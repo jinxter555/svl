@@ -1,0 +1,5 @@
+g++    -c -o main.o main.cpp
+g++    -c -o readinputline.o readinputline.cpp
+g++    -c -o token.o token.cpp
+g++    -c -o expr.o expr.cpp
+g++ -g -o main main.o commandline.o readinputline.o token.o expr.o -lreadline

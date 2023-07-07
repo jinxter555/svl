@@ -1,0 +1,11 @@
+10
+20
+30
+iambob
+what "hello" is up
+"hola world"
+"not quoted properly Que onda
+en la ciduda"
+12.345
+test
+mundo
