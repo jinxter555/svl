@@ -43,12 +43,13 @@ int main(int argc, char *argv[]) {
       text=t.readyline(input_str);
       if(text!=""){        // return "" if more text is quoted and multiline 
         t.tokenize(text);
-        p.run(t);
+        // p.run(t);
         cout << "Result: " ;
         cout <<  "\n";
         Expr e(t);
         e.print();
-        // e.Evaluate().print(); 
+        e.Evaluate().print(); 
+        // e.Evaluate();
 //        t.print_tokens();
         t.clear_token();
       }

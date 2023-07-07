@@ -36,10 +36,12 @@ void Expr::print() {
     cout << "Expr infix print()\n";
     for(auto token : infix_) {
       token.print();
+      // token.print_t();
     }
     cout << "\n\nExpr postfix print()\n";
     for(auto token : ToPostfix()) {
       token.print();
+      // token.print_t();
     }
     cout << "\n";
 }
@@ -104,13 +106,21 @@ Token Expr::Evaluate() {
       const auto& next_token = postfix_[i+1];
       if (token.is_number()) {
         s.push(token);
-      } else if (token.is_operator()) {
+      } else if (token.is_op_bin()) { // this should be bin op
+
         Token num2 = s.top();
         s.pop();
         Token num1 = s.top();
         s.pop();
 
         s.push(Token::calc(token.op(), num1, num2));
+      } else if(token.op() == "=") { // this should be uni op, ++, -- etc
+          Token id1 = next_token;
+          Token result = s.top();
+
+          // cout << "tok identifier = " <<  id1.identifer() << "\n";
+          cout << "tok identifier = " << id1.identifer() << "\n";
+          cout << "result = "; result.print();
       } else if (IsFunction(token, next_token)) {
         cout << "in eval function handling: " << "\n";
         void *handle = dlopen(LIBM_SO, RTLD_LAZY);

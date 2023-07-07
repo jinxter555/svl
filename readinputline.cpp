@@ -140,7 +140,7 @@ void ReadInputLine::tokenize(const string& input) {
     if(!isspace(input[i])) { 
       if(i < l)  {// side effect from helper function
         str = read_op_string(input, i, l);
-        infix_tokens.push_back(Token(str, OPERATOR));
+        infix_tokens.push_back(Token(str, Token::check_operator(str)));
         tokens.push_back(str);
       }
     }

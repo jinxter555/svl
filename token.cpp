@@ -14,6 +14,9 @@ void Token::print() {
     cout << "token value: " << arg << endl;
   }, value);
 }
+void Token::print_t() {
+    cout << "token type: " << type << endl;
+}
 
 Token::Token(string str) {
   if(str.find_first_not_of("0123456789") == string::npos) {
@@ -22,21 +25,21 @@ Token::Token(string str) {
   } else if (str.find_first_not_of("0123456789.") == string::npos) {
     value = stof(str);
     type = FLOAT;
-  } else if (is_operator(str)) {
+  } else if (isalnum(str[0])) {
     value = str;
-    type = OPERATOR;
+    type = INDENTIFIER;
   } else {
     value = str, 
-    type = STRING;
+    type = check_operator(str);
   }
 }
 
 
-bool Token::is_operator(string op) {
+token_enum_t Token::check_operator(string op) {
   if (op == "+" || op == "-"||  op== "*" || op == "/" || op == "^" )
-    return true;
+    return OP_BIN;
   else
-    return false;
+    return OP_UNI;
 }
 
 string Token::op() const {
@@ -47,6 +50,10 @@ string Token::op() const {
 }
 
 string Token::funcname() const {
+  return get<string>(value);
+}
+
+string Token::identifer() const {
   return get<string>(value);
 }
 

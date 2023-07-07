@@ -2,6 +2,9 @@ main: main.o commandline.o readinputline.o token.o expr.o parser.o
 	g++ -g -o main.out main.o commandline.o readinputline.o\
 		token.o expr.o parser.o -lreadline
 
+clean: 
+	rm *.o
+
 main.o : main.cpp
 
 commandline.o: commandline.cpp commandline.hh
