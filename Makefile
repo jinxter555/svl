@@ -1,5 +1,5 @@
 main: main.o commandline.o readinputline.o token.o expr.o parser.o
-	g++ -g -o main main.o commandline.o readinputline.o\
+	g++ -g -o main.out main.o commandline.o readinputline.o\
 		token.o expr.o parser.o -lreadline
 
 main.o : main.cpp
