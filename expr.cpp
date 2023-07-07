@@ -21,13 +21,14 @@ write a c++ Expr class. where it takes an infix vector string of numbers and ope
 using namespace std;
 
 bool Expr::IsFunction(const Token& t1, const Token& t2) const {
-    return t1.type == INDENTIFIER || t2.op() == "(";
+    return t1.type == INDENTIFIER && t2.op() == "(";
 }
 
 int Expr::Precedence(const string& op) const {
-    if (op == "+" || op == "-") return 1;
-    if (op == "*" || op == "/") return 2;
-    if (op == "^") return 3;
+    if (op == "=") return 1;
+    if (op == "+" || op == "-") return 10;
+    if (op == "*" || op == "/") return 20;
+    if (op == "^") return 30;
     return 0;
 }
 
@@ -79,6 +80,8 @@ vector<Token> Expr::ToPostfix(vector<Token>& infix) {
         s.pop();
       } else if (IsFunction(token, next_token)) {
         cout << "token function handling: " << token.funcname() << "\n";
+        s.push(token);
+      } else { // push anything for now, might want to check if it's identifer later
         s.push(token);
       }
     }
