@@ -37,5 +37,6 @@ class Expr {
   vector<Token> ToPostfix();
   vector<Token> ToPostfix(vector<Token>& infix);
   Token Evaluate();
+  Token Evaluate(vector<Token>& postfix);
   void print();
 };

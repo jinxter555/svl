@@ -36,12 +36,12 @@ void Expr::print() {
     cout << "Expr infix print()\n";
     for(auto token : infix_) {
       token.print();
-      // token.print_t();
+      token.print_t();
     }
     cout << "\n\nExpr postfix print()\n";
     for(auto token : ToPostfix()) {
       token.print();
-      // token.print_t();
+      token.print_t();
     }
     cout << "\n";
 }
@@ -97,13 +97,18 @@ vector<Token> Expr::ToPostfix(vector<Token>& infix) {
   }
 
 Token Expr::Evaluate() {
+  auto postfix = ToPostfix();
+  return Evaluate(postfix);
+}
+
+Token Expr::Evaluate(vector<Token>& postfix) {
     stack<Token> s;
     vector<Token> postfix_= ToPostfix();
 
     //for (const auto& token : ToPostfix()) {
-    for (int i=0; i < postfix_.size(); i++) {
-      const auto& token = postfix_[i];
-      const auto& next_token = postfix_[i+1];
+    for (int ip=0; ip < postfix_.size(); ip++) {
+      const auto& token = postfix_[ip];
+      const auto& next_token = postfix_[ip+1];
       if (token.is_number()) {
         s.push(token);
       } else if (token.is_op_bin()) { // this should be bin op
@@ -115,50 +120,21 @@ Token Expr::Evaluate() {
 
         s.push(Token::calc(token.op(), num1, num2));
       } else if(token.op() == "=") { // this should be uni op, ++, -- etc
-          Token id1 = next_token;
+          Token id1 = next_token; ip++;
           Token result = s.top();
 
           // cout << "tok identifier = " <<  id1.identifer() << "\n";
           cout << "tok identifier = " << id1.identifer() << "\n";
           cout << "result = "; result.print();
+          continue;
       } else if (IsFunction(token, next_token)) {
-        cout << "in eval function handling: " << "\n";
-        void *handle = dlopen(LIBM_SO, RTLD_LAZY);
-
-
-        if (!handle) {
-          cerr << "Error: " << dlerror() << endl;
-          exit(1);
-        }
-
-        typedef double (*MathFunc)(double);
-
-        MathFunc func = 
-          reinterpret_cast<MathFunc>(
-            dlsym(handle, token.funcname().c_str())
-          ); // op should be function
-
-        if (!func) {
-          cerr << "Error: " << dlerror() << endl;
-          exit(1);
-        }
-
-        Token arg = s.top();
-        s.pop();
-
-        double arg_value = (double) get<float>(arg.value);
-        cout << "arg_value: " << arg_value << "\n";
-
-        Token result = Token((float) func(arg_value), FLOAT);
-
-        dlclose(handle);
-
-        s.push(result);
+          cout << "in eval function handling: " << "\n";
       }
     }
 
     return s.top();
 }
+
 
 
 #ifdef __MAIN__

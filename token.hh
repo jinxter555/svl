@@ -15,12 +15,12 @@ enum token_enum_t {
     LONG=12,
     FLOAT=13,
     DOUBLE=14,
-    OP_BIN=15,
-    OP_UNI=16,
-    STRING=17,
-    INDENTIFIER=18,
-    PAIRS=19,
-    FUNCTION=20,
+    STRING=15,
+    INDENTIFIER=20,
+    FUNCTION=21,
+    OP_BIN=30,
+    OP_UNI=31,
+    PAIRS=49,
 };
 
 class Token {
@@ -37,6 +37,8 @@ public:
   void print_t();
 
   static token_enum_t check_operator(string op);
+  static string type_str(token_enum_t t);
+
   bool is_operator()  const { return type==OP_BIN || type==OP_UNI;}
   bool is_op_bin()  const { return type==OP_BIN;}
   bool is_op_uni()  const { return type==OP_UNI;}

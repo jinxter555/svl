@@ -15,8 +15,29 @@ void Token::print() {
   }, value);
 }
 void Token::print_t() {
-    cout << "token type: " << type << endl;
+    cout << "token type n: " << type << endl;
+    cout << "token type: " << type_str(type) << "\n\n";
 }
+
+string Token::type_str(token_enum_t t) {
+  string str="";
+  switch(t) {
+    case CHAR:   str="CHAR"; break;
+    case INTEGER: str="INTEGER"; break;
+    case LONG:   str="LONG"; break;
+    case FLOAT: str="FLOAT"; break;
+    case DOUBLE: str="DOUBLE"; break;
+    case OP_BIN: str="OP_BIN"; break;
+    case OP_UNI: str="OP_UNI"; break;
+    case STRING: str="STRING"; break;
+    case INDENTIFIER: str="INDENTIFIER"; break;
+    case PAIRS:  str="PAIRS"; break;
+    case FUNCTION: str="FUNCTION"; break;
+    default: str="unknown"; break;
+  }
+  return str;
+};
+
 
 Token::Token(string str) {
   if(str.find_first_not_of("0123456789") == string::npos) {

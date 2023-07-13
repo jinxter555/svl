@@ -40,6 +40,10 @@ int main(int argc, char *argv[]) {
       input_str=input;
       free(input);          
       if (input_str == "exit") break;          
+      if (input_str == "clear"){
+        t.clear_token();
+        continue;
+      }
       text=t.readyline(input_str);
       if(text!=""){        // return "" if more text is quoted and multiline 
         t.tokenize(text);
@@ -49,9 +53,8 @@ int main(int argc, char *argv[]) {
         Expr e(t);
         e.print();
         e.Evaluate().print(); 
-        // e.Evaluate();
 //        t.print_tokens();
-        t.clear_token();
+//        t.clear_token();
       }
     }
   }
