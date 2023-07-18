@@ -6,13 +6,16 @@
 #include "readinputline.hh"
 #include "expr.hh"
 #include "parser.hh"
+#include "interpreter.hh"
 
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
   char *input;
+  Interpreter itp;
   ReadInputLine t;
+
   Parser p;
   ifstream infile;
   string input_str, text;
@@ -44,15 +47,23 @@ int main(int argc, char *argv[]) {
         t.clear_token();
         continue;
       }
+      if (input_str == "print_token"){
+        t.print_tokens(); 
+        // interpreter vmsvl print code
+        continue;
+      }
       text=t.readyline(input_str);
       if(text!=""){        // return "" if more text is quoted and multiline 
         t.tokenize(text);
+
         // p.run(t);
         cout << "Result: " ;
         cout <<  "\n";
         Expr e(t);
-        e.print();
-        e.Evaluate().print(); 
+        itp.vmsvl_add_expr(e);
+        itp.run();
+        //e.print();
+        //e.Evaluate().print(); 
 //        t.print_tokens();
 //        t.clear_token();
       }

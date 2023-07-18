@@ -25,8 +25,8 @@ class Expr {
  private:
   vector<Token> infix_;
 
-  bool IsFunction(const Token& t1, const Token& t2) const;
-  int Precedence(const string& op) const;
+  static int Precedence(const string& op);
+  friend class Interpreter;
  public:
   Expr() {}
   Expr(const ReadInputLine& ril) {
@@ -35,8 +35,10 @@ class Expr {
   Expr(const vector<Token>& infix) : infix_(infix) {}
 
   vector<Token> ToPostfix();
-  vector<Token> ToPostfix(vector<Token>& infix);
+  static vector<Token> ToPostfix(vector<Token>& infix);
   Token Evaluate();
   Token Evaluate(vector<Token>& postfix);
   void print();
+
+  static bool IsFunction(const Token& t1, const Token& t2);
 };

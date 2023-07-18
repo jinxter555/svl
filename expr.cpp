@@ -20,11 +20,11 @@ write a c++ Expr class. where it takes an infix vector string of numbers and ope
 
 using namespace std;
 
-bool Expr::IsFunction(const Token& t1, const Token& t2) const {
+bool Expr::IsFunction(const Token& t1, const Token& t2) {
     return t1.type == INDENTIFIER && t2.op() == "(";
 }
 
-int Expr::Precedence(const string& op) const {
+int Expr::Precedence(const string& op) {
     if (op == "=") return 1;
     if (op == "+" || op == "-") return 10;
     if (op == "*" || op == "/") return 20;

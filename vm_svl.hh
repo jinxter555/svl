@@ -33,28 +33,27 @@ public:
 class VMsvl {
 private:
   vector<Token> code; // postfix expressions
-  stack<Token> stack; // tokens stack
+  std::stack<Token> stack; // tokens stack
   vector<Frame> frames;
   Frame context;
   int pc = 0;         // program counter
   int fp = 0;         // frame counter
+  friend class Interpreter;
 
 public:
+  VMsvl() : context(0,0) {};
   void run();
-  void add_expr(Expr& expr);
+  void add_expr(vector<Token>& expr);
 
   void push(Token v); 
   void call(int address);
   void decl(const string& name);    // declare local variable
   Token pop();
 
+  void print_stack();
+  void print_code();
+  void clear_code();
+
+
 
 };
-
-int main() {
-  ReadInputLine ril;
-  VMsvl vm;
-  ril.tokenize("1 + 2");
-  Expr e(ril);
-  vm.add_expr(e);
-}
