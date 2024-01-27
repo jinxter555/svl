@@ -28,12 +28,15 @@ void VMsvl::print_code() {
     token.print();
   }
 }
+void StackDebug(stack<Token> s) ;
 void VMsvl::print_stack() {
   //for(auto token: stack) {
   //  token.print();
   //}
-  auto token  = stack.top();
-  token.print();
+  //  auto token  = stack.top();
+  //token.print();
+  StackDebug(stack);
+
 
 }
 void VMsvl::clear_code() {
@@ -42,6 +45,20 @@ void VMsvl::clear_code() {
 void VMsvl::add_expr(vector<Token>& expr) { // takes variable expr modify th
     // auto ep = expr.ToPostfix();
     code.insert(code.end(), expr.begin(), expr.end());
+}
+
+void StackDebug(stack<Token> s) {
+  vector<Token> debugVector = vector<Token>();
+  while(!s.empty()) {
+    Token t = s.top();
+    debugVector.push_back(t);
+    s.pop();
+  }
+  // stack, read from top down, is reversed relative to its creation (from bot to top)
+  // std::reverse(debugVector.begin(),  debugVector.end());
+  for(auto it: debugVector) {
+    it.print();
+  }
 }
 
 void VMsvl::run() {

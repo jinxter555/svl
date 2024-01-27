@@ -43,6 +43,10 @@ int main(int argc, char *argv[]) {
       input_str=input;
       free(input);          
       if (input_str == "exit") break;          
+      if(input_str[0]=='\\') {
+        itp.cml_action(input_str);
+        continue;
+      }
       if (input_str == "clear"){
         t.clear_token();
         continue;
@@ -60,7 +64,7 @@ int main(int argc, char *argv[]) {
         cout << "Result: " ;
         cout <<  "\n";
         Expr e(t);
-        itp.vmsvl_add_expr(e);
+        itp.add_expr(e);
         itp.run();
         //e.print();
         //e.Evaluate().print(); 
