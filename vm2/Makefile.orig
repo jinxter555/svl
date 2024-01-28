@@ -1,0 +1,11 @@
+CC=clang++
+main: main.o 
+	clang++ -g -o main.out  main.o int_prompt_history.o -lreadline
+
+clean: 
+	rm *.o
+
+main.o : main.cpp
+
+int_prompt_history.o : int_prompt_history.cpp int_prompt_history.hh
+	clang++ -c int_prompt_history.cpp

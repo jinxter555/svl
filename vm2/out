@@ -1,0 +1,16 @@
+g++ -g -o main.out  main.o prompt.o   \
+assembly.o vm.o assembly_sbc.o commandline.o assembler.o -lreadline
+/usr/bin/ld: main.o: warning: relocation against `_ZTV20AssemblerInteractive' in read-only section `.text._ZN20AssemblerInteractiveD2Ev[_ZN20AssemblerInteractiveD5Ev]'
+/usr/bin/ld: main.o: in function `main':
+
+
+main.cpp:(.text+0x120): undefined reference to `AssemblerInteractive::load(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+
+/usr/bin/ld: main.o: in function `AssemblerInteractive::AssemblerInteractive(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+
+main.cpp:(.text._ZN20AssemblerInteractiveC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_[_ZN20AssemblerInteractiveC5ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_]+0x35): undefined reference to `vtable for AssemblerInteractive'
+/usr/bin/ld: main.o: in function `AssemblerInteractive::~AssemblerInteractive()':
+main.cpp:(.text._ZN20AssemblerInteractiveD2Ev[_ZN20AssemblerInteractiveD5Ev]+0x13): undefined reference to `vtable for AssemblerInteractive'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:3: main] Error 1
