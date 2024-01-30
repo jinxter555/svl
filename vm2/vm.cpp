@@ -98,17 +98,44 @@ void VM::ret() {
 void VM::vmexit() {
   pc = 99999;
 }
-void VM::cmpr() { // comparing registers
+void VM::cmpi() { // comparing registers integer
   reg_t difference; 
   difference.i 
     = R[instruction->operands[0].i].i 
     - R[instruction->operands[1].i].i;
   flag.N = difference.i < 0;
+  flag.C = difference.i > 0;
   flag.Z = difference.i == 0;
+}
+
+void VM::cmpf() { // comparing registers floating point
+  reg_t difference; 
+  difference.f 
+    = R[instruction->operands[0].i].f 
+    - R[instruction->operands[1].i].f;
+  flag.N = difference.f < 0;
+  flag.C = difference.f > 0;
+  flag.Z = difference.f == 0;
 }
 
 void VM::beq() {
   if(flag.Z) {
+  }
+}
+void VM::bgt() {
+  if(flag.C) {
+  }
+}
+void VM::blt() {
+  if(flag.N) {
+  }
+}
+void VM::ble() {
+  if(flag.N || flag.Z) {
+  }
+}
+void VM::bge() {
+  if(flag.C || flag.Z) {
   }
 }
 

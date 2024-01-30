@@ -16,3 +16,9 @@
 #define VM_divi       24
 #define VM_call       33      // push register
 #define VM_ret        34      // push register
+
+#define VM_cmpi       35
+#define VM_cmpf       36
+#define VM_beq        37
+#define VM_bgt        38
+#define VM_blt        39

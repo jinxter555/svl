@@ -17,16 +17,13 @@ class Assembler : public Assembly {
   friend class AssemblerInteractive;
 protected:
   // vector<string> module_structure_names;
+  int lvc=0;  // local variable count starting from %function
   string current_module="", current_function  = "", current_var="";
   string opcode_str="", operands_str[3] = {"", "", ""};
 
   vector<unresolved_t> unresolved_names;
 
 public:
-  void a() { 
-    symbol_t a1 = {"mymod", "t", "t2"};
-    context->get_node({a1.smodule, a1.sfunction, a1.svar});
-  }
   Assembler();
   void run(VM &vm);
   void run1(VM &vm);

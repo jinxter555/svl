@@ -73,10 +73,24 @@ bool Assembler::parse_directive(const string &line) {
     return true;
   }
   if(tokens_s[0] == "%function")  {
+    lvc = 0;
     current_function =  tokens_s[1];
     context->add_node({current_module, current_function, "addr"}, pc_load);
     cout << "in function direcive: module:" << current_module << "\n";
     cout << "function: " << tokens_s[1] << " addr: " << pc_load  << "\n";
+    return true;
+  }
+  if(tokens_s[0] == "%var_local")  {
+    reg_t value_default;
+    current_var = tokens_s[1];
+    if(is_float(current_var)) value_default.f = stod(current_var);
+    if(is_integer(current_var)) value_default.f = stol(current_var);
+    // add few more code[pc_load++] to set up push vmstack
+    context->add_node({current_module, current_function, current_var, "addr"}, lvc++);
+    return true;
+  }
+  if(tokens_s[0] == "%label")  {
+    context->add_node({current_module, current_function, tokens_s[1], "label"}, pc_load);
     return true;
   }
   return false;
@@ -170,10 +184,10 @@ bool Assembler::decode_call() {
 
   //cout << "in call opcode operands: " << opcode_str << " " << operands_str[0] << " " << operands_str[1] << " " << operands_str[2] << "\n";
   switch(tokens_s.size()) {
-  case 1: 
+  case 1:  // local module call fun1()
     sym_node = context->get_node({call_module_name, tokens_s[0], "addr"}); 
     break;
-  case 2: 
+  case 2: // extern module function call Module.fun1()
     call_module_name = tokens_s[0];
     call_function_name = tokens_s[1];
     sym_node = context->get_node({tokens_s[0], tokens_s[1], "addr"});  

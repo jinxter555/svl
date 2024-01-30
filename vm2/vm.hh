@@ -94,8 +94,14 @@ public:
   inline void load();
   inline void store();
 
-  inline void cmpr();
+  inline void cmpi();
+  inline void cmpf();
+
   inline void beq();
+  inline void bgt();
+  inline void blt();
+  inline void ble();
+  inline void bge();
 
   inline void call();
   inline void ret();
