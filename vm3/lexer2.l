@@ -1,7 +1,8 @@
 %{
-#include "Parser2.hpp"
-#include "Scanner2.hpp"
+#include "Parser2.hh"
+#include "Scanner2.hh"
 #define YY_DECL int vslasm::Scanner::lex(vslasm::Parser::semantic_type *yylval)
+//#define YY_DECL int vslasm::Scanner::lex(Parser::semantic_type *yylval,  Parser::location_type* loc)
 %}
 
 %option c++ interactive noyywrap noyylineno nodefault outfile="Scanner2.cpp"
@@ -17,14 +18,13 @@ identifier      ([a-zA-Z][a-zA-Z0-9_]*)
 blank           ([ \t\r])
 register        ([rR]{integer})
 
+
 %%
- 
-{integer}       yylval->emplace<long long>(strtoll(YYText(), nullptr, 10)); return Parser::token::INT;
+
+{integer}        yylval->emplace<long long>(strtoll(YYText(), nullptr, 10)); return Parser::token::INT; 
 {float}         yylval->emplace<double>(strtod(YYText(), nullptr)); return Parser::token::FLT;
 {blank}         {}
-
-{register}      { yylval->emplace<std::string>(std::string(YYText())); return Parser::token::REGISTER;
-}
+{register}      { yylval->emplace<std::string>(std::string(YYText())); return Parser::token::REGISTER; }
 {identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;

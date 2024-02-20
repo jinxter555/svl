@@ -1,4 +1,8 @@
-#include "assembler.h"
+#include <iostream>
+#include <istream>
+#include <fstream>
+#include <sstream>
+#include "assembler.hh"
 
 Opcode Assembler::lookup_opcode(const std::string& opname) {
   auto it = opcode_table.find(opname);
@@ -7,4 +11,8 @@ Opcode Assembler::lookup_opcode(const std::string& opname) {
   } else {
     return Opcode::INVALID;
   }
+}
+
+void Assembler::run(VM& vm) {
+  Assembly::run(vm);
 }

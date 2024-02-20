@@ -6,7 +6,9 @@
 %}
 %require "3.7.4"
 %language "C++"
-%defines "Parser2.hpp"
+
+
+%defines "Parser2.hh"
 %output "Parser2.cpp"
 
 %define api.parser.class {Parser}
@@ -15,20 +17,21 @@
 %parse-param {Scanner* scanner}
 %parse-param {Assembler* assembler}
 
+
 %code requires {
-#include "assembler.h"
+#include "assembler.hh"
 namespace vslasm {
   class Scanner;
 }}
 
 %code {
-#include "Scanner2.hpp"
+#include "Scanner2.hh"
 #define yylex(x) scanner->lex(x)
 }
 
 %token              EOL LPAREN RPAREN
 %token <long long>  INT
-%token <double>     FLT
+%token <long double>     FLT
 %token <std::string>     STR
  
 //%nterm <long long>  iexp
@@ -55,7 +58,7 @@ lines
 
 line: EOL
   | instruction
-  | directive
+ // | directive
   ;
 
 
@@ -74,10 +77,20 @@ instruction
 
 opname: STR;
 
-directive: EOL
-  ;
 %%
+// directive: EOL ;
 
 void vslasm::Parser::error(const std::string& msg) {
   std::cerr << msg << "\n";
 }
+/*
+void vslasm::Parser::error(const location_type& loc, const std::string& msg) {
+  // std::cerr << msg << "\n";
+  std::cerr 
+    << "Error at line " 
+    << loc.begin.line 
+    << ", column " 
+    << loc.begin.column 
+    << ": " << msg << std::endl;
+}
+*/
