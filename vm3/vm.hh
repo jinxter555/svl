@@ -18,6 +18,7 @@ typedef union {
   s_int_t adr;
 } reg_t;
 
+
 typedef struct {
   Opcode opcode;
   reg_t operands[3];
@@ -69,6 +70,8 @@ public:
   inline void push_c();
   inline void push_r();
   inline void pop_r();
+
+  inline void mov();
 
   inline void call();
   inline void ret();

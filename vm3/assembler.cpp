@@ -13,9 +13,13 @@ Opcode Assembler::lookup_opcode(const std::string& opname) {
 void Assembler::run(VM& vm) {
   Assembly::run(vm);
 }
+void Assembler::run_single_instruction(VM& vm) {
+  Assembly::run_single_instruction(vm);
+}
 void Assembler::set_instruction(const instr_t &t) {
   Assembly::instruction = t;
 }
+
 void Assembler::insert_instruction() {
   Assembly::insert_instruction();
 }

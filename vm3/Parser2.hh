@@ -392,7 +392,7 @@ namespace vslasm {
 
       // INT
       // REGISTER
-      char dummy3[sizeof (long long)];
+      char dummy3[sizeof (long int)];
 
       // STR
       char dummy4[sizeof (std::string)];
@@ -543,7 +543,7 @@ namespace vslasm {
 
       case symbol_kind::S_INT: // INT
       case symbol_kind::S_REGISTER: // REGISTER
-        value.move< long long > (std::move (that.value));
+        value.move< long int > (std::move (that.value));
         break;
 
       case symbol_kind::S_STR: // STR
@@ -596,12 +596,12 @@ namespace vslasm {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, long long&& v)
+      basic_symbol (typename Base::kind_type t, long int&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const long long& v)
+      basic_symbol (typename Base::kind_type t, const long int& v)
         : Base (t)
         , value (v)
       {}
@@ -653,7 +653,7 @@ switch (yykind)
 
       case symbol_kind::S_INT: // INT
       case symbol_kind::S_REGISTER: // REGISTER
-        value.template destroy< long long > ();
+        value.template destroy< long int > ();
         break;
 
       case symbol_kind::S_STR: // STR
@@ -765,10 +765,10 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, long long v)
+      symbol_type (int tok, long int v)
         : super_type (token_kind_type (tok), std::move (v))
 #else
-      symbol_type (int tok, const long long& v)
+      symbol_type (int tok, const long int& v)
         : super_type (token_kind_type (tok), v)
 #endif
       {}
@@ -923,14 +923,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_INT (long long v)
+      make_INT (long int v)
       {
         return symbol_type (token::INT, std::move (v));
       }
 #else
       static
       symbol_type
-      make_INT (const long long& v)
+      make_INT (const long int& v)
       {
         return symbol_type (token::INT, v);
       }
@@ -1118,14 +1118,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_REGISTER (long long v)
+      make_REGISTER (long int v)
       {
         return symbol_type (token::REGISTER, std::move (v));
       }
 #else
       static
       symbol_type
-      make_REGISTER (const long long& v)
+      make_REGISTER (const long int& v)
       {
         return symbol_type (token::REGISTER, v);
       }

@@ -12,6 +12,7 @@ public:
   void set_instruction(const instr_t &t);
   void insert_instruction();
   void run(VM& vm);
+  void run_single_instruction(VM &vm);
 
   void print_program();
 };

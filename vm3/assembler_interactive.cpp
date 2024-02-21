@@ -35,6 +35,8 @@ void AssemblerInteractive::parse(const std::string &line) {
   std::istringstream input_buffer(line);
   scanner.switch_streams(&input_buffer, &std::cerr);
   parser.parse();
+  assembler.run_single_instruction(vm);
+
 }
 
 void AssemblerInteractive::run_program() {
@@ -44,6 +46,7 @@ void AssemblerInteractive::run_program() {
 void AssemblerInteractive::interact(const std::string& line) {
   if(line == "\\print_register") print_vm_registers();
   if(line == "\\print_stack_int") print_vm_stack_int();
+  if(line == "\\print_stack_float") print_vm_stack_float();
   if(line == "\\print_program") print_program();
   if(line == "\\run_program") run_program();
 }
@@ -57,7 +60,22 @@ void AssemblerInteractive::print_vm_stack_int() {
   std::cout << '\n';
 }
 
-void AssemblerInteractive::print_vm_registers(){};
+void AssemblerInteractive::print_vm_stack_float() {
+  int i=0;
+  // for (std::vector<reg_t>::iterator it = vm->vmstack.begin() ; it != vm->vmstack.end(); ++it) {
+  for (std::vector<reg_t>::iterator it = vm.vmstack.begin() ; it != vm.vmstack.end(); ++it) {
+    std::cout << i++ << ": " << (*it).f << "\n";
+  }
+  std::cout << '\n';
+}
+
+void AssemblerInteractive::print_vm_registers(int n) {
+  for(int i=0; i<n; i++) {
+    std::cout << "R" << int(i) << ":" << vm.R[i].i << " ";
+  }
+  std::cout << "\n";
+}
+
 void AssemblerInteractive::print_program(){
   assembler.print_program();
 };

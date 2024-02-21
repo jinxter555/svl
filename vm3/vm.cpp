@@ -1,5 +1,9 @@
 #include "vm.hh"
 
+void VM::mov() {
+  R[instruction->operands[0].i].i
+    = instruction->operands[1].i;
+}
 
 void VM::iadd_c() {
   R[instruction->operands[0].i].i 
@@ -67,6 +71,7 @@ void VM::dispatch(instr_t &itt) {
 }
 void VM::dispatch() {
   switch(instruction->opcode) {
+    case Opcode::MOV: mov(); break;
     case Opcode::IADD_C: iadd_c(); break;
     case Opcode::IADD_R: iadd_r(); break;
     case Opcode::ISUB_C: isub_c(); break;

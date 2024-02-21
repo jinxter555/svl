@@ -11,5 +11,6 @@ protected:
 public:
   std::shared_ptr<TreeNode> resolve_symbol_node(const std::vector<std::string> &keys) const;
   void run(VM&);
+  void run_single_instruction(VM&);
   void insert_instruction();
 };

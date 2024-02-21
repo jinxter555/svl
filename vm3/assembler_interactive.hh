@@ -17,8 +17,9 @@ private:
   void interact(const std::string&);
   void parse_prompt(const std::string&);
 
-  void print_vm_registers();
+  void print_vm_registers(int n=8);  
   void print_vm_stack_int();
+  void print_vm_stack_float();
   void print_program();
 public:
   AssemblerInteractive(const std::string &, const std::string &);

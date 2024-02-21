@@ -21,12 +21,12 @@ register        ([rR]{integer})
 
 %%
 
-{integer}        { yylval->emplace<long long>(strtoll(YYText(), nullptr, 10)); return Parser::token::INT;}
+{integer}        { yylval->emplace<long int>(strtoll(YYText(), nullptr, 10)); return Parser::token::INT;}
 {float}         yylval->emplace<long double>(strtod(YYText(), nullptr)); return Parser::token::FLT;
 {blank}         {}
 {register}      { 
   std::string reg = YYText(); reg[0] = '0';
-  yylval->emplace<long long>(strtoll(reg.c_str(), nullptr, 10)); 
+  yylval->emplace<long int>(strtoll(reg.c_str(), nullptr, 10)); 
   return Parser::token::REGISTER; 
 }
 {identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;

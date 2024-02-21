@@ -31,11 +31,11 @@ instr_t asm_instr = {Opcode(0), 0,0,0};
 }
 
 %token              EOL LPAREN RPAREN 
-%token <long long>  INT
+%token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
  
-//%nterm <long long>  iexp
+//%nterm <long int>  iexp
 //%nterm <double>     fexp
  
 %nonassoc           ASSIGN
@@ -46,7 +46,7 @@ instr_t asm_instr = {Opcode(0), 0,0,0};
 %right              EXPONENT
  
 %token COMMA 
-%token <long long> REGISTER
+%token <long int> REGISTER
 // %nterm <std::string>     opname
 %nterm <Opcode>     opcode
 
@@ -59,7 +59,7 @@ lines
   ;
 
 line: EOL { 
-  assembler->set_instruction(asm_instr);
+  //assembler->set_instruction(asm_instr);
   assembler->insert_instruction();
   }
   | instruction
@@ -68,15 +68,48 @@ line: EOL {
 
 
 instruction
-  : opcode REGISTER { asm_instr = {$1, $2, 0, 0};  } // std::cout << static_cast<int>($1) << " " << $2 << "\n"; }
-  | opcode REGISTER COMMA REGISTER { asm_instr = {$1, $2, $4, 0}; }
-  | opcode REGISTER COMMA REGISTER COMMA REGISTER { asm_instr = {$1, $2, $4, $6}; }
-  | opcode INT { asm_instr = {$1, $2, 0, 0}; }
-  | opcode REGISTER COMMA INT { }
-  | opcode REGISTER COMMA REGISTER COMMA INT { }
-  | opcode FLT { }
-  | opcode REGISTER COMMA FLT { }
-  | opcode REGISTER COMMA REGISTER COMMA FLT { }
+  : opcode REGISTER { 
+    asm_instr = {$1, $2, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  } 
+  | opcode REGISTER COMMA REGISTER {
+    asm_instr = {$1, $2, $4, 0};
+    assembler->set_instruction(asm_instr); 
+  }
+  | opcode REGISTER COMMA REGISTER COMMA REGISTER {
+    asm_instr = {$1, $2, $4, $6}; 
+    assembler->set_instruction(asm_instr); 
+  }
+  | opcode INT { 
+    asm_instr = {$1, $2, 0, 0}; 
+    assembler->set_instruction(asm_instr); 
+    std::cout << static_cast<int>($1) << " " << $2 << "\n"; 
+  }
+  | opcode REGISTER COMMA INT { 
+    asm_instr = {$1, $2, $4, 0};
+    assembler->set_instruction(asm_instr); 
+    std::cout << static_cast<int>($1) << " " << $2 << " " << $4 << "\n"; 
+
+  }
+  | opcode REGISTER COMMA REGISTER COMMA INT { 
+    asm_instr = {$1, $2, $4, $6}; 
+    assembler->set_instruction(asm_instr); 
+  }
+  | opcode FLT { 
+    reg_t operand1;
+    operand1.f = $2;
+    asm_instr = {$1, operand1}; 
+    assembler->set_instruction(asm_instr); 
+
+  }
+  | opcode REGISTER COMMA FLT { 
+    //asm_instr_f = {$1, $2, $4, 0};
+    //assembler->set_instruction(asm_instr_f); 
+  }
+  | opcode REGISTER COMMA REGISTER COMMA FLT { 
+    //asm_instr = {$1, $2, $4, $6}; 
+    //assembler->set_instruction(asm_instr); 
+  }
   ;
 
 opcode:
