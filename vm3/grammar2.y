@@ -27,9 +27,10 @@ namespace vslasm {
 %code {
 #include "Scanner2.hh"
 #define yylex(x) scanner->lex(x)
+instr_t asm_instr = {Opcode(0), 0,0,0};
 }
 
-%token              EOL LPAREN RPAREN
+%token              EOL LPAREN RPAREN 
 %token <long long>  INT
 %token <long double>     FLT
 %token <std::string>     STR
@@ -44,10 +45,11 @@ namespace vslasm {
 %precedence         FACTORIAL
 %right              EXPONENT
  
-%token COMMA REGISTER
-%nterm <std::string>     opname
+%token COMMA 
+%token <long long> REGISTER
+// %nterm <std::string>     opname
+%nterm <Opcode>     opcode
 
-//  opcode REGISTER { std::cout << "R1: opcode: " << $1 <<  "\n"; }
 
 %%
 
@@ -56,26 +58,30 @@ lines
   | lines line
   ;
 
-line: EOL
+line: EOL { 
+  assembler->set_instruction(asm_instr);
+  assembler->insert_instruction();
+  }
   | instruction
  // | directive
   ;
 
 
 instruction
-  : opname REGISTER { 
-    std::cout << "R1: opname: " << $1 <<  "\n"; 
-    if(assembler->lookup_opcode($1) != Opcode::INVALID) {
-      std::cout << "opname is valid!\n";
-    } else {
-      std::cout << "opname is not valid!!!!\n";
-    }
-    }
-  | opname REGISTER COMMA REGISTER { std::cout << "R2: opcode: " << $1 <<  "\n"; }
-  | opname REGISTER COMMA REGISTER COMMA REGISTER { std::cout << "R3: opcode: " << $1 <<  "\n"; }
+  : opcode REGISTER { asm_instr = {$1, $2, 0, 0};  } // std::cout << static_cast<int>($1) << " " << $2 << "\n"; }
+  | opcode REGISTER COMMA REGISTER { asm_instr = {$1, $2, $4, 0}; }
+  | opcode REGISTER COMMA REGISTER COMMA REGISTER { asm_instr = {$1, $2, $4, $6}; }
+  | opcode INT { asm_instr = {$1, $2, 0, 0}; }
+  | opcode REGISTER COMMA INT { }
+  | opcode REGISTER COMMA REGISTER COMMA INT { }
+  | opcode FLT { }
+  | opcode REGISTER COMMA FLT { }
+  | opcode REGISTER COMMA REGISTER COMMA FLT { }
   ;
 
-opname: STR;
+opcode:
+  STR { $$ = assembler->lookup_opcode($1); };
+  ;
 
 %%
 // directive: EOL ;
@@ -83,14 +89,3 @@ opname: STR;
 void vslasm::Parser::error(const std::string& msg) {
   std::cerr << msg << "\n";
 }
-/*
-void vslasm::Parser::error(const location_type& loc, const std::string& msg) {
-  // std::cerr << msg << "\n";
-  std::cerr 
-    << "Error at line " 
-    << loc.begin.line 
-    << ", column " 
-    << loc.begin.column 
-    << ": " << msg << std::endl;
-}
-*/

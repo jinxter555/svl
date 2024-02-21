@@ -46,6 +46,7 @@ private:
 
   us_int_t pc = 0;
   us_int_t fp = 0;
+  us_int_t exit_max_pc=999999;
 
 public:
   VM(){}

@@ -21,9 +21,6 @@ int main(int argc, char *argv[]) {
   myprompt.run(ait);
   myprompt.save_history(ait);
 
-  Assembler asmblr;
-  vslasm::Scanner scanner{ std::cin, std::cerr };
-  vslasm::Parser parser{ &scanner, &asmblr };
   return 0;
 }
 /*

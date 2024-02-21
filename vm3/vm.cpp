@@ -6,12 +6,22 @@ void VM::iadd_c() {
     = R[instruction->operands[1].i].i
     + instruction->operands[2].i;
 }
-
 void VM::iadd_r() {
   R[instruction->operands[0].i].i 
     = R[instruction->operands[1].i].i
     + R[instruction->operands[2].i].i;
 }
+void VM::isub_c() {
+  R[instruction->operands[0].i].i 
+    = R[instruction->operands[1].i].i
+    - instruction->operands[2].i;
+}
+void VM::isub_r() {
+  R[instruction->operands[0].i].i 
+    = R[instruction->operands[1].i].i
+    - R[instruction->operands[2].i].i;
+}
+
 void VM::call() {
   vmframes.push(Frame(pc, fp));
   fp = vmstack.size();
@@ -25,7 +35,7 @@ void VM::ret() {
   pc = sf.pc;
 }
 void VM::vmexit() {
-  pc = 999999;
+  pc = exit_max_pc;
 }
 
 
@@ -58,12 +68,18 @@ void VM::dispatch(instr_t &itt) {
 void VM::dispatch() {
   switch(instruction->opcode) {
     case Opcode::IADD_C: iadd_c(); break;
+    case Opcode::IADD_R: iadd_r(); break;
+    case Opcode::ISUB_C: isub_c(); break;
+    case Opcode::ISUB_R: isub_r(); break;
+    case Opcode::POP_R:  pop_r();   break;
+    case Opcode::PUSH_C: push_c();  break;
+    case Opcode::PUSH_R: push_r();  break;
+    case Opcode::CALL:   call();  break;
+    case Opcode::RET:    ret();  break;
+    case Opcode::EXIT:   vmexit();  break;
+
     default: break;
 
   }
 }
-
-
-
-
 

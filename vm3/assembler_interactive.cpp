@@ -38,7 +38,7 @@ void AssemblerInteractive::parse(const std::string &line) {
 }
 
 void AssemblerInteractive::run_program() {
-  //assembler.run(vm);
+  assembler.run(vm);
 }
 
 void AssemblerInteractive::interact(const std::string& line) {
@@ -58,5 +58,7 @@ void AssemblerInteractive::print_vm_stack_int() {
 }
 
 void AssemblerInteractive::print_vm_registers(){};
-void AssemblerInteractive::print_program(){};
+void AssemblerInteractive::print_program(){
+  assembler.print_program();
+};
 

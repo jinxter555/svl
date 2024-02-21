@@ -384,15 +384,18 @@ namespace vslasm {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // opcode
+      char dummy1[sizeof (Opcode)];
+
       // FLT
-      char dummy1[sizeof (long double)];
+      char dummy2[sizeof (long double)];
 
       // INT
-      char dummy2[sizeof (long long)];
+      // REGISTER
+      char dummy3[sizeof (long long)];
 
       // STR
-      // opname
-      char dummy3[sizeof (std::string)];
+      char dummy4[sizeof (std::string)];
     };
 
     /// The size of the largest semantic type.
@@ -495,7 +498,7 @@ namespace vslasm {
         S_lines = 21,                            // lines
         S_line = 22,                             // line
         S_instruction = 23,                      // instruction
-        S_opname = 24                            // opname
+        S_opcode = 24                            // opcode
       };
     };
 
@@ -530,16 +533,20 @@ namespace vslasm {
       {
         switch (this->kind ())
     {
+      case symbol_kind::S_opcode: // opcode
+        value.move< Opcode > (std::move (that.value));
+        break;
+
       case symbol_kind::S_FLT: // FLT
         value.move< long double > (std::move (that.value));
         break;
 
       case symbol_kind::S_INT: // INT
+      case symbol_kind::S_REGISTER: // REGISTER
         value.move< long long > (std::move (that.value));
         break;
 
       case symbol_kind::S_STR: // STR
-      case symbol_kind::S_opname: // opname
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -561,6 +568,18 @@ namespace vslasm {
 #else
       basic_symbol (typename Base::kind_type t)
         : Base (t)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, Opcode&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const Opcode& v)
+        : Base (t)
+        , value (v)
       {}
 #endif
 
@@ -624,16 +643,20 @@ namespace vslasm {
         // Value type destructor.
 switch (yykind)
     {
+      case symbol_kind::S_opcode: // opcode
+        value.template destroy< Opcode > ();
+        break;
+
       case symbol_kind::S_FLT: // FLT
         value.template destroy< long double > ();
         break;
 
       case symbol_kind::S_INT: // INT
+      case symbol_kind::S_REGISTER: // REGISTER
         value.template destroy< long long > ();
         break;
 
       case symbol_kind::S_STR: // STR
-      case symbol_kind::S_opname: // opname
         value.template destroy< std::string > ();
         break;
 
@@ -1095,16 +1118,16 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_REGISTER ()
+      make_REGISTER (long long v)
       {
-        return symbol_type (token::REGISTER);
+        return symbol_type (token::REGISTER, std::move (v));
       }
 #else
       static
       symbol_type
-      make_REGISTER ()
+      make_REGISTER (const long long& v)
       {
-        return symbol_type (token::REGISTER);
+        return symbol_type (token::REGISTER, v);
       }
 #endif
 
@@ -1411,7 +1434,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 8,     ///< Last index in yytable_.
+      yylast_ = 17,     ///< Last index in yytable_.
       yynnts_ = 5,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
@@ -1426,7 +1449,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1430 "Parser2.hh"
+#line 1453 "Parser2.hh"
 
 
 

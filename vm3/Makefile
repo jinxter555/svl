@@ -1,19 +1,20 @@
-CC=clang++ -std=c++20
+CC=clang++ -std=c++17
 
-main.out:  lexer2.l grammar2.y main.cpp  opcode.o assembler.o  assembly.o commandline.o assembler_interactive.o vm.o prompt.o
+main.out:  lexer2.l grammar2.y main.cpp  opcode.o assembler.o  assembly.o commandline.o assembler_interactive.o vm.o prompt.o tree.o
 	bison -d grammar2.y
 	flex lexer2.l
-	clang++ -omain.out main.cpp Parser2.cpp Scanner2.cpp opcode.o assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o -lreadline
+	$(CC) -omain.out main.cpp Parser2.cpp Scanner2.cpp opcode.o \
+	assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o tree.o -lreadline
 
 
 opcode.o: opcode.cpp opcode.hh
-	clang++ -c opcode.cpp
+	$(CC) -c opcode.cpp
 
 assembly.o: assembly.cpp assembly.hh
-	clang++ -c assembly.cpp
+	$(CC) -c assembly.cpp
 
 vm.o: vm.cpp vm.hh
-	clang++ -c vm.cpp
+	$(CC) -c vm.cpp
 
 commandline.o: commandline.cpp commandline.hh
 	$(CC) -c commandline.cpp
@@ -26,6 +27,9 @@ assembler.o : assembler.cpp  assembler.hh
 
 assembler_interactive.o : assembler_interactive.cpp  assembler_interactive.hh
 	$(CC) -c assembler_interactive.cpp
+
+tree.o : tree.cpp  tree.hh
+	$(CC) -c tree.cpp
 
 clean:
 	rm -f main.out Parser2.cpp Scanner2.cpp *.o *.gch

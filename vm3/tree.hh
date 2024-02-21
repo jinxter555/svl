@@ -4,38 +4,37 @@
 #include <vector>
 #include <memory>
 
-using namespace std;
 
 class TreeNode {
   friend class Tree;
 private:
-  map<string, shared_ptr<TreeNode>> children;
-  any data;
+  std::map<std::string, std::shared_ptr<TreeNode>> children;
+  std::any data;
 public:
 
   TreeNode() {}
-  TreeNode(any data) : data(data) {}
+  TreeNode(std::any data) : data(data) {}
 
-  void add_child(const string &key, shared_ptr<TreeNode> child);
-  shared_ptr<TreeNode> get_child(const string& key) const;
+  void add_child(const std::string &key, std::shared_ptr<TreeNode> child);
+  std::shared_ptr<TreeNode> get_child(const std::string& key) const;
 
-  vector<string> get_child_keys() const;
-  any get_data() const;
-  void set_data(const any d);
+  std::vector<std::string> get_child_keys() const;
+  std::any get_data() const;
+  void set_data(const std::any d);
 };
 
 class Tree {
 private:
-  shared_ptr<TreeNode> root;
+  std::shared_ptr<TreeNode> root;
 public:
   Tree() : root(nullptr) {}
-  Tree(any data) : root(make_shared<TreeNode>(data)) {}
+  Tree(std::any data) : root(std::make_shared<TreeNode>(data)) {}
 
-  void add_node(vector<string> keys, const any data);
+  void add_node(std::vector<std::string> keys, const std::any data);
 
-  shared_ptr<TreeNode> get_node(vector<string> keys) const;
+  std::shared_ptr<TreeNode> get_node(std::vector<std::string> keys) const;
 
-  void set_node(vector<string> keys, const any data) const ;
+  void set_node(std::vector<std::string> keys, const std::any data) const ;
 
 };
 
