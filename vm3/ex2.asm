@@ -1,5 +1,5 @@
-%%module mod1
-%%function fun1
+%%function  f1
+%call hello.world
 mov r1, 12345
 mov r2, 3.45
 push_c 11

@@ -1,4 +1,5 @@
 #include <sstream>
+#include <regex>
 #include <FlexLexer.h>
 #include "prompt.hh"
 #include "assembler.hh"
@@ -17,10 +18,14 @@ private:
   void interact(const std::string&);
   void parse_prompt(const std::string&);
 
+  void print_tree(const std::string &line);  
   void print_vm_registers(int n=8);  
+  void print_vm_registers_float(int n=8);  
   void print_vm_stack_int();
   void print_vm_stack_float();
   void print_program();
+
+  std::string match(const std::string& line, const std::string& pattern);
 public:
   AssemblerInteractive(const std::string &, const std::string &);
   void accept_prompt(const std::string&) override;

@@ -7,11 +7,12 @@ struct option Commandline::long_options[] = {
 
 Commandline::Commandline(int argc, char* argv[]) {
   int opt;
-  while( (opt = getopt_long(argc, argv, "hif:o:", long_options, NULL)) != -1) {
+  while( (opt = getopt_long(argc, argv, "rhif:o:", long_options, NULL)) != -1) {
     switch(opt) {
       case 'i': interactive = true; break;
+      case 'r': run = true; break;
       case 'f': infile_name  = optarg; break;
-      case 'h': outerr(argv); break;
+      case 'h': outerr(argv); exit(0); break;
     }
   }
 }
@@ -20,7 +21,11 @@ void Commandline::outerr(char *argv[]) {
   std::cerr 
     << "Usage: " 
     << argv[0] 
-    << " [-i interactive] [-f inputfile] [--inputfile=inputfile] [-o outputfile] [--outputfile=outputfile]\n";
+    << " [-r ] [-i interactive] [-f inputfile] [--inputfile=inputfile] [-o outputfile] [--outputfile=outputfile]\n"
+    << " -r run program after load\n"
+    ;
+
+
 }
 
 void Commandline::printout() {

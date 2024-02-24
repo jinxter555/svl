@@ -16,9 +16,11 @@ int main(int argc, char *argv[]) {
 
   if(cml.infile_name !="")
     ait.load(cml.infile_name);
+  if(cml.run) 
+    ait.run_program();
 
   myprompt.load_history(ait);
-  myprompt.run(ait);
+  myprompt.ready(ait);
   myprompt.save_history(ait);
 
   return 0;

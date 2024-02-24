@@ -30,7 +30,8 @@ void PromptInteractive::load_history(Prompt& p) {
   }
 }
 
-void PromptInteractive::run(Prompt& p) {
+// ready for user readline input
+void PromptInteractive::ready(Prompt& p) {
   char *input;
   std::string input_str;
   // history.clear();

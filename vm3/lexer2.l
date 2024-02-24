@@ -29,6 +29,12 @@ register        ([rR]{integer})
   yylval->emplace<long int>(strtoll(reg.c_str(), nullptr, 10)); 
   return Parser::token::REGISTER; 
 }
+"app"    return Parser::token::APP;
+"api"    return Parser::token::API;
+"module"    return Parser::token::MODULE;
+"function"    return Parser::token::FUNCTION;
+"label"    return Parser::token::LABEL;
+"var"    return Parser::token::VAR;
 {identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;
@@ -41,6 +47,7 @@ register        ([rR]{integer})
 ")"             return Parser::token::RPAREN;
 "="             return Parser::token::ASSIGN;
 ","             return Parser::token::COMMA;
+"."             return Parser::token::DOT;
 \n              return Parser::token::EOL;
 <<EOF>>         return Parser::token::YYEOF;
 .               /* no action on unmatched input */

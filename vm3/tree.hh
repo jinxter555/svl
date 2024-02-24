@@ -5,6 +5,7 @@
 #include <memory>
 
 
+
 class TreeNode {
   friend class Tree;
 private:
@@ -21,6 +22,7 @@ public:
   std::vector<std::string> get_child_keys() const;
   std::any get_data() const;
   void set_data(const std::any d);
+  void print_data();
 };
 
 class Tree {
@@ -33,6 +35,7 @@ public:
   void add_node(std::vector<std::string> keys, const std::any data);
 
   std::shared_ptr<TreeNode> get_node(std::vector<std::string> keys) const;
+  std::vector<std::string> get_children(std::vector<std::string> keys) const;
 
   void set_node(std::vector<std::string> keys, const std::any data) const ;
 

@@ -1,9 +1,10 @@
 CC=clang++ -std=c++17
 
-main.out:  lexer2.l grammar2.y main.cpp  opcode.o assembler.o  assembly.o commandline.o assembler_interactive.o vm.o prompt.o tree.o
-	bison -d grammar2.y
+main.out:  lexer2.l grammar2.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
+	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o
+	bison -d grammar2.y 
 	flex lexer2.l
-	$(CC) -omain.out main.cpp Parser2.cpp Scanner2.cpp opcode.o \
+	$(CC) -omain.out main.cpp Parser2.cpp Scanner2.cpp opcode.o my_helpers.o \
 	assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o tree.o -lreadline
 
 
@@ -30,6 +31,9 @@ assembler_interactive.o : assembler_interactive.cpp  assembler_interactive.hh
 
 tree.o : tree.cpp  tree.hh
 	$(CC) -c tree.cpp
+
+my_helpers.o : my_helpers.cpp  my_helpers.hh
+	$(CC) -c my_helpers.cpp
 
 clean:
 	rm -f main.out Parser2.cpp Scanner2.cpp *.o *.gch

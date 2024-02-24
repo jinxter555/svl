@@ -14,6 +14,8 @@ public:
 
   static struct option long_options[];
   bool interactive=false;
+  bool run=false;
+
   Commandline(int argc, char* argv[]);
   void outerr(char *argv[]);
   void printout();

@@ -21,5 +21,5 @@ class PromptInteractive {
 public:
   void save_history(Prompt&);
   void load_history(Prompt&);
-  void run(Prompt&);
+  void ready(Prompt&); // ready for user readline input
 };

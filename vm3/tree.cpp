@@ -34,6 +34,22 @@ void TreeNode::set_data(const std::any d) {
   data = d;
 }
 
+std::ostream& operator << (std::ostream& out, std::any& a) {
+  if(a.type()  == typeid(int))
+    out << std::any_cast<int>(a);
+  else if(a.type()  == typeid(double))
+    out << std::any_cast<double>(a);
+  else if(a.type()  == typeid(float))
+    out << std::any_cast<float>(a);
+  else if(a.type()  == typeid(std::string))
+    out << std::any_cast<std::string>(a);
+  return out;
+}
+
+void TreeNode::print_data() {
+  std::cout << data;
+}
+
 //--------------------------------------------------------------
 
 
@@ -60,6 +76,14 @@ std::shared_ptr<TreeNode> Tree::get_node(std::vector<std::string> keys) const {
     if(curr == nullptr) return nullptr;
   }
   return curr;
+}
+
+std::vector<std::string> Tree::get_children(std::vector<std::string> keys) const {
+  auto cnode = get_node(keys);
+  if(cnode)
+    return cnode->get_child_keys();
+  else 
+    return {};
 }
 
 

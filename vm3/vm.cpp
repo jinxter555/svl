@@ -1,8 +1,10 @@
 #include "vm.hh"
 
 void VM::mov() {
-  R[instruction->operands[0].i].i
-    = instruction->operands[1].i;
+  //R[instruction->operands[0].i].i
+  //  = instruction->operands[1].i;
+  R[instruction->operands[0].i]
+    = instruction->operands[1];
 }
 
 void VM::iadd_c() {
