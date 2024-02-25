@@ -32,9 +32,11 @@ register        ([rR]{integer})
 "app"    return Parser::token::APP;
 "api"    return Parser::token::API;
 "module"    return Parser::token::MODULE;
+"mvar"    return Parser::token::MVAR;
 "function"    return Parser::token::FUNCTION;
 "label"    return Parser::token::LABEL;
-"var"    return Parser::token::VAR;
+"lvar"    return Parser::token::LVAR;
+"call"    return Parser::token::CALL;
 {identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;
@@ -48,6 +50,8 @@ register        ([rR]{integer})
 "="             return Parser::token::ASSIGN;
 ","             return Parser::token::COMMA;
 "."             return Parser::token::DOT;
+^#.*\n              {} // comments
+^[ \t\r]*\n              {} // ignore empty lines
 \n              return Parser::token::EOL;
 <<EOF>>         return Parser::token::YYEOF;
 .               /* no action on unmatched input */

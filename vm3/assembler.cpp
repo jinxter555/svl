@@ -4,15 +4,14 @@
 
 Assembler::Assembler() {
   context = new Tree();
-  context->add_node({"key1"}, std::string("workjob"));
-  context->add_node({"key1", "key2"}, 1);
-  context->add_node({"key1", "key2", "key3b"}, 123);
-  context->add_node({"key1", "key3"}, std::string("hello"));
-  context->add_node({"key4", "key5"}, 3.145);
-
-  context->add_node({"key1"}, std::string("workjob3"));
-  std::cout << "context init" <<"\n";
-
+  current_context = {
+    CONTEXT_UNIV, 
+    "myprog", 
+    "myapi_0.00",
+    "", // mod
+    "", // fun
+    "", // var
+  };
 };
 
 Opcode Assembler::lookup_opcode(const std::string& opname) {
@@ -49,51 +48,73 @@ void Assembler::print_program() {
   }
 }
 void Assembler::add_app_name(const std::string &app) {
-  current_app = app;
-  context->add_node({context_uni, current_app, "addr"}, pc_load);
+  current_context.sapp = app;
+  context->add_node({
+    current_context.uni, 
+    current_context.sapp,
+    "addr"}, pc_load);
 }
 void Assembler::add_api_name(const std::string &api) {
-  current_api = api;
+  current_context.sapi = api;
   context->add_node({
-    context_uni, current_app,
-    current_api, "addr"}, pc_load);
+    current_context.uni, 
+    current_context.sapp,
+    current_context.sapi, 
+    "addr"}, pc_load);
 }
 void Assembler::add_module_name(const std::string &m) {
-  current_module = m;
+  current_context.smodule = m;
   context->add_node({
-    context_uni, current_app,
-    current_api, current_module, "addr"}, pc_load);
+    current_context.uni, 
+    current_context.sapp,
+    current_context.sapi, 
+    current_context.smodule,
+    "addr"}, pc_load);
 }
 void Assembler::add_function_name(const std::string &f) {
-  current_function = f; 
+  current_context.sfunction = f; 
   // current_var = ""; // clear out var so, %call fun1 won't return variable
   lvc = 0; // init lvc local variable counter, it should be similar to vp variable pointer
   context->add_node({
-    context_uni, current_app, current_api, 
-    current_module, current_function, "addr"}, pc_load);
+    current_context.uni, 
+    current_context.sapp,
+    current_context.sapi, 
+    current_context.smodule,
+    current_context.sfunction,
+    "addr"}, pc_load);
 }
 void Assembler::add_label_name(const std::string &l) {
   context->add_node({
-    context_uni, current_app, current_api, 
-    current_module, current_function, l, "addr"}, pc_load);
+    current_context.uni, 
+    current_context.sapp,
+    current_context.sapi, 
+    current_context.smodule,
+    current_context.sfunction,
+    l, "addr"}, pc_load);
 }
 
 // the address location will be point to the stack realtive from fp,fp+vp
-void Assembler::add_var_name(const std::string &v) {
-  current_var = v;
-  context->add_node({context_uni, current_app, current_api, 
-  current_module, current_function, current_var, "addr"}, lvc++);
+void Assembler::add_lvar_name(const std::string &v) {
+  current_context.lvar = v;
+  context->add_node({
+  current_context.uni, 
+  current_context.sapp,
+  current_context.sapi, 
+  current_context.smodule,
+  current_context.sfunction,
+  current_context.lvar, 
+  "addr"}, lvc++);
 }
 
-void Assembler::super_op(Opcode op, const std::string operand1,
-  std::string operand2, std::string operand3) {
+/*
+void Assembler::super_op(Opcode op, const std::string operand1, std::string operand2, std::string operand3) {
   switch(op) {
   case Opcode::CALL: 
-    add_unresolved_function(current_module, operand1);
+    //add_unresolved_function(current_module, operand1);
     break;
   default: break;
   }
-}
+}*/
 
 std::shared_ptr<TreeNode> Assembler::resolve_symbol_node(const std::vector<std::string>& keys) const {
   auto curr = context->get_node(keys);
@@ -102,16 +123,63 @@ std::shared_ptr<TreeNode> Assembler::resolve_symbol_node(const std::vector<std::
 
 
 
-void Assembler::add_unresolved_function(const std::string &m, const std::string &f) {
-  unresolved_symbol_t  notfound_name;
-  std::cerr << "adding to not found to unresolved vector\n";
-  notfound_name.location.adr = pc_load;
-  notfound_name.smodule=m; //tokens_s[1], ""};
-  notfound_name.sfunction=f; //tokens_s[1], ""};
-  unresolved_names.push_back(notfound_name);
+void Assembler::add_unresolved_function(const full_symbol_t &fst) {
+  unresolved_symbol_t  notfound;
+  notfound.name = current_context;
+  notfound.name.smodule = fst.smodule;
+  notfound.name.sfunction = fst.sfunction;
+  notfound.type = unresolved_t::function ;
+  notfound.location.adr = pc_load;
+  unresolved_syms.push_back(notfound);
+  std::cerr << "adding to not found: '" << fst.smodule << ":" << fst.sfunction << "' to unresolved vector\n";
+
 }
 
 
-void Assembler::super_op_fun(Opcode op, const full_symbol_t &fst) {
+void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst) {
+  s_int_t adr = -1;
+  std::shared_ptr<TreeNode> sym_node = context->get_node({
+    current_context.uni, 
+    current_context.sapp,
+    current_context.sapi, 
+    fst.smodule, 
+    fst.sfunction, 
+    "addr"});
 
+  if(sym_node == nullptr) {
+    std::cout << "function '" << fst.sfunction << "' not found\n";
+    add_unresolved_function(fst);
+  } else {
+    adr = std::any_cast<s_int_t>(sym_node->get_data());
+  }
+  instr_t asm_instr = {op, adr,0,0};
+  set_instruction(asm_instr); 
+}
+
+#define __fkeys__ {us.name.uni, us.name.sapp, us.name.sapi, us.name.smodule, us.name.sfunction, "addr"}
+void Assembler::resolve_names() {
+  // gothru all vector unresolvednames
+  std::vector<std::string> keys;
+  std::shared_ptr<TreeNode> sym_node;
+  // std::cout << "trying unresolved symbols\n";
+
+  for(auto us  : unresolved_syms) {
+    // std::cout << "unresolved sym:'" << us.name.sfunction << "'\n";
+    switch(us.type) {
+    case unresolved_t::mvar:  break;
+    case unresolved_t::function:  
+      sym_node = context->get_node(__fkeys__);
+      if(sym_node != nullptr) {
+        std::cout << "resolving function: '" << us.name.sfunction << "'\n";
+        code[us.location.adr].operands[0].adr
+          = std::any_cast<s_int_t>(sym_node->get_data());
+      } else { 
+        std::cerr << "can't resolve symbol: nullptr\n"; 
+      }
+
+      break;
+    case unresolved_t::lvar:  break;
+    default: break;
+    }
+  }
 }

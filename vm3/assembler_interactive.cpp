@@ -30,6 +30,7 @@ void AssemblerInteractive::load(const std::string &filename) {
   }
   scanner.switch_streams(&std::cin, &std::cerr);
   infile.close();
+  assembler.resolve_names();
 }
 
 void AssemblerInteractive::parse(const std::string &line) {
@@ -93,7 +94,11 @@ void AssemblerInteractive::print_program(){
   assembler.print_program();
 }
 
-void AssemblerInteractive::print_tree(const std::string &line){
+void AssemblerInteractive::print_tree(const std::string &cline){
+  string line = cline;
+  line.erase(line.find_last_not_of(" ")+1);
+
+
   std::vector<std::string> vstr = split_string(line, " ");
   vstr.erase(vstr.begin()); // erase empty element
 

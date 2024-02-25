@@ -398,7 +398,7 @@ namespace vslasm {
       char dummy4[sizeof (long int)];
 
       // STR
-      // dotstr
+      // DOTSTR
       char dummy5[sizeof (std::string)];
     };
 
@@ -448,25 +448,27 @@ namespace vslasm {
     RPAREN = 5,                    // RPAREN
     APP = 6,                       // APP
     API = 7,                       // API
-    FUNCTION = 8,                  // FUNCTION
-    MODULE = 9,                    // MODULE
-    LABEL = 10,                    // LABEL
-    VAR = 11,                      // VAR
-    DOT = 12,                      // DOT
-    INT = 13,                      // INT
-    FLT = 14,                      // FLT
-    STR = 15,                      // STR
-    ASSIGN = 16,                   // ASSIGN
-    PLUS = 17,                     // PLUS
-    MINUS = 18,                    // MINUS
-    MULTIPLY = 19,                 // MULTIPLY
-    DIVIDE = 20,                   // DIVIDE
-    MODULO = 21,                   // MODULO
-    UMINUS = 22,                   // UMINUS
-    FACTORIAL = 23,                // FACTORIAL
-    EXPONENT = 24,                 // EXPONENT
-    COMMA = 25,                    // COMMA
-    REGISTER = 26                  // REGISTER
+    MODULE = 8,                    // MODULE
+    MVAR = 9,                      // MVAR
+    FUNCTION = 10,                 // FUNCTION
+    LABEL = 11,                    // LABEL
+    LVAR = 12,                     // LVAR
+    DOT = 13,                      // DOT
+    COMMA = 14,                    // COMMA
+    INT = 15,                      // INT
+    FLT = 16,                      // FLT
+    STR = 17,                      // STR
+    REGISTER = 18,                 // REGISTER
+    CALL = 19,                     // CALL
+    ASSIGN = 20,                   // ASSIGN
+    PLUS = 21,                     // PLUS
+    MINUS = 22,                    // MINUS
+    MULTIPLY = 23,                 // MULTIPLY
+    DIVIDE = 24,                   // DIVIDE
+    MODULO = 25,                   // MODULO
+    UMINUS = 26,                   // UMINUS
+    FACTORIAL = 27,                // FACTORIAL
+    EXPONENT = 28                  // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -483,7 +485,7 @@ namespace vslasm {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 27, ///< Number of tokens.
+        YYNTOKENS = 29, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -493,34 +495,36 @@ namespace vslasm {
         S_RPAREN = 5,                            // RPAREN
         S_APP = 6,                               // APP
         S_API = 7,                               // API
-        S_FUNCTION = 8,                          // FUNCTION
-        S_MODULE = 9,                            // MODULE
-        S_LABEL = 10,                            // LABEL
-        S_VAR = 11,                              // VAR
-        S_DOT = 12,                              // DOT
-        S_INT = 13,                              // INT
-        S_FLT = 14,                              // FLT
-        S_STR = 15,                              // STR
-        S_ASSIGN = 16,                           // ASSIGN
-        S_PLUS = 17,                             // PLUS
-        S_MINUS = 18,                            // MINUS
-        S_MULTIPLY = 19,                         // MULTIPLY
-        S_DIVIDE = 20,                           // DIVIDE
-        S_MODULO = 21,                           // MODULO
-        S_UMINUS = 22,                           // UMINUS
-        S_FACTORIAL = 23,                        // FACTORIAL
-        S_EXPONENT = 24,                         // EXPONENT
-        S_COMMA = 25,                            // COMMA
-        S_REGISTER = 26,                         // REGISTER
-        S_YYACCEPT = 27,                         // $accept
-        S_lines = 28,                            // lines
-        S_line = 29,                             // line
-        S_super_instruction = 30,                // super_instruction
-        S_directive = 31,                        // directive
-        S_dotstr = 32,                           // dotstr
-        S_modfunstr = 33,                        // modfunstr
-        S_instruction = 34,                      // instruction
-        S_opcode = 35                            // opcode
+        S_MODULE = 8,                            // MODULE
+        S_MVAR = 9,                              // MVAR
+        S_FUNCTION = 10,                         // FUNCTION
+        S_LABEL = 11,                            // LABEL
+        S_LVAR = 12,                             // LVAR
+        S_DOT = 13,                              // DOT
+        S_COMMA = 14,                            // COMMA
+        S_INT = 15,                              // INT
+        S_FLT = 16,                              // FLT
+        S_STR = 17,                              // STR
+        S_REGISTER = 18,                         // REGISTER
+        S_CALL = 19,                             // CALL
+        S_ASSIGN = 20,                           // ASSIGN
+        S_PLUS = 21,                             // PLUS
+        S_MINUS = 22,                            // MINUS
+        S_MULTIPLY = 23,                         // MULTIPLY
+        S_DIVIDE = 24,                           // DIVIDE
+        S_MODULO = 25,                           // MODULO
+        S_UMINUS = 26,                           // UMINUS
+        S_FACTORIAL = 27,                        // FACTORIAL
+        S_EXPONENT = 28,                         // EXPONENT
+        S_YYACCEPT = 29,                         // $accept
+        S_lines = 30,                            // lines
+        S_line = 31,                             // line
+        S_super_instruction = 32,                // super_instruction
+        S_directive = 33,                        // directive
+        S_DOTSTR = 34,                           // DOTSTR
+        S_modfunstr = 35,                        // modfunstr
+        S_instruction = 36,                      // instruction
+        S_opcode = 37                            // opcode
       };
     };
 
@@ -573,7 +577,7 @@ namespace vslasm {
         break;
 
       case symbol_kind::S_STR: // STR
-      case symbol_kind::S_dotstr: // dotstr
+      case symbol_kind::S_DOTSTR: // DOTSTR
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -700,7 +704,7 @@ switch (yykind)
         break;
 
       case symbol_kind::S_STR: // STR
-      case symbol_kind::S_dotstr: // dotstr
+      case symbol_kind::S_DOTSTR: // DOTSTR
         value.template destroy< std::string > ();
         break;
 
@@ -997,31 +1001,46 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_FUNCTION ()
+      make_MODULE ()
       {
-        return symbol_type (token::FUNCTION);
+        return symbol_type (token::MODULE);
       }
 #else
       static
       symbol_type
-      make_FUNCTION ()
+      make_MODULE ()
       {
-        return symbol_type (token::FUNCTION);
+        return symbol_type (token::MODULE);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_MODULE ()
+      make_MVAR ()
       {
-        return symbol_type (token::MODULE);
+        return symbol_type (token::MVAR);
       }
 #else
       static
       symbol_type
-      make_MODULE ()
+      make_MVAR ()
       {
-        return symbol_type (token::MODULE);
+        return symbol_type (token::MVAR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FUNCTION ()
+      {
+        return symbol_type (token::FUNCTION);
+      }
+#else
+      static
+      symbol_type
+      make_FUNCTION ()
+      {
+        return symbol_type (token::FUNCTION);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1042,16 +1061,16 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_VAR ()
+      make_LVAR ()
       {
-        return symbol_type (token::VAR);
+        return symbol_type (token::LVAR);
       }
 #else
       static
       symbol_type
-      make_VAR ()
+      make_LVAR ()
       {
-        return symbol_type (token::VAR);
+        return symbol_type (token::LVAR);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1067,6 +1086,21 @@ switch (yykind)
       make_DOT ()
       {
         return symbol_type (token::DOT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
+      }
+#else
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1117,156 +1151,6 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_ASSIGN ()
-      {
-        return symbol_type (token::ASSIGN);
-      }
-#else
-      static
-      symbol_type
-      make_ASSIGN ()
-      {
-        return symbol_type (token::ASSIGN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_PLUS ()
-      {
-        return symbol_type (token::PLUS);
-      }
-#else
-      static
-      symbol_type
-      make_PLUS ()
-      {
-        return symbol_type (token::PLUS);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_MINUS ()
-      {
-        return symbol_type (token::MINUS);
-      }
-#else
-      static
-      symbol_type
-      make_MINUS ()
-      {
-        return symbol_type (token::MINUS);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_MULTIPLY ()
-      {
-        return symbol_type (token::MULTIPLY);
-      }
-#else
-      static
-      symbol_type
-      make_MULTIPLY ()
-      {
-        return symbol_type (token::MULTIPLY);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_DIVIDE ()
-      {
-        return symbol_type (token::DIVIDE);
-      }
-#else
-      static
-      symbol_type
-      make_DIVIDE ()
-      {
-        return symbol_type (token::DIVIDE);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_MODULO ()
-      {
-        return symbol_type (token::MODULO);
-      }
-#else
-      static
-      symbol_type
-      make_MODULO ()
-      {
-        return symbol_type (token::MODULO);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_UMINUS ()
-      {
-        return symbol_type (token::UMINUS);
-      }
-#else
-      static
-      symbol_type
-      make_UMINUS ()
-      {
-        return symbol_type (token::UMINUS);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_FACTORIAL ()
-      {
-        return symbol_type (token::FACTORIAL);
-      }
-#else
-      static
-      symbol_type
-      make_FACTORIAL ()
-      {
-        return symbol_type (token::FACTORIAL);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_EXPONENT ()
-      {
-        return symbol_type (token::EXPONENT);
-      }
-#else
-      static
-      symbol_type
-      make_EXPONENT ()
-      {
-        return symbol_type (token::EXPONENT);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_COMMA ()
-      {
-        return symbol_type (token::COMMA);
-      }
-#else
-      static
-      symbol_type
-      make_COMMA ()
-      {
-        return symbol_type (token::COMMA);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
       make_REGISTER (long int v)
       {
         return symbol_type (token::REGISTER, std::move (v));
@@ -1277,6 +1161,156 @@ switch (yykind)
       make_REGISTER (const long int& v)
       {
         return symbol_type (token::REGISTER, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CALL ()
+      {
+        return symbol_type (token::CALL);
+      }
+#else
+      static
+      symbol_type
+      make_CALL ()
+      {
+        return symbol_type (token::CALL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ASSIGN ()
+      {
+        return symbol_type (token::ASSIGN);
+      }
+#else
+      static
+      symbol_type
+      make_ASSIGN ()
+      {
+        return symbol_type (token::ASSIGN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PLUS ()
+      {
+        return symbol_type (token::PLUS);
+      }
+#else
+      static
+      symbol_type
+      make_PLUS ()
+      {
+        return symbol_type (token::PLUS);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MINUS ()
+      {
+        return symbol_type (token::MINUS);
+      }
+#else
+      static
+      symbol_type
+      make_MINUS ()
+      {
+        return symbol_type (token::MINUS);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MULTIPLY ()
+      {
+        return symbol_type (token::MULTIPLY);
+      }
+#else
+      static
+      symbol_type
+      make_MULTIPLY ()
+      {
+        return symbol_type (token::MULTIPLY);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DIVIDE ()
+      {
+        return symbol_type (token::DIVIDE);
+      }
+#else
+      static
+      symbol_type
+      make_DIVIDE ()
+      {
+        return symbol_type (token::DIVIDE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MODULO ()
+      {
+        return symbol_type (token::MODULO);
+      }
+#else
+      static
+      symbol_type
+      make_MODULO ()
+      {
+        return symbol_type (token::MODULO);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UMINUS ()
+      {
+        return symbol_type (token::UMINUS);
+      }
+#else
+      static
+      symbol_type
+      make_UMINUS ()
+      {
+        return symbol_type (token::UMINUS);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FACTORIAL ()
+      {
+        return symbol_type (token::FACTORIAL);
+      }
+#else
+      static
+      symbol_type
+      make_FACTORIAL ()
+      {
+        return symbol_type (token::FACTORIAL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EXPONENT ()
+      {
+        return symbol_type (token::EXPONENT);
+      }
+#else
+      static
+      symbol_type
+      make_EXPONENT ()
+      {
+        return symbol_type (token::EXPONENT);
       }
 #endif
 
@@ -1598,7 +1632,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1602 "Parser2.hh"
+#line 1636 "Parser2.hh"
 
 
 

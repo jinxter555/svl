@@ -41,8 +41,18 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     out << std::any_cast<double>(a);
   else if(a.type()  == typeid(float))
     out << std::any_cast<float>(a);
+  else if(a.type()  == typeid(long int))
+    out << std::any_cast<long int>(a);
+  else if(a.type()  == typeid(unsigned long int))
+    out << std::any_cast<unsigned long int>(a);
+  else if(a.type()  == typeid(long long))
+    out << std::any_cast<long long>(a);
+  else if(a.type()  == typeid(long double))
+    out << std::any_cast<long double>(a);
   else if(a.type()  == typeid(std::string))
     out << std::any_cast<std::string>(a);
+  else
+    out << "unknown value type!";
   return out;
 }
 

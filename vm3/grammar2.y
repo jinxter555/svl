@@ -32,10 +32,12 @@ instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 }
 
-%token              EOL LPAREN RPAREN APP API FUNCTION MODULE LABEL VAR DOT
+%token              EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR DOT  COMMA
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
+%token <long int> REGISTER
+%token  CALL
  
 //%nterm <long int>  iexp
 //%nterm <double>     fexp
@@ -47,11 +49,8 @@ bool skipline=false;
 %precedence         FACTORIAL
 %right              EXPONENT
  
-%token COMMA 
-%token <long int> REGISTER
-%nterm <std::string>     dotstr
-%nterm <full_symbol_t>     modfunstr
-%nterm <full_symbol_t>     modvarstr
+%nterm <std::string> DOTSTR
+%nterm <full_symbol_t> modfunstr //modvarstr modfunvarstr
 %nterm <Opcode>     opcode
 
 
@@ -62,11 +61,13 @@ lines
   | lines line
   ;
 
-line: EOL {  // readline eats newline character. only file scanning will encounter newline char
-  // also do not insert directives in to assembly::code[]
-  if(!skipline) // skip assembly %% directives because it's not instruction
-    assembler->insert_instruction();  // instruction inserted when parsing a file aka encountering a newline char
-  skipline=false;
+line
+  : EOL {
+    // readline eats newline character. only file scanning will encounter newline char
+    // also do not insert directives in to assembly::code[]
+    if(!skipline) // skip assembly %% directives because it's not instruction
+      assembler->insert_instruction();  // instruction inserted when parsing a file aka encountering a newline char
+    skipline=false;
   }
   | instruction
   | directive
@@ -74,44 +75,58 @@ line: EOL {  // readline eats newline character. only file scanning will encount
   ;
 
 super_instruction
-  : STR
+  : MODULO CALL modfunstr {
+    // std::cout << "call modfunstr:'" << $3.sfunction << "'\n";
+    assembler->super_opfun_set_instruction(Opcode::CALL, $3); 
+    // skipline=true;
+    }
+//| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
   ;
 
 // do not insert directives in to assembly::code[]
 directive
-  : MODULO MODULO MODULE  dotstr {std::cout<< "module " << $4 << "\n"; skipline=true; } // have to skip insert_instruction 
-  | MODULO MODULO FUNCTION STR{std::cout<< "function " << $4 << "\n"; skipline=true;}
-  | MODULO MODULO LABEL STR{std::cout<< "label " << $4 << "\n"; skipline=true;}
-  | MODULO MODULO VAR  STR {std::cout<< "var " << $4 << "\n"; skipline=true;}
- // | MODULO opcode dotstr {std::cout<< "meta-opname code " << static_cast<int>($2) << $3 << "\n"; skipline=true;}
-  | MODULO opcode modfunstr {assembler->super_op_fun($2, $3); }
+  : MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } // have to skip insert_instruction 
+  | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
+  | MODULO MODULO LABEL STR       {assembler->add_label_name($4); skipline=true;}
+  | MODULO MODULO LVAR  STR        {assembler->add_lvar_name($4); skipline=true;}
+  //| MODULO opcode dotstr {std::cout<< "meta-opname code " << static_cast<int>($2) << $3 << "\n"; skipline=true;}
   ;
 
 
-dotstr
+DOTSTR
   : STR
-  | dotstr DOT STR { $$ = $1+ std::string(".")+ $3; }
+  | DOTSTR DOT STR { $$ = $1 + std::string(".")+ $3; }
   ;
 
 // set module and fun full symbol  return a symbol struct
 modfunstr
-  : STR DOT STR { 
+  : STR { 
+    $$.smodule = assembler->get_current_context().smodule;
+    $$.sfunction = $1;
+    }
+  | DOTSTR DOT STR { 
     $$.smodule = $1;
     $$.sfunction = $3;
     }
   ;
 // set module and var full symbol  return a symbol struct
+/*
 modvarstr
   : STR DOT STR { 
     $$.smodule = $1;
-    $$.var = $3;
+    $$.mvar = $3;
   }
   ;
-
-
+  */
 
 instruction
-  : opcode REGISTER { 
+  : opcode { 
+    asm_instr = {$1, 0, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+    std::cout<< "meta-opname code " << static_cast<int>($1) << "\n"; 
+    //skipline = true;
+  }
+  | opcode REGISTER { 
     asm_instr = {$1, $2, 0, 0};  
     assembler->set_instruction(asm_instr); 
   } 
@@ -160,7 +175,8 @@ instruction
   ;
 
 opcode:
-  STR { $$ = assembler->lookup_opcode($1); };
+  STR { 
+    $$ = assembler->lookup_opcode($1); };
   ;
 
 %%
