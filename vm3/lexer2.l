@@ -50,6 +50,7 @@ register        ([rR]{integer})
 "="             return Parser::token::ASSIGN;
 ","             return Parser::token::COMMA;
 "."             return Parser::token::DOT;
+":"             return Parser::token::COLON;
 ^#.*\n              {} // comments
 ^[ \t\r]*\n              {} // ignore empty lines
 \n              return Parser::token::EOL;

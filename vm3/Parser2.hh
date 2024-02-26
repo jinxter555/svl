@@ -455,20 +455,21 @@ namespace vslasm {
     LVAR = 12,                     // LVAR
     DOT = 13,                      // DOT
     COMMA = 14,                    // COMMA
-    INT = 15,                      // INT
-    FLT = 16,                      // FLT
-    STR = 17,                      // STR
-    REGISTER = 18,                 // REGISTER
-    CALL = 19,                     // CALL
-    ASSIGN = 20,                   // ASSIGN
-    PLUS = 21,                     // PLUS
-    MINUS = 22,                    // MINUS
-    MULTIPLY = 23,                 // MULTIPLY
-    DIVIDE = 24,                   // DIVIDE
-    MODULO = 25,                   // MODULO
-    UMINUS = 26,                   // UMINUS
-    FACTORIAL = 27,                // FACTORIAL
-    EXPONENT = 28                  // EXPONENT
+    COLON = 15,                    // COLON
+    INT = 16,                      // INT
+    FLT = 17,                      // FLT
+    STR = 18,                      // STR
+    REGISTER = 19,                 // REGISTER
+    CALL = 20,                     // CALL
+    ASSIGN = 21,                   // ASSIGN
+    PLUS = 22,                     // PLUS
+    MINUS = 23,                    // MINUS
+    MULTIPLY = 24,                 // MULTIPLY
+    DIVIDE = 25,                   // DIVIDE
+    MODULO = 26,                   // MODULO
+    UMINUS = 27,                   // UMINUS
+    FACTORIAL = 28,                // FACTORIAL
+    EXPONENT = 29                  // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -485,7 +486,7 @@ namespace vslasm {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 29, ///< Number of tokens.
+        YYNTOKENS = 30, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -502,29 +503,30 @@ namespace vslasm {
         S_LVAR = 12,                             // LVAR
         S_DOT = 13,                              // DOT
         S_COMMA = 14,                            // COMMA
-        S_INT = 15,                              // INT
-        S_FLT = 16,                              // FLT
-        S_STR = 17,                              // STR
-        S_REGISTER = 18,                         // REGISTER
-        S_CALL = 19,                             // CALL
-        S_ASSIGN = 20,                           // ASSIGN
-        S_PLUS = 21,                             // PLUS
-        S_MINUS = 22,                            // MINUS
-        S_MULTIPLY = 23,                         // MULTIPLY
-        S_DIVIDE = 24,                           // DIVIDE
-        S_MODULO = 25,                           // MODULO
-        S_UMINUS = 26,                           // UMINUS
-        S_FACTORIAL = 27,                        // FACTORIAL
-        S_EXPONENT = 28,                         // EXPONENT
-        S_YYACCEPT = 29,                         // $accept
-        S_lines = 30,                            // lines
-        S_line = 31,                             // line
-        S_super_instruction = 32,                // super_instruction
-        S_directive = 33,                        // directive
-        S_DOTSTR = 34,                           // DOTSTR
-        S_modfunstr = 35,                        // modfunstr
-        S_instruction = 36,                      // instruction
-        S_opcode = 37                            // opcode
+        S_COLON = 15,                            // COLON
+        S_INT = 16,                              // INT
+        S_FLT = 17,                              // FLT
+        S_STR = 18,                              // STR
+        S_REGISTER = 19,                         // REGISTER
+        S_CALL = 20,                             // CALL
+        S_ASSIGN = 21,                           // ASSIGN
+        S_PLUS = 22,                             // PLUS
+        S_MINUS = 23,                            // MINUS
+        S_MULTIPLY = 24,                         // MULTIPLY
+        S_DIVIDE = 25,                           // DIVIDE
+        S_MODULO = 26,                           // MODULO
+        S_UMINUS = 27,                           // UMINUS
+        S_FACTORIAL = 28,                        // FACTORIAL
+        S_EXPONENT = 29,                         // EXPONENT
+        S_YYACCEPT = 30,                         // $accept
+        S_lines = 31,                            // lines
+        S_line = 32,                             // line
+        S_super_instruction = 33,                // super_instruction
+        S_directive = 34,                        // directive
+        S_DOTSTR = 35,                           // DOTSTR
+        S_modfunstr = 36,                        // modfunstr
+        S_instruction = 37,                      // instruction
+        S_opcode = 38                            // opcode
       };
     };
 
@@ -1106,6 +1108,21 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#else
+      static
+      symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_INT (long int v)
       {
         return symbol_type (token::INT, std::move (v));
@@ -1617,7 +1634,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 33,     ///< Last index in yytable_.
+      yylast_ = 36,     ///< Last index in yytable_.
       yynnts_ = 9,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
@@ -1632,7 +1649,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1636 "Parser2.hh"
+#line 1653 "Parser2.hh"
 
 
 

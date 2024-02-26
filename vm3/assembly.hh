@@ -10,5 +10,6 @@ protected:
 public:
   void run(VM&);
   void run_single_instruction(VM&);
+  void run_call(VM&, s_int_t start_pc);
   void insert_instruction();
 };

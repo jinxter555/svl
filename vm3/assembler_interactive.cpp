@@ -48,15 +48,18 @@ void AssemblerInteractive::run_program() {
 void AssemblerInteractive::interact(const std::string& line) {
   std::string rest;
   
-  rest =  match(line, "\\print_tree");
-  if(line == "\\print_tree" || rest != "" ) print_tree(rest);
+  std::string rest_tree =  match(line, "\\print_tree");
+  std::string rest_call =  match(line, "\\call ");
+  if(line == "\\print_tree" || rest_tree != "" ) print_tree(rest);
   if(line == "\\print_register") print_vm_registers();
   if(line == "\\print_register_int") print_vm_registers();
   if(line == "\\print_register_float") print_vm_registers_float();
   if(line == "\\print_stack_int") print_vm_stack_int();
   if(line == "\\print_stack_float") print_vm_stack_float();
   if(line == "\\print_program") print_program();
+  if(line == "\\print_program_float") print_program_f();
   if(line == "\\run_program") run_program();
+  if(line == "\\call" || rest_call !="") call_func(rest_call); // setup up add end of code[] with call func , and exit
 }
 
 void AssemblerInteractive::print_vm_stack_int() {
@@ -93,6 +96,9 @@ void AssemblerInteractive::print_vm_registers_float(int n) {
 void AssemblerInteractive::print_program(){
   assembler.print_program();
 }
+void AssemblerInteractive::print_program_f(){
+  assembler.print_program_f();
+}
 
 void AssemblerInteractive::print_tree(const std::string &cline){
   string line = cline;
@@ -124,4 +130,10 @@ std::string AssemblerInteractive::match(const std::string& line, const std::stri
     // No match found, return an empty string
     return "";
   }
+}
+void AssemblerInteractive::call_func(const std::string &line) {
+  std::cout << "calling function: '" << line  << "'\n";
+  std::vector<std::string> vstr = split_string(line, ":");
+  assembler.run_call(vm, vstr[0], vstr[1]);
+
 }

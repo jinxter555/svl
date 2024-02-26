@@ -28,6 +28,24 @@ void VM::isub_r() {
     - R[instruction->operands[2].i].i;
 }
 
+// load targetR, addrR, offset
+void VM::load_l() { 
+  us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+  if(loc > vmstack.size()-1) { std::cerr << "can't load from above the stack!\n"; return; }
+  R[instruction->operands[0].i] = vmstack[loc];
+ 
+  //cout  << "load vmstack.size:" <<  vmstack.size() << "\n";
+  //print_instruction();
+  //cout << "load from addr: vmstack[" << loc <<  "]:" << vmstack[loc].i << "\n";  
+}
+void VM::store_l() { // store srcR, target addrR, offset
+  us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+  if(loc > vmstack.size()-1) { std::cerr << "can't store above the stack!\n"; return; }
+  vmstack[loc] = R[instruction->operands[0].i];
+}
+
+
+
 void VM::call() {
   vmframes.push(Frame(pc, fp));
   fp = vmstack.size();

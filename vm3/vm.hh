@@ -71,6 +71,14 @@ public:
   inline void push_r();
   inline void pop_r();
 
+  // entire stack
+  inline void load();
+  inline void store();
+
+  //local vars
+  inline void load_l();
+  inline void store_l();
+
   inline void mov();
 
   inline void call();

@@ -32,7 +32,7 @@ instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 }
 
-%token              EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR DOT  COMMA
+%token              EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR DOT  COMMA COLON
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
@@ -76,9 +76,7 @@ line
 
 super_instruction
   : MODULO CALL modfunstr {
-    // std::cout << "call modfunstr:'" << $3.sfunction << "'\n";
     assembler->super_opfun_set_instruction(Opcode::CALL, $3); 
-    // skipline=true;
     }
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
   ;
@@ -88,7 +86,18 @@ directive
   : MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } // have to skip insert_instruction 
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
   | MODULO MODULO LABEL STR       {assembler->add_label_name($4); skipline=true;}
-  | MODULO MODULO LVAR  STR        {assembler->add_lvar_name($4); skipline=true;}
+  | MODULO MODULO LVAR STR INT   {
+    assembler->add_lvar_name($4); 
+    asm_instr = {Opcode(Opcode::PUSH_C), $5, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | MODULO MODULO LVAR STR FLT  {
+    reg_t operand2;
+    operand2.f = $5;
+    assembler->add_lvar_name($4); 
+    asm_instr = {Opcode(Opcode::PUSH_C), operand2, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
   //| MODULO opcode dotstr {std::cout<< "meta-opname code " << static_cast<int>($2) << $3 << "\n"; skipline=true;}
   ;
 
@@ -104,7 +113,7 @@ modfunstr
     $$.smodule = assembler->get_current_context().smodule;
     $$.sfunction = $1;
     }
-  | DOTSTR DOT STR { 
+  | DOTSTR COLON STR { 
     $$.smodule = $1;
     $$.sfunction = $3;
     }
@@ -123,7 +132,7 @@ instruction
   : opcode { 
     asm_instr = {$1, 0, 0, 0};  
     assembler->set_instruction(asm_instr); 
-    std::cout<< "meta-opname code " << static_cast<int>($1) << "\n"; 
+    //std::cout<< "meta-opname code " << static_cast<int>($1) << "\n"; 
     //skipline = true;
   }
   | opcode REGISTER { 

@@ -24,6 +24,8 @@ private:
   void print_vm_stack_int();
   void print_vm_stack_float();
   void print_program();
+  void print_program_f();
+  void call_func(const std::string &line);
 
   std::string match(const std::string& line, const std::string& pattern);
 public:

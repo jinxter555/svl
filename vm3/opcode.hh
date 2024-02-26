@@ -19,6 +19,10 @@ enum class Opcode {
   PUSH_C,
   PUSH_R,
   POP_R,
+  LOAD,
+  STORE,
+  LOAD_L,
+  STORE_L,
 };
 
 extern std::unordered_map<std::string, Opcode> opcode_table ;

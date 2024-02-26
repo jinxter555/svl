@@ -33,8 +33,6 @@ private:
   std::vector<unresolved_symbol_t> unresolved_syms;
   int lvc=0;  // local variable count starting from %function
 
-  std::shared_ptr<TreeNode> resolve_symbol_node(const std::vector<std::string> &keys) const;
-
 public:  
   Assembler();
   Opcode lookup_opcode(const std::string& opname);
@@ -42,9 +40,11 @@ public:
   void insert_instruction();
   void run(VM& vm);
   void run_single_instruction(VM &vm); // this is for user command prompt eval
+  void run_call(VM &vm, const std::string& m, const std::string& f); // this is for user command prompt eval
 
   void super_opfun_set_instruction(Opcode op, const full_symbol_t &fst);
   void print_program();
+  void print_program_f();
 
   // add names to the symbol tree for later address lookup
   void add_app_name(const std::string &app);
@@ -55,7 +55,7 @@ public:
   void add_lvar_name(const std::string &v);
 
   void add_unresolved_function(const full_symbol_t &fst);
-  void add_unresolved_var(const std::string &m, const std::string &f, const std::string &v);
+  //void add_unresolved_var(const std::string &m, const std::string &f, const std::string &v);
   full_symbol_t get_current_context() { return current_context; };
   void resolve_names();
 

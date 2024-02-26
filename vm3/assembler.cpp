@@ -26,9 +26,32 @@ Opcode Assembler::lookup_opcode(const std::string& opname) {
 void Assembler::run(VM& vm) {
   Assembly::run(vm);
 }
+void Assembler::run_call(VM& vm, const std::string &m, const std::string &f) {
+  std::shared_ptr<TreeNode> sym_node = context->get_node({
+    current_context.uni, 
+    current_context.sapp,
+    current_context.sapi, 
+    "modules", m,
+    "functions", f,
+    "addr"});
+  if(sym_node == nullptr) {
+    std::cout << "can't find module: " << m << " function: " << f << "\n";
+    return;
+  }
+  s_int_t old_pc =  pc_load;
+  s_int_t fun_pc =  std::any_cast<s_int_t>(sym_node->get_data());
+  set_instruction({Opcode(Opcode::CALL), fun_pc, 0, 0});  
+  insert_instruction();
+  set_instruction({Opcode(Opcode::EXIT), 0, 0, 0});  
+  insert_instruction();
+  Assembly::run_call(vm, old_pc);
+  pc_load = old_pc;
+}
+
 void Assembler::run_single_instruction(VM& vm) {
   Assembly::run_single_instruction(vm);
 }
+
 void Assembler::set_instruction(const instr_t &t) {
   Assembly::instruction = t;
 }
@@ -45,6 +68,17 @@ void Assembler::print_program() {
       <<  code[i].operands[0].i << ","  
       <<  code[i].operands[1].i << ","  
       <<  code[i].operands[2].i << "\n";
+  }
+}
+void Assembler::print_program_f() {
+  for(int i=0; i<pc_load; i++) {
+    std::cout 
+      << "code[" <<i<< "]" 
+      <<  int(code[i].opcode) << " "  
+      << "operands: "  
+      <<  code[i].operands[0].f << ","  
+      <<  code[i].operands[1].f << ","  
+      <<  code[i].operands[2].f << "\n";
   }
 }
 void Assembler::add_app_name(const std::string &app) {
@@ -68,6 +102,7 @@ void Assembler::add_module_name(const std::string &m) {
     current_context.uni, 
     current_context.sapp,
     current_context.sapi, 
+    "modules",
     current_context.smodule,
     "addr"}, pc_load);
 }
@@ -79,7 +114,9 @@ void Assembler::add_function_name(const std::string &f) {
     current_context.uni, 
     current_context.sapp,
     current_context.sapi, 
+    "modules",
     current_context.smodule,
+    "functions",
     current_context.sfunction,
     "addr"}, pc_load);
 }
@@ -88,8 +125,11 @@ void Assembler::add_label_name(const std::string &l) {
     current_context.uni, 
     current_context.sapp,
     current_context.sapi, 
+    "modules",
     current_context.smodule,
+    "functions",
     current_context.sfunction,
+    "labels",
     l, "addr"}, pc_load);
 }
 
@@ -100,27 +140,14 @@ void Assembler::add_lvar_name(const std::string &v) {
   current_context.uni, 
   current_context.sapp,
   current_context.sapi, 
+  "modules",
   current_context.smodule,
+  "functions",
   current_context.sfunction,
+  "vars",
   current_context.lvar, 
   "addr"}, lvc++);
 }
-
-/*
-void Assembler::super_op(Opcode op, const std::string operand1, std::string operand2, std::string operand3) {
-  switch(op) {
-  case Opcode::CALL: 
-    //add_unresolved_function(current_module, operand1);
-    break;
-  default: break;
-  }
-}*/
-
-std::shared_ptr<TreeNode> Assembler::resolve_symbol_node(const std::vector<std::string>& keys) const {
-  auto curr = context->get_node(keys);
-  return curr; 
-}
-
 
 
 void Assembler::add_unresolved_function(const full_symbol_t &fst) {
@@ -132,7 +159,6 @@ void Assembler::add_unresolved_function(const full_symbol_t &fst) {
   notfound.location.adr = pc_load;
   unresolved_syms.push_back(notfound);
   std::cerr << "adding to not found: '" << fst.smodule << ":" << fst.sfunction << "' to unresolved vector\n";
-
 }
 
 
@@ -156,7 +182,7 @@ void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst)
   set_instruction(asm_instr); 
 }
 
-#define __fkeys__ {us.name.uni, us.name.sapp, us.name.sapi, us.name.smodule, us.name.sfunction, "addr"}
+#define __fkeys__ {us.name.uni, us.name.sapp, us.name.sapi, "modules", us.name.smodule, "functions", us.name.sfunction, "addr"}
 void Assembler::resolve_names() {
   // gothru all vector unresolvednames
   std::vector<std::string> keys;
@@ -176,7 +202,6 @@ void Assembler::resolve_names() {
       } else { 
         std::cerr << "can't resolve symbol: nullptr\n"; 
       }
-
       break;
     case unresolved_t::lvar:  break;
     default: break;
