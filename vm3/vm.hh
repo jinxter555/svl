@@ -30,7 +30,7 @@ public:
   us_int_t sp=0; // current stack pointer, current size is current index
   us_int_t vp=0; // variable pointer stack[fp+vp]
   us_int_t fp=0; 
-  Frame(int pc, int fp) : pc(pc), fp(fp) {}
+  Frame(us_int_t pc, us_int_t fp, us_int_t sp) : pc(pc), fp(fp), sp(sp) {}
 };  
 
 class VM {
@@ -47,7 +47,7 @@ private:
 
   us_int_t pc = 0;
   us_int_t fp = 0;
-  us_int_t exit_max_pc=999999;
+  us_int_t exit_max_pc=0-1;
 
 public:
   VM(){}

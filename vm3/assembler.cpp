@@ -26,6 +26,8 @@ Opcode Assembler::lookup_opcode(const std::string& opname) {
 void Assembler::run(VM& vm) {
   Assembly::run(vm);
 }
+
+// call function from user command prompt 
 void Assembler::run_call(VM& vm, const std::string &m, const std::string &f) {
   std::shared_ptr<TreeNode> sym_node = context->get_node({
     current_context.uni, 

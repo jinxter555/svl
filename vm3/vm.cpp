@@ -47,16 +47,20 @@ void VM::store_l() { // store srcR, target addrR, offset
 
 
 void VM::call() {
-  vmframes.push(Frame(pc, fp));
-  fp = vmstack.size();
+  us_int_t sp = vmstack.size();
+  vmframes.push(Frame(pc, fp, sp));
+  fp = sp;
   pc = instruction->operands[0].adr;
 
 }
 void VM::ret() {
+  us_int_t sp;
   Frame sf = vmframes.top();
   vmframes.pop();
   fp = sf.fp;
   pc = sf.pc;
+  sp = sf.sp;
+  vmstack.resize(sp);
 }
 void VM::vmexit() {
   pc = exit_max_pc;
