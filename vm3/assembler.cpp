@@ -27,21 +27,11 @@ void Assembler::run(VM& vm) {
   Assembly::run(vm);
 }
 
-// call module:function from user command prompt 
 void Assembler::run_call(VM& vm, const std::string &m, const std::string &f) {
-  std::shared_ptr<TreeNode> sym_node = context->get_node({
-    current_context.uni, 
-    current_context.app,
-    current_context.api, 
-    "modules", m,
-    "functions", f,
-    "addr"});
-  if(sym_node == nullptr) {
-    std::cout << "can't find module: " << m << " function: " << f << "\n";
-    return;
-  }
+  full_symbol_t fst=current_context; 
+  fst.smodule = m; fst.mfunction = f;
   s_int_t old_pc =  pc_load;
-  s_int_t fun_pc =  std::any_cast<s_int_t>(sym_node->get_data());
+  s_int_t fun_pc = get_sym_addr(key_tok_t::mfunction, fst);
   if(fun_pc < 0) {std::cerr << "Can't find function:'" << m+":"+ f << "'\n"; return;}
   set_instruction({Opcode(Opcode::CALL), fun_pc, 0, 0});  
   insert_instruction();
@@ -61,6 +51,10 @@ void Assembler::set_instruction(const instr_t &t) {
 
 void Assembler::insert_instruction() {
   Assembly::insert_instruction();
+
+  // reset instruction, if vm:disatch being 
+  // called from somewhere won't segmentfalt
+  Assembly::instruction = {Opcode::INVALID, 0, 0,0}; 
 }
 void Assembler::print_program() {
   for(int i=0; i<pc_load; i++) {
@@ -84,6 +78,7 @@ void Assembler::print_program_f() {
       <<  code[i].operands[2].f << "\n";
   }
 }
+
 void Assembler::add_app_name(const std::string &app) {
   std::cout << "in add app to context: "  << app << "\n";
   current_context.app = app;
@@ -92,6 +87,7 @@ void Assembler::add_app_name(const std::string &app) {
     current_context.app,
     "addr"}, pc_load);
 }
+
 void Assembler::add_api_name(const std::string &api) {
   std::cout << "in add api to context: "  << api << "\n";
   current_context.api = api;
@@ -101,18 +97,6 @@ void Assembler::add_api_name(const std::string &api) {
     current_context.api, 
     "addr"}, pc_load);
 }
-/* void Assembler::add_module_name(const std::string &m) {
-  std::cout << "in add module to context: "  << m << "\n";
-  current_context.smodule = m;
-  context->add_node({
-    current_context.uni, 
-    current_context.app,
-    current_context.api, 
-    "modules",
-    current_context.smodule,
-    "addr"}, pc_load);
-}
-*/
 
 void Assembler::add_module_name(const std::string &m) {
   // std::cout << "in add module to context: '"  << m << "'\n";
@@ -123,23 +107,6 @@ void Assembler::add_module_name(const std::string &m) {
   context->add_node(keys, pc_load);
 }
 
-
-/*
-void Assembler::add_function_name(const std::string &f) {
-  std::cout << "in add function to context: "  << f << "\n";
-  current_context.mfunction = f; 
-  // current_var = ""; // clear out var so, %call fun1 won't return variable
-  lvc = 0; // init lvc local variable counter, it should be similar to vp variable pointer
-  context->add_node({
-    current_context.uni, 
-    current_context.app,
-    current_context.api, 
-    "modules",
-    current_context.smodule,
-    "functions",
-    current_context.mfunction,
-    "addr"}, pc_load);
-}*/
 void Assembler::add_function_name(const std::string &f) {
   std::cout << "in add function to context: "  << f << "\n";
   current_context.mfunction = f; 
@@ -150,19 +117,6 @@ void Assembler::add_function_name(const std::string &f) {
   context->add_node(keys, pc_load);
 }
 
-/*
-void Assembler::add_label_name(const std::string &l) {
-  context->add_node({
-    current_context.uni, 
-    current_context.app,
-    current_context.api, 
-    "modules",
-    current_context.smodule,
-    "functions",
-    current_context.mfunction,
-    "labels",
-    l, "addr"}, pc_load);
-}*/
 void Assembler::add_label_name(const std::string &l) {
   current_context.label = l; 
   full_symbol_t fst = current_context; fst.label = l;
@@ -171,23 +125,6 @@ void Assembler::add_label_name(const std::string &l) {
   context->add_node(keys, pc_load);
 }
 
-
-/*
-// the address location will be point to the stack realtive from fp,fp+vp
-void Assembler::add_lvar_name(const std::string &v) {
-  current_context.lvar = v;
-  context->add_node({
-  current_context.uni, 
-  current_context.app,
-  current_context.api, 
-  "modules",
-  current_context.smodule,
-  "functions",
-  current_context.mfuntion,
-  "lvars",
-  current_context.lvar, 
-  "addr"}, lvc++);
-}*/
 void Assembler::add_lvar_name(const std::string &v) {
   current_context.lvar = v;
   full_symbol_t fst = current_context; fst.lvar= v;
@@ -196,20 +133,9 @@ void Assembler::add_lvar_name(const std::string &v) {
   context->add_node(keys, lvc++);
 }
 
-
-void Assembler::add_unresolved_function(const full_symbol_t &fst) {
-  unresolved_symbol_t  notfound;
-  notfound.name = current_context;
-  notfound.name.smodule = fst.smodule;
-  notfound.name.mfunction = fst.mfunction;
-  notfound.type = key_tok_t::mfunction ;
-  notfound.location.adr = pc_load;
-  unresolved_syms.push_back(notfound);
-  std::cerr << "adding to not found: '" << fst.smodule << ":" << fst.mfunction << "' to unresolved vector\n";
-}
 void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &fst) {
   unresolved_symbol_t  notfound;
-  notfound.name = current_context;
+  if(fst.smodule[0]!= ':') notfound.name = current_context; // use fst's full app:api name
   notfound.type = ktt;
   notfound.location.adr = pc_load;
   switch(ktt) {
@@ -249,30 +175,6 @@ void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &f
 
 }
 
-/*
-void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst) {
-  s_int_t adr = -1;
-  std::shared_ptr<TreeNode> sym_node = context->get_node({
-    current_context.uni, 
-    current_context.app,
-    current_context.api, 
-    "modules",
-    fst.smodule, 
-    "functions",
-    fst.mfunction, 
-    "addr"});
-
-  if(sym_node == nullptr) {
-    std::cout << "function '" << fst.mfunction << "' not found\n";
-    //add_unresolved_function(fst);
-    add_unresolved_sym(key_tok_t::mfunction, fst);
-  } else {
-    adr = std::any_cast<s_int_t>(sym_node->get_data());
-  }
-  instr_t asm_instr = {op, adr,0,0};
-  set_instruction(asm_instr); 
-}*/
-
 void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst) {
   s_int_t adr= -1;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
@@ -289,34 +191,6 @@ void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst)
 }
 
 
-/*
-#define __funckeys__ {us.name.uni, us.name.app, us.name.api, "modules", us.name.smodule, "functions", us.name.mfunction, "addr"}
-void Assembler::resolve_names() {
-  // gothru all vector unresolvednames
-  std::vector<std::string> keys;
-  std::shared_ptr<TreeNode> sym_node;
-  // std::cout << "trying unresolved symbols\n";
-
-  for(auto us  : unresolved_syms) {
-    // std::cout << "unresolved sym:'" << us.name.sfunction << "'\n";
-    switch(us.type) {
-    case key_tok_t::mvar:  break;
-    case key_tok_t::mfunction:  
-      sym_node = context->get_node(__funckeys__);
-      if(sym_node != nullptr) {
-        std::cout << "resolving function: '" << us.name.mfunction << "'\n";
-        code[us.location.adr].operands[0].adr
-          = std::any_cast<s_int_t>(sym_node->get_data());
-      } else { 
-        std::cerr << "can't resolve symbol: nullptr\n"; 
-      }
-      break;
-    case key_tok_t::lvar:  break;
-    default: break;
-    }
-  }
-}
-*/
 void Assembler::resolve_names() {
   std::vector<std::string> keys;
   for(auto us  : unresolved_syms) {
@@ -343,6 +217,7 @@ std::vector<std::string> Assembler::get_sym_key(const key_tok_t ktt,  const full
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "mvars", fst.mvar};
       break;
     case  key_tok_t::lvar:
+      //std::cout << "in getsymkey: "<<  fst.uni+ fst.app+ fst.api+ "modules"+ fst.smodule+  "functions"+ fst.mfunction+ "lvars"+ fst.lvar << "\n";
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.lvar};
       break;
     case  key_tok_t::label:

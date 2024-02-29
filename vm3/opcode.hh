@@ -7,6 +7,7 @@
 enum class Opcode {
   INVALID = -1,
   EXIT=0,
+  NOOP,
   CALL,
   RET,
   RET_N,

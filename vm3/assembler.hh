@@ -30,7 +30,7 @@ private:
   //  current_module="", current_function  = "", current_var="";
   full_symbol_t current_context;
   std::vector<unresolved_symbol_t> unresolved_syms;
-  int lvc=0;  // local variable count starting from %function
+  s_int_t lvc=0;  // local variable count starting from %function
 
 public:  
   Assembler();
@@ -57,7 +57,6 @@ public:
 
   void add_unresolved_sym(const key_tok_t ktt, const full_symbol_t &fst);
 
-  void add_unresolved_function(const full_symbol_t &fst);
   full_symbol_t get_current_context() { return current_context; };
   std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);
   s_int_t get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst);

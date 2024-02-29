@@ -5,6 +5,7 @@ exit
 %lvar i1 10
 %lvar i2 20
 %lvar i3 30
+#%load_l r1, i3
 mov r1, 12345
 mov r2, 3.45
 push_c 11

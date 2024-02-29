@@ -36,11 +36,8 @@ void VM::load() {
   us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
   if(loc > vmstack.size()-1) { std::cerr << "can't load from above the stack!\n"; return; }
   R[instruction->operands[0].i] = vmstack[loc];
- 
-  //cout  << "load vmstack.size:" <<  vmstack.size() << "\n";
-  //print_instruction();
-  //cout << "load from addr: vmstack[" << loc <<  "]:" << vmstack[loc].i << "\n";  
 }
+
 void VM::store() { // store, from srcR, target addrR, target offset
   us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
   if(loc > vmstack.size()-1) { std::cerr << "can't store above the stack!\n"; return; }
@@ -57,6 +54,7 @@ void VM::call() {
 // caller handles stack for returned values
 void VM::ret() {
   us_int_t sp;
+  if(vmframes.empty()) return; // might disable this with compiler defines for speed
   Frame sf = vmframes.top();
   vmframes.pop();
   R[Reg::fp].i = sf.fp;
@@ -67,6 +65,7 @@ void VM::ret() {
 // clear up calling stack including arguments
 void VM::ret_n() {
   us_int_t sp;
+  if(vmframes.empty()) return; // might disable this with compiler defines for speed
   Frame sf = vmframes.top();
   vmframes.pop();
   R[Reg::fp].i = sf.fp;

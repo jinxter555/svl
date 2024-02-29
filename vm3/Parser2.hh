@@ -388,6 +388,7 @@ namespace vslasm {
       char dummy1[sizeof (Opcode)];
 
       // modfunstr
+      // funlvarstr
       char dummy2[sizeof (full_symbol_t)];
 
       // FLT
@@ -529,8 +530,9 @@ namespace vslasm {
         S_directive = 36,                        // directive
         S_DOTSTR = 37,                           // DOTSTR
         S_modfunstr = 38,                        // modfunstr
-        S_instruction = 39,                      // instruction
-        S_opcode = 40                            // opcode
+        S_funlvarstr = 39,                       // funlvarstr
+        S_instruction = 40,                      // instruction
+        S_opcode = 41                            // opcode
       };
     };
 
@@ -570,6 +572,7 @@ namespace vslasm {
         break;
 
       case symbol_kind::S_modfunstr: // modfunstr
+      case symbol_kind::S_funlvarstr: // funlvarstr
         value.move< full_symbol_t > (std::move (that.value));
         break;
 
@@ -697,6 +700,7 @@ switch (yykind)
         break;
 
       case symbol_kind::S_modfunstr: // modfunstr
+      case symbol_kind::S_funlvarstr: // funlvarstr
         value.template destroy< full_symbol_t > ();
         break;
 
@@ -1668,8 +1672,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 39,     ///< Last index in yytable_.
-      yynnts_ = 9,  ///< Number of nonterminal symbols.
+      yylast_ = 48,     ///< Last index in yytable_.
+      yynnts_ = 10,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1683,7 +1687,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1687 "Parser2.hh"
+#line 1691 "Parser2.hh"
 
 
 

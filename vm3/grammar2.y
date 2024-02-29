@@ -28,6 +28,7 @@ namespace vslasm {
 %code {
 #include "Scanner2.hh"
 #define yylex(x) scanner->lex(x)
+// instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 }
@@ -50,7 +51,7 @@ bool skipline=false;
 %right              EXPONENT
  
 %nterm <std::string> DOTSTR
-%nterm <full_symbol_t> modfunstr //modvarstr modfunvarstr
+%nterm <full_symbol_t> modfunstr funlvarstr //modvarstr modfunvarstr
 %nterm <Opcode>     opcode
 
 
@@ -91,11 +92,25 @@ super_instruction
     asm_instr = {Opcode(Opcode::PUSH_C), operand2, 0, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO LOAD_L REGISTER COMMA STR {
-    std::cout << "loading local var " << $5 << " into reg: " << $3 << "\n";
-    skipline=true;
+  | MODULO LOAD_L REGISTER COMMA funlvarstr {
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $5);
+    asm_instr = {Opcode(Opcode::LOAD), $3, Reg::fp, vadr};  
+    assembler->set_instruction(asm_instr); 
   }
+  | MODULO STORE_L REGISTER COMMA funlvarstr {
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $5);
+    asm_instr = {Opcode(Opcode::STORE), $3, Reg::fp, vadr};  
+    assembler->set_instruction(asm_instr); 
+  }
+  /*
+  | MODULO STR {
+    std::cerr << "unknown super instruction!\n";
+    asm_instr = {Opcode(Opcode::NOOP), 0, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  */
   ;
+
 
 // do not insert directives in to assembly::code[]
 directive
@@ -120,7 +135,17 @@ modfunstr
     $$.smodule = $1;
     $$.mfunction = $3;
     }
+  // COLON COLON DOTSTR COLON STR {} //full symbol from another app api module
   ;
+funlvarstr
+  : STR { 
+    $$ = assembler->get_current_context();
+    $$.smodule = assembler->get_current_context().smodule;
+    $$.mfunction = assembler->get_current_context().mfunction;
+    $$.lvar = $1;
+    }
+  ;
+/*
 // set module and var full symbol  return a symbol struct
 /*
 modvarstr
