@@ -9,6 +9,7 @@ enum class Opcode {
   EXIT=0,
   CALL,
   RET,
+  RET_N,
   IADD_R=100,
   IADD_C,
   ISUB_R,

@@ -32,12 +32,12 @@ instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 }
 
-%token              EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR DOT  COMMA COLON
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR DOT  COMMA COLON
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
 %token <long int> REGISTER
-%token  CALL
+%token CALL LOAD_L STORE_L
  
 //%nterm <long int>  iexp
 //%nterm <double>     fexp
@@ -79,26 +79,29 @@ super_instruction
     assembler->super_opfun_set_instruction(Opcode::CALL, $3); 
     }
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
+  | MODULO LVAR STR INT   {
+    assembler->add_lvar_name($3); 
+    asm_instr = {Opcode(Opcode::PUSH_C), $4, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | MODULO LVAR STR FLT  {
+    reg_t operand2;
+    operand2.f = $4;
+    assembler->add_lvar_name($3); 
+    asm_instr = {Opcode(Opcode::PUSH_C), operand2, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | MODULO LOAD_L REGISTER COMMA STR {
+    std::cout << "loading local var " << $5 << " into reg: " << $3 << "\n";
+    skipline=true;
+  }
   ;
 
 // do not insert directives in to assembly::code[]
 directive
-  : MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } // have to skip insert_instruction 
+  : MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } 
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
   | MODULO MODULO LABEL STR       {assembler->add_label_name($4); skipline=true;}
-  | MODULO MODULO LVAR STR INT   {
-    assembler->add_lvar_name($4); 
-    asm_instr = {Opcode(Opcode::PUSH_C), $5, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-  }
-  | MODULO MODULO LVAR STR FLT  {
-    reg_t operand2;
-    operand2.f = $5;
-    assembler->add_lvar_name($4); 
-    asm_instr = {Opcode(Opcode::PUSH_C), operand2, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-  }
-  //| MODULO opcode dotstr {std::cout<< "meta-opname code " << static_cast<int>($2) << $3 << "\n"; skipline=true;}
   ;
 
 
@@ -111,11 +114,11 @@ DOTSTR
 modfunstr
   : STR { 
     $$.smodule = assembler->get_current_context().smodule;
-    $$.sfunction = $1;
+    $$.mfunction = $1;
     }
   | DOTSTR COLON STR { 
     $$.smodule = $1;
-    $$.sfunction = $3;
+    $$.mfunction = $3;
     }
   ;
 // set module and var full symbol  return a symbol struct
@@ -130,10 +133,9 @@ modvarstr
 
 instruction
   : opcode { 
+    //std::cout<< "meta-opname code " << static_cast<int>($1) << "\n"; 
     asm_instr = {$1, 0, 0, 0};  
     assembler->set_instruction(asm_instr); 
-    //std::cout<< "meta-opname code " << static_cast<int>($1) << "\n"; 
-    //skipline = true;
   }
   | opcode REGISTER { 
     asm_instr = {$1, $2, 0, 0};  

@@ -1,5 +1,8 @@
 #include "vm.hh"
 
+VM::VM() {
+  R[Reg::fp].i = 0;
+}
 void VM::mov() {
   //R[instruction->operands[0].i].i
   //  = instruction->operands[1].i;
@@ -28,8 +31,8 @@ void VM::isub_r() {
     - R[instruction->operands[2].i].i;
 }
 
-// load targetR, addrR, offset
-void VM::load_l() { 
+// load targetR, from addrR, from offset
+void VM::load() { 
   us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
   if(loc > vmstack.size()-1) { std::cerr << "can't load from above the stack!\n"; return; }
   R[instruction->operands[0].i] = vmstack[loc];
@@ -38,29 +41,39 @@ void VM::load_l() {
   //print_instruction();
   //cout << "load from addr: vmstack[" << loc <<  "]:" << vmstack[loc].i << "\n";  
 }
-void VM::store_l() { // store srcR, target addrR, offset
+void VM::store() { // store, from srcR, target addrR, target offset
   us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
   if(loc > vmstack.size()-1) { std::cerr << "can't store above the stack!\n"; return; }
   vmstack[loc] = R[instruction->operands[0].i];
 }
 
-
-
 void VM::call() {
   us_int_t sp = vmstack.size();
-  vmframes.push(Frame(pc, fp, sp));
-  fp = sp;
+  vmframes.push(Frame(pc, R[Reg::fp].i, sp));
+  R[Reg::fp].i = sp;
   pc = instruction->operands[0].adr;
-
 }
+
+// caller handles stack for returned values
 void VM::ret() {
   us_int_t sp;
   Frame sf = vmframes.top();
   vmframes.pop();
-  fp = sf.fp;
+  R[Reg::fp].i = sf.fp;
   pc = sf.pc;
   sp = sf.sp;
-  vmstack.resize(sp);
+}
+
+// clear up calling stack including arguments
+void VM::ret_n() {
+  us_int_t sp;
+  Frame sf = vmframes.top();
+  vmframes.pop();
+  R[Reg::fp].i = sf.fp;
+  pc = sf.pc;
+  sp = sf.sp;
+  vmstack.resize(sp - instruction->operands[0].i);
+  sp = vmstack.size();
 }
 void VM::vmexit() {
   pc = exit_max_pc;
@@ -103,10 +116,12 @@ void VM::dispatch() {
     case Opcode::POP_R:  pop_r();   break;
     case Opcode::PUSH_C: push_c();  break;
     case Opcode::PUSH_R: push_r();  break;
+    case Opcode::STORE: store();  break;
+    case Opcode::LOAD:  load();  break;
     case Opcode::CALL:   call();  break;
     case Opcode::RET:    ret();  break;
+    case Opcode::RET_N:  ret_n();  break;
     case Opcode::EXIT:   vmexit();  break;
-
     default: break;
 
   }

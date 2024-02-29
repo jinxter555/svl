@@ -5,20 +5,19 @@
 
 #define CONTEXT_UNIV "svlvm"
 typedef struct {
-  std::string uni, sapp, sapi, smodule, mvar, sfunction, lvar;
-  // type for svl lang
+  std::string uni, app, api, smodule, mvar, mfunction, lvar, label;
 } full_symbol_t;
 
-enum class unresolved_t{
-  app=10, api, module, mvar,
-  function, lvar, label
+// enum class unresolved_t{
+enum class key_tok_t {
+  app=10, api, smodule, mvar,
+  mfunction, lvar, label
 };
 typedef struct {
-  reg_t  location;
-  // std::string sapp, sapi, smodule, sfunction, svar;
-  unresolved_t type;
-  // type for svl lang
-  full_symbol_t name;
+  reg_t  location;  // address location of code[] where symbol is referenced
+  key_tok_t type;     // type for svl lang, module, function, var,
+  full_symbol_t name; // std::string sapp, sapi, smodule, sfunction, svar;
+  int operand_loc;
 } unresolved_symbol_t;
 
 class Assembler : public Assembly {
@@ -54,10 +53,13 @@ public:
   void add_label_name(const std::string &l);
   void add_lvar_name(const std::string &v);
 
-  void add_unresolved_function(const full_symbol_t &fst);
-  //void add_unresolved_var(const std::string &m, const std::string &f, const std::string &v);
-  full_symbol_t get_current_context() { return current_context; };
   void resolve_names();
 
+  void add_unresolved_sym(const key_tok_t ktt, const full_symbol_t &fst);
+
+  void add_unresolved_function(const full_symbol_t &fst);
+  full_symbol_t get_current_context() { return current_context; };
+  std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);
+  s_int_t get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst);
 
 };

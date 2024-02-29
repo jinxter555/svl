@@ -29,6 +29,10 @@ register        ([rR]{integer})
   yylval->emplace<long int>(strtoll(reg.c_str(), nullptr, 10)); 
   return Parser::token::REGISTER; 
 }
+"fp" { // frame pointer register
+  yylval->emplace<long int>(Reg::fp); 
+  return Parser::token::REGISTER; 
+}
 "app"    return Parser::token::APP;
 "api"    return Parser::token::API;
 "module"    return Parser::token::MODULE;
@@ -37,6 +41,8 @@ register        ([rR]{integer})
 "label"    return Parser::token::LABEL;
 "lvar"    return Parser::token::LVAR;
 "call"    return Parser::token::CALL;
+"store_l"    return Parser::token::STORE_L;
+"load_l"    return Parser::token::LOAD_L;
 {identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;

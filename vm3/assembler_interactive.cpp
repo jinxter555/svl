@@ -46,13 +46,11 @@ void AssemblerInteractive::run_program() {
 }
 
 void AssemblerInteractive::interact(const std::string& line) {
-  std::string rest;
-  
   std::string rest_tree =  match(line, "\\print_tree");
   std::string rest_call =  match(line, "\\call ");
-  if(line == "\\print_tree" || rest_tree != "" ) print_tree(rest);
-  if(line == "\\print_register") print_vm_registers();
-  if(line == "\\print_register_int") print_vm_registers();
+  if(line == "\\print_tree" || rest_tree != "" ) print_tree(rest_tree);
+  if(line == "\\print_register") print_vm_registers(12);
+  if(line == "\\print_register_int") print_vm_registers(12);
   if(line == "\\print_register_float") print_vm_registers_float();
   if(line == "\\print_stack_int") print_vm_stack_int();
   if(line == "\\print_stack_float") print_vm_stack_float();
@@ -108,7 +106,8 @@ void AssemblerInteractive::print_tree(const std::string &cline){
   std::vector<std::string> vstr = split_string(line, " ");
   vstr.erase(vstr.begin()); // erase empty element
 
-  // for(auto s : vstr) { std::cout << "s: '" << s << "'\n"; }
+//  for(auto s : vstr) { std::cout << "s: '" << s << "'\n"; }
+
   auto children = assembler.context->get_children(vstr);
   for(auto c : children) { std::cout << "child: " << c << "\n"; }
   auto node = assembler.context->get_node(vstr);
@@ -134,6 +133,7 @@ std::string AssemblerInteractive::match(const std::string& line, const std::stri
 void AssemblerInteractive::call_func(const std::string &line) {
   std::cout << "calling function: '" << line  << "'\n";
   std::vector<std::string> vstr = split_string(line, ":");
+  if(vstr.size() == 1) {std::cerr << "you have to specify module\n";return;}
   assembler.run_call(vm, vstr[0], vstr[1]);
 
 }

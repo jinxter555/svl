@@ -18,6 +18,13 @@ typedef union {
   s_int_t adr;
 } reg_t;
 
+enum Reg {
+  r0 = 0,
+  r1, r2, r3, r4, 
+  r5, r6, r7, r8,
+  pc = 9, fp, sp, vp
+};
+
 
 typedef struct {
   Opcode opcode;
@@ -26,11 +33,11 @@ typedef struct {
 
 class Frame {
 public:
-  us_int_t pc=0; // current insturction pointer
-  us_int_t sp=0; // current stack pointer, current size is current index
-  us_int_t vp=0; // variable pointer stack[fp+vp]
-  us_int_t fp=0; 
-  Frame(us_int_t pc, us_int_t fp, us_int_t sp) : pc(pc), fp(fp), sp(sp) {}
+  s_int_t pc=0; // current insturction pointer
+  s_int_t sp=0; // current stack pointer, current size is current index
+  s_int_t vp=0; // variable pointer stack[fp+vp]
+  s_int_t fp=0; 
+  Frame(const s_int_t pc, const s_int_t fp, const s_int_t sp) : pc(pc), fp(fp), sp(sp) {}
 };  
 
 class VM {
@@ -45,12 +52,13 @@ private:
   std::stack<Frame> vmframes;
   std::vector<reg_t> vmstack;
 
-  us_int_t pc = 0;
-  us_int_t fp = 0;
-  us_int_t exit_max_pc=0-1;
+// s_int_t fp = 0;
+s_int_t pc = 0;
+s_int_t sp = 0;
+s_int_t exit_max_pc=999999999999;
 
 public:
-  VM(){}
+  VM();
   void dispatch(instr_t &itt);
   inline void dispatch();
 
@@ -76,12 +84,13 @@ public:
   inline void store();
 
   //local vars
-  inline void load_l();
-  inline void store_l();
+  //inline void load_l();
+  //inline void store_l();
 
   inline void mov();
 
   inline void call();
   inline void ret();
+  inline void ret_n();
   inline void vmexit();
 };

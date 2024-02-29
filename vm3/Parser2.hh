@@ -461,15 +461,17 @@ namespace vslasm {
     STR = 18,                      // STR
     REGISTER = 19,                 // REGISTER
     CALL = 20,                     // CALL
-    ASSIGN = 21,                   // ASSIGN
-    PLUS = 22,                     // PLUS
-    MINUS = 23,                    // MINUS
-    MULTIPLY = 24,                 // MULTIPLY
-    DIVIDE = 25,                   // DIVIDE
-    MODULO = 26,                   // MODULO
-    UMINUS = 27,                   // UMINUS
-    FACTORIAL = 28,                // FACTORIAL
-    EXPONENT = 29                  // EXPONENT
+    LOAD_L = 21,                   // LOAD_L
+    STORE_L = 22,                  // STORE_L
+    ASSIGN = 23,                   // ASSIGN
+    PLUS = 24,                     // PLUS
+    MINUS = 25,                    // MINUS
+    MULTIPLY = 26,                 // MULTIPLY
+    DIVIDE = 27,                   // DIVIDE
+    MODULO = 28,                   // MODULO
+    UMINUS = 29,                   // UMINUS
+    FACTORIAL = 30,                // FACTORIAL
+    EXPONENT = 31                  // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -486,7 +488,7 @@ namespace vslasm {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 30, ///< Number of tokens.
+        YYNTOKENS = 32, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -509,24 +511,26 @@ namespace vslasm {
         S_STR = 18,                              // STR
         S_REGISTER = 19,                         // REGISTER
         S_CALL = 20,                             // CALL
-        S_ASSIGN = 21,                           // ASSIGN
-        S_PLUS = 22,                             // PLUS
-        S_MINUS = 23,                            // MINUS
-        S_MULTIPLY = 24,                         // MULTIPLY
-        S_DIVIDE = 25,                           // DIVIDE
-        S_MODULO = 26,                           // MODULO
-        S_UMINUS = 27,                           // UMINUS
-        S_FACTORIAL = 28,                        // FACTORIAL
-        S_EXPONENT = 29,                         // EXPONENT
-        S_YYACCEPT = 30,                         // $accept
-        S_lines = 31,                            // lines
-        S_line = 32,                             // line
-        S_super_instruction = 33,                // super_instruction
-        S_directive = 34,                        // directive
-        S_DOTSTR = 35,                           // DOTSTR
-        S_modfunstr = 36,                        // modfunstr
-        S_instruction = 37,                      // instruction
-        S_opcode = 38                            // opcode
+        S_LOAD_L = 21,                           // LOAD_L
+        S_STORE_L = 22,                          // STORE_L
+        S_ASSIGN = 23,                           // ASSIGN
+        S_PLUS = 24,                             // PLUS
+        S_MINUS = 25,                            // MINUS
+        S_MULTIPLY = 26,                         // MULTIPLY
+        S_DIVIDE = 27,                           // DIVIDE
+        S_MODULO = 28,                           // MODULO
+        S_UMINUS = 29,                           // UMINUS
+        S_FACTORIAL = 30,                        // FACTORIAL
+        S_EXPONENT = 31,                         // EXPONENT
+        S_YYACCEPT = 32,                         // $accept
+        S_lines = 33,                            // lines
+        S_line = 34,                             // line
+        S_super_instruction = 35,                // super_instruction
+        S_directive = 36,                        // directive
+        S_DOTSTR = 37,                           // DOTSTR
+        S_modfunstr = 38,                        // modfunstr
+        S_instruction = 39,                      // instruction
+        S_opcode = 40                            // opcode
       };
     };
 
@@ -1198,6 +1202,36 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_LOAD_L ()
+      {
+        return symbol_type (token::LOAD_L);
+      }
+#else
+      static
+      symbol_type
+      make_LOAD_L ()
+      {
+        return symbol_type (token::LOAD_L);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STORE_L ()
+      {
+        return symbol_type (token::STORE_L);
+      }
+#else
+      static
+      symbol_type
+      make_STORE_L ()
+      {
+        return symbol_type (token::STORE_L);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_ASSIGN ()
       {
         return symbol_type (token::ASSIGN);
@@ -1634,7 +1668,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 36,     ///< Last index in yytable_.
+      yylast_ = 39,     ///< Last index in yytable_.
       yynnts_ = 9,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
@@ -1649,7 +1683,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1653 "Parser2.hh"
+#line 1687 "Parser2.hh"
 
 
 
