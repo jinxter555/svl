@@ -34,5 +34,11 @@ public:
   void load(const std::string &filename);
   void parse(const std::string &line);
   void run_program();
+
+  // readline autocomplete
+  char *command_generator(const char *text, int state) ;
+
+  static std::vector<std::string> commands;
+
 }; 
 

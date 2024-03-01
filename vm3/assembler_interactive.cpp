@@ -1,6 +1,19 @@
 #include "assembler_interactive.hh"
 #include "my_helpers.hh"
 
+std::vector<std::string> AssemblerInteractive::commands = {
+  "\\print_tree",
+  "\\print_register",
+  "\\print_register_int",
+  "\\print_register_float",
+  "\\print_stack_int",
+  "\\print_stack_float",
+  "\\print_program",
+  "\\print_program_float",
+  "\\run_program",
+  "\\call"
+};
+
 AssemblerInteractive::AssemblerInteractive(const std::string &hf, const std::string &ps) 
   : Prompt(hf, ps) {
     //vm = new VM;

@@ -1,4 +1,5 @@
-CC=clang++ -std=c++17
+#CC=clang++ -std=c++17 -g
+CC=g++ -std=c++17 -g
 
 main.out:  lexer2.l grammar2.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
 	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o
