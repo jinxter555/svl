@@ -19,7 +19,6 @@ AssemblerInteractive::AssemblerInteractive(const std::string &hf, const std::str
   : Prompt(hf, ps) {
     //vm = new VM;
     //assembler = new Assembler;
-  setup_ui_commands();
 
 }
 
@@ -154,32 +153,45 @@ void AssemblerInteractive::call_func(const std::string &line) {
   assembler.run_call(vm, vstr[0], vstr[1]);
 
 }
-void AssemblerInteractive::setup_ui_commands() {
+void AssemblerInteractive::set_ui_commands() {
   std::string command; int list_index=0;
-  std::vector<std::string> key;
+  std::vector<std::string> keys;
   //std::cout << "set ui commandsize:" << commands.size() << "\n";
 
-  // while((command = commands[list_index++]) != "") {
   for(auto command : AssemblerInteractive::commands) {
     if(command =="") continue;
-    std::cout << "adding command " << command << "\n";
-    key = {rlac_current_context_key, command};
-    assembler.context->add_node({key}, 1);
+    keys = {rlac_current_context_key, command};
+    assembler.context->add_node({keys}, 1);
   }
+
+  std::shared_ptr<TreeNode> ptree_node = assembler.context->get_node({rlac_current_context_key, "!print_tree"});
+  if(ptree_node!=nullptr) {
+    std::shared_ptr<TreeNode> uni_node = assembler.context->get_node({CONTEXT_UNIV});
+    ptree_node->add_child({CONTEXT_UNIV}, uni_node);
+  } else
+    std::cerr << "Can't add the universe to !print_tree\n";
+}
+std::vector<std::string> AssemblerInteractive::get_ui_commands() {
+  std::vector<std::string> keys;
+  std::vector<std::string> children;
+  keys = {rlac_current_context_key};
+  children = assembler.context->get_children(keys);
+  children.push_back("");
+  return children;
 }
 
 extern AssemblerInteractive ait;
 char* AssemblerInteractive_command_generator(const char *text, int state) {
+  static std::vector<std::string> commands = move(ait.get_ui_commands());
   std::string textstr(text), command;
-  static int list_index, len;
+  static int list_index, len; 
 
   if(!state) {
     list_index = 0;
     len = strlen(text);
   }
-
-  while((command = AssemblerInteractive::commands[list_index++]) != "") {
-  // for(auto command : AssemblerInteractive::commands) {
+  // while((command = AssemblerInteractive::commands[list_index++]) != "") {
+  while((command = commands[list_index++]) != "") {
     if( command.compare(0, len, textstr) == 0) {
       return strdup(command.c_str());
     }

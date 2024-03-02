@@ -36,7 +36,9 @@ public:
   void load(const std::string &filename);
   void parse(const std::string &line);
   void run_program();
-  void setup_ui_commands();
+
+  void set_ui_commands();
+  std::vector<std::string> get_ui_commands();
 
   Assembler* getAssembler() { return &assembler;}
 
