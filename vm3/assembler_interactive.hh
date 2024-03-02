@@ -7,6 +7,8 @@
 #include "Parser2.hh"
 #include "Scanner2.hh"
 
+#define rlac_current_context_key   CONTEXT_UNIV, "ac_commands"
+
 
 class AssemblerInteractive : public Prompt {
 private:
@@ -34,9 +36,9 @@ public:
   void load(const std::string &filename);
   void parse(const std::string &line);
   void run_program();
+  void setup_ui_commands();
 
-  // readline autocomplete
-  char *command_generator(const char *text, int state) ;
+  Assembler* getAssembler() { return &assembler;}
 
   static std::vector<std::string> commands;
 

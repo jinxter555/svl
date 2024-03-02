@@ -28,8 +28,12 @@ void Assembler::run(VM& vm) {
 }
 
 void Assembler::run_call(VM& vm, const std::string &m, const std::string &f) {
-  full_symbol_t fst=current_context; 
-  fst.smodule = m; fst.mfunction = f;
+  full_symbol_t fst;
+  if(m[0]!= ':') {// use fst's full app:api name :app.api.module.fun
+    fst=current_context; 
+    fst.smodule = m; fst.mfunction = f;
+  }
+
   s_int_t old_pc =  pc_load;
   s_int_t fun_pc = get_sym_addr(key_tok_t::mfunction, fst);
   if(fun_pc < 0) {std::cerr << "Can't find function:'" << m+":"+ f << "'\n"; return;}
@@ -176,13 +180,19 @@ void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &f
 }
 
 void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst) {
-  s_int_t adr= -1;
-  std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
+  s_int_t adr = -1;
+  full_symbol_t lfst; 
+  if(fst.smodule[0]!= ':') {// use fst's full app:api name :app.api.module.fun
+    lfst = current_context;
+    lfst.smodule = fst.smodule;
+    lfst.mfunction  = fst.mfunction;
+  }
+  std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, lfst));
   keys.push_back("addr");
   std::shared_ptr<TreeNode> sym_node = context->get_node(keys);
   if(sym_node == nullptr) {
     std::cout << "function '" << fst.mfunction << "' not found\n";
-    add_unresolved_sym(key_tok_t::mfunction, fst);
+    add_unresolved_sym(key_tok_t::mfunction, lfst);
   } else {
     adr = std::any_cast<s_int_t>(sym_node->get_data());
   }
