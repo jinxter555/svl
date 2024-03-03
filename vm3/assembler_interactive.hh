@@ -38,7 +38,7 @@ public:
   void run_program();
 
   void set_ui_commands();
-  std::vector<std::string> get_ui_commands();
+  std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});
 
   Assembler* getAssembler() { return &assembler;}
 

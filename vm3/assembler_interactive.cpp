@@ -171,25 +171,43 @@ void AssemblerInteractive::set_ui_commands() {
   } else
     std::cerr << "Can't add the universe to !print_tree\n";
 }
-std::vector<std::string> AssemblerInteractive::get_ui_commands() {
+std::vector<std::string> AssemblerInteractive::get_ui_commands(const std::vector<std::string> &ptk) {
   std::vector<std::string> keys;
   std::vector<std::string> children;
   keys = {rlac_current_context_key};
+  keys.insert(keys.end(), ptk.begin(), ptk.end());
+  
+  // std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+
   children = assembler.context->get_children(keys);
   children.push_back("");
   return children;
 }
 
 extern AssemblerInteractive ait;
+static std::vector<std::string> AssemblerInteractive_cui_keys={};
+
+void convert_buff_to_keys() {
+  std::string rlbuff=trim(rl_line_buffer);
+  // cout << "convert rlbuff: '" << rlbuff << "'\n";
+  AssemblerInteractive_cui_keys.clear();
+  if(rl_line_buffer!=NULL)
+    AssemblerInteractive_cui_keys = split_string(rlbuff, " ");
+}
+
+
 char* AssemblerInteractive_command_generator(const char *text, int state) {
-  static std::vector<std::string> commands = move(ait.get_ui_commands());
+  std::vector<std::string> commands = move(ait.get_ui_commands(AssemblerInteractive_cui_keys));
   std::string textstr(text), command;
   static int list_index, len; 
 
   if(!state) {
     list_index = 0;
     len = strlen(text);
-  }
+  }  
+  
+  // std::cout << " keys:" << AssemblerInteractive_cui_keys.size() << ":"; for(auto k: AssemblerInteractive_cui_keys) { std::cout << k << ","; } std::cout <<"\n";
+
   // while((command = AssemblerInteractive::commands[list_index++]) != "") {
   while((command = commands[list_index++]) != "") {
     if( command.compare(0, len, textstr) == 0) {
@@ -204,8 +222,9 @@ char** AssemblerInteractive_command_completion(const char *text, int start, int 
   std::string matchstr;
   rl_attempted_completion_over = 1;
 
-  return  rl_completion_matches(text, AssemblerInteractive_command_generator);
-  //matches = rl_completion_matches(text, AssemblerInteractive_command_generator);
-  //return matches;
 
+  if(std::string(rl_line_buffer)  == "") AssemblerInteractive_cui_keys.clear();
+  if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') convert_buff_to_keys();
+
+  return  rl_completion_matches(text, AssemblerInteractive_command_generator);
 }
