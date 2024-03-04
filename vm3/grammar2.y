@@ -79,7 +79,7 @@ super_instruction
   : MODULO CALL modfunstr {
     assembler->super_opfun_set_instruction(Opcode::CALL, $3); 
     }
-  // : MODULO CALL modfunstr ARG1 ARG2 ARG3 ARG4 REGISTER{} 
+  // : MODULO CALL modfunstr args call_register  {} 
 
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
   | MODULO LVAR STR INT   {

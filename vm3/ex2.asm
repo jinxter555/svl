@@ -19,8 +19,9 @@ ret 0
 %%larg xyz
 %lvar return_value1 11
 %lvar return_value2 12
+%lvar i1 1
 %lvar i3 3
 %load_l r0, xyz
 %load_l r2, i1
 push_c 2222
-ret_np 2
+ret_np 1

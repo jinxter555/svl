@@ -64,23 +64,25 @@ void VM::ret() {
 }
 
 // caller handles stack for returned values
+// n plus
 void VM::ret_np() {  
   us_int_t sp;
-  std::cout << "ret_np ..\n";
+  //std::cout << "ret_np ..\n";
   if(vmframes.empty()) return; // might disable this with compiler defines for speed
   Frame sf = vmframes.top();
   vmframes.pop();
   R[Reg::fp].i = sf.fp;
   pc = sf.pc;
   sp = sf.sp;
-  std::cout << "sp:" << sp << "+" << " np:" <<  instruction->operands[0].i << "\n";
+  //std::cout << "sp:" << sp << "+" << " np:" <<  instruction->operands[0].i << "\n";
   vmstack.resize(sp + instruction->operands[0].i);
-  std::cout << "ret sp: " << sp << "\n";
+  //std::cout << "ret sp: " << sp << "\n";
   sp = vmstack.size();
 }
 
 // clear up calling stack including arguments
-void VM::ret_n() {
+// n minus
+void VM::ret_nm() {
   us_int_t sp;
   if(vmframes.empty()) return; // might disable this with compiler defines for speed
   Frame sf = vmframes.top();
@@ -137,10 +139,10 @@ void VM::dispatch() {
     case Opcode::LOAD:  load();  break;
     case Opcode::CALL:   call();  break;
     case Opcode::RET:    ret();  break;
-    case Opcode::RET_N:  ret_n();  break;
+    case Opcode::RET_NM:  ret_nm();  break;
     case Opcode::RET_NP:  ret_np();  break;
     case Opcode::EXIT:   vmexit();  break;
-    default: break;
+    default: std::cerr << "you've forgot to add case instruction. something very wrong!!!!"; break;
 
   }
 }
