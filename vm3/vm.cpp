@@ -51,7 +51,6 @@ void VM::call() {
   pc = instruction->operands[0].adr;
 }
 
-// caller handles stack for returned values
 void VM::ret() {
   us_int_t sp;
   if(vmframes.empty()) return; // might disable this with compiler defines for speed
@@ -62,6 +61,22 @@ void VM::ret() {
   sp = sf.sp;
   //std::cout << "ret sp: " << sp << "\n";
   vmstack.resize(sp);
+}
+
+// caller handles stack for returned values
+void VM::ret_np() {  
+  us_int_t sp;
+  std::cout << "ret_np ..\n";
+  if(vmframes.empty()) return; // might disable this with compiler defines for speed
+  Frame sf = vmframes.top();
+  vmframes.pop();
+  R[Reg::fp].i = sf.fp;
+  pc = sf.pc;
+  sp = sf.sp;
+  std::cout << "sp:" << sp << "+" << " np:" <<  instruction->operands[0].i << "\n";
+  vmstack.resize(sp + instruction->operands[0].i);
+  std::cout << "ret sp: " << sp << "\n";
+  sp = vmstack.size();
 }
 
 // clear up calling stack including arguments
@@ -76,6 +91,7 @@ void VM::ret_n() {
   vmstack.resize(sp - instruction->operands[0].i);
   sp = vmstack.size();
 }
+
 void VM::vmexit() {
   pc = exit_max_pc;
 }
@@ -122,6 +138,7 @@ void VM::dispatch() {
     case Opcode::CALL:   call();  break;
     case Opcode::RET:    ret();  break;
     case Opcode::RET_N:  ret_n();  break;
+    case Opcode::RET_NP:  ret_np();  break;
     case Opcode::EXIT:   vmexit();  break;
     default: break;
 

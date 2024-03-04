@@ -11,6 +11,7 @@ enum class Opcode {
   CALL,
   RET,
   RET_N,
+  RET_NP,
   IADD_R=100,
   IADD_C,
   ISUB_R,

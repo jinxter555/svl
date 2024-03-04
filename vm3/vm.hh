@@ -92,5 +92,6 @@ public:
   inline void call();
   inline void ret();
   inline void ret_n();
+  inline void ret_np();
   inline void vmexit();
 };

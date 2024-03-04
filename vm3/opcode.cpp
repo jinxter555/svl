@@ -18,6 +18,7 @@ std::unordered_map<std::string, Opcode> opcode_table = {
   {"exit", Opcode::EXIT},
   {"ret", Opcode::RET},
   {"ret_n", Opcode::RET_N},
+  {"ret_np", Opcode::RET_NP},
 };
 
 
