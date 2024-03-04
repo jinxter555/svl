@@ -33,7 +33,7 @@ instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR DOT  COMMA COLON
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
@@ -79,6 +79,8 @@ super_instruction
   : MODULO CALL modfunstr {
     assembler->super_opfun_set_instruction(Opcode::CALL, $3); 
     }
+  // : MODULO CALL modfunstr ARG1 ARG2 ARG3 ARG4 REGISTER{} 
+
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
   | MODULO LVAR STR INT   {
     assembler->add_lvar_name($3); 
@@ -117,6 +119,7 @@ directive
   : MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } 
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
   | MODULO MODULO LABEL STR       {assembler->add_label_name($4); skipline=true;}
+  | MODULO MODULO LARG STR        {assembler->add_larg_name($4); skipline=true;}
   ;
 
 

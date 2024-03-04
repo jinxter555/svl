@@ -5,13 +5,14 @@
 
 #define CONTEXT_UNIV "svlvm"
 typedef struct {
-  std::string uni, app, api, smodule, mvar, mfunction, lvar, label;
+  std::string uni, app, api, smodule, mvar, mfunction, lvar, larg, label;
+
 } full_symbol_t;
 
 // enum class unresolved_t{
 enum class key_tok_t {
   app=10, api, smodule, mvar,
-  mfunction, lvar, label
+  mfunction, lvar, larg, label
 };
 typedef struct {
   reg_t  location;  // address location of code[] where symbol is referenced
@@ -31,6 +32,8 @@ private:
   full_symbol_t current_context;
   std::vector<unresolved_symbol_t> unresolved_syms;
   s_int_t lvc=0;  // local variable count starting from %function
+  s_int_t lac=-1; // local variable count starting from fp-1 backing --
+  
 
 public:  
   Assembler();
@@ -51,6 +54,7 @@ public:
   void add_module_name(const std::string &m);
   void add_function_name(const std::string &f);
   void add_label_name(const std::string &l);
+  void add_larg_name(const std::string &a);
   void add_lvar_name(const std::string &v);
 
   void resolve_names();

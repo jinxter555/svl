@@ -15,6 +15,9 @@ std::vector<std::string> AssemblerInteractive::commands = {
   ""
 };
 
+extern AssemblerInteractive ait;
+static std::vector<std::string> AssemblerInteractive_cui_keys={};
+
 AssemblerInteractive::AssemblerInteractive(const std::string &hf, const std::string &ps) 
   : Prompt(hf, ps) {
     //vm = new VM;
@@ -74,6 +77,7 @@ void AssemblerInteractive::interact(const std::string& cline) {
   if(line == "!print_program_float") print_program_f();
   if(line == "!run_program") run_program();
   if(line == "!call" || rest_call !="") call_func(rest_call); // setup up add end of code[] with call func , and exit
+  AssemblerInteractive_cui_keys.clear();
 }
 
 void AssemblerInteractive::print_vm_stack_int() {
@@ -184,12 +188,9 @@ std::vector<std::string> AssemblerInteractive::get_ui_commands(const std::vector
   return children;
 }
 
-extern AssemblerInteractive ait;
-static std::vector<std::string> AssemblerInteractive_cui_keys={};
 
 void convert_buff_to_keys() {
   std::string rlbuff=trim(rl_line_buffer);
-  // cout << "convert rlbuff: '" << rlbuff << "'\n";
   AssemblerInteractive_cui_keys.clear();
   if(rl_line_buffer!=NULL)
     AssemblerInteractive_cui_keys = split_string(rlbuff, " ");

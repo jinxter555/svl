@@ -36,5 +36,12 @@ tree.o : tree.cpp  tree.hh
 my_helpers.o : my_helpers.cpp  my_helpers.hh
 	$(CC) -c my_helpers.cpp
 
+Parser2.cpp: assembler.hh Scanner2.hh assembler.cpp
+	bison -d grammar2.y 
+
+Scanner2.cpp: assembler.hh Scanner2.hh assembler.cpp
+	flex lexer2.l
+
+
 clean:
 	rm -f main.out Parser2.cpp Scanner2.cpp *.o *.gch

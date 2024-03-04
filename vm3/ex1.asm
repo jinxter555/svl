@@ -18,13 +18,14 @@ push_c 33
 push_c 44.44
 ret
 %%function fun2
-%lvar myint 12345
-%lvar myfloat2 3.45
-%load_l r0, myint
-iadd_c r0, r0, 1
-%store_l r0, myint
-mov r1, 12345
-mov r2, 3.45
+%lvar myint1 12345
+%lvar myint2 33
+%lvar myfloat2 3.14159
+%load_l r0, myint1
+%load_l r1, myint2
+%load_l r2, myfloat2
+iadd_c r3, r1, 1
+%store_l r0, myint1
 push_c 111
 push_c 222
 push_c 333

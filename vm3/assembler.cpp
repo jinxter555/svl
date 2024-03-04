@@ -9,8 +9,11 @@ Assembler::Assembler() {
     "myprog", 
     "myapi",
     "", // mod
+    "", // mvar
     "", // mfun
-    "", // var
+    "", // larg
+    "", // lvar
+    "", // label
   };
 };
 
@@ -115,6 +118,7 @@ void Assembler::add_function_name(const std::string &f) {
   std::cout << "in add function to context: "  << f << "\n";
   current_context.mfunction = f; 
   lvc = 0; // reset local var count to zero addr for every function
+  lac = -1; // reset local arg count to zero addr for every function
   full_symbol_t fst = current_context; fst.mfunction = f;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
   keys.push_back("addr");
@@ -135,6 +139,14 @@ void Assembler::add_lvar_name(const std::string &v) {
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::lvar, fst));
   keys.push_back("addr");
   context->add_node(keys, lvc++);
+}
+
+void Assembler::add_larg_name(const std::string &a) {
+  current_context.larg = a;
+  full_symbol_t fst = current_context; fst.larg= a;
+  std::vector<std::string> keys = move(get_sym_key(key_tok_t::larg, fst));
+  keys.push_back("addr");
+  context->add_node(keys, lac--);
 }
 
 void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &fst) {
@@ -230,6 +242,10 @@ std::vector<std::string> Assembler::get_sym_key(const key_tok_t ktt,  const full
       //std::cout << "in getsymkey: "<<  fst.uni+ fst.app+ fst.api+ "modules"+ fst.smodule+  "functions"+ fst.mfunction+ "lvars"+ fst.lvar << "\n";
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.lvar};
       break;
+    case  key_tok_t::larg:
+      // key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "largs", fst.larg};
+      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.larg};
+      break;
     case  key_tok_t::label:
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "labels", fst.label};
       break;
@@ -260,6 +276,9 @@ s_int_t Assembler::get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst) 
       break;
     case  key_tok_t::lvar:
       error_str = fst.smodule + ":" + fst.mfunction + "." + fst.lvar;
+      break;
+    case  key_tok_t::larg:
+      error_str = fst.smodule + ":" + fst.mfunction + "." + fst.larg;
       break;
     case  key_tok_t::label:
       error_str = fst.smodule + ":" + fst.mfunction + "." + fst.label;

@@ -60,6 +60,8 @@ void VM::ret() {
   R[Reg::fp].i = sf.fp;
   pc = sf.pc;
   sp = sf.sp;
+  //std::cout << "ret sp: " << sp << "\n";
+  vmstack.resize(sp);
 }
 
 // clear up calling stack including arguments
