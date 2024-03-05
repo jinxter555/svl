@@ -13,6 +13,7 @@ std::unordered_map<std::string, Opcode> opcode_table = {
   {"store", Opcode::STORE},
   {"load_l", Opcode::LOAD_L},
   {"store_l", Opcode::STORE_L},
+  {"stack_resize", Opcode::STACK_RESIZE},
   {"mov", Opcode::MOV},
   {"call", Opcode::CALL},
   {"exit", Opcode::EXIT},

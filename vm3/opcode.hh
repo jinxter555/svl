@@ -26,6 +26,7 @@ enum class Opcode {
   STORE,
   LOAD_L,
   STORE_L,
+  STACK_RESIZE
 };
 
 extern std::unordered_map<std::string, Opcode> opcode_table ;

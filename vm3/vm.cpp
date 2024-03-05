@@ -120,6 +120,10 @@ void VM::pop_r() {
   vmstack.pop_back();
   // cout << "in popr\n";  print_registers();
 }
+void VM::stack_resize() {
+  us_int_t sp=vmstack.size();
+  vmstack.resize(sp + instruction->operands[0].i);
+}
 
 void VM::dispatch(instr_t &itt) {
   instruction = &itt;
@@ -141,6 +145,7 @@ void VM::dispatch() {
     case Opcode::RET:    ret();  break;
     case Opcode::RET_NM:  ret_nm();  break;
     case Opcode::RET_NP:  ret_np();  break;
+    case Opcode::STACK_RESIZE:   stack_resize();  break;
     case Opcode::EXIT:   vmexit();  break;
     default: std::cerr << "you've forgot to add case instruction. something very wrong!!!!"; break;
 

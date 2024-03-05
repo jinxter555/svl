@@ -122,8 +122,8 @@ directive
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
   | MODULO MODULO LABEL STR       {assembler->add_label_name($4); skipline=true;}
   | MODULO MODULO LARG STR        {assembler->add_larg_name($4); skipline=true;}
+  // array needs another instruction to resize vmstack
   ;
-
 
 DOTSTR
   : STR
@@ -159,10 +159,6 @@ modvarstr
     $$.mvar = $3;
   }
   ;
-call_params
-  : funlvarstr { std::cout << "cpara1: " <<  $1.lvar << "\n";}
-  | call_params COMMA funlvarstr{ std::cout << "cparaM: " <<  $3.lvar << "\n";}
-  ;
   */
 
 call_params
@@ -181,8 +177,6 @@ call_params
     assembler->insert_instruction();
     }
   ;
-
-
 
 call_register
   : REGISTER { call_register = $1; std::cout << "call register: " << $1 << "\n";}

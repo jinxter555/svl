@@ -54,7 +54,7 @@ private:
 
 // s_int_t fp = 0;
 s_int_t pc = 0;
-s_int_t sp = 0;
+// s_int_t sp = 0;
 s_int_t exit_max_pc=999999999999;
 
 public:
@@ -94,4 +94,5 @@ public:
   inline void ret_nm();
   inline void ret_np();
   inline void vmexit();
+  inline void stack_resize();
 };
