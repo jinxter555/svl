@@ -79,8 +79,10 @@ line
   ;
 
 super_instruction
-  : MODULO CALL modfunstr { assembler->super_opfun_set_instruction(Opcode::CALL, $3); }
-  | MODULO CALL modfunstr call_register COMMA call_params {} 
+  : MODULO CALL modfunstr 
+    { assembler->super_opfun_set_instruction(Opcode::CALL, $3); }
+  | MODULO CALL modfunstr call_register COMMA call_params 
+    { assembler->super_opfun_set_instruction(Opcode::CALL, $3); } 
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
   | MODULO LVAR STR INT   {
     assembler->add_lvar_name($3); 
@@ -157,14 +159,33 @@ modvarstr
     $$.mvar = $3;
   }
   ;
-  */
 call_params
-  : STR { std::cout << "cpara1: " <<  $1 << "\n";}
-  | call_params COMMA STR { std::cout << "cparaM: " <<  $3 << "\n";}
+  : funlvarstr { std::cout << "cpara1: " <<  $1.lvar << "\n";}
+  | call_params COMMA funlvarstr{ std::cout << "cparaM: " <<  $3.lvar << "\n";}
+  ;
+  */
+
+call_params
+  : funlvarstr { 
+    std::cout << "cpara1: " <<  $1.lvar << "\n";
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $1);
+    asm_instr = {Opcode(Opcode::LOAD), call_register, Reg::fp, vadr};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();
+    }
+  | call_params COMMA funlvarstr { 
+    std::cout << "cparaM: " <<  $3.lvar << "\n";
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $3);
+    asm_instr = {Opcode(Opcode::LOAD), call_register, Reg::fp, vadr};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();
+    }
   ;
 
+
+
 call_register
-  : REGISTER { call_register = $1; std::cout << "callregister: " << $1 << "\n";}
+  : REGISTER { call_register = $1; std::cout << "call register: " << $1 << "\n";}
   ;
 
 instruction
