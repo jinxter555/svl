@@ -224,8 +224,18 @@ char** AssemblerInteractive_command_completion(const char *text, int start, int 
   rl_attempted_completion_over = 1;
 
 
-  if(std::string(rl_line_buffer)  == "") AssemblerInteractive_cui_keys.clear();
-  if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') convert_buff_to_keys();
 
-  return  rl_completion_matches(text, AssemblerInteractive_command_generator);
+
+  if(std::string(rl_line_buffer)  == "") AssemblerInteractive_cui_keys.clear();
+  if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') {convert_buff_to_keys(); }
+
+  matches = rl_completion_matches(text, AssemblerInteractive_command_generator);
+  if(matches == nullptr ) {     // if stuck from previous command didn't complete properly
+    convert_buff_to_keys(); 
+    if(!AssemblerInteractive_cui_keys.empty()) 
+      AssemblerInteractive_cui_keys.pop_back();
+    // matches = rl_completion_matches(text, AssemblerInteractive_command_generator);
+  }
+
+  return  matches;
 }
