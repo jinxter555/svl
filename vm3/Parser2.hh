@@ -396,10 +396,12 @@ namespace vslasm {
 
       // INT
       // REGISTER
+      // call_register
       char dummy4[sizeof (long int)];
 
       // STR
       // DOTSTR
+      // call_params
       char dummy5[sizeof (std::string)];
     };
 
@@ -533,8 +535,10 @@ namespace vslasm {
         S_DOTSTR = 38,                           // DOTSTR
         S_modfunstr = 39,                        // modfunstr
         S_funlvarstr = 40,                       // funlvarstr
-        S_instruction = 41,                      // instruction
-        S_opcode = 42                            // opcode
+        S_call_params = 41,                      // call_params
+        S_call_register = 42,                    // call_register
+        S_instruction = 43,                      // instruction
+        S_opcode = 44                            // opcode
       };
     };
 
@@ -584,11 +588,13 @@ namespace vslasm {
 
       case symbol_kind::S_INT: // INT
       case symbol_kind::S_REGISTER: // REGISTER
+      case symbol_kind::S_call_register: // call_register
         value.move< long int > (std::move (that.value));
         break;
 
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DOTSTR: // DOTSTR
+      case symbol_kind::S_call_params: // call_params
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -712,11 +718,13 @@ switch (yykind)
 
       case symbol_kind::S_INT: // INT
       case symbol_kind::S_REGISTER: // REGISTER
+      case symbol_kind::S_call_register: // call_register
         value.template destroy< long int > ();
         break;
 
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DOTSTR: // DOTSTR
+      case symbol_kind::S_call_params: // call_params
         value.template destroy< std::string > ();
         break;
 
@@ -1689,8 +1697,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 49,     ///< Last index in yytable_.
-      yynnts_ = 10,  ///< Number of nonterminal symbols.
+      yylast_ = 52,     ///< Last index in yytable_.
+      yynnts_ = 12,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1704,7 +1712,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1708 "Parser2.hh"
+#line 1716 "Parser2.hh"
 
 
 

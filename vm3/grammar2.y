@@ -31,6 +31,7 @@ namespace vslasm {
 // instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
+s_int_t call_register=0;
 }
 
 %token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON
@@ -51,7 +52,9 @@ bool skipline=false;
 %right              EXPONENT
  
 %nterm <std::string> DOTSTR
+%nterm <std::string> call_params
 %nterm <full_symbol_t> modfunstr funlvarstr //modvarstr modfunvarstr
+%nterm <long int> call_register
 %nterm <Opcode>     opcode
 
 
@@ -76,11 +79,8 @@ line
   ;
 
 super_instruction
-  : MODULO CALL modfunstr {
-    assembler->super_opfun_set_instruction(Opcode::CALL, $3); 
-    }
-  // : MODULO CALL modfunstr args call_register  {} 
-
+  : MODULO CALL modfunstr { assembler->super_opfun_set_instruction(Opcode::CALL, $3); }
+  | MODULO CALL modfunstr call_register COMMA call_params {} 
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
   | MODULO LVAR STR INT   {
     assembler->add_lvar_name($3); 
@@ -158,6 +158,14 @@ modvarstr
   }
   ;
   */
+call_params
+  : STR { std::cout << "cpara1: " <<  $1 << "\n";}
+  | call_params COMMA STR { std::cout << "cparaM: " <<  $3 << "\n";}
+  ;
+
+call_register
+  : REGISTER { call_register = $1; std::cout << "callregister: " << $1 << "\n";}
+  ;
 
 instruction
   : opcode { 

@@ -220,7 +220,7 @@ char* AssemblerInteractive_command_generator(const char *text, int state) {
 
 char** AssemblerInteractive_command_completion(const char *text, int start, int end) {
   char **matches, *match;
-  std::string matchstr;
+  std::string matchstr, rematch;
   rl_attempted_completion_over = 1;
 
 
@@ -230,11 +230,12 @@ char** AssemblerInteractive_command_completion(const char *text, int start, int 
   if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') {convert_buff_to_keys(); }
 
   matches = rl_completion_matches(text, AssemblerInteractive_command_generator);
-  if(matches == nullptr ) {     // if stuck from previous command didn't complete properly
+  if(matches == nullptr && strlen(text) > 0) {     // if stuck from previous command didn't complete properly
     convert_buff_to_keys(); 
     if(!AssemblerInteractive_cui_keys.empty()) 
+      rematch = AssemblerInteractive_cui_keys.back();
       AssemblerInteractive_cui_keys.pop_back();
-    // matches = rl_completion_matches(text, AssemblerInteractive_command_generator);
+      matches = rl_completion_matches(rematch.c_str(), AssemblerInteractive_command_generator);
   }
 
   return  matches;
