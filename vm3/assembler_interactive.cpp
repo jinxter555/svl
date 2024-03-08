@@ -33,21 +33,26 @@ void AssemblerInteractive::parse_prompt(const std::string &line) {
    if(line[0] == '!') { // command
     interact(line);
   } else { // assembly language
+    //if(line[0]== '%' && line[1]=='%') return; // ignore assembler directive
     parse(line);
   }
 }
 
-void AssemblerInteractive::load(const std::string &filename) {
-  std::ifstream infile(filename);
-  if(infile.is_open()) {
-    scanner.switch_streams(&infile, &std::cerr);
-    parser.parse();
-  } else {
-    std::cerr << "Error from assembly file: " << filename << "\n";
+void AssemblerInteractive::load(const std::string &cfn) {
+  std::vector<std::string> filenames = split_string(cfn, " ");
+
+  for(auto filename : filenames) {
+    std::ifstream infile(filename);
+    if(infile.is_open()) {
+      scanner.switch_streams(&infile, &std::cerr);
+      parser.parse();
+    } else {
+      std::cerr << "Error from assembly file: " << filename << "\n";
+    }
+    scanner.switch_streams(&std::cin, &std::cerr);
+    infile.close();
+    assembler.resolve_names();
   }
-  scanner.switch_streams(&std::cin, &std::cerr);
-  infile.close();
-  assembler.resolve_names();
 }
 
 void AssemblerInteractive::parse(const std::string &line) {

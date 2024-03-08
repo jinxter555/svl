@@ -1,4 +1,5 @@
 #include <iostream>
+#include "my_helpers.hh"
 #include "assembler.hh"
 #include <any>
 
@@ -6,8 +7,8 @@ Assembler::Assembler() {
   context = new Tree();
   current_context = {
     CONTEXT_UNIV, 
-    "myprog", 
-    "myapi",
+    "assembler", 
+    "symbols",
     "", // mod
     "", // mvar
     "", // mfun
@@ -133,12 +134,21 @@ void Assembler::add_label_name(const std::string &l) {
   context->add_node(keys, pc_load);
 }
 
-void Assembler::add_lvar_name(const std::string &v) {
+void Assembler::add_lvar_name(const std::string &v, int n) { //  int n, with offset for array
   current_context.lvar = v;
   full_symbol_t fst = current_context; fst.lvar= v;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::lvar, fst));
   keys.push_back("addr");
-  context->add_node(keys, lvc++);
+  context->add_node(keys, lvc);
+  lvc += n;
+}
+void Assembler::add_mvar_name(const std::string &mv, int n) { // int n, with offset for array
+  current_context.mvar = mv;
+  full_symbol_t fst = current_context; fst.mvar= mv;
+  std::vector<std::string> keys = move(get_sym_key(key_tok_t::mvar, fst));
+  keys.push_back("addr");
+  context->add_node(keys, mvc);
+  mvc += n;
 }
 
 void Assembler::add_larg_name(const std::string &a) {
@@ -151,7 +161,9 @@ void Assembler::add_larg_name(const std::string &a) {
 
 void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &fst) {
   unresolved_symbol_t  notfound;
-  if(fst.smodule[0]!= ':') notfound.name = current_context; // use fst's full app:api name
+  if(fst.smodule[0]!= ':') notfound.name = current_context; // uri, use fst's full app:api name
+  // if smodule=':' or mvar=':' uri resolve fst with ktt
+
   notfound.type = ktt;
   notfound.location.adr = pc_load;
   switch(ktt) {
@@ -187,7 +199,9 @@ void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &f
       break;
   }
   unresolved_syms.push_back(notfound);
-  std::cerr << "adding to not found symbols location: " << pc_load << " " << fst.smodule << ":" << fst.mfunction << "' to unresolved vector\n";
+  std::cerr 
+    << "adding to not found symbols location: " << pc_load 
+    << " " << fst.smodule << ":" << fst.mfunction << "' to unresolved vector\n";
 
 }
 
@@ -217,11 +231,18 @@ void Assembler::resolve_names() {
   std::vector<std::string> keys;
   for(auto us  : unresolved_syms) {
     switch(us.type) {
-    case key_tok_t::mvar:  break;
+    case key_tok_t::mvar:  
+      code[us.location.adr].operands[2].adr
+        = get_sym_addr(key_tok_t::mvar, us.name);
+      break;
     case key_tok_t::mfunction:  
       code[us.location.adr].operands[0].adr
         = get_sym_addr(key_tok_t::mfunction, us.name);
-    default: break;
+      break;
+      
+    default: 
+      std::cerr << "symbol not found: " << us.name.smodule << "\n";
+      break;
     }
   }
 }
@@ -235,8 +256,37 @@ std::vector<std::string> Assembler::get_sym_key(const key_tok_t ktt,  const full
     case  key_tok_t::mfunction:
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction};
       break;
+    case  key_tok_t::mvar_total_count:
+      key ={ fst.uni, fst.app, fst.api, "modules", "mvar_total_count"};
+      break;
     case  key_tok_t::mvar:
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "mvars", fst.mvar};
+      break;
+    case  key_tok_t::lvar:
+      //std::cout << "in getsymkey: "<<  fst.uni+ fst.app+ fst.api+ "modules"+ fst.smodule+  "functions"+ fst.mfunction+ "lvars"+ fst.lvar << "\n";
+      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.lvar};
+      break;
+    case  key_tok_t::larg:
+      // key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "largs", fst.larg};
+      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.larg};
+      break;
+    case  key_tok_t::label:
+      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "labels", fst.label};
+      break;
+    default: 
+      std::cerr << "get_sym_key(): key not found!\n";
+     return {}; 
+  }
+  return key; 
+}
+
+/*
+s_int_t Assembler::get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst) {
+
+  std::string error_str;
+  auto key=move(get_sym_key(ktt, fst));
+    case  key_tok_t::mfunction:
+      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction};
       break;
     case  key_tok_t::lvar:
       //std::cout << "in getsymkey: "<<  fst.uni+ fst.app+ fst.api+ "modules"+ fst.smodule+  "functions"+ fst.mfunction+ "lvars"+ fst.lvar << "\n";
@@ -253,6 +303,7 @@ std::vector<std::string> Assembler::get_sym_key(const key_tok_t ktt,  const full
   }
   return key; 
 }
+*/
 
 s_int_t Assembler::get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst) {
 
@@ -289,4 +340,57 @@ s_int_t Assembler::get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst) 
   }
   std::cerr << "can't resolve symbol:'" << error_str << "' got nullptr\n!";
   return -1;
+}
+
+
+full_symbol_t Assembler::dotstr2modvar(const std::string& vs) {
+  return dotstr2fst(key_tok_t::mvar, vs);
+}
+full_symbol_t Assembler::dotstr2modfun(const std::string& vs) {
+  return dotstr2fst(key_tok_t::mfunction, vs);
+}
+full_symbol_t Assembler::dotstr2mod(const std::string& vs) { //  up2 mod, include or exclude mod
+  return dotstr2fst(key_tok_t::smodule, vs);
+}
+
+// arg vector size: app:1 api:2, up to  smodule:3  
+// mfunction:4, mvar:4,  larg:5, lvar:5, label:5
+full_symbol_t Assembler::dotstr2fst(key_tok_t ktt, const std::string& vs) {
+  full_symbol_t fst = {};
+  std::vector<std::string> keys  = split_string(vs, ".");
+  if(keys.size()<=0) { 
+    fst.app = fst.api = fst.smodule = fst.mfunction =
+    fst.mvar = fst.lvar = fst.larg = fst.label = "";
+    std::cerr << "str2fst error string: " 
+      << vs << "\n"; 
+    return fst;
+  }
+  switch(keys.size()) {
+  case 5:
+    if(ktt == key_tok_t::larg) 
+      fst.larg = keys[4];
+    else if(ktt == key_tok_t::lvar) 
+      fst.lvar = keys[4];
+    else if(ktt == key_tok_t::label) 
+      fst.label = keys[4];
+    else 
+      fst.larg = fst.lvar = fst.label = "";
+  case 4:
+    if(ktt == key_tok_t::mfunction) 
+      fst.mfunction = keys[3];
+    else if(ktt == key_tok_t::mvar) 
+      fst.mvar = keys[3];
+    else  
+      fst.mfunction = fst.mvar = "";
+  case 3:
+    fst.smodule = keys[2];
+  case 2:
+    fst.api = keys[1];
+  case 1:
+    fst.app = keys[0];
+    break;
+  default:
+    std::cerr << "str2fst error string: " << vs << "\n";
+  }
+  return fst;
 }

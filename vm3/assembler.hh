@@ -11,7 +11,7 @@ typedef struct {
 
 // enum class unresolved_t{
 enum class key_tok_t {
-  app=10, api, smodule, mvar,
+  app=10, api, smodule, mvar, mvar_total_count,
   mfunction, lvar, larg, label
 };
 typedef struct {
@@ -32,7 +32,8 @@ private:
   full_symbol_t current_context;
   std::vector<unresolved_symbol_t> unresolved_syms;
   s_int_t lvc=0;  // local variable count starting from %function
-  s_int_t lac=-1; // local variable count starting from fp-1 backing --
+  s_int_t lac=-1; // local argument count starting from fp-1 backward toward calling stack.
+  s_int_t mvc=0;  // module variable count, aka GLOBAL variable
   
 
 public:  
@@ -52,10 +53,11 @@ public:
   void add_app_name(const std::string &app);
   void add_api_name(const std::string &api);
   void add_module_name(const std::string &m);
+  void add_mvar_name(const std::string &mv, int n=1);
   void add_function_name(const std::string &f);
   void add_label_name(const std::string &l);
   void add_larg_name(const std::string &a);
-  void add_lvar_name(const std::string &v);
+  void add_lvar_name(const std::string &v, int n=1);
 
   void resolve_names();
 
@@ -64,5 +66,11 @@ public:
   full_symbol_t get_current_context() { return current_context; };
   std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);
   s_int_t get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst);
+
+  full_symbol_t dotstr2fst(key_tok_t ktt, const std::string& vs);
+  full_symbol_t dotstr2modfun(const std::string& s);
+  full_symbol_t dotstr2modvar(const std::string& s);
+  full_symbol_t dotstr2mod(const std::string& s);
+
 
 };

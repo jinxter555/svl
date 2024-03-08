@@ -79,13 +79,15 @@ public:
   inline void push_r();
   inline void pop_r();
 
-  // entire stack
-  inline void load();
-  inline void store();
+  // global vars data segment
+  inline void load_g();
+  inline void store_g();
 
   //local vars
-  //inline void load_l();
-  //inline void store_l();
+  inline void load_l();
+  inline void store_l();
+  inline void iprint();
+  inline void fprint();
 
   inline void mov();
 

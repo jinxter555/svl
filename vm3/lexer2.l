@@ -33,6 +33,7 @@ register        ([rR]{integer})
   yylval->emplace<long int>(Reg::fp); 
   return Parser::token::REGISTER; 
 }
+"uri"    return Parser::token::URI;
 "app"    return Parser::token::APP;
 "api"    return Parser::token::API;
 "module"    return Parser::token::MODULE;
@@ -44,6 +45,8 @@ register        ([rR]{integer})
 "call"    return Parser::token::CALL;
 "store_l"       return Parser::token::STORE_L;
 "load_l"        return Parser::token::LOAD_L;
+"store_g"       return Parser::token::STORE_G;
+"load_g"        return Parser::token::LOAD_G;
 {identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;

@@ -1,4 +1,7 @@
 %%module mod2
+%%mvar v1
+%%mvar v2
+%%mvar v3
 push_c 888888
 %call mod2:fun2 
 exit

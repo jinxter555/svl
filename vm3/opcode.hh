@@ -22,10 +22,12 @@ enum class Opcode {
   PUSH_C,
   PUSH_R,
   POP_R,
-  LOAD,
-  STORE,
+  LOAD_G,
+  STORE_G,
   LOAD_L,
   STORE_L,
+  IPRINT,
+  FPRINT,
   STACK_RESIZE
 };
 

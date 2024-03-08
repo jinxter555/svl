@@ -15,6 +15,10 @@ Commandline::Commandline(int argc, char* argv[]) {
       case 'h': outerr(argv); exit(0); break;
     }
   }
+  for(; optind < argc; optind++){      
+    infile_name += std::string(" ") + std::string(argv[optind]);  
+  } 
+
 }
 
 void Commandline::outerr(char *argv[]) {

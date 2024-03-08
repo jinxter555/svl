@@ -32,16 +32,22 @@ void VM::isub_r() {
 }
 
 // load targetR, from addrR, from offset
-void VM::load() { 
+void VM::load_l() { 
   us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
   if(loc > vmstack.size()-1) { std::cerr << "can't load from above the stack!\n"; return; }
   R[instruction->operands[0].i] = vmstack[loc];
 }
 
-void VM::store() { // store, from srcR, target addrR, target offset
+void VM::store_l() { // store, from srcR, target addrR, target offset
   us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
   if(loc > vmstack.size()-1) { std::cerr << "can't store above the stack!\n"; return; }
   vmstack[loc] = R[instruction->operands[0].i];
+}
+void VM::load_g() { 
+
+}
+void VM::store_g() {
+
 }
 
 void VM::call() {
@@ -109,6 +115,12 @@ void VM::push_r() {
     R[instruction->operands[0].i]
   );
 }
+void VM::iprint() {
+  std::cout << R[instruction->operands[0].i].i << "\n";
+}
+void VM::fprint() {
+  std::cout << R[instruction->operands[0].i].f << "\n";
+}
 void VM::pop_r() {
   if(vmstack.empty()) { // might want to comment this out for speed optimization
     std::cerr << "stack emtpy poped out\n";
@@ -139,8 +151,12 @@ void VM::dispatch() {
     case Opcode::POP_R:  pop_r();   break;
     case Opcode::PUSH_C: push_c();  break;
     case Opcode::PUSH_R: push_r();  break;
-    case Opcode::STORE: store();  break;
-    case Opcode::LOAD:  load();  break;
+    case Opcode::STORE_L: store_l();  break;
+    case Opcode::LOAD_L:  load_l();  break;
+    case Opcode::STORE_G: store_g();  break;
+    case Opcode::LOAD_G:  load_g();  break;
+    case Opcode::IPRINT:  iprint();  break;
+    case Opcode::FPRINT:  fprint();  break;
     case Opcode::CALL:   call();  break;
     case Opcode::RET:    ret();  break;
     case Opcode::RET_NM:  ret_nm();  break;

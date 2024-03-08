@@ -18,7 +18,6 @@
 %parse-param {Scanner* scanner}
 %parse-param {Assembler* assembler}
 
-
 %code requires {
 #include "assembler.hh"
 namespace vslasm {
@@ -28,18 +27,31 @@ namespace vslasm {
 %code {
 #include "Scanner2.hh"
 #define yylex(x) scanner->lex(x)
+
+
+//---------------
+#define call_param_d(x) \
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, x); \
+    asm_instr = {Opcode(Opcode::LOAD_L), call_register, Reg::fp, vadr};   \
+    assembler->set_instruction(asm_instr); \
+    assembler->insert_instruction(); \
+    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0}; \
+    assembler->set_instruction(asm_instr); \
+    assembler->insert_instruction();
+
+
 // instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 s_int_t call_register=0;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
 %token <long int> REGISTER
-%token CALL LOAD_L STORE_L
+%token CALL LOAD_L STORE_L LOAD_G STORE_G
  
 //%nterm <long int>  iexp
 //%nterm <double>     fexp
@@ -53,7 +65,7 @@ s_int_t call_register=0;
  
 %nterm <std::string> DOTSTR
 %nterm <std::string> call_params
-%nterm <full_symbol_t> modfunstr funlvarstr //modvarstr modfunvarstr
+%nterm <full_symbol_t> modfunstr funlvarstr uri_api //modvarstr modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode
 
@@ -98,14 +110,15 @@ super_instruction
   }
   | MODULO LOAD_L REGISTER COMMA funlvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $5);
-    asm_instr = {Opcode(Opcode::LOAD), $3, Reg::fp, vadr};  
+    asm_instr = {Opcode(Opcode::LOAD_L), $3, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
   }
   | MODULO STORE_L REGISTER COMMA funlvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $5);
-    asm_instr = {Opcode(Opcode::STORE), $3, Reg::fp, vadr};  
+    asm_instr = {Opcode(Opcode::STORE_L), $3, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
   }
+  // MODULO INIT_GV_COUNT {} // global variable count for vmstack.resize
   /*
   | MODULO STR {
     std::cerr << "unknown super instruction!\n";
@@ -118,11 +131,27 @@ super_instruction
 
 // do not insert directives in to assembly::code[]
 directive
-  : MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } 
+  : MODULO MODULO URI uri_api { skipline=true;} 
+  | MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } 
+  | MODULO MODULO MVAR STR {
+    assembler->add_mvar_name($4);  
+    skipline=true;
+    }
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
-  | MODULO MODULO LABEL STR       {assembler->add_label_name($4); skipline=true;}
+  | MODULO MODULO LABEL STR       {
+    assembler->add_label_name($4);
+    std::cout << "adding label: " << $4 << "\n";
+    skipline=true;}
   | MODULO MODULO LARG STR        {assembler->add_larg_name($4); skipline=true;}
   // array needs another instruction to resize vmstack
+  ;
+
+uri_api
+  : COLON COLON STR DOT STR {
+    assembler->add_app_name($3);
+    assembler->add_api_name($5);
+    $$ = assembler->get_current_context();
+    } //full symbol from another app api module
   ;
 
 DOTSTR
@@ -161,11 +190,16 @@ modvarstr
   ;
   */
 
+/*
 call_params
   : funlvarstr { 
     std::cout << "cpara1: " <<  $1.lvar << "\n";
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $1);
     asm_instr = {Opcode(Opcode::LOAD), call_register, Reg::fp, vadr};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();
+
+    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};  
     assembler->set_instruction(asm_instr); 
     assembler->insert_instruction();
     }
@@ -175,7 +209,17 @@ call_params
     asm_instr = {Opcode(Opcode::LOAD), call_register, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
     assembler->insert_instruction();
+
+    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();
     }
+  ;
+*/
+
+call_params
+  : funlvarstr { call_param_d($1); }
+  | call_params COMMA funlvarstr { call_param_d($3); }
   ;
 
 call_register
