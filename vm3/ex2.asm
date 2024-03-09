@@ -1,10 +1,12 @@
 %%module mod2
-%%mvar v1
-%%mvar v2
-%%mvar v3
 push_c 888888
 %call mod2:fun2 
 exit
+%%function init_ds
+%mvar v1 1
+%mvar v2 2
+%mvar v3 3
+ret
 %%function fun1
 %%larg xyz
 %lvar i1 9999999

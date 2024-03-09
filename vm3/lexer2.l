@@ -43,10 +43,10 @@ register        ([rR]{integer})
 "lvar"    return Parser::token::LVAR;
 "larg"    return Parser::token::LARG; // local argument
 "call"    return Parser::token::CALL;
-"store_l"       return Parser::token::STORE_L;
-"load_l"        return Parser::token::LOAD_L;
-"store_g"       return Parser::token::STORE_G;
-"load_g"        return Parser::token::LOAD_G;
+"%store_l"       return Parser::token::STORE_L;
+"%load_l"        return Parser::token::LOAD_L;
+"%store_g"       return Parser::token::STORE_G;
+"%load_g"        return Parser::token::LOAD_G;
 {identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;

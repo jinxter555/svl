@@ -1,6 +1,10 @@
 #include "assembly.hh"
 
+void Assembly::set_data_seg(VM &vm) {
+  vm.set_data_seg(&data_seg);
+}
 void Assembly::run(VM &vm) {
+  vm.set_data_seg(&data_seg);
   for(vm.pc=0; vm.pc < pc_load;) {
     //print_instruction(vm.pc);
     vm.dispatch(code[vm.pc++]); // note pc++ is here and not in for

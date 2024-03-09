@@ -24,11 +24,14 @@ enum class Opcode {
   POP_R,
   LOAD_G,
   STORE_G,
+  DATA_ADD,
   LOAD_L,
   STORE_L,
   IPRINT,
   FPRINT,
-  STACK_RESIZE
+  STACK_RESIZE,
+  DATA_RESIZE,
+  DATA_SIZE,
 };
 
 extern std::unordered_map<std::string, Opcode> opcode_table ;

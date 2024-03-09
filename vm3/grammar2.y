@@ -102,20 +102,38 @@ super_instruction
     assembler->set_instruction(asm_instr); 
   }
   | MODULO LVAR STR FLT  {
+    reg_t operand1;
+    operand1.f = $4;
+    assembler->add_lvar_name($3); 
+    asm_instr = {Opcode(Opcode::PUSH_C), operand1, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | MODULO MVAR STR {
+    assembler->add_mvar_name($3);  
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | MODULO MVAR STR INT {
+    assembler->add_mvar_name($3);  
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, $4, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | MODULO MVAR STR FLT {
     reg_t operand2;
     operand2.f = $4;
-    assembler->add_lvar_name($3); 
-    asm_instr = {Opcode(Opcode::PUSH_C), operand2, 0, 0};  
+    assembler->add_mvar_name($3);  
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, operand2, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO LOAD_L REGISTER COMMA funlvarstr {
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $5);
-    asm_instr = {Opcode(Opcode::LOAD_L), $3, Reg::fp, vadr};  
+  | LOAD_L REGISTER COMMA funlvarstr {
+    std::cout << "loading local v\n";
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
+    asm_instr = {Opcode(Opcode::LOAD_L), $2, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO STORE_L REGISTER COMMA funlvarstr {
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $5);
-    asm_instr = {Opcode(Opcode::STORE_L), $3, Reg::fp, vadr};  
+  | STORE_L REGISTER COMMA funlvarstr {
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
+    asm_instr = {Opcode(Opcode::STORE_L), $2, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
   }
   // MODULO INIT_GV_COUNT {} // global variable count for vmstack.resize
@@ -133,10 +151,6 @@ super_instruction
 directive
   : MODULO MODULO URI uri_api { skipline=true;} 
   | MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } 
-  | MODULO MODULO MVAR STR {
-    assembler->add_mvar_name($4);  
-    skipline=true;
-    }
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
   | MODULO MODULO LABEL STR       {
     assembler->add_label_name($4);

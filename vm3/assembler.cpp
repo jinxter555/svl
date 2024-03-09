@@ -28,6 +28,8 @@ Opcode Assembler::lookup_opcode(const std::string& opname) {
 }
 
 void Assembler::run(VM& vm) {
+  if(vm.data_seg!=nullptr) // reset data segment
+    vm.data_seg->resize(0);
   Assembly::run(vm);
 }
 
@@ -142,13 +144,13 @@ void Assembler::add_lvar_name(const std::string &v, int n) { //  int n, with off
   context->add_node(keys, lvc);
   lvc += n;
 }
-void Assembler::add_mvar_name(const std::string &mv, int n) { // int n, with offset for array
+void Assembler::add_mvar_name(const std::string &mv, int offset) { // int n, with offset for array
   current_context.mvar = mv;
   full_symbol_t fst = current_context; fst.mvar= mv;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mvar, fst));
   keys.push_back("addr");
   context->add_node(keys, mvc);
-  mvc += n;
+  mvc += offset;
 }
 
 void Assembler::add_larg_name(const std::string &a) {

@@ -53,7 +53,7 @@ public:
   void add_app_name(const std::string &app);
   void add_api_name(const std::string &api);
   void add_module_name(const std::string &m);
-  void add_mvar_name(const std::string &mv, int n=1);
+  void add_mvar_name(const std::string &mv, int offset=1 ); // offset, [n] elements of an array 1 is
   void add_function_name(const std::string &f);
   void add_label_name(const std::string &l);
   void add_larg_name(const std::string &a);

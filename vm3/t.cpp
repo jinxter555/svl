@@ -1,29 +1,48 @@
 #include <iostream>
 #include <string>
-#include <regex>
+#include <vector>
 
-std::string match_and_return_rest(const std::string& line, const std::string& pattern) {
-  std::smatch match;
-  std::regex regex(pattern);
 
-  if (std::regex_search(line, match, regex)) {
-    // Match found, return the rest of the line after the match
-    return line.substr(match.position() + match.str(0).size());
-  } else {
-    // No match found, return an empty string
-    return "";
-  }
-}
 
+typedef union {
+  int i;
+  float f;
+  int adr;
+} reg_t;
+
+
+using namespace std;
 int main() {
-  std::string line1 = "\\print line world";
-  std::string line2 = "\\print program information";
-  std::string pattern = "\\print";
+  vector<reg_t> data_seg;
+  vector<reg_t> *dsd = &data_seg;
 
-  std::string rest_of_line1 = match_and_return_rest(line1, pattern);
-  std::string rest_of_line2 = match_and_return_rest(line2, pattern);
+  reg_t t1;
+  reg_t t2;
+  reg_t t3;
+  t1.f = 123.1f;
+  t2.f = 456.2f; 
+  t3.f = 123.45f;
 
-  std::cout << "Line 1: " << rest_of_line1 << std::endl;  // Output: This is a line with
-  std::cout << "Line 2: " << rest_of_line2 << std::endl;  // Output: 
+  //data_seg.push_back(t1);
+  //data_seg.push_back(t2);
+
+  dsd->resize(1);
+  cout <<  dsd->size() << "\n";
+  cout <<  dsd->capacity() << "\n";
+  //dsd->resize(10);
+   (*dsd)[1] = t1;
+  cout <<  dsd->size() << "\n";
+  dsd->resize(2);
+   (*dsd)[3] = t3;
+  cout <<  dsd->size() << "\n";
+
+   auto f1 = t1.f;
+
+  reg_t o = data_seg.back();
+  cout <<  data_seg[1].f << "\n";
+  cout <<  data_seg[3].f << "\n";
+  //cout <<  d1.f << "\n";
+
+
   return 0;
 }

@@ -1,8 +1,11 @@
 #include "vm.hh"
 
 VM::VM() {
-  R[Reg::fp].i = 0;
+  //R[Reg::fp].i = 0;
+  data_seg = nullptr;
 }
+
+
 void VM::mov() {
   //R[instruction->operands[0].i].i
   //  = instruction->operands[1].i;
@@ -44,10 +47,15 @@ void VM::store_l() { // store, from srcR, target addrR, target offset
   vmstack[loc] = R[instruction->operands[0].i];
 }
 void VM::load_g() { 
-
+  us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+  if(loc > data_seg->size()-1) { std::cerr << "can't load from above the data segment!\n"; return; }
+  R[instruction->operands[0].i] = (*data_seg)[loc];
 }
-void VM::store_g() {
 
+void VM::store_g() {
+  us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+  if(loc > data_seg->size()-1) { std::cerr << "can't store above the data segment!\n"; return; }
+  (*data_seg)[loc] = R[instruction->operands[0].i];
 }
 
 void VM::call() {
@@ -136,7 +144,29 @@ void VM::stack_resize() {
   us_int_t sp=vmstack.size();
   vmstack.resize(sp + instruction->operands[0].i);
 }
+void VM::data_resize() {
+  us_int_t dp=data_seg->size();
+  data_seg->resize(dp + instruction->operands[0].i);
+}
+void VM::data_size() {
+  R[instruction->operands[0].i].i = data_seg->size();
+}
 
+// data_add Reg, 0, 0   # add value of reg
+// data_add -1, int    # add number int instead
+// data_add -1, float   # add number float instead
+void VM::data_add() {
+  if( instruction->operands[0].i==-1) 
+    data_seg->push_back(instruction->operands[1]);
+  else
+    data_seg->push_back(R[instruction->operands[0].i]);
+}
+
+
+void VM::set_data_seg(std::vector<reg_t> *sds) {
+  if(data_seg == nullptr)
+    data_seg  = sds;
+}
 void VM::dispatch(instr_t &itt) {
   instruction = &itt;
   dispatch();
@@ -155,6 +185,7 @@ void VM::dispatch() {
     case Opcode::LOAD_L:  load_l();  break;
     case Opcode::STORE_G: store_g();  break;
     case Opcode::LOAD_G:  load_g();  break;
+    case Opcode::DATA_ADD:   data_add();  break;
     case Opcode::IPRINT:  iprint();  break;
     case Opcode::FPRINT:  fprint();  break;
     case Opcode::CALL:   call();  break;
@@ -162,6 +193,8 @@ void VM::dispatch() {
     case Opcode::RET_NM:  ret_nm();  break;
     case Opcode::RET_NP:  ret_np();  break;
     case Opcode::STACK_RESIZE:   stack_resize();  break;
+    case Opcode::DATA_RESIZE:   data_resize();  break;
+    case Opcode::DATA_SIZE:   data_size();  break;
     case Opcode::EXIT:   vmexit();  break;
     default: std::cerr << "you've forgot to add case instruction. something very wrong!!!!"; break;
 

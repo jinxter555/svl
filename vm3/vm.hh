@@ -42,7 +42,7 @@ public:
 
 class VM {
   friend class Assembly;
-  //friend class Assembler;
+  friend class Assembler;
   friend class AssemblerInteractive; // for now to printout stack and frames
 
 private:
@@ -51,6 +51,7 @@ private:
   reg_t R[MAXREG];
   std::stack<Frame> vmframes;
   std::vector<reg_t> vmstack;
+  std::vector<reg_t> *data_seg;
 
 // s_int_t fp = 0;
 s_int_t pc = 0;
@@ -59,6 +60,7 @@ s_int_t exit_max_pc=999999999999;
 
 public:
   VM();
+  void set_data_seg(std::vector<reg_t>*);
   void dispatch(instr_t &itt);
   inline void dispatch();
 
@@ -82,6 +84,7 @@ public:
   // global vars data segment
   inline void load_g();
   inline void store_g();
+  inline void data_add();
 
   //local vars
   inline void load_l();
@@ -97,4 +100,6 @@ public:
   inline void ret_np();
   inline void vmexit();
   inline void stack_resize();
+  inline void data_resize();
+  inline void data_size();
 };

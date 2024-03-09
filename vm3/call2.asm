@@ -1,4 +1,4 @@
-%%module mc1
+%%module mc2
 %call mc1:main
 exit
 %%function main
