@@ -1,6 +1,12 @@
 %%module mod2
+%mvar a[]
+%mvar b[5]
+%mvar c 123
 push_c 888888
+exit
+#
 %call  init_ds
+%call mod2:fun2 
 %call mod2:fun2 
 exit
 %%function init_ds
@@ -30,6 +36,8 @@ ret 0
 %lvar i3 3
 %load_g r0, r5, hello
 iprint r0
+iadd_c r0, r0, 1
+%store_g r0, r5, hello
 %load_l r0, xyz
 %load_l r2, i1
 push_c 2222

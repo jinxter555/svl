@@ -46,7 +46,7 @@ bool skipline=false;
 s_int_t call_register=0;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI IARRAY FARRAY LSBRACKET RSBRACKET
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
@@ -125,6 +125,18 @@ super_instruction
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, operand2, 0};  
     assembler->set_instruction(asm_instr); 
   }
+  | MODULO MVAR STR LSBRACKET RSBRACKET {
+      std::cout << "m array def\n";
+    assembler->add_mvar_name($3);  
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  } 
+  | MODULO MVAR STR LSBRACKET INT RSBRACKET {
+    std::cout << "m array def num element: " << $5 << "\n";
+    assembler->add_mvar_name($3, $5);   // don't forget the offset INT
+    asm_instr = {Opcode(Opcode::DATA_RESIZE), $5, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  } 
   | LOAD_L REGISTER COMMA funlvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
     asm_instr = {Opcode(Opcode::LOAD_L), $2, Reg::fp, vadr};  
@@ -138,6 +150,11 @@ super_instruction
   | LOAD_G REGISTER COMMA REGISTER COMMA modvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
     asm_instr = {Opcode(Opcode::LOAD_G), $2, $4, vadr};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | STORE_G REGISTER COMMA REGISTER COMMA modvarstr {
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
+    asm_instr = {Opcode(Opcode::STORE_G), $2, $4, vadr};  
     assembler->set_instruction(asm_instr); 
   }
   // MODULO INIT_GV_COUNT {} // global variable count for vmstack.resize

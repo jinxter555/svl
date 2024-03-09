@@ -147,6 +147,7 @@ void VM::stack_resize() {
   vmstack.resize(sp + instruction->operands[0].i);
 }
 void VM::data_resize() {
+  // std::cout << "data segment resize: " << instruction->operands[0].i << "\n";
   us_int_t dp=data_seg->size();
   data_seg->resize(dp + instruction->operands[0].i);
 }

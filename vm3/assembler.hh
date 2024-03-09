@@ -35,6 +35,7 @@ private:
   s_int_t lac=-1; // local argument count starting from fp-1 backward toward calling stack.
   s_int_t mvc=0;  // module variable count, aka GLOBAL variable
   
+  bool warning_print = false;
 
 public:  
   Assembler();

@@ -99,7 +99,7 @@ void Assembler::add_app_name(const std::string &app) {
 }
 
 void Assembler::add_api_name(const std::string &api) {
-  std::cout << "in add api to context: "  << api << "\n";
+  // std::cout << "in add api to context: "  << api << "\n";
   current_context.api = api;
   context->add_node({
     current_context.uni, 
@@ -118,7 +118,7 @@ void Assembler::add_module_name(const std::string &m) {
 }
 
 void Assembler::add_function_name(const std::string &f) {
-  std::cout << "in add function to context: "  << f << "\n";
+  //std::cout << "in add function to context: "  << f << "\n";
   current_context.mfunction = f; 
   lvc = 0; // reset local var count to zero addr for every function
   lac = -1; // reset local arg count to zero addr for every function
@@ -201,9 +201,7 @@ void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &f
       break;
   }
   unresolved_syms.push_back(notfound);
-  std::cerr 
-    << "adding to not found symbols location: " << pc_load 
-    << " " << fst.smodule << ":" << fst.mfunction << "' to unresolved vector\n";
+  // std::cerr << "adding to not found symbols location: " << pc_load << " " << fst.smodule << ":" << fst.mfunction << "' to unresolved vector\n";
 
 }
 
@@ -219,7 +217,7 @@ void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst)
   keys.push_back("addr");
   std::shared_ptr<TreeNode> sym_node = context->get_node(keys);
   if(sym_node == nullptr) {
-    std::cout << "function '" << fst.mfunction << "' not found\n";
+    if(warning_print) std::cerr << "function '" << fst.mfunction << "' not found\n";
     add_unresolved_sym(key_tok_t::mfunction, lfst);
   } else {
     adr = std::any_cast<s_int_t>(sym_node->get_data());
