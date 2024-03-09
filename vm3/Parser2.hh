@@ -390,6 +390,7 @@ namespace vslasm {
       // uri_api
       // modfunstr
       // funlvarstr
+      // modvarstr
       char dummy2[sizeof (full_symbol_t)];
 
       // FLT
@@ -543,10 +544,11 @@ namespace vslasm {
         S_DOTSTR = 42,                           // DOTSTR
         S_modfunstr = 43,                        // modfunstr
         S_funlvarstr = 44,                       // funlvarstr
-        S_call_params = 45,                      // call_params
-        S_call_register = 46,                    // call_register
-        S_instruction = 47,                      // instruction
-        S_opcode = 48                            // opcode
+        S_modvarstr = 45,                        // modvarstr
+        S_call_params = 46,                      // call_params
+        S_call_register = 47,                    // call_register
+        S_instruction = 48,                      // instruction
+        S_opcode = 49                            // opcode
       };
     };
 
@@ -588,6 +590,7 @@ namespace vslasm {
       case symbol_kind::S_uri_api: // uri_api
       case symbol_kind::S_modfunstr: // modfunstr
       case symbol_kind::S_funlvarstr: // funlvarstr
+      case symbol_kind::S_modvarstr: // modvarstr
         value.move< full_symbol_t > (std::move (that.value));
         break;
 
@@ -719,6 +722,7 @@ switch (yykind)
       case symbol_kind::S_uri_api: // uri_api
       case symbol_kind::S_modfunstr: // modfunstr
       case symbol_kind::S_funlvarstr: // funlvarstr
+      case symbol_kind::S_modvarstr: // modvarstr
         value.template destroy< full_symbol_t > ();
         break;
 
@@ -1752,8 +1756,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 63,     ///< Last index in yytable_.
-      yynnts_ = 13,  ///< Number of nonterminal symbols.
+      yylast_ = 70,     ///< Last index in yytable_.
+      yynnts_ = 14,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1767,7 +1771,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1771 "Parser2.hh"
+#line 1775 "Parser2.hh"
 
 
 

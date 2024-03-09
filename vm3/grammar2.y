@@ -65,7 +65,7 @@ s_int_t call_register=0;
  
 %nterm <std::string> DOTSTR
 %nterm <std::string> call_params
-%nterm <full_symbol_t> modfunstr funlvarstr uri_api //modvarstr modfunvarstr
+%nterm <full_symbol_t> modfunstr funlvarstr uri_api modvarstr // modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode
 
@@ -126,7 +126,6 @@ super_instruction
     assembler->set_instruction(asm_instr); 
   }
   | LOAD_L REGISTER COMMA funlvarstr {
-    std::cout << "loading local v\n";
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
     asm_instr = {Opcode(Opcode::LOAD_L), $2, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
@@ -134,6 +133,11 @@ super_instruction
   | STORE_L REGISTER COMMA funlvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
     asm_instr = {Opcode(Opcode::STORE_L), $2, Reg::fp, vadr};  
+    assembler->set_instruction(asm_instr); 
+  }
+  | LOAD_G REGISTER COMMA REGISTER COMMA modvarstr {
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
+    asm_instr = {Opcode(Opcode::LOAD_G), $2, $4, vadr};  
     assembler->set_instruction(asm_instr); 
   }
   // MODULO INIT_GV_COUNT {} // global variable count for vmstack.resize
@@ -193,16 +197,19 @@ funlvarstr
     $$.lvar = $1;
     }
   ;
-/*
 // set module and var full symbol  return a symbol struct
-/*
 modvarstr
-  : STR DOT STR { 
+  : STR { 
+    $$ = assembler->get_current_context();
+    $$.smodule = assembler->get_current_context().smodule;
+    $$.mvar = $1;
+    }
+  | STR COLON STR { 
+    $$ = assembler->get_current_context();
     $$.smodule = $1;
     $$.mvar = $3;
-  }
+    }
   ;
-  */
 
 /*
 call_params

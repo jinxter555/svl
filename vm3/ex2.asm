@@ -1,11 +1,13 @@
 %%module mod2
 push_c 888888
+%call  init_ds
 %call mod2:fun2 
 exit
 %%function init_ds
-%mvar v1 1
-%mvar v2 2
-%mvar v3 3
+%mvar v1 1111
+%mvar v2 2222
+%mvar v3 3333
+%mvar hello 8888
 ret
 %%function fun1
 %%larg xyz
@@ -26,6 +28,8 @@ ret 0
 %lvar return_value2 12
 %lvar i1 1
 %lvar i3 3
+%load_g r0, r5, hello
+iprint r0
 %load_l r0, xyz
 %load_l r2, i1
 push_c 2222
