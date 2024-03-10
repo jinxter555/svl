@@ -64,10 +64,11 @@ s_int_t call_register=0;
 %right              EXPONENT
  
 %nterm <std::string> DOTSTR
-%nterm <std::string> call_params
+%nterm  call_params
 %nterm <full_symbol_t> modfunstr funlvarstr uri_api modvarstr // modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode
+%nterm <long int> int_array  ielement
 
 
 %%
@@ -125,16 +126,16 @@ super_instruction
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, operand2, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO MVAR STR LSBRACKET RSBRACKET {
-      std::cout << "m array def\n";
+  | MODULO MVAR STR LSBRACKET int_array RSBRACKET  {
+      std::cout << "m array def  " << "$6" << "\n";
     assembler->add_mvar_name($3);  
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
     assembler->set_instruction(asm_instr); 
   } 
-  | MODULO MVAR STR LSBRACKET INT RSBRACKET {
-    std::cout << "m array def num element: " << $5 << "\n";
-    assembler->add_mvar_name($3, $5);   // don't forget the offset INT
-    asm_instr = {Opcode(Opcode::DATA_RESIZE), $5, 0, 0};  
+  | MODULO MVAR STR INT LSBRACKET RSBRACKET  {
+    std::cout << "m array def num element: " << $4 << "\n";
+    assembler->add_mvar_name($3, $4);   // don't forget the offset INT
+    asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
     assembler->set_instruction(asm_instr); 
   } 
   | LOAD_L REGISTER COMMA funlvarstr {
@@ -193,6 +194,16 @@ DOTSTR
   : STR
   | DOTSTR DOT STR { $$ = $1 + std::string(".")+ $3; }
   ;
+
+int_array 
+  : ielement 
+  | int_array ielement 
+  ;
+
+ielement
+  : INT { std::cout << $1 << " "; }
+  ;
+
 
 // set module and fun full symbol  return a symbol struct
 modfunstr

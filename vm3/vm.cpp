@@ -199,8 +199,8 @@ void VM::dispatch() {
     case Opcode::DATA_RESIZE:   data_resize();  break;
     case Opcode::DATA_SIZE:   data_size();  break;
     case Opcode::EXIT:   vmexit();  break;
-    default: std::cerr << "you've forgot to add case instruction. something very wrong!!!!"; break;
-
+    case Opcode::NOOP:   break;
+    default: std::cerr << "you've forgot to add case instruction: " <<  static_cast<int>(instruction->opcode) << "!!!!\n"; break;
   }
 }
 

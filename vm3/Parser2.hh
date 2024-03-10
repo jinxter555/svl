@@ -398,12 +398,13 @@ namespace vslasm {
 
       // INT
       // REGISTER
+      // int_array
+      // ielement
       // call_register
       char dummy4[sizeof (long int)];
 
       // STR
       // DOTSTR
-      // call_params
       char dummy5[sizeof (std::string)];
     };
 
@@ -550,13 +551,15 @@ namespace vslasm {
         S_directive = 44,                        // directive
         S_uri_api = 45,                          // uri_api
         S_DOTSTR = 46,                           // DOTSTR
-        S_modfunstr = 47,                        // modfunstr
-        S_funlvarstr = 48,                       // funlvarstr
-        S_modvarstr = 49,                        // modvarstr
-        S_call_params = 50,                      // call_params
-        S_call_register = 51,                    // call_register
-        S_instruction = 52,                      // instruction
-        S_opcode = 53                            // opcode
+        S_int_array = 47,                        // int_array
+        S_ielement = 48,                         // ielement
+        S_modfunstr = 49,                        // modfunstr
+        S_funlvarstr = 50,                       // funlvarstr
+        S_modvarstr = 51,                        // modvarstr
+        S_call_params = 52,                      // call_params
+        S_call_register = 53,                    // call_register
+        S_instruction = 54,                      // instruction
+        S_opcode = 55                            // opcode
       };
     };
 
@@ -608,13 +611,14 @@ namespace vslasm {
 
       case symbol_kind::S_INT: // INT
       case symbol_kind::S_REGISTER: // REGISTER
+      case symbol_kind::S_int_array: // int_array
+      case symbol_kind::S_ielement: // ielement
       case symbol_kind::S_call_register: // call_register
         value.move< long int > (std::move (that.value));
         break;
 
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DOTSTR: // DOTSTR
-      case symbol_kind::S_call_params: // call_params
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -740,13 +744,14 @@ switch (yykind)
 
       case symbol_kind::S_INT: // INT
       case symbol_kind::S_REGISTER: // REGISTER
+      case symbol_kind::S_int_array: // int_array
+      case symbol_kind::S_ielement: // ielement
       case symbol_kind::S_call_register: // call_register
         value.template destroy< long int > ();
         break;
 
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DOTSTR: // DOTSTR
-      case symbol_kind::S_call_params: // call_params
         value.template destroy< std::string > ();
         break;
 
@@ -1824,8 +1829,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 82,     ///< Last index in yytable_.
-      yynnts_ = 14,  ///< Number of nonterminal symbols.
+      yylast_ = 84,     ///< Last index in yytable_.
+      yynnts_ = 16,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1839,7 +1844,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1843 "Parser2.hh"
+#line 1848 "Parser2.hh"
 
 
 

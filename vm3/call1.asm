@@ -1,4 +1,3 @@
-%%uri ::helloapp.helloapi
 %%module mc1
 push_c 888888
 %call mc1:main

@@ -1,11 +1,11 @@
 %%module mc2
-%call mc1:main
+%call mc2:main
 exit
 %%function main
 %lvar i1 101
 %lvar i2 102
 %lvar i3 104
-%call mc1:fun2 r7, i1, i2
+%call mc2:fun2 r7, i1, i2
 ret 
 %%function fun2
 %%larg x

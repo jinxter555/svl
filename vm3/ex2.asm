@@ -1,6 +1,6 @@
 %%module mod2
-%mvar a[]
-%mvar b[5]
+%mvar a [1 2 3 4 5 6]
+%mvar b 3 []
 %mvar c 123
 push_c 888888
 exit
