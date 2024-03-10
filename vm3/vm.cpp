@@ -47,8 +47,14 @@ void VM::store_l() { // store, from srcR, target addrR, target offset
   vmstack[loc] = R[instruction->operands[0].i];
 }
 void VM::load_g() { 
+  us_int_t loc;
   if(data_seg == nullptr || data_seg->empty()) { std::cerr << "data segment have been not initalized!\n"; return; }
-  us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+
+  if(instruction->operands[1].i == -1)  // hack 
+    loc = instruction->operands[2].i;
+  else
+    loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+
   if(loc > data_seg->size()-1) { std::cerr << "can't load from above the data segment!\n"; return; }
   R[instruction->operands[0].i] = (*data_seg)[loc];
 }

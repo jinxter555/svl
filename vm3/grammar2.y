@@ -28,25 +28,13 @@ namespace vslasm {
 #include "Scanner2.hh"
 #define yylex(x) scanner->lex(x)
 
-
-//---------------
-#define call_param_d(x) \
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, x); \
-    asm_instr = {Opcode(Opcode::LOAD_L), call_register, Reg::fp, vadr};   \
-    assembler->set_instruction(asm_instr); \
-    assembler->insert_instruction(); \
-    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0}; \
-    assembler->set_instruction(asm_instr); \
-    assembler->insert_instruction();
-
-
 // instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 s_int_t call_register=0;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI IARRAY FARRAY LSBRACKET RSBRACKET
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
@@ -64,11 +52,11 @@ s_int_t call_register=0;
 %right              EXPONENT
  
 %nterm <std::string> DOTSTR
-%nterm  call_params
-%nterm <full_symbol_t> modfunstr funlvarstr uri_api modvarstr // modfunvarstr
+%nterm  param_list param
+%nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr // modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode
-%nterm <long int> int_array  ielement
+%nterm <reg_t> array number element
 
 
 %%
@@ -94,19 +82,13 @@ line
 super_instruction
   : MODULO CALL modfunstr 
     { assembler->super_opfun_set_instruction(Opcode::CALL, $3); }
-  | MODULO CALL modfunstr call_register COMMA call_params 
+//  | MODULO CALL modfunstr call_register COMMA call_params 
+  | MODULO CALL modfunstr call_register param_list
     { assembler->super_opfun_set_instruction(Opcode::CALL, $3); } 
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
-  | MODULO LVAR STR INT   {
+  | MODULO LVAR STR number   {
     assembler->add_lvar_name($3); 
     asm_instr = {Opcode(Opcode::PUSH_C), $4, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-  }
-  | MODULO LVAR STR FLT  {
-    reg_t operand1;
-    operand1.f = $4;
-    assembler->add_lvar_name($3); 
-    asm_instr = {Opcode(Opcode::PUSH_C), operand1, 0, 0};  
     assembler->set_instruction(asm_instr); 
   }
   | MODULO MVAR STR {
@@ -114,19 +96,12 @@ super_instruction
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO MVAR STR INT {
+  | MODULO MVAR STR number {
     assembler->add_mvar_name($3);  
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, $4, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO MVAR STR FLT {
-    reg_t operand2;
-    operand2.f = $4;
-    assembler->add_mvar_name($3);  
-    asm_instr = {Opcode(Opcode::DATA_ADD), -1, operand2, 0};  
-    assembler->set_instruction(asm_instr); 
-  }
-  | MODULO MVAR STR LSBRACKET int_array RSBRACKET  {
+  | MODULO MVAR STR LSBRACKET array RSBRACKET  {
       std::cout << "m array def  " << "$6" << "\n";
     assembler->add_mvar_name($3);  
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
@@ -158,14 +133,6 @@ super_instruction
     asm_instr = {Opcode(Opcode::STORE_G), $2, $4, vadr};  
     assembler->set_instruction(asm_instr); 
   }
-  // MODULO INIT_GV_COUNT {} // global variable count for vmstack.resize
-  /*
-  | MODULO STR {
-    std::cerr << "unknown super instruction!\n";
-    asm_instr = {Opcode(Opcode::NOOP), 0, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-  }
-  */
   ;
 
 
@@ -174,12 +141,8 @@ directive
   : MODULO MODULO URI uri_api { skipline=true;} 
   | MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } 
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
-  | MODULO MODULO LABEL STR       {
-    assembler->add_label_name($4);
-    std::cout << "adding label: " << $4 << "\n";
-    skipline=true;}
+//| MODULO MODULO LABEL STR       { assembler->add_label_name($4); std::cout << "adding label: " << $4 << "\n"; skipline=true;}
   | MODULO MODULO LARG STR        {assembler->add_larg_name($4); skipline=true;}
-  // array needs another instruction to resize vmstack
   ;
 
 uri_api
@@ -195,13 +158,55 @@ DOTSTR
   | DOTSTR DOT STR { $$ = $1 + std::string(".")+ $3; }
   ;
 
-int_array 
-  : ielement 
-  | int_array ielement 
+//----------------------------------- array decl
+array 
+  : element 
+  | array element 
   ;
 
-ielement
-  : INT { std::cout << $1 << " "; }
+element
+  : number { std::cout << $1.i << " "; }
+  ;
+
+//--- number dec
+number 
+  : FLT { $$.f = $1; }
+  | INT { $$.i = $1; }
+  ;
+
+//-----------------------------------
+call_register
+  : REGISTER { call_register = $1; }
+  ;
+
+//-----------------------------------
+param_list
+  : param
+  | param param_list
+  ;
+
+param 
+  : funlvarstr {
+    //std::cout << "funlvarstr\n";
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $1);
+    asm_instr = {Opcode(Opcode::LOAD_L), call_register, Reg::fp, vadr};
+    //std::cout << "vadr: " << vadr << "\n";
+    assembler->set_instruction(asm_instr);
+    assembler->insert_instruction();
+    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};
+    assembler->set_instruction(asm_instr);
+    assembler->insert_instruction();
+  }
+  | modvarstr {
+    //std::cout << "modvarstr\n";
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $1);
+    asm_instr = {Opcode(Opcode::LOAD_G), call_register, -1, vadr};
+    assembler->set_instruction(asm_instr);
+    assembler->insert_instruction();
+    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};
+    assembler->set_instruction(asm_instr);
+    assembler->insert_instruction();
+  }
   ;
 
 
@@ -239,45 +244,8 @@ modvarstr
     }
   ;
 
-/*
-call_params
-  : funlvarstr { 
-    std::cout << "cpara1: " <<  $1.lvar << "\n";
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $1);
-    asm_instr = {Opcode(Opcode::LOAD), call_register, Reg::fp, vadr};  
-    assembler->set_instruction(asm_instr); 
-    assembler->insert_instruction();
-
-    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-    assembler->insert_instruction();
-    }
-  | call_params COMMA funlvarstr { 
-    std::cout << "cparaM: " <<  $3.lvar << "\n";
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $3);
-    asm_instr = {Opcode(Opcode::LOAD), call_register, Reg::fp, vadr};  
-    assembler->set_instruction(asm_instr); 
-    assembler->insert_instruction();
-
-    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-    assembler->insert_instruction();
-    }
-  ;
-*/
-
-call_params
-  : funlvarstr { call_param_d($1); }
-  | call_params COMMA funlvarstr { call_param_d($3); }
-  ;
-
-call_register
-  : REGISTER { call_register = $1; std::cout << "call register: " << $1 << "\n";}
-  ;
-
 instruction
   : opcode { 
-    //std::cout<< "meta-opname code " << static_cast<int>($1) << "\n"; 
     asm_instr = {$1, 0, 0, 0};  
     assembler->set_instruction(asm_instr); 
   }
@@ -293,38 +261,16 @@ instruction
     asm_instr = {$1, $2, $4, $6}; 
     assembler->set_instruction(asm_instr); 
   }
-  | opcode INT { 
+  | opcode number { 
     asm_instr = {$1, $2, 0, 0}; 
     assembler->set_instruction(asm_instr); 
   }
-  | opcode REGISTER COMMA INT { 
+  | opcode REGISTER COMMA number { 
     asm_instr = {$1, $2, $4, 0};
     assembler->set_instruction(asm_instr); 
-
   }
-  | opcode REGISTER COMMA REGISTER COMMA INT { 
+  | opcode REGISTER COMMA REGISTER COMMA number { 
     asm_instr = {$1, $2, $4, $6}; 
-    assembler->set_instruction(asm_instr); 
-  }
-  //
-  // special init for float due to limitation of union
-  | opcode FLT { 
-    reg_t operand1;
-    operand1.f = $2;
-    asm_instr = {$1, operand1}; 
-    assembler->set_instruction(asm_instr); 
-
-  }
-  | opcode REGISTER COMMA FLT { 
-    reg_t operand2;
-    operand2.f = $4;
-    asm_instr = {$1, $2, operand2}; 
-    assembler->set_instruction(asm_instr); 
-  }
-  | opcode REGISTER COMMA REGISTER COMMA FLT { 
-    reg_t operand3;
-    operand3.f = $6;
-    asm_instr = {$1, $2, $4, operand3}; 
     assembler->set_instruction(asm_instr); 
   }
   ;

@@ -4,17 +4,17 @@ exit
 %%function main
 %lvar i1 101
 %lvar i2 102
-%lvar i3 104
-%call mc2:fun2 r7, i1, i2
+%lvar i3 103
+%call mc2:fun2 r7 i1 i2 i3
 ret 
 %%function fun2
-%%larg x
-%%larg y
-%lvar return_value1 11
-%lvar return_value2 12
-%lvar i1 1
-%lvar i3 3
-%load_l r1, x
-%load_l r2, y
-push_c 2222
-ret_np 1
+%%larg i3
+%%larg i2
+%%larg i1
+%load_l r0, i1
+%load_l r1, i2
+%load_l r2, i3
+iprint r0
+iprint r1
+iprint r2
+ret

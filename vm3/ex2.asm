@@ -1,9 +1,8 @@
 %%module mod2
-%mvar a [1 2 3 4 5 6]
+%mvar a [1 2 3 4 5 6 7.8]
 %mvar b 3 []
 %mvar c 123
 push_c 888888
-exit
 #
 %call  init_ds
 %call mod2:fun2 

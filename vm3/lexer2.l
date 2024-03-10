@@ -39,8 +39,6 @@ register        ([rR]{integer})
 "module"    return Parser::token::MODULE;
 "mvar"    return Parser::token::MVAR;
 "function"    return Parser::token::FUNCTION;
-"iarray"    return Parser::token::IARRAY;
-"farray"    return Parser::token::FARRAY;
 "label"    return Parser::token::LABEL;
 "lvar"    return Parser::token::LVAR;
 "larg"    return Parser::token::LARG; // local argument
