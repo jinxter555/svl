@@ -384,6 +384,8 @@ namespace vslasm {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // loadstore_l
+      // loadstore_g
       // opcode
       char dummy1[sizeof (Opcode)];
 
@@ -547,20 +549,22 @@ namespace vslasm {
         S_lines = 39,                            // lines
         S_line = 40,                             // line
         S_super_instruction = 41,                // super_instruction
-        S_directive = 42,                        // directive
-        S_uri_api = 43,                          // uri_api
-        S_DOTSTR = 44,                           // DOTSTR
-        S_array = 45,                            // array
-        S_element = 46,                          // element
-        S_number = 47,                           // number
-        S_call_register = 48,                    // call_register
-        S_param_list = 49,                       // param_list
-        S_param = 50,                            // param
-        S_modfunstr = 51,                        // modfunstr
-        S_funlvarstr = 52,                       // funlvarstr
-        S_modvarstr = 53,                        // modvarstr
-        S_instruction = 54,                      // instruction
-        S_opcode = 55                            // opcode
+        S_loadstore_l = 42,                      // loadstore_l
+        S_loadstore_g = 43,                      // loadstore_g
+        S_directive = 44,                        // directive
+        S_uri_api = 45,                          // uri_api
+        S_DOTSTR = 46,                           // DOTSTR
+        S_array = 47,                            // array
+        S_element = 48,                          // element
+        S_number = 49,                           // number
+        S_call_register = 50,                    // call_register
+        S_param_list = 51,                       // param_list
+        S_param = 52,                            // param
+        S_modfunstr = 53,                        // modfunstr
+        S_funlvarstr = 54,                       // funlvarstr
+        S_modvarstr = 55,                        // modvarstr
+        S_instruction = 56,                      // instruction
+        S_opcode = 57                            // opcode
       };
     };
 
@@ -595,6 +599,8 @@ namespace vslasm {
       {
         switch (this->kind ())
     {
+      case symbol_kind::S_loadstore_l: // loadstore_l
+      case symbol_kind::S_loadstore_g: // loadstore_g
       case symbol_kind::S_opcode: // opcode
         value.move< Opcode > (std::move (that.value));
         break;
@@ -744,6 +750,8 @@ namespace vslasm {
         // Value type destructor.
 switch (yykind)
     {
+      case symbol_kind::S_loadstore_l: // loadstore_l
+      case symbol_kind::S_loadstore_g: // loadstore_g
       case symbol_kind::S_opcode: // opcode
         value.template destroy< Opcode > ();
         break;
@@ -1820,8 +1828,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 87,     ///< Last index in yytable_.
-      yynnts_ = 18,  ///< Number of nonterminal symbols.
+      yylast_ = 80,     ///< Last index in yytable_.
+      yynnts_ = 20,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1835,7 +1843,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1839 "Parser2.hh"
+#line 1847 "Parser2.hh"
 
 
 

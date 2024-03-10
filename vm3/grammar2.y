@@ -29,6 +29,8 @@ namespace vslasm {
 #define yylex(x) scanner->lex(x)
 
 // instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
+
+int line=1;
 instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
 s_int_t call_register=0;
@@ -55,7 +57,7 @@ s_int_t call_register=0;
 %nterm  param_list param
 %nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr // modfunvarstr
 %nterm <long int> call_register
-%nterm <Opcode>     opcode
+%nterm <Opcode>     opcode loadstore_l loadstore_g
 %nterm <reg_t> array number element
 
 
@@ -73,6 +75,7 @@ line
     if(!skipline) // skip assembly %% directives because it's not instruction
       assembler->insert_instruction();  // instruction inserted when parsing a file aka encountering a newline char
     skipline=false;
+    line++;
   }
   | instruction
   | directive
@@ -113,6 +116,7 @@ super_instruction
     asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
     assembler->set_instruction(asm_instr); 
   } 
+  /*
   | LOAD_L REGISTER COMMA funlvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
     asm_instr = {Opcode(Opcode::LOAD_L), $2, Reg::fp, vadr};  
@@ -123,6 +127,13 @@ super_instruction
     asm_instr = {Opcode(Opcode::STORE_L), $2, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
   }
+  */
+  | loadstore_l REGISTER COMMA funlvarstr {
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
+    asm_instr = {$1, $2, Reg::fp, vadr};  
+    assembler->set_instruction(asm_instr); 
+  }
+/*
   | LOAD_G REGISTER COMMA REGISTER COMMA modvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
     asm_instr = {Opcode(Opcode::LOAD_G), $2, $4, vadr};  
@@ -133,8 +144,23 @@ super_instruction
     asm_instr = {Opcode(Opcode::STORE_G), $2, $4, vadr};  
     assembler->set_instruction(asm_instr); 
   }
+  */
+  | loadstore_g REGISTER COMMA REGISTER COMMA modvarstr {
+    s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
+    asm_instr = {$1, $2, $4, vadr};  
+    assembler->set_instruction(asm_instr); 
+  }
   ;
 
+loadstore_l
+  : LOAD_L  {$$ = Opcode(Opcode::LOAD_L);  }
+  | STORE_L {$$ = Opcode(Opcode::STORE_L); }
+  ;
+
+loadstore_g
+  : LOAD_G  {$$ = Opcode(Opcode::LOAD_G);  }
+  | STORE_G {$$ = Opcode(Opcode::STORE_G); }
+  ;
 
 // do not insert directives in to assembly::code[]
 directive
@@ -284,5 +310,5 @@ opcode:
 // directive: EOL ;
 
 void vslasm::Parser::error(const std::string& msg) {
-  std::cerr << msg << "\n";
+  std::cerr << msg + " on line: " << line << "\n";
 }
