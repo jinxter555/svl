@@ -61,7 +61,7 @@ void Assembler::set_instruction(const instr_t &t) {
 }
 
 void Assembler::insert_instruction() {
-  Assembly::insert_instruction();
+  Assembly::insert_instruction(line_total_read);
 
   // reset instruction, if vm:disatch being 
   // called from somewhere won't segmentfalt
@@ -73,7 +73,7 @@ void Assembler::print_program() {
     snprintf(istr, 7, "%06d", i);
     std::cout 
       << "code[" << istr << "]: " 
-      // <<  int(code[i].opcode) << " "  
+      << "lineno: " << line_no[i] << " "
       <<  Instruction::opcode_string_map[code[i].opcode] << " "  
       << "operands: "  
       <<  code[i].operands[0].i << ","  

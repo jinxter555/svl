@@ -25,6 +25,7 @@ typedef struct {
 
 class Assembler : public Assembly {
   friend class AssemblerInteractive;
+  friend class Parser;
 private:
   Tree *context;
 
@@ -75,5 +76,6 @@ public:
   full_symbol_t dotstr2modvar(const std::string& s);
   full_symbol_t dotstr2mod(const std::string& s);
 
+  us_int_t line_total_read=0; // to be used by Parser
 
 };

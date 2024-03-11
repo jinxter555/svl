@@ -41,7 +41,9 @@ void AssemblerInteractive::parse_prompt(const std::string &line) {
 }
 
 void AssemblerInteractive::loadsrc(std::ifstream &fs) {
-  while(std::getline(fs,  source[line_read_count++].line_str));
+  std::string line;
+  while(std::getline(fs,  line))
+    source[line_read_count++].line_str = line;
   fs.clear(); fs.seekg(0);
 }
 
@@ -55,7 +57,7 @@ void AssemblerInteractive::load(const std::string &cfn) {
       scanner.switch_streams(&infile, &std::cerr);
       parser.parse();
     } else {
-      std::cerr << "Error from assembly file: " << filename << "\n";
+      std::cerr << "Error opening assembly file: " << filename << "\n";
     }
     infile.close();
   }

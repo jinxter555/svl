@@ -76,6 +76,7 @@ line
       assembler->insert_instruction();  // instruction inserted when parsing a file aka encountering a newline char
     skipline=false;
     line++;
+    assembler->line_total_read++;
   }
   | instruction
   | directive

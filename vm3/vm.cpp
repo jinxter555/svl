@@ -182,6 +182,7 @@ void VM::dispatch(instr_t &itt) {
 }
 void VM::dispatch() {
   switch(instruction->opcode) {
+    case Opcode::INVALID: std::cerr << "Invalid instruction !!!!\n"; break;
     case Opcode::MOV: mov(); break;
     case Opcode::IADD_C: iadd_c(); break;
     case Opcode::IADD_R: iadd_r(); break;
