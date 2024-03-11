@@ -1,4 +1,6 @@
 #include "opcode.hh"
+#include <iostream>
+
 std::unordered_map<std::string, Opcode> opcode_table = {
   {"iadd_r", Opcode::IADD_R},
   {"iadd_c", Opcode::IADD_C},
@@ -27,4 +29,9 @@ std::unordered_map<std::string, Opcode> opcode_table = {
   {"ret_np", Opcode::RET_NP},
 };
 
+std::unordered_map<Opcode, std::string> Instruction::opcode_string_map;
 
+void Instruction::setup() {
+  for (const auto& [key, value] : opcode_table) 
+    Instruction::opcode_string_map[value] = key;
+}

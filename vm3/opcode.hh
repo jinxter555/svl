@@ -34,6 +34,14 @@ enum class Opcode {
   DATA_SIZE,
 };
 
+class Instruction  {
+public:
+  static std::unordered_map<Opcode, std::string> opcode_string_map;
+//----
+  static void setup();
+  
+};
+
 extern std::unordered_map<std::string, Opcode> opcode_table ;
 
 

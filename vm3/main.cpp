@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
   PromptInteractive myprompt;
   Commandline cml(argc, argv);
 
+  Instruction::setup();
   setup_readline_autocomplete();
 
   if(cml.infile_name !="")

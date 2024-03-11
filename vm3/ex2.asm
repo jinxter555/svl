@@ -2,7 +2,7 @@
 %mvar a [1 2 3 4 5 6 7.8]
 %mvar b 3 []
 %mvar c 123
-push_c 888888
+push_c 888889
 #
 %call  init_ds
 %call mod2:fun2 
@@ -21,6 +21,7 @@ ret
 %lvar i2 20
 %lvar i3 30
 %load_l r4, xyz
+iprint r4
 mov r1, 12345
 mov r2, 3.45
 push_c 11

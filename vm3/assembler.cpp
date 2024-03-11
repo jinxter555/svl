@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include "my_helpers.hh"
 #include "assembler.hh"
 #include <any>
@@ -67,10 +68,13 @@ void Assembler::insert_instruction() {
   Assembly::instruction = {Opcode::INVALID, 0, 0,0}; 
 }
 void Assembler::print_program() {
+  char istr[7];
   for(int i=0; i<pc_load; i++) {
+    snprintf(istr, 7, "%06d", i);
     std::cout 
-      << "code[" <<i<< "]" 
-      <<  int(code[i].opcode) << " "  
+      << "code[" << istr << "]: " 
+      // <<  int(code[i].opcode) << " "  
+      <<  Instruction::opcode_string_map[code[i].opcode] << " "  
       << "operands: "  
       <<  code[i].operands[0].i << ","  
       <<  code[i].operands[1].i << ","  
@@ -78,10 +82,13 @@ void Assembler::print_program() {
   }
 }
 void Assembler::print_program_f() {
+  char istr[7];
   for(int i=0; i<pc_load; i++) {
+    snprintf(istr, 7, "%06d", i);
     std::cout 
-      << "code[" <<i<< "]" 
-      <<  int(code[i].opcode) << " "  
+      << "code[" << istr << "]: " 
+      // <<  int(code[i].opcode) << " "  
+      <<  Instruction::opcode_string_map[code[i].opcode] << " "  
       << "operands: "  
       <<  code[i].operands[0].f << ","  
       <<  code[i].operands[1].f << ","  

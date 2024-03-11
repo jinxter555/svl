@@ -9,11 +9,18 @@
 
 #define rlac_current_context_key   CONTEXT_UNIV, "ac_commands"
 
+typedef struct {
+  us_int_t line_no;
+  std::string  line_str;
+} src_t;
 
 class AssemblerInteractive : public Prompt {
 private:
   VM vm;
   Assembler assembler;
+  us_int_t line_read_count=0;
+  src_t source[MAX_CODE_SIZE];
+
   vslasm::Scanner scanner{ std::cin, std::cerr };
   vslasm::Parser parser{ &scanner, &assembler};
 
@@ -25,6 +32,7 @@ private:
   void print_vm_registers_float(int n=8);  
   void print_vm_stack_int();
   void print_vm_stack_float();
+  void print_src();
   void print_program();
   void print_program_f();
   void call_func(const std::string &line);
@@ -33,6 +41,7 @@ private:
 public:
   AssemblerInteractive(const std::string &, const std::string &);
   void accept_prompt(const std::string&) override;
+  void loadsrc(std::ifstream &fs);
   void load(const std::string &filename);
   void parse(const std::string &line);
   void run_program();

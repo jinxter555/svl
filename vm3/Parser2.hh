@@ -548,23 +548,27 @@ namespace vslasm {
         S_YYACCEPT = 38,                         // $accept
         S_lines = 39,                            // lines
         S_line = 40,                             // line
-        S_super_instruction = 41,                // super_instruction
-        S_loadstore_l = 42,                      // loadstore_l
-        S_loadstore_g = 43,                      // loadstore_g
-        S_directive = 44,                        // directive
-        S_uri_api = 45,                          // uri_api
-        S_DOTSTR = 46,                           // DOTSTR
-        S_array = 47,                            // array
-        S_element = 48,                          // element
-        S_number = 49,                           // number
-        S_call_register = 50,                    // call_register
-        S_param_list = 51,                       // param_list
-        S_param = 52,                            // param
-        S_modfunstr = 53,                        // modfunstr
-        S_funlvarstr = 54,                       // funlvarstr
-        S_modvarstr = 55,                        // modvarstr
-        S_instruction = 56,                      // instruction
-        S_opcode = 57                            // opcode
+        S_super_instructions = 41,               // super_instructions
+        S_function_call = 42,                    // function_call
+        S_var_array_decl = 43,                   // var_array_decl
+        S_var_decl = 44,                         // var_decl
+        S_var_access = 45,                       // var_access
+        S_loadstore_l = 46,                      // loadstore_l
+        S_loadstore_g = 47,                      // loadstore_g
+        S_directive = 48,                        // directive
+        S_uri_api = 49,                          // uri_api
+        S_DOTSTR = 50,                           // DOTSTR
+        S_array = 51,                            // array
+        S_element = 52,                          // element
+        S_number = 53,                           // number
+        S_call_register = 54,                    // call_register
+        S_param_list = 55,                       // param_list
+        S_param = 56,                            // param
+        S_modfunstr = 57,                        // modfunstr
+        S_funlvarstr = 58,                       // funlvarstr
+        S_modvarstr = 59,                        // modvarstr
+        S_instruction = 60,                      // instruction
+        S_opcode = 61                            // opcode
       };
     };
 
@@ -1828,8 +1832,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 80,     ///< Last index in yytable_.
-      yynnts_ = 20,  ///< Number of nonterminal symbols.
+      yylast_ = 84,     ///< Last index in yytable_.
+      yynnts_ = 24,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1843,7 +1847,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1847 "Parser2.hh"
+#line 1851 "Parser2.hh"
 
 
 

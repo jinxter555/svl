@@ -9,6 +9,8 @@ typedef struct {
 
 } full_symbol_t;
 
+
+//extern Instruction bytecode;
 // enum class unresolved_t{
 enum class key_tok_t {
   app=10, api, smodule, mvar, mvar_total_count,

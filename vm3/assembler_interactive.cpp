@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "assembler_interactive.hh"
 #include "my_helpers.hh"
 
@@ -9,6 +10,7 @@ std::vector<std::string> AssemblerInteractive::commands = {
   "!print_stack_int",
   "!print_stack_float",
   "!print_program",
+  "!print_src",
   "!print_program_float",
   "!run_program",
   "!call",
@@ -38,21 +40,27 @@ void AssemblerInteractive::parse_prompt(const std::string &line) {
   }
 }
 
+void AssemblerInteractive::loadsrc(std::ifstream &fs) {
+  while(std::getline(fs,  source[line_read_count++].line_str));
+  fs.clear(); fs.seekg(0);
+}
+
 void AssemblerInteractive::load(const std::string &cfn) {
   std::vector<std::string> filenames = split_string(cfn, " ");
 
   for(auto filename : filenames) {
     std::ifstream infile(filename);
     if(infile.is_open()) {
+      loadsrc(infile); // read to src and reset
       scanner.switch_streams(&infile, &std::cerr);
       parser.parse();
     } else {
       std::cerr << "Error from assembly file: " << filename << "\n";
     }
-    scanner.switch_streams(&std::cin, &std::cerr);
     infile.close();
-    assembler.resolve_names();
   }
+  assembler.resolve_names();
+  scanner.switch_streams(&std::cin, &std::cerr);
 }
 
 void AssemblerInteractive::parse(const std::string &line) {
@@ -78,6 +86,7 @@ void AssemblerInteractive::interact(const std::string& cline) {
   if(line == "!print_register_float") print_vm_registers_float();
   if(line == "!print_stack_int") print_vm_stack_int();
   if(line == "!print_stack_float") print_vm_stack_float();
+  if(line == "!print_src") print_src();
   if(line == "!print_program") print_program();
   if(line == "!print_program_float") print_program_f();
   if(line == "!run_program") run_program();
@@ -116,6 +125,14 @@ void AssemblerInteractive::print_vm_registers_float(int n) {
   std::cout << "\n";
 }
 
+void AssemblerInteractive::print_src(){
+  char istr[16];
+  for(unsigned int i=0; i<line_read_count; i++) {
+    snprintf(istr, 16, "code[%06d]: ", i);
+    //sprintf(istr, "code[%06d]: ", i);
+    std::cout << istr << source[i].line_str  << "\n";
+  }
+}
 void AssemblerInteractive::print_program(){
   assembler.print_program();
 }

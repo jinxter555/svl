@@ -79,17 +79,43 @@ line
   }
   | instruction
   | directive
-  | super_instruction
+  | super_instructions
   ;
 
-super_instruction
-  : MODULO CALL modfunstr 
-    { assembler->super_opfun_set_instruction(Opcode::CALL, $3); }
-//  | MODULO CALL modfunstr call_register COMMA call_params 
-  | MODULO CALL modfunstr call_register param_list
-    { assembler->super_opfun_set_instruction(Opcode::CALL, $3); } 
+super_instructions
+  : var_access
+  | var_decl
+  | var_array_decl
+  | function_call
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
-  | MODULO LVAR STR number   {
+  ;
+//-----------------------------------  function call declaration
+function_call
+  : MODULO CALL modfunstr { 
+    assembler->super_opfun_set_instruction(Opcode::CALL, $3); 
+    }
+  | MODULO CALL modfunstr call_register param_list { 
+    assembler->super_opfun_set_instruction(Opcode::CALL, $3);
+    } 
+  ;
+//-----------------------------------  variable array declaration
+var_array_decl 
+  : MODULO MVAR STR LSBRACKET array RSBRACKET  {
+      std::cout << "m array def  " << "$6" << "\n";
+    assembler->add_mvar_name($3);  
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  } 
+  | MODULO MVAR STR INT LSBRACKET RSBRACKET  {
+    std::cout << "m array def num element: " << $4 << "\n";
+    assembler->add_mvar_name($3, $4);   // don't forget the offset INT
+    asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  } 
+  ;
+//-----------------------------------  variable declaration
+var_decl
+  : MODULO LVAR STR number   {
     assembler->add_lvar_name($3); 
     asm_instr = {Opcode(Opcode::PUSH_C), $4, 0, 0};  
     assembler->set_instruction(asm_instr); 
@@ -104,47 +130,14 @@ super_instruction
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, $4, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO MVAR STR LSBRACKET array RSBRACKET  {
-      std::cout << "m array def  " << "$6" << "\n";
-    assembler->add_mvar_name($3);  
-    asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-  } 
-  | MODULO MVAR STR INT LSBRACKET RSBRACKET  {
-    std::cout << "m array def num element: " << $4 << "\n";
-    assembler->add_mvar_name($3, $4);   // don't forget the offset INT
-    asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-  } 
-  /*
-  | LOAD_L REGISTER COMMA funlvarstr {
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
-    asm_instr = {Opcode(Opcode::LOAD_L), $2, Reg::fp, vadr};  
-    assembler->set_instruction(asm_instr); 
-  }
-  | STORE_L REGISTER COMMA funlvarstr {
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
-    asm_instr = {Opcode(Opcode::STORE_L), $2, Reg::fp, vadr};  
-    assembler->set_instruction(asm_instr); 
-  }
-  */
-  | loadstore_l REGISTER COMMA funlvarstr {
+  ;
+//-----------------------------------  variable acccess 
+var_access:
+  loadstore_l REGISTER COMMA funlvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
     asm_instr = {$1, $2, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
   }
-/*
-  | LOAD_G REGISTER COMMA REGISTER COMMA modvarstr {
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
-    asm_instr = {Opcode(Opcode::LOAD_G), $2, $4, vadr};  
-    assembler->set_instruction(asm_instr); 
-  }
-  | STORE_G REGISTER COMMA REGISTER COMMA modvarstr {
-    s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
-    asm_instr = {Opcode(Opcode::STORE_G), $2, $4, vadr};  
-    assembler->set_instruction(asm_instr); 
-  }
-  */
   | loadstore_g REGISTER COMMA REGISTER COMMA modvarstr {
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $6);
     asm_instr = {$1, $2, $4, vadr};  
@@ -205,7 +198,7 @@ call_register
   : REGISTER { call_register = $1; }
   ;
 
-//-----------------------------------
+//----------------------------------- for calling function
 param_list
   : param
   | param param_list
