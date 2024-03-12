@@ -25,7 +25,7 @@ typedef struct {
 
 class Assembler : public Assembly {
   friend class AssemblerInteractive;
-  friend class Parser;
+  //friend class Parser;
 private:
   Tree *context;
 
@@ -49,9 +49,15 @@ public:
   void run_single_instruction(VM &vm); // this is for user command prompt eval
   void run_call(VM &vm, const std::string& m, const std::string& f); // this is for user command prompt eval
 
+  void set_breakpoint(us_int_t bpt=0);
+  void run_break(VM&); // stop at location return to prompt
+  void run_step(VM&, s_int_t num=1); // step num of steps from bkpt
+
   void super_opfun_set_instruction(Opcode op, const full_symbol_t &fst);
   void print_program();
   void print_program_f();
+  void print_ds_i();
+  void print_ds_f();
 
   // add names to the symbol tree for later address lookup
   void add_app_name(const std::string &app);

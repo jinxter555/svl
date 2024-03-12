@@ -5,7 +5,7 @@
 push_c 888889
 #
 %call  init_ds
-%call mod2:fun2 
+%call mod2:fun1 
 %call mod2:fun2 
 exit
 %%function init_ds
@@ -24,6 +24,7 @@ ret
 iprint r4
 mov r1, 12345
 mov r2, 3.45
+fprint r2
 push_c 11
 push_c 22
 push_c 33

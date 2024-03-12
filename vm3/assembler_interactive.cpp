@@ -9,11 +9,17 @@ std::vector<std::string> AssemblerInteractive::commands = {
   "!print_register_float",
   "!print_stack_int",
   "!print_stack_float",
+  "!print_ds_int",
+  "!print_ds_float",
   "!print_program",
   "!print_src",
+  "!print_src_break",
   "!print_program_float",
   "!run_program",
   "!call",
+  "!break",
+  "!step",
+  "!run_break",
   ""
 };
 
@@ -82,6 +88,9 @@ void AssemblerInteractive::interact(const std::string& cline) {
   line.erase(line.find_last_not_of(" ")+1);
   std::string rest_tree =  match(line, "!print_tree");
   std::string rest_call =  match(line, "!call ");
+  std::string rest_break =  match(line, "!break");
+  std::string rest_step =  match(line, "!step");
+  std::string rest_psb =  match(line, "!print_src_break");
   if(line == "!print_tree" || rest_tree != "" ) print_tree(rest_tree);
   if(line == "!print_register") print_vm_registers(12);
   if(line == "!print_register_int") print_vm_registers(12);
@@ -89,11 +98,30 @@ void AssemblerInteractive::interact(const std::string& cline) {
   if(line == "!print_stack_int") print_vm_stack_int();
   if(line == "!print_stack_float") print_vm_stack_float();
   if(line == "!print_src") print_src();
+  if(line == "!print_src_break" ||  rest_psb != "") print_src_break(rest_psb);
+  if(line == "!print_ds_int") assembler.print_ds_i();
+  if(line == "!print_ds_float") assembler.print_ds_f();
   if(line == "!print_program") print_program();
   if(line == "!print_program_float") print_program_f();
   if(line == "!run_program") run_program();
+  if(line == "!run_break") run_break();
+  if(line == "!break" || rest_break != "" ) set_breakpoint(rest_break);
+  if(line == "!step" || rest_step != "" ) run_step(rest_step);
   if(line == "!call" || rest_call !="") call_func(rest_call); // setup up add end of code[] with call func , and exit
   AssemblerInteractive_cui_keys.clear();
+}
+
+
+void AssemblerInteractive::set_breakpoint(const std::string& bstr) {
+  us_int_t bpt = std::strtoll(bstr.c_str(), nullptr, 10);
+  assembler.set_breakpoint(bpt);
+}
+void AssemblerInteractive::run_step(const std::string& bstr) {
+  us_int_t num = std::strtoll(bstr.c_str(), nullptr, 10);
+  assembler.run_step(vm, num);
+}
+void AssemblerInteractive::run_break() {
+  assembler.run_break(vm);
 }
 
 void AssemblerInteractive::print_vm_stack_int() {
@@ -130,6 +158,19 @@ void AssemblerInteractive::print_vm_registers_float(int n) {
 void AssemblerInteractive::print_src(){
   char istr[16];
   for(unsigned int i=0; i<line_read_count; i++) {
+    snprintf(istr, 16, "code[%06d]: ", i);
+    //sprintf(istr, "code[%06d]: ", i);
+    std::cout << istr << source[i].line_str  << "\n";
+  }
+}
+void AssemblerInteractive::print_src_break(const std::string &cnumstr){
+  char istr[16];
+  std::string numstr;
+  int breakpoint = assembler.Assembly::breakpoint;
+  if(cnumstr == "") numstr = std::string("10");
+  us_int_t num = std::strtoll(numstr.c_str(), nullptr, 10);
+
+  for(unsigned int i=breakpoint; i<breakpoint + num; i++) {
     snprintf(istr, 16, "code[%06d]: ", i);
     //sprintf(istr, "code[%06d]: ", i);
     std::cout << istr << source[i].line_str  << "\n";

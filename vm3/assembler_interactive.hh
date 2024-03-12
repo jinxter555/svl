@@ -18,7 +18,8 @@ class AssemblerInteractive : public Prompt {
 private:
   VM vm;
   Assembler assembler;
-  us_int_t line_read_count=0;
+  us_int_t line_read_count=0; 
+
   src_t source[MAX_CODE_SIZE];
 
   vslasm::Scanner scanner{ std::cin, std::cerr };
@@ -33,6 +34,8 @@ private:
   void print_vm_stack_int();
   void print_vm_stack_float();
   void print_src();
+  void print_src_break(const std::string& numstr="10");
+  void print_ds();
   void print_program();
   void print_program_f();
   void call_func(const std::string &line);
@@ -48,6 +51,10 @@ public:
 
   void set_ui_commands();
   std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});
+
+  void set_breakpoint(const std::string& bstr);
+  void run_break(); // stop at location return to prompt
+  void run_step(const std::string& bstr ); // step num of steps from bkpt
 
   Assembler* getAssembler() { return &assembler;}
 

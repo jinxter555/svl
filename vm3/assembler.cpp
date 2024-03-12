@@ -52,10 +52,21 @@ void Assembler::run_call(VM& vm, const std::string &m, const std::string &f) {
   pc_load = old_pc;
 }
 
-void Assembler::run_single_instruction(VM& vm) {
+void Assembler::run_single_instruction(VM &vm) {
   Assembly::run_single_instruction(vm);
 }
 
+void Assembler::set_breakpoint(us_int_t bpt) {
+  Assembly::set_breakpoint(bpt);
+}
+
+void Assembler::run_break(VM &vm) {
+  Assembly::run_break(vm);
+}
+void Assembler::run_step(VM &vm, s_int_t num) {
+  Assembly::run_step(vm, num);
+}
+                                     //
 void Assembler::set_instruction(const instr_t &t) {
   Assembly::instruction = t;
 }
@@ -94,6 +105,20 @@ void Assembler::print_program_f() {
       <<  code[i].operands[1].f << ","  
       <<  code[i].operands[2].f << "\n";
   }
+}
+void Assembler::print_ds_i() {
+  int i=0;
+  for (std::vector<reg_t>::iterator it = data_seg.begin() ; it != data_seg.end(); ++it) {
+    std::cout << i++ << ": " << (*it).i << "\n";
+  }
+  std::cout << '\n';
+}
+void Assembler::print_ds_f() {
+  int i=0;
+  for (std::vector<reg_t>::iterator it = data_seg.begin() ; it != data_seg.end(); ++it) {
+    std::cout << i++ << ": " << (*it).f << "\n";
+  }
+  std::cout << '\n';
 }
 
 void Assembler::add_app_name(const std::string &app) {
