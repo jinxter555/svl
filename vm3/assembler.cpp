@@ -157,7 +157,8 @@ void Assembler::add_function_name(const std::string &f) {
   full_symbol_t fst = current_context; fst.mfunction = f;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
   keys.push_back("addr");
-  context->add_node(keys, pc_load);
+  context->add_node(keys, pc_load); // name lookup addr
+  addr2sym_map[pc_load] = fst;      // addr lookup name
 }
 
 void Assembler::add_label_name(const std::string &l) {
@@ -199,7 +200,7 @@ void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &f
   // if smodule=':' or mvar=':' uri resolve fst with ktt
 
   notfound.type = ktt;
-  notfound.location.adr = pc_load;
+  notfound.location = pc_load;
   switch(ktt) {
     case key_tok_t::app: 
       notfound.name.app = fst.app;
@@ -264,11 +265,11 @@ void Assembler::resolve_names() {
   for(auto us  : unresolved_syms) {
     switch(us.type) {
     case key_tok_t::mvar:  
-      code[us.location.adr].operands[2].adr
+      code[us.location].operands[2].adr
         = get_sym_addr(key_tok_t::mvar, us.name);
       break;
     case key_tok_t::mfunction:  
-      code[us.location.adr].operands[0].adr
+      code[us.location].operands[0].adr
         = get_sym_addr(key_tok_t::mfunction, us.name);
       break;
       
@@ -277,6 +278,12 @@ void Assembler::resolve_names() {
       break;
     }
   }
+}
+full_symbol_t Assembler::lookup_current_function(VM& vm) {
+  Frame calling_frame = vm.get_calling_frame();
+  int func = calling_frame.func; // current function address
+  full_symbol_t fst =  addr2sym_map[func];
+  return fst;
 }
 
 std::vector<std::string> Assembler::get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst) {
@@ -370,7 +377,7 @@ s_int_t Assembler::get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst) 
       error_str = "not sure";
       break;
   }
-  std::cerr << "can't resolve symbol:'" << error_str << "' got nullptr\n!";
+  std::cerr << "can't resolve symbol:'" << error_str << "' got nullptr!\n";
   return -1;
 }
 

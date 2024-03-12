@@ -37,7 +37,9 @@ public:
   s_int_t sp=0; // current stack pointer, current size is current index
   s_int_t vp=0; // variable pointer stack[fp+vp]
   s_int_t fp=0; 
-  Frame(const s_int_t pc, const s_int_t fp, const s_int_t sp) : pc(pc), fp(fp), sp(sp) {}
+  s_int_t func=0;  // function addr being called , for debug reverse lookup
+  Frame(const s_int_t pc, const s_int_t fp, const s_int_t sp, const s_int_t func) 
+    : pc(pc), fp(fp), sp(sp), func(func) {}
 };  
 
 class VM {
@@ -63,6 +65,9 @@ public:
   void set_data_seg(std::vector<reg_t>*);
   void dispatch(instr_t &itt);
   inline void dispatch();
+
+  const Frame get_current_frame();
+  const Frame& get_calling_frame();
 
   inline void iadd_r();      // reg
   inline void iadd_c();      // constant

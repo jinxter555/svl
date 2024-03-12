@@ -56,6 +56,8 @@ public:
   void run_break(); // stop at location return to prompt
   void run_step(const std::string& bstr ); // step num of steps from bkpt
 
+  void print_current_function(const std::string& lvstr);
+
   Assembler* getAssembler() { return &assembler;}
 
   static std::vector<std::string> commands;

@@ -17,7 +17,7 @@ enum class key_tok_t {
   mfunction, lvar, larg, label
 };
 typedef struct {
-  reg_t  location;  // address location of code[] where symbol is referenced
+  s_int_t location;  // address location of code[] where symbol is referenced
   key_tok_t type;     // type for svl lang, module, function, var,
   full_symbol_t name; // std::string sapp, sapi, smodule, sfunction, svar;
   int operand_loc;
@@ -28,12 +28,14 @@ class Assembler : public Assembly {
   //friend class Parser;
 private:
   Tree *context;
-
   //std::string 
   //  context_uni = CONTEXT_UNIV, current_app="myprog", current_api="myapi_0.00", 
   //  current_module="", current_function  = "", current_var="";
+  
   full_symbol_t current_context;
   std::vector<unresolved_symbol_t> unresolved_syms;
+  std::unordered_map<s_int_t, full_symbol_t> addr2sym_map;
+//----
   s_int_t lvc=0;  // local variable count starting from %function
   s_int_t lac=-1; // local argument count starting from fp-1 backward toward calling stack.
   s_int_t mvc=0;  // module variable count, aka GLOBAL variable
@@ -70,8 +72,8 @@ public:
   void add_lvar_name(const std::string &v, int n=1);
 
   void resolve_names();
-
   void add_unresolved_sym(const key_tok_t ktt, const full_symbol_t &fst);
+  full_symbol_t lookup_current_function(VM& vm); // who and where am i function lookup
 
   full_symbol_t get_current_context() { return current_context; };
   std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);

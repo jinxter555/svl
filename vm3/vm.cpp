@@ -5,6 +5,15 @@ VM::VM() {
   data_seg = nullptr;
 }
 
+const Frame& VM::get_calling_frame() {
+  return vmframes.top();
+}
+const Frame VM::get_current_frame() {
+  s_int_t func=0;
+  return Frame(pc, R[Reg::fp].i, vmstack.size(), func);
+
+}
+
 
 void VM::mov() {
   //R[instruction->operands[0].i].i
@@ -68,7 +77,9 @@ void VM::store_g() {
 
 void VM::call() {
   us_int_t sp = vmstack.size();
-  vmframes.push(Frame(pc, R[Reg::fp].i, sp));
+  vmframes.push(Frame(pc, R[Reg::fp].i, sp, 
+  instruction->operands[0].adr
+        ));
   R[Reg::fp].i = sp;
   pc = instruction->operands[0].adr;
 }

@@ -15,6 +15,7 @@ std::vector<std::string> AssemblerInteractive::commands = {
   "!print_src",
   "!print_src_break",
   "!print_program_float",
+  "!print_current_function",
   "!run_program",
   "!call",
   "!break",
@@ -91,6 +92,7 @@ void AssemblerInteractive::interact(const std::string& cline) {
   std::string rest_break =  match(line, "!break");
   std::string rest_step =  match(line, "!step");
   std::string rest_psb =  match(line, "!print_src_break");
+  std::string rest_plvar =  match(line, "!print_current_function");
   if(line == "!print_tree" || rest_tree != "" ) print_tree(rest_tree);
   if(line == "!print_register") print_vm_registers(12);
   if(line == "!print_register_int") print_vm_registers(12);
@@ -102,6 +104,7 @@ void AssemblerInteractive::interact(const std::string& cline) {
   if(line == "!print_ds_int") assembler.print_ds_i();
   if(line == "!print_ds_float") assembler.print_ds_f();
   if(line == "!print_program") print_program();
+  if(line == "!print_current_function" || rest_plvar != "") print_current_function(rest_plvar);
   if(line == "!print_program_float") print_program_f();
   if(line == "!run_program") run_program();
   if(line == "!run_break") run_break();
@@ -126,8 +129,11 @@ void AssemblerInteractive::run_break() {
 
 void AssemblerInteractive::print_vm_stack_int() {
   int i=0;
+  Frame frame=vm.get_current_frame();
   // for (std::vector<reg_t>::iterator it = vm->vmstack.begin() ; it != vm->vmstack.end(); ++it) {
   for (std::vector<reg_t>::iterator it = vm.vmstack.begin() ; it != vm.vmstack.end(); ++it) {
+    //std::cout  << "frame.fp: " << frame.fp << "\n";
+    if(frame.fp == i) std::cout << "----cf----\n";
     std::cout << i++ << ": " << (*it).i << "\n";
   }
   std::cout << '\n';
@@ -153,6 +159,25 @@ void AssemblerInteractive::print_vm_registers_float(int n) {
     std::cout << "R" << int(i) << ":" << vm.R[i].f << " ";
   }
   std::cout << "\n";
+}
+
+void AssemblerInteractive::print_current_function(const std::string& clvar){
+  std::string lvar = trim(clvar);
+
+  full_symbol_t fst = assembler.lookup_current_function(vm);
+  std::cout << fst.smodule + ":" + fst.mfunction << "\n";
+  if(clvar == "")  return;
+
+  fst.lvar = lvar;
+  s_int_t lvar_addr = assembler.get_sym_addr(key_tok_t::lvar, fst);
+  Frame current_frame = vm.get_current_frame();
+  s_int_t loc = current_frame.fp + lvar_addr;
+  reg_t value = vm.vmstack[loc];
+  std::cout 
+    << fst.smodule + ":" + fst.mfunction + " " + lvar + "\n"
+    << " addr: " << lvar_addr << "\n"
+    << " ivalue: " << value.i << "\n"
+    << " fvalue: " << value.f << "\n\n";
 }
 
 void AssemblerInteractive::print_src(){
