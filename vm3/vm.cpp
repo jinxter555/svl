@@ -60,7 +60,7 @@ void VM::load_g() {
   us_int_t loc;
   if(data_seg == nullptr || data_seg->empty()) { std::cerr << "data segment have been not initalized!\n"; return; }
 
-  if(instruction->operands[1].i == -1)  // hack 
+  if(instruction->operands[1].i == -1)  // hack if operand1 == -1, just operand2 addr realtive to datasegment
     loc = instruction->operands[2].i;
   else
     loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
@@ -76,13 +76,14 @@ void VM::store_g() {
   (*data_seg)[loc] = R[instruction->operands[0].i];
 }
 
+// if operand0 adddr 
 void VM::call() {
   us_int_t sp = vmstack.size();
   vmframes.push(Frame(pc, R[Reg::fp].i, sp, 
   instruction->operands[0].adr
         ));
   R[Reg::fp].i = sp;
-  pc = instruction->operands[0].adr;
+  pc = instruction->operands[0].adr;  // if pc == -1 , use operand1 R register adr
 }
 
 void VM::ret() {
@@ -143,8 +144,8 @@ void VM::push_r() {
   );
 }
 
-// if operand1 Reg== -1, use operand2 as addr 
-// else branch operand1 Reg addr
+// if operand0 Reg== -1, use operand1 as addr 
+// else branch operand1 addr
 void VM::beq() {
   if(R[Reg::flag].flag.Z) {
   }

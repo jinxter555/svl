@@ -36,7 +36,7 @@ bool element_init = false;
 s_int_t call_register=0;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET COMMENT EMPTYLINE
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET COMMENT EMPTYLINE BRANCH
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
@@ -55,7 +55,7 @@ s_int_t call_register=0;
  
 %nterm <std::string> DOTSTR
 %nterm  param_list param
-%nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr // modfunvarstr
+%nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr  labelstr // modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode loadstore_l loadstore_g
 %nterm <reg_t> array_g number element_g
@@ -94,7 +94,14 @@ super_instructions
   | var_decl
   | var_array_g_decl
   | function_call
-//| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
+  | MODULO BRANCH opcode labelstr { 
+    std::cout << static_cast<int>($3) << "label:" << $4.label << "\n"; 
+    s_int_t ladr = assembler->get_sym_addr(key_tok_t::label, $4);
+    if(ladr==-1) { assembler->add_unresolved_sym(key_tok_t::label, $4); }
+    asm_instr = {$3, ladr, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+    }
+  // | MODULO BRANCH STR { std::cout <<  ":" << $3 << "\n";  skipline = true; }
   ;
 //-----------------------------------  function call declaration
 function_call
@@ -275,6 +282,16 @@ funlvarstr
     $$.lvar = $1;
     }
   ;
+// label string for branching
+labelstr
+  : STR { 
+    $$ = assembler->get_current_context();
+    $$.smodule = assembler->get_current_context().smodule;
+    $$.mfunction = assembler->get_current_context().mfunction;
+    $$.label = $1;
+    }
+  ;
+
 // set module and var full symbol  return a symbol struct
 modvarstr
   : STR { 

@@ -11,9 +11,12 @@ exit
 %call mc2:fun2 r7 i1 i2 i3
 ret 
 %%function fun2
+%branch blt step1
 %%larg i3
 %%larg i2
 %%larg i1
+mov r0, 1
+mov r1, 2
 %%label step1
 %load_l r0, i1
 %load_l r1, i2
@@ -22,4 +25,5 @@ ret
 iprint r0
 iprint r1
 iprint r2
+%branch beq step2
 ret

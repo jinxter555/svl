@@ -57,6 +57,7 @@ public:
   void run_step(VM&, s_int_t num=1); // step num of steps from bkpt
 
   void super_opfun_set_instruction(Opcode op, const full_symbol_t &fst);
+  void super_op_branch(const std::string &labelstr);
   void print_program();
   void print_program_f();
   void print_ds_i();

@@ -258,8 +258,14 @@ void Assembler::super_opfun_set_instruction(Opcode op, const full_symbol_t &fst)
   instr_t asm_instr = {op, adr,0,0};
   set_instruction(asm_instr); 
 }
+void Assembler::super_op_branch(const std::string &labelstr) {
+  
+
+}
 
 
+// resolve all names aka unresolved symbols at end of
+// file loading or parsing
 void Assembler::resolve_names() {
   std::vector<std::string> keys;
   for(auto us  : unresolved_syms) {
@@ -272,7 +278,10 @@ void Assembler::resolve_names() {
       code[us.location].operands[0].adr
         = get_sym_addr(key_tok_t::mfunction, us.name);
       break;
-      
+    case key_tok_t::label:  
+      code[us.location].operands[0].adr
+        = get_sym_addr(key_tok_t::label, us.name);
+      break;
     default: 
       std::cerr << "symbol not found: " << us.name.smodule << "\n";
       break;
@@ -318,31 +327,6 @@ std::vector<std::string> Assembler::get_sym_key(const key_tok_t ktt,  const full
   }
   return key; 
 }
-
-/*
-s_int_t Assembler::get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst) {
-
-  std::string error_str;
-  auto key=move(get_sym_key(ktt, fst));
-    case  key_tok_t::mfunction:
-      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction};
-      break;
-    case  key_tok_t::lvar:
-      //std::cout << "in getsymkey: "<<  fst.uni+ fst.app+ fst.api+ "modules"+ fst.smodule+  "functions"+ fst.mfunction+ "lvars"+ fst.lvar << "\n";
-      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.lvar};
-      break;
-    case  key_tok_t::larg:
-      // key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "largs", fst.larg};
-      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.larg};
-      break;
-    case  key_tok_t::label:
-      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "labels", fst.label};
-      break;
-    default : return {}; break;
-  }
-  return key; 
-}
-*/
 
 s_int_t Assembler::get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst) {
 
