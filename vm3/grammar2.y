@@ -30,9 +30,10 @@ namespace vslasm {
 
 // instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 
-int line=1;
+int line=1, element_count = 0;
 instr_t asm_instr = {Opcode(0), 0,0,0};
 bool skipline=false;
+bool element_init = false;
 s_int_t call_register=0;
 }
 
@@ -58,7 +59,7 @@ s_int_t call_register=0;
 %nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr // modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode loadstore_l loadstore_g
-%nterm <reg_t> array number element
+%nterm <reg_t> array_g number element_g
 
 
 %%
@@ -70,8 +71,12 @@ lines
 
 line
   : EOL {
+    //
     // readline eats newline character. only file scanning will encounter newline char
     // also do not insert directives in to assembly::code[]
+    // NOTE:  recursive parsing within a single line do not reach here 
+    //        to have the instruction inserted. i.e. module array  [1 2 3 4]
+    //
     if(!skipline) // skip assembly %% directives because it's not instruction
       assembler->insert_instruction();  // instruction inserted when parsing a file aka encountering a newline char
     skipline=false;
@@ -86,7 +91,7 @@ line
 super_instructions
   : var_access
   | var_decl
-  | var_array_decl
+  | var_array_g_decl
   | function_call
 //| MODULO BRANCH labelstr {assembler->super_op_branch($2, $3); }
   ;
@@ -100,15 +105,20 @@ function_call
     } 
   ;
 //-----------------------------------  variable array declaration
-var_array_decl 
-  : MODULO MVAR STR LSBRACKET array RSBRACKET  {
-      std::cout << "m array def  " << "$6" << "\n";
-    assembler->add_mvar_name($3);  
-    asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
-    assembler->set_instruction(asm_instr); 
+var_array_g_decl 
+  : MODULO MVAR STR LSBRACKET array_g RSBRACKET  {
+
+    //std::cout << "module array def: " << $3 << "\n";
+    //std::cout << "mvc: " << assembler->mvc << "\n";
+
+    assembler->add_mvar_name($3, 0);  // add mvar name default add + 1,
+    assembler->mvc += element_count;  // should add element_count instead
+    element_count=0; // reset for for next array
+    skipline = true; // insert is done by array_g grammar
   } 
   | MODULO MVAR STR INT LSBRACKET RSBRACKET  {
-    std::cout << "m array def num element: " << $4 << "\n";
+    //std::cout << "module array def num element: " << $4 << "\n";
+    //std::cout << "mvc: " << assembler->mvc << "\n";
     assembler->add_mvar_name($3, $4);   // don't forget the offset INT
     asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
     assembler->set_instruction(asm_instr); 
@@ -179,13 +189,19 @@ DOTSTR
   ;
 
 //----------------------------------- array decl
-array 
-  : element 
-  | array element 
+array_g
+  : element_g
+  | array_g element_g
   ;
 
-element
-  : number { std::cout << $1.i << " "; }
+element_g
+  : number { 
+    //std::cout << $1.i << " "; 
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, $1, 0};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();
+    element_count++;
+  }
   ;
 
 //--- number dec

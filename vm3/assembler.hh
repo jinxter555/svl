@@ -25,7 +25,7 @@ typedef struct {
 
 class Assembler : public Assembly {
   friend class AssemblerInteractive;
-  //friend class Parser;
+  friend class Parser;
 private:
   Tree *context;
   //std::string 
@@ -38,11 +38,12 @@ private:
 //----
   s_int_t lvc=0;  // local variable count starting from %function
   s_int_t lac=-1; // local argument count starting from fp-1 backward toward calling stack.
-  s_int_t mvc=0;  // module variable count, aka GLOBAL variable
   
   bool warning_print = false;
 
 public:  
+  s_int_t mvc=0;  // module variable count, aka GLOBAL variable to be accessed by parser as well.
+
   Assembler();
   Opcode lookup_opcode(const std::string& opname);
   void set_instruction(const instr_t &t);

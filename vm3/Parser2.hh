@@ -403,8 +403,8 @@ namespace vslasm {
       // call_register
       char dummy4[sizeof (long int)];
 
-      // array
-      // element
+      // array_g
+      // element_g
       // number
       char dummy5[sizeof (reg_t)];
 
@@ -550,7 +550,7 @@ namespace vslasm {
         S_line = 40,                             // line
         S_super_instructions = 41,               // super_instructions
         S_function_call = 42,                    // function_call
-        S_var_array_decl = 43,                   // var_array_decl
+        S_var_array_g_decl = 43,                 // var_array_g_decl
         S_var_decl = 44,                         // var_decl
         S_var_access = 45,                       // var_access
         S_loadstore_l = 46,                      // loadstore_l
@@ -558,8 +558,8 @@ namespace vslasm {
         S_directive = 48,                        // directive
         S_uri_api = 49,                          // uri_api
         S_DOTSTR = 50,                           // DOTSTR
-        S_array = 51,                            // array
-        S_element = 52,                          // element
+        S_array_g = 51,                          // array_g
+        S_element_g = 52,                        // element_g
         S_number = 53,                           // number
         S_call_register = 54,                    // call_register
         S_param_list = 55,                       // param_list
@@ -626,8 +626,8 @@ namespace vslasm {
         value.move< long int > (std::move (that.value));
         break;
 
-      case symbol_kind::S_array: // array
-      case symbol_kind::S_element: // element
+      case symbol_kind::S_array_g: // array_g
+      case symbol_kind::S_element_g: // element_g
       case symbol_kind::S_number: // number
         value.move< reg_t > (std::move (that.value));
         break;
@@ -777,8 +777,8 @@ switch (yykind)
         value.template destroy< long int > ();
         break;
 
-      case symbol_kind::S_array: // array
-      case symbol_kind::S_element: // element
+      case symbol_kind::S_array_g: // array_g
+      case symbol_kind::S_element_g: // element_g
       case symbol_kind::S_number: // number
         value.template destroy< reg_t > ();
         break;
