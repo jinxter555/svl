@@ -107,22 +107,30 @@ function_call
 //-----------------------------------  variable array declaration
 var_array_g_decl 
   : MODULO MVAR STR LSBRACKET array_g RSBRACKET  {
-
-    //std::cout << "module array def: " << $3 << "\n";
-    //std::cout << "mvc: " << assembler->mvc << "\n";
-
     assembler->add_mvar_name($3, 0);  // add mvar name default add + 1,
     assembler->mvc += element_count;  // should add element_count instead
     element_count=0; // reset for for next array
     skipline = true; // insert is done by array_g grammar
   } 
   | MODULO MVAR STR INT LSBRACKET RSBRACKET  {
-    //std::cout << "module array def num element: " << $4 << "\n";
-    //std::cout << "mvc: " << assembler->mvc << "\n";
     assembler->add_mvar_name($3, $4);   // don't forget the offset INT
     asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
     assembler->set_instruction(asm_instr); 
   } 
+  | MODULO MVAR STR INT LSBRACKET array_g RSBRACKET  {
+    assembler->add_mvar_name($3, 0);  // add mvar name default add + 1,
+    assembler->mvc += element_count;  // should add element_count instead
+    int remain_size = $4 - element_count;
+    element_count=0; // reset for for next array
+    if(remain_size > 0) {
+      asm_instr = {Opcode(Opcode::DATA_RESIZE), remain_size, 0, 0};  
+      assembler->set_instruction(asm_instr); 
+      assembler->mvc += remain_size; 
+      skipline = false;
+    } else {
+      skipline = true; // insert is done by array_g grammar
+    }
+  }
   ;
 //-----------------------------------  variable declaration
 var_decl
