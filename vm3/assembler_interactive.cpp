@@ -152,7 +152,15 @@ void AssemblerInteractive::print_vm_registers(int n) {
   for(int i=0; i<n; i++) {
     std::cout << "R" << int(i) << ":" << vm.R[i].i << " ";
   }
-  std::cout << "\n";
+  std::cout << "\nFlags:\n";
+  std::cout 
+    << "flag.N: " << vm.R[Reg::flag].flag.N << "\n"
+    << "flag.Z: " << vm.R[Reg::flag].flag.Z << "\n"
+    << "flag.C: " << vm.R[Reg::flag].flag.C << "\n"
+    << "flag.V: " << vm.R[Reg::flag].flag.V << "\n"
+    << "\n";
+
+  
 }
 void AssemblerInteractive::print_vm_registers_float(int n) {
   for(int i=0; i<n; i++) {

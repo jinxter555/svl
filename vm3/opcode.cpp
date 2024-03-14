@@ -22,6 +22,17 @@ std::unordered_map<std::string, Opcode> opcode_table = {
   {"data_size", Opcode::DATA_SIZE},
   {"data_add", Opcode::DATA_ADD},
   {"mov", Opcode::MOV},
+
+  {"beq", Opcode::BEQ},
+  {"bgt", Opcode::BGT},
+  {"blt", Opcode::BLT},
+  {"ble", Opcode::BLE},
+  {"bge", Opcode::BGE},
+  
+  {"cmpi", Opcode::CMPI},
+  {"cmpf", Opcode::CMPF},
+
+
   {"call", Opcode::CALL},
   {"exit", Opcode::EXIT},
   {"ret", Opcode::RET},

@@ -14,9 +14,11 @@ ret
 %%larg i3
 %%larg i2
 %%larg i1
+%%label step1
 %load_l r0, i1
 %load_l r1, i2
 %load_l r2, i3
+%%label step2
 iprint r0
 iprint r1
 iprint r2

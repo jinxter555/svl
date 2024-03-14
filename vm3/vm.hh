@@ -12,19 +12,28 @@ typedef unsigned long int us_int_t;
 typedef long int s_int_t;
 typedef long double s_float_t;
 
+typedef struct frts {
+  bool N ;
+  bool Z ;
+  bool C ;
+  bool V ;
+} flag_rt;
+
 typedef union {
   s_int_t i;
   s_float_t f;
   s_int_t adr;
+
+  flag_rt flag;
+
 } reg_t;
 
 enum Reg {
   r0 = 0,
   r1, r2, r3, r4, 
   r5, r6, r7, r8,
-  pc = 9, fp, sp, vp
+  pc = 9, fp, sp, flag
 };
-
 
 typedef struct {
   Opcode opcode;
@@ -54,6 +63,10 @@ private:
   std::stack<Frame> vmframes;
   std::vector<reg_t> vmstack;
   std::vector<reg_t> *data_seg;
+
+  // flag_rt flag;
+  // reg_t flag;
+
 
 // s_int_t fp = 0;
 s_int_t pc = 0;
@@ -97,14 +110,30 @@ public:
   inline void iprint();
   inline void fprint();
 
+  // stack and data segment
+  inline void stack_resize();
+  inline void data_resize();
+  inline void data_size();
+
+  //
   inline void mov();
+
+  // comparing
+  inline void cmpi();
+  inline void cmpf();
+
+  // branching
+  inline void beq();
+  inline void bgt();
+  inline void blt();
+  inline void ble();
+  inline void bge();
+
 
   inline void call();
   inline void ret();
   inline void ret_nm();
   inline void ret_np();
   inline void vmexit();
-  inline void stack_resize();
-  inline void data_resize();
-  inline void data_size();
+
 };

@@ -2,6 +2,7 @@
 
 VM::VM() {
   //R[Reg::fp].i = 0;
+  R[Reg::flag].i = 0;
   data_seg = nullptr;
 }
 
@@ -131,7 +132,6 @@ void VM::vmexit() {
   pc = exit_max_pc;
 }
 
-
 void VM::push_c() {
   vmstack.push_back(
     instruction->operands[0]
@@ -142,6 +142,51 @@ void VM::push_r() {
     R[instruction->operands[0].i]
   );
 }
+
+// if operand1 Reg== -1, use operand2 as addr 
+// else branch operand1 Reg addr
+void VM::beq() {
+  if(R[Reg::flag].flag.Z) {
+  }
+}
+void VM::bgt() {
+  if(R[Reg::flag].flag.C) {
+  }
+}
+void VM::blt() {
+  if(R[Reg::flag].flag.N) {
+  }
+}
+void VM::ble() {
+  if(R[Reg::flag].flag.N || R[Reg::flag].flag.Z) {
+  }
+}
+void VM::bge() {
+  if(R[Reg::flag].flag.C || R[Reg::flag].flag.Z) {
+  }
+}
+
+void VM::cmpi() { // comparing registers integer
+  reg_t difference; 
+  difference.i 
+    = R[instruction->operands[0].i].i 
+    - R[instruction->operands[1].i].i;
+  R[Reg::flag].flag.N = difference.i < 0;
+  R[Reg::flag].flag.C = difference.i > 0;
+  R[Reg::flag].flag.Z = difference.i == 0;
+}
+
+void VM::cmpf() { // comparing registers floating point
+  reg_t difference; 
+  difference.f 
+    = R[instruction->operands[0].i].f 
+    - R[instruction->operands[1].i].f;
+  R[Reg::flag].flag.N = difference.f < 0;
+  R[Reg::flag].flag.C = difference.f > 0;
+  R[Reg::flag].flag.Z = difference.f == 0;
+}
+
+
 void VM::iprint() {
   std::cout << R[instruction->operands[0].i].i << "\n";
 }
@@ -213,6 +258,17 @@ void VM::dispatch() {
     case Opcode::RET:    ret();  break;
     case Opcode::RET_NM:  ret_nm();  break;
     case Opcode::RET_NP:  ret_np();  break;
+
+    case Opcode::BEQ:   beq(); break; 
+    case Opcode::BGT:   bgt(); break; 
+    case Opcode::BLT:   blt(); break;
+    case Opcode::BLE:   ble(); break;
+    case Opcode::BGE:   bge(); break;
+  
+    case Opcode::CMPI:  cmpi(); break;
+    case Opcode::CMPF:  cmpf(); break;
+
+
     case Opcode::STACK_RESIZE:   stack_resize();  break;
     case Opcode::DATA_RESIZE:   data_resize();  break;
     case Opcode::DATA_SIZE:   data_size();  break;

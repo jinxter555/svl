@@ -180,7 +180,7 @@ directive
   : MODULO MODULO URI uri_api { skipline=true;} 
   | MODULO MODULO MODULE  DOTSTR  {assembler->add_module_name($4); skipline=true; } 
   | MODULO MODULO FUNCTION STR    {assembler->add_function_name($4); skipline=true;}
-//| MODULO MODULO LABEL STR       { assembler->add_label_name($4); std::cout << "adding label: " << $4 << "\n"; skipline=true;}
+  | MODULO MODULO LABEL STR       {assembler->add_label_name($4); skipline=true;}
   | MODULO MODULO LARG STR        {assembler->add_larg_name($4); skipline=true;}
   ;
 
