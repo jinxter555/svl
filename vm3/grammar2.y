@@ -28,16 +28,15 @@ namespace vslasm {
 #include "Scanner2.hh"
 #define yylex(x) scanner->lex(x)
 
-// instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 
 int line=1, element_count = 0;
-instr_t asm_instr = {Opcode(0), 0,0,0};
+instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 bool skipline=false;
 bool element_init = false;
 s_int_t call_register=0;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET COMMENT EMPTYLINE
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR
@@ -86,6 +85,8 @@ line
   | instruction
   | directive
   | super_instructions
+  | COMMENT { assembler->line_total_read++; }     // parser bugs out without this
+  | EMPTYLINE { assembler->line_total_read++; }   // parser bugs out without this
   ;
 
 super_instructions

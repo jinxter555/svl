@@ -2,6 +2,9 @@
 %call mc2:main
 exit
 %%function main
+#
+#
+#
 %lvar i1 101
 %lvar i2 102
 %lvar i3 103

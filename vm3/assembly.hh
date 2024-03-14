@@ -6,7 +6,7 @@
 
 class Assembly {
 protected:
-  instr_t instruction = {Opcode(0), 0,0,0};
+  instr_t instruction = {Opcode(Opcode::NOOP), 0,0,0};
 
   s_int_t pc_load=0; // program counter at load program
   instr_t code[MAX_CODE_SIZE];    

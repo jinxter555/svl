@@ -63,8 +63,8 @@ register        ([rR]{integer})
 ","             return Parser::token::COMMA;
 "."             return Parser::token::DOT;
 ":"             return Parser::token::COLON;
-^#.*\n              {} // comments
-^[ \t\r]*\n              {} // ignore empty lines
+^#.*\n          return Parser::token::COMMENT; // ignore comment
+^[ \t\r]*\n   return Parser::token::EMPTYLINE; // ignore empty line
 \n              return Parser::token::EOL;
 <<EOF>>         return Parser::token::YYEOF;
 .               /* no action on unmatched input */

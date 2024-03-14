@@ -5,6 +5,9 @@ push_c 888889
 %call mod2:fun1 
 %call mod2:fun2 
 exit
+#
+#
+#
 %%function init_ds
 %mvar a [1 2 3]
 %mvar b 3 [30]
