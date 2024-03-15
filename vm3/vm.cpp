@@ -76,14 +76,20 @@ void VM::store_g() {
   (*data_seg)[loc] = R[instruction->operands[0].i];
 }
 
-// if operand0 adddr 
 void VM::call() {
   us_int_t sp = vmstack.size();
   vmframes.push(Frame(pc, R[Reg::fp].i, sp, 
-  instruction->operands[0].adr
-        ));
+    instruction->operands[0].adr));
   R[Reg::fp].i = sp;
-  pc = instruction->operands[0].adr;  // if pc == -1 , use operand1 R register adr
+  pc = instruction->operands[0].adr;
+}
+
+void VM::call_r() {
+  us_int_t sp = vmstack.size();
+  vmframes.push(Frame(pc, R[Reg::fp].i, sp, 
+    R[instruction->operands[0].i].adr));
+  R[Reg::fp].i = sp;
+  pc = R[instruction->operands[0].i].adr;
 }
 
 void VM::ret() {
@@ -148,22 +154,27 @@ void VM::push_r() {
 // else branch operand1 addr
 void VM::beq() {
   if(R[Reg::flag].flag.Z) {
+    pc = instruction->operands[0].adr; 
   }
 }
 void VM::bgt() {
   if(R[Reg::flag].flag.C) {
+    pc = instruction->operands[0].adr; 
   }
 }
 void VM::blt() {
   if(R[Reg::flag].flag.N) {
+    pc = instruction->operands[0].adr; 
   }
 }
 void VM::ble() {
   if(R[Reg::flag].flag.N || R[Reg::flag].flag.Z) {
+    pc = instruction->operands[0].adr; 
   }
 }
 void VM::bge() {
   if(R[Reg::flag].flag.C || R[Reg::flag].flag.Z) {
+    pc = instruction->operands[0].adr; 
   }
 }
 
@@ -256,6 +267,7 @@ void VM::dispatch() {
     case Opcode::IPRINT:  iprint();  break;
     case Opcode::FPRINT:  fprint();  break;
     case Opcode::CALL:   call();  break;
+    case Opcode::CALL_R:   call_r();  break;
     case Opcode::RET:    ret();  break;
     case Opcode::RET_NM:  ret_nm();  break;
     case Opcode::RET_NP:  ret_np();  break;

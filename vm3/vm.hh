@@ -131,6 +131,7 @@ public:
 
 
   inline void call();
+  inline void call_r();
   inline void ret();
   inline void ret_nm();
   inline void ret_np();

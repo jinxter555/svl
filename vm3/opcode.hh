@@ -10,6 +10,7 @@ enum class Opcode {
   NOOP,
   
   CALL,
+  CALL_R,
   RET,
   RET_NM,
   RET_NP,

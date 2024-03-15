@@ -34,6 +34,7 @@ std::unordered_map<std::string, Opcode> opcode_table = {
 
 
   {"call", Opcode::CALL},
+  {"call_r", Opcode::CALL_R},
   {"exit", Opcode::EXIT},
   {"ret", Opcode::RET},
   {"ret_nm", Opcode::RET_NM},
