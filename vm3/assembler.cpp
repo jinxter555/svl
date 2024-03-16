@@ -183,6 +183,9 @@ void Assembler::add_mvar_name(const std::string &mv, int offset) { // int n, wit
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mvar, fst));
   keys.push_back("addr");
   context->add_node(keys, mvc);
+  keys.pop_back();
+  keys.push_back("size");
+  context->add_node(keys, offset);
   mvc += offset;
 }
 

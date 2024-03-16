@@ -19,6 +19,9 @@ blank           ([ \t\r])
 register        ([rR]{integer})
 
 
+
+
+
 %%
 
 {integer}        { yylval->emplace<long int>(strtoll(YYText(), nullptr, 10)); return Parser::token::INT;}
@@ -37,6 +40,7 @@ register        ([rR]{integer})
 "app"    return Parser::token::APP;
 "api"    return Parser::token::API;
 "module"    return Parser::token::MODULE;
+"text"    return Parser::token::TEXT;
 "mvar"    return Parser::token::MVAR;
 "function"    return Parser::token::FUNCTION;
 "label"    return Parser::token::LABEL;
@@ -48,7 +52,8 @@ register        ([rR]{integer})
 "%load_l"        return Parser::token::LOAD_L;
 "%store_g"       return Parser::token::STORE_G;
 "%load_g"        return Parser::token::LOAD_G;
-{identifier}    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
+\"(\\(.|\n)|[^\\"\n])*\"    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::VSLSTRING;
+{identifier}      yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;
 "*"             return Parser::token::MULTIPLY;

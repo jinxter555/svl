@@ -10,6 +10,7 @@ exit
 #
 %%function init_ds
 %mvar a [1 2 3]
+%%mvar str1 "thisis  \n  :watestwithallthatandallkakdfakjdsfjkasdkjfkjsdfkjd3sfkjadskfj"
 %mvar b 3 [30]
 %mvar c [4 5 6]
 %mvar v1 1111

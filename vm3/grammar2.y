@@ -36,10 +36,10 @@ bool element_init = false;
 s_int_t call_register=0;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET COMMENT EMPTYLINE BRANCH
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET COMMENT EMPTYLINE BRANCH TEXT
 %token <long int>  INT
 %token <long double>     FLT
-%token <std::string>     STR
+%token <std::string>     STR VSLSTRING
 %token <long int> REGISTER
 %token CALL LOAD_L STORE_L LOAD_G STORE_G
  
@@ -117,6 +117,7 @@ var_array_g_decl
   : MODULO MVAR STR LSBRACKET array_g RSBRACKET  {
     assembler->add_mvar_name($3, 0);  // add mvar name default add + 1,
     assembler->mvc += element_count;  // should add element_count instead
+    // need to reset size here
     element_count=0; // reset for for next array
     skipline = true; // insert is done by array_g grammar
   } 
@@ -156,6 +157,43 @@ var_decl
     assembler->add_mvar_name($3);  
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, $4, 0};  
     assembler->set_instruction(asm_instr); 
+  }
+  | MODULO MODULO MVAR STR VSLSTRING {
+    int i;
+
+    s_int_t l=$5.length();
+    int mvs = l / sizeof(reg_t);
+    int remain = l  % sizeof(reg_t);
+    int offset = mvs; if(remain != 0) offset++;
+
+    reg_t block, *bptr=(reg_t *)$5.c_str();
+
+    assembler->add_mvar_name($4, offset);  
+
+    std::cout << "mvs: " << mvs << ":" << l  << " string " << $5 <<  "\n";
+
+    // add size of string first
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, l, 0};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();  
+
+    for(i=0; i<mvs; i++, bptr++) {
+      block = *bptr;
+      for(int j=0; j<sizeof(s_float_t); j++) std::cout << bptr->c[j]; std::cout << "\n";
+      asm_instr = {Opcode(Opcode::DATA_ADD), -1, block, 0};  
+      assembler->set_instruction(asm_instr); 
+      assembler->insert_instruction();  
+    }
+    if(remain != 0) {
+      block = *bptr;
+      for(i=0; i<remain; i++) std::cout << block.c[i]; std::cout << "\n";
+      for(i=remain; i<sizeof(s_float_t); i++) block.c[i] = 0; // zero all 
+      asm_instr = {Opcode(Opcode::DATA_ADD), -1, block, 0};  
+      assembler->set_instruction(asm_instr); 
+      assembler->insert_instruction();  
+    }
+
+    skipline = true;
   }
   ;
 //-----------------------------------  variable acccess 

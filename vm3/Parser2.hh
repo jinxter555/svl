@@ -410,6 +410,7 @@ namespace vslasm {
       char dummy5[sizeof (reg_t)];
 
       // STR
+      // VSLSTRING
       // DOTSTR
       char dummy6[sizeof (std::string)];
     };
@@ -475,24 +476,26 @@ namespace vslasm {
     COMMENT = 20,                  // COMMENT
     EMPTYLINE = 21,                // EMPTYLINE
     BRANCH = 22,                   // BRANCH
-    INT = 23,                      // INT
-    FLT = 24,                      // FLT
-    STR = 25,                      // STR
-    REGISTER = 26,                 // REGISTER
-    CALL = 27,                     // CALL
-    LOAD_L = 28,                   // LOAD_L
-    STORE_L = 29,                  // STORE_L
-    LOAD_G = 30,                   // LOAD_G
-    STORE_G = 31,                  // STORE_G
-    ASSIGN = 32,                   // ASSIGN
-    PLUS = 33,                     // PLUS
-    MINUS = 34,                    // MINUS
-    MULTIPLY = 35,                 // MULTIPLY
-    DIVIDE = 36,                   // DIVIDE
-    MODULO = 37,                   // MODULO
-    UMINUS = 38,                   // UMINUS
-    FACTORIAL = 39,                // FACTORIAL
-    EXPONENT = 40                  // EXPONENT
+    TEXT = 23,                     // TEXT
+    INT = 24,                      // INT
+    FLT = 25,                      // FLT
+    STR = 26,                      // STR
+    VSLSTRING = 27,                // VSLSTRING
+    REGISTER = 28,                 // REGISTER
+    CALL = 29,                     // CALL
+    LOAD_L = 30,                   // LOAD_L
+    STORE_L = 31,                  // STORE_L
+    LOAD_G = 32,                   // LOAD_G
+    STORE_G = 33,                  // STORE_G
+    ASSIGN = 34,                   // ASSIGN
+    PLUS = 35,                     // PLUS
+    MINUS = 36,                    // MINUS
+    MULTIPLY = 37,                 // MULTIPLY
+    DIVIDE = 38,                   // DIVIDE
+    MODULO = 39,                   // MODULO
+    UMINUS = 40,                   // UMINUS
+    FACTORIAL = 41,                // FACTORIAL
+    EXPONENT = 42                  // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -509,7 +512,7 @@ namespace vslasm {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 41, ///< Number of tokens.
+        YYNTOKENS = 43, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -534,49 +537,51 @@ namespace vslasm {
         S_COMMENT = 20,                          // COMMENT
         S_EMPTYLINE = 21,                        // EMPTYLINE
         S_BRANCH = 22,                           // BRANCH
-        S_INT = 23,                              // INT
-        S_FLT = 24,                              // FLT
-        S_STR = 25,                              // STR
-        S_REGISTER = 26,                         // REGISTER
-        S_CALL = 27,                             // CALL
-        S_LOAD_L = 28,                           // LOAD_L
-        S_STORE_L = 29,                          // STORE_L
-        S_LOAD_G = 30,                           // LOAD_G
-        S_STORE_G = 31,                          // STORE_G
-        S_ASSIGN = 32,                           // ASSIGN
-        S_PLUS = 33,                             // PLUS
-        S_MINUS = 34,                            // MINUS
-        S_MULTIPLY = 35,                         // MULTIPLY
-        S_DIVIDE = 36,                           // DIVIDE
-        S_MODULO = 37,                           // MODULO
-        S_UMINUS = 38,                           // UMINUS
-        S_FACTORIAL = 39,                        // FACTORIAL
-        S_EXPONENT = 40,                         // EXPONENT
-        S_YYACCEPT = 41,                         // $accept
-        S_lines = 42,                            // lines
-        S_line = 43,                             // line
-        S_super_instructions = 44,               // super_instructions
-        S_function_call = 45,                    // function_call
-        S_var_array_g_decl = 46,                 // var_array_g_decl
-        S_var_decl = 47,                         // var_decl
-        S_var_access = 48,                       // var_access
-        S_loadstore_l = 49,                      // loadstore_l
-        S_loadstore_g = 50,                      // loadstore_g
-        S_directive = 51,                        // directive
-        S_uri_api = 52,                          // uri_api
-        S_DOTSTR = 53,                           // DOTSTR
-        S_array_g = 54,                          // array_g
-        S_element_g = 55,                        // element_g
-        S_number = 56,                           // number
-        S_call_register = 57,                    // call_register
-        S_param_list = 58,                       // param_list
-        S_param = 59,                            // param
-        S_modfunstr = 60,                        // modfunstr
-        S_funlvarstr = 61,                       // funlvarstr
-        S_labelstr = 62,                         // labelstr
-        S_modvarstr = 63,                        // modvarstr
-        S_instruction = 64,                      // instruction
-        S_opcode = 65                            // opcode
+        S_TEXT = 23,                             // TEXT
+        S_INT = 24,                              // INT
+        S_FLT = 25,                              // FLT
+        S_STR = 26,                              // STR
+        S_VSLSTRING = 27,                        // VSLSTRING
+        S_REGISTER = 28,                         // REGISTER
+        S_CALL = 29,                             // CALL
+        S_LOAD_L = 30,                           // LOAD_L
+        S_STORE_L = 31,                          // STORE_L
+        S_LOAD_G = 32,                           // LOAD_G
+        S_STORE_G = 33,                          // STORE_G
+        S_ASSIGN = 34,                           // ASSIGN
+        S_PLUS = 35,                             // PLUS
+        S_MINUS = 36,                            // MINUS
+        S_MULTIPLY = 37,                         // MULTIPLY
+        S_DIVIDE = 38,                           // DIVIDE
+        S_MODULO = 39,                           // MODULO
+        S_UMINUS = 40,                           // UMINUS
+        S_FACTORIAL = 41,                        // FACTORIAL
+        S_EXPONENT = 42,                         // EXPONENT
+        S_YYACCEPT = 43,                         // $accept
+        S_lines = 44,                            // lines
+        S_line = 45,                             // line
+        S_super_instructions = 46,               // super_instructions
+        S_function_call = 47,                    // function_call
+        S_var_array_g_decl = 48,                 // var_array_g_decl
+        S_var_decl = 49,                         // var_decl
+        S_var_access = 50,                       // var_access
+        S_loadstore_l = 51,                      // loadstore_l
+        S_loadstore_g = 52,                      // loadstore_g
+        S_directive = 53,                        // directive
+        S_uri_api = 54,                          // uri_api
+        S_DOTSTR = 55,                           // DOTSTR
+        S_array_g = 56,                          // array_g
+        S_element_g = 57,                        // element_g
+        S_number = 58,                           // number
+        S_call_register = 59,                    // call_register
+        S_param_list = 60,                       // param_list
+        S_param = 61,                            // param
+        S_modfunstr = 62,                        // modfunstr
+        S_funlvarstr = 63,                       // funlvarstr
+        S_labelstr = 64,                         // labelstr
+        S_modvarstr = 65,                        // modvarstr
+        S_instruction = 66,                      // instruction
+        S_opcode = 67                            // opcode
       };
     };
 
@@ -642,6 +647,7 @@ namespace vslasm {
         break;
 
       case symbol_kind::S_STR: // STR
+      case symbol_kind::S_VSLSTRING: // VSLSTRING
       case symbol_kind::S_DOTSTR: // DOTSTR
         value.move< std::string > (std::move (that.value));
         break;
@@ -794,6 +800,7 @@ switch (yykind)
         break;
 
       case symbol_kind::S_STR: // STR
+      case symbol_kind::S_VSLSTRING: // VSLSTRING
       case symbol_kind::S_DOTSTR: // DOTSTR
         value.template destroy< std::string > ();
         break;
@@ -1316,6 +1323,21 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_TEXT ()
+      {
+        return symbol_type (token::TEXT);
+      }
+#else
+      static
+      symbol_type
+      make_TEXT ()
+      {
+        return symbol_type (token::TEXT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_INT (long int v)
       {
         return symbol_type (token::INT, std::move (v));
@@ -1356,6 +1378,21 @@ switch (yykind)
       make_STR (const std::string& v)
       {
         return symbol_type (token::STR, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VSLSTRING (std::string v)
+      {
+        return symbol_type (token::VSLSTRING, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_VSLSTRING (const std::string& v)
+      {
+        return symbol_type (token::VSLSTRING, v);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1887,7 +1924,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 99,     ///< Last index in yytable_.
+      yylast_ = 104,     ///< Last index in yytable_.
       yynnts_ = 25,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
@@ -1902,7 +1939,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1906 "Parser2.hh"
+#line 1943 "Parser2.hh"
 
 
 

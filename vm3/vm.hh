@@ -23,7 +23,7 @@ typedef union {
   s_int_t i;
   s_float_t f;
   s_int_t adr;
-
+  char c[sizeof(s_float_t)];
   flag_rt flag;
 
 } reg_t;
