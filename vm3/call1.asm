@@ -1,9 +1,12 @@
 %%module mc1
-%mvar pi 3.14
-%call mc1:fun2 r7 mc1:pi
+%mvar gold 1.878
+%call init_ds
+# %call mc1:fun2 r7 mc1:e
+%call mc1:fun2 r7 @pi
 ret 
 exit
 %%function init_ds
+%mvar pi 3.14
 %mvar e 2.8
 ret
 %%function fun2

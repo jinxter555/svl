@@ -29,7 +29,7 @@ namespace vslasm {
 #define yylex(x) scanner->lex(x)
 
 
-int line=1, element_count = 0;
+int line=0, element_count = 0;
 instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 bool skipline=false;
 bool element_init = false;
@@ -37,7 +37,7 @@ s_int_t call_register=0;
 }
 
 %token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET 
-%token COMMENT EMPTYLINE BRANCH TEXT MOV_MF_ADR MOV_MV_ADR MOV_L_ADR AT
+%token COMMENT1 COMMENT2 EMPTYLINE BRANCH TEXT MOV_MF_ADR MOV_MV_ADR MOV_L_ADR AT
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR VSLSTRING
@@ -83,12 +83,15 @@ line
     line++;
     assembler->line_total_read++;
   }
+  | comments
   | instruction
   | directive
   | super_instructions
-  | COMMENT { assembler->line_total_read++; }     // parser bugs out without this
-  | EMPTYLINE { assembler->line_total_read++; }   // parser bugs out without this
+  | EMPTYLINE { assembler->line_total_read++;  line++;}   // parser bugs out without this
   ;
+
+
+
 
 super_instructions
   : var_access
@@ -99,12 +102,21 @@ super_instructions
   | move_address
   ;
 
+comments
+  : COMMENT1 { assembler->line_total_read++; line++; }     // parser bugs out without this
+  | COMMENT2 {  // this comment is at the end of the instruction 
+    if(!skipline) // skip assembly %% directives because it's not instruction
+      assembler->insert_instruction();  // instruction inserted when parsing a file aka encountering a newline char
+    skipline=false;
+    assembler->line_total_read++; line++; 
+    }  
+  ;
 //-----------------------------------  move address
 move_address
   : MODULO MOV_MV_ADR REGISTER COMMA modvarstr {
-    std::cout << "moving mf" << $3 << " " << $5.mfunction << "\n";
-    std::cout << "moving mv" << $3 << " " << $5.mvar << "\n";
-    std::cout << "type " << $3 << " " << static_cast<int>($5.type) << "\n";
+    //std::cout << "moving mf" << $3 << " " << $5.mfunction << "\n";
+    //std::cout << "moving mv" << $3 << " " << $5.mvar << "\n";
+    //std::cout << "type " << $3 << " " << static_cast<int>($5.type) << "\n";
     key_tok_t kkt_type = $5.type;
     s_int_t madr = assembler->get_sym_addr(kkt_type, $5);
     if(madr==-1) { assembler->add_unresolved_sym(kkt_type, $5, 1); }
@@ -115,7 +127,7 @@ move_address
 //-----------------------------------  branch instruction
 branch_call
   : MODULO BRANCH opcode labelstr { 
-    std::cout << static_cast<int>($3) << "label:" << $4.label << "\n"; 
+    // std::cout << static_cast<int>($3) << "label:" << $4.label << "\n"; 
     s_int_t ladr = assembler->get_sym_addr(key_tok_t::label, $4);
     if(ladr==-1) { assembler->add_unresolved_sym(key_tok_t::label, $4); }
     asm_instr = {$3, ladr, 0, 0};  
@@ -188,25 +200,28 @@ var_decl
 
     reg_t block, *bptr=(reg_t *)$4.c_str();
 
-    std::cout << "mvs: " << mvs <<  " offset: " << offset
-      << " length" << l  << " string " << $4 <<  "\n";
+    // std::cout << "mvs: " << mvs <<  " offset: " << offset << " length" << l  << " string " << $4 <<  "\n";
 
-    assembler->add_mvar_name($3, offset+1);   // add size of string
-    // add size of string first
+    assembler->add_mvar_name($3, offset+2);   // add size of array and string + 2 
+    // add size of array first
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, offset, 0};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();  
+    // add size of string second
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, l, 0};  
     assembler->set_instruction(asm_instr); 
     assembler->insert_instruction();  
 
     for(i=0; i<mvs; i++, bptr++) {
       block = *bptr;
-      for(int j=0; j<sizeof(s_float_t); j++) std::cout << bptr->c[j]; std::cout << "\n";
+      //for(int j=0; j<sizeof(s_float_t); j++) std::cout << bptr->c[j]; std::cout << "\n";
       asm_instr = {Opcode(Opcode::DATA_ADD), -1, block, 0};  
       assembler->set_instruction(asm_instr); 
       assembler->insert_instruction();  
     }
     if(remain != 0) {
       block = *bptr;
-      for(i=0; i<remain; i++) std::cout << block.c[i]; std::cout << "\n";
+      //for(i=1; i<remain; i++) std::cout << block.c[i]; std::cout << "\n";
       for(i=remain; i<sizeof(s_float_t); i++) block.c[i] = 0; // zero all 
       asm_instr = {Opcode(Opcode::DATA_ADD), -1, block, 0};  
       assembler->set_instruction(asm_instr); 
@@ -219,6 +234,7 @@ var_decl
 //-----------------------------------  variable acccess 
 var_access:
   loadstore_l REGISTER COMMA funlvarstr {
+    //std::cout << "lvar: " << $4.lvar << "\n";
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::lvar, $4);
     asm_instr = {$1, $2, Reg::fp, vadr};  
     assembler->set_instruction(asm_instr); 
@@ -310,12 +326,19 @@ param
   | modvarstr {
     //std::cout << "modvarstr\n";
     s_int_t vadr = assembler->get_sym_addr(key_tok_t::mvar, $1);
-    asm_instr = {Opcode(Opcode::LOAD_G), call_register, -1, vadr};
+    if(vadr==-1) { assembler->add_unresolved_sym(key_tok_t::mvar, $1); } // if symbol is not found
+    asm_instr = {Opcode(Opcode::LOAD_G), call_register, -1, vadr}; // load from data seg into register
     assembler->set_instruction(asm_instr);
     assembler->insert_instruction();
-    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};
+    asm_instr = {Opcode(Opcode::PUSH_R), call_register, 0, 0};     // pushed register to stack to be used as arg
     assembler->set_instruction(asm_instr);
     assembler->insert_instruction();
+  }
+  | REGISTER {
+    asm_instr = {Opcode(Opcode::PUSH_R), $1, 0, 0};
+    assembler->set_instruction(asm_instr);
+    assembler->insert_instruction();
+
   }
   ;
 

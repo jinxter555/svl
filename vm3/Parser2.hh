@@ -473,33 +473,34 @@ namespace vslasm {
     URI = 17,                      // URI
     LSBRACKET = 18,                // LSBRACKET
     RSBRACKET = 19,                // RSBRACKET
-    COMMENT = 20,                  // COMMENT
-    EMPTYLINE = 21,                // EMPTYLINE
-    BRANCH = 22,                   // BRANCH
-    TEXT = 23,                     // TEXT
-    MOV_MF_ADR = 24,               // MOV_MF_ADR
-    MOV_MV_ADR = 25,               // MOV_MV_ADR
-    MOV_L_ADR = 26,                // MOV_L_ADR
-    AT = 27,                       // AT
-    INT = 28,                      // INT
-    FLT = 29,                      // FLT
-    STR = 30,                      // STR
-    VSLSTRING = 31,                // VSLSTRING
-    REGISTER = 32,                 // REGISTER
-    CALL = 33,                     // CALL
-    LOAD_L = 34,                   // LOAD_L
-    STORE_L = 35,                  // STORE_L
-    LOAD_G = 36,                   // LOAD_G
-    STORE_G = 37,                  // STORE_G
-    ASSIGN = 38,                   // ASSIGN
-    PLUS = 39,                     // PLUS
-    MINUS = 40,                    // MINUS
-    MULTIPLY = 41,                 // MULTIPLY
-    DIVIDE = 42,                   // DIVIDE
-    MODULO = 43,                   // MODULO
-    UMINUS = 44,                   // UMINUS
-    FACTORIAL = 45,                // FACTORIAL
-    EXPONENT = 46                  // EXPONENT
+    COMMENT1 = 20,                 // COMMENT1
+    COMMENT2 = 21,                 // COMMENT2
+    EMPTYLINE = 22,                // EMPTYLINE
+    BRANCH = 23,                   // BRANCH
+    TEXT = 24,                     // TEXT
+    MOV_MF_ADR = 25,               // MOV_MF_ADR
+    MOV_MV_ADR = 26,               // MOV_MV_ADR
+    MOV_L_ADR = 27,                // MOV_L_ADR
+    AT = 28,                       // AT
+    INT = 29,                      // INT
+    FLT = 30,                      // FLT
+    STR = 31,                      // STR
+    VSLSTRING = 32,                // VSLSTRING
+    REGISTER = 33,                 // REGISTER
+    CALL = 34,                     // CALL
+    LOAD_L = 35,                   // LOAD_L
+    STORE_L = 36,                  // STORE_L
+    LOAD_G = 37,                   // LOAD_G
+    STORE_G = 38,                  // STORE_G
+    ASSIGN = 39,                   // ASSIGN
+    PLUS = 40,                     // PLUS
+    MINUS = 41,                    // MINUS
+    MULTIPLY = 42,                 // MULTIPLY
+    DIVIDE = 43,                   // DIVIDE
+    MODULO = 44,                   // MODULO
+    UMINUS = 45,                   // UMINUS
+    FACTORIAL = 46,                // FACTORIAL
+    EXPONENT = 47                  // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -516,7 +517,7 @@ namespace vslasm {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 47, ///< Number of tokens.
+        YYNTOKENS = 48, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -538,60 +539,62 @@ namespace vslasm {
         S_URI = 17,                              // URI
         S_LSBRACKET = 18,                        // LSBRACKET
         S_RSBRACKET = 19,                        // RSBRACKET
-        S_COMMENT = 20,                          // COMMENT
-        S_EMPTYLINE = 21,                        // EMPTYLINE
-        S_BRANCH = 22,                           // BRANCH
-        S_TEXT = 23,                             // TEXT
-        S_MOV_MF_ADR = 24,                       // MOV_MF_ADR
-        S_MOV_MV_ADR = 25,                       // MOV_MV_ADR
-        S_MOV_L_ADR = 26,                        // MOV_L_ADR
-        S_AT = 27,                               // AT
-        S_INT = 28,                              // INT
-        S_FLT = 29,                              // FLT
-        S_STR = 30,                              // STR
-        S_VSLSTRING = 31,                        // VSLSTRING
-        S_REGISTER = 32,                         // REGISTER
-        S_CALL = 33,                             // CALL
-        S_LOAD_L = 34,                           // LOAD_L
-        S_STORE_L = 35,                          // STORE_L
-        S_LOAD_G = 36,                           // LOAD_G
-        S_STORE_G = 37,                          // STORE_G
-        S_ASSIGN = 38,                           // ASSIGN
-        S_PLUS = 39,                             // PLUS
-        S_MINUS = 40,                            // MINUS
-        S_MULTIPLY = 41,                         // MULTIPLY
-        S_DIVIDE = 42,                           // DIVIDE
-        S_MODULO = 43,                           // MODULO
-        S_UMINUS = 44,                           // UMINUS
-        S_FACTORIAL = 45,                        // FACTORIAL
-        S_EXPONENT = 46,                         // EXPONENT
-        S_YYACCEPT = 47,                         // $accept
-        S_lines = 48,                            // lines
-        S_line = 49,                             // line
-        S_super_instructions = 50,               // super_instructions
-        S_move_address = 51,                     // move_address
-        S_branch_call = 52,                      // branch_call
-        S_function_call = 53,                    // function_call
-        S_var_array_g_decl = 54,                 // var_array_g_decl
-        S_var_decl = 55,                         // var_decl
-        S_var_access = 56,                       // var_access
-        S_loadstore_l = 57,                      // loadstore_l
-        S_loadstore_g = 58,                      // loadstore_g
-        S_directive = 59,                        // directive
-        S_uri_api = 60,                          // uri_api
-        S_DOTSTR = 61,                           // DOTSTR
-        S_array_g = 62,                          // array_g
-        S_element_g = 63,                        // element_g
-        S_number = 64,                           // number
-        S_call_register = 65,                    // call_register
-        S_param_list = 66,                       // param_list
-        S_param = 67,                            // param
-        S_modfunstr = 68,                        // modfunstr
-        S_funlvarstr = 69,                       // funlvarstr
-        S_labelstr = 70,                         // labelstr
-        S_modvarstr = 71,                        // modvarstr
-        S_instruction = 72,                      // instruction
-        S_opcode = 73                            // opcode
+        S_COMMENT1 = 20,                         // COMMENT1
+        S_COMMENT2 = 21,                         // COMMENT2
+        S_EMPTYLINE = 22,                        // EMPTYLINE
+        S_BRANCH = 23,                           // BRANCH
+        S_TEXT = 24,                             // TEXT
+        S_MOV_MF_ADR = 25,                       // MOV_MF_ADR
+        S_MOV_MV_ADR = 26,                       // MOV_MV_ADR
+        S_MOV_L_ADR = 27,                        // MOV_L_ADR
+        S_AT = 28,                               // AT
+        S_INT = 29,                              // INT
+        S_FLT = 30,                              // FLT
+        S_STR = 31,                              // STR
+        S_VSLSTRING = 32,                        // VSLSTRING
+        S_REGISTER = 33,                         // REGISTER
+        S_CALL = 34,                             // CALL
+        S_LOAD_L = 35,                           // LOAD_L
+        S_STORE_L = 36,                          // STORE_L
+        S_LOAD_G = 37,                           // LOAD_G
+        S_STORE_G = 38,                          // STORE_G
+        S_ASSIGN = 39,                           // ASSIGN
+        S_PLUS = 40,                             // PLUS
+        S_MINUS = 41,                            // MINUS
+        S_MULTIPLY = 42,                         // MULTIPLY
+        S_DIVIDE = 43,                           // DIVIDE
+        S_MODULO = 44,                           // MODULO
+        S_UMINUS = 45,                           // UMINUS
+        S_FACTORIAL = 46,                        // FACTORIAL
+        S_EXPONENT = 47,                         // EXPONENT
+        S_YYACCEPT = 48,                         // $accept
+        S_lines = 49,                            // lines
+        S_line = 50,                             // line
+        S_super_instructions = 51,               // super_instructions
+        S_comments = 52,                         // comments
+        S_move_address = 53,                     // move_address
+        S_branch_call = 54,                      // branch_call
+        S_function_call = 55,                    // function_call
+        S_var_array_g_decl = 56,                 // var_array_g_decl
+        S_var_decl = 57,                         // var_decl
+        S_var_access = 58,                       // var_access
+        S_loadstore_l = 59,                      // loadstore_l
+        S_loadstore_g = 60,                      // loadstore_g
+        S_directive = 61,                        // directive
+        S_uri_api = 62,                          // uri_api
+        S_DOTSTR = 63,                           // DOTSTR
+        S_array_g = 64,                          // array_g
+        S_element_g = 65,                        // element_g
+        S_number = 66,                           // number
+        S_call_register = 67,                    // call_register
+        S_param_list = 68,                       // param_list
+        S_param = 69,                            // param
+        S_modfunstr = 70,                        // modfunstr
+        S_funlvarstr = 71,                       // funlvarstr
+        S_labelstr = 72,                         // labelstr
+        S_modvarstr = 73,                        // modvarstr
+        S_instruction = 74,                      // instruction
+        S_opcode = 75                            // opcode
       };
     };
 
@@ -1288,16 +1291,31 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_COMMENT ()
+      make_COMMENT1 ()
       {
-        return symbol_type (token::COMMENT);
+        return symbol_type (token::COMMENT1);
       }
 #else
       static
       symbol_type
-      make_COMMENT ()
+      make_COMMENT1 ()
       {
-        return symbol_type (token::COMMENT);
+        return symbol_type (token::COMMENT1);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMENT2 ()
+      {
+        return symbol_type (token::COMMENT2);
+      }
+#else
+      static
+      symbol_type
+      make_COMMENT2 ()
+      {
+        return symbol_type (token::COMMENT2);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1994,8 +2012,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 101,     ///< Last index in yytable_.
-      yynnts_ = 27,  ///< Number of nonterminal symbols.
+      yylast_ = 119,     ///< Last index in yytable_.
+      yynnts_ = 28,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -2009,7 +2027,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 2013 "Parser2.hh"
+#line 2031 "Parser2.hh"
 
 
 

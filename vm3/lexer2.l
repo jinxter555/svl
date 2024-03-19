@@ -73,7 +73,8 @@ register        ([rR]{integer})
 ","             return Parser::token::COMMA;
 "."             return Parser::token::DOT;
 ":"             return Parser::token::COLON;
-^#.*\n          return Parser::token::COMMENT; // ignore comment
+^#.*\n          return Parser::token::COMMENT1; // ignore comment
+#.*\n          return Parser::token::COMMENT2; // ignore comment
 ^[ \t\r]*\n   return Parser::token::EMPTYLINE; // ignore empty line
 \n              return Parser::token::EOL;
 <<EOF>>         return Parser::token::YYEOF;
