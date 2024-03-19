@@ -109,6 +109,7 @@ public:
   inline void store_l();
   inline void iprint();
   inline void fprint();
+  inline void cprint();
 
   // stack and data segment
   inline void stack_resize();

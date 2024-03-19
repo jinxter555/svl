@@ -36,7 +36,8 @@ bool element_init = false;
 s_int_t call_register=0;
 }
 
-%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET COMMENT EMPTYLINE BRANCH TEXT
+%token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET 
+%token COMMENT EMPTYLINE BRANCH TEXT MOV_MF_ADR MOV_MV_ADR MOV_L_ADR AT
 %token <long int>  INT
 %token <long double>     FLT
 %token <std::string>     STR VSLSTRING
@@ -55,7 +56,7 @@ s_int_t call_register=0;
  
 %nterm <std::string> DOTSTR
 %nterm  param_list param
-%nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr  labelstr // modfunvarstr
+%nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr  labelstr mvarstr // modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode loadstore_l loadstore_g
 %nterm <reg_t> array_g number element_g
@@ -94,7 +95,26 @@ super_instructions
   | var_decl
   | var_array_g_decl
   | function_call
-  | MODULO BRANCH opcode labelstr { 
+  | branch_call
+  | move_address
+  ;
+
+//-----------------------------------  move address
+move_address
+  : MODULO MOV_MV_ADR REGISTER COMMA modvarstr {
+    std::cout << "moving mf" << $3 << " " << $5.mfunction << "\n";
+    std::cout << "moving mv" << $3 << " " << $5.mvar << "\n";
+    std::cout << "type " << $3 << " " << static_cast<int>($5.type) << "\n";
+    key_tok_t kkt_type = $5.type;
+    s_int_t madr = assembler->get_sym_addr(kkt_type, $5);
+    if(madr==-1) { assembler->add_unresolved_sym(kkt_type, $5, 1); }
+    asm_instr = {Opcode(Opcode::MOV), $3, madr, 0};  
+    assembler->set_instruction(asm_instr); 
+  }
+  ;
+//-----------------------------------  branch instruction
+branch_call
+  : MODULO BRANCH opcode labelstr { 
     std::cout << static_cast<int>($3) << "label:" << $4.label << "\n"; 
     s_int_t ladr = assembler->get_sym_addr(key_tok_t::label, $4);
     if(ladr==-1) { assembler->add_unresolved_sym(key_tok_t::label, $4); }
@@ -158,20 +178,20 @@ var_decl
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, $4, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO MODULO MVAR STR VSLSTRING {
+  | MODULO MVAR STR VSLSTRING {
     int i;
 
-    s_int_t l=$5.length();
+    s_int_t l=$4.length();
     int mvs = l / sizeof(reg_t);
     int remain = l  % sizeof(reg_t);
     int offset = mvs; if(remain != 0) offset++;
 
-    reg_t block, *bptr=(reg_t *)$5.c_str();
+    reg_t block, *bptr=(reg_t *)$4.c_str();
 
-    assembler->add_mvar_name($4, offset);  
+    std::cout << "mvs: " << mvs <<  " offset: " << offset
+      << " length" << l  << " string " << $4 <<  "\n";
 
-    std::cout << "mvs: " << mvs << ":" << l  << " string " << $5 <<  "\n";
-
+    assembler->add_mvar_name($3, offset+1);   // add size of string
     // add size of string first
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, l, 0};  
     assembler->set_instruction(asm_instr); 
@@ -305,18 +325,21 @@ modfunstr
   : STR { 
     $$.smodule = assembler->get_current_context().smodule;
     $$.mfunction = $1;
+    $$.type = key_tok_t::mfunction;
     }
   | DOTSTR COLON STR { 
     $$.smodule = $1;
     $$.mfunction = $3;
+    $$.type = key_tok_t::mfunction;
     }
   // COLON COLON DOTSTR COLON STR {} //full symbol from another app api module
   ;
 funlvarstr
   : STR { 
     $$ = assembler->get_current_context();
-    $$.smodule = assembler->get_current_context().smodule;
-    $$.mfunction = assembler->get_current_context().mfunction;
+    //$$.smodule = assembler->get_current_context().smodule;
+    //$$.mfunction = assembler->get_current_context().mfunction;
+    $$.type = key_tok_t::lvar;
     $$.lvar = $1;
     }
   ;
@@ -324,23 +347,25 @@ funlvarstr
 labelstr
   : STR { 
     $$ = assembler->get_current_context();
-    $$.smodule = assembler->get_current_context().smodule;
-    $$.mfunction = assembler->get_current_context().mfunction;
+    //$$.smodule = assembler->get_current_context().smodule;
+    //$$.mfunction = assembler->get_current_context().mfunction;
     $$.label = $1;
     }
   ;
 
 // set module and var full symbol  return a symbol struct
 modvarstr
-  : STR { 
+  : AT STR { 
     $$ = assembler->get_current_context();
-    $$.smodule = assembler->get_current_context().smodule;
-    $$.mvar = $1;
+    //$$.smodule = assembler->get_current_context().smodule;
+    $$.mvar = $2;
+    $$.type = key_tok_t::mvar;
     }
   | STR COLON STR { 
     $$ = assembler->get_current_context();
     $$.smodule = $1;
     $$.mvar = $3;
+    $$.type = key_tok_t::mvar;
     }
   ;
 

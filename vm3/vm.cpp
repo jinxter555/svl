@@ -1,4 +1,5 @@
 #include "vm.hh"
+#include <stdio.h>
 
 VM::VM() {
   //R[Reg::fp].i = 0;
@@ -56,6 +57,8 @@ void VM::store_l() { // store, from srcR, target addrR, target offset
   if(loc > vmstack.size()-1) { std::cerr << "can't store above the stack!\n"; return; }
   vmstack[loc] = R[instruction->operands[0].i];
 }
+
+// load R_target, R_datasegment, addr_loc
 void VM::load_g() { 
   us_int_t loc;
   if(data_seg == nullptr || data_seg->empty()) { std::cerr << "data segment have been not initalized!\n"; return; }
@@ -69,6 +72,7 @@ void VM::load_g() {
   R[instruction->operands[0].i] = (*data_seg)[loc];
 }
 
+// store R_target, R_datasegment, addr_loc
 void VM::store_g() {
   if(data_seg == nullptr || data_seg->empty()) { std::cerr << "data segment have been not initalized!\n"; return; }
   us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
@@ -205,6 +209,12 @@ void VM::iprint() {
 void VM::fprint() {
   std::cout << R[instruction->operands[0].i].f << "\n";
 }
+void VM::cprint() {
+  int i, c=instruction->operands[1].i;
+  if(c <= 0) c = sizeof(reg_t); 
+  for(i=0; i<c; i++) 
+    printf("%c", R[instruction->operands[0].i].c[i]);
+}
 void VM::pop_r() {
   if(vmstack.empty()) { // might want to comment this out for speed optimization
     std::cerr << "stack emtpy poped out\n";
@@ -266,6 +276,7 @@ void VM::dispatch() {
     case Opcode::DATA_ADD:   data_add();  break;
     case Opcode::IPRINT:  iprint();  break;
     case Opcode::FPRINT:  fprint();  break;
+    case Opcode::CPRINT:  cprint();  break;
     case Opcode::CALL:   call();  break;
     case Opcode::CALL_R:   call_r();  break;
     case Opcode::RET:    ret();  break;

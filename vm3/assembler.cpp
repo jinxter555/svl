@@ -197,13 +197,14 @@ void Assembler::add_larg_name(const std::string &a) {
   context->add_node(keys, lac--);
 }
 
-void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &fst) {
+void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &fst, int oploc) {
   unresolved_symbol_t  notfound;
   if(fst.smodule[0]!= ':') notfound.name = current_context; // uri, use fst's full app:api name
   // if smodule=':' or mvar=':' uri resolve fst with ktt
 
   notfound.type = ktt;
   notfound.location = pc_load;
+  notfound.operand_loc = oploc;
   switch(ktt) {
     case key_tok_t::app: 
       notfound.name.app = fst.app;
@@ -272,6 +273,12 @@ void Assembler::super_op_branch(const std::string &labelstr) {
 void Assembler::resolve_names() {
   std::vector<std::string> keys;
   for(auto us  : unresolved_syms) {
+    // if the location of the unresolved name 
+    if(us.operand_loc > -1) { // is specified in operand_loc which is > -1
+      code[us.location].operands[us.operand_loc ].adr
+         = get_sym_addr(us.type, us.name);
+      continue;
+    }
     switch(us.type) {
     case key_tok_t::mvar:  
       code[us.location].operands[2].adr

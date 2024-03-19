@@ -52,8 +52,12 @@ register        ([rR]{integer})
 "%load_l"        return Parser::token::LOAD_L;
 "%store_g"       return Parser::token::STORE_G;
 "%load_g"        return Parser::token::LOAD_G;
+"mov_mf_adr"        return Parser::token::MOV_MF_ADR;
+"mov_mv_adr"        return Parser::token::MOV_MV_ADR;
+"mov_l_adr"        return Parser::token::MOV_L_ADR;
 \"(\\(.|\n)|[^\\"\n])*\"    yylval->emplace<std::string>(std::string(YYText())); return Parser::token::VSLSTRING;
 {identifier}      yylval->emplace<std::string>(std::string(YYText())); return Parser::token::STR;
+"@"             return Parser::token::AT;
 "+"             return Parser::token::PLUS;
 "-"             return Parser::token::MINUS;
 "*"             return Parser::token::MULTIPLY;

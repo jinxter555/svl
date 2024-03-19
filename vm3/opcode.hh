@@ -47,6 +47,7 @@ enum class Opcode {
   STORE_L,
   IPRINT,
   FPRINT,
+  CPRINT,
   STACK_RESIZE,
   DATA_RESIZE,
   DATA_SIZE,

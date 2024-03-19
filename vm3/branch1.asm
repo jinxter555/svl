@@ -12,7 +12,6 @@ fprint r0
 mov r1, 10
 mov r7, 0
 %%label loop1
-#fprint r0
 iprint r1
 isub_c r1, r1, 1
 cmpi r1, r7

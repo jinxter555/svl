@@ -477,25 +477,29 @@ namespace vslasm {
     EMPTYLINE = 21,                // EMPTYLINE
     BRANCH = 22,                   // BRANCH
     TEXT = 23,                     // TEXT
-    INT = 24,                      // INT
-    FLT = 25,                      // FLT
-    STR = 26,                      // STR
-    VSLSTRING = 27,                // VSLSTRING
-    REGISTER = 28,                 // REGISTER
-    CALL = 29,                     // CALL
-    LOAD_L = 30,                   // LOAD_L
-    STORE_L = 31,                  // STORE_L
-    LOAD_G = 32,                   // LOAD_G
-    STORE_G = 33,                  // STORE_G
-    ASSIGN = 34,                   // ASSIGN
-    PLUS = 35,                     // PLUS
-    MINUS = 36,                    // MINUS
-    MULTIPLY = 37,                 // MULTIPLY
-    DIVIDE = 38,                   // DIVIDE
-    MODULO = 39,                   // MODULO
-    UMINUS = 40,                   // UMINUS
-    FACTORIAL = 41,                // FACTORIAL
-    EXPONENT = 42                  // EXPONENT
+    MOV_MF_ADR = 24,               // MOV_MF_ADR
+    MOV_MV_ADR = 25,               // MOV_MV_ADR
+    MOV_L_ADR = 26,                // MOV_L_ADR
+    AT = 27,                       // AT
+    INT = 28,                      // INT
+    FLT = 29,                      // FLT
+    STR = 30,                      // STR
+    VSLSTRING = 31,                // VSLSTRING
+    REGISTER = 32,                 // REGISTER
+    CALL = 33,                     // CALL
+    LOAD_L = 34,                   // LOAD_L
+    STORE_L = 35,                  // STORE_L
+    LOAD_G = 36,                   // LOAD_G
+    STORE_G = 37,                  // STORE_G
+    ASSIGN = 38,                   // ASSIGN
+    PLUS = 39,                     // PLUS
+    MINUS = 40,                    // MINUS
+    MULTIPLY = 41,                 // MULTIPLY
+    DIVIDE = 42,                   // DIVIDE
+    MODULO = 43,                   // MODULO
+    UMINUS = 44,                   // UMINUS
+    FACTORIAL = 45,                // FACTORIAL
+    EXPONENT = 46                  // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -512,7 +516,7 @@ namespace vslasm {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 43, ///< Number of tokens.
+        YYNTOKENS = 47, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -538,50 +542,56 @@ namespace vslasm {
         S_EMPTYLINE = 21,                        // EMPTYLINE
         S_BRANCH = 22,                           // BRANCH
         S_TEXT = 23,                             // TEXT
-        S_INT = 24,                              // INT
-        S_FLT = 25,                              // FLT
-        S_STR = 26,                              // STR
-        S_VSLSTRING = 27,                        // VSLSTRING
-        S_REGISTER = 28,                         // REGISTER
-        S_CALL = 29,                             // CALL
-        S_LOAD_L = 30,                           // LOAD_L
-        S_STORE_L = 31,                          // STORE_L
-        S_LOAD_G = 32,                           // LOAD_G
-        S_STORE_G = 33,                          // STORE_G
-        S_ASSIGN = 34,                           // ASSIGN
-        S_PLUS = 35,                             // PLUS
-        S_MINUS = 36,                            // MINUS
-        S_MULTIPLY = 37,                         // MULTIPLY
-        S_DIVIDE = 38,                           // DIVIDE
-        S_MODULO = 39,                           // MODULO
-        S_UMINUS = 40,                           // UMINUS
-        S_FACTORIAL = 41,                        // FACTORIAL
-        S_EXPONENT = 42,                         // EXPONENT
-        S_YYACCEPT = 43,                         // $accept
-        S_lines = 44,                            // lines
-        S_line = 45,                             // line
-        S_super_instructions = 46,               // super_instructions
-        S_function_call = 47,                    // function_call
-        S_var_array_g_decl = 48,                 // var_array_g_decl
-        S_var_decl = 49,                         // var_decl
-        S_var_access = 50,                       // var_access
-        S_loadstore_l = 51,                      // loadstore_l
-        S_loadstore_g = 52,                      // loadstore_g
-        S_directive = 53,                        // directive
-        S_uri_api = 54,                          // uri_api
-        S_DOTSTR = 55,                           // DOTSTR
-        S_array_g = 56,                          // array_g
-        S_element_g = 57,                        // element_g
-        S_number = 58,                           // number
-        S_call_register = 59,                    // call_register
-        S_param_list = 60,                       // param_list
-        S_param = 61,                            // param
-        S_modfunstr = 62,                        // modfunstr
-        S_funlvarstr = 63,                       // funlvarstr
-        S_labelstr = 64,                         // labelstr
-        S_modvarstr = 65,                        // modvarstr
-        S_instruction = 66,                      // instruction
-        S_opcode = 67                            // opcode
+        S_MOV_MF_ADR = 24,                       // MOV_MF_ADR
+        S_MOV_MV_ADR = 25,                       // MOV_MV_ADR
+        S_MOV_L_ADR = 26,                        // MOV_L_ADR
+        S_AT = 27,                               // AT
+        S_INT = 28,                              // INT
+        S_FLT = 29,                              // FLT
+        S_STR = 30,                              // STR
+        S_VSLSTRING = 31,                        // VSLSTRING
+        S_REGISTER = 32,                         // REGISTER
+        S_CALL = 33,                             // CALL
+        S_LOAD_L = 34,                           // LOAD_L
+        S_STORE_L = 35,                          // STORE_L
+        S_LOAD_G = 36,                           // LOAD_G
+        S_STORE_G = 37,                          // STORE_G
+        S_ASSIGN = 38,                           // ASSIGN
+        S_PLUS = 39,                             // PLUS
+        S_MINUS = 40,                            // MINUS
+        S_MULTIPLY = 41,                         // MULTIPLY
+        S_DIVIDE = 42,                           // DIVIDE
+        S_MODULO = 43,                           // MODULO
+        S_UMINUS = 44,                           // UMINUS
+        S_FACTORIAL = 45,                        // FACTORIAL
+        S_EXPONENT = 46,                         // EXPONENT
+        S_YYACCEPT = 47,                         // $accept
+        S_lines = 48,                            // lines
+        S_line = 49,                             // line
+        S_super_instructions = 50,               // super_instructions
+        S_move_address = 51,                     // move_address
+        S_branch_call = 52,                      // branch_call
+        S_function_call = 53,                    // function_call
+        S_var_array_g_decl = 54,                 // var_array_g_decl
+        S_var_decl = 55,                         // var_decl
+        S_var_access = 56,                       // var_access
+        S_loadstore_l = 57,                      // loadstore_l
+        S_loadstore_g = 58,                      // loadstore_g
+        S_directive = 59,                        // directive
+        S_uri_api = 60,                          // uri_api
+        S_DOTSTR = 61,                           // DOTSTR
+        S_array_g = 62,                          // array_g
+        S_element_g = 63,                        // element_g
+        S_number = 64,                           // number
+        S_call_register = 65,                    // call_register
+        S_param_list = 66,                       // param_list
+        S_param = 67,                            // param
+        S_modfunstr = 68,                        // modfunstr
+        S_funlvarstr = 69,                       // funlvarstr
+        S_labelstr = 70,                         // labelstr
+        S_modvarstr = 71,                        // modvarstr
+        S_instruction = 72,                      // instruction
+        S_opcode = 73                            // opcode
       };
     };
 
@@ -1338,6 +1348,66 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_MOV_MF_ADR ()
+      {
+        return symbol_type (token::MOV_MF_ADR);
+      }
+#else
+      static
+      symbol_type
+      make_MOV_MF_ADR ()
+      {
+        return symbol_type (token::MOV_MF_ADR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MOV_MV_ADR ()
+      {
+        return symbol_type (token::MOV_MV_ADR);
+      }
+#else
+      static
+      symbol_type
+      make_MOV_MV_ADR ()
+      {
+        return symbol_type (token::MOV_MV_ADR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MOV_L_ADR ()
+      {
+        return symbol_type (token::MOV_L_ADR);
+      }
+#else
+      static
+      symbol_type
+      make_MOV_L_ADR ()
+      {
+        return symbol_type (token::MOV_L_ADR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_AT ()
+      {
+        return symbol_type (token::AT);
+      }
+#else
+      static
+      symbol_type
+      make_AT ()
+      {
+        return symbol_type (token::AT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_INT (long int v)
       {
         return symbol_type (token::INT, std::move (v));
@@ -1924,8 +1994,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 104,     ///< Last index in yytable_.
-      yynnts_ = 25,  ///< Number of nonterminal symbols.
+      yylast_ = 101,     ///< Last index in yytable_.
+      yynnts_ = 27,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1939,7 +2009,7 @@ switch (yykind)
 
 #line 15 "grammar2.y"
 } // vslasm
-#line 1943 "Parser2.hh"
+#line 2013 "Parser2.hh"
 
 
 
