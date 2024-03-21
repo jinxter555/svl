@@ -114,6 +114,7 @@ public:
   // stack and data segment
   inline void set_d_av();
   inline void set_s_av();
+  inline void set_lv_av();
   inline void stack_resize();
   inline void data_resize();
   inline void data_size();

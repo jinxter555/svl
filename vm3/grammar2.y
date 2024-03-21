@@ -97,7 +97,6 @@ line
 super_instructions
   : var_access
   | var_decl
-  | var_array_g_decl
   | function_call
   | branch_call
   | move_address
@@ -145,74 +144,16 @@ function_call
     assembler->super_opfun_set_instruction(Opcode::CALL, $3);
     } 
   ;
-//-----------------------------------  variable array declaration
-/*
-var_array_g_decl 
-
-  : MODULO MVAR STR INT LSBRACKET array_g RSBRACKET  {  // insert_int inserts -1 for size now
-    assembler->add_mvar_name($3, 1);  // default add + 1, for element count
-    assembler->mvc += element_count;  // should add element_count instead
-    // need to reset size here
-    element_count=0; // reset for for next array
-    skipline = true; // insert is done by array_g grammar
-  } 
-  : MODULO MVAR STR INT LSBRACKET RSBRACKET  {
-
-    asm_instr = {Opcode(Opcode::DATA_ADD), -1, $4, 0};  
-    assembler->set_instruction(asm_instr); 
-    assembler->insert_instruction();  
-
-    assembler->add_mvar_name($3, $4+1);   // don't forget the offset INT
-    asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
-    assembler->set_instruction(asm_instr); 
-  } 
-  | MODULO MVAR STR INT LSBRACKET array_g RSBRACKET  {
-    assembler->add_mvar_name($3, 0);  // add mvar name default add + 1,
-    assembler->mvc += element_count;  // should add element_count instead
-    int remain_size = $4 - element_count;
-    element_count=0; // reset for for next array
-    if(remain_size > 0) {
-      asm_instr = {Opcode(Opcode::DATA_RESIZE), remain_size, 0, 0};  
-      assembler->set_instruction(asm_instr); 
-      assembler->mvc += remain_size; 
-      skipline = false;
-    } else {
-      skipline = true; // insert is done by array_g grammar
-    }
-  }
-  ;
-  */
-var_array_g_decl 
-  : MODULO MVAR STR INT LSBRACKET array_g RSBRACKET  {
-  // : var_m_decl LSBRACKET array_g RSBRACKET  {
-    int madr = assembler->add_mvar_name($3, 1);  // add mvar name default add + 1,
-
-    reg_t ec; ec.i = element_count;
-    if($4 > element_count) ec.i = $4;
-
-    assembler->mvc += element_count;  // should add element_count instead
-    assembler->set_dataseg_adr_value(madr, ec);
-
-    int remain_size = $4 - element_count;
-    element_count=0; // reset for for next array
-    if(remain_size > 0) {
-      asm_instr = {Opcode(Opcode::DATA_RESIZE), remain_size, 0, 0};  
-      assembler->set_instruction(asm_instr); 
-      assembler->mvc += remain_size; 
-      skipline = false;
-    } else {
-      skipline = true; // insert is done by array_g grammar
-    }
-    array_init = true;
-  }
-  ;
 
 //-----------------------------------  variable declaration
 var_decl
   : var_decl_l
   | var_decl_m
+  | var_array_g_decl
+  | var_array_l_decl
   ;
 
+//-----------------------------------  variable declaration local
 var_decl_l
   : MODULO LVAR STR number   {
     assembler->add_lvar_name($3); 
@@ -221,6 +162,20 @@ var_decl_l
   }
   ;
 
+var_array_l_decl
+  : MODULO LVAR STR INT LSBRACKET RSBRACKET  {
+    asm_instr = {Opcode(Opcode::PUSH_C), $4, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();  
+
+    assembler->add_lvar_name($3, $4+1);   // don't forget the offset INT to include size
+    asm_instr = {Opcode(Opcode::STACK_RESIZE), $4, 0, 0};  
+    assembler->set_instruction(asm_instr); 
+  } 
+
+  ;
+
+//-----------------------------------  variable declaration module global
 var_decl_m
   : MODULO MVAR STR {
     assembler->add_mvar_name($3);  
@@ -273,6 +228,33 @@ var_decl_m
     skipline = true;
   }
   ;
+
+// array  decl
+var_array_g_decl 
+  : MODULO MVAR STR INT LSBRACKET array_g RSBRACKET  {
+  // : var_m_decl LSBRACKET array_g RSBRACKET  {
+    int madr = assembler->add_mvar_name($3, 1);  // add mvar name default add + 1,
+
+    reg_t ec; ec.i = element_count;
+    if($4 > element_count) ec.i = $4;
+
+    assembler->mvc += element_count;  // should add element_count instead
+    assembler->set_dataseg_adr_value(madr, ec);
+
+    int remain_size = $4 - element_count;
+    element_count=0; // reset for for next array
+    if(remain_size > 0) {
+      asm_instr = {Opcode(Opcode::DATA_RESIZE), remain_size, 0, 0};  
+      assembler->set_instruction(asm_instr); 
+      assembler->mvc += remain_size; 
+      skipline = false;
+    } else {
+      skipline = true; // insert is done by array_g grammar
+    }
+    array_init = true;
+  }
+  ;
+
 //-----------------------------------  variable acccess 
 var_access:
   loadstore_l REGISTER COMMA funlvarstr {

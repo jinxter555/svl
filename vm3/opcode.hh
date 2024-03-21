@@ -50,6 +50,7 @@ enum class Opcode {
   CPRINT,
   SET_D_AV, // set data  segment address value, mvar 
   SET_S_AV, // set stack segment address value, lvar
+  SET_LV_AV, // set stack segment relative address value + fp,  lvar
   STACK_RESIZE,
   DATA_RESIZE,
   DATA_SIZE,

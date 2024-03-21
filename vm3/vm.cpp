@@ -255,7 +255,17 @@ void VM::set_d_av() {
 }
 
 void VM::set_s_av() {
+  // us_int_t loc = instruction->operands[0].i + R[Reg::fp].i;
+  us_int_t loc = instruction->operands[0].i;
+  if(loc > vmstack.size()-1 || loc < 0) { std::cerr << "can't load from above the stack!\n"; return; }
+  vmstack[loc] =  instruction->operands[1];
 }
+void VM::set_lv_av() {
+  us_int_t loc = instruction->operands[0].i + R[Reg::fp].i;
+  if(loc > vmstack.size()-1 || loc < 0) { std::cerr << "can't load from above the stack!\n"; return; }
+  vmstack[loc] =  instruction->operands[1];
+}
+
 
 // data_add Reg, 0, 0   # add value of reg
 // data_add -1, int    # add number int instead
@@ -315,6 +325,8 @@ void VM::dispatch() {
     case Opcode::DATA_RESIZE:   data_resize();  break;
     case Opcode::DATA_SIZE:   data_size();  break;
     case Opcode::SET_D_AV:   set_d_av();  break;
+    case Opcode::SET_S_AV:   set_s_av();  break;
+    case Opcode::SET_LV_AV:   set_lv_av();  break;
     case Opcode::EXIT:   vmexit();  break;
     case Opcode::NOOP:   break;
     default: std::cerr << "you've forgot to add case instruction: " <<  static_cast<int>(instruction->opcode) << "!!!!\n"; break;
