@@ -51,6 +51,11 @@ void Assembler::run_call(VM& vm, const std::string &m, const std::string &f) {
   Assembly::run_call(vm, old_pc);
   pc_load = old_pc;
 }
+void Assembler::set_dataseg_adr_value(s_int_t madr, reg_t v) {
+  //std::cout << "madr: " << madr << " v:" << v.i << "\n";
+  set_instruction({Opcode(Opcode::SET_D_AV), madr, v, 0});  
+  insert_instruction();
+}
 
 void Assembler::run_single_instruction(VM &vm) {
   Assembly::run_single_instruction(vm);
@@ -121,16 +126,17 @@ void Assembler::print_ds_f() {
   std::cout << '\n';
 }
 
-void Assembler::add_app_name(const std::string &app) {
+s_int_t Assembler::add_app_name(const std::string &app) {
   std::cout << "in add app to context: "  << app << "\n";
   current_context.app = app;
   context->add_node({
     current_context.uni, 
     current_context.app,
     "addr"}, pc_load);
+  return pc_load;
 }
 
-void Assembler::add_api_name(const std::string &api) {
+s_int_t Assembler::add_api_name(const std::string &api) {
   // std::cout << "in add api to context: "  << api << "\n";
   current_context.api = api;
   context->add_node({
@@ -138,18 +144,20 @@ void Assembler::add_api_name(const std::string &api) {
     current_context.app,
     current_context.api, 
     "addr"}, pc_load);
+  return pc_load;
 }
 
-void Assembler::add_module_name(const std::string &m) {
+s_int_t Assembler::add_module_name(const std::string &m) {
   // std::cout << "in add module to context: '"  << m << "'\n";
   current_context.smodule = m; // update current context where are we
   full_symbol_t fst = current_context; fst.smodule = m;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::smodule, fst));
   keys.push_back("addr");
   context->add_node(keys, pc_load);
+  return pc_load;
 }
 
-void Assembler::add_function_name(const std::string &f) {
+s_int_t Assembler::add_function_name(const std::string &f) {
   //std::cout << "in add function to context: "  << f << "\n";
   current_context.mfunction = f; 
   lvc = 0; // reset local var count to zero addr for every function
@@ -159,25 +167,30 @@ void Assembler::add_function_name(const std::string &f) {
   keys.push_back("addr");
   context->add_node(keys, pc_load); // name lookup addr
   addr2sym_map[pc_load] = fst;      // addr lookup name
+  return pc_load;
 }
 
-void Assembler::add_label_name(const std::string &l) {
+s_int_t Assembler::add_label_name(const std::string &l) {
   current_context.label = l; 
   full_symbol_t fst = current_context; fst.label = l;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::label, fst));
   keys.push_back("addr");
   context->add_node(keys, pc_load);
+  return pc_load;
 }
 
-void Assembler::add_lvar_name(const std::string &v, int n) { //  int n, with offset for array
+s_int_t Assembler::add_lvar_name(const std::string &v, int n) { //  int n, with offset for array
+  s_int_t adr = lvc;
   current_context.lvar = v;
   full_symbol_t fst = current_context; fst.lvar= v;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::lvar, fst));
   keys.push_back("addr");
   context->add_node(keys, lvc);
   lvc += n;
+  return adr;       // return address of the local variable
 }
-void Assembler::add_mvar_name(const std::string &mv, int offset) { // int n, with offset for array
+s_int_t Assembler::add_mvar_name(const std::string &mv, int offset) { // int n, with offset for array
+  s_int_t adr = mvc;
   current_context.mvar = mv;
   full_symbol_t fst = current_context; fst.mvar= mv;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mvar, fst));
@@ -187,14 +200,17 @@ void Assembler::add_mvar_name(const std::string &mv, int offset) { // int n, wit
   keys.push_back("size");
   context->add_node(keys, offset);
   mvc += offset;
+  return adr;
 }
 
-void Assembler::add_larg_name(const std::string &a) {
+s_int_t Assembler::add_larg_name(const std::string &a) {
+  s_int_t adr = lac;
   current_context.larg = a;
   full_symbol_t fst = current_context; fst.larg= a;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::larg, fst));
   keys.push_back("addr");
   context->add_node(keys, lac--);
+  return adr;
 }
 
 void Assembler::add_unresolved_sym(const key_tok_t ktt,   const full_symbol_t &fst, int oploc) {

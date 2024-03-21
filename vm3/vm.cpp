@@ -72,10 +72,16 @@ void VM::load_g() {
   R[instruction->operands[0].i] = (*data_seg)[loc];
 }
 
-// store R_target, R_datasegment, addr_loc
+// store R_from, R_datasegment, addr_loc_target
 void VM::store_g() {
+  us_int_t loc;
   if(data_seg == nullptr || data_seg->empty()) { std::cerr << "data segment have been not initalized!\n"; return; }
-  us_int_t loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+
+  if(instruction->operands[1].i == -1)  // hack if operand1 == -1, just operand2 addr realtive to datasegment
+    loc = instruction->operands[2].i;
+  else
+    loc = R[instruction->operands[1].i].i + instruction->operands[2].i;
+
   if(loc > data_seg->size()-1) { std::cerr << "can't store above the data segment!\n"; return; }
   (*data_seg)[loc] = R[instruction->operands[0].i];
 }
@@ -239,6 +245,18 @@ void VM::data_size() {
   R[instruction->operands[0].i].i = data_seg->size();
 }
 
+void VM::set_d_av() {
+  if(data_seg == nullptr || data_seg->empty()) { std::cerr << "data segment have been not initalized!\n"; return; }
+
+  us_int_t loc = instruction->operands[0].i;
+
+  if(loc > data_seg->size()-1) { std::cerr << "can't store above the data segment!\n"; return; }
+  (*data_seg)[loc] = instruction->operands[1];
+}
+
+void VM::set_s_av() {
+}
+
 // data_add Reg, 0, 0   # add value of reg
 // data_add -1, int    # add number int instead
 // data_add -1, float   # add number float instead
@@ -296,6 +314,7 @@ void VM::dispatch() {
     case Opcode::STACK_RESIZE:   stack_resize();  break;
     case Opcode::DATA_RESIZE:   data_resize();  break;
     case Opcode::DATA_SIZE:   data_size();  break;
+    case Opcode::SET_D_AV:   set_d_av();  break;
     case Opcode::EXIT:   vmexit();  break;
     case Opcode::NOOP:   break;
     default: std::cerr << "you've forgot to add case instruction: " <<  static_cast<int>(instruction->opcode) << "!!!!\n"; break;

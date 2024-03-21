@@ -9,10 +9,11 @@ exit
 #
 #
 %%function init_ds
-%mvar a [1 2 3]
-%mvar str1 "this is Delphia represented that it used artificial intelligence and machine learning to analyze its retail clients' spending and social media data to inform its investment advice when, in fact, no such data was being used in its investment process, the SEC said in a settlement order. Despite being warned about suspected misleading practices in 2021 and agreeing to amend them, Delphia only partially complied, according to the SEC. The company continued to market itself as using client data as AI inputs but never did anything of the sort, the regulator said."
-%mvar b 3 [30]
-%mvar c [4 5 6]
+%mvar a 3 [1 2 3]
+#%mvar str2 "this is Delphia represented that it used artificial intelligence and machine learning to analyze its retail clients' spending and social media data to inform its investment advice when, in fact, no such data was being used in its investment process, the SEC said in a settlement order. Despite being warned about suspected misleading practices in 2021 and agreeing to amend them, Delphia only partially complied, according to the SEC. The company continued to market itself as using client data as AI inputs but never did anything of the sort, the regulator said."
+%mvar b 2 []
+%mvar c 2 [4 5 6]
+%mvar d 3 [7]
 %mvar v1 1111
 %mvar v2 2222
 %mvar v3 3333

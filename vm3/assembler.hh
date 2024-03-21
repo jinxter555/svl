@@ -66,14 +66,17 @@ public:
   void print_ds_f();
 
   // add names to the symbol tree for later address lookup
-  void add_app_name(const std::string &app);
-  void add_api_name(const std::string &api);
-  void add_module_name(const std::string &m);
-  void add_mvar_name(const std::string &mv, int offset=1 ); // offset, [n] elements of an array 1 is
-  void add_function_name(const std::string &f);
-  void add_label_name(const std::string &l);
-  void add_larg_name(const std::string &a);
-  void add_lvar_name(const std::string &v, int n=1);
+  s_int_t add_app_name(const std::string &app);
+  s_int_t add_api_name(const std::string &api);
+  s_int_t add_module_name(const std::string &m);
+  s_int_t add_mvar_name(const std::string &mv, int offset=1 ); // offset, [n] elements of an array 1 is
+  s_int_t add_function_name(const std::string &f);
+  s_int_t add_label_name(const std::string &l);
+  s_int_t add_larg_name(const std::string &a);
+  s_int_t add_lvar_name(const std::string &v, int n=1);
+
+
+  void set_dataseg_adr_value(s_int_t madr, reg_t v);  
 
   void resolve_names();
   void add_unresolved_sym(const key_tok_t ktt, const full_symbol_t &fst, int oploc=-1);
@@ -82,6 +85,8 @@ public:
   full_symbol_t get_current_context() { return current_context; };
   std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);
   s_int_t get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst);
+
+
 
   full_symbol_t dotstr2fst(key_tok_t ktt, const std::string& vs);
   full_symbol_t dotstr2modfun(const std::string& s);

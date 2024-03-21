@@ -18,6 +18,8 @@ std::unordered_map<std::string, Opcode> opcode_table = {
   {"iprint", Opcode::IPRINT},
   {"fprint", Opcode::FPRINT},
   {"cprint", Opcode::CPRINT},
+  {"set_d_av", Opcode::SET_D_AV},
+  {"set_s_av", Opcode::SET_S_AV},
   {"stack_resize", Opcode::STACK_RESIZE},
   {"data_resize", Opcode::DATA_RESIZE},
   {"data_size", Opcode::DATA_SIZE},

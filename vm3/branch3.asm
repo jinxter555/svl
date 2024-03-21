@@ -19,7 +19,7 @@ ret
 %%larg mstring 
 mov r7, 1
 
-%load_l r0, mstring  ## r0 has the address
+%load_l r0,  mstring  ## r0 has the address
 load_g r1, r0, 0     ## r1 has the array size
 load_g r2, r0, 1     ## r2 has the string buffer size
 iadd_c r0, r0, 2     ## r0, set r0 to the begining of stirng buffer

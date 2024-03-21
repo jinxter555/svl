@@ -34,6 +34,7 @@ instr_t asm_instr = {Opcode(Opcode::NOOP), 0,0,0};
 bool skipline=false;
 bool element_init = false;
 s_int_t call_register=0;
+bool array_init = true;
 }
 
 %token EOL LPAREN RPAREN APP API MODULE MVAR FUNCTION LABEL LVAR LARG DOT  COMMA COLON URI LSBRACKET RSBRACKET 
@@ -56,7 +57,7 @@ s_int_t call_register=0;
  
 %nterm <std::string> DOTSTR
 %nterm  param_list param
-%nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr  labelstr mvarstr // modfunvarstr
+%nterm <full_symbol_t> uri_api modfunstr funlvarstr modvarstr  labelstr // modfunvarstr
 %nterm <long int> call_register
 %nterm <Opcode>     opcode loadstore_l loadstore_g
 %nterm <reg_t> array_g number element_g
@@ -145,16 +146,23 @@ function_call
     } 
   ;
 //-----------------------------------  variable array declaration
+/*
 var_array_g_decl 
-  : MODULO MVAR STR LSBRACKET array_g RSBRACKET  {
-    assembler->add_mvar_name($3, 0);  // add mvar name default add + 1,
+
+  : MODULO MVAR STR INT LSBRACKET array_g RSBRACKET  {  // insert_int inserts -1 for size now
+    assembler->add_mvar_name($3, 1);  // default add + 1, for element count
     assembler->mvc += element_count;  // should add element_count instead
     // need to reset size here
     element_count=0; // reset for for next array
     skipline = true; // insert is done by array_g grammar
   } 
-  | MODULO MVAR STR INT LSBRACKET RSBRACKET  {
-    assembler->add_mvar_name($3, $4);   // don't forget the offset INT
+  : MODULO MVAR STR INT LSBRACKET RSBRACKET  {
+
+    asm_instr = {Opcode(Opcode::DATA_ADD), -1, $4, 0};  
+    assembler->set_instruction(asm_instr); 
+    assembler->insert_instruction();  
+
+    assembler->add_mvar_name($3, $4+1);   // don't forget the offset INT
     asm_instr = {Opcode(Opcode::DATA_RESIZE), $4, 0, 0};  
     assembler->set_instruction(asm_instr); 
   } 
@@ -173,14 +181,48 @@ var_array_g_decl
     }
   }
   ;
+  */
+var_array_g_decl 
+  : MODULO MVAR STR INT LSBRACKET array_g RSBRACKET  {
+  // : var_m_decl LSBRACKET array_g RSBRACKET  {
+    int madr = assembler->add_mvar_name($3, 1);  // add mvar name default add + 1,
+
+    reg_t ec; ec.i = element_count;
+    if($4 > element_count) ec.i = $4;
+
+    assembler->mvc += element_count;  // should add element_count instead
+    assembler->set_dataseg_adr_value(madr, ec);
+
+    int remain_size = $4 - element_count;
+    element_count=0; // reset for for next array
+    if(remain_size > 0) {
+      asm_instr = {Opcode(Opcode::DATA_RESIZE), remain_size, 0, 0};  
+      assembler->set_instruction(asm_instr); 
+      assembler->mvc += remain_size; 
+      skipline = false;
+    } else {
+      skipline = true; // insert is done by array_g grammar
+    }
+    array_init = true;
+  }
+  ;
+
 //-----------------------------------  variable declaration
 var_decl
+  : var_decl_l
+  | var_decl_m
+  ;
+
+var_decl_l
   : MODULO LVAR STR number   {
     assembler->add_lvar_name($3); 
     asm_instr = {Opcode(Opcode::PUSH_C), $4, 0, 0};  
     assembler->set_instruction(asm_instr); 
   }
-  | MODULO MVAR STR {
+  ;
+
+var_decl_m
+  : MODULO MVAR STR {
     assembler->add_mvar_name($3);  
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, 0, 0};  
     assembler->set_instruction(asm_instr); 
@@ -280,13 +322,26 @@ DOTSTR
 
 //----------------------------------- array decl
 array_g
-  : element_g
+  : %empty {
+    if(array_init) { // set up size of array at initialization
+       asm_instr = {Opcode(Opcode::DATA_ADD), -1, -1, 0};  
+      assembler->set_instruction(asm_instr); 
+      assembler->insert_instruction();
+      array_init = false;
+    }
+  }
+  | element_g
   | array_g element_g
   ;
 
 element_g
   : number { 
-    //std::cout << $1.i << " "; 
+    if(array_init) { // set up size of array at initialization
+       asm_instr = {Opcode(Opcode::DATA_ADD), -1, -1, 0};  
+      assembler->set_instruction(asm_instr); 
+      assembler->insert_instruction();
+      array_init = false;
+    }
     asm_instr = {Opcode(Opcode::DATA_ADD), -1, $1, 0};  
     assembler->set_instruction(asm_instr); 
     assembler->insert_instruction();
