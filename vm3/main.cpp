@@ -2,8 +2,8 @@
 #include <istream>
 #include <sstream>
 #include <FlexLexer.h>
-#include "Parser2.hh"
-#include "Scanner2.hh"
+#include "asm_parser.hh"
+#include "asm_scanner.hh"
 #include "assembler.hh"
 #include  "assembler_interactive.hh"
 

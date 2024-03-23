@@ -32,7 +32,7 @@
 
 
 /**
- ** \file Parser2.hpp
+ ** \file asm_parser.hh
  ** Define the vslasm::parser class.
  */
 
@@ -42,17 +42,17 @@
 // especially those whose name start with YY_ or yy_.  They are
 // private implementation details that can be changed or removed.
 
-#ifndef YY_YY_PARSER2_HPP_INCLUDED
-# define YY_YY_PARSER2_HPP_INCLUDED
+#ifndef YY_YY_ASM_PARSER_HH_INCLUDED
+# define YY_YY_ASM_PARSER_HH_INCLUDED
 // "%code requires" blocks.
-#line 18 "grammar2.y"
+#line 21 "asm_grammar.y"
 
-#include "assembler.h"
+#include "assembler.hh"
 namespace vslasm {
-  class Scanner;
+  class AsmScanner;
 }
 
-#line 56 "Parser2.hpp"
+#line 56 "asm_parser.hh"
 
 
 # include <cstdlib> // std::abort
@@ -186,15 +186,15 @@ namespace vslasm {
 # define YYDEBUG 0
 #endif
 
-#line 13 "grammar2.y"
+#line 15 "asm_grammar.y"
 namespace vslasm {
-#line 192 "Parser2.hpp"
+#line 192 "asm_parser.hh"
 
 
 
 
   /// A Bison parser.
-  class Parser
+  class AsmParser
   {
   public:
 #ifdef YYSTYPE
@@ -384,15 +384,35 @@ namespace vslasm {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // loadstore_l
+      // loadstore_g
+      // opcode
+      char dummy1[sizeof (Opcode)];
+
+      // uri_api
+      // modfunstr
+      // funlvarstr
+      // labelstr
+      // modvarstr
+      char dummy2[sizeof (full_symbol_t)];
+
       // FLT
-      char dummy1[sizeof (double)];
+      char dummy3[sizeof (long double)];
 
       // INT
-      char dummy2[sizeof (long long)];
+      // REGISTER
+      // call_register
+      char dummy4[sizeof (long int)];
+
+      // array_g
+      // element_g
+      // number
+      char dummy5[sizeof (reg_t)];
 
       // STR
-      // opname
-      char dummy3[sizeof (std::string)];
+      // VSLSTRING
+      // DOTSTR
+      char dummy6[sizeof (std::string)];
     };
 
     /// The size of the largest semantic type.
@@ -434,25 +454,53 @@ namespace vslasm {
       {
         YYEMPTY = -2,
     YYEOF = 0,                     // "end of file"
-    YYerror = 256,                 // error
-    YYUNDEF = 257,                 // "invalid token"
-    EOL = 258,                     // EOL
-    LPAREN = 259,                  // LPAREN
-    RPAREN = 260,                  // RPAREN
-    INT = 261,                     // INT
-    FLT = 262,                     // FLT
-    STR = 263,                     // STR
-    ASSIGN = 264,                  // ASSIGN
-    PLUS = 265,                    // PLUS
-    MINUS = 266,                   // MINUS
-    MULTIPLY = 267,                // MULTIPLY
-    DIVIDE = 268,                  // DIVIDE
-    MODULO = 269,                  // MODULO
-    UMINUS = 270,                  // UMINUS
-    FACTORIAL = 271,               // FACTORIAL
-    EXPONENT = 272,                // EXPONENT
-    COMMA = 273,                   // COMMA
-    REGISTER = 274                 // REGISTER
+    YYerror = 1,                   // error
+    YYUNDEF = 2,                   // "invalid token"
+    EOL = 3,                       // EOL
+    LPAREN = 4,                    // LPAREN
+    RPAREN = 5,                    // RPAREN
+    APP = 6,                       // APP
+    API = 7,                       // API
+    MODULE = 8,                    // MODULE
+    MVAR = 9,                      // MVAR
+    FUNCTION = 10,                 // FUNCTION
+    LABEL = 11,                    // LABEL
+    LVAR = 12,                     // LVAR
+    LARG = 13,                     // LARG
+    DOT = 14,                      // DOT
+    COMMA = 15,                    // COMMA
+    COLON = 16,                    // COLON
+    URI = 17,                      // URI
+    LSBRACKET = 18,                // LSBRACKET
+    RSBRACKET = 19,                // RSBRACKET
+    COMMENT1 = 20,                 // COMMENT1
+    COMMENT2 = 21,                 // COMMENT2
+    EMPTYLINE = 22,                // EMPTYLINE
+    BRANCH = 23,                   // BRANCH
+    TEXT = 24,                     // TEXT
+    MOV_MF_ADR = 25,               // MOV_MF_ADR
+    MOV_MV_ADR = 26,               // MOV_MV_ADR
+    MOV_L_ADR = 27,                // MOV_L_ADR
+    AT = 28,                       // AT
+    INT = 29,                      // INT
+    FLT = 30,                      // FLT
+    STR = 31,                      // STR
+    VSLSTRING = 32,                // VSLSTRING
+    REGISTER = 33,                 // REGISTER
+    CALL = 34,                     // CALL
+    LOAD_L = 35,                   // LOAD_L
+    STORE_L = 36,                  // STORE_L
+    LOAD_G = 37,                   // LOAD_G
+    STORE_G = 38,                  // STORE_G
+    ASSIGN = 39,                   // ASSIGN
+    PLUS = 40,                     // PLUS
+    MINUS = 41,                    // MINUS
+    MULTIPLY = 42,                 // MULTIPLY
+    DIVIDE = 43,                   // DIVIDE
+    MODULO = 44,                   // MODULO
+    UMINUS = 45,                   // UMINUS
+    FACTORIAL = 46,                // FACTORIAL
+    EXPONENT = 47                  // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -469,7 +517,7 @@ namespace vslasm {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 20, ///< Number of tokens.
+        YYNTOKENS = 48, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -477,26 +525,79 @@ namespace vslasm {
         S_EOL = 3,                               // EOL
         S_LPAREN = 4,                            // LPAREN
         S_RPAREN = 5,                            // RPAREN
-        S_INT = 6,                               // INT
-        S_FLT = 7,                               // FLT
-        S_STR = 8,                               // STR
-        S_ASSIGN = 9,                            // ASSIGN
-        S_PLUS = 10,                             // PLUS
-        S_MINUS = 11,                            // MINUS
-        S_MULTIPLY = 12,                         // MULTIPLY
-        S_DIVIDE = 13,                           // DIVIDE
-        S_MODULO = 14,                           // MODULO
-        S_UMINUS = 15,                           // UMINUS
-        S_FACTORIAL = 16,                        // FACTORIAL
-        S_EXPONENT = 17,                         // EXPONENT
-        S_COMMA = 18,                            // COMMA
-        S_REGISTER = 19,                         // REGISTER
-        S_YYACCEPT = 20,                         // $accept
-        S_lines = 21,                            // lines
-        S_line = 22,                             // line
-        S_instruction = 23,                      // instruction
-        S_opname = 24,                           // opname
-        S_directive = 25                         // directive
+        S_APP = 6,                               // APP
+        S_API = 7,                               // API
+        S_MODULE = 8,                            // MODULE
+        S_MVAR = 9,                              // MVAR
+        S_FUNCTION = 10,                         // FUNCTION
+        S_LABEL = 11,                            // LABEL
+        S_LVAR = 12,                             // LVAR
+        S_LARG = 13,                             // LARG
+        S_DOT = 14,                              // DOT
+        S_COMMA = 15,                            // COMMA
+        S_COLON = 16,                            // COLON
+        S_URI = 17,                              // URI
+        S_LSBRACKET = 18,                        // LSBRACKET
+        S_RSBRACKET = 19,                        // RSBRACKET
+        S_COMMENT1 = 20,                         // COMMENT1
+        S_COMMENT2 = 21,                         // COMMENT2
+        S_EMPTYLINE = 22,                        // EMPTYLINE
+        S_BRANCH = 23,                           // BRANCH
+        S_TEXT = 24,                             // TEXT
+        S_MOV_MF_ADR = 25,                       // MOV_MF_ADR
+        S_MOV_MV_ADR = 26,                       // MOV_MV_ADR
+        S_MOV_L_ADR = 27,                        // MOV_L_ADR
+        S_AT = 28,                               // AT
+        S_INT = 29,                              // INT
+        S_FLT = 30,                              // FLT
+        S_STR = 31,                              // STR
+        S_VSLSTRING = 32,                        // VSLSTRING
+        S_REGISTER = 33,                         // REGISTER
+        S_CALL = 34,                             // CALL
+        S_LOAD_L = 35,                           // LOAD_L
+        S_STORE_L = 36,                          // STORE_L
+        S_LOAD_G = 37,                           // LOAD_G
+        S_STORE_G = 38,                          // STORE_G
+        S_ASSIGN = 39,                           // ASSIGN
+        S_PLUS = 40,                             // PLUS
+        S_MINUS = 41,                            // MINUS
+        S_MULTIPLY = 42,                         // MULTIPLY
+        S_DIVIDE = 43,                           // DIVIDE
+        S_MODULO = 44,                           // MODULO
+        S_UMINUS = 45,                           // UMINUS
+        S_FACTORIAL = 46,                        // FACTORIAL
+        S_EXPONENT = 47,                         // EXPONENT
+        S_YYACCEPT = 48,                         // $accept
+        S_lines = 49,                            // lines
+        S_line = 50,                             // line
+        S_super_instructions = 51,               // super_instructions
+        S_comments = 52,                         // comments
+        S_move_address = 53,                     // move_address
+        S_branch_call = 54,                      // branch_call
+        S_function_call = 55,                    // function_call
+        S_var_decl = 56,                         // var_decl
+        S_var_decl_l = 57,                       // var_decl_l
+        S_var_array_l_decl = 58,                 // var_array_l_decl
+        S_var_decl_m = 59,                       // var_decl_m
+        S_var_array_g_decl = 60,                 // var_array_g_decl
+        S_var_access = 61,                       // var_access
+        S_loadstore_l = 62,                      // loadstore_l
+        S_loadstore_g = 63,                      // loadstore_g
+        S_directive = 64,                        // directive
+        S_uri_api = 65,                          // uri_api
+        S_DOTSTR = 66,                           // DOTSTR
+        S_array_g = 67,                          // array_g
+        S_element_g = 68,                        // element_g
+        S_number = 69,                           // number
+        S_call_register = 70,                    // call_register
+        S_param_list = 71,                       // param_list
+        S_param = 72,                            // param
+        S_modfunstr = 73,                        // modfunstr
+        S_funlvarstr = 74,                       // funlvarstr
+        S_labelstr = 75,                         // labelstr
+        S_modvarstr = 76,                        // modvarstr
+        S_instruction = 77,                      // instruction
+        S_opcode = 78                            // opcode
       };
     };
 
@@ -531,16 +632,39 @@ namespace vslasm {
       {
         switch (this->kind ())
     {
+      case symbol_kind::S_loadstore_l: // loadstore_l
+      case symbol_kind::S_loadstore_g: // loadstore_g
+      case symbol_kind::S_opcode: // opcode
+        value.move< Opcode > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_uri_api: // uri_api
+      case symbol_kind::S_modfunstr: // modfunstr
+      case symbol_kind::S_funlvarstr: // funlvarstr
+      case symbol_kind::S_labelstr: // labelstr
+      case symbol_kind::S_modvarstr: // modvarstr
+        value.move< full_symbol_t > (std::move (that.value));
+        break;
+
       case symbol_kind::S_FLT: // FLT
-        value.move< double > (std::move (that.value));
+        value.move< long double > (std::move (that.value));
         break;
 
       case symbol_kind::S_INT: // INT
-        value.move< long long > (std::move (that.value));
+      case symbol_kind::S_REGISTER: // REGISTER
+      case symbol_kind::S_call_register: // call_register
+        value.move< long int > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_array_g: // array_g
+      case symbol_kind::S_element_g: // element_g
+      case symbol_kind::S_number: // number
+        value.move< reg_t > (std::move (that.value));
         break;
 
       case symbol_kind::S_STR: // STR
-      case symbol_kind::S_opname: // opname
+      case symbol_kind::S_VSLSTRING: // VSLSTRING
+      case symbol_kind::S_DOTSTR: // DOTSTR
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -566,24 +690,60 @@ namespace vslasm {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, double&& v)
+      basic_symbol (typename Base::kind_type t, Opcode&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const double& v)
+      basic_symbol (typename Base::kind_type t, const Opcode& v)
         : Base (t)
         , value (v)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, long long&& v)
+      basic_symbol (typename Base::kind_type t, full_symbol_t&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const long long& v)
+      basic_symbol (typename Base::kind_type t, const full_symbol_t& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, long double&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const long double& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, long int&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const long int& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, reg_t&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const reg_t& v)
         : Base (t)
         , value (v)
       {}
@@ -625,16 +785,39 @@ namespace vslasm {
         // Value type destructor.
 switch (yykind)
     {
+      case symbol_kind::S_loadstore_l: // loadstore_l
+      case symbol_kind::S_loadstore_g: // loadstore_g
+      case symbol_kind::S_opcode: // opcode
+        value.template destroy< Opcode > ();
+        break;
+
+      case symbol_kind::S_uri_api: // uri_api
+      case symbol_kind::S_modfunstr: // modfunstr
+      case symbol_kind::S_funlvarstr: // funlvarstr
+      case symbol_kind::S_labelstr: // labelstr
+      case symbol_kind::S_modvarstr: // modvarstr
+        value.template destroy< full_symbol_t > ();
+        break;
+
       case symbol_kind::S_FLT: // FLT
-        value.template destroy< double > ();
+        value.template destroy< long double > ();
         break;
 
       case symbol_kind::S_INT: // INT
-        value.template destroy< long long > ();
+      case symbol_kind::S_REGISTER: // REGISTER
+      case symbol_kind::S_call_register: // call_register
+        value.template destroy< long int > ();
+        break;
+
+      case symbol_kind::S_array_g: // array_g
+      case symbol_kind::S_element_g: // element_g
+      case symbol_kind::S_number: // number
+        value.template destroy< reg_t > ();
         break;
 
       case symbol_kind::S_STR: // STR
-      case symbol_kind::S_opname: // opname
+      case symbol_kind::S_VSLSTRING: // VSLSTRING
+      case symbol_kind::S_DOTSTR: // DOTSTR
         value.template destroy< std::string > ();
         break;
 
@@ -649,7 +832,7 @@ switch (yykind)
       /// The user-facing name of this symbol.
       const char *name () const YY_NOEXCEPT
       {
-        return Parser::symbol_name (this->kind ());
+        return AsmParser::symbol_name (this->kind ());
       }
 #endif // #if YYDEBUG || 0
 
@@ -735,18 +918,18 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, double v)
+      symbol_type (int tok, long double v)
         : super_type (token_kind_type (tok), std::move (v))
 #else
-      symbol_type (int tok, const double& v)
+      symbol_type (int tok, const long double& v)
         : super_type (token_kind_type (tok), v)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, long long v)
+      symbol_type (int tok, long int v)
         : super_type (token_kind_type (tok), std::move (v))
 #else
-      symbol_type (int tok, const long long& v)
+      symbol_type (int tok, const long int& v)
         : super_type (token_kind_type (tok), v)
 #endif
       {}
@@ -761,14 +944,14 @@ switch (yykind)
     };
 
     /// Build a parser object.
-    Parser (Scanner* scanner_yyarg, Assembler* assembler_yyarg);
-    virtual ~Parser ();
+    AsmParser (AsmScanner* asm_scanner_yyarg, Assembler* assembler_yyarg);
+    virtual ~AsmParser ();
 
 #if 201103L <= YY_CPLUSPLUS
     /// Non copyable.
-    Parser (const Parser&) = delete;
+    AsmParser (const AsmParser&) = delete;
     /// Non copyable.
-    Parser& operator= (const Parser&) = delete;
+    AsmParser& operator= (const AsmParser&) = delete;
 #endif
 
     /// Parse.  An alias for parse ().
@@ -901,14 +1084,359 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_INT (long long v)
+      make_APP ()
+      {
+        return symbol_type (token::APP);
+      }
+#else
+      static
+      symbol_type
+      make_APP ()
+      {
+        return symbol_type (token::APP);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_API ()
+      {
+        return symbol_type (token::API);
+      }
+#else
+      static
+      symbol_type
+      make_API ()
+      {
+        return symbol_type (token::API);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MODULE ()
+      {
+        return symbol_type (token::MODULE);
+      }
+#else
+      static
+      symbol_type
+      make_MODULE ()
+      {
+        return symbol_type (token::MODULE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MVAR ()
+      {
+        return symbol_type (token::MVAR);
+      }
+#else
+      static
+      symbol_type
+      make_MVAR ()
+      {
+        return symbol_type (token::MVAR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FUNCTION ()
+      {
+        return symbol_type (token::FUNCTION);
+      }
+#else
+      static
+      symbol_type
+      make_FUNCTION ()
+      {
+        return symbol_type (token::FUNCTION);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LABEL ()
+      {
+        return symbol_type (token::LABEL);
+      }
+#else
+      static
+      symbol_type
+      make_LABEL ()
+      {
+        return symbol_type (token::LABEL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LVAR ()
+      {
+        return symbol_type (token::LVAR);
+      }
+#else
+      static
+      symbol_type
+      make_LVAR ()
+      {
+        return symbol_type (token::LVAR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LARG ()
+      {
+        return symbol_type (token::LARG);
+      }
+#else
+      static
+      symbol_type
+      make_LARG ()
+      {
+        return symbol_type (token::LARG);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DOT ()
+      {
+        return symbol_type (token::DOT);
+      }
+#else
+      static
+      symbol_type
+      make_DOT ()
+      {
+        return symbol_type (token::DOT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
+      }
+#else
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#else
+      static
+      symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_URI ()
+      {
+        return symbol_type (token::URI);
+      }
+#else
+      static
+      symbol_type
+      make_URI ()
+      {
+        return symbol_type (token::URI);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LSBRACKET ()
+      {
+        return symbol_type (token::LSBRACKET);
+      }
+#else
+      static
+      symbol_type
+      make_LSBRACKET ()
+      {
+        return symbol_type (token::LSBRACKET);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RSBRACKET ()
+      {
+        return symbol_type (token::RSBRACKET);
+      }
+#else
+      static
+      symbol_type
+      make_RSBRACKET ()
+      {
+        return symbol_type (token::RSBRACKET);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMENT1 ()
+      {
+        return symbol_type (token::COMMENT1);
+      }
+#else
+      static
+      symbol_type
+      make_COMMENT1 ()
+      {
+        return symbol_type (token::COMMENT1);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMENT2 ()
+      {
+        return symbol_type (token::COMMENT2);
+      }
+#else
+      static
+      symbol_type
+      make_COMMENT2 ()
+      {
+        return symbol_type (token::COMMENT2);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EMPTYLINE ()
+      {
+        return symbol_type (token::EMPTYLINE);
+      }
+#else
+      static
+      symbol_type
+      make_EMPTYLINE ()
+      {
+        return symbol_type (token::EMPTYLINE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BRANCH ()
+      {
+        return symbol_type (token::BRANCH);
+      }
+#else
+      static
+      symbol_type
+      make_BRANCH ()
+      {
+        return symbol_type (token::BRANCH);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_TEXT ()
+      {
+        return symbol_type (token::TEXT);
+      }
+#else
+      static
+      symbol_type
+      make_TEXT ()
+      {
+        return symbol_type (token::TEXT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MOV_MF_ADR ()
+      {
+        return symbol_type (token::MOV_MF_ADR);
+      }
+#else
+      static
+      symbol_type
+      make_MOV_MF_ADR ()
+      {
+        return symbol_type (token::MOV_MF_ADR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MOV_MV_ADR ()
+      {
+        return symbol_type (token::MOV_MV_ADR);
+      }
+#else
+      static
+      symbol_type
+      make_MOV_MV_ADR ()
+      {
+        return symbol_type (token::MOV_MV_ADR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MOV_L_ADR ()
+      {
+        return symbol_type (token::MOV_L_ADR);
+      }
+#else
+      static
+      symbol_type
+      make_MOV_L_ADR ()
+      {
+        return symbol_type (token::MOV_L_ADR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_AT ()
+      {
+        return symbol_type (token::AT);
+      }
+#else
+      static
+      symbol_type
+      make_AT ()
+      {
+        return symbol_type (token::AT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INT (long int v)
       {
         return symbol_type (token::INT, std::move (v));
       }
 #else
       static
       symbol_type
-      make_INT (const long long& v)
+      make_INT (const long int& v)
       {
         return symbol_type (token::INT, v);
       }
@@ -916,14 +1444,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_FLT (double v)
+      make_FLT (long double v)
       {
         return symbol_type (token::FLT, std::move (v));
       }
 #else
       static
       symbol_type
-      make_FLT (const double& v)
+      make_FLT (const long double& v)
       {
         return symbol_type (token::FLT, v);
       }
@@ -946,6 +1474,111 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_VSLSTRING (std::string v)
+      {
+        return symbol_type (token::VSLSTRING, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_VSLSTRING (const std::string& v)
+      {
+        return symbol_type (token::VSLSTRING, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_REGISTER (long int v)
+      {
+        return symbol_type (token::REGISTER, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_REGISTER (const long int& v)
+      {
+        return symbol_type (token::REGISTER, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CALL ()
+      {
+        return symbol_type (token::CALL);
+      }
+#else
+      static
+      symbol_type
+      make_CALL ()
+      {
+        return symbol_type (token::CALL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LOAD_L ()
+      {
+        return symbol_type (token::LOAD_L);
+      }
+#else
+      static
+      symbol_type
+      make_LOAD_L ()
+      {
+        return symbol_type (token::LOAD_L);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STORE_L ()
+      {
+        return symbol_type (token::STORE_L);
+      }
+#else
+      static
+      symbol_type
+      make_STORE_L ()
+      {
+        return symbol_type (token::STORE_L);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LOAD_G ()
+      {
+        return symbol_type (token::LOAD_G);
+      }
+#else
+      static
+      symbol_type
+      make_LOAD_G ()
+      {
+        return symbol_type (token::LOAD_G);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STORE_G ()
+      {
+        return symbol_type (token::STORE_G);
+      }
+#else
+      static
+      symbol_type
+      make_STORE_G ()
+      {
+        return symbol_type (token::STORE_G);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_ASSIGN ()
       {
         return symbol_type (token::ASSIGN);
@@ -1076,36 +1709,6 @@ switch (yykind)
       make_EXPONENT ()
       {
         return symbol_type (token::EXPONENT);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_COMMA ()
-      {
-        return symbol_type (token::COMMA);
-      }
-#else
-      static
-      symbol_type
-      make_COMMA ()
-      {
-        return symbol_type (token::COMMA);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_REGISTER ()
-      {
-        return symbol_type (token::REGISTER);
-      }
-#else
-      static
-      symbol_type
-      make_REGISTER ()
-      {
-        return symbol_type (token::REGISTER);
       }
 #endif
 
@@ -1113,9 +1716,9 @@ switch (yykind)
   private:
 #if YY_CPLUSPLUS < 201103L
     /// Non copyable.
-    Parser (const Parser&);
+    AsmParser (const AsmParser&);
     /// Non copyable.
-    Parser& operator= (const Parser&);
+    AsmParser& operator= (const AsmParser&);
 #endif
 
 
@@ -1185,7 +1788,7 @@ switch (yykind)
 
 #if YYDEBUG
     // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-    static const signed char yyrline_[];
+    static const short yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r) const;
     /// Print the state stack on the debug stream.
@@ -1412,24 +2015,24 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 8,     ///< Last index in yytable_.
-      yynnts_ = 6,  ///< Number of nonterminal symbols.
+      yylast_ = 96,     ///< Last index in yytable_.
+      yynnts_ = 31,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
 
     // User arguments.
-    Scanner* scanner;
+    AsmScanner* asm_scanner;
     Assembler* assembler;
 
   };
 
 
-#line 13 "grammar2.y"
+#line 15 "asm_grammar.y"
 } // vslasm
-#line 1431 "Parser2.hpp"
+#line 2034 "asm_parser.hh"
 
 
 
 
-#endif // !YY_YY_PARSER2_HPP_INCLUDED
+#endif // !YY_YY_ASM_PARSER_HH_INCLUDED

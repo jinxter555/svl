@@ -61,21 +61,21 @@ void AssemblerInteractive::load(const std::string &cfn) {
     std::ifstream infile(filename);
     if(infile.is_open()) {
       loadsrc(infile); // read to src and reset
-      scanner.switch_streams(&infile, &std::cerr);
-      parser.parse();
+      asm_scanner.switch_streams(&infile, &std::cerr);
+      asm_parser.parse();
     } else {
       std::cerr << "Error opening assembly file: " << filename << "\n";
     }
     infile.close();
   }
   assembler.resolve_names();
-  scanner.switch_streams(&std::cin, &std::cerr);
+  asm_scanner.switch_streams(&std::cin, &std::cerr);
 }
 
 void AssemblerInteractive::parse(const std::string &line) {
   std::istringstream input_buffer(line);
-  scanner.switch_streams(&input_buffer, &std::cerr);
-  parser.parse();
+  asm_scanner.switch_streams(&input_buffer, &std::cerr);
+  asm_parser.parse();
   assembler.run_single_instruction(vm);
 
 }

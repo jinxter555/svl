@@ -1,11 +1,11 @@
 #CC=clang++ -std=c++17 -g
 CC=g++ -std=c++17 -g
 
-main.out:  lexer2.l grammar2.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
+main.out:  asm_lexer.l asm_grammar.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
 	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o
-	bison -d grammar2.y 
-	flex lexer2.l
-	$(CC) -omain.out main.cpp Parser2.cpp Scanner2.cpp opcode.o my_helpers.o \
+	bison -d asm_grammar.y 
+	flex asm_lexer.l
+	$(CC) -omain.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
 	assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o tree.o -lreadline
 
 
@@ -36,12 +36,12 @@ tree.o : tree.cpp  tree.hh
 my_helpers.o : my_helpers.cpp  my_helpers.hh
 	$(CC) -c my_helpers.cpp
 
-Parser2.cpp: assembler.hh Scanner2.hh assembler.cpp
-	bison -d grammar2.y 
+asm_parser.cpp: assembler.hh asm_scanner.hh assembler.cpp
+	bison -d asm_grammar.y 
 
-Scanner2.cpp: assembler.hh Scanner2.hh assembler.cpp
-	flex lexer2.l
+asm_scanner.cpp: assembler.hh asm_scanner.hh assembler.cpp
+	flex asm_lexer.l
 
 
 clean:
-	rm -f main.out Parser2.cpp Scanner2.cpp *.o *.gch
+	rm -f main.out asm_parser.cpp asm_scanner.cpp *.o *.gch

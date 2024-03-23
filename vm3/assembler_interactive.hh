@@ -4,8 +4,8 @@
 #include "prompt.hh"
 #include "assembler.hh"
 #include "vm.hh"
-#include "Parser2.hh"
-#include "Scanner2.hh"
+#include "asm_parser.hh"
+#include "asm_scanner.hh"
 
 #define rlac_current_context_key   CONTEXT_UNIV, "ac_commands"
 
@@ -22,8 +22,8 @@ private:
 
   src_t source[MAX_CODE_SIZE];
 
-  vslasm::Scanner scanner{ std::cin, std::cerr };
-  vslasm::Parser parser{ &scanner, &assembler};
+  vslasm::AsmScanner asm_scanner{ std::cin, std::cerr };
+  vslasm::AsmParser asm_parser{ &asm_scanner, &assembler};
 
   void interact(const std::string&);
   void parse_prompt(const std::string&);

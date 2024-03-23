@@ -8,25 +8,25 @@
 %language "C++"
 
 
-%defines "Parser2.hh"
-%output "Parser2.cpp"
+%defines "asm_parser.hh"
+%output "asm_parser.cpp"
 
-%define api.parser.class {Parser}
+%define api.parser.class {AsmParser}
 %define api.namespace {vslasm}
 %define api.value.type variant
 %define api.token.raw
-%parse-param {Scanner* scanner}
+%parse-param {AsmScanner* asm_scanner}
 %parse-param {Assembler* assembler}
 
 %code requires {
 #include "assembler.hh"
 namespace vslasm {
-  class Scanner;
+  class AsmScanner;
 }}
 
 %code {
-#include "Scanner2.hh"
-#define yylex(x) scanner->lex(x)
+#include "asm_scanner.hh"
+#define yylex(x) asm_scanner->lex(x)
 
 
 int line=0, element_count = 0;
@@ -468,6 +468,6 @@ opcode:
 %%
 // directive: EOL ;
 
-void vslasm::Parser::error(const std::string& msg) {
+void vslasm::AsmParser::error(const std::string& msg) {
   std::cerr << msg + " on line: " << line << "\n";
 }
