@@ -81,3 +81,6 @@ register        ([rR]{integer})
 .               /* no action on unmatched input */
 
 %%
+
+
+int AsmFlexLexer::yywrap() { return 1; }

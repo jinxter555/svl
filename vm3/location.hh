@@ -32,7 +32,7 @@
 
 /**
  ** \file location.hh
- ** Define the vslasm::location class.
+ ** Define the vslast::location class.
  */
 
 #ifndef YY_YY_LOCATION_HH_INCLUDED
@@ -53,8 +53,8 @@
 #  endif
 # endif
 
-#line 18 "grammar2.y"
-namespace vslasm {
+#line 15 "ast_grammar.y"
+namespace vslast {
 #line 59 "location.hh"
 
   /// A point in a source file.
@@ -299,8 +299,8 @@ namespace vslasm {
     return ostr;
   }
 
-#line 18 "grammar2.y"
-} // vslasm
+#line 15 "ast_grammar.y"
+} // vslast
 #line 305 "location.hh"
 
 #endif // !YY_YY_LOCATION_HH_INCLUDED
