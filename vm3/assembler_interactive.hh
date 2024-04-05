@@ -1,6 +1,5 @@
 #include <sstream>
 #include <regex>
-#include <FlexLexer.h>
 #include "prompt.hh"
 #include "assembler.hh"
 #include "vm.hh"

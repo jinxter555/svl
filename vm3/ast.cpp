@@ -1,41 +1,53 @@
 #include "ast.hh"
+#include <iostream>
 
 #ifndef AST_CPP
 #define AST_CPP
 
-template<typename T>
-Expr<T>::~Expr() {}
+ExprAst::~ExprAst() {}
 
-template<typename T>
-void NumberExpr<T>::codegen(std::vector<std::string>& code) const {
-  code.push_back("push " + std::to_string(value));
+void NumberExprAst::codegen(std::vector<std::string>& code) const {
+  //code.push_back("push " + std::to_string(value));
+  code.push_back("push " + std::to_string(1));
 }
 
-template<typename T>
-T NumberExpr<T>::evaluate() const { return value; }
+std::any NumberExprAst::evaluate() { return ExprAst::get_data(); }
 
-template <>
-int NumberExpr<int>::evaluate() const { return value; }
+//-----------------------------
 
-template<typename T>
-T BinOpExpr<T>::evaluate(T v) const {
-  T l_val= left->evaluate();
-  T r_val= right->evaluate();
-  switch(op) {
-  case '+': return l_val + r_val;
-  case '-': return l_val - r_val;
-  case '*': return l_val * r_val;
-  case '/': return r_val !=0 ? l_val / r_val : 0;
-  default: throw std::invalid_argument("Invalid operator");
-  }
+BinOpExprAst::BinOpExprAst 
+( std::shared_ptr<ExprAst> l
+, std::shared_ptr<ExprAst> r
+, op_t op
+) : ExprAst(op) 
+{ ExprAst::add_child("left", l);
+  ExprAst::add_child("right", r);
 }
-template<typename T>
-void BinOpExpr<T>::codegen(std::vector<std::string>& code) const {
-  left->codgen(code);
-  right->codegen(code);
+
+BinOpExprAst::BinOpExprAst
+( std::shared_ptr<ExprAst> l
+, std::shared_ptr<ExprAst> r
+, BinOpcodeAST t, char o) 
+{ op_t op = {t, o};
+  ExprAst::set_data(op);
+  ExprAst::add_child("left", l);
+  ExprAst::add_child("right", r);
+}
+
+void BinOpExprAst::codegen(std::vector<std::string>& code) const {
+  std::shared_ptr<NumberExprAst> l = 
+    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("left"));
+  std::shared_ptr<NumberExprAst> r = 
+    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("right"));
+
+  l->codegen(code);
+  r->codegen(code);
+
+  op_t op = std::any_cast<op_t>(ExprAst::get_data());
+
   code.push_back("pop ebx");
   code.push_back("pop eax");
-  switch(op) {
+  switch(op.op) {
   case '+': code.push_back("add eax, ebx"); break;
   case '-': code.push_back("sub eax, ebx"); break;
   case '*': code.push_back("imul eax, ebx"); break;
@@ -44,13 +56,106 @@ void BinOpExpr<T>::codegen(std::vector<std::string>& code) const {
   }
 }
 
+
+std::any BinOpExprAst::evaluate() {
+  std::shared_ptr<NumberExprAst> l = 
+    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("left"));
+  std::shared_ptr<NumberExprAst> r = 
+    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("right"));
+
+  op_t op = std::any_cast<op_t>(ExprAst::get_data());
+  switch(op.op_type) {
+  case BinOpcodeAST::INT_OP_INT:  {
+    int a = std::any_cast<int>(l->evaluate());
+    int b = std::any_cast<int>(r->evaluate());
+    return binop(a, b, op.op); }
+  case BinOpcodeAST::FLT_OP_FLT: {
+    float a = std::any_cast<float>(l->evaluate());
+    float b = std::any_cast<float>(r->evaluate());
+    return binop(a, b, op.op); }
+  case BinOpcodeAST::FLT_OP_INT: {
+    float a = std::any_cast<float>(l->evaluate());
+    float b = static_cast<float>(std::any_cast<int>(r->evaluate()));
+    return binop(a, b, op.op); }
+  case BinOpcodeAST::INT_OP_FLT: {
+    int a = std::any_cast<int>(l->evaluate());
+    int b = static_cast<int>(std::any_cast<float>(r->evaluate()));
+    return binop(a, b, op.op); }
+  default: std::cerr << "wrong type\n"; return 0;
+  }
+}
+
+template <typename T>
+std::any BinOpExprAst::binop(T a, T b, char op) {
+  switch(op) {
+  case '+': return std::any_cast<T>(a) + std::any_cast<T>(b);
+  case '-': return std::any_cast<T>(a) - std::any_cast<T>(b);
+  case '*': return std::any_cast<T>(a) * std::any_cast<T>(b);
+  case '/': return std::any_cast<T>(a) !=0 
+    ? std::any_cast<T>(a) / std::any_cast<T>(b) : 0;
+  default: throw std::invalid_argument("Invalid operator");
+  }
+}
 /*
+template <typename T, typename U>
+std::any BinOpExprAst::binop(T a, U b, char op) {
+  switch(op) {
+  case '+': return std::any_cast<T>(a) + std::any_cast<U>(b);
+  case '-': return std::any_cast<T>(a) - std::any_cast<U>(b);
+  case '*': return std::any_cast<T>(a) * std::any_cast<U>(b);
+  case '/': return std::any_cast<T>(a) !=0 
+    ? std::any_cast<T>(a) / std::any_cast<U>(b) : 0;
+  default: throw std::invalid_argument("Invalid operator");
+  }
+}
+*/
+
+
+
 int main() {
-  std::unique_ptr<Expr<int>> n1 = std::make_unique<NumberExpr<int>>(3);
-  std::unique_ptr<Expr<float>> f1 = std::make_unique<NumberExpr<float>>(3.145f);
+  //NumberExprAst a(3);
+  std::shared_ptr<ExprAst> n1 = std::make_shared<NumberExprAst>(3);
+  std::shared_ptr<ExprAst> n2 = std::make_shared<NumberExprAst>(5);
+  std::shared_ptr<ExprAst> f1 = std::make_shared<NumberExprAst>(3.145f);
 
-  std::cout <<  n1->evaluate() << "\n";
-  std::cout <<  f1->evaluate() << "\n";
-}*/
+  std::cout <<  std::any_cast<int>(n1->evaluate()) << "\n";
+  std::cout <<  std::any_cast<float>(f1->evaluate()) << "\n";
 
+  op_t op1 = {BinOpcodeAST::INT_OP_INT, '-'};
+  op_t op2 = {BinOpcodeAST::FLT_OP_FLT, '*'};
+  op_t op3 = {BinOpcodeAST::FLT_OP_INT, '*'};
+
+  // std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>( std::make_shared<NumberExprAst>(3), std::make_shared<NumberExprAst>(5), op1); std::cout <<  std::any_cast<int>(b1->evaluate()) << "\n";
+
+  // std::shared_ptr<ExprAst> b2 = std::make_shared<BinOpExprAst>( std::make_shared<NumberExprAst>(3.145f), std::make_shared<NumberExprAst>(5.15f), op2); std::cout <<  std::any_cast<float>(b2->evaluate()) << "\n";
+
+  std::shared_ptr<ExprAst> b3 = std::make_shared<BinOpExprAst>(
+    std::make_shared<NumberExprAst>(3.145f),
+    std::make_shared<NumberExprAst>(5), 
+    BinOpcodeAST::FLT_OP_INT, '*');
+
+  std::shared_ptr<ExprAst> b4 = std::make_shared<BinOpExprAst>(
+    std::make_shared<NumberExprAst>(3),
+    std::make_shared<NumberExprAst>(75.5555f), 
+    BinOpcodeAST::INT_OP_FLT, '*');
+
+
+  std::cout <<  std::any_cast<float>(b3->evaluate()) << "\n";
+  std::cout <<  std::any_cast<int>(b4->evaluate()) << "\n";
+}
+
+/*
+  std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>(
+    std::make_shared<NumberExprAst>(3),
+    std::make_shared<NumberExprAst>(5),
+  '-');
+
+
+
+  std::cout <<  std::any_cast<int>(n1->evaluate()) << "\n";
+  std::cout <<  std::any_cast<float>(f1->evaluate()) << "\n";
+  std::cout <<  std::any_cast<int>(b1->evaluate()) << "\n";
+  //std::cout <<  std::any_cast<float>(b2->evaluate()) << "\n";
+}
+*/
 #endif

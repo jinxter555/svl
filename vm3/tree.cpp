@@ -78,6 +78,24 @@ void Tree::add_node(std::vector<std::string> keys, const std::any data) {
   curr->add_child(keys.back(), std::make_shared<TreeNode>(data));
 }
 
+void Tree::add_tree_node(std::vector<std::string> keys, std::shared_ptr<TreeNode> tn) {
+  if(root == nullptr) {
+    root = std::make_shared<TreeNode>();
+  }
+
+  auto curr = root;
+  for(int i=0; i<keys.size() -1; i++) {
+    if(curr->get_child(keys[i])==nullptr) {
+      curr->add_child(keys[i], std::make_shared<TreeNode>());
+    }
+    curr = curr->get_child(keys[i]);
+  }
+  curr->add_child(keys.back(), tn);
+}
+
+
+
+
 std::shared_ptr<TreeNode> Tree::get_node(std::vector<std::string> keys) const {
   auto curr = root;
   if(curr==nullptr) return nullptr;

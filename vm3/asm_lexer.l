@@ -2,7 +2,6 @@
 #include "asm_parser.hh"
 #include "asm_scanner.hh"
 #define YY_DECL int vslasm::AsmScanner::lex(vslasm::AsmParser::semantic_type *yylval)
-//#define YY_DECL int vslasm::Scanner::lex(Parser::semantic_type *yylval,  Parser::location_type* loc)
 %}
 
 %option c++ interactive noyywrap noyylineno nodefault outfile="asm_scanner.cpp"

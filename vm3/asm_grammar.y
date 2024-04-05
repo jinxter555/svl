@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-#include <FlexLexer.h>
 %}
 %require "3.7.4"
 %language "C++"

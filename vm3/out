@@ -1,0 +1,73 @@
+ast.cpp: In function ‘int main()’:
+ast.cpp:102:63: error: too many arguments to function ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {}]’
+  102 |   std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>(
+      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+  103 |     std::make_shared<NumberExprAst>(3),
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                        
+  104 |     std::make_shared<NumberExprAst>(5), {BinOpcodeAST::INT_OP_INT, '-'});
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/memory:77,
+                 from tree.hh:5,
+                 from ast.hh:2,
+                 from ast.cpp:1:
+/usr/include/c++/11/bits/shared_ptr.h:875:5: note: declared here
+  875 |     make_shared(_Args&&... __args)
+      |     ^~~~~~~~~~~
+In file included from /usr/include/c++/11/ext/alloc_traits.h:34,
+                 from /usr/include/c++/11/bits/basic_string.h:40,
+                 from /usr/include/c++/11/string:55,
+                 from /usr/include/c++/11/bits/locale_classes.h:40,
+                 from /usr/include/c++/11/bits/ios_base.h:41,
+                 from /usr/include/c++/11/ios:42,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from tree.hh:1,
+                 from ast.hh:2,
+                 from ast.cpp:1:
+/usr/include/c++/11/bits/alloc_traits.h: In instantiation of ‘static constexpr void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’:
+/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {}; _Tp = BinOpExprAst]’
+/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {}]’
+/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {}]’
+ast.cpp:102:63:   required from here
+/usr/include/c++/11/bits/alloc_traits.h:518:28: error: no matching function for call to ‘construct_at(BinOpExprAst*&)’
+  518 |           std::construct_at(__p, std::forward<_Args>(__args)...);
+      |           ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/bits/stl_iterator.h:85,
+                 from /usr/include/c++/11/bits/stl_algobase.h:67,
+                 from /usr/include/c++/11/bits/char_traits.h:39,
+                 from /usr/include/c++/11/ios:40,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from tree.hh:1,
+                 from ast.hh:2,
+                 from ast.cpp:1:
+/usr/include/c++/11/bits/stl_construct.h:94:5: note: candidate: ‘template<class _Tp, class ... _Args> constexpr decltype (::new(void*(0)) _Tp) std::construct_at(_Tp*, _Args&& ...)’
+   94 |     construct_at(_Tp* __location, _Args&&... __args)
+      |     ^~~~~~~~~~~~
+/usr/include/c++/11/bits/stl_construct.h:94:5: note:   template argument deduction/substitution failed:
+/usr/include/c++/11/bits/stl_construct.h: In substitution of ‘template<class _Tp, class ... _Args> constexpr decltype (::new(void*(0)) _Tp) std::construct_at(_Tp*, _Args&& ...) [with _Tp = BinOpExprAst; _Args = {}]’:
+/usr/include/c++/11/bits/alloc_traits.h:518:21:   required from ‘static constexpr void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’
+/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {}; _Tp = BinOpExprAst]’
+/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {}]’
+/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {}]’
+ast.cpp:102:63:   required from here
+/usr/include/c++/11/bits/stl_construct.h:96:17: error: no matching function for call to ‘BinOpExprAst::BinOpExprAst()’
+   96 |     -> decltype(::new((void*)0) _Tp(std::declval<_Args>()...))
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ast.cpp:17:1: note: candidate: ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<ExprAst>, std::shared_ptr<ExprAst>, op_t)’
+   17 | BinOpExprAst::BinOpExprAst
+      | ^~~~~~~~~~~~
+ast.cpp:17:1: note:   candidate expects 3 arguments, 0 provided
+In file included from ast.cpp:1:
+ast.hh:37:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(const BinOpExprAst&)’
+   37 | class BinOpExprAst : public ExprAst {
+      |       ^~~~~~~~~~~~
+ast.hh:37:7: note:   candidate expects 1 argument, 0 provided
+ast.hh:37:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(BinOpExprAst&&)’
+ast.hh:37:7: note:   candidate expects 1 argument, 0 provided

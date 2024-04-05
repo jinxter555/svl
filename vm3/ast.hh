@@ -1,42 +1,47 @@
 #pragma once
-#include <iostream>
-#include <memory>
-#include <vector>
+#include "tree.hh"
 
+enum class BinOpcodeAST {
+  INT_OP_INT,
+  FLT_OP_FLT,
+  INT_OP_FLT,
+  FLT_OP_INT,
+};
 
-template<typename T>
-class Expr {
+typedef struct {
+  BinOpcodeAST op_type;
+  char op;
+} op_t;
+
+class ExprAst : public TreeNode {
 public:
-  virtual ~Expr();
-  virtual T evaluate() const = 0;
+
+  ExprAst(std::any d) : TreeNode(d) {}
+  ExprAst() {}
+  virtual ~ExprAst();
+  virtual std::any evaluate() = 0;
   virtual void codegen(std::vector<std::string>& code) const = 0;
 };
 
-template<typename T>
-class NumberExpr : public Expr<T> {
+
+class NumberExprAst : public ExprAst {
 public:
-  NumberExpr(T v) : value(v) {}
-  T evaluate() const override;
+  NumberExprAst(std::any d) : ExprAst(d) {}
+  std::any evaluate() override ;
   void codegen(std::vector<std::string> &code) const override;
 private:
-  T value;
 };
 
-template<typename T>
-class BinOpExpr : public Expr<T> {
+class BinOpExprAst : public ExprAst {
 public:
-  //~BinOpExpr() {}
-  BinOpExpr
-  ( std::unique_ptr<Expr<T>> left
-  , std::unique_ptr<Expr<T>> right
-  , char o)
-  : left(std::move(left))
-  , right(std::move(right))
-  , op(o) {}
+  BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, op_t op);
+  BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, BinOpcodeAST t, char o);
   void codegen(std::vector<std::string>& code) const override;
-  T evaluate(T) const override;
+  std::any evaluate() override;
+
+  template <typename T>
+  std::any binop(T a, T b, char op);
+  template <typename T, typename U>
+  std::any binop(T a, U b, char op);
 private:
-  char op;
-  std::unique_ptr<Expr<T>> left;
-  std::unique_ptr<Expr<T>> right;
 };
