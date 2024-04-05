@@ -111,6 +111,7 @@ std::any BinOpExprAst::binop(T a, U b, char op) {
 */
 
 
+/*
 
 int main() {
   //NumberExprAst a(3);
@@ -144,7 +145,6 @@ int main() {
   std::cout <<  std::any_cast<int>(b4->evaluate()) << "\n";
 }
 
-/*
   std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>(
     std::make_shared<NumberExprAst>(3),
     std::make_shared<NumberExprAst>(5),

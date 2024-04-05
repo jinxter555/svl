@@ -26,15 +26,18 @@ int main(int argc, char *argv[]) {
   setup_readline_autocomplete();
 
   if(cml.infile_name !="")
-    ait.load(cml.infile_name);
+   ait.load(cml.infile_name);
+  svlm_it.load(cml.infile_name);
   if(cml.run) 
     ait.run_program();
 
+/*
   if(cml.assembly_lang) {
     myprompt.load_history(ait);
     myprompt.ready(ait);
     myprompt.save_history(ait);
   } 
+  */
 
   if( cml.svlm_lang) {
     myprompt.load_history(svlm_it);

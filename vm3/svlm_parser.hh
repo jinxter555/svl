@@ -395,6 +395,9 @@ namespace vslast {
 
       // INT
       char dummy3[sizeof (long long)];
+
+      // iexp
+      char dummy4[sizeof (std::unique_ptr<NumberExprAst>)];
     };
 
     /// The size of the largest semantic type.
@@ -499,7 +502,8 @@ namespace vslast {
         S_EXPONENT = 18,                         // EXPONENT
         S_YYACCEPT = 19,                         // $accept
         S_lines = 20,                            // lines
-        S_line = 21                              // line
+        S_line = 21,                             // line
+        S_iexp = 22                              // iexp
       };
     };
 
@@ -547,6 +551,10 @@ namespace vslast {
 
       case symbol_kind::S_INT: // INT
         value.move< long long > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_iexp: // iexp
+        value.move< std::unique_ptr<NumberExprAst> > (std::move (that.value));
         break;
 
       default:
@@ -614,6 +622,20 @@ namespace vslast {
       {}
 #endif
 
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::unique_ptr<NumberExprAst>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<NumberExprAst>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
       /// Destroy the symbol.
       ~basic_symbol ()
       {
@@ -649,6 +671,10 @@ switch (yykind)
 
       case symbol_kind::S_INT: // INT
         value.template destroy< long long > ();
+        break;
+
+      case symbol_kind::S_iexp: // iexp
+        value.template destroy< std::unique_ptr<NumberExprAst> > ();
         break;
 
       default:
@@ -1414,8 +1440,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 3,     ///< Last index in yytable_.
-      yynnts_ = 3,  ///< Number of nonterminal symbols.
+      yylast_ = 6,     ///< Last index in yytable_.
+      yynnts_ = 4,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1429,7 +1455,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 1433 "svlm_parser.hh"
+#line 1459 "svlm_parser.hh"
 
 
 

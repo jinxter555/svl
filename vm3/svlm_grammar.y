@@ -48,7 +48,8 @@ namespace vslast {
 
 //%nterm <int> iexp
 //%type <NumberExpr<int>*>  iexp
-%type <std::unique_ptr<NumberExpr>>  iexp
+%type <std::unique_ptr<NumberExprAst>>  iexp
+//%nterm  <std::unique_ptr<NumberExpr>>  iexp
 
 %%
 lines
@@ -58,7 +59,7 @@ lines
 
 line
   : EOL       { std::cerr << "Read an empty line\n"; }
-//  | iexp EOL       { std::cout << "iexp " << $1->evaluate() << "\n"; }
+  | iexp EOL       { std::cout << "iexp " << std::any_cast<long long>($1->evaluate()) << "\n"; }
 // | iexp EOL       { std::cout << "iexp " << $1 << "\n"; }
  // | fexp EOL       { std::cout << "fexp\n"; }
   | error EOL { yyerrok; }
@@ -66,7 +67,7 @@ line
 
 iexp
    // : INT { $$ = 456; Expr<int> *a = new NumberExpr<int>(123); }
-  : INT { $$ = std::make_unique<NumberExpr>($1); }
+  : INT { $$ = std::make_unique<NumberExprAst>($1); }
  // : INT { $$ = $1; }
   ;
 //fexp //: FLT { Expr<float> *a = new NumberExpr<float>(3.1415); } ;
