@@ -13,7 +13,8 @@ typedef struct {
   std::string  line_str;
 } src_t;
 
-class AssemblerInteractive : public Prompt {
+//class AssemblerInteractive : public Prompt {
+class AssemblerInteractive : public LangPrompt {
 private:
   VM vm;
   Assembler assembler;

@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include "tree.hh"
 
 enum class BinOpcodeAST {

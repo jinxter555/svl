@@ -28,7 +28,7 @@ extern AssemblerInteractive ait;
 static std::vector<std::string> AssemblerInteractive_cui_keys={};
 
 AssemblerInteractive::AssemblerInteractive(const std::string &hf, const std::string &ps) 
-  : Prompt(hf, ps) {
+  : LangPrompt(hf, ps) {
     //vm = new VM;
     //assembler = new Assembler;
 
@@ -330,8 +330,8 @@ char** AssemblerInteractive_command_completion(const char *text, int start, int 
     convert_buff_to_keys(); 
     if(!AssemblerInteractive_cui_keys.empty()) 
       rematch = AssemblerInteractive_cui_keys.back();
-      AssemblerInteractive_cui_keys.pop_back();
-      matches = rl_completion_matches(rematch.c_str(), AssemblerInteractive_command_generator);
+    AssemblerInteractive_cui_keys.pop_back();
+    matches = rl_completion_matches(rematch.c_str(), AssemblerInteractive_command_generator);
   }
 
   return  matches;
