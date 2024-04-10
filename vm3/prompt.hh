@@ -5,6 +5,14 @@
 #include <iostream>
 #include <fstream>
 
+
+enum class PromptSwitch {
+  exit,
+  begin,
+  vasm,
+  svlm,
+};
+
 class Prompt {
   friend class PromptInteractive;
 private:
@@ -24,11 +32,13 @@ public:
   virtual void parse(const std::string &line) = 0; // parse readline line
   virtual void interact(const std::string &line) = 0; // parse readline line
   virtual void load(const std::string &filename) = 0; // load files from command line
+  virtual void run_program() = 0; // load files from command line
 };
 
 class PromptInteractive {
 public:
-  void save_history(Prompt&);
-  void load_history(Prompt&);
-  void ready(Prompt&); // ready for user readline input
+  static void save_history(Prompt&);
+  static void load_history(Prompt&);
+  static PromptSwitch ready(Prompt&); // ready for user readline input
+
 };

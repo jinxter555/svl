@@ -61,6 +61,11 @@ public:
   Assembler* getAssembler() { return &assembler;}
 
   static std::vector<std::string> commands;
+  static std::vector<std::string> cui_keys;
+
+  static char** command_completion(const char *text, int start, int end);
+  static char* command_generator(const char *text, int state);
+  static void convert_buff_to_keys();
 
 }; 
 

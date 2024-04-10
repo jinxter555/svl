@@ -50,7 +50,7 @@ assembler_interactive.o : assembler_interactive.cpp  assembler_interactive.hh as
 svlm_lang.o: svlm_lang.cpp svlm_lang.hh
 	$(CC) -c svlm_lang.cpp
 
-svlm_interactive.o: svlm_interactive.cpp svlm_interactive.hh
+svlm_interactive.o: svlm_interactive.cpp svlm_interactive.hh svlm_parser.hh svlm_scanner.hh svlm_parser.cpp svlm_scanner.cpp
 	$(CC) -c svlm_interactive.cpp
 
 tree.o : tree.cpp  tree.hh

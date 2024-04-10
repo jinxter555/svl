@@ -1,14 +1,40 @@
 #include "svlm_interactive.hh"
 #include "my_helpers.hh"
 
-std::vector<std::string> SvlmInteractive::commands = {                                                                         
-  "!print_tree",                                                                                                                    
-  "!print_hello",                                                                                                                    
-""};
+
+
+// Define some example functions that take a string argument
+void printTree(const std::string& message) {
+  std::cout << message << std::endl;
+}
+void printHello(const std::string& message) {
+  std::cout << message << std::endl;
+}
+
+void printGoodbye(const std::string& message) {
+  std::cout << message << std::endl;
+}
+
+std::map<std::string, std::function<void(const std::string&)>> 
+  SvlmInteractive::command_functions = {
+  {"!print_tree",  printTree},
+  {"!print_hello", printHello},
+  {"!print_me", printHello},
+  {"", nullptr}};
+
 std::vector<std::string> SvlmInteractive::cui_keys = {                                                                         
 };
 
 void SvlmInteractive::accept_prompt(const std::string &line) {
+  parse_prompt(line);
+}
+
+void SvlmInteractive::parse_prompt(const std::string &line) {
+    std::istringstream input_buffer(line);
+    if(line[0] == '!') 
+      interact(line);
+}
+void SvlmInteractive::parse(const std::string &line) {
 }
 
 void SvlmInteractive::load(const std::string &cfn) {
@@ -26,14 +52,16 @@ void SvlmInteractive::load(const std::string &cfn) {
   }
 }
 
-void SvlmInteractive::parse(const std::string &line) {
-    std::istringstream input_buffer(line);
-    if(line[0] == '!') 
-      interact(line);
-}
+void SvlmInteractive::run_program() {}
 
-void SvlmInteractive::interact(const std::string &line) {
-    std::cout << line << "\n";
+void SvlmInteractive::interact(const std::string &cline) {
+  std::string line = move(reduce(cline));
+  std::vector<std::string> tokens= move(split_string(line, " "));
+  std::string command = tokens.front();
+  if(command_functions[command] != nullptr)
+    std::cout << command << ": " << line << "\n";
+  else 
+    std::cerr << command << " not found!\n";
 }
 
 std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std::string> &ptk) {
@@ -53,7 +81,7 @@ void SvlmInteractive::set_ui_commands() {
   std::vector<std::string> keys;
   //std::cout << "set ui commandsize:" << commands.size() << "\n";
 
-  for(auto command : SvlmInteractive::commands) {
+  for(auto const&[command, fun] : SvlmInteractive::command_functions) {
     if(command =="") continue;
     keys = {rlsvlm_current_context_key, command};
     svlm_lang.context->add_node({keys}, 1);

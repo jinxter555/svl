@@ -32,7 +32,7 @@ void PromptInteractive::load_history(Prompt& p) {
 
 
 // ready for user readline input
-void PromptInteractive::ready(Prompt& p) {
+PromptSwitch PromptInteractive::ready(Prompt& p) {
   char *input;
   std::string input_str;
   // history.clear();
@@ -44,7 +44,10 @@ void PromptInteractive::ready(Prompt& p) {
     p.history.push_back(input);
     input_str = input; 
     free(input);
-    if(input_str == "exit") break;
+    if(input_str == "exit") return PromptSwitch::exit;
+    if(input_str == "!asm") return PromptSwitch::vasm;
+    if(input_str == "!svlm") return PromptSwitch::svlm;
     p.accept_prompt(input_str);
   }
+  return PromptSwitch::exit;
 }

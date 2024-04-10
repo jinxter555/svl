@@ -1,48 +1,43 @@
 #include <iostream>
+#include <map>
 #include <string>
-#include <vector>
+#include <functional>
 
+// Define some example functions that take a string argument
+void printHello(const std::string& message) {
+  std::cout << message << std::endl;
+}
 
+void printGoodbye(const std::string& message) {
+  std::cout << message << std::endl;
+}
 
-typedef union {
-  int i;
-  float f;
-  int adr;
-} reg_t;
-
-
-using namespace std;
 int main() {
-  vector<reg_t> data_seg;
-  vector<reg_t> *dsd = &data_seg;
+  // Create a map of strings to function pointers
+  std::map<std::string, std::function<void(const std::string&)>> functionMap;
 
-  reg_t t1;
-  reg_t t2;
-  reg_t t3;
-  t1.f = 123.1f;
-  t2.f = 456.2f; 
-  t3.f = 123.45f;
+  // Add functions to the map
+  functionMap["hello"] = printHello;
+  functionMap["goodbye"] = printGoodbye;
 
-  //data_seg.push_back(t1);
-  //data_seg.push_back(t2);
+  // Get user input
+  std::string input, message;
+  std::cout << "Enter a command (hello or goodbye): ";
+  std::getline(std::cin, input);
 
-  dsd->resize(1);
-  cout <<  dsd->size() << "\n";
-  cout <<  dsd->capacity() << "\n";
-  //dsd->resize(10);
-   (*dsd)[1] = t1;
-  cout <<  dsd->size() << "\n";
-  dsd->resize(2);
-   (*dsd)[3] = t3;
-  cout <<  dsd->size() << "\n";
+  std::cout << "Enter a message: ";
+  std::getline(std::cin, message);
 
-   auto f1 = t1.f;
+  // Find the function pointer in the map
+  auto it = functionMap.find(input);
 
-  reg_t o = data_seg.back();
-  cout <<  data_seg[1].f << "\n";
-  cout <<  data_seg[3].f << "\n";
-  //cout <<  d1.f << "\n";
-
+  // Check if the command exists
+  if (it != functionMap.end()) {
+    // Call the function using the function pointer, passing the message
+    it->second(message);
+  } else {
+    std::cout << "Invalid command." << std::endl;
+  }
 
   return 0;
 }

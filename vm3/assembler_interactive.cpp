@@ -25,7 +25,7 @@ std::vector<std::string> AssemblerInteractive::commands = {
 };
 
 extern AssemblerInteractive ait;
-static std::vector<std::string> AssemblerInteractive_cui_keys={};
+std::vector<std::string> AssemblerInteractive::cui_keys={};
 
 AssemblerInteractive::AssemblerInteractive(const std::string &hf, const std::string &ps) 
   : LangPrompt(hf, ps) {
@@ -111,7 +111,7 @@ void AssemblerInteractive::interact(const std::string& cline) {
   if(line == "!break" || rest_break != "" ) set_breakpoint(rest_break);
   if(line == "!step" || rest_step != "" ) run_step(rest_step);
   if(line == "!call" || rest_call !="") call_func(rest_call); // setup up add end of code[] with call func , and exit
-  AssemblerInteractive_cui_keys.clear();
+  cui_keys.clear();
 }
 
 
@@ -287,16 +287,16 @@ std::vector<std::string> AssemblerInteractive::get_ui_commands(const std::vector
 }
 
 
-void convert_buff_to_keys() {
+void AssemblerInteractive::convert_buff_to_keys() {
   std::string rlbuff=trim(rl_line_buffer);
-  AssemblerInteractive_cui_keys.clear();
+  cui_keys.clear();
   if(rl_line_buffer!=NULL)
-    AssemblerInteractive_cui_keys = split_string(rlbuff, " ");
+    cui_keys = split_string(rlbuff, " ");
 }
 
 
-char* AssemblerInteractive_command_generator(const char *text, int state) {
-  std::vector<std::string> commands = move(ait.get_ui_commands(AssemblerInteractive_cui_keys));
+char* AssemblerInteractive::command_generator(const char *text, int state) {
+  std::vector<std::string> commands = move(ait.get_ui_commands(cui_keys));
   std::string textstr(text), command;
   static int list_index, len; 
 
@@ -305,9 +305,6 @@ char* AssemblerInteractive_command_generator(const char *text, int state) {
     len = strlen(text);
   }  
   
-  // std::cout << " keys:" << AssemblerInteractive_cui_keys.size() << ":"; for(auto k: AssemblerInteractive_cui_keys) { std::cout << k << ","; } std::cout <<"\n";
-
-  // while((command = AssemblerInteractive::commands[list_index++]) != "") {
   while((command = commands[list_index++]) != "") {
     if( command.compare(0, len, textstr) == 0) {
       return strdup(command.c_str());
@@ -316,22 +313,22 @@ char* AssemblerInteractive_command_generator(const char *text, int state) {
   return nullptr;
 }
 
-char** AssemblerInteractive_command_completion(const char *text, int start, int end) {
+char** AssemblerInteractive::command_completion(const char *text, int start, int end) {
   char **matches, *match;
   std::string matchstr, rematch;
   rl_attempted_completion_over = 1;
 
-  if(std::string(rl_line_buffer)  == "") AssemblerInteractive_cui_keys.clear();
+  if(std::string(rl_line_buffer)  == "") cui_keys.clear();
   if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') {convert_buff_to_keys(); }
 
-  matches = rl_completion_matches(text, AssemblerInteractive_command_generator);
+  matches = rl_completion_matches(text, command_generator);
 
   if(matches == nullptr && strlen(text) > 0) {     // if stuck from previous command didn't complete properly
     convert_buff_to_keys(); 
-    if(!AssemblerInteractive_cui_keys.empty()) 
-      rematch = AssemblerInteractive_cui_keys.back();
-    AssemblerInteractive_cui_keys.pop_back();
-    matches = rl_completion_matches(rematch.c_str(), AssemblerInteractive_command_generator);
+    if(!cui_keys.empty()) 
+      rematch = cui_keys.back();
+    cui_keys.pop_back();
+    matches = rl_completion_matches(rematch.c_str(), command_generator);
   }
 
   return  matches;
