@@ -23,6 +23,28 @@ std::vector<std::string> AssemblerInteractive::commands = {
   "!run_break",
   ""
 };
+std::map<std::string, std::function<void(const std::string&)>> 
+AssemblerInteractive::command_functions = {
+  //{"!print_tree", AssemblerInteractive::print_tree},
+  {"!print_tree", nullptr},
+  {"!print_register",nullptr},
+  {"!print_register_int",nullptr},
+  {"!print_register_float",nullptr},
+  {"!print_stack_int",nullptr},
+  {"!print_stack_float",nullptr},
+  {"!print_ds_int",nullptr},
+  {"!print_ds_float",nullptr},
+  {"!print_program",nullptr},
+  {"!print_src",nullptr},
+  {"!print_src_break",nullptr},
+  {"!print_program_float",nullptr},
+  {"!print_current_function",nullptr},
+  {"!run_program",nullptr},
+  {"!call",nullptr},
+  {"!break",nullptr},
+  {"!step",nullptr},
+  {"!run_break",nullptr},
+};
 
 extern AssemblerInteractive ait;
 std::vector<std::string> AssemblerInteractive::cui_keys={};
@@ -80,7 +102,7 @@ void AssemblerInteractive::parse(const std::string &line) {
 
 }
 
-void AssemblerInteractive::run_program() {
+void AssemblerInteractive::run_program(const std::string& l) {
   assembler.run(vm);
 }
 
@@ -94,8 +116,8 @@ void AssemblerInteractive::interact(const std::string& cline) {
   std::string rest_psb =  match(line, "!print_src_break");
   std::string rest_plvar =  match(line, "!print_current_function");
   if(line == "!print_tree" || rest_tree != "" ) print_tree(rest_tree);
-  if(line == "!print_register") print_vm_registers(12);
-  if(line == "!print_register_int") print_vm_registers(12);
+  if(line == "!print_register") print_vm_registers("12");
+  if(line == "!print_register_int") print_vm_registers("12");
   if(line == "!print_register_float") print_vm_registers_float();
   if(line == "!print_stack_int") print_vm_stack_int();
   if(line == "!print_stack_float") print_vm_stack_float();
@@ -148,7 +170,8 @@ void AssemblerInteractive::print_vm_stack_float() {
   std::cout << '\n';
 }
 
-void AssemblerInteractive::print_vm_registers(int n) {
+void AssemblerInteractive::print_vm_registers(const std::string &num_str) {
+  int n = stoi(num_str);
   for(int i=0; i<n; i++) {
     std::cout << "R" << int(i) << ":" << vm.R[i].i << " ";
   }
@@ -162,7 +185,8 @@ void AssemblerInteractive::print_vm_registers(int n) {
 
   
 }
-void AssemblerInteractive::print_vm_registers_float(int n) {
+void AssemblerInteractive::print_vm_registers_float(const std::string &num_str) {
+  int n = stoi(num_str);
   for(int i=0; i<n; i++) {
     std::cout << "R" << int(i) << ":" << vm.R[i].f << " ";
   }

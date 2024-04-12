@@ -1,5 +1,6 @@
 #include <sstream>
 #include <regex>
+#include <functional>
 #include "prompt.hh"
 #include "assembler.hh"
 #include "vm.hh"
@@ -29,8 +30,8 @@ private:
   void parse_prompt(const std::string&);
 
   void print_tree(const std::string &line);  
-  void print_vm_registers(int n=8);  
-  void print_vm_registers_float(int n=8);  
+  void print_vm_registers(const std::string &line="8");  
+  void print_vm_registers_float(const std::string &line="8");  
   void print_vm_stack_int();
   void print_vm_stack_float();
   void print_src();
@@ -47,11 +48,12 @@ public:
   void loadsrc(std::ifstream &fs);
   void load(const std::string &filename);
   void parse(const std::string &line);
-  void run_program();
+
 
   void set_ui_commands();
   std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});
 
+  void run_program(const std::string &l="");
   void set_breakpoint(const std::string& bstr);
   void run_break(); // stop at location return to prompt
   void run_step(const std::string& bstr ); // step num of steps from bkpt
@@ -60,6 +62,7 @@ public:
 
   Assembler* getAssembler() { return &assembler;}
 
+  static std::map<std::string, std::function<void(const std::string&)>> command_functions;
   static std::vector<std::string> commands;
   static std::vector<std::string> cui_keys;
 

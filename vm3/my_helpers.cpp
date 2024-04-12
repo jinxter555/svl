@@ -46,3 +46,16 @@ std::string reduce(const std::string& str, const std::string& fill , const std::
 
     return result;
 }
+
+std::string match(const std::string& line, const std::string& pattern) {
+  std::smatch match;
+  std::regex regex(pattern);
+
+  if (std::regex_search(line, match, regex)) {
+    // Match found, return the rest of the line after the match
+    return line.substr(match.position() + match.str(0).size());
+  } else {
+    // No match found, return an empty string
+    return "";
+  }
+}

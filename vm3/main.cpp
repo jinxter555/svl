@@ -22,7 +22,7 @@ LangPrompt *lang_it = &ait;
 //void setup_readline_autocomplete(LangPrompt *lp);
 void asm_setup_readline_autocomplete();
 void svlm_setup_readline_autocomplete();
-PromptSwitch prun(LangPrompt *lp, const Commandline& cml) ;
+PromptSwitch p_run(LangPrompt *lp, const Commandline& cml) ;
 
 
 int main(int argc, char *argv[]) {
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
       std::cerr << "lang not specified! \n";
       return(1); 
     }
-    ps = prun(lang_it, cml);
+    ps = p_run(lang_it, cml);
 
     switch(ps) {
     case PromptSwitch::svlm:
@@ -60,10 +60,10 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-PromptSwitch prun(LangPrompt *lp, const Commandline& cml) {
+PromptSwitch p_run(LangPrompt *lp, const Commandline& cml) {
   PromptSwitch ps;
   if(cml.infile_name !="") lp->load(cml.infile_name);
-  if(cml.run) lang_it->run_program();
+  if(cml.run) lang_it->run_program("");
   myprompt.load_history(*lp);
   ps = myprompt.ready(*lp);
   myprompt.save_history(*lp);

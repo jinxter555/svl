@@ -18,30 +18,32 @@ private:
   vslast::SvlmScanner svlm_scanner { std::cin, std::cerr };
   vslast::SvlmParser svlm_parser { &svlm_scanner , &svlm_lang };
 public:
-  SvlmInteractive(const std::string&hf, const std::string&ps)
-    : LangPrompt(hf, ps) {};
+  SvlmInteractive(const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
   void accept_prompt(const std::string&l) override; // readyline prompt
   void parse(const std::string &line); // parse readline line
   void parse_prompt(const std::string &line); // parse readline line
   void interact(const std::string &line); // parse readline line
   void load(const std::string &filename); // load files from command line
-  void run_program();
+  void run_program(const std::string &l="");
 
 
   // command completion
-  // static std::vector<std::string> commands;
-  //static std::map<std::string, std::function<void(const std::string&)>> command_functions;
-  static std::map<std::string, std::function<void(const std::string&)>> command_functions;
+  std::map<std::string, std::function<void(const std::string&)>> command_functions;
+  void init_command_functions();
 
   static std::vector<std::string> cui_keys;
 
   std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});                                                 
   void set_ui_commands();
 
-  static void convert_buff_to_keys();
   static char** command_completion(const char *text, int start, int end);
   static char* command_generator(const char *text, int state);
+  static void convert_buff_to_keys();
 
-  static void tset();
+
+  // using CommandFunctionPtr = std::function<void(const std::string &)>;
+  void printTree(const std::string& message);
+  void printHello(const std::string& message);
+  void printGoodbye(const std::string& message);
 
 };

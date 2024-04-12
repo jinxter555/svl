@@ -2,25 +2,36 @@
 #include "my_helpers.hh"
 
 
+extern SvlmInteractive svlm_it;
+
+SvlmInteractive::SvlmInteractive
+( const std::string&hf
+, const std::string&ps
+) : LangPrompt(hf, ps) {
+  init_command_functions();
+};
 
 // Define some example functions that take a string argument
-void printTree(const std::string& message) {
-  std::cout << message << std::endl;
-}
-void printHello(const std::string& message) {
+void SvlmInteractive::printTree(const std::string& message) {
   std::cout << message << std::endl;
 }
 
-void printGoodbye(const std::string& message) {
-  std::cout << message << std::endl;
+
+void SvlmInteractive::printHello(const std::string& message) {
+  std::cout << "hello: " <<  message << std::endl;
 }
 
-std::map<std::string, std::function<void(const std::string&)>> 
-  SvlmInteractive::command_functions = {
-  {"!print_tree",  printTree},
-  {"!print_hello", printHello},
-  {"!print_me", printHello},
-  {"", nullptr}};
+void SvlmInteractive::printGoodbye(const std::string& message) {
+  std::cout << "goodbye: " << message << std::endl;
+}
+
+void SvlmInteractive::init_command_functions() {
+  command_functions =  {
+    {"!print_tree", std::bind(&SvlmInteractive::printTree, this,  std::placeholders::_1)},
+    {"!print_hello", std::bind(&SvlmInteractive::printHello, this,  std::placeholders::_1)},
+    {"!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
+  };
+}
 
 std::vector<std::string> SvlmInteractive::cui_keys = {                                                                         
 };
@@ -52,15 +63,16 @@ void SvlmInteractive::load(const std::string &cfn) {
   }
 }
 
-void SvlmInteractive::run_program() {}
+void SvlmInteractive::run_program(const std::string &l) {}
 
 void SvlmInteractive::interact(const std::string &cline) {
   std::string line = move(reduce(cline));
   std::vector<std::string> tokens= move(split_string(line, " "));
   std::string command = tokens.front();
-  if(command_functions[command] != nullptr)
-    std::cout << command << ": " << line << "\n";
-  else 
+  if(command_functions[command] != nullptr) {
+    std::string args =  move(trim(match(line, command)));
+    std::cout << command << ": " << args << "\n";
+  } else 
     std::cerr << command << " not found!\n";
 }
 
@@ -106,7 +118,6 @@ void SvlmInteractive::convert_buff_to_keys() {
 }
 
 
-extern SvlmInteractive svlm_it;
 char* SvlmInteractive::command_generator(const char *text, int state) {
   std::vector<std::string> commands = std::move(svlm_it.get_ui_commands(cui_keys));
   std::string textstr(text), command;

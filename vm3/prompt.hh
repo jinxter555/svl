@@ -32,7 +32,7 @@ public:
   virtual void parse(const std::string &line) = 0; // parse readline line
   virtual void interact(const std::string &line) = 0; // parse readline line
   virtual void load(const std::string &filename) = 0; // load files from command line
-  virtual void run_program() = 0; // load files from command line
+  virtual void run_program(const std::string& line) = 0; // load files from command line
 };
 
 class PromptInteractive {
