@@ -1,13 +1,6 @@
-bison -d svlm_grammar.y 
+g++ -std=c++17 -g -c assembler_interactive.cpp
 g++ -std=c++17 -g -omain.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
 assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o  \
 svlm_scanner.cpp svlm_parser.cpp tree.o  svlm_interactive.o svlm_lang.o \
+ast.hh ast.cpp \
 -lreadline
-/usr/bin/ld: /tmp/ccXGe4Jf.o: warning: relocation against `_ZTV13NumberExprAst' in read-only section `.text._ZN13NumberExprAstC2ESt3any[_ZN13NumberExprAstC5ESt3any]'
-/usr/bin/ld: /tmp/ccXGe4Jf.o: in function `ExprAst::ExprAst(std::any)':
-/home/jt/projects/cpp/t/parse_vm/ast.hh:19: undefined reference to `vtable for ExprAst'
-/usr/bin/ld: /tmp/ccXGe4Jf.o: in function `NumberExprAst::NumberExprAst(std::any)':
-/home/jt/projects/cpp/t/parse_vm/ast.hh:29: undefined reference to `vtable for NumberExprAst'
-/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
-collect2: error: ld returned 1 exit status
-make: *** [Makefile:8: main.out] Error 1

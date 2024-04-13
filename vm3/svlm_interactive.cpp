@@ -88,10 +88,11 @@ std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std:
   children.push_back("");
   return children;
 }
+
+
 void SvlmInteractive::set_ui_commands() {
   std::string command; int list_index=0;
   std::vector<std::string> keys;
-  //std::cout << "set ui commandsize:" << commands.size() << "\n";
 
   for(auto const&[command, fun] : SvlmInteractive::command_functions) {
     if(command =="") continue;

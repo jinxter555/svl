@@ -2,6 +2,7 @@
 #include "assembler_interactive.hh"
 #include "my_helpers.hh"
 
+/*
 std::vector<std::string> AssemblerInteractive::commands = {
   "!print_tree",
   "!print_register",
@@ -23,28 +24,33 @@ std::vector<std::string> AssemblerInteractive::commands = {
   "!run_break",
   ""
 };
-std::map<std::string, std::function<void(const std::string&)>> 
-AssemblerInteractive::command_functions = {
-  //{"!print_tree", AssemblerInteractive::print_tree},
-  {"!print_tree", nullptr},
-  {"!print_register",nullptr},
-  {"!print_register_int",nullptr},
-  {"!print_register_float",nullptr},
-  {"!print_stack_int",nullptr},
-  {"!print_stack_float",nullptr},
-  {"!print_ds_int",nullptr},
-  {"!print_ds_float",nullptr},
-  {"!print_program",nullptr},
-  {"!print_src",nullptr},
-  {"!print_src_break",nullptr},
-  {"!print_program_float",nullptr},
-  {"!print_current_function",nullptr},
-  {"!run_program",nullptr},
-  {"!call",nullptr},
-  {"!break",nullptr},
-  {"!step",nullptr},
-  {"!run_break",nullptr},
+*/
+
+
+void AssemblerInteractive::init_command_functions() {
+  command_functions =  {
+  {"!print_tree", std::bind(&AssemblerInteractive::print_tree, this, std::placeholders::_1)},
+  {"!print_register", std::bind(&AssemblerInteractive::print_vm_registers, this, std::placeholders::_1)},
+  {"!print_register_int", std::bind(&AssemblerInteractive::print_vm_registers, this, std::placeholders::_1)},
+  {"!print_register_float", std::bind(&AssemblerInteractive::print_vm_registers_float, this, std::placeholders::_1)},
+
+  {"!print_stack_int", std::bind(&AssemblerInteractive::print_vm_stack_int, this, std::placeholders::_1)},
+  {"!print_stack_float", std::bind(&AssemblerInteractive::print_vm_stack_float, this, std::placeholders::_1)},
+
+  {"!print_ds_int", std::bind(&AssemblerInteractive::print_ds_int, this, std::placeholders::_1)},
+  {"!print_ds_float", std::bind(&AssemblerInteractive::print_ds_float, this, std::placeholders::_1)},
+  {"!print_program", std::bind(&AssemblerInteractive::print_program, this, std::placeholders::_1)},
+  {"!print_src", std::bind(&AssemblerInteractive::print_src, this,  std::placeholders::_1)},
+  {"!print_src_break", std::bind(&AssemblerInteractive::print_src_break, this,  std::placeholders::_1)},
+  {"!print_program_float", std::bind(&AssemblerInteractive::print_program_f, this,  std::placeholders::_1)},
+  {"!print_current_function", std::bind(&AssemblerInteractive::print_current_function, this,  std::placeholders::_1)},
+  {"!run_program", std::bind(&AssemblerInteractive::run_program, this, std::placeholders::_1)},
+  {"!call", std::bind(&AssemblerInteractive::call_func, this, std::placeholders::_1)},
+  {"!break", std::bind(&AssemblerInteractive::set_breakpoint, this, std::placeholders::_1)},
+  {"!step", std::bind(&AssemblerInteractive::run_step, this, std::placeholders::_1)},
+  {"!run_break", std::bind(&AssemblerInteractive::run_break, this, std::placeholders::_1)},
 };
+}
 
 extern AssemblerInteractive ait;
 std::vector<std::string> AssemblerInteractive::cui_keys={};
@@ -53,7 +59,7 @@ AssemblerInteractive::AssemblerInteractive(const std::string &hf, const std::str
   : LangPrompt(hf, ps) {
     //vm = new VM;
     //assembler = new Assembler;
-
+  init_command_functions();
 }
 
 void AssemblerInteractive::accept_prompt(const std::string &line) {
@@ -106,9 +112,27 @@ void AssemblerInteractive::run_program(const std::string& l) {
   assembler.run(vm);
 }
 
+void AssemblerInteractive::executeCommand(const std::string& command, const std::string& args) {
+  auto iter = command_functions.find(command);
+  if (iter != command_functions.end()) {
+    (iter->second)(args);
+  } else {
+    std::cout << "Invalid command. Please choose from the available commands." << std::endl;
+  }
+}
+
+
 void AssemblerInteractive::interact(const std::string& cline) {
-  std::string line = cline;
-  line.erase(line.find_last_not_of(" ")+1);
+  std::string line = move(reduce(cline));
+  std::vector<std::string> tokens= move(split_string(line, " "));
+  std::string command = tokens.front();
+  if(command_functions[command] != nullptr) {
+    std::string args =  move(trim(match(line, command)));
+    (command_functions[command])(args);
+  } else 
+    std::cerr << command << " not found!\n";
+
+/*
   std::string rest_tree =  match(line, "!print_tree");
   std::string rest_call =  match(line, "!call ");
   std::string rest_break =  match(line, "!break");
@@ -133,7 +157,9 @@ void AssemblerInteractive::interact(const std::string& cline) {
   if(line == "!break" || rest_break != "" ) set_breakpoint(rest_break);
   if(line == "!step" || rest_step != "" ) run_step(rest_step);
   if(line == "!call" || rest_call !="") call_func(rest_call); // setup up add end of code[] with call func , and exit
+
   cui_keys.clear();
+  */
 }
 
 
@@ -145,11 +171,18 @@ void AssemblerInteractive::run_step(const std::string& bstr) {
   us_int_t num = std::strtoll(bstr.c_str(), nullptr, 10);
   assembler.run_step(vm, num);
 }
-void AssemblerInteractive::run_break() {
+void AssemblerInteractive::run_break(const std::string& line) {
   assembler.run_break(vm);
 }
 
-void AssemblerInteractive::print_vm_stack_int() {
+void AssemblerInteractive::print_ds_int(const std::string& line) {
+  assembler.print_ds_i();
+}
+void AssemblerInteractive::print_ds_float(const std::string& line) {
+  assembler.print_ds_f();
+}
+
+void AssemblerInteractive::print_vm_stack_int(const std::string& line) {
   int i=0;
   Frame frame=vm.get_current_frame();
   // for (std::vector<reg_t>::iterator it = vm->vmstack.begin() ; it != vm->vmstack.end(); ++it) {
@@ -161,7 +194,7 @@ void AssemblerInteractive::print_vm_stack_int() {
   std::cout << '\n';
 }
 
-void AssemblerInteractive::print_vm_stack_float() {
+void AssemblerInteractive::print_vm_stack_float(const std::string& line) {
   int i=0;
   // for (std::vector<reg_t>::iterator it = vm->vmstack.begin() ; it != vm->vmstack.end(); ++it) {
   for (std::vector<reg_t>::iterator it = vm.vmstack.begin() ; it != vm.vmstack.end(); ++it) {
@@ -171,7 +204,8 @@ void AssemblerInteractive::print_vm_stack_float() {
 }
 
 void AssemblerInteractive::print_vm_registers(const std::string &num_str) {
-  int n = stoi(num_str);
+  int n=8;
+  if(num_str != "") n = stoi(num_str); 
   for(int i=0; i<n; i++) {
     std::cout << "R" << int(i) << ":" << vm.R[i].i << " ";
   }
@@ -186,7 +220,8 @@ void AssemblerInteractive::print_vm_registers(const std::string &num_str) {
   
 }
 void AssemblerInteractive::print_vm_registers_float(const std::string &num_str) {
-  int n = stoi(num_str);
+  int n=8;
+  if(num_str != "") n = stoi(num_str); 
   for(int i=0; i<n; i++) {
     std::cout << "R" << int(i) << ":" << vm.R[i].f << " ";
   }
@@ -212,7 +247,7 @@ void AssemblerInteractive::print_current_function(const std::string& clvar){
     << " fvalue: " << value.f << "\n\n";
 }
 
-void AssemblerInteractive::print_src(){
+void AssemblerInteractive::print_src(const std::string& line){
   char istr[16];
   for(unsigned int i=0; i<line_read_count; i++) {
     snprintf(istr, 16, "code[%06d]: ", i);
@@ -233,20 +268,17 @@ void AssemblerInteractive::print_src_break(const std::string &cnumstr){
     std::cout << istr << source[i].line_str  << "\n";
   }
 }
-void AssemblerInteractive::print_program(){
+void AssemblerInteractive::print_program(const std::string &line){
   assembler.print_program();
 }
-void AssemblerInteractive::print_program_f(){
+void AssemblerInteractive::print_program_f(const std::string &line){
   assembler.print_program_f();
 }
 
 void AssemblerInteractive::print_tree(const std::string &cline){
   std::string line = cline;
-  line.erase(line.find_last_not_of(" ")+1);
-
-
+ // line.erase(line.find_last_not_of(" ")+1);
   std::vector<std::string> vstr = split_string(line, " ");
-  vstr.erase(vstr.begin()); // erase empty element
 
 //  for(auto s : vstr) { std::cout << "s: '" << s << "'\n"; }
 
@@ -284,7 +316,7 @@ void AssemblerInteractive::set_ui_commands() {
   std::vector<std::string> keys;
   //std::cout << "set ui commandsize:" << commands.size() << "\n";
 
-  for(auto command : AssemblerInteractive::commands) {
+  for(auto const&[command, fun] : AssemblerInteractive::command_functions) {
     if(command =="") continue;
     keys = {rlac_current_context_key, command};
     assembler.context->add_node({keys}, 1);

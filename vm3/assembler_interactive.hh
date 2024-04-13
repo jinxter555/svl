@@ -30,16 +30,21 @@ private:
   void parse_prompt(const std::string&);
 
   void print_tree(const std::string &line);  
-  void print_vm_registers(const std::string &line="8");  
-  void print_vm_registers_float(const std::string &line="8");  
-  void print_vm_stack_int();
-  void print_vm_stack_float();
-  void print_src();
+
+  void print_vm_registers(const std::string &line);  
+  void print_vm_registers_float(const std::string &line);  
+  void print_vm_stack_int(const std::string& line="");
+  void print_vm_stack_float(const std::string& line="");
+  void print_src(const std::string& line="");
   void print_src_break(const std::string& numstr="10");
-  void print_ds();
-  void print_program();
-  void print_program_f();
-  void call_func(const std::string &line);
+
+  void print_ds_int(const std::string &line="");
+  void print_ds_float(const std::string &line="");
+
+  void print_program(const std::string &line="");
+  void print_program_f(const std::string &line="");
+
+  void call_func(const std::string &line="");
 
   std::string match(const std::string& line, const std::string& pattern);
 public:
@@ -55,14 +60,16 @@ public:
 
   void run_program(const std::string &l="");
   void set_breakpoint(const std::string& bstr);
-  void run_break(); // stop at location return to prompt
+  void run_break(const std::string& line=""); // stop at location return to prompt
   void run_step(const std::string& bstr ); // step num of steps from bkpt
 
   void print_current_function(const std::string& lvstr);
 
   Assembler* getAssembler() { return &assembler;}
 
-  static std::map<std::string, std::function<void(const std::string&)>> command_functions;
+  void init_command_functions();
+  void executeCommand(const std::string& command, const std::string& args);
+  std::map<std::string, std::function<void(const std::string&)>> command_functions;
   static std::vector<std::string> commands;
   static std::vector<std::string> cui_keys;
 
