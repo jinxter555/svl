@@ -29,7 +29,7 @@ class Assembler : public Assembly {
   friend class AssemblerInteractive;
   friend class Parser;
 private:
-  Tree *context;
+  std::shared_ptr<Tree> context;
   //std::string 
   //  context_uni = CONTEXT_UNIV, current_app="myprog", current_api="myapi_0.00", 
   //  current_module="", current_function  = "", current_var="";
@@ -46,7 +46,7 @@ private:
 public:  
   s_int_t mvc=0;  // module variable count, aka GLOBAL variable to be accessed by parser as well.
 
-  Assembler();
+  Assembler(std::shared_ptr<Tree> tp);
   Opcode lookup_opcode(const std::string& opname);
   void set_instruction(const instr_t &t);
   void insert_instruction();

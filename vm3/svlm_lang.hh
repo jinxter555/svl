@@ -7,6 +7,6 @@ class SvlmLang {
 private:
   std::shared_ptr<Tree> context;
 public:
-  SvlmLang() { context = std::make_shared<Tree>();}
+  SvlmLang(std::shared_ptr<Tree> tp) { context = tp; }
 };
 

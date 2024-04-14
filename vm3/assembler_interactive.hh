@@ -48,7 +48,7 @@ private:
 
   std::string match(const std::string& line, const std::string& pattern);
 public:
-  AssemblerInteractive(const std::string &, const std::string &);
+  AssemblerInteractive(const std::string &, const std::string &, std::shared_ptr<Tree> tp);
   void accept_prompt(const std::string&) override;
   void loadsrc(std::ifstream &fs);
   void load(const std::string &filename);

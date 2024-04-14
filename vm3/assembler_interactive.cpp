@@ -2,6 +2,15 @@
 #include "assembler_interactive.hh"
 #include "my_helpers.hh"
 
+AssemblerInteractive::AssemblerInteractive
+( const std::string &hf
+, const std::string &ps
+, std::shared_ptr<Tree> tp) 
+: LangPrompt(hf, ps),  assembler(tp)
+{
+  init_command_functions();
+}
+
 /*
 std::vector<std::string> AssemblerInteractive::commands = {
   "!print_tree",
@@ -54,13 +63,6 @@ void AssemblerInteractive::init_command_functions() {
 
 extern AssemblerInteractive ait;
 std::vector<std::string> AssemblerInteractive::cui_keys={};
-
-AssemblerInteractive::AssemblerInteractive(const std::string &hf, const std::string &ps) 
-  : LangPrompt(hf, ps) {
-    //vm = new VM;
-    //assembler = new Assembler;
-  init_command_functions();
-}
 
 void AssemblerInteractive::accept_prompt(const std::string &line) {
   parse_prompt(line);
@@ -256,6 +258,7 @@ void AssemblerInteractive::print_src(const std::string& line){
   }
 }
 void AssemblerInteractive::print_src_break(const std::string &cnumstr){
+  
   char istr[16];
   std::string numstr;
   int breakpoint = assembler.Assembly::breakpoint;

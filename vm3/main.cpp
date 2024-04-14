@@ -11,8 +11,10 @@
 #include "svlm_lang.hh"
 #include "svlm_interactive.hh"
 
-AssemblerInteractive ait(".vm_history", "asm> ");
-SvlmInteractive svlm_it(".svlm_history", "svlm> ");
+std::shared_ptr<Tree> universe_tree = std::make_shared<Tree>();
+
+AssemblerInteractive ait(".vm_history", "asm> ", universe_tree);
+SvlmInteractive svlm_it(".svlm_history", "svlm> ", universe_tree);
 
 PromptInteractive myprompt;
 LangPrompt *lang_it = &ait;
@@ -23,9 +25,13 @@ LangPrompt *lang_it = &ait;
 void asm_setup_readline_autocomplete();
 void svlm_setup_readline_autocomplete();
 PromptSwitch p_run(LangPrompt *lp, const Commandline& cml) ;
+PromptSwitch p_run_init(LangPrompt *lp, const Commandline& cml) ;
+
 
 
 int main(int argc, char *argv[]) {
+  bool init_flag = true;
+
   Commandline cml(argc, argv);
   PromptSwitch ps = PromptSwitch::begin;
 
@@ -42,7 +48,12 @@ int main(int argc, char *argv[]) {
       std::cerr << "lang not specified! \n";
       return(1); 
     }
-    ps = p_run(lang_it, cml);
+    if(init_flag) {
+      ps = p_run_init(lang_it, cml);
+      init_flag=false;
+    }
+    else
+      ps = p_run(lang_it, cml);
 
     switch(ps) {
     case PromptSwitch::svlm:
@@ -60,10 +71,14 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-PromptSwitch p_run(LangPrompt *lp, const Commandline& cml) {
-  PromptSwitch ps;
+PromptSwitch p_run_init(LangPrompt *lp, const Commandline& cml) {
   if(cml.infile_name !="") lp->load(cml.infile_name);
   if(cml.run) lang_it->run_program("");
+  return p_run(lp, cml);
+}
+
+PromptSwitch p_run(LangPrompt *lp, const Commandline& cml) {
+  PromptSwitch ps;
   myprompt.load_history(*lp);
   ps = myprompt.ready(*lp);
   myprompt.save_history(*lp);

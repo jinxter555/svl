@@ -4,8 +4,9 @@
 #include "assembler.hh"
 #include <any>
 
-Assembler::Assembler() {
-  context = new Tree();
+Assembler::Assembler(std::shared_ptr<Tree> tp) {
+  //context = new Tree();
+  context = tp;
   current_context = {
     CONTEXT_UNIV, 
     "assembler", 

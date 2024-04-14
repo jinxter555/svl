@@ -18,7 +18,7 @@ private:
   vslast::SvlmScanner svlm_scanner { std::cin, std::cerr };
   vslast::SvlmParser svlm_parser { &svlm_scanner , &svlm_lang };
 public:
-  SvlmInteractive(const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
+  SvlmInteractive(const std::string&hf, const std::string&ps, std::shared_ptr<Tree> tp);//  : LangPrompt(hf, ps) {};
   void accept_prompt(const std::string&l) override; // readyline prompt
   void parse(const std::string &line); // parse readline line
   void parse_prompt(const std::string &line); // parse readline line
@@ -42,7 +42,7 @@ public:
 
 
   // using CommandFunctionPtr = std::function<void(const std::string &)>;
-  void printTree(const std::string& message);
+  void print_tree(const std::string& line);
   void printHello(const std::string& message);
   void printGoodbye(const std::string& message);
 

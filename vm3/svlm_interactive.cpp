@@ -7,13 +7,18 @@ extern SvlmInteractive svlm_it;
 SvlmInteractive::SvlmInteractive
 ( const std::string&hf
 , const std::string&ps
-) : LangPrompt(hf, ps) {
+, std::shared_ptr<Tree> tp
+) : LangPrompt(hf, ps), svlm_lang(tp) {
   init_command_functions();
 };
 
 // Define some example functions that take a string argument
-void SvlmInteractive::printTree(const std::string& message) {
-  std::cout << message << std::endl;
+void SvlmInteractive::print_tree(const std::string& line) {
+  std::vector<std::string> vstr = split_string(line, " ");
+  auto children = svlm_lang.context->get_children(vstr);
+  for(auto c : children) { std::cout << "child: " << c << "\n"; }
+  auto node = svlm_lang.context->get_node(vstr);
+  if(node) {std::cout << "value: "; node->print_data(); std::cout << "\n";}
 }
 
 
@@ -27,7 +32,7 @@ void SvlmInteractive::printGoodbye(const std::string& message) {
 
 void SvlmInteractive::init_command_functions() {
   command_functions =  {
-    {"!print_tree", std::bind(&SvlmInteractive::printTree, this,  std::placeholders::_1)},
+    {"!print_tree", std::bind(&SvlmInteractive::print_tree, this,  std::placeholders::_1)},
     {"!print_hello", std::bind(&SvlmInteractive::printHello, this,  std::placeholders::_1)},
     {"!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
   };
@@ -71,7 +76,7 @@ void SvlmInteractive::interact(const std::string &cline) {
   std::string command = tokens.front();
   if(command_functions[command] != nullptr) {
     std::string args =  move(trim(match(line, command)));
-    std::cout << command << ": " << args << "\n";
+    (command_functions[command])(args);
   } else 
     std::cerr << command << " not found!\n";
 }
