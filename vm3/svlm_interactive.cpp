@@ -12,12 +12,11 @@ SvlmInteractive::SvlmInteractive
   init_command_functions();
 };
 
-// Define some example functions that take a string argument
 void SvlmInteractive::print_tree(const std::string& line) {
   std::vector<std::string> vstr = split_string(line, " ");
-  auto children = svlm_lang.context->get_children(vstr);
+  auto children = svlm_lang.context_tree->get_children(vstr);
   for(auto c : children) { std::cout << "child: " << c << "\n"; }
-  auto node = svlm_lang.context->get_node(vstr);
+  auto node = svlm_lang.context_tree->get_node(vstr);
   if(node) {std::cout << "value: "; node->print_data(); std::cout << "\n";}
 }
 
@@ -89,7 +88,7 @@ std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std:
   
   // std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
 
-  children = svlm_lang.context->get_children(keys);
+  children = svlm_lang.context_tree->get_children(keys);
   children.push_back("");
   return children;
 }
@@ -102,14 +101,14 @@ void SvlmInteractive::set_ui_commands() {
   for(auto const&[command, fun] : SvlmInteractive::command_functions) {
     if(command =="") continue;
     keys = {rlsvlm_current_context_key, command};
-    svlm_lang.context->add_node({keys}, 1);
+    svlm_lang.context_tree->add_node({keys}, 1);
   }
 
   std::shared_ptr<TreeNode> ptree_node 
-    = svlm_lang.context->get_node({rlsvlm_current_context_key, "!print_tree"});
+    = svlm_lang.context_tree->get_node({rlsvlm_current_context_key, "!print_tree"});
 
   if(ptree_node!=nullptr) {
-    std::shared_ptr<TreeNode> uni_node = svlm_lang.context->get_node({CONTEXT_UNIV});
+    std::shared_ptr<TreeNode> uni_node = svlm_lang.context_tree->get_node({CONTEXT_UNIV});
     ptree_node->add_child({CONTEXT_UNIV}, uni_node);
   } else
     std::cerr << "Can't add the universe to !print_tree\n";

@@ -13,6 +13,12 @@ void NumberExprAst::codegen(std::vector<std::string>& code) const {
 
 std::any NumberExprAst::evaluate() { return ExprAst::get_data(); }
 
+void NumberExprAst::print() { 
+  //return ExprAst::get_data(); 
+  //std::cout << evaluate();
+  TreeNode::print_data();
+}
+
 //-----------------------------
 
 BinOpExprAst::BinOpExprAst 
@@ -55,6 +61,19 @@ void BinOpExprAst::codegen(std::vector<std::string>& code) const {
   default: throw std::invalid_argument("Invalid opeartor");
   }
 }
+void BinOpExprAst::print() {
+  std::shared_ptr<NumberExprAst> l = 
+    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("left"));
+  std::shared_ptr<NumberExprAst> r = 
+    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("right"));
+
+  l->print();
+  print_data();
+  r->print();
+  std::cout << " ";
+
+
+}
 
 
 std::any BinOpExprAst::evaluate() {
@@ -96,66 +115,37 @@ std::any BinOpExprAst::binop(T a, T b, char op) {
   default: throw std::invalid_argument("Invalid operator");
   }
 }
-/*
-template <typename T, typename U>
-std::any BinOpExprAst::binop(T a, U b, char op) {
-  switch(op) {
-  case '+': return std::any_cast<T>(a) + std::any_cast<U>(b);
-  case '-': return std::any_cast<T>(a) - std::any_cast<U>(b);
-  case '*': return std::any_cast<T>(a) * std::any_cast<U>(b);
-  case '/': return std::any_cast<T>(a) !=0 
-    ? std::any_cast<T>(a) / std::any_cast<U>(b) : 0;
-  default: throw std::invalid_argument("Invalid operator");
+
+//--------------------
+
+ListExprAst::ListExprAst(std::any d) : ExprAst(d) {}
+
+void ListExprAst::add(std::shared_ptr<ExprAst> e) {
+  ExprAst::add_member(e);
+}
+
+std::shared_ptr<ExprAst> ListExprAst::get(int i) {
+  return std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
+}
+
+void ListExprAst::codegen(std::vector<std::string>& code) const {
+  std::shared_ptr<ExprAst> e;
+  for(int i=0; i<TreeNode::get_member_size(); i++ ) {
+    e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
+    e->codegen(code);
   }
 }
-*/
 
-
-/*
-
-int main() {
-  //NumberExprAst a(3);
-  std::shared_ptr<ExprAst> n1 = std::make_shared<NumberExprAst>(3);
-  std::shared_ptr<ExprAst> n2 = std::make_shared<NumberExprAst>(5);
-  std::shared_ptr<ExprAst> f1 = std::make_shared<NumberExprAst>(3.145f);
-
-  std::cout <<  std::any_cast<int>(n1->evaluate()) << "\n";
-  std::cout <<  std::any_cast<float>(f1->evaluate()) << "\n";
-
-  op_t op1 = {BinOpcodeAST::INT_OP_INT, '-'};
-  op_t op2 = {BinOpcodeAST::FLT_OP_FLT, '*'};
-  op_t op3 = {BinOpcodeAST::FLT_OP_INT, '*'};
-
-  // std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>( std::make_shared<NumberExprAst>(3), std::make_shared<NumberExprAst>(5), op1); std::cout <<  std::any_cast<int>(b1->evaluate()) << "\n";
-
-  // std::shared_ptr<ExprAst> b2 = std::make_shared<BinOpExprAst>( std::make_shared<NumberExprAst>(3.145f), std::make_shared<NumberExprAst>(5.15f), op2); std::cout <<  std::any_cast<float>(b2->evaluate()) << "\n";
-
-  std::shared_ptr<ExprAst> b3 = std::make_shared<BinOpExprAst>(
-    std::make_shared<NumberExprAst>(3.145f),
-    std::make_shared<NumberExprAst>(5), 
-    BinOpcodeAST::FLT_OP_INT, '*');
-
-  std::shared_ptr<ExprAst> b4 = std::make_shared<BinOpExprAst>(
-    std::make_shared<NumberExprAst>(3),
-    std::make_shared<NumberExprAst>(75.5555f), 
-    BinOpcodeAST::INT_OP_FLT, '*');
-
-
-  std::cout <<  std::any_cast<float>(b3->evaluate()) << "\n";
-  std::cout <<  std::any_cast<int>(b4->evaluate()) << "\n";
+void ListExprAst::print() {
+  std::shared_ptr<ExprAst> e;
+  for(int i=0; i<ExprAst::get_member_size(); i++ ) {
+    e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
+    e->print(); std::cout << "\n";
+  }
 }
 
-  std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>(
-    std::make_shared<NumberExprAst>(3),
-    std::make_shared<NumberExprAst>(5),
-  '-');
-
-
-
-  std::cout <<  std::any_cast<int>(n1->evaluate()) << "\n";
-  std::cout <<  std::any_cast<float>(f1->evaluate()) << "\n";
-  std::cout <<  std::any_cast<int>(b1->evaluate()) << "\n";
-  //std::cout <<  std::any_cast<float>(b2->evaluate()) << "\n";
+std::any ListExprAst::evaluate() {
+  return 0;
 }
-*/
+
 #endif

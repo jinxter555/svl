@@ -1,9 +1,26 @@
 #include "tree.hh"
 
+enum class BinOpcodeAST {
+  INT_OP_INT,
+  FLT_OP_FLT,
+  INT_OP_FLT,
+  FLT_OP_INT,
+};
+
+typedef struct {
+  BinOpcodeAST op_type;
+  char op;
+} op_t;
+
+
 void TreeNode::add_child(const std::string &key, std::shared_ptr<TreeNode> child) {
   if(children[key] == nullptr)
     // children[key] = move(child);
     children[key] = child;
+}
+
+void TreeNode::add_member(std::shared_ptr<TreeNode> member) {
+  members.push_back(member);
 }
 
 std::shared_ptr<TreeNode> TreeNode::get_child(const std::string &key) const {
@@ -18,6 +35,14 @@ std::shared_ptr<TreeNode> TreeNode::get_child(const std::string &key) const {
     //cout << "out get child \n";
   return children.at(key);
 }
+
+std::shared_ptr<TreeNode> TreeNode::get_member(int index) const {
+  return members[index];
+}
+int TreeNode::get_member_size() const {
+  return members.size();
+}
+
 
 std::vector<std::string> TreeNode::get_child_keys() const {
   std::vector<std::string> keys;
@@ -35,7 +60,9 @@ void TreeNode::set_data(const std::any d) {
 }
 
 std::ostream& operator << (std::ostream& out, std::any& a) {
-  if(a.type()  == typeid(int))
+  if(a.type()  == typeid(char))
+    out << std::any_cast<char>(a);
+  else if(a.type()  == typeid(int))
     out << std::any_cast<int>(a);
   else if(a.type()  == typeid(double))
     out << std::any_cast<double>(a);
@@ -51,6 +78,10 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     out << std::any_cast<long double>(a);
   else if(a.type()  == typeid(std::string))
     out << std::any_cast<std::string>(a);
+  else if(a.type()  == typeid(op_t)) {
+    op_t ao = std::any_cast<op_t>(a);
+    out << ao.op;
+  }
   else
     out << "unknown value type!";
   return out;

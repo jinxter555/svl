@@ -1,4 +1,5 @@
-//#pragma once
+#ifndef AST_HH
+#define AST_HH
 #include "tree.hh"
 
 enum class BinOpcodeAST {
@@ -21,6 +22,7 @@ public:
   virtual ~ExprAst();
   virtual std::any evaluate() = 0;
   virtual void codegen(std::vector<std::string>& code) const = 0;
+  virtual void print() = 0 ;
 };
 
 
@@ -29,6 +31,7 @@ public:
   NumberExprAst(std::any d) : ExprAst(d) {}
   std::any evaluate() override ;
   void codegen(std::vector<std::string> &code) const override;
+  void print() override;
 private:
 };
 
@@ -43,5 +46,20 @@ public:
   std::any binop(T a, T b, char op);
   template <typename T, typename U>
   std::any binop(T a, U b, char op);
+
+  void print() override;
 private:
 };
+
+class ListExprAst : public ExprAst {
+public:
+  ListExprAst() {}
+  ListExprAst(std::any d);
+  void add(std::shared_ptr<ExprAst> e);
+  std::shared_ptr<ExprAst> get(int n);
+  std::any evaluate() override;
+
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+};
+#endif
