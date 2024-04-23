@@ -41,10 +41,10 @@ BinOpExprAst::BinOpExprAst
 }
 
 void BinOpExprAst::codegen(std::vector<std::string>& code) const {
-  std::shared_ptr<NumberExprAst> l = 
-    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("left"));
-  std::shared_ptr<NumberExprAst> r = 
-    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("right"));
+  std::shared_ptr<ExprAst> l = 
+    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("left"));
+  std::shared_ptr<ExprAst> r = 
+    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("right"));
 
   l->codegen(code);
   r->codegen(code);
@@ -62,10 +62,10 @@ void BinOpExprAst::codegen(std::vector<std::string>& code) const {
   }
 }
 void BinOpExprAst::print() {
-  std::shared_ptr<NumberExprAst> l = 
-    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("left"));
-  std::shared_ptr<NumberExprAst> r = 
-    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("right"));
+  std::shared_ptr<ExprAst> l = 
+    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("left"));
+  std::shared_ptr<ExprAst> r = 
+    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("right"));
 
   l->print();
   print_data();
@@ -75,12 +75,15 @@ void BinOpExprAst::print() {
 
 }
 
-
 std::any BinOpExprAst::evaluate() {
-  std::shared_ptr<NumberExprAst> l = 
-    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("left"));
-  std::shared_ptr<NumberExprAst> r = 
-    std::dynamic_pointer_cast<NumberExprAst>(TreeNode::get_child("right"));
+
+  std::shared_ptr<ExprAst> l = 
+    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("left"));
+  std::shared_ptr<ExprAst> r = 
+    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("right"));
+
+  if(l ==nullptr) { std::cerr << "l is nullptr\n"; }
+  if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
 
   op_t op = std::any_cast<op_t>(ExprAst::get_data());
   switch(op.op_type) {

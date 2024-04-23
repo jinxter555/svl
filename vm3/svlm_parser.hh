@@ -397,7 +397,7 @@ namespace vslast {
       char dummy3[sizeof (long long)];
 
       // iexp
-      char dummy4[sizeof (std::shared_ptr<NumberExprAst>)];
+      char dummy4[sizeof (std::shared_ptr<ExprAst>)];
     };
 
     /// The size of the largest semantic type.
@@ -555,7 +555,7 @@ namespace vslast {
         break;
 
       case symbol_kind::S_iexp: // iexp
-        value.move< std::shared_ptr<NumberExprAst> > (std::move (that.value));
+        value.move< std::shared_ptr<ExprAst> > (std::move (that.value));
         break;
 
       default:
@@ -624,13 +624,13 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::shared_ptr<NumberExprAst>&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, std::shared_ptr<ExprAst>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::shared_ptr<NumberExprAst>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::shared_ptr<ExprAst>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -675,7 +675,7 @@ switch (yykind)
         break;
 
       case symbol_kind::S_iexp: // iexp
-        value.template destroy< std::shared_ptr<NumberExprAst> > ();
+        value.template destroy< std::shared_ptr<ExprAst> > ();
         break;
 
       default:
@@ -1441,7 +1441,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 7,     ///< Last index in yytable_.
+      yylast_ = 9,     ///< Last index in yytable_.
       yynnts_ = 5,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };

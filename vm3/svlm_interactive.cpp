@@ -20,6 +20,15 @@ void SvlmInteractive::print_tree(const std::string& line) {
   if(node) {std::cout << "value: "; node->print_data(); std::cout << "\n";}
 }
 
+void SvlmInteractive::print_ast(const std::string& line) {
+  std::vector<std::string> vstr = split_string(line, " ");
+  std::shared_ptr<TreeNode> cc  = 
+    svlm_lang.context_tree->get_node({SVLM_AST_TREE});
+  std::shared_ptr<ListExprAst> program = 
+    std::dynamic_pointer_cast<ListExprAst>(cc->get_child("code"));
+  program->print();
+}
+
 
 void SvlmInteractive::printHello(const std::string& message) {
   std::cout << "hello: " <<  message << std::endl;
@@ -34,6 +43,7 @@ void SvlmInteractive::init_command_functions() {
     {"!print_tree", std::bind(&SvlmInteractive::print_tree, this,  std::placeholders::_1)},
     {"!print_hello", std::bind(&SvlmInteractive::printHello, this,  std::placeholders::_1)},
     {"!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
+    {"!print_ast", std::bind(&SvlmInteractive::print_ast, this,  std::placeholders::_1)},
   };
 }
 
@@ -45,11 +55,16 @@ void SvlmInteractive::accept_prompt(const std::string &line) {
 }
 
 void SvlmInteractive::parse_prompt(const std::string &line) {
-    std::istringstream input_buffer(line);
     if(line[0] == '!') 
       interact(line);
+    else 
+      parse(line);
 }
+
 void SvlmInteractive::parse(const std::string &line) {
+  std::istringstream input_buffer(line+"\n");
+  svlm_scanner.switch_streams(&input_buffer, &std::cerr);
+  svlm_parser.parse();
 }
 
 void SvlmInteractive::load(const std::string &cfn) {

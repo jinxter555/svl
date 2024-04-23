@@ -45,5 +45,6 @@ public:
   void print_tree(const std::string& line);
   void printHello(const std::string& message);
   void printGoodbye(const std::string& message);
+  void print_ast(const std::string& line);
 
 };

@@ -23,15 +23,25 @@ int main() {
 
   std::shared_ptr<ExprAst> b3 = std::make_shared<BinOpExprAst>(
     std::make_shared<NumberExprAst>(3.145f),
-    std::make_shared<NumberExprAst>(5), 
-    BinOpcodeAST::FLT_OP_INT, '*');
+    std::make_shared<NumberExprAst>(5.0f), 
+    BinOpcodeAST::FLT_OP_FLT, '*');
   
   b3->print();
+  std::cout <<  "b3: " << std::any_cast<float>(b3->evaluate()) << "\n\n";
 
   std::shared_ptr<ExprAst> b4 = std::make_shared<BinOpExprAst>(
-    std::make_shared<NumberExprAst>(3),
+    std::make_shared<NumberExprAst>(3.0f),
     std::make_shared<NumberExprAst>(75.5555f), 
-    BinOpcodeAST::INT_OP_FLT, '*');
+    BinOpcodeAST::FLT_OP_FLT, '*');
+
+  std::shared_ptr<ExprAst> b5 = std::make_shared<BinOpExprAst>(
+      b3,
+      b4,
+    BinOpcodeAST::FLT_OP_FLT, '+');
+  b5->print();
+  std::cout <<  "b5: " << std::any_cast<float>(b5->evaluate()) << "\n\n";
+  
+
 
 
   program->add(f1);

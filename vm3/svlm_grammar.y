@@ -47,7 +47,7 @@ namespace vslast {
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<NumberExprAst>>  iexp
+%type <std::shared_ptr<ExprAst>>  iexp
 
 
 
@@ -63,32 +63,25 @@ lines
   ;
 
 line
-  : EOL { 
-      //std::shared_ptr<ExprAst> current_context = lang->current_contexts.top(); 
-      std::cerr << "Read an empty line\n"; 
-    }
-  // | iexp EOL       { std::cout << "iexp " << std::any_cast<long long>($1->evaluate()) << "\n"; }
-  | iexp EOL       { 
-    //std::cout << "iexp " << std::any_cast<int>($1->evaluate()) << "\n"; 
-    $1->print();
-    if(lang->current_context == nullptr) {
-      std::cout << "current context is null!\n";
-
-    }
-    //lang->current_context->add($1);
+  : EOL { std::cerr << "Read an empty line\n"; }
+  | iexp EOL { 
+    // $1->print(); 
+    lang->current_context->add($1);
   }
-// | iexp EOL       { std::cout << "iexp " << $1 << "\n"; }
-// | iexp EOL       { std::cout << "iexp " << $1 << "\n"; }
- // | fexp EOL       { std::cout << "fexp\n"; }
   | error EOL { yyerrok; }
   ;
 
 iexp
-  : INT { $$ = std::make_shared<NumberExprAst>((int)$1); }
+  : INT { $$ = std::make_shared<NumberExprAst>($1); }
+  | iexp PLUS iexp {
+    std::cout << "bin_op_expr:\n";
+    $1->print(); 
+    $3->print();
+    $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, '+');
+  }
   ;
 
 
-//fexp //: FLT { Expr<float> *a = new NumberExpr<float>(3.1415); } ;
 
 %%
 
