@@ -16,8 +16,7 @@ exp             ([eE][+-]?{dseq})
 exp_opt         ({exp}?)
 integer         ({dseq})
 float           (({frac}{exp_opt})|({dseq}{exp}))
-intvar          ([[:upper:]])
-fltvar          ([[:lower:]])
+identifier      ([a-zA-Z][a-zA-Z0-9_]*)
 blank           [ \t\r]           
 
 %{
@@ -28,11 +27,11 @@ blank           [ \t\r]
 %{
   yylloc->step();
 %}
+"module"        return SvlmParser::token::MODULE;
 {integer}   yylval->emplace<long long>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
 {float}     yylval->emplace<double>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
-{intvar}    yylval->emplace<char>(YYText()[0]); return SvlmParser::token::INTVAR;
-{fltvar}    yylval->emplace<char>(YYText()[0]); return SvlmParser::token::FLTVAR;
 {blank}     yylloc->step();
+{identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::IDENT_STR;
 "+"             return SvlmParser::token::PLUS;
 "-"             return SvlmParser::token::MINUS;
 "*"             return SvlmParser::token::MULTIPLY;
@@ -43,6 +42,7 @@ blank           [ \t\r]
 "("             return SvlmParser::token::LPAREN;
 ")"             return SvlmParser::token::RPAREN;
 "="             return SvlmParser::token::ASSIGN;
+"@"             return SvlmParser::token::AT;
 \n  {
   yylloc->lines(yyleng); 
   yylloc->step(); 

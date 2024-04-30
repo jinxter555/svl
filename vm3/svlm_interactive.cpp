@@ -44,6 +44,7 @@ void SvlmInteractive::init_command_functions() {
     {"!print_hello", std::bind(&SvlmInteractive::printHello, this,  std::placeholders::_1)},
     {"!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
     {"!print_ast", std::bind(&SvlmInteractive::print_ast, this,  std::placeholders::_1)},
+    {"!run_program", std::bind(&SvlmInteractive::run_program, this,  std::placeholders::_1)},
   };
 }
 
@@ -82,7 +83,10 @@ void SvlmInteractive::load(const std::string &cfn) {
   }
 }
 
-void SvlmInteractive::run_program(const std::string &l) {}
+void SvlmInteractive::run_program(const std::string &l) {
+  std::cout << "run program\n";
+
+}
 
 void SvlmInteractive::interact(const std::string &cline) {
   std::string line = move(reduce(cline));

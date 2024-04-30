@@ -14,10 +14,20 @@ int main() {
   //std::cout <<  std::any_cast<float>(f1->evaluate()) << "\n";
 
   op_t op1 = {BinOpcodeAST::INT_OP_INT, '-'};
-  op_t op2 = {BinOpcodeAST::FLT_OP_FLT, '*'};
-  op_t op3 = {BinOpcodeAST::FLT_OP_INT, '*'};
+  op_t op4 = {BinOpcodeAST::INT_OP_INT, '+'};
 
-  // std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>( std::make_shared<NumberExprAst>(3), std::make_shared<NumberExprAst>(5), op1); std::cout <<  std::any_cast<int>(b1->evaluate()) << "\n";
+  op_t op2 = {BinOpcodeAST::FLT_OP_FLT, '*'};
+  op_t op3 = {BinOpcodeAST::FLT_OP_INT, '/'};
+
+  std::shared_ptr<ExprAst> b1 = std::make_shared<BinOpExprAst>(
+    std::make_shared<NumberExprAst>(3),
+    std::make_shared<NumberExprAst>(5), op1); 
+  std::cout <<  std::any_cast<int>(b1->evaluate()) << "\n";
+
+  std::shared_ptr<ExprAst> i1 = std::make_shared<BinOpExprAst>( 
+    std::make_shared<NumberExprAst>(11), 
+    std::make_shared<NumberExprAst>(22), op1); 
+  std::cout <<  "i1: " << std::any_cast<int>(i1->evaluate()) << "\n";
 
   // std::shared_ptr<ExprAst> b2 = std::make_shared<BinOpExprAst>( std::make_shared<NumberExprAst>(3.145f), std::make_shared<NumberExprAst>(5.15f), op2); std::cout <<  std::any_cast<float>(b2->evaluate()) << "\n";
 

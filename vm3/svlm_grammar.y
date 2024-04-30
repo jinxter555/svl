@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-
 %}
 
 %require "3.7.4"
@@ -10,15 +9,14 @@
 %defines "svlm_parser.hh"
 %output "svlm_parser.cpp"
 
-
 %define api.parser.class {SvlmParser}
 %define api.namespace {vslast}
 %define api.value.type variant
 %parse-param {SvlmScanner* scanner}
 %parse-param {SvlmLang* lang}
 
-%locations
 
+%locations
 
 %code requires { 
 #include "ast.hh"
@@ -32,14 +30,19 @@ namespace vslast {
 #include "svlm_scanner.hh"
 #include "svlm_lang.hh"
 #define yylex(x,y) scanner->lex(x,y)
+
+SvlmLangContext slc; 
+
 }
 
 
-%token              EOL LPAREN RPAREN
-%token <long long>  INT
-%token <double>     FLT
-%token <char>       INTVAR FLTVAR
+%token              EOL LPAREN RPAREN AT MODULE
+%token <std::string> IDENT_STR
+%token <int>  INT
+%token <float>     FLT
  
+%nterm <char>  math_bin_op
+
 %nonassoc           ASSIGN
 %left               PLUS MINUS
 %left               MULTIPLY DIVIDE MODULO
@@ -50,11 +53,9 @@ namespace vslast {
 %type <std::shared_ptr<ExprAst>>  iexp
 
 
-
 %%
-
-start:
-  lines
+start
+  : lines
   ;
 
 lines
@@ -65,23 +66,52 @@ lines
 line
   : EOL { std::cerr << "Read an empty line\n"; }
   | iexp EOL { 
-    // $1->print(); 
-    lang->current_context->add($1);
+    lang->ast_current_context->add($1);
+    $1->print(); 
+    //std::cout <<  "ieval: " << std::any_cast<int>($1->evaluate()) << "\n\n";
   }
+  | MODULE IDENT_STR EOL { 
+    slc.init(lang); 
+    slc.add_module_name($2); 
+    lang->ast_current_context->add( 
+      std::make_shared<DeclExprAst>(
+        std::make_shared<IdentExprAst>($2), 
+        DeclOpcodeAST::MODULE)
+    );
+  }
+
   | error EOL { yyerrok; }
   ;
 
 iexp
   : INT { $$ = std::make_shared<NumberExprAst>($1); }
-  | iexp PLUS iexp {
-    std::cout << "bin_op_expr:\n";
-    $1->print(); 
-    $3->print();
-    $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, '+');
-  }
+  | iexp math_bin_op iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, $2); }
+  | IDENT_STR ASSIGN iexp { 
+    slc.add_mvar_name($1);  // add to context tree
+
+
+      $$ = std::make_shared<BinOpExprAst>(
+      std::make_shared<GvarExprAst>(std::string($1)), 
+      $3, 
+      BinOpcodeAST::ASSIGN_INT_G, '='
+      );
+    // std::cout << "var " << $1 << " " << $3->evaluate();
+    }
+
+  /*
+  | iexp PLUS     iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, '+'); }
+  | iexp MINUS    iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, '-'); }
+  | iexp MULTIPLY iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, '*'); }
+  | iexp DIVIDE   iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, '/'); }
+  */
   ;
 
-
+math_bin_op
+  : PLUS      {$$ = '+';}
+  | MINUS     {$$ = '-';}
+  | MULTIPLY  {$$ = '*';}
+  | DIVIDE    {$$ = '/';}
+  ;
 
 %%
 

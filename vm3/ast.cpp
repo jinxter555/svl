@@ -6,6 +6,7 @@
 
 ExprAst::~ExprAst() {}
 
+//----------------------------- number variable expr
 void NumberExprAst::codegen(std::vector<std::string>& code) const {
   //code.push_back("push " + std::to_string(value));
   code.push_back("push " + std::to_string(1));
@@ -18,6 +19,52 @@ void NumberExprAst::print() {
   //std::cout << evaluate();
   TreeNode::print_data();
 }
+//----------------------------- ident expr
+IdentExprAst::IdentExprAst(std::string s) : ExprAst(s) {}
+std::any IdentExprAst::evaluate() {return 0;}
+std::string IdentExprAst::name() { return std::any_cast<std::string>(get_data()); }
+void IdentExprAst::codegen(std::vector<std::string> &code) const {}
+void IdentExprAst::print() { print_data(); }
+
+//----------------------------- global variable expr
+
+GvarExprAst::GvarExprAst(std::string s)
+ : ExprAst(s) {}
+
+std::any GvarExprAst::evaluate() {
+  return 0;
+}
+
+std::string GvarExprAst::name() { return std::any_cast<std::string>(get_data()); }
+
+void GvarExprAst::codegen(std::vector<std::string> &code) const {
+}
+
+void GvarExprAst::print() { print_data(); }
+
+//----------------------------- decl expr
+DeclExprAst::DeclExprAst(std::shared_ptr<IdentExprAst> l, DeclOpcodeAST doa) 
+: ExprAst(doa) {
+    add_child("left", l);
+};
+std::any DeclExprAst::evaluate() {
+  return 0;
+}
+void DeclExprAst::codegen(std::vector<std::string> &code) const {
+}
+void DeclExprAst::print() { 
+  std::shared_ptr<IdentExprAst> l = 
+    std::dynamic_pointer_cast<IdentExprAst>(get_child("left"));
+  switch (std::any_cast<DeclOpcodeAST>(get_data())) {
+  case DeclOpcodeAST::MODULE:  
+    std::cout << "Module:" ; break;
+  default: 
+    std::cerr << "unknown decl!\n"; break;
+  }
+
+  l->print_data();
+}
+
 
 //-----------------------------
 
@@ -63,24 +110,22 @@ void BinOpExprAst::codegen(std::vector<std::string>& code) const {
 }
 void BinOpExprAst::print() {
   std::shared_ptr<ExprAst> l = 
-    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("left"));
+    std::dynamic_pointer_cast<ExprAst>(get_child("left"));
   std::shared_ptr<ExprAst> r = 
-    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("right"));
+    std::dynamic_pointer_cast<ExprAst>(get_child("right"));
 
   l->print();
   print_data();
   r->print();
   std::cout << " ";
-
-
 }
 
 std::any BinOpExprAst::evaluate() {
 
   std::shared_ptr<ExprAst> l = 
-    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("left"));
+    std::dynamic_pointer_cast<ExprAst>(get_child("left"));
   std::shared_ptr<ExprAst> r = 
-    std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("right"));
+    std::dynamic_pointer_cast<ExprAst>(get_child("right"));
 
   if(l ==nullptr) { std::cerr << "l is nullptr\n"; }
   if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
@@ -103,6 +148,14 @@ std::any BinOpExprAst::evaluate() {
     int a = std::any_cast<int>(l->evaluate());
     int b = static_cast<int>(std::any_cast<float>(r->evaluate()));
     return binop(a, b, op.op); }
+  case BinOpcodeAST::ASSIGN_INT_G: {
+    std::shared_ptr<GvarExprAst> al = 
+      std::dynamic_pointer_cast<GvarExprAst>(get_child("left"));
+    std::string name = al->name();
+    int b = std::any_cast<int>(r->evaluate());
+
+
+  }
   default: std::cerr << "wrong type\n"; return 0;
   }
 }
