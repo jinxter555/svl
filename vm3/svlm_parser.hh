@@ -829,7 +829,7 @@ switch (yykind)
     };
 
     /// Build a parser object.
-    SvlmParser (SvlmScanner* scanner_yyarg, SvlmLang* lang_yyarg);
+    SvlmParser (SvlmScanner* scanner_yyarg, SvlmLangContext* slc_yyarg);
     virtual ~SvlmParser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -1489,7 +1489,7 @@ switch (yykind)
 
     // User arguments.
     SvlmScanner* scanner;
-    SvlmLang* lang;
+    SvlmLangContext* slc;
 
   };
 

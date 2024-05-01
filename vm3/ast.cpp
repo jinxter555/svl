@@ -1,8 +1,24 @@
 #include "ast.hh"
+#include "svlm_lang.hh"
 #include <iostream>
 
 #ifndef AST_CPP
 #define AST_CPP
+
+ExprAst::ExprAst() {
+   current_context = {
+    CONTEXT_UNIV, 
+    "svlm_program_tree", 
+    "symbols/1.0.0",
+    "", // mod
+    "", // mvar
+    "", // mfun
+    "", // larg
+    "", // lvar
+    "", // label
+    };
+}
+
 
 ExprAst::~ExprAst() {}
 
@@ -12,7 +28,7 @@ void NumberExprAst::codegen(std::vector<std::string>& code) const {
   code.push_back("push " + std::to_string(1));
 }
 
-std::any NumberExprAst::evaluate() { return ExprAst::get_data(); }
+std::any NumberExprAst::evaluate(SvlmLangContext *slc) { return ExprAst::get_data(); }
 
 void NumberExprAst::print() { 
   //return ExprAst::get_data(); 
@@ -21,7 +37,7 @@ void NumberExprAst::print() {
 }
 //----------------------------- ident expr
 IdentExprAst::IdentExprAst(std::string s) : ExprAst(s) {}
-std::any IdentExprAst::evaluate() {return 0;}
+std::any IdentExprAst::evaluate(SvlmLangContext *slc) {return 0;}
 std::string IdentExprAst::name() { return std::any_cast<std::string>(get_data()); }
 void IdentExprAst::codegen(std::vector<std::string> &code) const {}
 void IdentExprAst::print() { print_data(); }
@@ -31,7 +47,7 @@ void IdentExprAst::print() { print_data(); }
 GvarExprAst::GvarExprAst(std::string s)
  : ExprAst(s) {}
 
-std::any GvarExprAst::evaluate() {
+std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   return 0;
 }
 
@@ -47,7 +63,26 @@ DeclExprAst::DeclExprAst(std::shared_ptr<IdentExprAst> l, DeclOpcodeAST doa)
 : ExprAst(doa) {
     add_child("left", l);
 };
-std::any DeclExprAst::evaluate() {
+
+class SvlmLang;
+
+std::any DeclExprAst::evaluate(SvlmLangContext *slc) {
+  auto l = std::dynamic_pointer_cast<IdentExprAst>(get_child("left"));
+  auto doa = std::any_cast<DeclOpcodeAST>(get_data());
+  full_symbol_t fst = slc->current_context;  
+  switch(doa) {
+  case DeclOpcodeAST::MODULE: 
+    fst.smodule = l->name();
+    std::cout << "found module : " <<  l->name() << "\n";
+    break;
+  default: break;
+  }
+  std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::smodule, fst));
+
+  //std::cout << "k: "; for( auto k : keys) { std::cout << k << " "; } std::cout << "\n";
+
+  slc->svlm_lang->context_tree->set_node(keys, std::string("module name2"));
+  slc->current_context = fst;
   return 0;
 }
 void DeclExprAst::codegen(std::vector<std::string> &code) const {
@@ -120,7 +155,7 @@ void BinOpExprAst::print() {
   std::cout << " ";
 }
 
-std::any BinOpExprAst::evaluate() {
+std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
 
   std::shared_ptr<ExprAst> l = 
     std::dynamic_pointer_cast<ExprAst>(get_child("left"));
@@ -133,30 +168,38 @@ std::any BinOpExprAst::evaluate() {
   op_t op = std::any_cast<op_t>(ExprAst::get_data());
   switch(op.op_type) {
   case BinOpcodeAST::INT_OP_INT:  {
-    int a = std::any_cast<int>(l->evaluate());
-    int b = std::any_cast<int>(r->evaluate());
+    int a = std::any_cast<int>(l->evaluate(slc));
+    int b = std::any_cast<int>(r->evaluate(slc));
     return binop(a, b, op.op); }
   case BinOpcodeAST::FLT_OP_FLT: {
-    float a = std::any_cast<float>(l->evaluate());
-    float b = std::any_cast<float>(r->evaluate());
+    float a = std::any_cast<float>(l->evaluate(slc));
+    float b = std::any_cast<float>(r->evaluate(slc));
     return binop(a, b, op.op); }
   case BinOpcodeAST::FLT_OP_INT: {
-    float a = std::any_cast<float>(l->evaluate());
-    float b = static_cast<float>(std::any_cast<int>(r->evaluate()));
+    float a = std::any_cast<float>(l->evaluate(slc));
+    float b = static_cast<float>(std::any_cast<int>(r->evaluate(slc)));
     return binop(a, b, op.op); }
   case BinOpcodeAST::INT_OP_FLT: {
-    int a = std::any_cast<int>(l->evaluate());
-    int b = static_cast<int>(std::any_cast<float>(r->evaluate()));
+    int a = std::any_cast<int>(l->evaluate(slc));
+    int b = static_cast<int>(std::any_cast<float>(r->evaluate(slc)));
     return binop(a, b, op.op); }
   case BinOpcodeAST::ASSIGN_INT_G: {
+
     std::shared_ptr<GvarExprAst> al = 
       std::dynamic_pointer_cast<GvarExprAst>(get_child("left"));
+
     std::string name = al->name();
-    int b = std::any_cast<int>(r->evaluate());
+    int b = std::any_cast<int>(r->evaluate(slc));
 
+    full_symbol_t fst = slc->current_context;  
+    fst.mvar = name;
+    std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
 
-  }
-  default: std::cerr << "wrong type\n"; return 0;
+    slc->svlm_lang->context_tree->set_node(keys, b);
+    slc->current_context = fst;
+
+    return 0;}
+  default: std::cerr << "wrong type: " <<  static_cast<int>(op.op_type) << "\n"; return 0;
   }
 }
 
@@ -200,7 +243,12 @@ void ListExprAst::print() {
   }
 }
 
-std::any ListExprAst::evaluate() {
+std::any ListExprAst::evaluate(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> e;
+  for(int i=0; i<ExprAst::get_member_size(); i++ ) {
+    e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
+    e->evaluate(slc); std::cout << "\n";
+  }
   return 0;
 }
 

@@ -85,6 +85,7 @@ void SvlmInteractive::load(const std::string &cfn) {
 
 void SvlmInteractive::run_program(const std::string &l) {
   std::cout << "run program\n";
+  slc.run_evaluate();
 
 }
 

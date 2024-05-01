@@ -13,7 +13,7 @@
 %define api.namespace {vslast}
 %define api.value.type variant
 %parse-param {SvlmScanner* scanner}
-%parse-param {SvlmLang* lang}
+%parse-param {SvlmLangContext* slc}
 
 
 %locations
@@ -31,7 +31,8 @@ namespace vslast {
 #include "svlm_lang.hh"
 #define yylex(x,y) scanner->lex(x,y)
 
-SvlmLangContext slc; 
+//SvlmLangContext slc; 
+SvlmLang* svlm_lang;
 
 }
 
@@ -66,14 +67,15 @@ lines
 line
   : EOL { std::cerr << "Read an empty line\n"; }
   | iexp EOL { 
-    lang->ast_current_context->add($1);
+    svlm_lang->ast_current_context->add($1);
     $1->print(); 
     //std::cout <<  "ieval: " << std::any_cast<int>($1->evaluate()) << "\n\n";
   }
   | MODULE IDENT_STR EOL { 
-    slc.init(lang); 
-    slc.add_module_name($2); 
-    lang->ast_current_context->add( 
+    //slc.init(svlm_lang); 
+    svlm_lang = slc->svlm_lang;
+    slc->add_module_name($2); 
+    svlm_lang->ast_current_context->add( 
       std::make_shared<DeclExprAst>(
         std::make_shared<IdentExprAst>($2), 
         DeclOpcodeAST::MODULE)
@@ -87,7 +89,7 @@ iexp
   : INT { $$ = std::make_shared<NumberExprAst>($1); }
   | iexp math_bin_op iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, $2); }
   | IDENT_STR ASSIGN iexp { 
-    slc.add_mvar_name($1);  // add to context tree
+    slc->add_mvar_name($1);  // add to context tree
 
 
       $$ = std::make_shared<BinOpExprAst>(

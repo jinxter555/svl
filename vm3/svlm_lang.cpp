@@ -20,7 +20,7 @@
   }
 
 //--------------------------------------------------------------------
-SvlmLangContext::SvlmLangContext() {
+SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {
    current_context = {
     CONTEXT_UNIV, 
     "svlm_program_tree", 
@@ -34,20 +34,23 @@ SvlmLangContext::SvlmLangContext() {
     };
 }
 
+void SvlmLangContext::run_evaluate() {
+  svlm_lang->ast_current_context->evaluate(this);
+}
+
 void SvlmLangContext::add_module_name(const std::string &m) {
     std::cout << "in add module \n";
     current_context.smodule = m;
     full_symbol_t fst = current_context;  fst.smodule = m;
     std::vector<std::string> keys = move(get_sym_key(key_tok_t::smodule, fst));
-    svl_lang->context_tree->add_node(keys, std::string("module name"));
-    //std::cout << "context tree: " << svl_lang->context_tree << "\n";
+    svlm_lang->context_tree->add_node(keys, std::string("module name"));
 }
 
 void SvlmLangContext::add_mvar_name(const std::string &mv) { // int n, with offset for array
   current_context.mvar = mv;
   full_symbol_t fst = current_context; fst.mvar= mv;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mvar, fst));
-  svl_lang->context_tree->add_node(keys, std::string("value"));
+  svlm_lang->context_tree->add_node(keys, std::string("value"));
 }
 
 std::vector<std::string> SvlmLangContext::get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst) {
@@ -88,7 +91,7 @@ s_int_t SvlmLangContext::get_sym_addr(const key_tok_t ktt,  const full_symbol_t 
   std::string error_str;
   auto key=move(get_sym_key(ktt, fst));
   key.push_back("addr"); 
-  std::shared_ptr<TreeNode> sym_node = svl_lang->context_tree->get_node({key});
+  std::shared_ptr<TreeNode> sym_node = svlm_lang->context_tree->get_node({key});
 
   if(sym_node != nullptr) {
     return std::any_cast<s_int_t>(sym_node->get_data());

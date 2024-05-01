@@ -3,6 +3,7 @@
 #include "tree.hh"
 #include "vm_type.hh"
 #include "lang.hh"
+#include "universe.hh"
 
 enum class BinOpcodeAST {
   INT_OP_INT,
@@ -26,16 +27,18 @@ enum class DeclOpcodeAST {
   VAR
 };
 
+class SvlmLangContext;
 class ExprAst : public TreeNode {
 protected:
   std::vector<full_symbol_t> current_contexts; // where am i and who ami
   full_symbol_t current_context; // where am i and who ami
+  std::shared_ptr<Tree> context_tree;
 public:
 
   ExprAst(std::any d) : TreeNode(d) {}
-  ExprAst() {}
+  ExprAst();
   virtual ~ExprAst();
-  virtual std::any evaluate() = 0;
+  virtual std::any evaluate(SvlmLangContext *slc) = 0;
   virtual void codegen(std::vector<std::string>& code) const = 0;
   virtual void print() = 0 ;
 };
@@ -44,7 +47,7 @@ public:
 class NumberExprAst : public ExprAst {
 public:
   NumberExprAst(std::any d) : ExprAst(d) {}
-  std::any evaluate() override ;
+  std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
 private:
@@ -54,7 +57,7 @@ class IdentExprAst : public ExprAst {
 public:
   IdentExprAst(std::string s);
   std::string name();
-  std::any evaluate() override ;
+  std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
 private:
@@ -64,16 +67,18 @@ class GvarExprAst : public ExprAst {
 public:
   GvarExprAst(std::string s);
   std::string name();
-  std::any evaluate() override ;
+  std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
+  void e2(SvlmLangContext *slc) {
+  }
 private:
 };
 
 class LvarExprAst : public ExprAst {
 public:
   LvarExprAst(std::any d) : ExprAst(d) {}
-  std::any evaluate() override ;
+  std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
 private:
@@ -82,7 +87,7 @@ private:
 class DeclExprAst : public ExprAst {
 public:
   DeclExprAst (std::shared_ptr<IdentExprAst> l, DeclOpcodeAST doa) ;
-  std::any evaluate() override ;
+  std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
 };
@@ -93,7 +98,7 @@ public:
   BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, BinOpcodeAST t, char o);
 
   void codegen(std::vector<std::string>& code) const override;
-  std::any evaluate() override;
+  std::any evaluate(SvlmLangContext *slc) override;
 
   template <typename T>
   std::any binop(T a, T b, char op);
@@ -110,7 +115,7 @@ public:
   ListExprAst(std::any d);
   void add(std::shared_ptr<ExprAst> e);
   std::shared_ptr<ExprAst> get(int n);
-  std::any evaluate() override;
+  std::any evaluate(SvlmLangContext *slc) override;
 
   void print() override;
   void codegen(std::vector<std::string> &code) const override;
