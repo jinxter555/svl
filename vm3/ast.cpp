@@ -48,10 +48,21 @@ GvarExprAst::GvarExprAst(std::string s)
  : ExprAst(s) {}
 
 std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
-  return 0;
+  full_symbol_t fst = slc->current_context;  
+  fst.mvar = name();
+  std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
+  slc->current_context = fst;
+  std::shared_ptr<TreeNode> tn = slc->svlm_lang->context_tree->get_node(keys);
+  if(tn==nullptr){
+    std::cerr << "variable name: " << fst.mvar << " doesn't exist\n";
+    return 0;
+  }
+  return  tn->get_data();
 }
 
-std::string GvarExprAst::name() { return std::any_cast<std::string>(get_data()); }
+std::string GvarExprAst::name() { 
+  return std::any_cast<std::string>(get_data()); 
+}
 
 void GvarExprAst::codegen(std::vector<std::string> &code) const {
 }
