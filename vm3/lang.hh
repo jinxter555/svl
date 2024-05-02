@@ -15,3 +15,25 @@ typedef struct {
   full_symbol_t name; // std::string sapp, sapi, smodule, sfunction, svar;
   int operand_loc;
 } unresolved_symbol_t;
+
+enum class BinOpcodeAST {
+  INT_OP_INT,
+  FLT_OP_FLT,
+  INT_OP_FLT,
+  FLT_OP_INT,
+  ASSIGN_INT_L,
+  ASSIGN_INT_G,
+  ASSIGN_FLT_L,
+  ASSIGN_FLT_G,
+};
+
+typedef struct {
+  BinOpcodeAST op_type;
+  char op;
+} op_t;
+
+enum class DeclOpcodeAST {
+  MODULE,
+  DEF,
+  VAR
+};

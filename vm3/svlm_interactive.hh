@@ -28,6 +28,9 @@ public:
   void load(const std::string &filename); // load files from command line
   void run_program(const std::string &l="");
 
+  void evaluate_line();       // evaluate ast_current_context pop back members
+
+
 
   // command completion
   std::map<std::string, std::function<void(const std::string&)>> command_functions;

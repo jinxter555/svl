@@ -454,18 +454,20 @@ namespace vslast {
     RPAREN = 260,                  // RPAREN
     AT = 261,                      // AT
     MODULE = 262,                  // MODULE
-    IDENT_STR = 263,               // IDENT_STR
-    INT = 264,                     // INT
-    FLT = 265,                     // FLT
-    ASSIGN = 266,                  // ASSIGN
-    PLUS = 267,                    // PLUS
-    MINUS = 268,                   // MINUS
-    MULTIPLY = 269,                // MULTIPLY
-    DIVIDE = 270,                  // DIVIDE
-    MODULO = 271,                  // MODULO
-    UMINUS = 272,                  // UMINUS
-    FACTORIAL = 273,               // FACTORIAL
-    EXPONENT = 274                 // EXPONENT
+    DOLLAR = 263,                  // DOLLAR
+    COLON = 264,                   // COLON
+    IDENT_STR = 265,               // IDENT_STR
+    INT = 266,                     // INT
+    FLT = 267,                     // FLT
+    ASSIGN = 268,                  // ASSIGN
+    PLUS = 269,                    // PLUS
+    MINUS = 270,                   // MINUS
+    MULTIPLY = 271,                // MULTIPLY
+    DIVIDE = 272,                  // DIVIDE
+    MODULO = 273,                  // MODULO
+    UMINUS = 274,                  // UMINUS
+    FACTORIAL = 275,               // FACTORIAL
+    EXPONENT = 276                 // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -482,7 +484,7 @@ namespace vslast {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 20, ///< Number of tokens.
+        YYNTOKENS = 22, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -492,24 +494,26 @@ namespace vslast {
         S_RPAREN = 5,                            // RPAREN
         S_AT = 6,                                // AT
         S_MODULE = 7,                            // MODULE
-        S_IDENT_STR = 8,                         // IDENT_STR
-        S_INT = 9,                               // INT
-        S_FLT = 10,                              // FLT
-        S_ASSIGN = 11,                           // ASSIGN
-        S_PLUS = 12,                             // PLUS
-        S_MINUS = 13,                            // MINUS
-        S_MULTIPLY = 14,                         // MULTIPLY
-        S_DIVIDE = 15,                           // DIVIDE
-        S_MODULO = 16,                           // MODULO
-        S_UMINUS = 17,                           // UMINUS
-        S_FACTORIAL = 18,                        // FACTORIAL
-        S_EXPONENT = 19,                         // EXPONENT
-        S_YYACCEPT = 20,                         // $accept
-        S_start = 21,                            // start
-        S_lines = 22,                            // lines
-        S_line = 23,                             // line
-        S_iexp = 24,                             // iexp
-        S_math_bin_op = 25                       // math_bin_op
+        S_DOLLAR = 8,                            // DOLLAR
+        S_COLON = 9,                             // COLON
+        S_IDENT_STR = 10,                        // IDENT_STR
+        S_INT = 11,                              // INT
+        S_FLT = 12,                              // FLT
+        S_ASSIGN = 13,                           // ASSIGN
+        S_PLUS = 14,                             // PLUS
+        S_MINUS = 15,                            // MINUS
+        S_MULTIPLY = 16,                         // MULTIPLY
+        S_DIVIDE = 17,                           // DIVIDE
+        S_MODULO = 18,                           // MODULO
+        S_UMINUS = 19,                           // UMINUS
+        S_FACTORIAL = 20,                        // FACTORIAL
+        S_EXPONENT = 21,                         // EXPONENT
+        S_YYACCEPT = 22,                         // $accept
+        S_start = 23,                            // start
+        S_lines = 24,                            // lines
+        S_line = 25,                             // line
+        S_iexp = 26,                             // iexp
+        S_math_bin_op = 27                       // math_bin_op
       };
     };
 
@@ -1000,6 +1004,36 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_DOLLAR (location_type l)
+      {
+        return symbol_type (token::DOLLAR, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DOLLAR (const location_type& l)
+      {
+        return symbol_type (token::DOLLAR, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COLON (location_type l)
+      {
+        return symbol_type (token::COLON, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_COLON (const location_type& l)
+      {
+        return symbol_type (token::COLON, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_IDENT_STR (std::string v, location_type l)
       {
         return symbol_type (token::IDENT_STR, std::move (v), std::move (l));
@@ -1481,7 +1515,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 23,     ///< Last index in yytable_.
+      yylast_ = 26,     ///< Last index in yytable_.
       yynnts_ = 6,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
@@ -1496,7 +1530,7 @@ switch (yykind)
 
 #line 13 "svlm_grammar.y"
 } // vslast
-#line 1500 "svlm_parser.hh"
+#line 1534 "svlm_parser.hh"
 
 
 

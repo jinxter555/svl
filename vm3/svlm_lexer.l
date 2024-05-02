@@ -43,6 +43,8 @@ blank           [ \t\r]
 ")"             return SvlmParser::token::RPAREN;
 "="             return SvlmParser::token::ASSIGN;
 "@"             return SvlmParser::token::AT;
+"$"             return SvlmParser::token::DOLLAR;
+":"             return SvlmParser::token::COLON;
 \n  {
   yylloc->lines(yyleng); 
   yylloc->step(); 

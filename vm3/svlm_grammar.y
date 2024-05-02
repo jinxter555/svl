@@ -37,7 +37,7 @@ SvlmLang* svlm_lang;
 }
 
 
-%token              EOL LPAREN RPAREN AT MODULE
+%token              EOL LPAREN RPAREN AT MODULE DOLLAR COLON
 %token <std::string> IDENT_STR
 %token <int>  INT
 %token <float>     FLT
@@ -87,14 +87,12 @@ line
 iexp
   : INT { $$ = std::make_shared<NumberExprAst>($1); }
   | iexp math_bin_op iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, $2); }
-  | IDENT_STR { $$ = std::make_shared<GvarExprAst>(std::string($1)); }
-  | IDENT_STR ASSIGN iexp { 
-    slc->add_mvar_name($1);  // add to context tree
-
-
+  | DOLLAR IDENT_STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
+  | DOLLAR IDENT_STR ASSIGN iexp { 
+    slc->add_mvar_name($2);  // add to context tree
       $$ = std::make_shared<BinOpExprAst>(
-      std::make_shared<GvarExprAst>(std::string($1)), 
-      $3, 
+      std::make_shared<GvarExprAst>(std::string($2)), 
+      $4, 
       BinOpcodeAST::ASSIGN_INT_G, '='
       );
     // std::cout << "var " << $1 << " " << $3->evaluate();

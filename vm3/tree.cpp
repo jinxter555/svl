@@ -1,17 +1,6 @@
 #include "tree.hh"
-
-enum class BinOpcodeAST {
-  INT_OP_INT,
-  FLT_OP_FLT,
-  INT_OP_FLT,
-  FLT_OP_INT,
-};
-
-typedef struct {
-  BinOpcodeAST op_type;
-  char op;
-} op_t;
-
+#include "vm_type.hh"
+#include "lang.hh"
 
 void TreeNode::add_child(const std::string &key, std::shared_ptr<TreeNode> child) {
   if(children[key] == nullptr)

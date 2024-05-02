@@ -66,6 +66,13 @@ void SvlmInteractive::parse(const std::string &line) {
   std::istringstream input_buffer(line+"\n");
   svlm_scanner.switch_streams(&input_buffer, &std::cerr);
   svlm_parser.parse();
+  evaluate_line();
+
+  // evaluate ast_current_context pop back members
+}
+void SvlmInteractive::evaluate_line() {
+  slc.evaluate_last_line();
+
 }
 
 void SvlmInteractive::load(const std::string &cfn) {

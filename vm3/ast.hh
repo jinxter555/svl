@@ -5,27 +5,6 @@
 #include "lang.hh"
 #include "universe.hh"
 
-enum class BinOpcodeAST {
-  INT_OP_INT,
-  FLT_OP_FLT,
-  INT_OP_FLT,
-  FLT_OP_INT,
-  ASSIGN_INT_L,
-  ASSIGN_INT_G,
-  ASSIGN_FLT_L,
-  ASSIGN_FLT_G,
-};
-
-typedef struct {
-  BinOpcodeAST op_type;
-  char op;
-} op_t;
-
-enum class DeclOpcodeAST {
-  MODULE,
-  DEF,
-  VAR
-};
 
 class SvlmLangContext;
 class ExprAst : public TreeNode {
@@ -70,8 +49,6 @@ public:
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
-  void e2(SvlmLangContext *slc) {
-  }
 private:
 };
 
@@ -116,6 +93,7 @@ public:
   void add(std::shared_ptr<ExprAst> e);
   std::shared_ptr<ExprAst> get(int n);
   std::any evaluate(SvlmLangContext *slc) override;
+  std::any evaluate_last_line(SvlmLangContext *slc);
 
   void print() override;
   void codegen(std::vector<std::string> &code) const override;

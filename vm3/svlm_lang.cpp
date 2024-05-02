@@ -37,6 +37,9 @@ SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {
 void SvlmLangContext::run_evaluate() {
   svlm_lang->ast_current_context->evaluate(this);
 }
+void SvlmLangContext::evaluate_last_line() {
+  svlm_lang->ast_current_context->evaluate_last_line(this);
+}
 
 void SvlmLangContext::add_module_name(const std::string &m) {
     std::cout << "in add module \n";

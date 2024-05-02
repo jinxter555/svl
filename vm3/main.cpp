@@ -11,6 +11,7 @@
 #include "svlm_lang.hh"
 #include "svlm_interactive.hh"
 
+
 std::shared_ptr<Tree> universe_tree = std::make_shared<Tree>();
 
 AssemblerInteractive ait(".vm_history", "asm> ", universe_tree);

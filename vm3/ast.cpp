@@ -1,6 +1,9 @@
 #include "ast.hh"
 #include "svlm_lang.hh"
 #include <iostream>
+//#include "printer_any.hh"
+std::ostream& operator << (std::ostream& out, std::any& a) ;
+
 
 #ifndef AST_CPP
 #define AST_CPP
@@ -84,7 +87,6 @@ std::any DeclExprAst::evaluate(SvlmLangContext *slc) {
   switch(doa) {
   case DeclOpcodeAST::MODULE: 
     fst.smodule = l->name();
-    std::cout << "found module : " <<  l->name() << "\n";
     break;
   default: break;
   }
@@ -258,9 +260,21 @@ std::any ListExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
   for(int i=0; i<ExprAst::get_member_size(); i++ ) {
     e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
-    e->evaluate(slc); std::cout << "\n";
+    e->evaluate(slc); 
   }
   return 0;
+}
+std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> e;
+  e = 
+    std::dynamic_pointer_cast<ExprAst>(
+      TreeNode::get_member( ExprAst::get_member_size() -1)
+    );
+  //std::cout << "eval last line\n";
+  std::any output = e->evaluate(slc);
+  std::cout << output << "\n";
+
+  return output;
 }
 
 #endif

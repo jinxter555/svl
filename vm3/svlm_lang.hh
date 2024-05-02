@@ -32,6 +32,7 @@ public:
   void add_module_name(const std::string &m);
   void add_mvar_name(const std::string &mv);
   void run_evaluate();
+  void evaluate_last_line();
 
   s_int_t get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst);
   std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);
