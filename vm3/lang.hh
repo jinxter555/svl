@@ -1,4 +1,7 @@
 #pragma once
+#include "vm_type.hh"
+#include <variant>
+
 enum class key_tok_t {
   app=10, api, smodule, mvar, mvar_total_count,
   mfunction, lvar, larg, label
@@ -37,3 +40,22 @@ enum class DeclOpcodeAST {
   DEF,
   VAR
 };
+
+enum class VarTypeEnum {
+  INT,
+  FLT,
+  STR,
+  PTR=10, // pointer maybe
+  USER_DEF=100
+};
+
+typedef struct {
+  VarTypeEnum t;
+  std::variant<int, float, std::string> v;
+} vartype_t;
+
+typedef struct {
+  unsigned char pos; // argument postition from 0 - 255
+  std::string name;
+} arg_name_pos_t;
+

@@ -28,10 +28,13 @@ blank           [ \t\r]
   yylloc->step();
 %}
 "module"        return SvlmParser::token::MODULE;
+"def"        return SvlmParser::token::DEF;
+"do"        return SvlmParser::token::DO;
+"end"        return SvlmParser::token::END;
 {integer}   yylval->emplace<long long>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
 {float}     yylval->emplace<double>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
 {blank}     yylloc->step();
-{identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::IDENT_STR;
+{identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::STR;
 "+"             return SvlmParser::token::PLUS;
 "-"             return SvlmParser::token::MINUS;
 "*"             return SvlmParser::token::MULTIPLY;
@@ -45,6 +48,7 @@ blank           [ \t\r]
 "@"             return SvlmParser::token::AT;
 "$"             return SvlmParser::token::DOLLAR;
 ":"             return SvlmParser::token::COLON;
+";"             return SvlmParser::token::SEMICOLON;
 \n  {
   yylloc->lines(yyleng); 
   yylloc->step(); 

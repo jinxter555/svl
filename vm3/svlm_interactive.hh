@@ -12,6 +12,7 @@
 #define CONTEXT_UNIV "svlvm"
 #define rlsvlm_current_context_key  CONTEXT_UNIV, "readline",  "commands", "svlm"
 
+
 class SvlmInteractive : public LangPrompt {
 private:
   SvlmLang svlm_lang; // static or not static to be determined
@@ -22,11 +23,11 @@ private:
 public:
   SvlmInteractive(const std::string&hf, const std::string&ps, std::shared_ptr<Tree> tp);//  : LangPrompt(hf, ps) {};
   void accept_prompt(const std::string&l) override; // readyline prompt
-  void parse(const std::string &line); // parse readline line
+  void parse(const std::string &line) override; // parse readline line
   void parse_prompt(const std::string &line); // parse readline line
-  void interact(const std::string &line); // parse readline line
-  void load(const std::string &filename); // load files from command line
-  void run_program(const std::string &l="");
+  void interact(const std::string &line) override; // parse readline line
+  void load(const std::string &filename) override; // load files from command line
+  void run_program(const std::string &l="") override;
 
   void evaluate_line();       // evaluate ast_current_context pop back members
 

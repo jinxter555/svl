@@ -14,7 +14,13 @@ main.out:  asm_lexer.l asm_grammar.y main.cpp  opcode.o assembler.o  assembly.o 
 asm_parser.cpp: assembler.hh asm_scanner.hh assembler.cpp asm_grammar.y
 	bison -d asm_grammar.y 
 
+asm_parser.hh: 
+	bison -d asm_grammar.y 
+
 svlm_parser.cpp: svlm_grammar.y
+	bison -d svlm_grammar.y 
+
+svlm_parser.hh: svlm_grammar.y
 	bison -d svlm_grammar.y 
 
 asm_scanner.cpp: assembler.hh asm_scanner.hh assembler.cpp asm_lexer.l
@@ -63,4 +69,5 @@ my_helpers.o : my_helpers.cpp  my_helpers.hh
 	$(CC) -c my_helpers.cpp
 
 clean:
-	rm -f main.out asm_parser.cpp asm_scanner.cpp *.o *.gch svlm_scanner.cpp svlm_parser.cpp
+	rm -f main.out asm_parser.cpp asm_scanner.cpp *.o *.gch svlm_scanner.cpp svlm_parser.cpp svlm_parser.hh asm_parser.hh
+

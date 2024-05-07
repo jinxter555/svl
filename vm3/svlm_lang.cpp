@@ -1,6 +1,8 @@
   #include "svlm_lang.hh"
 
-  SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) { 
+std::ostream& operator << (std::ostream& out, std::any& a) ;
+
+SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) { 
     context_tree = tp; 
     if(tp == nullptr) { std::cerr << "SvlmLang init: tree pointer is null!\n"; }
 
@@ -17,7 +19,7 @@
     ast_current_contexts.push
     ( ast_current_context
     );
-  }
+}
 
 //--------------------------------------------------------------------
 SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {
@@ -37,8 +39,9 @@ SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {
 void SvlmLangContext::run_evaluate() {
   svlm_lang->ast_current_context->evaluate(this);
 }
-void SvlmLangContext::evaluate_last_line() {
-  svlm_lang->ast_current_context->evaluate_last_line(this);
+std::any SvlmLangContext::evaluate_last_line() {
+  std::any output = svlm_lang->ast_current_context->evaluate_last_line(this);
+  return output;
 }
 
 void SvlmLangContext::add_module_name(const std::string &m) {
@@ -54,6 +57,34 @@ void SvlmLangContext::add_mvar_name(const std::string &mv) { // int n, with offs
   full_symbol_t fst = current_context; fst.mvar= mv;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mvar, fst));
   svlm_lang->context_tree->add_node(keys, std::string("value"));
+}
+
+void SvlmLangContext::add_function_name(const std::string &name) {
+  full_symbol_t fst = current_context; fst.mfunction= name;
+  std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
+  svlm_lang->context_tree->add_node(keys, std::string("functions")); // name lookup addr
+  current_context = fst;
+}
+
+void SvlmLangContext::add_function_args(std::vector<std::string> param_list) {
+  full_symbol_t fst = current_context; 
+  std::vector<std::string> keys, lvar_keys;
+
+  for(int i=0; i< param_list.size(); i++) {
+    fst.larg = param_list[i];
+    keys = move(get_sym_key(key_tok_t::larg, fst));
+    svlm_lang->context_tree->add_node(keys, i); // name lookup addr
+    //svlm_lang->context_tree->add_node(keys, 3.14f); // name lookup addr
+    keys.clear();
+  }
+  lvar_keys = move(get_sym_key(key_tok_t::mfunction, fst));
+  lvar_keys.push_back("lvars");
+  auto lvar_node = svlm_lang->context_tree->get_node(lvar_keys); 
+  for(int i=0; i< param_list.size(); i++) {
+    fst.larg = param_list[i];
+    auto larg_node =  std::make_shared<TreeNode>(param_list[i]); 
+    lvar_node->add_member(larg_node);
+  }
 }
 
 std::vector<std::string> SvlmLangContext::get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst) {

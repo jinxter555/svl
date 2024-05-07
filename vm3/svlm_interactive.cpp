@@ -1,6 +1,12 @@
+#include <iostream>
 #include "svlm_interactive.hh"
 #include "my_helpers.hh"
 
+#include "vm_type.hh"
+#include "lang.hh"
+
+
+std::ostream& operator << (std::ostream& out, std::any& a) ;
 
 extern SvlmInteractive svlm_it;
 
@@ -16,7 +22,15 @@ void SvlmInteractive::print_tree(const std::string& line) {
   std::vector<std::string> vstr = split_string(line, " ");
   auto children = svlm_lang.context_tree->get_children(vstr);
   for(auto c : children) { std::cout << "child: " << c << "\n"; }
+
   auto node = svlm_lang.context_tree->get_node(vstr);
+
+  for(int i=0; node!=nullptr && i<node->get_member_size(); i++) {
+    auto node_mem = node->get_member(i);
+    if(node_mem == nullptr) break;
+    std::cout << i << ": "; node_mem->print_data(); std::cout << "\n"; 
+  }
+
   if(node) {std::cout << "value: "; node->print_data(); std::cout << "\n";}
 }
 
@@ -71,8 +85,8 @@ void SvlmInteractive::parse(const std::string &line) {
   // evaluate ast_current_context pop back members
 }
 void SvlmInteractive::evaluate_line() {
-  slc.evaluate_last_line();
-
+  std::any output = slc.evaluate_last_line();
+  std::cout << output << "\n";
 }
 
 void SvlmInteractive::load(const std::string &cfn) {

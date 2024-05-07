@@ -72,6 +72,28 @@ void GvarExprAst::codegen(std::vector<std::string> &code) const {
 
 void GvarExprAst::print() { print_data(); }
 
+//----------------------------- func arg expr
+ArgExprAst::ArgExprAst(std::string name, unsigned char pos) {
+  arg_name_pos_t arg;
+  arg.name = name;
+  arg.pos = pos;
+  set_data(arg);
+}
+
+ArgExprAst::ArgExprAst(arg_name_pos_t arg) : ExprAst(arg) {}
+void ArgExprAst::codegen(std::vector<std::string> &code) const {
+}
+std::string ArgExprAst::name() { 
+  return std::any_cast<std::string>(get_data()); 
+}
+arg_name_pos_t ArgExprAst::arg() { 
+  return std::any_cast<arg_name_pos_t>(get_data()); 
+}
+std::any ArgExprAst::evaluate(SvlmLangContext *slc) {
+  return 0;
+}
+void ArgExprAst::print() { print_data(); }
+
 //----------------------------- decl expr
 DeclExprAst::DeclExprAst(std::shared_ptr<IdentExprAst> l, DeclOpcodeAST doa) 
 : ExprAst(doa) {
@@ -211,7 +233,7 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
     slc->svlm_lang->context_tree->set_node(keys, b);
     slc->current_context = fst;
 
-    return 0;}
+    return b;}
   default: std::cerr << "wrong type: " <<  static_cast<int>(op.op_type) << "\n"; return 0;
   }
 }
@@ -233,7 +255,7 @@ std::any BinOpExprAst::binop(T a, T b, char op) {
 ListExprAst::ListExprAst(std::any d) : ExprAst(d) {}
 
 void ListExprAst::add(std::shared_ptr<ExprAst> e) {
-  ExprAst::add_member(e);
+  add_member(e);
 }
 
 std::shared_ptr<ExprAst> ListExprAst::get(int i) {
@@ -272,9 +294,30 @@ std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
     );
   //std::cout << "eval last line\n";
   std::any output = e->evaluate(slc);
-  std::cout << output << "\n";
+  //std::cout << output << "\n";
+  // remove last line here
 
   return output;
 }
+//--------------------
+FuncExprAst::FuncExprAst(
+  std::string name, 
+  std::vector<std::string> args, 
+  std::shared_ptr<ListExprAst> body) : ExprAst(name) {
+  
+//  add_child("args", args );
+  add_child("body", body );
+};
+
+
+void FuncExprAst::add_args(std::shared_ptr<ListExprAst> lea) {}
+void FuncExprAst::add_body(std::shared_ptr<ListExprAst> lea) {}
+std::any FuncExprAst::evaluate(SvlmLangContext *slc) { return 0; }
+void FuncExprAst::print() {}
+void FuncExprAst::codegen(std::vector<std::string> &code) const {}
+
+
+
+
 
 #endif
