@@ -112,14 +112,10 @@ public:
 
 class FuncExprAst : public ExprAst {
 public:
-  FuncExprAst(int i) ; // init function name
   FuncExprAst(std::string s, std::vector<std::string> args, std::shared_ptr<ListExprAst> body); 
 
-  ; // init function name
-
-
-  void add_args(std::shared_ptr<ListExprAst> lea); // list of IdentExprAst
-  void add_body(std::shared_ptr<ListExprAst> lea); // function body, list of code
+  //void add_args(std::shared_ptr<ListExprAst> lea); // list of IdentExprAst
+  //void add_body(std::shared_ptr<ListExprAst> lea); // function body, list of code
   std::any evaluate(SvlmLangContext *slc) override;
   void print() override;
   void codegen(std::vector<std::string> &code) const override;

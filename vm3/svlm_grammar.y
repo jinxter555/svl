@@ -38,15 +38,17 @@ std::vector<std::string> param_list;
 }
 
 
+%token YYEOF EOL 
 %token              MODULE DEF DO END
-%token              EOL LPAREN RPAREN AT DOLLAR COLON SEMICOLON
+%token              LPAREN RPAREN AT DOLLAR COLON SEMICOLON
 %token <std::string> IDENT_STR STR
 %token <int>  INT
 %token <float>     FLT
  
 %nterm <char>  math_bin_op
-%nterm param_list param exp def_function
 %nterm EOS // end of statement
+%nterm <std::vector<std::string>> param_list 
+%nterm <std::string> param
 
 %nonassoc           ASSIGN
 %left               PLUS MINUS
@@ -55,46 +57,52 @@ std::vector<std::string> param_list;
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  iexp
+%type <std::shared_ptr<ExprAst>>  iexp exp statement def_module def_function
+%type <std::shared_ptr<ListExprAst>>  statement_list 
 
 %start program_start
 
 
 %%
 program_start
-  : statement_list
+  : statement_list  {
+    auto p = slc->svlm_lang->ast_current_contexts.top();
+    p->add($1);
+  }
   ;
 
 statement_list
-  : statement
-  | statement_list statement
+  : statement_list EOS statement {
+    if($3 != nullptr) {
+      slc->svlm_lang->ast_current_context->add($3);
+    } else {std::cout << "reach end\n"; }
+    $$ = slc->svlm_lang->ast_current_context;
+  }
+  | statement  {
+    slc->svlm_lang->new_ast_l_cc(); // init new ast_current_context for the block
+    if($1!=nullptr) 
+      slc->svlm_lang->ast_current_context->add($1);
+    $$ = slc->svlm_lang->ast_current_context;
+  }
   ;
 
 statement
-  : exp
-  // function def here def_function a() { statement_list }
+  : {$$=nullptr;} // end of each statement
+  | exp 
   | def_module
-  | def_function EOS
+  | def_function
   ;
 
 exp
-  : EOS { std::cerr << "Read an empty line\n"; }
-  | iexp EOS { 
-    svlm_lang->ast_current_context->add($1);
-    // $1->print(); //std::cout <<  "ieval: " << std::any_cast<int>($1->evaluate()) << "\n\n";
-  }
-  | error EOL { yyerrok; }
+  : iexp { $$=$1; }
+  | error { yyerrok; }
   ;
 
 def_module
-  : MODULE STR EOL { 
+  : MODULE STR { 
     svlm_lang = slc->svlm_lang;
     slc->add_module_name($2); 
-    svlm_lang->ast_current_context->add( 
-      std::make_shared<DeclExprAst>(
-        std::make_shared<IdentExprAst>($2), 
-        DeclOpcodeAST::MODULE)
-    );
+    $$ = std::make_shared<DeclExprAst>( std::make_shared<IdentExprAst>($2), DeclOpcodeAST::MODULE);
   }
   ;
 
@@ -120,24 +128,35 @@ math_bin_op
   ;
 
 def_function
-  : DEF STR LPAREN param_list RPAREN { 
-    std::cout << "function: " << $2 << "\n";
-    // std::make_shared<FuncExprAst>(std::string($2), param_list, nullptr); 
+  : DEF STR LPAREN param_list RPAREN DO statement_list END { 
+    // std::cout << "function: " << $2 << "\n";
+
+    std::shared_ptr<FuncExprAst> func_ptr = std::make_shared<FuncExprAst>(std::string($2), param_list, $7); 
     if($2=="") std::cerr << "error empty function string!\n";
     slc->add_function_name($2);
-    slc->add_function_args(param_list);
+    slc->add_function_args($4);
+    std::cout << "in def fun print:\n";
+    $7->print();
+
     param_list.clear();
+
+    slc->svlm_lang->done_ast_l_cc(); // pop the statement_list code block
+    $$ = func_ptr;
   }
   ;
 
 param_list
-  : param 
-  | param param_list 
+  : param  { param_list.push_back($1); }
+  | param_list param { 
+    param_list.push_back($2);
+    $$ = param_list;
+  }
   ;
 
 param
-  : STR { std::cout << "param: " << $1 << "\n"; 
-    param_list.push_back(std::string($1));
+  : STR { 
+    std::cout << "param: " << $1 << "\n"; 
+    $$=$1;
   }
   ;
 

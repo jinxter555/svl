@@ -1,4 +1,4 @@
-  #include "svlm_lang.hh"
+#include "svlm_lang.hh"
 
 std::ostream& operator << (std::ostream& out, std::any& a) ;
 
@@ -45,7 +45,7 @@ std::any SvlmLangContext::evaluate_last_line() {
 }
 
 void SvlmLangContext::add_module_name(const std::string &m) {
-    std::cout << "in add module \n";
+    //std::cout << "in add module \n";
     current_context.smodule = m;
     full_symbol_t fst = current_context;  fst.smodule = m;
     std::vector<std::string> keys = move(get_sym_key(key_tok_t::smodule, fst));

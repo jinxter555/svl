@@ -21,6 +21,18 @@ public:
   
   std::stack<Frame> svlm_frames;
   std::stack<vartype_t> svlm_stack;
+
+  std::shared_ptr<ListExprAst> new_ast_l_cc(std::string v="block") {
+    ast_current_contexts.push(ast_current_context);
+    ast_current_context = std::make_shared<ListExprAst>(v);
+    return ast_current_context;
+  }
+  std::shared_ptr<ListExprAst> done_ast_l_cc() {
+    ast_current_context = ast_current_contexts.top();
+    ast_current_contexts.pop();
+    return ast_current_context;
+  }
+
 private:
 
 };

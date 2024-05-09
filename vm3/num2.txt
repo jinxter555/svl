@@ -1,0 +1,9 @@
+module mhello
+5 + 6 * 11
+$hello = 5 + 6 * 11
+$abc = $hello + 123
+def myfun3(world, wide) do
+  1 + 2
+  3 + 4
+  5 + 6
+end

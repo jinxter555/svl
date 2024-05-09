@@ -1,7 +1,2 @@
 module mhello
-5 + 6 * 11
 $hello = 5 + 6 * 11
-$abc = $hello + 123
-def myfun1(world, wide)
-def myfun2(world, wide)
-def myfun3(world, wide)
