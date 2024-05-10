@@ -16,9 +16,6 @@ SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) {
     cc->add_child("data", ast_current_context);
     cc->add_child("stack", ast_current_context);
 
-    ast_current_contexts.push
-    ( ast_current_context
-    );
 }
 
 //--------------------------------------------------------------------
@@ -30,6 +27,7 @@ SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {
     "", // mod
     "", // mvar
     "", // mfun
+    "", // fbody, function code body block
     "", // larg
     "", // lvar
     "", // label
@@ -74,7 +72,6 @@ void SvlmLangContext::add_function_args(std::vector<std::string> param_list) {
     fst.larg = param_list[i];
     keys = move(get_sym_key(key_tok_t::larg, fst));
     svlm_lang->context_tree->add_node(keys, i); // name lookup addr
-    //svlm_lang->context_tree->add_node(keys, 3.14f); // name lookup addr
     keys.clear();
   }
   lvar_keys = move(get_sym_key(key_tok_t::mfunction, fst));
@@ -86,6 +83,13 @@ void SvlmLangContext::add_function_args(std::vector<std::string> param_list) {
     lvar_node->add_member(larg_node);
   }
 }
+void SvlmLangContext::add_function_body(std::shared_ptr<ExprAst> code) {
+  full_symbol_t fst = current_context; 
+  std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
+  keys.push_back("fbody");
+  svlm_lang->context_tree->add_node(keys, code); // name lookup addr
+}
+
 
 std::vector<std::string> SvlmLangContext::get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst) {
   std::vector<std::string> key;
@@ -107,8 +111,11 @@ std::vector<std::string> SvlmLangContext::get_sym_key(const key_tok_t ktt,  cons
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.lvar};
       break;
     case  key_tok_t::larg:
-      // key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "largs", fst.larg};
+   // key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "largs", fst.larg};
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "lvars", fst.larg};
+      break;
+    case  key_tok_t::fbody:
+      key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "fbody"};
       break;
     case  key_tok_t::label:
       key ={ fst.uni, fst.app, fst.api, "modules", fst.smodule,  "functions", fst.mfunction, "labels", fst.label};

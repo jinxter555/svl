@@ -2,6 +2,8 @@
 #include "vm_type.hh"
 #include "lang.hh"
 
+std::ostream& operator << (std::ostream& out, std::any& a);
+
 void TreeNode::add_child(const std::string &key, std::shared_ptr<TreeNode> child) {
   if(children[key] == nullptr)
     // children[key] = move(child);
@@ -48,6 +50,7 @@ void TreeNode::set_data(const std::any d) {
   data = d;
 }
 
+/*
 std::ostream& operator << (std::ostream& out, std::any& a) {
   if(a.type()  == typeid(char))
     out << std::any_cast<char>(a);
@@ -75,6 +78,7 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     out << "unknown value type!";
   return out;
 }
+*/
 
 void TreeNode::print_data() {
   std::cout << data;

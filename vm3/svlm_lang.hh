@@ -46,9 +46,12 @@ public:
   void init(SvlmLang *s) { svlm_lang=s; } 
   void add_app_name(const std::string &app);
   void add_module_name(const std::string &m);
+  void add_mvar_name(const std::string &mv);
+
   void add_function_name(const std::string &n);
   void add_function_args(std::vector<std::string> param_list);
-  void add_mvar_name(const std::string &mv);
+  void add_function_body(std::shared_ptr<ExprAst> code);
+
   void run_evaluate();
   std::any evaluate_last_line();
 

@@ -4,11 +4,11 @@
 
 enum class key_tok_t {
   app=10, api, smodule, mvar, mvar_total_count,
-  mfunction, lvar, larg, label
+  mfunction, fbody, lvar, larg, label
 };
 
 typedef struct {
-  std::string uni, app, api, smodule, mvar, mfunction, lvar, larg, label;
+  std::string uni, app, api, smodule, mvar, mfunction, fbody, lvar, larg, label;
   key_tok_t type;     // app, api, smodule... do i know who i am?
 } full_symbol_t;
 

@@ -14,6 +14,7 @@ Assembler::Assembler(std::shared_ptr<Tree> tp) {
     "", // mod
     "", // mvar
     "", // mfun
+    "", // fbody only for  module svlm
     "", // larg
     "", // lvar
     "", // label
@@ -72,7 +73,6 @@ void Assembler::run_break(VM &vm) {
 void Assembler::run_step(VM &vm, s_int_t num) {
   Assembly::run_step(vm, num);
 }
-                                     //
 void Assembler::set_instruction(const instr_t &t) {
   Assembly::instruction = t;
 }

@@ -141,6 +141,7 @@ def_function
     param_list.clear();
 
     slc->svlm_lang->done_ast_l_cc(); // pop the statement_list code block
+    slc->add_function_body(func_ptr);
     $$ = func_ptr;
   }
   ;
