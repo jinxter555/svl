@@ -283,11 +283,12 @@ void ListExprAst::print() {
 
 std::any ListExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
+  std::vector<std::any> result_list;
   for(int i=0; i<ExprAst::get_member_size(); i++ ) {
     e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
-    e->evaluate(slc); 
+    result_list.push_back(e->evaluate(slc)); 
   }
-  return 0;
+  return result_list;
 }
 std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
@@ -308,13 +309,10 @@ FuncExprAst::FuncExprAst(
   std::vector<std::string> args, 
   std::shared_ptr<ListExprAst> body) : ExprAst(name) {
   
- // add_child("args", args ); // add to universe tree instead
   add_child("body", body );
 };
 
 
-//void FuncExprAst::add_args(std::shared_ptr<ListExprAst> lea) {}
-//void FuncExprAst::add_body(std::shared_ptr<ListExprAst> lea) {}
 std::any FuncExprAst::evaluate(SvlmLangContext *slc) { return 0; }
 void FuncExprAst::print() {
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("body"));
@@ -322,9 +320,18 @@ void FuncExprAst::print() {
   l->print();
 }
 void FuncExprAst::codegen(std::vector<std::string> &code) const {}
-
-
-
-
+//--------------------
+CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
+  add_child("args", args ); // add to universe tree instead, when evaluate push these args to stack
+}
+std::any CallExprAst::evaluate(SvlmLangContext *slc) { return 0;}
+void CallExprAst::print() { 
+  std::cout << "calling function: "; print_data(); std::cout << "\n";
+  auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("args"));
+  std::cout << "with arguments: "; print_data(); std::cout << "\n";
+  l->print();
+  std::cout << "\n";
+}
+void CallExprAst::codegen(std::vector<std::string> &code) const {}
 
 #endif

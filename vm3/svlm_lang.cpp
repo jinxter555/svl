@@ -64,7 +64,7 @@ void SvlmLangContext::add_function_name(const std::string &name) {
   current_context = fst;
 }
 
-void SvlmLangContext::add_function_args(std::vector<std::string> param_list) {
+void SvlmLangContext::add_function_params(std::vector<std::string> param_list) {
   full_symbol_t fst = current_context; 
   std::vector<std::string> keys, lvar_keys;
 

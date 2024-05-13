@@ -121,5 +121,13 @@ public:
   void codegen(std::vector<std::string> &code) const override;
 };
 
+class CallExprAst : public ExprAst {
+public:
+  CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args);
+  std::any evaluate(SvlmLangContext *slc) override;
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+};
+
 
 #endif

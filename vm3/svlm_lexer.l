@@ -47,6 +47,7 @@ blank           [ \t\r]
 "="             return SvlmParser::token::ASSIGN;
 "@"             return SvlmParser::token::AT;
 "$"             return SvlmParser::token::DOLLAR;
+","             return SvlmParser::token::COMMA;
 ":"             return SvlmParser::token::COLON;
 ";"             return SvlmParser::token::SEMICOLON;
 \n  {

@@ -6,7 +6,7 @@
 #include "ast.hh"
 #include "universe.hh"
 #include "lang.hh"
-#include "frame.hh"
+#include "frame_svlm.hh"
 
 class SvlmLang {
   friend class SvlmInteractive;
@@ -19,7 +19,7 @@ public:
   std::stack<std::shared_ptr<ListExprAst>> ast_current_contexts;
   std::shared_ptr<ListExprAst> ast_current_context;
   
-  std::stack<Frame> svlm_frames;
+  std::stack<FrameSvlm> svlm_frames;
   std::stack<vartype_t> svlm_stack;
 
   std::shared_ptr<ListExprAst> new_ast_l_cc(std::string v="block") {
@@ -49,7 +49,7 @@ public:
   void add_mvar_name(const std::string &mv);
 
   void add_function_name(const std::string &n);
-  void add_function_args(std::vector<std::string> param_list);
+  void add_function_params(std::vector<std::string> param_list);
   void add_function_body(std::shared_ptr<ExprAst> code);
 
   void run_evaluate();

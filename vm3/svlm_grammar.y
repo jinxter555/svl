@@ -40,7 +40,7 @@ std::vector<std::string> param_list;
 
 %token YYEOF EOL 
 %token              MODULE DEF DO END
-%token              LPAREN RPAREN AT DOLLAR COLON SEMICOLON
+%token              LPAREN RPAREN AT DOLLAR COLON COMMA SEMICOLON
 %token <std::string> IDENT_STR STR
 %token <int>  INT
 %token <float>     FLT
@@ -57,8 +57,8 @@ std::vector<std::string> param_list;
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  iexp exp statement def_module def_function
-%type <std::shared_ptr<ListExprAst>>  statement_list 
+%type <std::shared_ptr<ExprAst>>  iexp exp statement arg def_module def_function def_caller
+%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
 
 %start program_start
 
@@ -75,7 +75,7 @@ statement_list
   : statement_list EOS statement {
     if($3 != nullptr) {
       slc->svlm_lang->ast_current_context->add($3);
-    } else {std::cout << "reach end\n"; }
+    } else {std::cout << "reach end statement\n"; }
     $$ = slc->svlm_lang->ast_current_context;
   }
   | statement  {
@@ -91,6 +91,26 @@ statement
   | exp 
   | def_module
   | def_function
+  | def_caller
+  ;
+
+arg_list
+  : arg_list COMMA arg {
+    if($3 != nullptr) {
+      slc->svlm_lang->ast_current_context->add($3);
+    } else {std::cout << "reach end of caller\n"; }
+    $$ = slc->svlm_lang->ast_current_context;
+  }
+  | arg {
+    slc->svlm_lang->new_ast_l_cc(); // init new ast_current_context for the block
+    if($1!=nullptr) 
+      slc->svlm_lang->ast_current_context->add($1);
+    $$ = slc->svlm_lang->ast_current_context;
+  }
+
+arg
+  : {$$ = nullptr;}
+  | exp
   ;
 
 exp
@@ -105,6 +125,14 @@ def_module
     $$ = std::make_shared<DeclExprAst>( std::make_shared<IdentExprAst>($2), DeclOpcodeAST::MODULE);
   }
   ;
+
+def_caller
+  : STR LPAREN arg_list RPAREN {
+    std::cout << "calling function " << $1 << "\n";
+    std::shared_ptr<CallExprAst> caller = std::make_shared<CallExprAst>($1, $3); 
+    slc->svlm_lang->done_ast_l_cc(); // pop the statement_list code block
+    $$ = caller;
+  }
 
 
 iexp
@@ -129,27 +157,23 @@ math_bin_op
 
 def_function
   : DEF STR LPAREN param_list RPAREN DO statement_list END { 
-    // std::cout << "function: " << $2 << "\n";
-
     std::shared_ptr<FuncExprAst> func_ptr = std::make_shared<FuncExprAst>(std::string($2), param_list, $7); 
-    if($2=="") std::cerr << "error empty function string!\n";
+    //if($2=="") std::cerr << "error empty function string!\n";
     slc->add_function_name($2);
-    slc->add_function_args($4);
-    std::cout << "in def fun print:\n";
-    $7->print();
+    slc->add_function_params($4);
+    slc->add_function_body(func_ptr);
+    //std::cout << "in def fun print:\n"; $7->print();
 
     param_list.clear();
-
     slc->svlm_lang->done_ast_l_cc(); // pop the statement_list code block
-    slc->add_function_body(func_ptr);
     $$ = func_ptr;
   }
   ;
 
 param_list
   : param  { param_list.push_back($1); }
-  | param_list param { 
-    param_list.push_back($2);
+  | param_list COMMA param { 
+    param_list.push_back($3);
     $$ = param_list;
   }
   ;

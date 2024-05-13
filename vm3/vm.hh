@@ -1,6 +1,6 @@
 #pragma once
 #include "vm_type.hh"
-#include "frame.hh"
+#include "frame_vm.hh"
 
 class VM {
   friend class Assembly;
