@@ -20,7 +20,7 @@ public:
   std::shared_ptr<ListExprAst> ast_current_context;
   
   std::stack<FrameSvlm> svlm_frames;
-  std::stack<vartype_t> svlm_stack;
+  std::stack<std::any> svlm_stack;
 
   std::shared_ptr<ListExprAst> new_ast_l_cc(std::string v="block") {
     ast_current_contexts.push(ast_current_context);

@@ -26,6 +26,8 @@ ExprAst::ExprAst() {
 ExprAst::~ExprAst() {}
 
 //----------------------------- number variable expr
+NumberExprAst::NumberExprAst(Number n) : ExprAst(n) {}
+
 void NumberExprAst::codegen(std::vector<std::string>& code) const {
   //code.push_back("push " + std::to_string(value));
   code.push_back("push " + std::to_string(1));
@@ -48,7 +50,7 @@ void IdentExprAst::print() { print_data(); }
 //----------------------------- global variable expr
 
 GvarExprAst::GvarExprAst(std::string s)
- : ExprAst(s) {}
+ : AssignExprAst(s) {}
 
 std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   full_symbol_t fst = slc->current_context;  
@@ -58,9 +60,19 @@ std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<TreeNode> tn = slc->svlm_lang->context_tree->get_node(keys);
   if(tn==nullptr){
     std::cerr << "variable name: " << fst.mvar << " doesn't exist\n";
+    std::cout << "k: "; for( auto k : keys) { std::cout << k << " "; } std::cout << "\n";
     return 0;
   }
   return  tn->get_data();
+}
+void GvarExprAst::assign(SvlmLangContext *slc, Number &n) {
+    std::string name = this->name();
+    full_symbol_t fst = slc->current_context;  
+    fst.mvar = name;
+    std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
+
+    slc->svlm_lang->context_tree->set_node(keys, n);
+    slc->current_context = fst;
 }
 
 std::string GvarExprAst::name() { 
@@ -141,21 +153,12 @@ void DeclExprAst::print() {
 BinOpExprAst::BinOpExprAst 
 ( std::shared_ptr<ExprAst> l
 , std::shared_ptr<ExprAst> r
-, op_t op
+, char op
 ) : ExprAst(op) 
 { ExprAst::add_child("left", l);
   ExprAst::add_child("right", r);
 }
 
-BinOpExprAst::BinOpExprAst
-( std::shared_ptr<ExprAst> l
-, std::shared_ptr<ExprAst> r
-, BinOpcodeAST t, char o) 
-{ op_t op = {t, o};
-  ExprAst::set_data(op);
-  ExprAst::add_child("left", l);
-  ExprAst::add_child("right", r);
-}
 
 void BinOpExprAst::codegen(std::vector<std::string>& code) const {
   std::shared_ptr<ExprAst> l = 
@@ -200,55 +203,37 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
   if(l ==nullptr) { std::cerr << "l is nullptr\n"; }
   if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
 
-  op_t op = std::any_cast<op_t>(ExprAst::get_data());
-  switch(op.op_type) {
-  case BinOpcodeAST::INT_OP_INT:  {
-    int a = std::any_cast<int>(l->evaluate(slc));
-    int b = std::any_cast<int>(r->evaluate(slc));
-    return binop(a, b, op.op); }
-  case BinOpcodeAST::FLT_OP_FLT: {
-    float a = std::any_cast<float>(l->evaluate(slc));
-    float b = std::any_cast<float>(r->evaluate(slc));
-    return binop(a, b, op.op); }
-  case BinOpcodeAST::FLT_OP_INT: {
-    float a = std::any_cast<float>(l->evaluate(slc));
-    float b = static_cast<float>(std::any_cast<int>(r->evaluate(slc)));
-    return binop(a, b, op.op); }
-  case BinOpcodeAST::INT_OP_FLT: {
-    int a = std::any_cast<int>(l->evaluate(slc));
-    int b = static_cast<int>(std::any_cast<float>(r->evaluate(slc)));
-    return binop(a, b, op.op); }
-  case BinOpcodeAST::ASSIGN_INT_G: {
+  char op = std::any_cast<char>(ExprAst::get_data());
 
-    std::shared_ptr<GvarExprAst> al = 
-      std::dynamic_pointer_cast<GvarExprAst>(get_child("left"));
-
-    std::string name = al->name();
-    int b = std::any_cast<int>(r->evaluate(slc));
-
-    full_symbol_t fst = slc->current_context;  
-    fst.mvar = name;
-    std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
-
-    slc->svlm_lang->context_tree->set_node(keys, b);
-    slc->current_context = fst;
-
-    return b;}
-  default: std::cerr << "wrong type: " <<  static_cast<int>(op.op_type) << "\n"; return 0;
-  }
-}
-
-template <typename T>
-std::any BinOpExprAst::binop(T a, T b, char op) {
   switch(op) {
-  case '+': return std::any_cast<T>(a) + std::any_cast<T>(b);
-  case '-': return std::any_cast<T>(a) - std::any_cast<T>(b);
-  case '*': return std::any_cast<T>(a) * std::any_cast<T>(b);
-  case '/': return std::any_cast<T>(a) !=0 
-    ? std::any_cast<T>(a) / std::any_cast<T>(b) : 0;
-  default: throw std::invalid_argument("Invalid operator");
+  case '+': {
+    Number a = std::any_cast<Number>(l->evaluate(slc));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a + b; }
+  case '-': {
+    Number a = std::any_cast<Number>(l->evaluate(slc));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a - b; }
+  case '*': {
+    Number a = std::any_cast<Number>(l->evaluate(slc));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a * b; }
+  case '/': {
+    Number a = std::any_cast<Number>(l->evaluate(slc));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a / b;}
+  case '=': {
+    std::shared_ptr<AssignExprAst> al = 
+      std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    std::cout << "assign name = " << al->name() << "\n";
+    al->assign(slc, b);
+    return b;
+  }
+  default: std::cerr << "wrong type: " << "\n"; return 0;
   }
 }
+
 
 //--------------------
 

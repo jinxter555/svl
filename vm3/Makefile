@@ -4,11 +4,11 @@ CC=g++ -std=c++17 -g
 main.out:  asm_lexer.l asm_grammar.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
 	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o svlm_grammar.y svlm_lexer.l  \
 	asm_parser.cpp asm_scanner.cpp svlm_parser.cpp svlm_scanner.cpp \
-	svlm_interactive.o svlm_lang.o ast.hh ast.cpp printer_any.o
+	svlm_interactive.o svlm_lang.o ast.hh ast.cpp printer_any.o number.o 
 	$(CC) -omain.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
 	assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o  \
 	svlm_scanner.cpp svlm_parser.cpp tree.o  svlm_interactive.o svlm_lang.o \
-	ast.hh ast.cpp printer_any.o \
+	ast.hh ast.cpp printer_any.o number.o \
 	-lreadline
 
 asm_parser.cpp: assembler.hh asm_scanner.hh assembler.cpp asm_grammar.y
@@ -33,6 +33,10 @@ svlm_scanner.cpp: svlm_lexer.l
 
 printer_any.o: printer_any.cpp
 	$(CC) -c printer_any.cpp
+
+number.o: number.cpp number.hh
+	$(CC) -c number.cpp
+
 
 opcode.o: opcode.cpp opcode.hh
 	$(CC) -c opcode.cpp

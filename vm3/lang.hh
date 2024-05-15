@@ -54,6 +54,8 @@ typedef struct {
   std::variant<int, float, std::string> v;
 } vartype_t;
 
+typedef std::variant<int, float>  num_d_t;
+
 typedef struct {
   unsigned char pos; // argument postition from 0 - 255
   std::string name;

@@ -57,7 +57,7 @@ std::vector<std::string> param_list;
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  iexp exp statement arg def_module def_function def_caller
+%type <std::shared_ptr<ExprAst>>  exp num_exp statement arg def_module def_function def_caller
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
 
 %start program_start
@@ -114,7 +114,7 @@ arg
   ;
 
 exp
-  : iexp { $$=$1; }
+  : num_exp {$$ = $1; }
   | error { yyerrok; }
   ;
 
@@ -135,18 +135,20 @@ def_caller
   }
 
 
-iexp
-  : INT { $$ = std::make_shared<NumberExprAst>($1); }
-  | iexp math_bin_op iexp { $$ = std::make_shared<BinOpExprAst>($1, $3, BinOpcodeAST::INT_OP_INT, $2); }
-  | LPAREN iexp RPAREN        { $$ = $2; }
+num_exp
+  : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
+  | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
+  | num_exp math_bin_op num_exp { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
+  | LPAREN num_exp RPAREN        { $$ = $2; }
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
-  | DOLLAR STR ASSIGN iexp { 
+  | DOLLAR STR ASSIGN num_exp { 
     slc->add_mvar_name($2);  // add to context tree
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<GvarExprAst>(std::string($2)), 
-      $4, BinOpcodeAST::ASSIGN_INT_G, '=');
+      $4, '=');
   }
   ;
+
 
 math_bin_op
   : PLUS      {$$ = '+';}

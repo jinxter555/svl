@@ -4,9 +4,11 @@
 #include "vm_type.hh"
 #include "lang.hh"
 #include "universe.hh"
+#include "number.hh"
 
 
 class SvlmLangContext;
+
 class ExprAst : public TreeNode {
 protected:
   std::vector<full_symbol_t> current_contexts; // where am i and who ami
@@ -25,7 +27,7 @@ public:
 
 class NumberExprAst : public ExprAst {
 public:
-  NumberExprAst(std::any d) : ExprAst(d) {}
+  NumberExprAst(Number n);
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
@@ -42,13 +44,22 @@ public:
 private:
 };
 
-class GvarExprAst : public ExprAst {
+class AssignExprAst : public ExprAst { 
+public:
+  AssignExprAst(std::any d) : ExprAst(d) {}
+  virtual ~AssignExprAst() {}
+  virtual std::string name() =0;
+  virtual void assign(SvlmLangContext *slc, Number &n) = 0;
+};
+
+class GvarExprAst : public AssignExprAst {
 public:
   GvarExprAst(std::string s);
-  std::string name();
+  std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
+  void assign(SvlmLangContext *slc, Number &n) override;
 private:
 };
 
@@ -82,17 +93,10 @@ public:
 
 class BinOpExprAst : public ExprAst {
 public:
-  BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, op_t op);
-  BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, BinOpcodeAST t, char o);
+  BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, char op);
 
   void codegen(std::vector<std::string>& code) const override;
   std::any evaluate(SvlmLangContext *slc) override;
-
-  template <typename T>
-  std::any binop(T a, T b, char op);
-  template <typename T, typename U>
-  std::any binop(T a, U b, char op);
-
   void print() override;
 private:
 };

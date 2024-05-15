@@ -1,6 +1,7 @@
 #include "vm_type.hh"
 #include "lang.hh"
 #include "ast.hh"
+#include "number.hh"
 #include <any>
 #include <memory>
 
@@ -26,6 +27,10 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
   else if(a.type()  == typeid(op_t)) {
     op_t ao = std::any_cast<op_t>(a);
     out << ao.op; }
+  else if(a.type()  == typeid(Number)) {
+    Number num= std::any_cast<Number>(a);
+    num.printData();
+    }
   else if(a.type()  == typeid(std::shared_ptr<ExprAst>)) {
     std::cout  << "function code block\n";
     std::shared_ptr ast = std::any_cast<std::shared_ptr<ExprAst>>(a);
