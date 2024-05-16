@@ -79,7 +79,8 @@ statement_list
     $$ = slc->svlm_lang->ast_current_context;
   }
   | statement  {
-    slc->svlm_lang->new_ast_l_cc(); // init new ast_current_context for the block
+    if(! slc->interactive)   // if not prompt line interactive
+      slc->svlm_lang->new_ast_l_cc(); // init new ast_current_context for the block
     if($1!=nullptr) 
       slc->svlm_lang->ast_current_context->add($1);
     $$ = slc->svlm_lang->ast_current_context;
