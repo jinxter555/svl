@@ -1,3 +1,2 @@
-number.cpp:24:9: error: expected initializer before ‘<’ token
-   24 | T Number<T>::getValue() const {
-      |         ^
+comment end1!
+reach end statement

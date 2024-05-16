@@ -34,11 +34,10 @@ namespace vslast {
 SvlmLang* svlm_lang;
 std::vector<std::string> param_list;
 
-
 }
 
 
-%token YYEOF EOL 
+%token YYEOF EOL COMMENT1 COMMENT2
 %token              MODULE DEF DO END AST_RETURN
 %token              LPAREN RPAREN AT DOLLAR COLON COMMA SEMICOLON
 %token <std::string> IDENT_STR STR
@@ -49,6 +48,7 @@ std::vector<std::string> param_list;
 %nterm EOS // end of statement
 %nterm <std::vector<std::string>> param_list 
 %nterm <std::string> param
+%nterm comments
 
 %nonassoc           ASSIGN
 %left               PLUS MINUS
@@ -57,7 +57,7 @@ std::vector<std::string> param_list;
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp num_exp statement arg def_module def_function def_caller
+%type <std::shared_ptr<ExprAst>>  exp num_exp statement arg def_module def_function def_caller comments 
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
 
 %start program_start
@@ -71,11 +71,17 @@ program_start
   }
   ;
 
+comments
+  : COMMENT1 {$$=nullptr;}
+  ;
+
 statement_list
   : statement_list EOS statement {
     if($3 != nullptr) {
       slc->svlm_lang->ast_current_context->add($3);
-    } else {std::cout << "reach end statement\n"; }
+    } else {
+      //std::cout << "reach end statement\n"; 
+    }
     $$ = slc->svlm_lang->ast_current_context;
   }
   | statement  {
@@ -85,6 +91,7 @@ statement_list
       slc->svlm_lang->ast_current_context->add($1);
     $$ = slc->svlm_lang->ast_current_context;
   }
+  | statement_list error EOS statement { yyerrok; }
   ;
 
 statement
@@ -93,6 +100,7 @@ statement
   | def_module
   | def_function
   | def_caller
+  | comments {$$ = nullptr; }
   ;
 
 arg_list
@@ -108,6 +116,8 @@ arg_list
       slc->svlm_lang->ast_current_context->add($1);
     $$ = slc->svlm_lang->ast_current_context;
   }
+ // | error { yyerrok; }
+  ;
 
 arg
   : {$$ = nullptr;}
@@ -116,7 +126,7 @@ arg
 
 exp
   : num_exp {$$ = $1; }
-  | error { yyerrok; }
+ // | error { yyerrok; }
   | AST_RETURN { $$ = std::make_shared<DisContExprAst>(std::string("return")); }
   ;
 
@@ -180,6 +190,7 @@ param_list
     param_list.push_back($3);
     $$ = param_list;
   }
+ // | error { yyerrok; }
   ;
 
 param
@@ -193,6 +204,7 @@ param
 EOS
   : SEMICOLON
   | EOL
+  | COMMENT2
   ;
 
 

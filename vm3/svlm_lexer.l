@@ -21,6 +21,18 @@ blank           [ \t\r]
 
 %{
 #define YY_USER_ACTION yylloc->columns(yyleng);
+/*
+^#.*\n          {
+  yylloc->lines(yyleng); 
+  yylloc->step(); 
+  return SvlmParser::token::COMMENT1; // ignore comment
+}
+#.*\n          {
+  yylloc->lines(yyleng); 
+  yylloc->step(); 
+  return SvlmParser::token::COMMENT2; // ignore comment
+}
+*/
 %}
 
 %%
@@ -51,11 +63,33 @@ blank           [ \t\r]
 ","             return SvlmParser::token::COMMA;
 ":"             return SvlmParser::token::COLON;
 ";"             return SvlmParser::token::SEMICOLON;
+
+
+
+
 \n  {
   yylloc->lines(yyleng); 
   yylloc->step(); 
   return SvlmParser::token::EOL;}
+
+^#.*          {
+//  yylloc->lines(yyleng); 
+  yylloc->step(); 
+  return SvlmParser::token::COMMENT1; // ignore comment
+}
+
+#.*          {
+ // yylloc->lines(yyleng); 
+  yylloc->step(); 
+  return SvlmParser::token::COMMENT2; // ignore comment
+}
+
+
+
 <<EOF>>         return SvlmParser::token::YYEOF;
+
+
+
 .               /* no action on unmatched input */
 %%
 
