@@ -1,11 +1,12 @@
 #CC=clang++ -std=c++17 -g
-CC=g++ -std=c++17 -g
+#CC=g++ -std=c++17 -g
+CC=g++ -std=c++17 
 
 main.out:  asm_lexer.l asm_grammar.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
 	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o svlm_grammar.y svlm_lexer.l  \
 	asm_parser.cpp asm_scanner.cpp svlm_parser.cpp svlm_scanner.cpp \
 	svlm_interactive.o svlm_lang.o ast.hh ast.cpp printer_any.o number.o 
-	$(CC) -omain.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
+	$(CC) -o main.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
 	assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o  \
 	svlm_scanner.cpp svlm_parser.cpp tree.o  svlm_interactive.o svlm_lang.o \
 	ast.hh ast.cpp printer_any.o number.o \

@@ -24,9 +24,6 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     out << std::any_cast<long double>(a);
   else if(a.type()  == typeid(std::string))
     out << std::any_cast<std::string>(a);
-  else if(a.type()  == typeid(op_t)) {
-    op_t ao = std::any_cast<op_t>(a);
-    out << ao.op; }
   else if(a.type()  == typeid(Number)) {
     Number num= std::any_cast<Number>(a);
     num.printData();

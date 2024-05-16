@@ -24,6 +24,13 @@ public:
   virtual void print() = 0 ;
 };
 
+class DisContExprAst : public ExprAst { // to disable continue aka break loop for ListExprAst
+public:
+  DisContExprAst(std::string s);
+  std::any evaluate(SvlmLangContext *slc) override ;
+  void codegen(std::vector<std::string>& code) const override;
+  void print() override;
+};
 
 class NumberExprAst : public ExprAst {
 public:
@@ -126,6 +133,8 @@ public:
 };
 
 class CallExprAst : public ExprAst {
+private:
+  void fcall_args_setup(SvlmLangContext *slc);
 public:
   CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args);
   std::any evaluate(SvlmLangContext *slc) override;

@@ -31,6 +31,7 @@ blank           [ \t\r]
 "def"        return SvlmParser::token::DEF;
 "do"        return SvlmParser::token::DO;
 "end"        return SvlmParser::token::END;
+"return"        return SvlmParser::token::AST_RETURN;
 {integer}   yylval->emplace<int>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
 {float}     yylval->emplace<float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
 {blank}     yylloc->step();

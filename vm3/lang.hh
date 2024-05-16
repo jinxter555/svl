@@ -45,7 +45,8 @@ enum class VarTypeEnum {
   INT,
   FLT,
   STR,
-  PTR=10, // pointer maybe
+  NUMBER=20,
+  PTR=30, // pointer maybe
   USER_DEF=100
 };
 

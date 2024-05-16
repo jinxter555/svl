@@ -3,11 +3,13 @@ module mhello
 $hello = 5 + 6 * 11
 $abc = $hello + 123
 $hello + $abc
-a(1+1,2+2)
+myfun1(1+1,2+2)
+return
 def myfun1(world, wide) do
   1 + 2
   3 + 4
   5 + 6
+  $what = 555
 end
 def myfun2(world, wide) do
   10 + 2

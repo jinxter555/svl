@@ -39,7 +39,7 @@ std::vector<std::string> param_list;
 
 
 %token YYEOF EOL 
-%token              MODULE DEF DO END
+%token              MODULE DEF DO END AST_RETURN
 %token              LPAREN RPAREN AT DOLLAR COLON COMMA SEMICOLON
 %token <std::string> IDENT_STR STR
 %token <int>  INT
@@ -116,6 +116,7 @@ arg
 exp
   : num_exp {$$ = $1; }
   | error { yyerrok; }
+  | AST_RETURN { $$ = std::make_shared<DisContExprAst>(std::string("return")); }
   ;
 
 def_module
@@ -163,7 +164,7 @@ def_function
     //if($2=="") std::cerr << "error empty function string!\n";
     slc->add_function_name($2);
     slc->add_function_params($4);
-    slc->add_function_body(func_ptr);
+    slc->add_function_fbody(func_ptr);
     //std::cout << "in def fun print:\n"; $7->print();
 
     param_list.clear();

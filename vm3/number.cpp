@@ -55,7 +55,7 @@ Number Number::operator/(const Number& other) const {
 
 void Number::printData() const {
   std::visit([](auto val) {
-    std::cout << "Data value: " << val << std::endl;
+    std::cout << val;
   }, data_);
 }
 

@@ -20,9 +20,15 @@ public:
   std::shared_ptr<ListExprAst> ast_current_context;
   
   std::stack<FrameSvlm> svlm_frames;
-  std::stack<std::any> svlm_stack;
+  std::vector<std::any> svlm_stack;
+  FrameSvlm frame;
+  bool ast_eval_continue = true;
 
-  std::shared_ptr<ListExprAst> new_ast_l_cc(std::string v="block") {
+  void fcall_args_setup(std::vector<std::any>);
+
+
+  // parser functions
+  std::shared_ptr<ListExprAst> new_ast_l_cc(std::string v="code_block") {
     ast_current_contexts.push(ast_current_context);
     ast_current_context = std::make_shared<ListExprAst>(v);
     return ast_current_context;
@@ -32,6 +38,7 @@ public:
     ast_current_contexts.pop();
     return ast_current_context;
   }
+
 
 private:
 
@@ -50,7 +57,7 @@ public:
 
   void add_function_name(const std::string &n);
   void add_function_params(std::vector<std::string> param_list);
-  void add_function_body(std::shared_ptr<ExprAst> code);
+  void add_function_fbody(std::shared_ptr<ExprAst> code);
 
   void run_evaluate();
   std::any evaluate_last_line();
