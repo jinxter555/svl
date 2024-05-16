@@ -156,8 +156,7 @@ void DeclExprAst::print() {
     std::cerr << "unknown decl!\n"; break;
   }
 
-  l->print_data();
-  std::cout << "\n";
+  l->print_data();// std::cout << "\n";
 }
 
 
@@ -272,6 +271,7 @@ void ListExprAst::print() {
   for(int i=0; i<get_member_size(); i++ ) {
     e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
     if(e==nullptr) { std::cerr << "encounter null expr at " << i << "\n"; continue;; }
+    std::cout << "code[" <<i << "]: ";
     e->print(); std::cout << "\n";
   }
 }
@@ -280,12 +280,15 @@ std::any ListExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
   std::vector<std::any> result_list;
   int code_count = get_member_size();
+  std::cout  << "list eval!\n";
   for(int i=0; i<code_count && slc->svlm_lang->ast_eval_continue; i++ ) {
     e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
     result_list.push_back(e->evaluate(slc)); 
   }
+  slc->svlm_lang->ast_eval_continue=true; // reset it to true regardless for the next run
   return result_list;
 }
+
 std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
   e = 
@@ -308,17 +311,16 @@ FuncExprAst::FuncExprAst(
   add_child("fbody", body );
 };
 
-
 std::any FuncExprAst::evaluate(SvlmLangContext *slc) { 
-  std::cout << "In function but I am lazy!\n";
+  std::cout << "In function:"; print_data(); std::cout << " eval!\n";
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("fbody"));
-  //print_data();
   return l->evaluate(slc);
 }
 void FuncExprAst::print() {
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("fbody"));
-  std::cout << "function body:\n";
+  std::cout << "def "; print_data(); std::cout << " {\n";
   l->print();
+  std::cout << "}";
 }
 void FuncExprAst::codegen(std::vector<std::string> &code) const {
 }
@@ -345,9 +347,9 @@ std::any CallExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> func = std::any_cast<std::shared_ptr<ExprAst>> ( tn->get_data());
 
   if(func!=nullptr) {
-    std::cout << "print func_body ptr: " << func<< "\n";
-   // func->evaluate(slc);
-   //func->print();
+    std::cout << "in caller print and eval func_body ptr: " << func<< "\n";
+    func->evaluate(slc);
+    // func->print();
   } else {
     std::cerr << "function body is nullptr!\n";
   }
@@ -356,9 +358,9 @@ std::any CallExprAst::evaluate(SvlmLangContext *slc) {
 }
 
 void CallExprAst::print() { 
-  std::cout << "calling function: "; print_data(); std::cout << "\n";
+  std::cout << "call function: "; print_data(); std::cout << "\n";
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("args"));
-  std::cout << "with arguments:\n"; l->print(); std::cout << "\n";
+  std::cout << "with arguments:{\n"; l->print(); std::cout << "}";
 
 }
 void CallExprAst::codegen(std::vector<std::string> &code) const {}

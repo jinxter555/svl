@@ -48,6 +48,7 @@ class SvlmLangContext  {
 public:
   SvlmLang *svlm_lang;
   full_symbol_t current_context;
+  bool interactive = false; // if this is going to be from file or prompt
 
   SvlmLangContext(SvlmLang *s);
   void init(SvlmLang *s) { svlm_lang=s; } 
