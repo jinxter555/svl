@@ -9,6 +9,7 @@
 
 class SvlmLangContext;
 
+
 class ExprAst : public TreeNode {
 protected:
   std::vector<full_symbol_t> current_contexts; // where am i and who ami
@@ -24,9 +25,18 @@ public:
   virtual void print() = 0 ;
 };
 
+
+class PrintExprAst : public ExprAst { // to disable continue aka break loop for ListExprAst
+public:
+  PrintExprAst(std::shared_ptr<ExprAst> exp);
+  std::any evaluate(SvlmLangContext *slc) override ;
+  void codegen(std::vector<std::string>& code) const override;
+  void print() override;
+};
+
 class DisContExprAst : public ExprAst { // to disable continue aka break loop for ListExprAst
 public:
-  DisContExprAst(std::string s);
+  DisContExprAst(std::string kw); // break keyword 
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string>& code) const override;
   void print() override;
@@ -43,7 +53,7 @@ private:
 
 class IdentExprAst : public ExprAst {
 public:
-  IdentExprAst(std::string s);
+  IdentExprAst(std::string name);
   std::string name();
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
@@ -53,7 +63,7 @@ private:
 
 class AssignExprAst : public ExprAst { 
 public:
-  AssignExprAst(std::any d) : ExprAst(d) {}
+  AssignExprAst(std::string name) : ExprAst(name) {}
   virtual ~AssignExprAst() {}
   virtual std::string name() =0;
   virtual void assign(SvlmLangContext *slc, Number &n) = 0;
@@ -61,7 +71,7 @@ public:
 
 class GvarExprAst : public AssignExprAst {
 public:
-  GvarExprAst(std::string s);
+  GvarExprAst(std::string name);
   std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;

@@ -4,7 +4,7 @@
 #include <cmath>
 %}
 
-%require "3.7.4"
+%require "3.8.1"
 %language "C++"
 %defines "svlm_parser.hh"
 %output "svlm_parser.cpp"
@@ -15,7 +15,7 @@
 %parse-param {SvlmScanner* scanner}
 %parse-param {SvlmLangContext* slc}
 
-
+ 
 %locations
 
 %code requires { 
@@ -38,7 +38,7 @@ std::vector<std::string> param_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token              MODULE DEF DO END AST_RETURN
+%token              MODULE DEF DO END AST_RETURN PRINT
 %token              LPAREN RPAREN AT DOLLAR COLON COMMA SEMICOLON
 %token <std::string> IDENT_STR STR
 %token <int>  INT
@@ -57,7 +57,7 @@ std::vector<std::string> param_list;
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp num_exp statement arg def_module def_function def_caller comments 
+%type <std::shared_ptr<ExprAst>>  exp num_exp statement arg print_exp def_module def_function def_caller comments 
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
 
 %start program_start
@@ -100,6 +100,7 @@ statement
   | def_module
   | def_function
   | def_caller
+  | print_exp
   | comments {$$ = nullptr; }
   ;
 
@@ -128,6 +129,14 @@ exp
   : num_exp {$$ = $1; }
  // | error { yyerrok; }
   | AST_RETURN { $$ = std::make_shared<DisContExprAst>(std::string("return")); }
+  ;
+
+print_exp
+  : PRINT exp { $$ = std::make_shared<PrintExprAst>($2); }
+  | PRINT STR { 
+    $$ = std::make_shared<PrintExprAst>
+      (std::make_shared<IdentExprAst>($2)); 
+  }
   ;
 
 def_module
@@ -194,8 +203,7 @@ param_list
   ;
 
 param
-  : STR { 
-    std::cout << "param: " << $1 << "\n"; 
+  : STR { //std::cout << "param: " << $1 << "\n"; 
     $$=$1;
   }
   ;
@@ -213,3 +221,22 @@ EOS
 void vslast::SvlmParser::error(const location_type& l, const std::string& msg) {
     std::cerr << "line "  << l << ": " << msg << '\n';
 }
+
+ /*
+void vslast::SvlmParser::report_syntax_error (const vslast::SvlmParser::context& ctx) const
+{
+ // Access error context information (replace with specific logic)
+  const char* location_info = yypcontext_location(ctx);
+  const std::string& expected_tokens = yypcontext_expected_tokens(ctx);
+
+  std::cerr << "Error parsing expression:" << std::endl;
+  if (location_info) {
+    std::cerr << "  Location: " << location_info << std::endl;
+  }
+  if (!expected_tokens.empty()) {
+    std::cerr << "  Expected: " << expected_tokens << std::endl;
+  } else {
+    std::cerr << "  Unexpected token encountered." << std::endl;
+  }
+}
+  */

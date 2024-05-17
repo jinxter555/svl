@@ -49,8 +49,9 @@ public:
 
   // using CommandFunctionPtr = std::function<void(const std::string &)>;
   void print_tree(const std::string& line);
-  void printHello(const std::string& message);
   void printGoodbye(const std::string& message);
   void print_ast(const std::string& line);
+  void print_stack(const std::string& line);
+
 
 };

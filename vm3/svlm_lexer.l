@@ -44,6 +44,7 @@ blank           [ \t\r]
 "do"        return SvlmParser::token::DO;
 "end"        return SvlmParser::token::END;
 "return"        return SvlmParser::token::AST_RETURN;
+"print"        return SvlmParser::token::PRINT;
 {integer}   yylval->emplace<int>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
 {float}     yylval->emplace<float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
 {blank}     yylloc->step();

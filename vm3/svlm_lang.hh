@@ -19,7 +19,7 @@ public:
   std::stack<std::shared_ptr<ListExprAst>> ast_current_contexts;
   std::shared_ptr<ListExprAst> ast_current_context;
   
-  std::stack<FrameSvlm> svlm_frames;
+  std::vector<FrameSvlm> svlm_frames;
   std::vector<std::any> svlm_stack;
   FrameSvlm frame;
   bool ast_eval_continue = true;

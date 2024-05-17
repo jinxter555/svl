@@ -44,8 +44,15 @@ void SvlmInteractive::print_ast(const std::string& line) {
 }
 
 
-void SvlmInteractive::printHello(const std::string& message) {
-  std::cout << "hello: " <<  message << std::endl;
+void SvlmInteractive::print_stack(const std::string& message) {
+  int i=0;
+  std::cout << "stack: " <<  message << std::endl;
+  for ( std::vector<std::any>::iterator it = svlm_lang.svlm_stack.begin() ; 
+    it != svlm_lang.svlm_stack.end(); ++it) {
+    std::cout << i++ << ": " << (*it) << "\n";
+  }
+  std::cout << '\n';
+
 }
 
 void SvlmInteractive::printGoodbye(const std::string& message) {
@@ -55,7 +62,7 @@ void SvlmInteractive::printGoodbye(const std::string& message) {
 void SvlmInteractive::init_command_functions() {
   command_functions =  {
     {"!print_tree", std::bind(&SvlmInteractive::print_tree, this,  std::placeholders::_1)},
-    {"!print_hello", std::bind(&SvlmInteractive::printHello, this,  std::placeholders::_1)},
+    {"!print_stack", std::bind(&SvlmInteractive::print_stack, this,  std::placeholders::_1)},
     {"!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
     {"!print_ast", std::bind(&SvlmInteractive::print_ast, this,  std::placeholders::_1)},
     {"!run_program", std::bind(&SvlmInteractive::run_program, this,  std::placeholders::_1)},

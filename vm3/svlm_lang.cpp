@@ -22,7 +22,7 @@ SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) {
 
 void SvlmLang::fcall_args_setup(std::vector<std::any> args){
   frame.sp = svlm_stack.size(); // set current stack pointer
-  svlm_frames.push(frame);
+  svlm_frames.push_back(frame);
   for(auto a :args) {
       svlm_stack.push_back(a);
   }
