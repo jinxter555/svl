@@ -40,6 +40,7 @@ public:
   }
 
 
+
 private:
 
 };
@@ -58,6 +59,7 @@ public:
 
   void add_function_name(const std::string &n);
   void add_function_params(std::vector<std::string> param_list);
+  void add_function_lvars(const std::vector<std::string> lvars);
   void add_function_fbody(std::shared_ptr<ExprAst> code);
 
   void run_evaluate();

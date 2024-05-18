@@ -81,7 +81,7 @@ void SvlmLangContext::add_function_params(std::vector<std::string> param_list) {
 
   for(int i=0; i< param_list.size(); i++) {
     fst.larg = param_list[i];
-    keys = move(get_sym_key(key_tok_t::larg, fst));
+    keys = move(get_sym_key(key_tok_t::larg, fst)); // same as lva
     svlm_lang->context_tree->add_node(keys, i); // name lookup addr
     keys.clear();
   }
@@ -99,6 +99,18 @@ void SvlmLangContext::add_function_fbody(std::shared_ptr<ExprAst> code) {
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
   keys.push_back("fbody");
   svlm_lang->context_tree->add_node(keys, code); // name lookup addr
+}
+
+void SvlmLangContext::add_function_lvars(const std::vector<std::string> lvars) {
+  full_symbol_t fst = current_context; 
+  std::vector<std::string> keys, lvar_keys;
+
+  for(int i=0; i< lvars.size(); i++) {
+    fst.larg = lvars[i];
+    keys = move(get_sym_key(key_tok_t::larg, fst)); // same as lva
+    svlm_lang->context_tree->add_node(keys, i); // name lookup addr
+    keys.clear();
+  }
 }
 
 

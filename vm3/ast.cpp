@@ -90,13 +90,14 @@ std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   }
   return  tn->get_data();
 }
-void GvarExprAst::assign(SvlmLangContext *slc, Number &n) {
+void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
     std::string name = this->name();
+    //std::string name = name();
     full_symbol_t fst = slc->current_context;  
     fst.mvar = name;
     std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
 
-    slc->svlm_lang->context_tree->set_node(keys, n);
+    slc->svlm_lang->context_tree->set_node(keys, d);
     slc->current_context = fst;
 }
 

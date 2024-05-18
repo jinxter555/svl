@@ -66,7 +66,7 @@ public:
   AssignExprAst(std::string name) : ExprAst(name) {}
   virtual ~AssignExprAst() {}
   virtual std::string name() =0;
-  virtual void assign(SvlmLangContext *slc, Number &n) = 0;
+  virtual void assign(SvlmLangContext *slc, std::any d) = 0;
 };
 
 class GvarExprAst : public AssignExprAst {
@@ -76,7 +76,7 @@ public:
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
-  void assign(SvlmLangContext *slc, Number &n) override;
+  void assign(SvlmLangContext *slc, std::any d) override;
 private:
 };
 
@@ -85,6 +85,7 @@ public:
   LvarExprAst(std::string s) : ExprAst(s) {}
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
+  //void assign(SvlmLangContext *slc, std::any d) override;
   void print() override;
 private:
 };

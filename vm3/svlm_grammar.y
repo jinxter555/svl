@@ -32,7 +32,7 @@ namespace vslast {
 #define yylex(x,y) scanner->lex(x,y)
 
 SvlmLang* svlm_lang;
-std::vector<std::string> param_list;
+std::vector<std::string> param_list, lvar_list;
 
 }
 
@@ -57,7 +57,7 @@ std::vector<std::string> param_list;
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp num_exp statement arg print_exp def_module def_function def_caller comments 
+%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp def_module def_function def_caller comments 
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
 
 %start program_start
@@ -126,17 +126,15 @@ arg
   ;
 
 exp
-  : num_exp {$$ = $1; }
+  : exp_num {$$ = $1; }
+ // | exp_str {$$ = $1; }
  // | error { yyerrok; }
   | AST_RETURN { $$ = std::make_shared<DisContExprAst>(std::string("return")); }
   ;
 
 print_exp
   : PRINT exp { $$ = std::make_shared<PrintExprAst>($2); }
-  | PRINT STR { 
-    $$ = std::make_shared<PrintExprAst>
-      (std::make_shared<IdentExprAst>($2)); 
-  }
+  | PRINT STR { $$ = std::make_shared<PrintExprAst> (std::make_shared<IdentExprAst>($2)); }
   ;
 
 def_module
@@ -156,19 +154,29 @@ def_caller
   }
 
 
-num_exp
+exp_num
   : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
-  | num_exp math_bin_op num_exp { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
-  | LPAREN num_exp RPAREN        { $$ = $2; }
+  | exp_num math_bin_op exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
+  | LPAREN exp_num RPAREN        { $$ = $2; }
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
-  | DOLLAR STR ASSIGN num_exp { 
+  | DOLLAR STR ASSIGN exp_num {  // global variable
     slc->add_mvar_name($2);  // add to context tree
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<GvarExprAst>(std::string($2)), 
       $4, '=');
   }
+  | STR ASSIGN exp_num { 
+    lvar_list.push_back($1);
+  }
   ;
+
+/*
+exp_str
+  //: DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
+  : DOLLAR STR ASSIGN STR { $$ = std::make_shared<IdentExprAst>($2); }
+  ;
+  */
 
 
 math_bin_op
@@ -184,10 +192,12 @@ def_function
     //if($2=="") std::cerr << "error empty function string!\n";
     slc->add_function_name($2);
     slc->add_function_params($4);
+    slc->add_function_lvars(lvar_list);
     slc->add_function_fbody(func_ptr);
     //std::cout << "in def fun print:\n"; $7->print();
 
     param_list.clear();
+    lvar_list.clear();
     slc->svlm_lang->done_ast_l_cc(); // pop the statement_list code block
     $$ = func_ptr;
   }
