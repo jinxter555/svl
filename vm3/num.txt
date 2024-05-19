@@ -1,2 +1,3 @@
 module mhello
-ab:ff
+print "hello, world what \n"
+

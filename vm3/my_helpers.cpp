@@ -59,3 +59,60 @@ std::string match(const std::string& line, const std::string& pattern) {
     return "";
   }
 }
+
+std::string raw_to_escaped_string(const std::string& s) {
+    std::string result;
+    std::string::const_iterator it = s.begin();
+
+    while (it != s.end()) {
+        char c = *it++;
+        if (c == '\\' && it != s.end()) {
+            switch (*it++) {
+                case '\\':
+                    result += '\\'; // Backslash
+                    break;
+                case 'n':
+                    result += '\n'; // Newline
+                    break;
+                case 't':
+                    result += '\t'; // Tab
+                    break;
+                case '\"':
+                    result += '\"'; // Double quote
+                    break;
+                case '\'':
+                    result += '\''; // Single quote
+                    break;
+                case 'r':
+                    result += '\r'; // Carriage return
+                    break;
+                case 'b':
+                    result += '\b'; // Backspace
+                    break;
+                case 'f':
+                    result += '\f'; // Form feed
+                    break;
+                case 'a':
+                    result += '\a'; // Alert (bell)
+                    break;
+                case 'v':
+                    result += '\v'; // Vertical tab
+                    break;
+                case '?':
+                    result += '\?'; // Question mark
+                    break;
+                case '0':
+                    result += '\0'; // Null character
+                    break;
+                // Add other escape sequences as needed
+                default:
+                    // Invalid escape sequence - keep the character unchanged
+                    result += c;
+            }
+        } else {
+            result += c; // No escape sequence, keep the character as is
+        }
+    }
+
+    return result;
+}

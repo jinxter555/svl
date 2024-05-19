@@ -1,6 +1,7 @@
 %{
 #include "svlm_parser.hh"
 #include "svlm_scanner.hh"
+#include "my_helpers.hh"
 #define YY_DECL int vslast::SvlmScanner::lex(\
   vslast::SvlmParser::semantic_type *yylval,\
   vslast::SvlmParser::location_type *yylloc)
@@ -18,21 +19,12 @@ integer         ({dseq})
 float           (({frac}{exp_opt})|({dseq}{exp}))
 identifier      ([a-zA-Z][a-zA-Z0-9_]*)
 blank           [ \t\r]           
+dqstring        \"([^"\\]|\\[^\n\\])*\"  
+
 
 %{
 #define YY_USER_ACTION yylloc->columns(yyleng);
-/*
-^#.*\n          {
-  yylloc->lines(yyleng); 
-  yylloc->step(); 
-  return SvlmParser::token::COMMENT1; // ignore comment
-}
-#.*\n          {
-  yylloc->lines(yyleng); 
-  yylloc->step(); 
-  return SvlmParser::token::COMMENT2; // ignore comment
-}
-*/
+std::string raw_to_escaped_string(const std::string& raw_string);
 %}
 
 %%
@@ -65,6 +57,12 @@ blank           [ \t\r]
 ":"             return SvlmParser::token::COLON;
 ";"             return SvlmParser::token::SEMICOLON;
 
+{dqstring}        { 
+  std::string result = raw_to_escaped_string(YYText()); 
+  result.erase(0, 1); result.erase(result.size() - 1);
+  yylval->emplace<std::string>(result);
+  return SvlmParser::token::DQSTR;
+  }
 
 
 
@@ -106,3 +104,4 @@ int main() {
   parser.parse();
 }
 */
+

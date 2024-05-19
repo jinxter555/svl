@@ -40,7 +40,7 @@ std::vector<std::string> param_list, lvar_list;
 %token YYEOF EOL COMMENT1 COMMENT2
 %token              MODULE DEF DO END AST_RETURN PRINT
 %token              LPAREN RPAREN AT DOLLAR COLON COMMA SEMICOLON
-%token <std::string> IDENT_STR STR
+%token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
 %token <float>     FLT
  
@@ -134,7 +134,7 @@ exp
 
 print_exp
   : PRINT exp { $$ = std::make_shared<PrintExprAst>($2); }
-//  | PRINT STR { $$ = std::make_shared<PrintExprAst> (std::make_shared<IdentExprAst>($2)); }
+  | PRINT DQSTR { $$ = std::make_shared<PrintExprAst> (std::make_shared<IdentExprAst>($2)); }
   ;
 
 def_module
@@ -159,13 +159,15 @@ exp_num
   | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | exp_num math_bin_op exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
   | LPAREN exp_num RPAREN        { $$ = $2; }
+
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
-  | DOLLAR STR ASSIGN exp_num {  // global variable
-    slc->add_mvar_name($2);  // add to context tree
+  | DOLLAR STR ASSIGN exp_num {           // global variable
+    slc->add_mvar_name($2);               // add to context tree
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<GvarExprAst>(std::string($2)), 
       $4, '=');
   }
+
   | STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
   | STR ASSIGN exp_num { 
     lvar_list.push_back($1);
