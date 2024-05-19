@@ -395,11 +395,28 @@ namespace vslast {
       // INT
       char dummy3[sizeof (int)];
 
-      // iexp
+      // comments
+      // statement
+      // arg
+      // exp
+      // print_exp
+      // def_module
+      // def_caller
+      // exp_num
+      // def_function
       char dummy4[sizeof (std::shared_ptr<ExprAst>)];
 
+      // statement_list
+      // arg_list
+      char dummy5[sizeof (std::shared_ptr<ListExprAst>)];
+
       // IDENT_STR
-      char dummy5[sizeof (std::string)];
+      // STR
+      // param
+      char dummy6[sizeof (std::string)];
+
+      // param_list
+      char dummy7[sizeof (std::vector<std::string>)];
     };
 
     /// The size of the largest semantic type.
@@ -450,24 +467,34 @@ namespace vslast {
     YYerror = 256,                 // error
     YYUNDEF = 257,                 // "invalid token"
     EOL = 258,                     // EOL
-    LPAREN = 259,                  // LPAREN
-    RPAREN = 260,                  // RPAREN
-    AT = 261,                      // AT
-    MODULE = 262,                  // MODULE
-    DOLLAR = 263,                  // DOLLAR
-    COLON = 264,                   // COLON
-    IDENT_STR = 265,               // IDENT_STR
-    INT = 266,                     // INT
-    FLT = 267,                     // FLT
-    ASSIGN = 268,                  // ASSIGN
-    PLUS = 269,                    // PLUS
-    MINUS = 270,                   // MINUS
-    MULTIPLY = 271,                // MULTIPLY
-    DIVIDE = 272,                  // DIVIDE
-    MODULO = 273,                  // MODULO
-    UMINUS = 274,                  // UMINUS
-    FACTORIAL = 275,               // FACTORIAL
-    EXPONENT = 276                 // EXPONENT
+    COMMENT1 = 259,                // COMMENT1
+    COMMENT2 = 260,                // COMMENT2
+    MODULE = 261,                  // MODULE
+    DEF = 262,                     // DEF
+    DO = 263,                      // DO
+    END = 264,                     // END
+    AST_RETURN = 265,              // AST_RETURN
+    PRINT = 266,                   // PRINT
+    LPAREN = 267,                  // LPAREN
+    RPAREN = 268,                  // RPAREN
+    AT = 269,                      // AT
+    DOLLAR = 270,                  // DOLLAR
+    COLON = 271,                   // COLON
+    COMMA = 272,                   // COMMA
+    SEMICOLON = 273,               // SEMICOLON
+    IDENT_STR = 274,               // IDENT_STR
+    STR = 275,                     // STR
+    INT = 276,                     // INT
+    FLT = 277,                     // FLT
+    ASSIGN = 278,                  // ASSIGN
+    PLUS = 279,                    // PLUS
+    MINUS = 280,                   // MINUS
+    MULTIPLY = 281,                // MULTIPLY
+    DIVIDE = 282,                  // DIVIDE
+    MODULO = 283,                  // MODULO
+    UMINUS = 284,                  // UMINUS
+    FACTORIAL = 285,               // FACTORIAL
+    EXPONENT = 286                 // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -484,36 +511,57 @@ namespace vslast {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 22, ///< Number of tokens.
+        YYNTOKENS = 32, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
         S_YYUNDEF = 2,                           // "invalid token"
         S_EOL = 3,                               // EOL
-        S_LPAREN = 4,                            // LPAREN
-        S_RPAREN = 5,                            // RPAREN
-        S_AT = 6,                                // AT
-        S_MODULE = 7,                            // MODULE
-        S_DOLLAR = 8,                            // DOLLAR
-        S_COLON = 9,                             // COLON
-        S_IDENT_STR = 10,                        // IDENT_STR
-        S_INT = 11,                              // INT
-        S_FLT = 12,                              // FLT
-        S_ASSIGN = 13,                           // ASSIGN
-        S_PLUS = 14,                             // PLUS
-        S_MINUS = 15,                            // MINUS
-        S_MULTIPLY = 16,                         // MULTIPLY
-        S_DIVIDE = 17,                           // DIVIDE
-        S_MODULO = 18,                           // MODULO
-        S_UMINUS = 19,                           // UMINUS
-        S_FACTORIAL = 20,                        // FACTORIAL
-        S_EXPONENT = 21,                         // EXPONENT
-        S_YYACCEPT = 22,                         // $accept
-        S_start = 23,                            // start
-        S_lines = 24,                            // lines
-        S_line = 25,                             // line
-        S_iexp = 26,                             // iexp
-        S_math_bin_op = 27                       // math_bin_op
+        S_COMMENT1 = 4,                          // COMMENT1
+        S_COMMENT2 = 5,                          // COMMENT2
+        S_MODULE = 6,                            // MODULE
+        S_DEF = 7,                               // DEF
+        S_DO = 8,                                // DO
+        S_END = 9,                               // END
+        S_AST_RETURN = 10,                       // AST_RETURN
+        S_PRINT = 11,                            // PRINT
+        S_LPAREN = 12,                           // LPAREN
+        S_RPAREN = 13,                           // RPAREN
+        S_AT = 14,                               // AT
+        S_DOLLAR = 15,                           // DOLLAR
+        S_COLON = 16,                            // COLON
+        S_COMMA = 17,                            // COMMA
+        S_SEMICOLON = 18,                        // SEMICOLON
+        S_IDENT_STR = 19,                        // IDENT_STR
+        S_STR = 20,                              // STR
+        S_INT = 21,                              // INT
+        S_FLT = 22,                              // FLT
+        S_ASSIGN = 23,                           // ASSIGN
+        S_PLUS = 24,                             // PLUS
+        S_MINUS = 25,                            // MINUS
+        S_MULTIPLY = 26,                         // MULTIPLY
+        S_DIVIDE = 27,                           // DIVIDE
+        S_MODULO = 28,                           // MODULO
+        S_UMINUS = 29,                           // UMINUS
+        S_FACTORIAL = 30,                        // FACTORIAL
+        S_EXPONENT = 31,                         // EXPONENT
+        S_YYACCEPT = 32,                         // $accept
+        S_program_start = 33,                    // program_start
+        S_comments = 34,                         // comments
+        S_statement_list = 35,                   // statement_list
+        S_statement = 36,                        // statement
+        S_arg_list = 37,                         // arg_list
+        S_arg = 38,                              // arg
+        S_exp = 39,                              // exp
+        S_print_exp = 40,                        // print_exp
+        S_def_module = 41,                       // def_module
+        S_def_caller = 42,                       // def_caller
+        S_exp_num = 43,                          // exp_num
+        S_math_bin_op = 44,                      // math_bin_op
+        S_def_function = 45,                     // def_function
+        S_param_list = 46,                       // param_list
+        S_param = 47,                            // param
+        S_EOS = 48                               // EOS
       };
     };
 
@@ -562,12 +610,31 @@ namespace vslast {
         value.move< int > (std::move (that.value));
         break;
 
-      case symbol_kind::S_iexp: // iexp
+      case symbol_kind::S_comments: // comments
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_arg: // arg
+      case symbol_kind::S_exp: // exp
+      case symbol_kind::S_print_exp: // print_exp
+      case symbol_kind::S_def_module: // def_module
+      case symbol_kind::S_def_caller: // def_caller
+      case symbol_kind::S_exp_num: // exp_num
+      case symbol_kind::S_def_function: // def_function
         value.move< std::shared_ptr<ExprAst> > (std::move (that.value));
         break;
 
+      case symbol_kind::S_statement_list: // statement_list
+      case symbol_kind::S_arg_list: // arg_list
+        value.move< std::shared_ptr<ListExprAst> > (std::move (that.value));
+        break;
+
       case symbol_kind::S_IDENT_STR: // IDENT_STR
+      case symbol_kind::S_STR: // STR
+      case symbol_kind::S_param: // param
         value.move< std::string > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_param_list: // param_list
+        value.move< std::vector<std::string> > (std::move (that.value));
         break;
 
       default:
@@ -650,6 +717,20 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::shared_ptr<ListExprAst>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::shared_ptr<ListExprAst>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -657,6 +738,20 @@ namespace vslast {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::vector<std::string>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::vector<std::string>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -699,12 +794,31 @@ switch (yykind)
         value.template destroy< int > ();
         break;
 
-      case symbol_kind::S_iexp: // iexp
+      case symbol_kind::S_comments: // comments
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_arg: // arg
+      case symbol_kind::S_exp: // exp
+      case symbol_kind::S_print_exp: // print_exp
+      case symbol_kind::S_def_module: // def_module
+      case symbol_kind::S_def_caller: // def_caller
+      case symbol_kind::S_exp_num: // exp_num
+      case symbol_kind::S_def_function: // def_function
         value.template destroy< std::shared_ptr<ExprAst> > ();
         break;
 
+      case symbol_kind::S_statement_list: // statement_list
+      case symbol_kind::S_arg_list: // arg_list
+        value.template destroy< std::shared_ptr<ListExprAst> > ();
+        break;
+
       case symbol_kind::S_IDENT_STR: // IDENT_STR
+      case symbol_kind::S_STR: // STR
+      case symbol_kind::S_param: // param
         value.template destroy< std::string > ();
+        break;
+
+      case symbol_kind::S_param_list: // param_list
+        value.template destroy< std::vector<std::string> > ();
         break;
 
       default:
@@ -944,6 +1058,126 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_COMMENT1 (location_type l)
+      {
+        return symbol_type (token::COMMENT1, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_COMMENT1 (const location_type& l)
+      {
+        return symbol_type (token::COMMENT1, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMENT2 (location_type l)
+      {
+        return symbol_type (token::COMMENT2, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_COMMENT2 (const location_type& l)
+      {
+        return symbol_type (token::COMMENT2, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MODULE (location_type l)
+      {
+        return symbol_type (token::MODULE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MODULE (const location_type& l)
+      {
+        return symbol_type (token::MODULE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DEF (location_type l)
+      {
+        return symbol_type (token::DEF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DEF (const location_type& l)
+      {
+        return symbol_type (token::DEF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DO (location_type l)
+      {
+        return symbol_type (token::DO, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DO (const location_type& l)
+      {
+        return symbol_type (token::DO, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_END (location_type l)
+      {
+        return symbol_type (token::END, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_END (const location_type& l)
+      {
+        return symbol_type (token::END, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_AST_RETURN (location_type l)
+      {
+        return symbol_type (token::AST_RETURN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_AST_RETURN (const location_type& l)
+      {
+        return symbol_type (token::AST_RETURN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PRINT (location_type l)
+      {
+        return symbol_type (token::PRINT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_PRINT (const location_type& l)
+      {
+        return symbol_type (token::PRINT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_LPAREN (location_type l)
       {
         return symbol_type (token::LPAREN, std::move (l));
@@ -989,21 +1223,6 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_MODULE (location_type l)
-      {
-        return symbol_type (token::MODULE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_MODULE (const location_type& l)
-      {
-        return symbol_type (token::MODULE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
       make_DOLLAR (location_type l)
       {
         return symbol_type (token::DOLLAR, std::move (l));
@@ -1034,6 +1253,36 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_COMMA (location_type l)
+      {
+        return symbol_type (token::COMMA, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_COMMA (const location_type& l)
+      {
+        return symbol_type (token::COMMA, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SEMICOLON (location_type l)
+      {
+        return symbol_type (token::SEMICOLON, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SEMICOLON (const location_type& l)
+      {
+        return symbol_type (token::SEMICOLON, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_IDENT_STR (std::string v, location_type l)
       {
         return symbol_type (token::IDENT_STR, std::move (v), std::move (l));
@@ -1044,6 +1293,21 @@ switch (yykind)
       make_IDENT_STR (const std::string& v, const location_type& l)
       {
         return symbol_type (token::IDENT_STR, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STR (std::string v, location_type l)
+      {
+        return symbol_type (token::STR, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_STR (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::STR, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1288,7 +1552,7 @@ switch (yykind)
 
 #if YYDEBUG
     // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-    static const signed char yyrline_[];
+    static const unsigned char yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r) const;
     /// Print the state stack on the debug stream.
@@ -1515,9 +1779,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 26,     ///< Last index in yytable_.
-      yynnts_ = 6,  ///< Number of nonterminal symbols.
-      yyfinal_ = 3 ///< Termination state number.
+      yylast_ = 77,     ///< Last index in yytable_.
+      yynnts_ = 17,  ///< Number of nonterminal symbols.
+      yyfinal_ = 30 ///< Termination state number.
     };
 
 
@@ -1530,7 +1794,7 @@ switch (yykind)
 
 #line 13 "svlm_grammar.y"
 } // vslast
-#line 1534 "svlm_parser.hh"
+#line 1798 "svlm_parser.hh"
 
 
 

@@ -168,6 +168,9 @@ exp_num
   }
   | STR ASSIGN exp_num { 
     lvar_list.push_back($1);
+    $$ = std::make_shared<BinOpExprAst>(
+      std::make_shared<LvarExprAst>(std::string($1)), 
+      $3, '=');
   }
   ;
 

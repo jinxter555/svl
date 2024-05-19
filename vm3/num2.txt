@@ -5,9 +5,9 @@ module mhello
 $hello = 5 + 6 * 11
 $abc = $hello + 123
 $hello + $abc
-print hello_is_
-print $hello
-myfun1(1+1,2+2)
+#print hello_is_
+#print $hello
+myfun2(123,555)
 return
 def myfun1(world, wide) do
   1 + 2

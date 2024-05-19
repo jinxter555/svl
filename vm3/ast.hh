@@ -80,12 +80,13 @@ public:
 private:
 };
 
-class LvarExprAst : public ExprAst {
+class LvarExprAst : public AssignExprAst {
 public:
-  LvarExprAst(std::string s) : ExprAst(s) {}
+  LvarExprAst(std::string name);
+  std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
-  //void assign(SvlmLangContext *slc, std::any d) override;
+  void assign(SvlmLangContext *slc, std::any d) override;
   void print() override;
 private:
 };

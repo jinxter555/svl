@@ -111,6 +111,22 @@ void GvarExprAst::codegen(std::vector<std::string> &code) const {
 void GvarExprAst::print() { 
   print_data(); //std::cout << "\n";
 }
+//----------------------------- local variable expr
+LvarExprAst::LvarExprAst(std::string name)
+ : AssignExprAst(name) {
+}
+std::string LvarExprAst::name() { 
+  return std::any_cast<std::string>(get_data()); 
+}
+std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
+  return 0;
+}
+void LvarExprAst::codegen(std::vector<std::string> &code) const {
+}
+void LvarExprAst::assign(SvlmLangContext *slc, std::any d) {}
+void LvarExprAst::print() {}
+
+
 
 //----------------------------- func arg expr
 ArgExprAst::ArgExprAst(std::string name, unsigned char pos) {
@@ -342,13 +358,17 @@ void FuncExprAst::codegen(std::vector<std::string> &code) const {
 }
 //--------------------
 CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
-  add_child("args", args ); // add to universe tree instead, when evaluate push these args to stack
+  add_child("args", args ); // add to ast tree instead, when evaluate push these args to stack
 }
 void CallExprAst::fcall_args_setup(SvlmLangContext *slc) { 
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("args"));
   auto args_evaluated = move(std::any_cast<std::vector<std::any>>(l->evaluate(slc)));
   //std::cout << "with arguments evaluated:\n"; for(auto e : args_evaluated) { std::cout << e << "\n"; }
   slc->svlm_lang->fcall_args_setup(args_evaluated); // s
+  slc->fcall_stack_setup(args_evaluated); // s
+
+  std::cout << "module: " << slc->current_context.smodule  << "\n";
+  std::cout << "calling: "; print_data(); std::cout << "\n";
 }
 
 std::any CallExprAst::evaluate(SvlmLangContext *slc) { 

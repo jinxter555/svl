@@ -13,6 +13,9 @@ void TreeNode::add_child(const std::string &key, std::shared_ptr<TreeNode> child
 void TreeNode::add_member(std::shared_ptr<TreeNode> member) {
   members.push_back(member);
 }
+std::map<std::string, std::shared_ptr<TreeNode>> TreeNode::get_children() const {
+  return children;
+}
 
 std::shared_ptr<TreeNode> TreeNode::get_child(const std::string &key) const {
  // cout << "in get child\n";
@@ -30,6 +33,10 @@ std::shared_ptr<TreeNode> TreeNode::get_child(const std::string &key) const {
 std::shared_ptr<TreeNode> TreeNode::get_member(int index) const {
   return members[index];
 }
+std::any TreeNode::get_member_data(int index) const {
+  return get_member(index)->get_data();
+}
+
 int TreeNode::get_member_size() const {
   return members.size();
 }

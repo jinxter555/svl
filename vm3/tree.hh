@@ -24,7 +24,12 @@ public:
   void add_member(std::shared_ptr<TreeNode> m);
 
   std::shared_ptr<TreeNode> get_child(const std::string& key) const;
+
+  std::map<std::string, std::shared_ptr<TreeNode>> get_children() const;
+  //std::vector<std::shared_ptr<TreeNode>> get_members() const;
+
   std::shared_ptr<TreeNode> get_member(int index) const;
+  std::any get_member_data(int index) const;
   int get_member_size() const;
 
   std::vector<std::string> get_child_keys() const;

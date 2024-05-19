@@ -5,6 +5,9 @@
 #include <any>
 #include <memory>
 
+
+#define TM std::map<std::string, std::shared_ptr<TreeNode>>
+
 std::ostream& operator << (std::ostream& out, std::any& a) {
   if(a.type()  == typeid(char))
     out << std::any_cast<char>(a);
@@ -26,13 +29,18 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     out << std::any_cast<std::string>(a);
   else if(a.type()  == typeid(Number)) {
     Number num= std::any_cast<Number>(a);
-    num.printData();
-    }
+    num.printData(); }
   else if(a.type()  == typeid(std::shared_ptr<ExprAst>)) {
     std::cout  << "function code block\n";
     std::shared_ptr ast = std::any_cast<std::shared_ptr<ExprAst>>(a);
-    ast->print();
-    }
+    ast->print(); }
+  else if(a.type()  == typeid(TM)) {
+    TM lvars = std::any_cast<TM>(a);
+    std::cout  << "Tree node\n";
+    for (const auto& [key, _] :  lvars) {
+      std::any  v = lvars[key]->get_data();
+      std::cout << "k: " << key << ", v: " << v << "\n";
+    }}
   else
     out << "unknown value type!";
   return out;

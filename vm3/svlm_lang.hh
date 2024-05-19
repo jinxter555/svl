@@ -8,6 +8,8 @@
 #include "lang.hh"
 #include "frame_svlm.hh"
 
+std::ostream& operator << (std::ostream& out, std::any& a) ;
+
 class SvlmLang {
   friend class SvlmInteractive;
   friend class SvlmLangContext;
@@ -68,4 +70,30 @@ public:
   s_int_t get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst);
   std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);
 
+  void fcall_stack_setup(std::vector<std::any> args) {
+    // get the lvar from 
+    full_symbol_t fst = current_context; 
+    std::string k;
+    std::vector<std::string> keys, lvar_keys;
+    keys = move(get_sym_key(key_tok_t::mfunction, fst)); // same as lva
+    keys.push_back("lvars");
+    std::shared_ptr<TreeNode> lvar_node  = svlm_lang->context_tree->get_node({keys});
+    std::map<std::string, std::shared_ptr<TreeNode>> lvars = lvar_node->get_children();
+
+
+    for(int i=0; i<args.size(); i++) {
+      std::cout << "arg: " << std::any_cast<std::string>(lvar_node->get_member_data(i)) << "=" << args[i]<< "\n";
+      k = std::any_cast<std::string>(lvar_node->get_member_data(i));
+      lvars[k]->set_data(args[i]);
+/*
+    for (const auto& [key, _] : lvars) {
+      std::cout << "k: " << key << "\n";
+      lvars[key]->set_data(555);
+    }
+
+*/
+    }
+     svlm_lang->svlm_stack.push_back(lvars);
+
+  }
 };
