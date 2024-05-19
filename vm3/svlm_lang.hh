@@ -8,6 +8,10 @@
 #include "lang.hh"
 #include "frame_svlm.hh"
 
+#define TM std::map<std::string, std::shared_ptr<TreeNode>>
+#define TMA std::map<std::string, std::any>
+
+
 std::ostream& operator << (std::ostream& out, std::any& a) ;
 
 class SvlmLang {
@@ -22,7 +26,8 @@ public:
   std::shared_ptr<ListExprAst> ast_current_context;
   
   std::vector<FrameSvlm> svlm_frames;
-  std::vector<std::any> svlm_stack;
+  // std::vector<std::any> svlm_stack;
+  std::vector<std::shared_ptr<TMA>> svlm_stack;
   FrameSvlm frame;
   bool ast_eval_continue = true;
 
@@ -81,21 +86,21 @@ public:
     std::shared_ptr<TreeNode> lvar_node  = svlm_lang->context_tree->get_node({keys});
     std::map<std::string, std::shared_ptr<TreeNode>> lvars = lvar_node->get_children();
 
-    std::cout<< "keys: "; for(auto k: keys) {std::cout << k << " ";} std::cout << "\n";
+    auto lvars_tma = std::make_shared<TMA>();
 
-    std::cout << "lvars:\n";
-    for (const auto& [key, _] : lvars) {
-      std::cout << "k: " << key << "\n";
-    }
-    std::cout << "\n";
+    //std::cout<< "keys: "; for(auto k: keys) {std::cout << k << " ";} std::cout << "\n";
+    //std::cout << "lvars:\n"; for (const auto& [key, _] : lvars) { std::cout << "k: " << key << "\n"; } std::cout << "\n";
+    for (const auto& [k, v] : lvars)  // set up all the local vars names including argumentsname
+      (*lvars_tma)[k] = v;
 
     for(int i=0; i<args.size(); i++) {
       std::cout << "arg: " << std::any_cast<std::string>(lvar_node->get_member_data(i)) << "=" << args[i]<< "\n";
       k = std::any_cast<std::string>(lvar_node->get_member_data(i));
-      lvars[k]->set_data(args[i]);
+      //lvars[k]->set_data(args[i]);
+      (*lvars_tma)[k] = args[i];
     }
 
-    svlm_lang->svlm_stack.push_back(lvars);
+    svlm_lang->svlm_stack.push_back(lvars_tma);
 
   }
 };

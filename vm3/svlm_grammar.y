@@ -134,7 +134,7 @@ exp
 
 print_exp
   : PRINT exp { $$ = std::make_shared<PrintExprAst>($2); }
-  | PRINT STR { $$ = std::make_shared<PrintExprAst> (std::make_shared<IdentExprAst>($2)); }
+//  | PRINT STR { $$ = std::make_shared<PrintExprAst> (std::make_shared<IdentExprAst>($2)); }
   ;
 
 def_module
@@ -166,6 +166,7 @@ exp_num
       std::make_shared<GvarExprAst>(std::string($2)), 
       $4, '=');
   }
+  | STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
   | STR ASSIGN exp_num { 
     lvar_list.push_back($1);
     $$ = std::make_shared<BinOpExprAst>(

@@ -7,22 +7,18 @@ $abc = $hello + 123
 $hello + $abc
 #print hello_is_
 #print $hello
-myfun1(123,555)
+myfun2(123,555)
 return
 def myfun1(world, wide) do
-  1 + 2
-  3 + 4
-  5 + 6
   lnum1 = 123
   lnum2 = 567
   lnum3 = 567
   $what = 555
-  print $what
+  print lnum15
 end
 def myfun2(world, wide) do
-  10 + 2
-  30 + 4
-  50 + 6
+  num1 = world
+  print world
 end
 5+1
 def myfun3(world, wide) do 1+2; 2+3; end

@@ -119,11 +119,20 @@ std::string LvarExprAst::name() {
   return std::any_cast<std::string>(get_data()); 
 }
 std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
-  return 0;
+  //std::map<std::string, std::shared_ptr<TreeNode>> lvars;
+  std::shared_ptr<TMA> lvars_tma = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
+  std::any a = (*lvars_tma)[name()];
+  std::cout << "eval lvar " << name() << " = " << a << "\n";
+  return a;
 }
 void LvarExprAst::codegen(std::vector<std::string> &code) const {
 }
-void LvarExprAst::assign(SvlmLangContext *slc, std::any d) {}
+void LvarExprAst::assign(SvlmLangContext *slc, std::any d) {
+  std::cout << "assign lvar " << name() << " = " << d << "\n";
+  std::shared_ptr<TMA> lvars_tma 
+    = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
+  (*lvars_tma)[name()]= d;
+}
 void LvarExprAst::print() {}
 
 

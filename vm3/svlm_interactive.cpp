@@ -47,10 +47,23 @@ void SvlmInteractive::print_ast(const std::string& line) {
 void SvlmInteractive::print_stack(const std::string& message) {
   int i=0;
   std::cout << "stack: " <<  message << std::endl;
-  for ( std::vector<std::any>::iterator it = svlm_lang.svlm_stack.begin() ; 
+
+  /*
+  for ( std::vector<std::shared_ptr<TMA>>::iterator it = svlm_lang.svlm_stack.begin() ; 
     it != svlm_lang.svlm_stack.end(); ++it) {
+    if((*it)==nullptr) { std::cerr << "nullptr in stack!\n"; break;}
     std::cout << i++ << ": " << (*it) << "\n";
+  }*/
+
+  for (const auto& sharedMap : svlm_lang.svlm_stack) {
+    std::cout << i++ << ":";
+    for (const auto& keyValue : *sharedMap) {
+      std::any second  = keyValue.second;
+      std::cout << keyValue.first << ": " << second << std::endl;
+    }
+    std::cout << std::endl;
   }
+
   std::cout << '\n';
 
 }

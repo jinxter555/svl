@@ -7,6 +7,7 @@
 
 
 #define TM std::map<std::string, std::shared_ptr<TreeNode>>
+#define TMA std::map<std::string, std::any>
 
 std::ostream& operator << (std::ostream& out, std::any& a) {
   if(a.type()  == typeid(char))
@@ -34,6 +35,8 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     std::cout  << "function code block\n";
     std::shared_ptr ast = std::any_cast<std::shared_ptr<ExprAst>>(a);
     ast->print(); }
+  else if(a.type()  == typeid(std::shared_ptr<TMA>)) {
+    std::cout  << "shared ptr TMA\n"; }
   else if(a.type()  == typeid(TM)) {
     TM lvars = std::any_cast<TM>(a);
     std::cout  << "Tree node\n";
