@@ -1,6 +1,6 @@
 #CC=clang++ -std=c++17 -g
-#CC=g++ -std=c++17 -g
-CC=g++ -std=c++17 
+CC=g++ -std=c++17 -g
+#CC=g++ -std=c++17 
 
 main.out:  asm_lexer.l asm_grammar.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
 	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o svlm_grammar.y svlm_lexer.l  \

@@ -194,13 +194,14 @@ math_bin_op
 
 def_function
   : DEF STR LPAREN param_list RPAREN DO statement_list END { 
-    std::shared_ptr<FuncExprAst> func_ptr = std::make_shared<FuncExprAst>(std::string($2), param_list, $7); 
-    //if($2=="") std::cerr << "error empty function string!\n";
+
+    std::shared_ptr<FuncExprAst> func_ptr = 
+      std::make_shared<FuncExprAst>
+        (std::string($2), param_list, $7); 
     slc->add_function_name($2);
-    slc->add_function_params($4);
+    slc->add_function_params(param_list);
     slc->add_function_lvars(lvar_list);
     slc->add_function_fbody(func_ptr);
-    //std::cout << "in def fun print:\n"; $7->print();
 
     param_list.clear();
     lvar_list.clear();
@@ -215,6 +216,7 @@ param_list
     param_list.push_back($3);
     $$ = param_list;
   }
+  | %empty
  // | error { yyerrok; }
   ;
 

@@ -31,7 +31,7 @@ public:
   FrameSvlm frame;
   bool ast_eval_continue = true;
 
-  void fcall_args_setup(std::vector<std::any>);
+  //void fcall_args_setup(std::vector<std::any>);
 
 
   // parser functions
@@ -82,21 +82,29 @@ public:
     std::string k;
     std::vector<std::string> keys, lvar_keys;
     keys = move(get_sym_key(key_tok_t::mfunction, fst)); // same as lva
-    keys.push_back("lvars");
+
     std::shared_ptr<TreeNode> lvar_node  = svlm_lang->context_tree->get_node({keys});
+    if(lvar_node==nullptr) { std::cerr <<"can't find function: " << callee << " !\n"; return;  }
+
+    keys.push_back("lvars");
+    lvar_node  = svlm_lang->context_tree->get_node({keys});
+    if(lvar_node==nullptr) { std::cerr <<"can't find lvars for function " << callee << " !\n"; return;  }
+
     std::map<std::string, std::shared_ptr<TreeNode>> lvars = lvar_node->get_children();
+
+    //if(lvars.empty()) { std::cerr << "lvars is empty!\n"; return ; }
 
     auto lvars_tma = std::make_shared<TMA>();
 
     //std::cout<< "keys: "; for(auto k: keys) {std::cout << k << " ";} std::cout << "\n";
     //std::cout << "lvars:\n"; for (const auto& [key, _] : lvars) { std::cout << "k: " << key << "\n"; } std::cout << "\n";
-    for (const auto& [k, v] : lvars)  // set up all the local vars names including argumentsname
+
+    for (const auto& [k, v] : lvars)  // set up all the local vars names including argument names
       (*lvars_tma)[k] = v;
 
     for(int i=0; i<args.size(); i++) {
-      std::cout << "arg: " << std::any_cast<std::string>(lvar_node->get_member_data(i)) << "=" << args[i]<< "\n";
+      //std::cout << "arg: " << std::any_cast<std::string>(lvar_node->get_member_data(i)) << "=" << args[i]<< "\n";
       k = std::any_cast<std::string>(lvar_node->get_member_data(i));
-      //lvars[k]->set_data(args[i]);
       (*lvars_tma)[k] = args[i];
     }
 

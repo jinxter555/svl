@@ -120,20 +120,29 @@ std::string LvarExprAst::name() {
 }
 std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
   //std::map<std::string, std::shared_ptr<TreeNode>> lvars;
+  if (slc->svlm_lang->svlm_stack.empty()) { std::cerr << "empty stack 1!\n"; return 0; }
+  if (slc->svlm_lang->svlm_stack.back()==nullptr) { std::cerr << "empty stack 2!\n"; return 0; }
   std::shared_ptr<TMA> lvars_tma = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
+  if(lvars_tma==nullptr) { std::cerr << "unknown local variable: " << name() << " !\n"; return 0;}
+
+  if( ! (*lvars_tma).count(name()) ) {
+    std::cerr << "unknown local variable: " << name() << " !\n"; return 0;
+  }
   std::any a = (*lvars_tma)[name()];
-  std::cout << "eval lvar " << name() << " = " << a << "\n";
+  //std::cout << "eval lvar " << name() << " = " << a << "\n";
   return a;
 }
 void LvarExprAst::codegen(std::vector<std::string> &code) const {
 }
 void LvarExprAst::assign(SvlmLangContext *slc, std::any d) {
-  std::cout << "assign lvar " << name() << " = " << d << "\n";
+  //std::cout << "assign lvar " << name() << " = " << d << "\n";
   std::shared_ptr<TMA> lvars_tma 
     = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
   (*lvars_tma)[name()]= d;
 }
-void LvarExprAst::print() {}
+void LvarExprAst::print() {
+  print_data(); //std::cout << "\n";
+}
 
 
 
@@ -353,7 +362,7 @@ FuncExprAst::FuncExprAst(
 };
 
 std::any FuncExprAst::evaluate(SvlmLangContext *slc) { 
-  std::cout << "In function:"; print_data(); std::cout << " eval!\n";
+  std::cout << "In function: "; print_data(); std::cout << " eval!\n";
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("fbody"));
   return l->evaluate(slc);
 }
@@ -369,11 +378,10 @@ void FuncExprAst::codegen(std::vector<std::string> &code) const {
 CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
   add_child("args", args ); // add to ast tree instead, when evaluate push these args to stack
 }
-void CallExprAst::fcall_args_setup(SvlmLangContext *slc) { 
+void CallExprAst::fcall_setup(SvlmLangContext *slc) { 
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("args"));
   auto args_evaluated = move(std::any_cast<std::vector<std::any>>(l->evaluate(slc)));
   //std::cout << "with arguments evaluated:\n"; for(auto e : args_evaluated) { std::cout << e << "\n"; }
-  //slc->svlm_lang->fcall_args_setup(args_evaluated); // s
   slc->fcall_stack_setup(args_evaluated, std::any_cast<std::string>(get_data())); // s
 
   std::cout << "module: " << slc->current_context.smodule  << "\n";
@@ -381,7 +389,7 @@ void CallExprAst::fcall_args_setup(SvlmLangContext *slc) {
 }
 
 std::any CallExprAst::evaluate(SvlmLangContext *slc) { 
-  fcall_args_setup(slc);
+  fcall_setup(slc);
 
   full_symbol_t fst = slc->current_context;  
   fst.mfunction = std::any_cast<std::string>(get_data());
@@ -389,6 +397,7 @@ std::any CallExprAst::evaluate(SvlmLangContext *slc) {
 
   keys.push_back("fbody");
   std::shared_ptr<TreeNode> tn = slc->svlm_lang->context_tree->get_node(keys);
+  if(tn==nullptr) {std::cerr << "can't find function!\n"; return 0;}
   std::shared_ptr<ExprAst> func = std::any_cast<std::shared_ptr<ExprAst>> ( tn->get_data());
 
   if(func!=nullptr) {

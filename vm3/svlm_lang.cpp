@@ -20,12 +20,13 @@ SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) {
 
 }
 
+/*
 void SvlmLang::fcall_args_setup(std::vector<std::any> args){
   frame.sp = svlm_stack.size(); // set current stack pointer
   svlm_frames.push_back(frame);
   //for(auto a :args) { svlm_stack.push_back(a); }
   frame.fp = svlm_stack.size();
-}
+}*/
 
 //--------------------------------------------------------------------
 SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {
@@ -70,13 +71,21 @@ void SvlmLangContext::add_function_name(const std::string &name) {
   full_symbol_t fst = current_context; fst.mfunction= name;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mfunction, fst));
   svlm_lang->context_tree->add_node(keys, std::string("functions")); // name lookup addr
+
+  keys.push_back("lvars");
+  svlm_lang->context_tree->add_node(keys, std::string("local variables")); 
+  //keys.push_back("fbody"); svlm_lang->context_tree->add_node(keys, "function code"); 
+
   current_context = fst;
 }
 
+
+// add proto type params to lvars
 void SvlmLangContext::add_function_params(std::vector<std::string> param_list) {
   full_symbol_t fst = current_context; 
   std::vector<std::string> keys, lvar_keys;
 
+  // add prototype params to lvars
   for(int i=0; i< param_list.size(); i++) {
     fst.larg = param_list[i];
     keys = move(get_sym_key(key_tok_t::larg, fst)); // same as lva

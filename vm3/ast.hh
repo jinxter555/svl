@@ -146,7 +146,7 @@ public:
 
 class CallExprAst : public ExprAst {
 private:
-  void fcall_args_setup(SvlmLangContext *slc);
+  void fcall_setup(SvlmLangContext *slc);
 public:
   CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args);
   std::any evaluate(SvlmLangContext *slc) override;

@@ -22,3 +22,8 @@ def myfun2(world, wide) do
 end
 5+1
 def myfun3(world, wide) do 1+2; 2+3; end
+def myfun4(world) do 2+2; 2+3; end
+def p() do print "hello, world\n"; end
+def p2() do end
+
+

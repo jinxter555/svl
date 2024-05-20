@@ -1,0 +1,9 @@
+module mhello
+#
+# what is going on
+#
+def p1() do
+  print "hello, world\n";
+  print 2
+end
+def p2() do print "what \n"; end
