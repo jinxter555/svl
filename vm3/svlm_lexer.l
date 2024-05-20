@@ -10,6 +10,7 @@
 %option c++ interactive noyylineno nodefault outfile="svlm_scanner.cpp" 
 %option noyyfree noyyrealloc noyyalloc
 
+
 dseq            ([[:digit:]]+)
 dseq_opt        ({dseq}?)
 frac            (({dseq_opt}"."{dseq})|{dseq}".")

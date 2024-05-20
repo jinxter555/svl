@@ -1,9 +1,12 @@
 module mhello
 #
 # what is going on
-#
+# when p1 is executed without using callee
+# there is no stack hello will fail and segfalt
+print 1000
+return
 def p1() do
-  print "hello, world\n";
-  print 2
+  hello=123
+  print hello
 end
-def p2() do print "what \n"; end
+#  def p2() do print "what \n"; end

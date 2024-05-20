@@ -15,6 +15,7 @@
 %parse-param {SvlmScanner* scanner}
 %parse-param {SvlmLangContext* slc}
 
+
  
 %locations
 
@@ -66,7 +67,14 @@ std::vector<std::string> param_list, lvar_list;
 %%
 program_start
   : statement_list  {
+    /*
+    if(slc->svlm_lang->ast_current_contexts.empty()) {
+      std::cerr << "prg start ast-current-ctxts is empty\n";
+      return 0;
+    }
+    */
     auto p = slc->svlm_lang->ast_current_contexts.top();
+    //if(p==nullptr) {std::cerr << "prg start top is null\n"; return 1;}
     p->add($1);
   }
   ;
@@ -95,7 +103,7 @@ statement_list
   ;
 
 statement
-  : {$$=nullptr;} // end of each statement
+  : %empty {$$=nullptr;} // end of each statement
   | exp 
   | def_module
   | def_function
@@ -121,7 +129,7 @@ arg_list
   ;
 
 arg
-  : {$$ = nullptr;}
+  : %empty {$$ = nullptr;}
   | exp
   ;
 
