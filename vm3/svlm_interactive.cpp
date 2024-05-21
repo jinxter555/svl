@@ -90,10 +90,10 @@ void SvlmInteractive::accept_prompt(const std::string &line) {
 }
 
 void SvlmInteractive::parse_prompt(const std::string &line) {
+    slc.interactive = true;
     if(line[0] == '!') 
       interact(line);
     else {
-      slc.interactive = true;
       parse(line);
     }
 }

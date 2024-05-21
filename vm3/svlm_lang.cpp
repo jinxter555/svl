@@ -18,6 +18,8 @@ SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) {
     frame.sp=0;
     frame.fp=0;
 
+    ast_current_contexts.push(ast_current_context);
+
 }
 
 /*

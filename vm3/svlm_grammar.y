@@ -32,8 +32,9 @@ namespace vslast {
 #include "svlm_lang.hh"
 #define yylex(x,y) scanner->lex(x,y)
 
+
 SvlmLang* svlm_lang;
-std::vector<std::string> param_list, lvar_list;
+std::vector<std::string> lvar_list;
 
 }
 
@@ -66,17 +67,7 @@ std::vector<std::string> param_list, lvar_list;
 
 %%
 program_start
-  : statement_list  {
-    /*
-    if(slc->svlm_lang->ast_current_contexts.empty()) {
-      std::cerr << "prg start ast-current-ctxts is empty\n";
-      return 0;
-    }
-    */
-    auto p = slc->svlm_lang->ast_current_contexts.top();
-    //if(p==nullptr) {std::cerr << "prg start top is null\n"; return 1;}
-    p->add($1);
-  }
+  : statement_list  { auto astcode = slc->svlm_lang->ast_current_contexts.top(); astcode->add($1); }
   ;
 
 comments
@@ -85,21 +76,16 @@ comments
 
 statement_list
   : statement_list EOS statement {
-    if($3 != nullptr) {
-      slc->svlm_lang->ast_current_context->add($3);
-    } else {
-      //std::cout << "reach end statement\n"; 
-    }
-    $$ = slc->svlm_lang->ast_current_context;
+    if($3!=nullptr) $1->add($3);
+    $$ = $1;
   }
   | statement  {
-    if(! slc->interactive)   // if not prompt line interactive
-      slc->svlm_lang->new_ast_l_cc(); // init new ast_current_context for the block
-    if($1!=nullptr) 
-      slc->svlm_lang->ast_current_context->add($1);
-    $$ = slc->svlm_lang->ast_current_context;
+    auto ast_current_context = std::make_shared<ListExprAst>(std::string("statement code here"));
+    ast_current_context->add($1);
+    $$ = ast_current_context;
   }
   | statement_list error EOS statement { yyerrok; }
+  | %empty { $$ = std::make_shared<ListExprAst>(std::string("empty statement code")); }
   ;
 
 statement
@@ -112,39 +98,7 @@ statement
   | comments {$$ = nullptr; }
   ;
 
-arg_list
-  : arg_list COMMA arg {
-    if($3 != nullptr) {
-      slc->svlm_lang->ast_current_context->add($3);
-    } else {std::cout << "reach end of caller\n"; }
-    $$ = slc->svlm_lang->ast_current_context;
-  }
-  | arg {
-    slc->svlm_lang->new_ast_l_cc(); // init new ast_current_context for the block
-    if($1!=nullptr) 
-      slc->svlm_lang->ast_current_context->add($1);
-    $$ = slc->svlm_lang->ast_current_context;
-  }
- // | error { yyerrok; }
-  ;
-
-arg
-  : %empty {$$ = nullptr;}
-  | exp
-  ;
-
-exp
-  : exp_num {$$ = $1; }
- // | exp_str {$$ = $1; }
- // | error { yyerrok; }
-  | AST_RETURN { $$ = std::make_shared<DisContExprAst>(std::string("return")); }
-  ;
-
-print_exp
-  : PRINT exp { $$ = std::make_shared<PrintExprAst>($2); }
-  | PRINT DQSTR { $$ = std::make_shared<PrintExprAst> (std::make_shared<IdentExprAst>($2)); }
-  ;
-
+//--------------------------------------------------- module decl
 def_module
   : MODULE STR { 
     svlm_lang = slc->svlm_lang;
@@ -153,18 +107,48 @@ def_module
   }
   ;
 
+//--------------------------------------------------- callee argument list
+arg_list
+  : arg_list COMMA arg {
+    $1->add($3);
+    $$ = $1;
+  }
+  | arg {
+    auto ast_current_context = std::make_shared<ListExprAst>("argument block");
+    ast_current_context->add($1);
+    $$ = ast_current_context;
+  }
+  | %empty {$$ = std::make_shared<ListExprAst>("empty args");}
+  ;
+
+arg
+  : exp
+  ;
+
+
+//--------------------------------------------------- caller/callee 
 def_caller
   : STR LPAREN arg_list RPAREN {
-    std::cout << "calling function " << $1 << "\n";
     std::shared_ptr<CallExprAst> caller = std::make_shared<CallExprAst>($1, $3); 
-    slc->svlm_lang->done_ast_l_cc(); // pop the statement_list code block
     $$ = caller;
   }
 
+//--------------------------------------------------- exp eval
+exp
+  : exp_num {$$ = $1; }
+  | AST_RETURN { $$ = std::make_shared<DisContExprAst>(std::string("return")); }
+  ;
 
+print_exp
+  : PRINT exp { $$ = std::make_shared<PrintExprAst>($2); }
+  | PRINT DQSTR { $$ = std::make_shared<PrintExprAst> (std::make_shared<IdentExprAst>($2)); }
+  ;
+
+//--------------------------------------------------- exp var eval
 exp_num
   : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
+  | COLON STR { $$ = std::make_shared<AtomExprAst>($2); }
   | exp_num math_bin_op exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
   | LPAREN exp_num RPAREN        { $$ = $2; }
 
@@ -185,14 +169,6 @@ exp_num
   }
   ;
 
-/*
-exp_str
-  //: DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
-  : DOLLAR STR ASSIGN STR { $$ = std::make_shared<IdentExprAst>($2); }
-  ;
-  */
-
-
 math_bin_op
   : PLUS      {$$ = '+';}
   | MINUS     {$$ = '-';}
@@ -200,32 +176,38 @@ math_bin_op
   | DIVIDE    {$$ = '/';}
   ;
 
+//--------------------------------------------------- def function 
 def_function
   : DEF STR LPAREN param_list RPAREN DO statement_list END { 
 
     std::shared_ptr<FuncExprAst> func_ptr = 
       std::make_shared<FuncExprAst>
-        (std::string($2), param_list, $7); 
+        (std::string($2), $4, $7); 
     slc->add_function_name($2);
-    slc->add_function_params(param_list);
+    slc->add_function_params($4);
     slc->add_function_lvars(lvar_list);
     slc->add_function_fbody(func_ptr);
 
-    param_list.clear();
     lvar_list.clear();
-    slc->svlm_lang->done_ast_l_cc(); // pop the statement_list code block
     $$ = func_ptr;
   }
   ;
 
+//--------------------------------------------------- param list
 param_list
-  : param  { param_list.push_back($1); }
-  | param_list COMMA param { 
-    param_list.push_back($3);
-    $$ = param_list;
+  : param  { 
+    std::vector<std::string> pl;
+    pl.push_back($1); 
+    $$ = pl;
   }
-  | %empty
- // | error { yyerrok; }
+  | param_list COMMA param { 
+    $1.push_back($3);
+    $$ = $1;
+  }
+  | %empty { 
+    std::vector<std::string> pl;
+    $$=pl;
+  } 
   ;
 
 param
@@ -234,35 +216,16 @@ param
   }
   ;
 
+//--------------------------------------------------- EOS end of statement
 
 EOS
   : SEMICOLON
   | EOL
   | COMMENT2
   ;
-
-
 %%
 
+//--------------------------------------------------- EOS end of statement
 void vslast::SvlmParser::error(const location_type& l, const std::string& msg) {
     std::cerr << "line "  << l << ": " << msg << '\n';
 }
-
- /*
-void vslast::SvlmParser::report_syntax_error (const vslast::SvlmParser::context& ctx) const
-{
- // Access error context information (replace with specific logic)
-  const char* location_info = yypcontext_location(ctx);
-  const std::string& expected_tokens = yypcontext_expected_tokens(ctx);
-
-  std::cerr << "Error parsing expression:" << std::endl;
-  if (location_info) {
-    std::cerr << "  Location: " << location_info << std::endl;
-  }
-  if (!expected_tokens.empty()) {
-    std::cerr << "  Expected: " << expected_tokens << std::endl;
-  } else {
-    std::cerr << "  Unexpected token encountered." << std::endl;
-  }
-}
-  */

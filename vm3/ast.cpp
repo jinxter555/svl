@@ -1,6 +1,7 @@
 #include "ast.hh"
 #include "svlm_lang.hh"
 #include <iostream>
+#include <type_traits>
 //#include "printer_any.hh"
 std::ostream& operator << (std::ostream& out, std::any& a) ;
 
@@ -65,6 +66,13 @@ std::any NumberExprAst::evaluate(SvlmLangContext *slc) { return ExprAst::get_dat
 void NumberExprAst::print() { 
   TreeNode::print_data(); //std::cout << "\n";
 }
+//----------------------------- atom variable expr
+AtomExprAst::AtomExprAst(std::string s) : ExprAst(s) {}
+std::any AtomExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
+std::string AtomExprAst::name() { return std::any_cast<std::string>(get_data()); }
+void AtomExprAst::codegen(std::vector<std::string> &code) const {}
+void AtomExprAst::print() { print_data(); std::cout << "\n";}
+
 //----------------------------- ident expr
 IdentExprAst::IdentExprAst(std::string s) : ExprAst(s) {}
 std::any IdentExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
@@ -287,7 +295,8 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
     return a / b;}
   case '=': {
     std::shared_ptr<AssignExprAst> al = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
+    // Number b = std::any_cast<Number>(r->evaluate(slc));
+    std::any b = r->evaluate(slc);
     al->assign(slc, b);
     return b; }
   default: std::cerr << "wrong type:\n"; return 0;
@@ -341,18 +350,18 @@ std::any ListExprAst::evaluate(SvlmLangContext *slc) {
 }
 
 std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
-  std::shared_ptr<ExprAst> e;
-  e = 
-    std::dynamic_pointer_cast<ExprAst>(
-      TreeNode::get_member( ExprAst::get_member_size() -1)
-    );
-  //std::cout << "eval last line\n";
-  std::any output = e->evaluate(slc);
-  //std::cout << output << "\n";
-  // remove last line here
+  std::shared_ptr<ExprAst> 
+  e = std::dynamic_pointer_cast<ExprAst>(
+    TreeNode::get_member( ExprAst::get_member_size() -1));
 
+  if(e==nullptr){
+    std::cerr << "eval expr is null\n";
+    return 0;
+  }
+  std::any output = e->evaluate(slc);
   return output;
 }
+
 //--------------------
 FuncExprAst::FuncExprAst(
   std::string name, 
@@ -385,8 +394,8 @@ void CallExprAst::fcall_setup(SvlmLangContext *slc) {
   //std::cout << "with arguments evaluated:\n"; for(auto e : args_evaluated) { std::cout << e << "\n"; }
   slc->fcall_stack_setup(args_evaluated, std::any_cast<std::string>(get_data())); // s
 
-  std::cout << "module: " << slc->current_context.smodule  << "\n";
-  std::cout << "calling: "; print_data(); std::cout << "\n";
+  //std::cout << "module: " << slc->current_context.smodule  << "\n";
+  //std::cout << "calling: "; print_data(); std::cout << "\n";
 }
 
 std::any CallExprAst::evaluate(SvlmLangContext *slc) { 

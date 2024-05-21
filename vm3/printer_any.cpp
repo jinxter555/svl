@@ -31,6 +31,10 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
   else if(a.type()  == typeid(Number)) {
     Number num= std::any_cast<Number>(a);
     num.printData(); }
+  else if(a.type()  == typeid(std::vector<std::any>)) {
+    std::vector<std::any> any_vector = std::any_cast<std::vector<std::any>>(a);
+    for (std::any element : any_vector) {
+      out << element; } }
   else if(a.type()  == typeid(std::shared_ptr<ExprAst>)) {
     std::cout  << "function code block\n";
     std::shared_ptr ast = std::any_cast<std::shared_ptr<ExprAst>>(a);
