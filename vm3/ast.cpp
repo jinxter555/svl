@@ -354,11 +354,14 @@ std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
   e = std::dynamic_pointer_cast<ExprAst>(
     TreeNode::get_member( ExprAst::get_member_size() -1));
 
+
   if(e==nullptr){
     std::cerr << "eval expr is null\n";
     return 0;
   }
+  slc->last_line=true;
   std::any output = e->evaluate(slc);
+  slc->last_line=false;
   return output;
 }
 
@@ -372,7 +375,12 @@ FuncExprAst::FuncExprAst(
 };
 
 std::any FuncExprAst::evaluate(SvlmLangContext *slc) { 
-  std::cout << "In function: "; print_data(); std::cout << " eval!\n";
+  if(slc->defining_func && slc->interactive) { 
+    //std::cout << "prompt defining function\n"; 
+    slc->defining_func=false;
+    return 0;
+  }
+  //std::cout << "In function: "; print_data(); std::cout << " eval!\n";
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("fbody"));
   return l->evaluate(slc);
 }

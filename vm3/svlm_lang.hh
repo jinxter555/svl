@@ -31,23 +31,6 @@ public:
   FrameSvlm frame;
   bool ast_eval_continue = true;
 
-  //void fcall_args_setup(std::vector<std::any>);
-
-
-  // parser functions
-  std::shared_ptr<ListExprAst> new_ast_l_cc(std::string v="code_block") {
-    ast_current_contexts.push(ast_current_context);
-    ast_current_context = std::make_shared<ListExprAst>(v);
-    return ast_current_context;
-  }
-  std::shared_ptr<ListExprAst> done_ast_l_cc() {
-    ast_current_context = ast_current_contexts.top();
-    ast_current_contexts.pop();
-    return ast_current_context;
-  }
-
-
-
 private:
 
 };
@@ -57,6 +40,8 @@ public:
   SvlmLang *svlm_lang;
   full_symbol_t current_context;
   bool interactive = false; // if this is going to be from file or prompt
+  bool last_line = false; // command prompt last line
+  bool defining_func = false;
 
   SvlmLangContext(SvlmLang *s);
   void init(SvlmLang *s) { svlm_lang=s; } 

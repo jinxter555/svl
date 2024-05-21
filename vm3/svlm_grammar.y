@@ -180,6 +180,7 @@ math_bin_op
 def_function
   : DEF STR LPAREN param_list RPAREN DO statement_list END { 
 
+    if(slc->interactive) slc->defining_func = true;
     std::shared_ptr<FuncExprAst> func_ptr = 
       std::make_shared<FuncExprAst>
         (std::string($2), $4, $7); 
