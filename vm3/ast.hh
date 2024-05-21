@@ -123,7 +123,7 @@ public:
 
 class BinOpExprAst : public ExprAst {
 public:
-  BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, char op);
+  BinOpExprAst (std::shared_ptr<ExprAst> l, std::shared_ptr<ExprAst> r, ast_op op);
 
   void codegen(std::vector<std::string>& code) const override;
   std::any evaluate(SvlmLangContext *slc) override;

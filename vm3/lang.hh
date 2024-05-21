@@ -7,6 +7,19 @@ enum class key_tok_t {
   mfunction, fbody, lvar, larg, label
 };
 
+enum class ast_op {
+  plus,
+  minus,
+  mul,
+  div,
+  gt,
+  lt,
+  gteq,
+  lteq,
+  eql,
+  assign,
+};
+
 typedef struct {
   std::string uni, app, api, smodule, mvar, mfunction, fbody, lvar, larg, label;
   key_tok_t type;     // app, api, smodule... do i know who i am?

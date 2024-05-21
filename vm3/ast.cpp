@@ -224,7 +224,7 @@ void DeclExprAst::print() {
 BinOpExprAst::BinOpExprAst 
 ( std::shared_ptr<ExprAst> l
 , std::shared_ptr<ExprAst> r
-, char op
+, ast_op op
 ) : ExprAst(op) 
 { ExprAst::add_child("left", l);
   ExprAst::add_child("right", r);
@@ -240,15 +240,15 @@ void BinOpExprAst::codegen(std::vector<std::string>& code) const {
   l->codegen(code);
   r->codegen(code);
 
-  op_t op = std::any_cast<op_t>(ExprAst::get_data());
+  ast_op op = std::any_cast<ast_op>(ExprAst::get_data());
 
   code.push_back("pop ebx");
   code.push_back("pop eax");
-  switch(op.op) {
-  case '+': code.push_back("add eax, ebx"); break;
-  case '-': code.push_back("sub eax, ebx"); break;
-  case '*': code.push_back("imul eax, ebx"); break;
-  case '/': code.push_back("cdq"); code.push_back("idv ebx"); break;
+  switch(op) {
+    case ast_op::plus: code.push_back("add eax, ebx"); break;
+    case ast_op::minus: code.push_back("sub eax, ebx"); break;
+    case ast_op::mul: code.push_back("imul eax, ebx"); break;
+    case ast_op::div: code.push_back("cdq"); code.push_back("div ebx"); break;
   default: throw std::invalid_argument("Invalid opeartor");
   }
 }
@@ -274,26 +274,56 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
   if(l ==nullptr) { std::cerr << "l is nullptr\n"; }
   if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
 
-  char op = std::any_cast<char>(ExprAst::get_data());
+  ast_op op = std::any_cast<ast_op>(ExprAst::get_data());
 
   switch(op) {
-  case '+': {
+  case ast_op::plus: {
     Number a = std::any_cast<Number>(l->evaluate(slc));
     Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a + b; }
-  case '-': {
+    return a + b; 
+  }
+  case ast_op::minus: {
     Number a = std::any_cast<Number>(l->evaluate(slc));
     Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a - b; }
-  case '*': {
+    return a - b; 
+  }
+  case ast_op::mul: {
     Number a = std::any_cast<Number>(l->evaluate(slc));
     Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a * b; }
-  case '/': {
+    return a * b; 
+  }
+  case ast_op::div: {
     Number a = std::any_cast<Number>(l->evaluate(slc));
     Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a / b;}
-  case '=': {
+    return a / b;
+  }
+  case ast_op::eql: {
+    Number a = std::any_cast<Number>(l->evaluate(slc));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a == b;
+  }
+  case ast_op::gt: {
+    Number a = std::any_cast<Number>(l->evaluate(slc));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a > b;
+  }
+  case ast_op::lt: {
+    Number a = std::any_cast<Number>(l->evaluate(slc));
+    Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a < b;
+  }
+  case ast_op::lteq: {
+  Number a = std::any_cast<Number>(l->evaluate(slc));
+  Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a <= b;
+  }
+  case ast_op::gteq: {
+  Number a = std::any_cast<Number>(l->evaluate(slc));
+  Number b = std::any_cast<Number>(r->evaluate(slc));
+    return a >= b;
+  }
+
+  case ast_op::assign: {
     std::shared_ptr<AssignExprAst> al = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
     // Number b = std::any_cast<Number>(r->evaluate(slc));
     std::any b = r->evaluate(slc);

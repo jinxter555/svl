@@ -1,2 +1,80 @@
-comment end1!
-reach end statement
+Makefile:76: warning: overriding recipe for target 'ast.o'
+Makefile:43: warning: ignoring old recipe for target 'ast.o'
+g++ -std=c++17 -g -c ast.cpp
+ast.cpp: In member function ‘virtual std::any BinOpExprAst::evaluate(SvlmLangContext*)’:
+ast.cpp:311:35: error: expected primary-expression before ‘d’
+  311 | ListExprAst::ListExprAst(std::any d) : ExprAst(d) {}
+      |                                   ^
+ast.cpp:311:36: error: cannot call constructor ‘ListExprAst::ListExprAst’ directly [-fpermissive]
+  311 | ListExprAst::ListExprAst(std::any d) : ExprAst(d) {}
+      |                                    ^
+ast.cpp:311:36: note: for a function-style cast, remove the redundant ‘::ListExprAst’
+ast.cpp:313:22: error: qualified-id in declaration before ‘(’ token
+  313 | void ListExprAst::add(std::shared_ptr<ExprAst> e) {
+      |                      ^
+ast.cpp:317:42: error: qualified-id in declaration before ‘(’ token
+  317 | std::shared_ptr<ExprAst> ListExprAst::get(int i) {
+      |                                          ^
+ast.cpp:321:26: error: qualified-id in declaration before ‘(’ token
+  321 | void ListExprAst::codegen(std::vector<std::string>& code) const {
+      |                          ^
+ast.cpp:329:24: error: qualified-id in declaration before ‘(’ token
+  329 | void ListExprAst::print() {
+      |                        ^
+ast.cpp:341:31: error: qualified-id in declaration before ‘(’ token
+  341 | std::any ListExprAst::evaluate(SvlmLangContext *slc) {
+      |                               ^
+ast.cpp:354:41: error: qualified-id in declaration before ‘(’ token
+  354 | std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
+      |                                         ^
+ast.cpp:372:15: error: expected primary-expression before ‘name’
+  372 |   std::string name,
+      |               ^~~~
+ast.cpp:373:28: error: expected primary-expression before ‘args’
+  373 |   std::vector<std::string> args,
+      |                            ^~~~
+ast.cpp:374:32: error: expected primary-expression before ‘body’
+  374 |   std::shared_ptr<ListExprAst> body) : ExprAst(name) {
+      |                                ^~~~
+ast.cpp:374:36: error: cannot call constructor ‘FuncExprAst::FuncExprAst’ directly [-fpermissive]
+  374 |   std::shared_ptr<ListExprAst> body) : ExprAst(name) {
+      |                                    ^
+ast.cpp:374:36: note: for a function-style cast, remove the redundant ‘::FuncExprAst’
+ast.cpp:379:31: error: qualified-id in declaration before ‘(’ token
+  379 | std::any FuncExprAst::evaluate(SvlmLangContext *slc) {
+      |                               ^
+ast.cpp:389:24: error: qualified-id in declaration before ‘(’ token
+  389 | void FuncExprAst::print() {
+      |                        ^
+ast.cpp:395:26: error: qualified-id in declaration before ‘(’ token
+  395 | void FuncExprAst::codegen(std::vector<std::string> &code) const {
+      |                          ^
+ast.cpp:398:38: error: expected primary-expression before ‘callee’
+  398 | CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
+      |                                      ^~~~~~
+ast.cpp:398:75: error: expected primary-expression before ‘args’
+  398 | CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
+      |                                                                           ^~~~
+ast.cpp:398:79: error: cannot call constructor ‘CallExprAst::CallExprAst’ directly [-fpermissive]
+  398 | CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
+      |                                                                               ^
+ast.cpp:398:79: note: for a function-style cast, remove the redundant ‘::CallExprAst’
+ast.cpp:401:30: error: qualified-id in declaration before ‘(’ token
+  401 | void CallExprAst::fcall_setup(SvlmLangContext *slc) {
+      |                              ^
+ast.cpp:411:31: error: qualified-id in declaration before ‘(’ token
+  411 | std::any CallExprAst::evaluate(SvlmLangContext *slc) {
+      |                               ^
+ast.cpp:434:24: error: qualified-id in declaration before ‘(’ token
+  434 | void CallExprAst::print() {
+      |                        ^
+ast.cpp:440:26: error: qualified-id in declaration before ‘(’ token
+  440 | void CallExprAst::codegen(std::vector<std::string> &code) const {}
+      |                          ^
+ast.cpp:440:67: error: expected ‘}’ at end of input
+  440 | void CallExprAst::codegen(std::vector<std::string> &code) const {}
+      |                                                                   ^
+ast.cpp:267:55: note: to match this ‘{’
+  267 | std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
+      |                                                       ^
+make: *** [Makefile:76: ast.o] Error 1

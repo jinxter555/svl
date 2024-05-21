@@ -12,6 +12,8 @@
 std::ostream& operator << (std::ostream& out, std::any& a) {
   if(a.type()  == typeid(char))
     out << std::any_cast<char>(a);
+  if(a.type()  == typeid(bool))
+    out << std::any_cast<bool>(a);
   else if(a.type()  == typeid(int))
     out << std::any_cast<int>(a);
   else if(a.type()  == typeid(double))

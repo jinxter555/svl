@@ -53,7 +53,7 @@
 #  endif
 # endif
 
-#line 13 "svlm_grammar.y"
+#line 14 "svlm_grammar.y"
 namespace vslast {
 #line 59 "location.hh"
 
@@ -299,7 +299,7 @@ namespace vslast {
     return ostr;
   }
 
-#line 13 "svlm_grammar.y"
+#line 14 "svlm_grammar.y"
 } // vslast
 #line 305 "location.hh"
 

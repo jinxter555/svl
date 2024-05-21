@@ -37,6 +37,44 @@ struct Number::DivideVisitor {
   }
 };
 
+struct Number::EqlVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a == b;
+  }
+};
+
+struct Number::GtVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a > b;
+  }
+};
+
+struct Number::LtVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a < b;
+  }
+};
+
+struct Number::LtEqVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a <= b;
+  }
+};
+
+struct Number::GtEqVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a >= b;
+  }
+};
+
+
+
+
 Number Number::operator+(const Number& other) const {
   return std::visit(Number::AddVisitor{}, data_, other.data_);
 }
@@ -51,6 +89,22 @@ Number Number::operator*(const Number& other) const {
 
 Number Number::operator/(const Number& other) const {
   return std::visit(Number::DivideVisitor{}, data_, other.data_);
+}
+
+bool Number::operator==(const Number& other) const {
+  return std::visit(Number::EqlVisitor{}, data_, other.data_);
+}
+bool Number::operator>=(const Number& other) const {
+  return std::visit(Number::GtEqVisitor{}, data_, other.data_);
+}
+bool Number::operator<=(const Number& other) const {
+  return std::visit(Number::LtEqVisitor{}, data_, other.data_);
+}
+bool Number::operator<(const Number& other) const {
+  return std::visit(Number::LtVisitor{}, data_, other.data_);
+}
+bool Number::operator>(const Number& other) const {
+  return std::visit(Number::GtVisitor{}, data_, other.data_);
 }
 
 void Number::printData() const {

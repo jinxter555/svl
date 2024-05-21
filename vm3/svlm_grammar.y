@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include "lang.hh"
 %}
 
 %require "3.8.1"
@@ -46,13 +47,14 @@ std::vector<std::string> lvar_list;
 %token <int>  INT
 %token <float>     FLT
  
-%nterm <char>  math_bin_op
+%nterm <ast_op>  math_bin_op
 %nterm EOS // end of statement
 %nterm <std::vector<std::string>> param_list 
 %nterm <std::string> param
 %nterm comments
 
 %nonassoc           ASSIGN
+%left               EQL GT LT GTEQ LTEQ
 %left               PLUS MINUS
 %left               MULTIPLY DIVIDE MODULO
 %precedence         UMINUS
@@ -157,7 +159,7 @@ exp_num
     slc->add_mvar_name($2);               // add to context tree
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<GvarExprAst>(std::string($2)), 
-      $4, '=');
+      $4, ast_op::assign);
   }
 
   | STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
@@ -165,15 +167,20 @@ exp_num
     lvar_list.push_back($1);
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<LvarExprAst>(std::string($1)), 
-      $3, '=');
+      $3, ast_op::assign);
   }
   ;
 
 math_bin_op
-  : PLUS      {$$ = '+';}
-  | MINUS     {$$ = '-';}
-  | MULTIPLY  {$$ = '*';}
-  | DIVIDE    {$$ = '/';}
+  : PLUS      {$$ = ast_op::plus;}
+  | MINUS     {$$ = ast_op::minus;}
+  | MULTIPLY  {$$ = ast_op::mul;}
+  | DIVIDE    {$$ = ast_op::div;}
+  | GT    {$$ = ast_op::gt;}
+  | LT    {$$ = ast_op::lt;}
+  | GTEQ    {$$ = ast_op::gteq;}
+  | LTEQ    {$$ = ast_op::lteq;}
+  | EQL    {$$ = ast_op::eql;}
   ;
 
 //--------------------------------------------------- def function 

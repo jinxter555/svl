@@ -1,10 +1,15 @@
 module mhello
+#
+# what is going on
+#
+
 $hello = 5 + 6 * 11
 print $hello
 print "\n"
 $abc = $hello + 123
-print "abc "
-print $abc
+$hello + $abc
+print "hellois: "
+print $hello
 print "\n"
 myfun2(123,555)
 print "\n"

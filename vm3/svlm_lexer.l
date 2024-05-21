@@ -57,6 +57,11 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 ","             return SvlmParser::token::COMMA;
 ":"             return SvlmParser::token::COLON;
 ";"             return SvlmParser::token::SEMICOLON;
+"=="             return SvlmParser::token::EQL;
+">="             return SvlmParser::token::GTEQ;
+"<="             return SvlmParser::token::LTEQ;
+"<"             return SvlmParser::token::LT;
+">"             return SvlmParser::token::GT;
 
 {dqstring}        { 
   std::string result = raw_to_escaped_string(YYText()); 
