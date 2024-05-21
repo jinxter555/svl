@@ -5,7 +5,7 @@
 std::ostream& operator << (std::ostream& out, std::any& a);
 
 void TreeNode::add_child(const std::string &key, std::shared_ptr<TreeNode> child) {
-  if(children[key] == nullptr)
+  //if(children[key] == nullptr)
     // children[key] = move(child);
     children[key] = child;
 }
