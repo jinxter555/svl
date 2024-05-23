@@ -14,6 +14,24 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     out << std::any_cast<char>(a);
   if(a.type()  == typeid(bool))
     out << std::any_cast<bool>(a);
+  if(a.type()  == typeid(ast_op)) {
+    std::string oc;
+    ast_op op = std::any_cast<ast_op>(a);
+  switch(op) {
+  case ast_op::plus:  oc="+"; break;
+  case ast_op::minus: oc="-"; break;
+  case ast_op::mul:   oc="*"; break;
+  case ast_op::div:   oc="/"; break;
+  case ast_op::eql:   oc="=="; break;
+  case ast_op::neql:  oc="!="; break;
+  case ast_op::gt:    oc=">"; break;
+  case ast_op::lt:    oc="<"; break;
+  case ast_op::lteq:  oc="<="; break;
+  case ast_op::gteq:  oc=">="; break;
+  default: oc="wrong type"; break;
+  } 
+  out << oc ;
+  }
   else if(a.type()  == typeid(int))
     out << std::any_cast<int>(a);
   else if(a.type()  == typeid(double))

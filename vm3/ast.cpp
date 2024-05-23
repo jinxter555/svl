@@ -292,6 +292,7 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> r = 
     std::dynamic_pointer_cast<ExprAst>(get_child("right"));
   ast_op op = std::any_cast<ast_op>(ExprAst::get_data());
+  std::any a_op = op;
 
   if(l ==nullptr) { std::cerr << "l is nullptr\n"; } if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
 
@@ -300,18 +301,15 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
       // assignment operation for both local and global/module
       std::shared_ptr<AssignExprAst> al = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
       std::any b = r->evaluate(slc); al->assign(slc, b); return b;
-    } else {
-      try {
-        Number a = std::any_cast<Number>(l->evaluate(slc));
-        NumberExprAst nea(a);
-        return nea.uni_op(slc, r, op);
-      } catch(const std::bad_any_cast& e) {}
-
-      //std::cout << "operand type: a " << static_cast<int>(a.whoami()) << "\n";
-      //std::cout << "number: a " ; a.print(); std::cout << "\n";
-    }
+    } 
   } 
-  return l->uni_op(slc, r, op);
+
+  try {
+    Number a = std::any_cast<Number>(l->evaluate(slc)); 
+    NumberExprAst nea(a);
+    return nea.uni_op(slc, r, op);
+  } catch(const std::bad_any_cast& e) {}
+  return 0;
 }
 
 

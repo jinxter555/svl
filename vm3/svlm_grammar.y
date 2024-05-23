@@ -153,7 +153,6 @@ exp_num
   | COLON STR { $$ = std::make_shared<AtomExprAst>($2); }
   | exp_num math_bin_op exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
   | LPAREN exp_num RPAREN        { $$ = $2; }
-
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
   | DOLLAR STR ASSIGN exp_num {           // global variable
     slc->add_mvar_name($2);               // add to context tree
