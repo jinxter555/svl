@@ -32,7 +32,7 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     out << std::any_cast<std::string>(a);
   else if(a.type()  == typeid(Number)) {
     Number num= std::any_cast<Number>(a);
-    num.printData(); }
+    num.print(); }
   else if(a.type()  == typeid(std::vector<std::any>)) {
     std::vector<std::any> any_vector = std::any_cast<std::vector<std::any>>(a);
     for (std::any element : any_vector) {

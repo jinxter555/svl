@@ -54,7 +54,7 @@ std::vector<std::string> lvar_list;
 %nterm comments
 
 %nonassoc           ASSIGN
-%left               EQL GT LT GTEQ LTEQ
+%left               EQL NEQL GT LT GTEQ LTEQ
 %left               PLUS MINUS
 %left               MULTIPLY DIVIDE MODULO
 %precedence         UMINUS
@@ -181,6 +181,7 @@ math_bin_op
   | GTEQ    {$$ = ast_op::gteq;}
   | LTEQ    {$$ = ast_op::lteq;}
   | EQL    {$$ = ast_op::eql;}
+  | NEQL    {$$ = ast_op::neql;}
   ;
 
 //--------------------------------------------------- def function 
@@ -190,9 +191,9 @@ def_function
     if(slc->interactive) slc->defining_func = true;
     std::shared_ptr<FuncExprAst> func_ptr = 
       std::make_shared<FuncExprAst>
-        (std::string($2), $4, $7); 
+        (std::string($2), $4, $7);  // this adds to ast tree notice param_list, not added in FuncExprAst
     slc->add_function_name($2);
-    slc->add_function_params($4);
+    slc->add_function_params($4); // this adds to the universe context  tree notice param_list
     slc->add_function_lvars(lvar_list);
     slc->add_function_fbody(func_ptr);
 

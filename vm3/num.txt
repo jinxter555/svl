@@ -1,3 +1,4 @@
 module mhello
+return 
 def p(a) do print "hello, world what \n" end
 

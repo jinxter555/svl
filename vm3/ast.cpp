@@ -2,6 +2,7 @@
 #include "svlm_lang.hh"
 #include <iostream>
 #include <type_traits>
+#include "svlm_operand.hh"
 //#include "printer_any.hh"
 std::ostream& operator << (std::ostream& out, std::any& a) ;
 
@@ -42,19 +43,20 @@ void PrintExprAst::print() { print_data(); };
 
 
 //----------------------------- discontinue expr ast
-
 DisContExprAst::DisContExprAst(std::string kw) : ExprAst(kw) {};
 std::any DisContExprAst::evaluate(SvlmLangContext *slc) {
   slc->svlm_lang->ast_eval_continue = false;
   //std::cout << "discontinue with: "; print(); std::cout << "\n";
   return false;
 }
-
 void DisContExprAst::codegen(std::vector<std::string>& code) const {};
 void DisContExprAst::print() { print_data(); };
 
+//----------------------------- Bin  variable expr
+
 //----------------------------- number variable expr
 NumberExprAst::NumberExprAst(Number n) : ExprAst(n) {}
+
 
 void NumberExprAst::codegen(std::vector<std::string>& code) const {
   //code.push_back("push " + std::to_string(value));
@@ -62,6 +64,25 @@ void NumberExprAst::codegen(std::vector<std::string>& code) const {
 }
 
 std::any NumberExprAst::evaluate(SvlmLangContext *slc) { return ExprAst::get_data(); }
+
+std::any NumberExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {
+  Number a = std::any_cast<Number>(this->evaluate(slc));
+  Number b = std::any_cast<Number>(r->evaluate(slc));
+  switch(op) {
+  case ast_op::plus:  return a+b;
+  case ast_op::minus: return a - b; 
+  case ast_op::mul:   return a * b; 
+  case ast_op::div:   return a / b;
+  case ast_op::eql:   return a == b;
+  case ast_op::neql:  return a != b;
+  case ast_op::gt:    return a > b;
+  case ast_op::lt:    return a < b;
+  case ast_op::lteq:  return a <= b;
+  case ast_op::gteq:  return a >= b;
+  default: std::cerr << "wrong type:\n"; return 0;
+  }
+  return 1;
+} 
 
 void NumberExprAst::print() { 
   TreeNode::print_data(); //std::cout << "\n";
@@ -270,67 +291,27 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
     std::dynamic_pointer_cast<ExprAst>(get_child("left"));
   std::shared_ptr<ExprAst> r = 
     std::dynamic_pointer_cast<ExprAst>(get_child("right"));
-
-  if(l ==nullptr) { std::cerr << "l is nullptr\n"; }
-  if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
-
   ast_op op = std::any_cast<ast_op>(ExprAst::get_data());
 
-  switch(op) {
-  case ast_op::plus: {
-    Number a = std::any_cast<Number>(l->evaluate(slc));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a + b; 
-  }
-  case ast_op::minus: {
-    Number a = std::any_cast<Number>(l->evaluate(slc));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a - b; 
-  }
-  case ast_op::mul: {
-    Number a = std::any_cast<Number>(l->evaluate(slc));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a * b; 
-  }
-  case ast_op::div: {
-    Number a = std::any_cast<Number>(l->evaluate(slc));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a / b;
-  }
-  case ast_op::eql: {
-    Number a = std::any_cast<Number>(l->evaluate(slc));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a == b;
-  }
-  case ast_op::gt: {
-    Number a = std::any_cast<Number>(l->evaluate(slc));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a > b;
-  }
-  case ast_op::lt: {
-    Number a = std::any_cast<Number>(l->evaluate(slc));
-    Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a < b;
-  }
-  case ast_op::lteq: {
-  Number a = std::any_cast<Number>(l->evaluate(slc));
-  Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a <= b;
-  }
-  case ast_op::gteq: {
-  Number a = std::any_cast<Number>(l->evaluate(slc));
-  Number b = std::any_cast<Number>(r->evaluate(slc));
-    return a >= b;
-  }
+  if(l ==nullptr) { std::cerr << "l is nullptr\n"; } if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
 
-  case ast_op::assign: {
-    std::shared_ptr<AssignExprAst> al = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
-    // Number b = std::any_cast<Number>(r->evaluate(slc));
-    std::any b = r->evaluate(slc);
-    al->assign(slc, b);
-    return b; }
-  default: std::cerr << "wrong type:\n"; return 0;
-  }
+  if((l->whoami() == ExprAstType::Gvar || l->whoami() == ExprAstType::Lvar)) {
+    if(op == ast_op::assign) {
+      // assignment operation for both local and global/module
+      std::shared_ptr<AssignExprAst> al = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
+      std::any b = r->evaluate(slc); al->assign(slc, b); return b;
+    } else {
+      try {
+        Number a = std::any_cast<Number>(l->evaluate(slc));
+        NumberExprAst nea(a);
+        return nea.uni_op(slc, r, op);
+      } catch(const std::bad_any_cast& e) {}
+
+      //std::cout << "operand type: a " << static_cast<int>(a.whoami()) << "\n";
+      //std::cout << "number: a " ; a.print(); std::cout << "\n";
+    }
+  } 
+  return l->uni_op(slc, r, op);
 }
 
 

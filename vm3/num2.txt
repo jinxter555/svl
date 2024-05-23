@@ -3,9 +3,7 @@ $hello = 5 + 6 * 11
 print $hello
 print "\n"
 $abc = $hello + 123
-print "abc "
-print $abc
-print "\n"
+myfun1(123,555)
 myfun2(123,555)
 print "\n"
 return
@@ -18,6 +16,8 @@ def myfun1(world, wide) do
 end
 def myfun2(world, wide) do
   num1 = world
+  num2 = world
+
   print world
 end
 5+1

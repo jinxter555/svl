@@ -44,6 +44,13 @@ struct Number::EqlVisitor {
   }
 };
 
+struct Number::NeqlVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a != b;
+  }
+};
+
 struct Number::GtVisitor {
   template <typename T, typename U>
   auto operator()(const T& a, const U& b) const -> bool {
@@ -94,6 +101,9 @@ Number Number::operator/(const Number& other) const {
 bool Number::operator==(const Number& other) const {
   return std::visit(Number::EqlVisitor{}, data_, other.data_);
 }
+bool Number::operator!=(const Number& other) const {
+  return std::visit(Number::NeqlVisitor{}, data_, other.data_);
+}
 bool Number::operator>=(const Number& other) const {
   return std::visit(Number::GtEqVisitor{}, data_, other.data_);
 }
@@ -107,7 +117,7 @@ bool Number::operator>(const Number& other) const {
   return std::visit(Number::GtVisitor{}, data_, other.data_);
 }
 
-void Number::printData() const {
+void Number::print() const {
   std::visit([](auto val) {
     std::cout << val;
   }, data_);

@@ -1,80 +1,113 @@
 Makefile:76: warning: overriding recipe for target 'ast.o'
 Makefile:43: warning: ignoring old recipe for target 'ast.o'
-g++ -std=c++17 -g -c ast.cpp
-ast.cpp: In member function ‘virtual std::any BinOpExprAst::evaluate(SvlmLangContext*)’:
-ast.cpp:311:35: error: expected primary-expression before ‘d’
-  311 | ListExprAst::ListExprAst(std::any d) : ExprAst(d) {}
-      |                                   ^
-ast.cpp:311:36: error: cannot call constructor ‘ListExprAst::ListExprAst’ directly [-fpermissive]
-  311 | ListExprAst::ListExprAst(std::any d) : ExprAst(d) {}
-      |                                    ^
-ast.cpp:311:36: note: for a function-style cast, remove the redundant ‘::ListExprAst’
-ast.cpp:313:22: error: qualified-id in declaration before ‘(’ token
-  313 | void ListExprAst::add(std::shared_ptr<ExprAst> e) {
-      |                      ^
-ast.cpp:317:42: error: qualified-id in declaration before ‘(’ token
-  317 | std::shared_ptr<ExprAst> ListExprAst::get(int i) {
-      |                                          ^
-ast.cpp:321:26: error: qualified-id in declaration before ‘(’ token
-  321 | void ListExprAst::codegen(std::vector<std::string>& code) const {
-      |                          ^
-ast.cpp:329:24: error: qualified-id in declaration before ‘(’ token
-  329 | void ListExprAst::print() {
-      |                        ^
-ast.cpp:341:31: error: qualified-id in declaration before ‘(’ token
-  341 | std::any ListExprAst::evaluate(SvlmLangContext *slc) {
-      |                               ^
-ast.cpp:354:41: error: qualified-id in declaration before ‘(’ token
-  354 | std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
-      |                                         ^
-ast.cpp:372:15: error: expected primary-expression before ‘name’
-  372 |   std::string name,
-      |               ^~~~
-ast.cpp:373:28: error: expected primary-expression before ‘args’
-  373 |   std::vector<std::string> args,
-      |                            ^~~~
-ast.cpp:374:32: error: expected primary-expression before ‘body’
-  374 |   std::shared_ptr<ListExprAst> body) : ExprAst(name) {
-      |                                ^~~~
-ast.cpp:374:36: error: cannot call constructor ‘FuncExprAst::FuncExprAst’ directly [-fpermissive]
-  374 |   std::shared_ptr<ListExprAst> body) : ExprAst(name) {
-      |                                    ^
-ast.cpp:374:36: note: for a function-style cast, remove the redundant ‘::FuncExprAst’
-ast.cpp:379:31: error: qualified-id in declaration before ‘(’ token
-  379 | std::any FuncExprAst::evaluate(SvlmLangContext *slc) {
-      |                               ^
-ast.cpp:389:24: error: qualified-id in declaration before ‘(’ token
-  389 | void FuncExprAst::print() {
-      |                        ^
-ast.cpp:395:26: error: qualified-id in declaration before ‘(’ token
-  395 | void FuncExprAst::codegen(std::vector<std::string> &code) const {
-      |                          ^
-ast.cpp:398:38: error: expected primary-expression before ‘callee’
-  398 | CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
-      |                                      ^~~~~~
-ast.cpp:398:75: error: expected primary-expression before ‘args’
-  398 | CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
-      |                                                                           ^~~~
-ast.cpp:398:79: error: cannot call constructor ‘CallExprAst::CallExprAst’ directly [-fpermissive]
-  398 | CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
-      |                                                                               ^
-ast.cpp:398:79: note: for a function-style cast, remove the redundant ‘::CallExprAst’
-ast.cpp:401:30: error: qualified-id in declaration before ‘(’ token
-  401 | void CallExprAst::fcall_setup(SvlmLangContext *slc) {
-      |                              ^
-ast.cpp:411:31: error: qualified-id in declaration before ‘(’ token
-  411 | std::any CallExprAst::evaluate(SvlmLangContext *slc) {
-      |                               ^
-ast.cpp:434:24: error: qualified-id in declaration before ‘(’ token
-  434 | void CallExprAst::print() {
-      |                        ^
-ast.cpp:440:26: error: qualified-id in declaration before ‘(’ token
-  440 | void CallExprAst::codegen(std::vector<std::string> &code) const {}
-      |                          ^
-ast.cpp:440:67: error: expected ‘}’ at end of input
-  440 | void CallExprAst::codegen(std::vector<std::string> &code) const {}
-      |                                                                   ^
-ast.cpp:267:55: note: to match this ‘{’
-  267 | std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
-      |                                                       ^
-make: *** [Makefile:76: ast.o] Error 1
+g++ -std=c++17 -g -o main.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
+assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o  \
+svlm_scanner.cpp svlm_parser.cpp tree.o  svlm_interactive.o svlm_lang.o \
+printer_any.o number.o ast.o \
+-lreadline
+In file included from /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h:33,
+                 from /usr/include/c++/11/bits/allocator.h:46,
+                 from /usr/include/c++/11/string:41,
+                 from /usr/include/c++/11/bits/locale_classes.h:40,
+                 from /usr/include/c++/11/bits/ios_base.h:41,
+                 from /usr/include/c++/11/ios:42,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from svlm_grammar.y:2:
+/usr/include/c++/11/ext/new_allocator.h: In instantiation of ‘void __gnu_cxx::new_allocator<_Tp>::construct(_Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst]’:
+/usr/include/c++/11/bits/alloc_traits.h:516:17:   required from ‘static void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’
+/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst]’
+/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}]’
+/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}]’
+svlm_grammar.y:154:114:   required from here
+/usr/include/c++/11/ext/new_allocator.h:162:11: error: no matching function for call to ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&)’
+  162 |         { ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from svlm_grammar.y:24,
+                 from svlm_parser.cpp:50:
+ast.hh:138:3: note: candidate: ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<UniExprAst>, std::shared_ptr<UniExprAst>, ast_op)’
+  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
+      |   ^~~~~~~~~~~~
+ast.hh:138:45: note:   no known conversion for argument 1 from ‘shared_ptr<ExprAst>’ to ‘shared_ptr<UniExprAst>’
+  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(const BinOpExprAst&)’
+  135 | class BinOpExprAst : public ExprAst {
+      |       ^~~~~~~~~~~~
+ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
+ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(BinOpExprAst&&)’
+ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
+In file included from /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h:33,
+                 from /usr/include/c++/11/bits/allocator.h:46,
+                 from /usr/include/c++/11/string:41,
+                 from /usr/include/c++/11/bits/locale_classes.h:40,
+                 from /usr/include/c++/11/bits/ios_base.h:41,
+                 from /usr/include/c++/11/ios:42,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from svlm_grammar.y:2:
+/usr/include/c++/11/ext/new_allocator.h: In instantiation of ‘void __gnu_cxx::new_allocator<_Tp>::construct(_Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’:
+/usr/include/c++/11/bits/alloc_traits.h:516:17:   required from ‘static void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’
+/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’
+/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
+/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
+svlm_grammar.y:160:84:   required from here
+/usr/include/c++/11/ext/new_allocator.h:162:11: error: no matching function for call to ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op)’
+  162 |         { ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from svlm_grammar.y:24,
+                 from svlm_parser.cpp:50:
+ast.hh:138:3: note: candidate: ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<UniExprAst>, std::shared_ptr<UniExprAst>, ast_op)’
+  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
+      |   ^~~~~~~~~~~~
+ast.hh:138:76: note:   no known conversion for argument 2 from ‘shared_ptr<ExprAst>’ to ‘shared_ptr<UniExprAst>’
+  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
+      |                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(const BinOpExprAst&)’
+  135 | class BinOpExprAst : public ExprAst {
+      |       ^~~~~~~~~~~~
+ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
+ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(BinOpExprAst&&)’
+ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
+In file included from /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h:33,
+                 from /usr/include/c++/11/bits/allocator.h:46,
+                 from /usr/include/c++/11/string:41,
+                 from /usr/include/c++/11/bits/locale_classes.h:40,
+                 from /usr/include/c++/11/bits/ios_base.h:41,
+                 from /usr/include/c++/11/ios:42,
+                 from /usr/include/c++/11/ostream:38,
+                 from /usr/include/c++/11/iostream:39,
+                 from svlm_grammar.y:2:
+/usr/include/c++/11/ext/new_allocator.h: In instantiation of ‘void __gnu_cxx::new_allocator<_Tp>::construct(_Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’:
+/usr/include/c++/11/bits/alloc_traits.h:516:17:   required from ‘static void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’
+/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’
+/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
+/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
+svlm_grammar.y:168:84:   required from here
+/usr/include/c++/11/ext/new_allocator.h:162:11: error: no matching function for call to ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op)’
+  162 |         { ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from svlm_grammar.y:24,
+                 from svlm_parser.cpp:50:
+ast.hh:138:3: note: candidate: ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<UniExprAst>, std::shared_ptr<UniExprAst>, ast_op)’
+  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
+      |   ^~~~~~~~~~~~
+ast.hh:138:76: note:   no known conversion for argument 2 from ‘shared_ptr<ExprAst>’ to ‘shared_ptr<UniExprAst>’
+  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
+      |                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(const BinOpExprAst&)’
+  135 | class BinOpExprAst : public ExprAst {
+      |       ^~~~~~~~~~~~
+ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
+ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(BinOpExprAst&&)’
+ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
+make: *** [Makefile:9: main.out] Error 1

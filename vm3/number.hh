@@ -4,8 +4,9 @@
 #include <variant>
 #include <iostream>
 #include "lang.hh"
+#include "svlm_operand.hh"
 
-class Number {
+class Number : Operand {
 public:
     Number(int value);
     Number(float value);
@@ -16,14 +17,16 @@ public:
     Number operator/(const Number& other) const;
 
     bool operator==(const Number& other) const;
+    bool operator!=(const Number& other) const;
     bool operator>=(const Number& other) const;
     bool operator<=(const Number& other) const;
     bool operator<(const Number& other) const;
     bool operator>(const Number& other) const;
 
-    void printData() const; // New method to print data_
+    void print() const; // New method to print data_
     std::variant<int, float> getData() const; // New method to get data_
     std::string getCurrentType() const; // New method to get the current type
+    OperandType whoami() override {return OperandType::Number; } ;
 
     
 private:
@@ -34,6 +37,7 @@ private:
     struct DivideVisitor;
 
     struct EqlVisitor;
+    struct NeqlVisitor;
     struct GtVisitor;
     struct LtVisitor;
     struct GtEqVisitor;
