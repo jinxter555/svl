@@ -47,7 +47,6 @@ std::vector<std::string> lvar_list;
 %token <int>  INT
 %token <float>     FLT
  
-%nterm <ast_op>  math_bin_op
 %nterm EOS // end of statement
 %nterm <std::vector<std::string>> param_list 
 %nterm <std::string> param
@@ -134,10 +133,7 @@ def_caller
     std::shared_ptr<CallExprAst> caller = std::make_shared<CallExprAst>($1, $3); 
     $$ = caller;
   }
-tuple
-  : LCUR arg_list RCUR {
-    $$ = std::make_shared<TupleExprAst>($2); 
-  }
+
 
 //--------------------------------------------------- exp eval
 exp
@@ -151,12 +147,26 @@ print_exp
   ;
 
 //--------------------------------------------------- exp var eval
+tuple
+  : LCUR arg_list RCUR { $$ = std::make_shared<TupleExprAst>($2); }
+
 exp_num
   : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | tuple { $$ = $1; }
   | COLON STR { $$ = std::make_shared<AtomExprAst>($2); }
-  | exp_num math_bin_op exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
+
+  | exp_num MULTIPLY exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::mul); }
+  | exp_num DIVIDE exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::div); }
+  | exp_num PLUS exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::plus); }
+  | exp_num MINUS exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::minus); }
+  | exp_num GT exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::gt); }
+  | exp_num LT exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::lt); }
+  | exp_num LTEQ exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::lteq); }
+  | exp_num GTEQ exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::gteq); }
+  | exp_num EQL exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::eql); }
+  | exp_num NEQL exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::neql); }
+
   | LPAREN exp_num RPAREN        { $$ = $2; }
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
   | DOLLAR STR ASSIGN exp_num {           // global variable
@@ -176,19 +186,6 @@ exp_num
   | tuple ASSIGN tuple {
     $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::assign);
   }
-  ;
-
-math_bin_op
-  : PLUS      {$$ = ast_op::plus;}
-  | MINUS     {$$ = ast_op::minus;}
-  | MULTIPLY  {$$ = ast_op::mul;}
-  | DIVIDE    {$$ = ast_op::div;}
-  | GT    {$$ = ast_op::gt;}
-  | LT    {$$ = ast_op::lt;}
-  | GTEQ    {$$ = ast_op::gteq;}
-  | LTEQ    {$$ = ast_op::lteq;}
-  | EQL    {$$ = ast_op::eql;}
-  | NEQL    {$$ = ast_op::neql;}
   ;
 
 //--------------------------------------------------- def function 
