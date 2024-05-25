@@ -5,6 +5,7 @@
 #include "lang.hh"
 #include "universe.hh"
 #include "number.hh"
+#include "tuple.hh"
 
 
 class SvlmLangContext;
@@ -17,7 +18,7 @@ protected:
   std::shared_ptr<Tree> context_tree;
 public:
   enum class ExprAstType {
-     Print, DistCont, Number, Atom, Ident, 
+     Print, DistCont, Number, Atom, Ident, Tuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
     Call, Decl, BinOp};
 
@@ -60,10 +61,27 @@ public:
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override; 
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
-  ExprAstType whoami() override { return ExprAstType::Number;}
+  ExprAstType whoami() override { 
+    //std::cout << "whoami, i am number\n";
+    return ExprAstType::Number;}
 private:
 };
 
+//----------------------------- tuple expr
+class ListExprAst;
+class TupleExprAst : public ExprAst {
+public:
+  bool evaluated = false;
+  TupleExprAst(std::shared_ptr<ListExprAst> tlist);
+  std::any evaluate(SvlmLangContext *slc) override ;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override;
+  void codegen(std::vector<std::string> &code) const override;
+  ExprAstType whoami() override { //std::cout << "I am tupleExpr\n";
+  return ExprAstType::Tuple;}
+  void print() override;
+};
+
+//----------------------------- atom expr
 class AtomExprAst : public ExprAst {
 public:
   AtomExprAst(std::string name);
@@ -108,7 +126,9 @@ public:
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
   void assign(SvlmLangContext *slc, std::any d) override;
-  ExprAstType whoami() override { return ExprAstType::Gvar;}
+  ExprAstType whoami() override { 
+    //std::cout << "whoami, i am gvar\n";
+    return ExprAstType::Gvar;}
 private:
 };
 
@@ -121,9 +141,12 @@ public:
   void codegen(std::vector<std::string> &code) const override;
   void assign(SvlmLangContext *slc, std::any d) override;
   void print() override;
-  ExprAstType whoami() override { return ExprAstType::Lvar;}
+  ExprAstType whoami() override { 
+    //std::cout << "whoami, i am lvar\n";
+    return ExprAstType::Lvar;}
 private:
 };
+
 
 class ArgExprAst : public ExprAst {
 public:
@@ -137,6 +160,7 @@ public:
   arg_name_pos_t arg();
   ExprAstType whoami() override { return ExprAstType::Arg;}
 };
+
 
 class DeclExprAst : public ExprAst {
 public:

@@ -24,7 +24,7 @@ public:
     bool operator>(const Number& other) const;
 
     void print() const; // New method to print data_
-    std::variant<int, float> getData() const; // New method to get data_
+    std::variant<int, float> get_data() const; // New method to get data_
     std::string getCurrentType() const; // New method to get the current type
     OperandType whoami() override {return OperandType::Number; } ;
 

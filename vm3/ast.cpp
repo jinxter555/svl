@@ -92,7 +92,7 @@ AtomExprAst::AtomExprAst(std::string s) : ExprAst(s) {}
 std::any AtomExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
 std::string AtomExprAst::name() { return std::any_cast<std::string>(get_data()); }
 void AtomExprAst::codegen(std::vector<std::string> &code) const {}
-void AtomExprAst::print() { print_data(); std::cout << "\n";}
+void AtomExprAst::print() { print_data(); std::cout << "--\n";}
 
 //----------------------------- ident expr
 IdentExprAst::IdentExprAst(std::string s) : ExprAst(s) {}
@@ -126,7 +126,8 @@ void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
     fst.mvar = name;
     std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
 
-    slc->svlm_lang->context_tree->set_node(keys, d);
+//    slc->svlm_lang->context_tree->set_node(keys, d);
+    slc->svlm_lang->context_tree->add_node(keys, d);
     slc->current_context = fst;
 }
 
@@ -198,13 +199,75 @@ std::any ArgExprAst::evaluate(SvlmLangContext *slc) {
 }
 void ArgExprAst::print() { print_data(); std::cout << "\n";}
 
+//----------------------------- tuple expr
+TupleExprAst:: TupleExprAst(std::shared_ptr<ListExprAst> tlist)
+: ExprAst("unevaluated tuple") {
+  add_child("ulist", tlist);
+  //std::cout << "adding tuple\n"; tlist->print();
+}
+
+std::any TupleExprAst::evaluate(SvlmLangContext *slc) {
+  //std::shared_ptr<ListExprAst> l = std::any_cast<std::shared_ptr<ListExprAst>>(get_data());
+  auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
+  //std::cout << "tuple eval\n"; l->print();
+  if(!this->evaluated) {
+    //std::vector<std::any> elist = move(std::any_cast<std::vector<std::any>>(l->evaluate(slc)));
+    Tuple elist(move(std::any_cast<std::vector<std::any>>(l->evaluate(slc))));
+    set_data(elist);
+    evaluated = true;
+    return elist;
+  }
+  return get_data();
+};
+
+std::any TupleExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> rl, ast_op op) {
+  std::cout << "tuple uni_op\n";
+  auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
+  auto rtva = std::any_cast<Tuple>(rl->get_data()).get_data();
+  //auto rta = rt.get_data();
+
+  if(l==nullptr) std::cerr << "tpl l is nullptr\n";
+
+  std::cout << "lsize:" << l->get_member_size() << "\n";
+  std::cout << "rsize:" << rtva.size() << "\n";
+  switch(op) {
+  case ast_op::assign: {
+    if(l->get_member_size() != rtva.size()) return bool(false);
+
+    for(int i=0; i<l->get_member_size(); i++) {
+      std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
+      if(lexpr->whoami() == ExprAstType::Gvar ||
+         lexpr->whoami() == ExprAstType::Lvar) {
+          std::shared_ptr<AssignExprAst> lexprv 
+            =  std::dynamic_pointer_cast<AssignExprAst>(lexpr);
+          lexprv->assign(slc, rtva[i]);
+      }
+
+      auto a =  lexpr->get_data();
+      std::cout << a << "\n";;
+    }
+    //l->print();
+    return bool(true);
+  }
+  default: break;
+  }
+  return bool(false);
+} 
+void TupleExprAst::codegen(std::vector<std::string> &code) const {};
+void TupleExprAst::print() {
+  //std::vector<std::any> elist = std::any_cast<std::vector<std::any>>(get_data());
+  try {
+    Tuple elist = std::any_cast<Tuple>(get_data());
+    elist.print();
+  } catch(const std::bad_any_cast& e) {}
+}
+
 //----------------------------- decl expr
 DeclExprAst::DeclExprAst(std::shared_ptr<IdentExprAst> l, DeclOpcodeAST doa) 
 : ExprAst(doa) {
     add_child("left", l);
 };
 
-class SvlmLang;
 
 std::any DeclExprAst::evaluate(SvlmLangContext *slc) {
   auto l = std::dynamic_pointer_cast<IdentExprAst>(get_child("left"));
@@ -253,6 +316,7 @@ BinOpExprAst::BinOpExprAst
 
 
 void BinOpExprAst::codegen(std::vector<std::string>& code) const {
+  /*
   std::shared_ptr<ExprAst> l = 
     std::dynamic_pointer_cast<ExprAst>(ExprAst::get_child("left"));
   std::shared_ptr<ExprAst> r = 
@@ -272,6 +336,7 @@ void BinOpExprAst::codegen(std::vector<std::string>& code) const {
     case ast_op::div: code.push_back("cdq"); code.push_back("div ebx"); break;
   default: throw std::invalid_argument("Invalid opeartor");
   }
+*/
 }
 void BinOpExprAst::print() {
   std::shared_ptr<ExprAst> l = 
@@ -294,12 +359,14 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
   ast_op op = std::any_cast<ast_op>(ExprAst::get_data());
   std::any a_op = op;
 
-  if(l ==nullptr) { std::cerr << "l is nullptr\n"; } if(r ==nullptr) { std::cerr << "r is nullptr\n"; }
+  if(l ==nullptr) { std::cerr << "eval left handside is nullptr\n"; } 
+  if(r ==nullptr) { std::cerr << "eval right handside r is nullptr\n"; }
 
   if((l->whoami() == ExprAstType::Gvar || l->whoami() == ExprAstType::Lvar)) {
     if(op == ast_op::assign) {
       // assignment operation for both local and global/module
-      std::shared_ptr<AssignExprAst> al = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
+      std::shared_ptr<AssignExprAst> al
+        = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
       std::any b = r->evaluate(slc); al->assign(slc, b); return b;
     } 
   } 
@@ -308,6 +375,14 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
     Number a = std::any_cast<Number>(l->evaluate(slc)); 
     NumberExprAst nea(a);
     return nea.uni_op(slc, r, op);
+  } catch(const std::bad_any_cast& e) {}
+
+  try {
+    std::cout << "try tuple!\n";
+    Tuple a = std::any_cast<Tuple>(l->evaluate(slc)); 
+    Tuple b = std::any_cast<Tuple>(r->evaluate(slc)); 
+    l->whoami();
+    return l->uni_op(slc, r, op);
   } catch(const std::bad_any_cast& e) {}
   return 0;
 }

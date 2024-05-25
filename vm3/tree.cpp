@@ -31,6 +31,7 @@ std::shared_ptr<TreeNode> TreeNode::get_child(const std::string &key) const {
 }
 
 std::shared_ptr<TreeNode> TreeNode::get_member(int index) const {
+  if(index < 0 || index > members.size()) {return nullptr;}
   return members[index];
 }
 std::any TreeNode::get_member_data(int index) const {

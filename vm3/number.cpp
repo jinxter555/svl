@@ -123,7 +123,7 @@ void Number::print() const {
   }, data_);
 }
 
-num_d_t Number::getData() const {
+num_d_t Number::get_data() const {
    return data_;
 }
 

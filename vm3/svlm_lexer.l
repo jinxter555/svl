@@ -51,6 +51,8 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 "^"             return SvlmParser::token::EXPONENT;
 "("             return SvlmParser::token::LPAREN;
 ")"             return SvlmParser::token::RPAREN;
+"{"             return SvlmParser::token::LCUR;
+"}"             return SvlmParser::token::RCUR;
 "@"             return SvlmParser::token::AT;
 "$"             return SvlmParser::token::DOLLAR;
 ","             return SvlmParser::token::COMMA;

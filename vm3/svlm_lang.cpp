@@ -22,6 +22,39 @@ SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) {
 
 }
 
+// both arguments and local variables are stored in lvars 
+void SvlmLangContext::fcall_stack_setup(std::vector<std::any> args, std::string callee) {
+    full_symbol_t fst = current_context; 
+    fst.mfunction=callee;
+    std::string k;
+    std::vector<std::string> keys, lvar_keys;
+    keys = move(get_sym_key(key_tok_t::mfunction, fst)); // same as lva
+
+    std::shared_ptr<TreeNode> lvar_node  = svlm_lang->context_tree->get_node({keys});
+    if(lvar_node==nullptr) { std::cerr <<"can't find function: " << callee << " !\n"; return;  }
+
+    keys.push_back("lvars");
+    lvar_node  = svlm_lang->context_tree->get_node({keys});
+    if(lvar_node==nullptr) { std::cerr <<"can't find lvars for function " << callee << " !\n"; return;  }
+
+    std::map<std::string, std::shared_ptr<TreeNode>> lvars = lvar_node->get_children();
+
+    auto lvars_tma = std::make_shared<TMA>();
+
+
+    for (const auto& [k, v] : lvars)  // set up all the local vars names including argument names
+      (*lvars_tma)[k] = v;
+
+    for(int i=0; i<args.size(); i++) {
+      //std::cout << "arg: " << std::any_cast<std::string>(lvar_node->get_member_data(i)) << "=" << args[i]<< "\n";
+      k = std::any_cast<std::string>(lvar_node->get_member_data(i));
+      (*lvars_tma)[k] = args[i];
+    }
+
+    svlm_lang->svlm_stack.push_back(lvars_tma);
+
+  }
+
 /*
 void SvlmLang::fcall_args_setup(std::vector<std::any> args){
   frame.sp = svlm_stack.size(); // set current stack pointer

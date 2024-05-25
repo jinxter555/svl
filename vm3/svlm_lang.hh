@@ -8,8 +8,6 @@
 #include "lang.hh"
 #include "frame_svlm.hh"
 
-#define TM std::map<std::string, std::shared_ptr<TreeNode>>
-#define TMA std::map<std::string, std::any>
 
 
 std::ostream& operator << (std::ostream& out, std::any& a) ;
@@ -60,40 +58,5 @@ public:
   s_int_t get_sym_addr(const key_tok_t ktt,  const full_symbol_t &fst);
   std::vector<std::string> get_sym_key(const key_tok_t ktt,  const full_symbol_t &fst);
 
-  void fcall_stack_setup(std::vector<std::any> args, std::string callee) {
-    // get the lvar from 
-    full_symbol_t fst = current_context; 
-    fst.mfunction=callee;
-    std::string k;
-    std::vector<std::string> keys, lvar_keys;
-    keys = move(get_sym_key(key_tok_t::mfunction, fst)); // same as lva
-
-    std::shared_ptr<TreeNode> lvar_node  = svlm_lang->context_tree->get_node({keys});
-    if(lvar_node==nullptr) { std::cerr <<"can't find function: " << callee << " !\n"; return;  }
-
-    keys.push_back("lvars");
-    lvar_node  = svlm_lang->context_tree->get_node({keys});
-    if(lvar_node==nullptr) { std::cerr <<"can't find lvars for function " << callee << " !\n"; return;  }
-
-    std::map<std::string, std::shared_ptr<TreeNode>> lvars = lvar_node->get_children();
-
-    //if(lvars.empty()) { std::cerr << "lvars is empty!\n"; return ; }
-
-    auto lvars_tma = std::make_shared<TMA>();
-
-    //std::cout<< "keys: "; for(auto k: keys) {std::cout << k << " ";} std::cout << "\n";
-    //std::cout << "lvars:\n"; for (const auto& [key, _] : lvars) { std::cout << "k: " << key << "\n"; } std::cout << "\n";
-
-    for (const auto& [k, v] : lvars)  // set up all the local vars names including argument names
-      (*lvars_tma)[k] = v;
-
-    for(int i=0; i<args.size(); i++) {
-      //std::cout << "arg: " << std::any_cast<std::string>(lvar_node->get_member_data(i)) << "=" << args[i]<< "\n";
-      k = std::any_cast<std::string>(lvar_node->get_member_data(i));
-      (*lvars_tma)[k] = args[i];
-    }
-
-    svlm_lang->svlm_stack.push_back(lvars_tma);
-
-  }
+  void fcall_stack_setup(std::vector<std::any> args, std::string callee);
 };

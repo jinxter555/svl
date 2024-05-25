@@ -2,6 +2,9 @@
 #include "vm_type.hh"
 #include <variant>
 
+#define TM std::map<std::string, std::shared_ptr<TreeNode>>
+#define TMA std::map<std::string, std::any>
+
 enum class key_tok_t {
   app=10, api, smodule, mvar, mvar_total_count,
   mfunction, fbody, lvar, larg, label

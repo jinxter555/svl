@@ -42,7 +42,7 @@ std::vector<std::string> lvar_list;
 
 %token YYEOF EOL COMMENT1 COMMENT2
 %token              MODULE DEF DO END AST_RETURN PRINT
-%token              LPAREN RPAREN AT DOLLAR COLON COMMA SEMICOLON
+%token              LPAREN RPAREN LCUR RCUR AT DOLLAR COLON COMMA SEMICOLON
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
 %token <float>     FLT
@@ -61,7 +61,7 @@ std::vector<std::string> lvar_list;
 %precedence         FACTORIAL
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp def_module def_function def_caller comments 
+%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp def_module def_function def_caller tuple comments 
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
 
 %start program_start
@@ -134,6 +134,10 @@ def_caller
     std::shared_ptr<CallExprAst> caller = std::make_shared<CallExprAst>($1, $3); 
     $$ = caller;
   }
+tuple
+  : LCUR arg_list RCUR {
+    $$ = std::make_shared<TupleExprAst>($2); 
+  }
 
 //--------------------------------------------------- exp eval
 exp
@@ -150,6 +154,7 @@ print_exp
 exp_num
   : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
+  | tuple { $$ = $1; }
   | COLON STR { $$ = std::make_shared<AtomExprAst>($2); }
   | exp_num math_bin_op exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, $2); }
   | LPAREN exp_num RPAREN        { $$ = $2; }
@@ -167,6 +172,9 @@ exp_num
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<LvarExprAst>(std::string($1)), 
       $3, ast_op::assign);
+  }
+  | tuple ASSIGN tuple {
+    $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::assign);
   }
   ;
 
