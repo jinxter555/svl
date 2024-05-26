@@ -154,7 +154,7 @@ exp_num
   : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
   | tuple { $$ = $1; }
-  | COLON STR { $$ = std::make_shared<AtomExprAst>($2); }
+  | COLON STR { $$ = std::make_shared<AtomExprAst>(Atom($2)); }
 
   | exp_num MULTIPLY exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::mul); }
   | exp_num DIVIDE exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::div); }

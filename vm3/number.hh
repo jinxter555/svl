@@ -4,14 +4,13 @@
 #include <variant>
 #include <iostream>
 #include "lang.hh"
-#include "svlm_operand.hh"
 
-class Number : Operand {
+class Number {
 public:
     Number(int value);
     Number(float value);
 
-    Number operator+(const Number& other) const;
+    Number operator+(const Number& other) const ;
     Number operator-(const Number& other) const;
     Number operator*(const Number& other) const;
     Number operator/(const Number& other) const;
@@ -26,7 +25,6 @@ public:
     void print() const; // New method to print data_
     std::variant<int, float> get_data() const; // New method to get data_
     std::string getCurrentType() const; // New method to get the current type
-    OperandType whoami() override {return OperandType::Number; } ;
 
     
 private:

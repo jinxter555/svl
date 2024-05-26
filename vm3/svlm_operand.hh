@@ -5,7 +5,9 @@ public:
   enum class OperandType{Nobody, Number, Tuple, Atom, String};
     virtual OperandType whoami() { return OperandType::Nobody; }; // New method to print data_
 
-    virtual std::any operator+(const Operand& other) const {return 0;};
+    //virtual std::any operator+(const Operand& other) const;
+    //virtual std::any hello(const Operand& other)=0;
+    //virtual std::any operator+(const Operand& other) const {return 0;};
     //Number(int value);
     //Number(float value);
     /*

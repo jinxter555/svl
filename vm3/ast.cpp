@@ -88,12 +88,22 @@ void NumberExprAst::print() {
   TreeNode::print_data(); //std::cout << "\n";
 }
 //----------------------------- atom variable expr
-AtomExprAst::AtomExprAst(std::string s) : ExprAst(s) {}
+AtomExprAst::AtomExprAst(Atom name) : ExprAst(name) {}
 std::any AtomExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
 std::string AtomExprAst::name() { return std::any_cast<std::string>(get_data()); }
 void AtomExprAst::codegen(std::vector<std::string> &code) const {}
 void AtomExprAst::print() { print_data(); std::cout << "--\n";}
 
+std::any AtomExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {
+  Atom a = std::any_cast<Atom>(this->evaluate(slc));
+  Atom b = std::any_cast<Atom>(r->evaluate(slc));
+  switch(op) {
+  case ast_op::eql:   return a == b;
+  case ast_op::neql:  return a != b;
+  default: return false;
+  }
+  return 0;
+} 
 //----------------------------- ident expr
 IdentExprAst::IdentExprAst(std::string s) : ExprAst(s) {}
 std::any IdentExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
@@ -220,35 +230,57 @@ std::any TupleExprAst::evaluate(SvlmLangContext *slc) {
   return get_data();
 };
 
+bool TupleExprAst::assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, std::vector<std::any> rtva){
+  if(l->get_member_size() != rtva.size()) return bool(false);
+
+  for(int i=0; i<l->get_member_size(); i++) {
+    std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
+
+    if(lexpr->whoami() == ExprAstType::Gvar || lexpr->whoami() == ExprAstType::Lvar) continue;
+   // left side == right hand side?
+   // std::any a = lexpr->get_data(); std::cout << a  << " =? " <<  rtva[i] << "\n";
+    if(lexpr->get_data().type() != rtva[i].type()) return bool(false);  // any type() not same
+
+    try {
+      Number a_n = std::any_cast<Number>(lexpr->get_data()); 
+      Number b_n = std::any_cast<Number>(rtva[i]); 
+      if(a_n != b_n) return bool(false);
+    } catch(const std::bad_any_cast& e) {}
+
+    try {
+      Atom a_a = std::any_cast<Atom>(lexpr->get_data()); 
+      Atom b_a = std::any_cast<Atom>(rtva[i]); 
+      if(a_a != b_a) return bool(false);
+    } catch(const std::bad_any_cast& e) {}
+
+  }
+
+  //std::cout << "assign\n";
+  for(int i=0; i<l->get_member_size(); i++) {
+    std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
+    // have to all match here before assign
+    if(lexpr->whoami() == ExprAstType::Gvar ||
+      lexpr->whoami() == ExprAstType::Lvar) {
+      std::shared_ptr<AssignExprAst> lexprv 
+      =  std::dynamic_pointer_cast<AssignExprAst>(lexpr);
+      lexprv->assign(slc, rtva[i]);
+    }
+
+  }
+  return bool(true);
+
+}
+
 std::any TupleExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> rl, ast_op op) {
-  std::cout << "tuple uni_op\n";
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
-  auto rtva = std::any_cast<Tuple>(rl->get_data()).get_data();
-  //auto rta = rt.get_data();
+  auto rtva = std::any_cast<Tuple>(rl->get_data()).get_data(); // rtva is a vector of any now
+  //auto rta = rt.get_data(); 
 
   if(l==nullptr) std::cerr << "tpl l is nullptr\n";
 
-  std::cout << "lsize:" << l->get_member_size() << "\n";
-  std::cout << "rsize:" << rtva.size() << "\n";
+  //std::cout << "lsize:" << l->get_member_size() << "\n"; std::cout << "rsize:" << rtva.size() << "\n";
   switch(op) {
-  case ast_op::assign: {
-    if(l->get_member_size() != rtva.size()) return bool(false);
-
-    for(int i=0; i<l->get_member_size(); i++) {
-      std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
-      if(lexpr->whoami() == ExprAstType::Gvar ||
-         lexpr->whoami() == ExprAstType::Lvar) {
-          std::shared_ptr<AssignExprAst> lexprv 
-            =  std::dynamic_pointer_cast<AssignExprAst>(lexpr);
-          lexprv->assign(slc, rtva[i]);
-      }
-
-      auto a =  lexpr->get_data();
-      std::cout << a << "\n";;
-    }
-    //l->print();
-    return bool(true);
-  }
+  case ast_op::assign:  return assign(slc, l, rtva);
   default: break;
   }
   return bool(false);
@@ -351,7 +383,6 @@ void BinOpExprAst::print() {
 }
 
 std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
-
   std::shared_ptr<ExprAst> l = 
     std::dynamic_pointer_cast<ExprAst>(get_child("left"));
   std::shared_ptr<ExprAst> r = 
@@ -378,12 +409,20 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
   } catch(const std::bad_any_cast& e) {}
 
   try {
-    std::cout << "try tuple!\n";
+//    std::cout << "try tuple!\n";
     Tuple a = std::any_cast<Tuple>(l->evaluate(slc)); 
     Tuple b = std::any_cast<Tuple>(r->evaluate(slc)); 
     l->whoami();
     return l->uni_op(slc, r, op);
   } catch(const std::bad_any_cast& e) {}
+
+  try {
+    Atom a = std::any_cast<Atom>(l->evaluate(slc)); 
+    AtomExprAst nea(a);
+    return nea.uni_op(slc, r, op);
+  } catch(const std::bad_any_cast& e) {}
+
+
   return 0;
 }
 

@@ -6,6 +6,7 @@
 #include "universe.hh"
 #include "number.hh"
 #include "tuple.hh"
+#include "atom.hh"
 
 
 class SvlmLangContext;
@@ -70,6 +71,9 @@ private:
 //----------------------------- tuple expr
 class ListExprAst;
 class TupleExprAst : public ExprAst {
+private:
+  bool assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, std::vector<std::any> rtva);
+
 public:
   bool evaluated = false;
   TupleExprAst(std::shared_ptr<ListExprAst> tlist);
@@ -84,9 +88,9 @@ public:
 //----------------------------- atom expr
 class AtomExprAst : public ExprAst {
 public:
-  AtomExprAst(std::string name);
+  AtomExprAst(Atom name);
   std::any evaluate(SvlmLangContext *slc) override ;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override ;
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
   std::string name();

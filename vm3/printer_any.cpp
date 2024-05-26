@@ -55,6 +55,9 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
   else if(a.type()  == typeid(Tuple)) {
     Tuple t= std::any_cast<Tuple>(a);
     t.print(); }
+  else if(a.type()  == typeid(Atom)) {
+    Atom t= std::any_cast<Atom>(a);
+    t.print(); }
   else if(a.type()  == typeid(std::vector<std::any>)) {
     std::vector<std::any> any_vector = std::any_cast<std::vector<std::any>>(a);
     for (std::any element : any_vector) {
