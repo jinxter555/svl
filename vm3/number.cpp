@@ -79,6 +79,26 @@ struct Number::GtEqVisitor {
   }
 };
 
+struct Number::AndVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a && b;
+  }
+};
+
+struct Number::OrVisitor {
+  template <typename T, typename U>
+  auto operator()(const T& a, const U& b) const -> bool {
+    return a || b;
+  }
+};
+struct Number::NotVisitor {
+  template <typename T>
+  auto operator()(const T& a) const -> bool {
+    return !a;
+  }
+};
+
 
 
 
@@ -115,6 +135,16 @@ bool Number::operator<(const Number& other) const {
 }
 bool Number::operator>(const Number& other) const {
   return std::visit(Number::GtVisitor{}, data_, other.data_);
+}
+
+bool Number::operator&&(const Number& other) const {
+  return std::visit(Number::AndVisitor{}, data_, other.data_);
+}
+bool Number::operator||(const Number& other) const {
+  return std::visit(Number::OrVisitor{}, data_, other.data_);
+}
+bool Number::operator!() const {
+  return std::visit(Number::NotVisitor{}, data_);
 }
 
 void Number::print() const {

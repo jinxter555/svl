@@ -41,8 +41,8 @@ std::vector<std::string> lvar_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token              MODULE DEF DO END AST_RETURN PRINT
-%token              LPAREN RPAREN LCUR RCUR AT DOLLAR COLON COMMA SEMICOLON
+%token              MODULE DEF DO END AST_RETURN PRINT CASE
+%token              PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
 %token <float>     FLT
@@ -53,15 +53,16 @@ std::vector<std::string> lvar_list;
 %nterm comments
 
 %nonassoc           ASSIGN
-%left               EQL NEQL GT LT GTEQ LTEQ
+%left               EQL NEQL GT LT GTEQ LTEQ AND OR 
 %left               PLUS MINUS
 %left               MULTIPLY DIVIDE MODULO
 %precedence         UMINUS
-%precedence         FACTORIAL
+%precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp def_module def_function def_caller tuple comments 
+%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments  case
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
+%type <std::shared_ptr<CaseMatchExprAst>>  case_match
 
 %start program_start
 
@@ -92,15 +93,16 @@ statement_list
 statement
   : %empty {$$=nullptr;} // end of each statement
   | exp 
-  | def_module
-  | def_function
-  | def_caller
+  | module
+  | function
+  | caller
+  | case
   | print_exp
   | comments {$$ = nullptr; }
   ;
 
 //--------------------------------------------------- module decl
-def_module
+module
   : MODULE STR { 
     svlm_lang = slc->svlm_lang;
     slc->add_module_name($2); 
@@ -128,8 +130,8 @@ arg
 
 
 //--------------------------------------------------- caller/callee 
-def_caller
-  : STR LPAREN arg_list RPAREN {
+caller
+  : STR PAREN_L arg_list PAREN_R {
     std::shared_ptr<CallExprAst> caller = std::make_shared<CallExprAst>($1, $3); 
     $$ = caller;
   }
@@ -148,7 +150,7 @@ print_exp
 
 //--------------------------------------------------- exp var eval
 tuple
-  : LCUR arg_list RCUR { $$ = std::make_shared<TupleExprAst>($2); }
+  : CUR_L arg_list CUR_R { $$ = std::make_shared<TupleExprAst>($2); }
 
 exp_num
   : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
@@ -166,8 +168,11 @@ exp_num
   | exp_num GTEQ exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::gteq); }
   | exp_num EQL exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::eql); }
   | exp_num NEQL exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::neql); }
+  | exp_num AND exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::and_); }
+  | exp_num OR exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::or_); }
+  | NOT exp_num { $$ = std::make_shared<BinOpExprAst>($2, $2, ast_op::not_); }
 
-  | LPAREN exp_num RPAREN        { $$ = $2; }
+  | PAREN_L exp_num PAREN_R        { $$ = $2; }
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
   | DOLLAR STR ASSIGN exp_num {           // global variable
     slc->add_mvar_name($2);               // add to context tree
@@ -189,8 +194,8 @@ exp_num
   ;
 
 //--------------------------------------------------- def function 
-def_function
-  : DEF STR LPAREN param_list RPAREN DO statement_list END { 
+function
+  : DEF STR PAREN_L param_list PAREN_R DO statement_list END { 
 
     if(slc->interactive) slc->defining_func = true;
     std::shared_ptr<FuncExprAst> func_ptr = 
@@ -206,6 +211,24 @@ def_function
   }
   ;
 
+//--------------------------------------------------- case statement list
+case
+  : CASE statement DO END {
+    std::shared_ptr<CaseExprAst> case_ptr =
+      std::make_shared<CaseExprAst>($2);
+    $$ = case_ptr;
+  }
+  ;
+
+case_match
+  : statement ARROW_R statement_list {
+
+  } 
+  | %empty {
+    $$ = std::make_shared<CaseMatchExprAst>(nullptr, ast_op::eql );
+
+  }
+  ;
 //--------------------------------------------------- param list
 param_list
   : param  { 

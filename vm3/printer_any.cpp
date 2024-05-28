@@ -28,7 +28,10 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     case ast_op::lt:    oc="<"; break;
     case ast_op::lteq:  oc="<="; break;
     case ast_op::gteq:  oc=">="; break;
-    default: oc="wrong type"; break;
+    case ast_op::and_:  oc="&&"; break;
+    case ast_op::or_:  oc="||"; break;
+    case ast_op::not_:  oc="!"; break;
+    default: oc="out wrong type"; break;
     } 
     out << oc ; }
   else if(a.type()  == typeid(int))
@@ -63,7 +66,7 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     for (std::any element : any_vector) {
       out << element << " "; } }
   else if(a.type()  == typeid(std::shared_ptr<ExprAst>)) {
-    std::cout  << "function code block\n";
+    std::cout  << "code block\n";
     std::shared_ptr ast = std::any_cast<std::shared_ptr<ExprAst>>(a);
     ast->print(); }
   else if(a.type()  == typeid(TM)) {

@@ -22,6 +22,10 @@ public:
     bool operator<(const Number& other) const;
     bool operator>(const Number& other) const;
 
+    bool operator&&(const Number& other) const;
+    bool operator||(const Number& other) const;
+    bool operator!() const;
+
     void print() const; // New method to print data_
     std::variant<int, float> get_data() const; // New method to get data_
     std::string getCurrentType() const; // New method to get the current type
@@ -40,6 +44,10 @@ private:
     struct LtVisitor;
     struct GtEqVisitor;
     struct LtEqVisitor;
+
+    struct AndVisitor;
+    struct OrVisitor;
+    struct NotVisitor;
 };
 
 #endif // NUMBER_H

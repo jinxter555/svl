@@ -79,6 +79,9 @@ std::any NumberExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r,
   case ast_op::lt:    return a < b;
   case ast_op::lteq:  return a <= b;
   case ast_op::gteq:  return a >= b;
+  case ast_op::and_:  return a && b;
+  case ast_op::or_:  return a || b;
+  case ast_op::not_:  return !a;
   default: std::cerr << "wrong type:\n"; return 0;
   }
   return 1;
@@ -515,6 +518,8 @@ void FuncExprAst::print() {
 }
 void FuncExprAst::codegen(std::vector<std::string> &code) const {
 }
+
+
 //--------------------
 CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) : ExprAst(callee) {
   add_child("args", args ); // add to ast tree instead, when evaluate push these args to stack
@@ -559,5 +564,23 @@ void CallExprAst::print() {
 
 }
 void CallExprAst::codegen(std::vector<std::string> &code) const {}
+
+//--------------------  case expr
+CaseExprAst::CaseExprAst(std::shared_ptr<ExprAst> top) : ExprAst(top) {
+}
+std::any CaseExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
+void CaseExprAst::codegen(std::vector<std::string> &code) const {}
+void CaseExprAst::print() { print_data(); std::cout << "\n";}
+
+
+//--------------------  case match expr
+CaseMatchExprAst::CaseMatchExprAst(std::shared_ptr<ExprAst> match,
+ std::shared_ptr<ListExprAst> body, ast_op op) : ExprAst(op) {
+  add_child("match", match);
+  add_child("fbody", body);
+}
+std::any CaseMatchExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
+void CaseMatchExprAst::codegen(std::vector<std::string> &code) const {}
+void CaseMatchExprAst::print() { print_data(); std::cout << "\n";}
 
 #endif

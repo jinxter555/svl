@@ -21,7 +21,7 @@ public:
   enum class ExprAstType {
      Print, DistCont, Number, Atom, Ident, Tuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
-    Call, Decl, BinOp};
+    Call, Case, CaseMatch, Decl, BinOp};
 
   ExprAst(std::any d) : TreeNode(d) {}
   ExprAst();
@@ -33,7 +33,7 @@ public:
   virtual void print() = 0 ;
 };
 
-
+//----------------------------- Print expr
 class PrintExprAst : public ExprAst { // to disable continue aka break loop for ListExprAst
 public:
   PrintExprAst(std::shared_ptr<ExprAst> exp);
@@ -43,6 +43,8 @@ public:
   void print() override;
   ExprAstType whoami() override { return ExprAstType::Print;}
 };
+
+//----------------------------- discontinue  
 
 class DisContExprAst : public ExprAst { // to disable continue aka break loop for ListExprAst
 public:
@@ -225,6 +227,33 @@ public:
   void codegen(std::vector<std::string> &code) const override;
   ExprAstType whoami() override { return ExprAstType::Call;}
 };
+
+//----------------------------- Switch Bin variable expr
+class CaseExprAst : public ExprAst {
+public:
+  CaseExprAst (std::shared_ptr<ExprAst> top);
+
+  std::any evaluate(SvlmLangContext *slc) override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+  ExprAstType whoami() override { return ExprAstType::Case;}
+
+};
+
+//----------------------------- Case Bin variable expr
+class CaseMatchExprAst : public ExprAst {
+public:
+  CaseMatchExprAst (std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body, ast_op op);
+  std::any evaluate(SvlmLangContext *slc) override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+  ExprAstType whoami() override { return ExprAstType::CaseMatch;}
+
+};
+
+
 
 
 #endif

@@ -21,6 +21,9 @@ enum class ast_op {
   lteq,
   eql,
   neql,
+  and_,
+  not_,
+  or_,
   assign,
 };
 

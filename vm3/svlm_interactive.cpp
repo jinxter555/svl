@@ -74,11 +74,11 @@ void SvlmInteractive::printGoodbye(const std::string& message) {
 
 void SvlmInteractive::init_command_functions() {
   command_functions =  {
-    {"!print_tree", std::bind(&SvlmInteractive::print_tree, this,  std::placeholders::_1)},
-    {"!print_stack", std::bind(&SvlmInteractive::print_stack, this,  std::placeholders::_1)},
-    {"!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
-    {"!print_ast", std::bind(&SvlmInteractive::print_ast, this,  std::placeholders::_1)},
-    {"!run_program", std::bind(&SvlmInteractive::run_program, this,  std::placeholders::_1)},
+    {"!!print_tree", std::bind(&SvlmInteractive::print_tree, this,  std::placeholders::_1)},
+    {"!!print_stack", std::bind(&SvlmInteractive::print_stack, this,  std::placeholders::_1)},
+    {"!!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
+    {"!!print_ast", std::bind(&SvlmInteractive::print_ast, this,  std::placeholders::_1)},
+    {"!!run_program", std::bind(&SvlmInteractive::run_program, this,  std::placeholders::_1)},
   };
 }
 
@@ -91,7 +91,7 @@ void SvlmInteractive::accept_prompt(const std::string &line) {
 
 void SvlmInteractive::parse_prompt(const std::string &line) {
     slc.interactive = true;
-    if(line[0] == '!') 
+    if(line[0] == '!' && line[1] == '!') 
       interact(line);
     else {
       parse(line);
@@ -168,7 +168,7 @@ void SvlmInteractive::set_ui_commands() {
   }
 
   std::shared_ptr<TreeNode> ptree_node 
-    = svlm_lang.context_tree->get_node({rlsvlm_current_context_key, "!print_tree"});
+    = svlm_lang.context_tree->get_node({rlsvlm_current_context_key, "!!print_tree"});
 
   if(ptree_node!=nullptr) {
     std::shared_ptr<TreeNode> uni_node = svlm_lang.context_tree->get_node({CONTEXT_UNIV});
