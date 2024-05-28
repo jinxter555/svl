@@ -4,7 +4,7 @@
 #define YY_DECL int vslasm::AsmScanner::lex(vslasm::AsmParser::semantic_type *yylval)
 %}
 
-%option c++ interactive noyywrap noyylineno nodefault outfile="asm_scanner.cpp"
+%option c++ interactive noyywrap noyylineno nodefault outfile="asm_scanner.cc"
 
 dseq            ([[:digit:]]+)
 dseq_opt        ({dseq}?)

@@ -2,88 +2,88 @@
 CC=g++ -std=c++17 -g
 #CC=g++ -std=c++17 
 
-main.out:  asm_lexer.l asm_grammar.y main.cpp  opcode.o assembler.o  assembly.o commandline.o \
+main.out:  asm_lexer.l asm_grammar.y main.cc  opcode.o assembler.o  assembly.o commandline.o \
 	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o svlm_grammar.y svlm_lexer.l  \
-	asm_parser.cpp asm_scanner.cpp svlm_parser.cpp svlm_scanner.cpp \
+	asm_parser.cc asm_scanner.cc svlm_parser.cc svlm_scanner.cc \
 	svlm_interactive.o svlm_lang.o ast.o printer_any.o number.o tuple.o atom.o
-	$(CC) -o main.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
+	$(CC) -o /dev/shm/main.out main.cc asm_parser.cc asm_scanner.cc opcode.o my_helpers.o \
 	assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o  \
-	svlm_scanner.cpp svlm_parser.cpp tree.o  svlm_interactive.o svlm_lang.o \
+	svlm_scanner.cc svlm_parser.cc tree.o  svlm_interactive.o svlm_lang.o \
 	printer_any.o number.o tuple.o atom.o ast.o \
 	-lreadline
 
 
-asm_parser.cpp: assembler.hh asm_scanner.hh assembler.cpp asm_grammar.y
+asm_parser.cc: assembler.hh asm_scanner.hh assembler.cc asm_grammar.y
 	bison -d asm_grammar.y 
 
 asm_parser.hh: 
 	bison -d asm_grammar.y 
 
-svlm_parser.cpp: svlm_grammar.y
+svlm_parser.cc: svlm_grammar.y
 	bison -d svlm_grammar.y 
 
 svlm_parser.hh: svlm_grammar.y
 	bison -d svlm_grammar.y 
 
-asm_scanner.cpp: assembler.hh asm_scanner.hh assembler.cpp asm_lexer.l
+asm_scanner.cc: assembler.hh asm_scanner.hh assembler.cc asm_lexer.l
 	flex asm_lexer.l
 
-svlm_scanner.cpp: svlm_lexer.l
+svlm_scanner.cc: svlm_lexer.l
 	flex -i svlm_lexer.l
 
 
 
-printer_any.o: printer_any.cpp
-	$(CC) -c printer_any.cpp
+printer_any.o: printer_any.cc
+	$(CC) -c printer_any.cc
 
-tuple.o: tuple.cpp tuple.hh
-	$(CC) -c tuple.cpp
+tuple.o: tuple.cc tuple.hh
+	$(CC) -c tuple.cc
 
-number.o: number.cpp number.hh
-	$(CC) -c number.cpp
+number.o: number.cc number.hh
+	$(CC) -c number.cc
 
-atom.o: atom.cpp atom.hh
-	$(CC) -c atom.cpp
+atom.o: atom.cc atom.hh
+	$(CC) -c atom.cc
 
-ast.o: ast.cpp ast.hh
-	$(CC) -c ast.cpp
+ast.o: ast.cc ast.hh
+	$(CC) -c ast.cc
 
-opcode.o: opcode.cpp opcode.hh
-	$(CC) -c opcode.cpp
+opcode.o: opcode.cc opcode.hh
+	$(CC) -c opcode.cc
 
-assembly.o: assembly.cpp assembly.hh
-	$(CC) -c assembly.cpp
+assembly.o: assembly.cc assembly.hh
+	$(CC) -c assembly.cc
 
-vm.o: vm.cpp vm.hh
-	$(CC) -c vm.cpp
+vm.o: vm.cc vm.hh
+	$(CC) -c vm.cc
 
-commandline.o: commandline.cpp commandline.hh
-	$(CC) -c commandline.cpp
+commandline.o: commandline.cc commandline.hh
+	$(CC) -c commandline.cc
 
-prompt.o : prompt.cpp  prompt.hh
-	$(CC) -c prompt.cpp
+prompt.o : prompt.cc  prompt.hh
+	$(CC) -c prompt.cc
 
-assembler.o : assembler.cpp  assembler.hh
-	$(CC) -c assembler.cpp
+assembler.o : assembler.cc  assembler.hh
+	$(CC) -c assembler.cc
 
-assembler_interactive.o : assembler_interactive.cpp  assembler_interactive.hh asm_parser.hh asm_scanner.hh asm_parser.cpp asm_scanner.cpp
-	$(CC) -c assembler_interactive.cpp
+assembler_interactive.o : assembler_interactive.cc  assembler_interactive.hh asm_parser.hh asm_scanner.hh asm_parser.cc asm_scanner.cc
+	$(CC) -c assembler_interactive.cc
 
-svlm_lang.o: svlm_lang.cpp svlm_lang.hh
-	$(CC) -c svlm_lang.cpp
+svlm_lang.o: svlm_lang.cc svlm_lang.hh
+	$(CC) -c svlm_lang.cc
 
-svlm_interactive.o: svlm_interactive.cpp svlm_interactive.hh svlm_parser.hh svlm_scanner.hh svlm_parser.cpp svlm_scanner.cpp
-	$(CC) -c svlm_interactive.cpp
+svlm_interactive.o: svlm_interactive.cc svlm_interactive.hh svlm_parser.hh svlm_scanner.hh svlm_parser.cc svlm_scanner.cc
+	$(CC) -c svlm_interactive.cc
 
-tree.o : tree.cpp  tree.hh
-	$(CC) -c tree.cpp
+tree.o : tree.cc  tree.hh
+	$(CC) -c tree.cc
 
-ast.o : ast.cpp  ast.hh
-	$(CC) -c ast.cpp
+ast.o : ast.cc  ast.hh
+	$(CC) -c ast.cc
 
-my_helpers.o : my_helpers.cpp  my_helpers.hh
-	$(CC) -c my_helpers.cpp
+my_helpers.o : my_helpers.cc  my_helpers.hh
+	$(CC) -c my_helpers.cc
 
 clean:
-	rm -f main.out asm_parser.cpp asm_scanner.cpp *.o *.gch svlm_scanner.cpp svlm_parser.cpp svlm_parser.hh asm_parser.hh
+	rm -f /dev/shm/main.out asm_parser.cc asm_scanner.cc *.o *.gch svlm_scanner.cc svlm_parser.cc svlm_parser.hh asm_parser.hh
 

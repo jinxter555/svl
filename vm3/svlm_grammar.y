@@ -8,7 +8,7 @@
 %require "3.8.1"
 %language "C++"
 %defines "svlm_parser.hh"
-%output "svlm_parser.cpp"
+%output "svlm_parser.cc"
 
 %define api.parser.class {SvlmParser}
 %define api.namespace {vslast}

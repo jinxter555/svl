@@ -7,7 +7,7 @@
   vslast::SvlmParser::location_type *yylloc)
 %}
 
-%option c++ interactive noyylineno nodefault outfile="svlm_scanner.cpp" 
+%option c++ interactive noyylineno nodefault outfile="svlm_scanner.cc" 
 %option noyyfree noyyrealloc noyyalloc
 
 

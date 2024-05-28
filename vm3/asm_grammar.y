@@ -8,7 +8,7 @@
 
 
 %defines "asm_parser.hh"
-%output "asm_parser.cpp"
+%output "asm_parser.cc"
 
 %define api.parser.class {AsmParser}
 %define api.namespace {vslasm}
