@@ -36,6 +36,7 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 "def"        return SvlmParser::token::DEF;
 "do"        return SvlmParser::token::DO;
 "end"        return SvlmParser::token::END;
+"flow"        return SvlmParser::token::FLOW;
 "case"        return SvlmParser::token::CASE;
 "return"        return SvlmParser::token::AST_RETURN;
 "print"        return SvlmParser::token::PRINT;

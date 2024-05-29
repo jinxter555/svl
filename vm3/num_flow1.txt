@@ -1,0 +1,5 @@
+module mhello
+$abc = 456
+print $abc
+flow 123 do != 222 -> 2+25 end
+return

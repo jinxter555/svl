@@ -41,7 +41,7 @@ std::vector<std::string> lvar_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token              MODULE DEF DO END AST_RETURN PRINT CASE
+%token              MODULE DEF DO END AST_RETURN PRINT CASE FLOW
 %token              PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
@@ -50,6 +50,7 @@ std::vector<std::string> lvar_list;
 %nterm EOS // end of statement
 %nterm <std::vector<std::string>> param_list 
 %nterm <std::string> param
+%nterm <ast_op> comparison_ops
 %nterm comments
 
 %nonassoc           ASSIGN
@@ -60,9 +61,10 @@ std::vector<std::string> lvar_list;
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments  case
-%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list
+%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments case flow
+%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list flow_match_list
 %type <std::shared_ptr<CaseMatchExprAst>>  case_match
+%type <std::shared_ptr<FlowMatchExprAst>>  flow_match
 
 %start program_start
 
@@ -97,6 +99,7 @@ statement
   | function
   | caller
   | case
+  | flow
   | print_exp
   | comments {$$ = nullptr; }
   ;
@@ -226,9 +229,66 @@ case_match
   } 
   | %empty {
     $$ = std::make_shared<CaseMatchExprAst>(nullptr, ast_op::eql );
-
   }
   ;
+//--------------------------------------------------- flow statement list
+flow
+  // : FLOW exp_num DO flow_match_list END {
+  : FLOW exp_num DO flow_match_list END {
+    std::shared_ptr<FlowExprAst> flow_ptr =
+      std::make_shared<FlowExprAst>($2, $4);
+
+    // $2->print();
+    //$4->print();
+    $$ = flow_ptr;
+  }
+  ;
+
+flow_match_list
+  : %empty {
+    std::cout << "empty flow match list\n";
+    $$ = std::make_shared<ListExprAst>(std::string("empty flow match list"));
+  }
+  | flow_match {
+    std::cout << "start flow match list\n";
+    auto ast_current_context = std::make_shared<ListExprAst>(std::string("flow match list"));
+    ast_current_context->add($1);
+    $$ = ast_current_context;
+  }
+  | flow_match_list flow_match {
+    if($2 !=nullptr)
+      $1->add($2);
+    $$ = $1;
+  }
+  | flow_match_list EOS flow_match {
+    if($3 !=nullptr)
+      $1->add($3);
+    $$ = $1;
+  }
+  | flow_match_list error EOS flow_match { yyerrok; }
+  ;
+
+flow_match
+  : comparison_ops statement ARROW_R statement_list {
+    $$ = std::make_shared<FlowMatchExprAst>($2, $4, $1);
+  } 
+  ;
+
+comparison_ops
+  : EQL   { $$ = ast_op::eql; }
+  | NEQL  {$$ = ast_op::neql; }
+  | LT    {$$ = ast_op::lt;   }
+  | GT    {$$ = ast_op::gt;   }
+  | LTEQ  {$$ = ast_op::lteq; }
+  | GTEQ  {$$ = ast_op::gteq; }
+  ;
+
+
+
+
+
+
+
 //--------------------------------------------------- param list
 param_list
   : param  { 

@@ -1,0 +1,8 @@
+module mhello
+$a = 123456;
+flow $a do
+  1+1
+  2+2
+  3+3
+end
+return

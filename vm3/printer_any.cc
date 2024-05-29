@@ -17,6 +17,7 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     std::string oc;
     ast_op op = std::any_cast<ast_op>(a);
     switch(op) {
+    case ast_op::noop:  oc="-noop-"; break;
     case ast_op::assign:  oc="="; break;
     case ast_op::plus:  oc="+"; break;
     case ast_op::minus: oc="-"; break;

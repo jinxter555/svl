@@ -11,6 +11,7 @@ enum class key_tok_t {
 };
 
 enum class ast_op {
+  noop,
   plus,
   minus,
   mul,
