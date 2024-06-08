@@ -99,7 +99,10 @@ void SvlmLangContext::add_mvar_name(const std::string &mv) { // int n, with offs
   current_context.mvar = mv;
   full_symbol_t fst = current_context; fst.mvar= mv;
   std::vector<std::string> keys = move(get_sym_key(key_tok_t::mvar, fst));
-  svlm_lang->context_tree->add_node(keys, std::string("value"));
+
+  std::shared_ptr<TreeNode> tn = svlm_lang->context_tree->get_node(keys);
+  if(tn ==nullptr) // prevent prompt command line from re-adding the variable name again
+    svlm_lang->context_tree->add_node(keys, std::string("value"));
 }
 
 void SvlmLangContext::add_function_name(const std::string &name) {

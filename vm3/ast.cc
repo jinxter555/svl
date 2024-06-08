@@ -2,7 +2,6 @@
 #include "svlm_lang.hh"
 #include <iostream>
 #include <type_traits>
-#include "svlm_operand.hh"
 //#include "printer_any.hh"
 std::ostream& operator << (std::ostream& out, std::any& a) ;
 
@@ -53,6 +52,43 @@ void DisContExprAst::codegen(std::vector<std::string>& code) const {};
 void DisContExprAst::print() { print_data(); };
 
 //----------------------------- Bin  variable expr
+//----------------------------- number variable expr
+OperandExprAst::OperandExprAst(Operand o) : ExprAst(o) { }
+void OperandExprAst::codegen(std::vector<std::string>& code) const {
+}
+
+std::any OperandExprAst::evaluate(SvlmLangContext *slc) { return ExprAst::get_data(); }
+
+std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {
+  Operand a = std::any_cast<Operand>(evaluate(slc));
+  Operand b = std::any_cast<Operand>(r->evaluate(slc));
+  switch(op) {
+  case ast_op::plus:  return a+b;
+  case ast_op::minus: return a - b; 
+  case ast_op::mul:   return a * b; 
+  case ast_op::div:   return a / b;
+  case ast_op::eql:   
+    std::cout <<"cmp a == b\n";
+    return a == b;
+  case ast_op::neql:  return a != b;
+  case ast_op::gt:    return a > b;
+  case ast_op::lt:    return a < b;
+  case ast_op::lteq:  return a <= b;
+  case ast_op::gteq:  return a >= b;
+  case ast_op::and_:  return a && b;
+  case ast_op::or_:  return a || b;
+  case ast_op::not_:  return !a;
+  default: std::cerr << "wrong type:\n"; return 0;
+  }
+  return 1;
+} 
+
+void OperandExprAst::print() { 
+//  TreeNode::print_data(); //std::cout << "\n";
+  std::cout << "operand print\n";
+  Operand o = std::any_cast<Operand>(get_data());
+  std::cout << o;
+}
 
 //----------------------------- number variable expr
 NumberExprAst::NumberExprAst(Number n) : ExprAst(n) {}
@@ -214,10 +250,13 @@ void ArgExprAst::print() { print_data(); std::cout << "\n";}
 
 //----------------------------- tuple expr
 TupleExprAst:: TupleExprAst(std::shared_ptr<ListExprAst> tlist)
-: ExprAst("unevaluated tuple") {
-  add_child("ulist", tlist);
-  //std::cout << "adding tuple\n"; tlist->print();
-}
+: ExprAst("unevaluated tuple") { add_child("ulist", tlist); }
+
+TupleExprAst:: TupleExprAst(const Tuple &t)
+  : ExprAst(t)  { add_child("ulist", nullptr); }
+
+TupleExprAst:: TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist)
+  : ExprAst(t) { add_child("ulist", tlist); }
 
 std::any TupleExprAst::evaluate(SvlmLangContext *slc) {
   //std::shared_ptr<ListExprAst> l = std::any_cast<std::shared_ptr<ListExprAst>>(get_data());
@@ -245,6 +284,12 @@ bool TupleExprAst::assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, 
     if(lexpr->get_data().type() != rtva[i].type()) return bool(false);  // any type() not same
 
     try {
+      Operand a = std::any_cast<Operand>(lexpr->get_data()); 
+      Operand b = std::any_cast<Operand>(rtva[i]); 
+      if(a != b) return bool(false);
+    } catch(const std::bad_any_cast& e) {}
+/*
+    try {
       Number a_n = std::any_cast<Number>(lexpr->get_data()); 
       Number b_n = std::any_cast<Number>(rtva[i]); 
       if(a_n != b_n) return bool(false);
@@ -255,7 +300,7 @@ bool TupleExprAst::assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, 
       Atom b_a = std::any_cast<Atom>(rtva[i]); 
       if(a_a != b_a) return bool(false);
     } catch(const std::bad_any_cast& e) {}
-
+*/
   }
 
   //std::cout << "assign\n";
@@ -276,18 +321,32 @@ bool TupleExprAst::assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, 
 
 std::any TupleExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> rl, ast_op op) {
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
+ // auto ltva = std::any_cast<Tuple>(l->get_data()).get_data(); // rtva is a vector of any now
+
+  std::cout << "tuple uniop1\n";
   auto rtva = std::any_cast<Tuple>(rl->get_data()).get_data(); // rtva is a vector of any now
-  //auto rta = rt.get_data(); 
-
   if(l==nullptr) std::cerr << "tpl l is nullptr\n";
+  std::cout << "tuple uniop2\n";
 
-  //std::cout << "lsize:" << l->get_member_size() << "\n"; std::cout << "rsize:" << rtva.size() << "\n";
+  std::any op_print = op; 
   switch(op) {
-  case ast_op::assign:  return assign(slc, l, rtva);
-  default: break;
+  case ast_op::eql:  
+  case ast_op::neql:    {
+    Tuple a = std::any_cast<Tuple>(evaluate(slc));
+    Tuple b = std::any_cast<Tuple>(rl->evaluate(slc));
+    std::cout << "tuple n/eql uni_op\n";
+    return a.bin_op(b, op);
+  }
+  case ast_op::assign:  
+    return assign(slc, l, rtva);
+  default: 
+    std::cerr << "error operator! " << op_print << "\n"; 
+    break;
   }
   return bool(false);
 } 
+
+
 void TupleExprAst::codegen(std::vector<std::string> &code) const {};
 void TupleExprAst::print() {
   //std::vector<std::any> elist = std::any_cast<std::vector<std::any>>(get_data());
@@ -391,7 +450,6 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> r = 
     std::dynamic_pointer_cast<ExprAst>(get_child("right"));
   ast_op op = std::any_cast<ast_op>(ExprAst::get_data());
-  std::any a_op = op;
 
   if(l ==nullptr) { std::cerr << "eval left handside is nullptr\n"; } 
   if(r ==nullptr) { std::cerr << "eval right handside r is nullptr\n"; }
@@ -401,30 +459,35 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
       // assignment operation for both local and global/module
       std::shared_ptr<AssignExprAst> al
         = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
-      std::any b = r->evaluate(slc); al->assign(slc, b); return b;
+
+      std::any b = r->evaluate(slc); 
+      al->assign(slc, b); 
+      return b;
     } 
+
+    try {
+    Tuple a = std::any_cast<Tuple>(l->evaluate(slc)); 
+    Tuple b = std::any_cast<Tuple>(r->evaluate(slc)); 
+    return a.bin_op(b, op);
+    } catch(const std::bad_any_cast& e) { }
   } 
 
   try {
-    Number a = std::any_cast<Number>(l->evaluate(slc)); 
-    NumberExprAst nea(a);
-    return nea.uni_op(slc, r, op);
-  } catch(const std::bad_any_cast& e) {}
-
-  try {
-//    std::cout << "try tuple!\n";
-    Tuple a = std::any_cast<Tuple>(l->evaluate(slc)); 
+    //std::cout << "trying tuple1\n";
+    if(op != ast_op::assign) // to prevent var look up error 
+      Tuple a = std::any_cast<Tuple>(l->evaluate(slc)); 
     Tuple b = std::any_cast<Tuple>(r->evaluate(slc)); 
-    l->whoami();
     return l->uni_op(slc, r, op);
-  } catch(const std::bad_any_cast& e) {}
+  } catch(const std::bad_any_cast& e) { }
 
   try {
-    Atom a = std::any_cast<Atom>(l->evaluate(slc)); 
-    AtomExprAst nea(a);
-    return nea.uni_op(slc, r, op);
-  } catch(const std::bad_any_cast& e) {}
-
+    // std::cout << "trying operand\n"; std::any op_print  = op; std::cout << "op: " << op_print << "\n";
+    Operand a = std::any_cast<Operand>(l->evaluate(slc)); 
+    OperandExprAst oea(a);
+    return oea.uni_op(slc, r, op);
+  } catch(const std::bad_any_cast& e) { 
+    //std::cerr << "operand cast error: " << e.what() << "\n"; 
+  }
 
   return 0;
 }
@@ -495,6 +558,7 @@ std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
   }
   slc->last_line=true;
   std::any output = e->evaluate(slc);
+  //std::cout << "output: " << output << "\n";
   slc->last_line=false;
   return output;
 }
@@ -607,8 +671,7 @@ void FlowExprAst::print() {
   if(l==nullptr) { std::cerr << "flow match list is null!\n"; return; }
 
   std::cout << "flow "; e->print_data(); std::cout << " do\n";
-
-  std::cout << "---flow match list--\n";
+  //std::cout << "---flow match list--\n";
   l->print();
 }
 
@@ -622,14 +685,17 @@ FlowMatchExprAst::FlowMatchExprAst(std::shared_ptr<ExprAst> match,
 std::any FlowMatchExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
 void FlowMatchExprAst::codegen(std::vector<std::string> &code) const {}
 void FlowMatchExprAst::print() { 
-  std::any op = get_data(); std::cout << "op "; std::cout << op;
+  std::any print_op = get_data();  ast_op  op = std::any_cast<ast_op>(print_op);
+ // std::cout << "op "; 
+  std::cout << print_op;
   auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
-  std::cout << " match ";
-  m->print_data();
-  std::cout << " cbody ";
+  if(op != ast_op::ast_default) {
+    // std::cout << " match ";
+    m->print_data();
+  } //else { std::cout << " default  "; }
+  //std::cout << " cbody ";
   l->print();
-  std::cout << "\n";
 }
 
 #endif

@@ -12,6 +12,7 @@ enum class key_tok_t {
 
 enum class ast_op {
   noop,
+  ast_default,
   plus,
   minus,
   mul,
@@ -40,41 +41,26 @@ typedef struct {
   int operand_loc;
 } unresolved_symbol_t;
 
-enum class BinOpcodeAST {
-  INT_OP_INT,
-  FLT_OP_FLT,
-  INT_OP_FLT,
-  FLT_OP_INT,
-  ASSIGN_INT_L,
-  ASSIGN_INT_G,
-  ASSIGN_FLT_L,
-  ASSIGN_FLT_G,
-};
-
-typedef struct {
-  BinOpcodeAST op_type;
-  char op;
-} op_t;
-
 enum class DeclOpcodeAST {
   MODULE,
   DEF,
   VAR
 };
 
+class Number; class Atom; class Tuple;
+using OperandVariant = std::variant
+  <bool, Number, Atom, Tuple, std::string>;
+
 enum class VarTypeEnum {
-  INT,
-  FLT,
-  STR,
-  NUMBER=20,
-  PTR=30, // pointer maybe
-  USER_DEF=100
+  bool_t,
+  num_t,
+  str_t,
+  atom_t,
+  tuple_t,
+  ptr_t, // pointer maybe
+  user_t,
 };
 
-typedef struct {
-  VarTypeEnum t;
-  std::variant<int, float, std::string> v;
-} vartype_t;
 
 typedef std::variant<int, float>  num_d_t;
 

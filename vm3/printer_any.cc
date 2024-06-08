@@ -2,6 +2,7 @@
 #include "lang.hh"
 #include "ast.hh"
 #include "number.hh"
+#include "operand.hh"
 #include <any>
 #include <memory>
 
@@ -18,6 +19,7 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     ast_op op = std::any_cast<ast_op>(a);
     switch(op) {
     case ast_op::noop:  oc="-noop-"; break;
+    case ast_op::ast_default:  oc="default"; break;
     case ast_op::assign:  oc="="; break;
     case ast_op::plus:  oc="+"; break;
     case ast_op::minus: oc="-"; break;
@@ -56,11 +58,11 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
   else if(a.type()  == typeid(Number)) {
     Number num= std::any_cast<Number>(a);
     num.print(); }
+  else if(a.type()  == typeid(Operand)) {
+    Operand  opr= std::any_cast<Operand>(a);
+     out << opr; }
   else if(a.type()  == typeid(Tuple)) {
     Tuple t= std::any_cast<Tuple>(a);
-    t.print(); }
-  else if(a.type()  == typeid(Atom)) {
-    Atom t= std::any_cast<Atom>(a);
     t.print(); }
   else if(a.type()  == typeid(std::vector<std::any>)) {
     std::vector<std::any> any_vector = std::any_cast<std::vector<std::any>>(a);

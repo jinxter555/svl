@@ -41,7 +41,7 @@ std::vector<std::string> lvar_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token              MODULE DEF DO END AST_RETURN PRINT CASE FLOW
+%token              MODULE DEF DO END AST_RETURN AST_DEFAULT PRINT CASE FLOW
 %token              PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
@@ -156,10 +156,10 @@ tuple
   : CUR_L arg_list CUR_R { $$ = std::make_shared<TupleExprAst>($2); }
 
 exp_num
-  : INT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
-  | FLT { $$ = std::make_shared<NumberExprAst>(Number($1)); }
+  : INT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
+  | FLT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
   | tuple { $$ = $1; }
-  | COLON STR { $$ = std::make_shared<AtomExprAst>(Atom($2)); }
+  | COLON STR { $$ = std::make_shared<OperandExprAst>(Operand(Atom($2))); }
 
   | exp_num MULTIPLY exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::mul); }
   | exp_num DIVIDE exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::div); }
@@ -272,6 +272,9 @@ flow_match
   : comparison_ops statement ARROW_R statement_list {
     $$ = std::make_shared<FlowMatchExprAst>($2, $4, $1);
   } 
+  | AST_DEFAULT ARROW_R statement_list {
+    $$ = std::make_shared<FlowMatchExprAst>(nullptr, $3, ast_op::ast_default);
+  }
   ;
 
 comparison_ops

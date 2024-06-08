@@ -1,5 +1,20 @@
 module mhello
 $abc = 456
 print $abc
-flow 123 do != 222 -> 2+25 end
+#
+flow 123 do
+== 123 -> 
+  $a = 1+2 
+  print $a
+
+!= 222 -> 
+  $b = 2+25
+  print $b
+
+default ->
+  $c = 555
+  print $c
+
+end
 return
+

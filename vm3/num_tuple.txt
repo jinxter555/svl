@@ -1,0 +1,9 @@
+module mhello
+$a = {1,2}
+$b = {1,2}
+print $a
+print "\n"
+print $b
+print "\n"
+return 
+

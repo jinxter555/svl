@@ -1,0 +1,210 @@
+#include <variant>
+#include <string>
+#include <stdexcept>
+#include <iostream>
+#include "operand.hh"
+
+
+Operand::Operand(bool value) : value_(value) { type_ = VarTypeEnum::bool_t; }
+Operand::Operand(int value) : value_(Number(value)) { type_ = VarTypeEnum::num_t; }
+Operand::Operand(float value) : value_(Number(value)) { type_ = VarTypeEnum::num_t; }
+Operand::Operand(const Number &value) : value_(value) { type_ = VarTypeEnum::num_t; }
+Operand::Operand(const Atom &value) : value_(value) { type_ = VarTypeEnum::atom_t; }
+Operand::Operand(const Tuple &value) : value_(value) { type_ = VarTypeEnum::tuple_t; }
+Operand::Operand(const std::string& value) : value_(value) { type_ = VarTypeEnum::str_t; }
+
+const OperandVariant& Operand::getValue() const { return value_; }
+
+Operand Operand::operator+(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation + for unequal types"); 
+
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return Operand(std::get<Number>(value_) + std::get<Number>(other.value_));
+  case VarTypeEnum::str_t: 
+    std::cout << "adding two strings\n";
+    return Operand(std::get<std::string>(value_) + std::get<std::string>(other.value_));
+  default: 
+    std::cout << "type int: " << static_cast<int>(type_) << "\n";
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+
+
+  // Overload subtraction operator (similar approach)
+Operand Operand::operator-(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation + for unequal types"); 
+
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return Operand(std::get<Number>(value_) - std::get<Number>(other.value_));
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+Operand Operand::operator*(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation * for unequal types"); 
+
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return Operand(std::get<Number>(value_) * std::get<Number>(other.value_));
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+Operand Operand::operator/(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation / for unequal types"); 
+
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return Operand(std::get<Number>(value_) / std::get<Number>(other.value_));
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+bool Operand::operator==(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation == for unequal types"); 
+  
+  std::cout << "operand cmp==\n";
+  switch(type_) {
+  case VarTypeEnum::bool_t: 
+    return std::get<bool>(value_) == std::get<bool>(other.value_);
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) == std::get<Number>(other.value_);
+  case VarTypeEnum::str_t: 
+    return std::get<std::string>(value_) == std::get<std::string>(other.value_);
+  case VarTypeEnum::atom_t: 
+    return std::get<Atom>(value_) == std::get<Atom>(other.value_);
+  case VarTypeEnum::tuple_t: 
+    //return std::get<Tuple>(value_) == std::get<Tuple>(other.value_);
+    std::cout << "operand tuple cmp ==\n";
+    return false;
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+bool Operand::operator!=(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation != for unequal types"); 
+  switch(type_) {
+  case VarTypeEnum::bool_t: 
+    return std::get<bool>(value_) != std::get<bool>(other.value_);
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) != std::get<Number>(other.value_);
+  case VarTypeEnum::str_t: 
+    return std::get<std::string>(value_) != std::get<std::string>(other.value_);
+  case VarTypeEnum::atom_t: 
+    return std::get<Atom>(value_) != std::get<Atom>(other.value_);
+  case VarTypeEnum::tuple_t: 
+    //return std::get<Tuple>(value_) != std::get<Tuple>(other.value_);
+    return false;
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+bool Operand::operator>=(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation >= for unequal types"); 
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) >= std::get<Number>(other.value_);
+  case VarTypeEnum::str_t: 
+    return std::get<std::string>(value_) >= std::get<std::string>(other.value_);
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+bool Operand::operator<=(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation <= for unequal types"); 
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) <= std::get<Number>(other.value_);
+  case VarTypeEnum::str_t: 
+    return std::get<std::string>(value_) <= std::get<std::string>(other.value_);
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+bool Operand::operator<(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation < for unequal types"); 
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) < std::get<Number>(other.value_);
+  case VarTypeEnum::str_t: 
+    return std::get<std::string>(value_) < std::get<std::string>(other.value_);
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+bool Operand::operator>(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation > for unequal types"); 
+  switch(type_) {
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) > std::get<Number>(other.value_);
+  case VarTypeEnum::str_t: 
+    return std::get<std::string>(value_) > std::get<std::string>(other.value_);
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+Operand Operand::operator!() const {
+  switch(type_) {
+  case VarTypeEnum::bool_t: 
+    return !std::get<bool>(value_);
+  case VarTypeEnum::num_t: 
+    return !std::get<Number>(value_);
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+Operand Operand::operator&&(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation && for unequal types"); 
+
+  switch(type_) {
+  case VarTypeEnum::bool_t: 
+    return std::get<bool>(value_) && std::get<bool>(other.value_);
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) && std::get<Number>(other.value_);
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+Operand Operand::operator||(const Operand& other) const {
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation || for unequal types"); 
+
+  switch(type_) {
+  case VarTypeEnum::bool_t: 
+    return std::get<bool>(value_) || std::get<bool>(other.value_);
+  case VarTypeEnum::num_t: 
+    return std::get<Number>(value_) || std::get<Number>(other.value_);
+  default: 
+    throw std::runtime_error("Unsupported operation"); 
+  }
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Operand& operand) {
+  std::visit([&os](const auto& value) { os << value; }, operand.value_);
+  return os;
+}

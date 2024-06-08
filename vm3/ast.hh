@@ -7,6 +7,7 @@
 #include "number.hh"
 #include "tuple.hh"
 #include "atom.hh"
+#include "operand.hh"
 
 
 class SvlmLangContext;
@@ -19,7 +20,7 @@ protected:
   std::shared_ptr<Tree> context_tree;
 public:
   enum class ExprAstType {
-     Print, DistCont, Number, Atom, Ident, Tuple,
+     Print, DistCont, Operand, Number, Atom, Ident, Tuple, LTuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
     Call, Case, CaseMatch, Flow, FlowMatch, Decl, BinOp};
 
@@ -70,6 +71,18 @@ public:
 private:
 };
 
+//----------------------------- Number Bin variable expr
+class OperandExprAst : public ExprAst {
+public:
+  OperandExprAst(Operand o);
+  std::any evaluate(SvlmLangContext *slc) override ;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override; 
+  void codegen(std::vector<std::string> &code) const override;
+  void print() override;
+  ExprAstType whoami() override { return ExprAstType::Operand;}
+private:
+};
+
 //----------------------------- tuple expr
 class ListExprAst;
 class TupleExprAst : public ExprAst {
@@ -79,11 +92,12 @@ private:
 public:
   bool evaluated = false;
   TupleExprAst(std::shared_ptr<ListExprAst> tlist);
+  TupleExprAst(const Tuple &t);
+  TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist);
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override;
   void codegen(std::vector<std::string> &code) const override;
-  ExprAstType whoami() override { //std::cout << "I am tupleExpr\n";
-  return ExprAstType::Tuple;}
+  ExprAstType whoami() override { return ExprAstType::Tuple;}
   void print() override;
 };
 
@@ -128,7 +142,10 @@ public:
   GvarExprAst(std::string name);
   std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {
+    std::cout << "gvar uni_oip\n";
+    return 0;
+    } 
   void codegen(std::vector<std::string> &code) const override;
   void print() override;
   void assign(SvlmLangContext *slc, std::any d) override;

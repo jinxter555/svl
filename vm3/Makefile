@@ -5,11 +5,11 @@ CC=g++ -std=c++17 -g
 main.out:  asm_lexer.l asm_grammar.y main.cc  opcode.o assembler.o  assembly.o commandline.o \
 	assembler_interactive.o vm.o prompt.o tree.o my_helpers.o svlm_grammar.y svlm_lexer.l  \
 	asm_parser.cc asm_scanner.cc svlm_parser.cc svlm_scanner.cc \
-	svlm_interactive.o svlm_lang.o ast.o printer_any.o number.o tuple.o atom.o
+	svlm_interactive.o svlm_lang.o ast.o printer_any.o number.o operand.o tuple.o atom.o
 	$(CC) -o /dev/shm/main.out main.cc asm_parser.cc asm_scanner.cc opcode.o my_helpers.o \
 	assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o  \
 	svlm_scanner.cc svlm_parser.cc tree.o  svlm_interactive.o svlm_lang.o \
-	printer_any.o number.o tuple.o atom.o ast.o \
+	printer_any.o number.o operand.o tuple.o atom.o ast.o \
 	-lreadline
 
 
@@ -41,6 +41,9 @@ tuple.o: tuple.cc tuple.hh
 
 number.o: number.cc number.hh
 	$(CC) -c number.cc
+
+operand.o: operand.cc operand.hh
+	$(CC) -c operand.cc
 
 atom.o: atom.cc atom.hh
 	$(CC) -c atom.cc
@@ -85,5 +88,5 @@ my_helpers.o : my_helpers.cc  my_helpers.hh
 	$(CC) -c my_helpers.cc
 
 clean:
-	rm -f main.out asm_parser.cc asm_scanner.cc *.o *.gch svlm_scanner.cc svlm_parser.cc svlm_parser.hh asm_parser.hh
+	rm -f asm_parser.cc asm_scanner.cc *.o *.gch svlm_scanner.cc svlm_parser.cc svlm_parser.hh asm_parser.hh
 

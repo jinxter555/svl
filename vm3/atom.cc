@@ -1,5 +1,5 @@
 #include "atom.hh"
-#include <iostream>
+
 
 Atom::Atom(std::string s) : data(s) {}
 
@@ -17,3 +17,8 @@ bool Atom::operator!=(const Atom& other) const{
 };
 
 
+std::ostream& operator<<(std::ostream& os, const Atom& a) {
+  //  std::visit([&os](const auto& value) { os << value; }, a.data);
+  os << ":" << a.data;
+  return os;
+}

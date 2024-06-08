@@ -153,6 +153,11 @@ void Number::print() const {
   }, data_);
 }
 
+std::ostream& operator<<(std::ostream& os, const Number& number) {
+  std::visit([&os](const auto& value) { os << value; }, number.data_);
+  return os;
+}
+
 num_d_t Number::get_data() const {
    return data_;
 }

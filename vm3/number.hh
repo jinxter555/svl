@@ -29,6 +29,7 @@ public:
     void print() const; // New method to print data_
     std::variant<int, float> get_data() const; // New method to get data_
     std::string getCurrentType() const; // New method to get the current type
+    friend std::ostream& operator<<(std::ostream& os, const Number& number);
 
     
 private:

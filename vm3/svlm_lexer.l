@@ -39,6 +39,7 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 "flow"        return SvlmParser::token::FLOW;
 "case"        return SvlmParser::token::CASE;
 "return"        return SvlmParser::token::AST_RETURN;
+"default"        return SvlmParser::token::AST_DEFAULT;
 "print"        return SvlmParser::token::PRINT;
 "not"        return SvlmParser::token::NOT;
 {integer}   yylval->emplace<int>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;

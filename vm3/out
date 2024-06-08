@@ -1,113 +1,268 @@
-Makefile:76: warning: overriding recipe for target 'ast.o'
-Makefile:43: warning: ignoring old recipe for target 'ast.o'
-g++ -std=c++17 -g -o main.out main.cpp asm_parser.cpp asm_scanner.cpp opcode.o my_helpers.o \
-assembler.o assembly.o commandline.o assembler_interactive.o  vm.o prompt.o  \
-svlm_scanner.cpp svlm_parser.cpp tree.o  svlm_interactive.o svlm_lang.o \
-printer_any.o number.o ast.o \
--lreadline
-In file included from /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h:33,
-                 from /usr/include/c++/11/bits/allocator.h:46,
-                 from /usr/include/c++/11/string:41,
-                 from /usr/include/c++/11/bits/locale_classes.h:40,
-                 from /usr/include/c++/11/bits/ios_base.h:41,
-                 from /usr/include/c++/11/ios:42,
-                 from /usr/include/c++/11/ostream:38,
-                 from /usr/include/c++/11/iostream:39,
-                 from svlm_grammar.y:2:
-/usr/include/c++/11/ext/new_allocator.h: In instantiation of ‘void __gnu_cxx::new_allocator<_Tp>::construct(_Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst]’:
-/usr/include/c++/11/bits/alloc_traits.h:516:17:   required from ‘static void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’
-/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}; _Tp = BinOpExprAst]’
-/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}]’
-/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&}]’
-svlm_grammar.y:154:114:   required from here
-/usr/include/c++/11/ext/new_allocator.h:162:11: error: no matching function for call to ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<ExprAst>&, std::shared_ptr<ExprAst>&, ast_op&)’
-  162 |         { ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
-      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from svlm_grammar.y:24,
-                 from svlm_parser.cpp:50:
-ast.hh:138:3: note: candidate: ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<UniExprAst>, std::shared_ptr<UniExprAst>, ast_op)’
-  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
-      |   ^~~~~~~~~~~~
-ast.hh:138:45: note:   no known conversion for argument 1 from ‘shared_ptr<ExprAst>’ to ‘shared_ptr<UniExprAst>’
-  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(const BinOpExprAst&)’
-  135 | class BinOpExprAst : public ExprAst {
-      |       ^~~~~~~~~~~~
-ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
-ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(BinOpExprAst&&)’
-ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
-In file included from /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h:33,
-                 from /usr/include/c++/11/bits/allocator.h:46,
-                 from /usr/include/c++/11/string:41,
-                 from /usr/include/c++/11/bits/locale_classes.h:40,
-                 from /usr/include/c++/11/bits/ios_base.h:41,
-                 from /usr/include/c++/11/ios:42,
-                 from /usr/include/c++/11/ostream:38,
-                 from /usr/include/c++/11/iostream:39,
-                 from svlm_grammar.y:2:
-/usr/include/c++/11/ext/new_allocator.h: In instantiation of ‘void __gnu_cxx::new_allocator<_Tp>::construct(_Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’:
-/usr/include/c++/11/bits/alloc_traits.h:516:17:   required from ‘static void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’
-/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’
-/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
-/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
-svlm_grammar.y:160:84:   required from here
-/usr/include/c++/11/ext/new_allocator.h:162:11: error: no matching function for call to ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<GvarExprAst>, std::shared_ptr<ExprAst>&, ast_op)’
-  162 |         { ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
-      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from svlm_grammar.y:24,
-                 from svlm_parser.cpp:50:
-ast.hh:138:3: note: candidate: ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<UniExprAst>, std::shared_ptr<UniExprAst>, ast_op)’
-  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
-      |   ^~~~~~~~~~~~
-ast.hh:138:76: note:   no known conversion for argument 2 from ‘shared_ptr<ExprAst>’ to ‘shared_ptr<UniExprAst>’
-  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
-      |                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(const BinOpExprAst&)’
-  135 | class BinOpExprAst : public ExprAst {
-      |       ^~~~~~~~~~~~
-ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
-ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(BinOpExprAst&&)’
-ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
-In file included from /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h:33,
-                 from /usr/include/c++/11/bits/allocator.h:46,
-                 from /usr/include/c++/11/string:41,
-                 from /usr/include/c++/11/bits/locale_classes.h:40,
-                 from /usr/include/c++/11/bits/ios_base.h:41,
-                 from /usr/include/c++/11/ios:42,
-                 from /usr/include/c++/11/ostream:38,
-                 from /usr/include/c++/11/iostream:39,
-                 from svlm_grammar.y:2:
-/usr/include/c++/11/ext/new_allocator.h: In instantiation of ‘void __gnu_cxx::new_allocator<_Tp>::construct(_Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’:
-/usr/include/c++/11/bits/alloc_traits.h:516:17:   required from ‘static void std::allocator_traits<std::allocator<_CharT> >::construct(std::allocator_traits<std::allocator<_CharT> >::allocator_type&, _Up*, _Args&& ...) [with _Up = BinOpExprAst; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; std::allocator_traits<std::allocator<_CharT> >::allocator_type = std::allocator<BinOpExprAst>]’
-/usr/include/c++/11/bits/shared_ptr_base.h:519:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr_base.h:650:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr_base.h:1342:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
-/usr/include/c++/11/bits/shared_ptr.h:409:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}; _Tp = BinOpExprAst]’
-/usr/include/c++/11/bits/shared_ptr.h:862:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = BinOpExprAst; _Alloc = std::allocator<BinOpExprAst>; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
-/usr/include/c++/11/bits/shared_ptr.h:878:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = BinOpExprAst; _Args = {std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op}]’
-svlm_grammar.y:168:84:   required from here
-/usr/include/c++/11/ext/new_allocator.h:162:11: error: no matching function for call to ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<LvarExprAst>, std::shared_ptr<ExprAst>&, ast_op)’
-  162 |         { ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
-      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from svlm_grammar.y:24,
-                 from svlm_parser.cpp:50:
-ast.hh:138:3: note: candidate: ‘BinOpExprAst::BinOpExprAst(std::shared_ptr<UniExprAst>, std::shared_ptr<UniExprAst>, ast_op)’
-  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
-      |   ^~~~~~~~~~~~
-ast.hh:138:76: note:   no known conversion for argument 2 from ‘shared_ptr<ExprAst>’ to ‘shared_ptr<UniExprAst>’
-  138 |   BinOpExprAst (std::shared_ptr<UniExprAst> l, std::shared_ptr<UniExprAst> r, ast_op op);
-      |                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(const BinOpExprAst&)’
-  135 | class BinOpExprAst : public ExprAst {
-      |       ^~~~~~~~~~~~
-ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
-ast.hh:135:7: note: candidate: ‘BinOpExprAst::BinOpExprAst(BinOpExprAst&&)’
-ast.hh:135:7: note:   candidate expects 1 argument, 3 provided
-make: *** [Makefile:9: main.out] Error 1
+Makefile:85: warning: overriding recipe for target 'ast.o'
+Makefile:52: warning: ignoring old recipe for target 'ast.o'
+g++ -std=c++17 -g -c tuple.cc
+In file included from /usr/include/c++/11/bits/move.h:57,
+                 from /usr/include/c++/11/bits/stl_pair.h:59,
+                 from /usr/include/c++/11/bits/stl_algobase.h:64,
+                 from /usr/include/c++/11/vector:60,
+                 from tuple.hh:2,
+                 from tuple.cc:1:
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_copy_constructible<Tuple>’:
+/usr/include/c++/11/type_traits:3180:33:   required from ‘constexpr const bool std::is_copy_constructible_v<Tuple>’
+/usr/include/c++/11/variant:310:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_copy_ctor’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:987:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+  987 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:987:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_copy_assignable<Tuple>’:
+/usr/include/c++/11/type_traits:3187:73:   required from ‘constexpr const bool std::is_copy_assignable_v<Tuple>’
+/usr/include/c++/11/variant:315:8:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_copy_assign’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1110:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1110 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1110:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_move_constructible<Tuple>’:
+/usr/include/c++/11/type_traits:3183:33:   required from ‘constexpr const bool std::is_move_constructible_v<Tuple>’
+/usr/include/c++/11/variant:312:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_move_ctor’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1010:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1010 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1010:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_move_assignable<Tuple>’:
+/usr/include/c++/11/type_traits:3189:73:   required from ‘constexpr const bool std::is_move_assignable_v<Tuple>’
+/usr/include/c++/11/variant:318:8:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_move_assign’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1131:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1131 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1131:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_trivially_destructible<Tuple>’:
+/usr/include/c++/11/type_traits:3215:37:   required from ‘constexpr const bool std::is_trivially_destructible_v<Tuple>’
+/usr/include/c++/11/variant:321:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_dtor’
+/usr/include/c++/11/variant:330:4:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_assign’
+/usr/include/c++/11/variant:696:11:   required by substitution of ‘template<class ... _Types> using _Move_assign_alias = std::__detail::__variant::_Move_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_move_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1339:37: error: invalid use of incomplete type ‘class Tuple’
+ 1339 |                     __bool_constant<__has_trivial_destructor(_Tp)>>
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from operand.hh:6,
+                 from tuple.hh:5,
+                 from tuple.cc:1:
+lang.hh:50:33: note: forward declaration of ‘class Tuple’
+   50 | class Number; class Atom; class Tuple;
+      |                                 ^~~~~
+In file included from /usr/include/c++/11/bits/move.h:57,
+                 from /usr/include/c++/11/bits/stl_pair.h:59,
+                 from /usr/include/c++/11/bits/stl_algobase.h:64,
+                 from /usr/include/c++/11/vector:60,
+                 from tuple.hh:2,
+                 from tuple.cc:1:
+/usr/include/c++/11/type_traits:1341:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1341 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1341:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘constexpr const bool std::is_trivially_destructible_v<Tuple>’:
+/usr/include/c++/11/variant:321:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_dtor’
+/usr/include/c++/11/variant:330:4:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_assign’
+/usr/include/c++/11/variant:696:11:   required by substitution of ‘template<class ... _Types> using _Move_assign_alias = std::__detail::__variant::_Move_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_move_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:3215:37: error: ‘value’ is not a member of ‘std::is_trivially_destructible<Tuple>’
+ 3215 |     is_trivially_destructible<_Tp>::value;
+      |                                     ^~~~~
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::__is_trivially_move_constructible_impl<Tuple, true>’:
+/usr/include/c++/11/type_traits:1277:12:   required from ‘struct std::is_trivially_move_constructible<Tuple>’
+/usr/include/c++/11/type_traits:3203:43:   required from ‘constexpr const bool std::is_trivially_move_constructible_v<Tuple>’
+/usr/include/c++/11/variant:325:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_ctor’
+/usr/include/c++/11/variant:330:23:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_assign’
+/usr/include/c++/11/variant:696:11:   required by substitution of ‘template<class ... _Types> using _Move_assign_alias = std::__detail::__variant::_Move_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_move_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1272:25: error: invalid use of incomplete type ‘class Tuple’
+ 1272 |                         __is_trivially_constructible(_Tp, _Tp&&)>>
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from operand.hh:6,
+                 from tuple.hh:5,
+                 from tuple.cc:1:
+lang.hh:50:33: note: forward declaration of ‘class Tuple’
+   50 | class Number; class Atom; class Tuple;
+      |                                 ^~~~~
+In file included from /usr/include/c++/11/bits/move.h:57,
+                 from /usr/include/c++/11/bits/stl_pair.h:59,
+                 from /usr/include/c++/11/bits/stl_algobase.h:64,
+                 from /usr/include/c++/11/vector:60,
+                 from tuple.hh:2,
+                 from tuple.cc:1:
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_trivially_move_constructible<Tuple>’:
+/usr/include/c++/11/type_traits:3203:43:   required from ‘constexpr const bool std::is_trivially_move_constructible_v<Tuple>’
+/usr/include/c++/11/variant:325:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_ctor’
+/usr/include/c++/11/variant:330:23:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_assign’
+/usr/include/c++/11/variant:696:11:   required by substitution of ‘template<class ... _Types> using _Move_assign_alias = std::__detail::__variant::_Move_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_move_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1280:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1280 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1280:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘constexpr const bool std::is_trivially_move_constructible_v<Tuple>’:
+/usr/include/c++/11/variant:325:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_ctor’
+/usr/include/c++/11/variant:330:23:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_assign’
+/usr/include/c++/11/variant:696:11:   required by substitution of ‘template<class ... _Types> using _Move_assign_alias = std::__detail::__variant::_Move_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_move_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:3203:43: error: ‘value’ is not a member of ‘std::is_trivially_move_constructible<Tuple>’
+ 3203 |     is_trivially_move_constructible<_Tp>::value;
+      |                                           ^~~~~
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_trivially_move_assignable<Tuple>’:
+/usr/include/c++/11/type_traits:3212:40:   required from ‘constexpr const bool std::is_trivially_move_assignable_v<Tuple>’
+/usr/include/c++/11/variant:331:8:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_move_assign’
+/usr/include/c++/11/variant:696:11:   required by substitution of ‘template<class ... _Types> using _Move_assign_alias = std::__detail::__variant::_Move_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_move_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1331:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1331 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1331:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::__is_trivially_copy_constructible_impl<Tuple, true>’:
+/usr/include/c++/11/type_traits:1254:12:   required from ‘struct std::is_trivially_copy_constructible<Tuple>’
+/usr/include/c++/11/type_traits:3200:43:   required from ‘constexpr const bool std::is_trivially_copy_constructible_v<Tuple>’
+/usr/include/c++/11/variant:323:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_copy_ctor’
+/usr/include/c++/11/variant:327:23:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_copy_assign’
+/usr/include/c++/11/variant:653:11:   required by substitution of ‘template<class ... _Types> using _Copy_assign_alias = std::__detail::__variant::_Copy_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_copy_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:657:12:   required from ‘struct std::__detail::__variant::_Move_assign_base<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1249:25: error: invalid use of incomplete type ‘class Tuple’
+ 1249 |                         __is_trivially_constructible(_Tp, const _Tp&)>>
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from operand.hh:6,
+                 from tuple.hh:5,
+                 from tuple.cc:1:
+lang.hh:50:33: note: forward declaration of ‘class Tuple’
+   50 | class Number; class Atom; class Tuple;
+      |                                 ^~~~~
+In file included from /usr/include/c++/11/bits/move.h:57,
+                 from /usr/include/c++/11/bits/stl_pair.h:59,
+                 from /usr/include/c++/11/bits/stl_algobase.h:64,
+                 from /usr/include/c++/11/vector:60,
+                 from tuple.hh:2,
+                 from tuple.cc:1:
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_trivially_copy_constructible<Tuple>’:
+/usr/include/c++/11/type_traits:3200:43:   required from ‘constexpr const bool std::is_trivially_copy_constructible_v<Tuple>’
+/usr/include/c++/11/variant:323:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_copy_ctor’
+/usr/include/c++/11/variant:327:23:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_copy_assign’
+/usr/include/c++/11/variant:653:11:   required by substitution of ‘template<class ... _Types> using _Copy_assign_alias = std::__detail::__variant::_Copy_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_copy_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:657:12:   required from ‘struct std::__detail::__variant::_Move_assign_base<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1257:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1257 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1257:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+/usr/include/c++/11/type_traits: In instantiation of ‘constexpr const bool std::is_trivially_copy_constructible_v<Tuple>’:
+/usr/include/c++/11/variant:323:5:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_copy_ctor’
+/usr/include/c++/11/variant:327:23:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_copy_assign’
+/usr/include/c++/11/variant:653:11:   required by substitution of ‘template<class ... _Types> using _Copy_assign_alias = std::__detail::__variant::_Copy_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_copy_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:657:12:   required from ‘struct std::__detail::__variant::_Move_assign_base<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:3200:43: error: ‘value’ is not a member of ‘std::is_trivially_copy_constructible<Tuple>’
+ 3200 |     is_trivially_copy_constructible<_Tp>::value;
+      |                                           ^~~~~
+/usr/include/c++/11/type_traits: In instantiation of ‘struct std::is_trivially_copy_assignable<Tuple>’:
+/usr/include/c++/11/type_traits:3209:40:   required from ‘constexpr const bool std::is_trivially_copy_assignable_v<Tuple>’
+/usr/include/c++/11/variant:328:8:   required from ‘constexpr const bool std::__detail::__variant::_Traits<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_S_trivial_copy_assign’
+/usr/include/c++/11/variant:653:11:   required by substitution of ‘template<class ... _Types> using _Copy_assign_alias = std::__detail::__variant::_Copy_assign_base<std::__detail::__variant::_Traits<_Types>::_S_trivial_copy_assign, _Types ...> [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:657:12:   required from ‘struct std::__detail::__variant::_Move_assign_base<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:700:12:   required from ‘struct std::__detail::__variant::_Variant_base<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+/usr/include/c++/11/variant:1326:11:   required from ‘class std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’
+operand.hh:15:18:   required from here
+/usr/include/c++/11/type_traits:1310:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+ 1310 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/type_traits:1310:52: note: ‘std::__is_complete_or_unbounded<std::__type_identity<Tuple> >((std::__type_identity<Tuple>{}, std::__type_identity<Tuple>()))’ evaluates to false
+In file included from tuple.hh:4,
+                 from tuple.cc:1:
+/usr/include/c++/11/any: In instantiation of ‘_ValueType std::any_cast(const std::any&) [with _ValueType = Operand]’:
+tuple.cc:20:39:   required from here
+/usr/include/c++/11/any:463:53: error: static assertion failed: Template argument must be a reference or CopyConstructible type
+  463 |       static_assert(any::__is_valid_cast<_ValueType>(),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+/usr/include/c++/11/any:463:53: note: ‘std::any::__is_valid_cast<Operand>()’ evaluates to false
+/usr/include/c++/11/any:465:21: error: static assertion failed: Template argument must be constructible from a const value.
+  465 |       static_assert(is_constructible_v<_ValueType, const _Up&>,
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/any:465:21: note: ‘std::is_constructible_v<Operand, const Operand&>’ evaluates to false
+/usr/include/c++/11/any:469:16: error: use of deleted function ‘Operand::Operand(const Operand&)’
+  469 |         return static_cast<_ValueType>(*__p);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from tuple.hh:5,
+                 from tuple.cc:1:
+operand.hh:13:7: note: ‘Operand::Operand(const Operand&)’ is implicitly deleted because the default definition would be ill-formed:
+   13 | class Operand {
+      |       ^~~~~~~
+operand.hh:13:7: error: use of deleted function ‘std::variant<_Types>::variant(const std::variant<_Types>&) [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+In file included from operand.hh:2,
+                 from tuple.hh:5,
+                 from tuple.cc:1:
+/usr/include/c++/11/variant:1396:7: note: ‘std::variant<_Types>::variant(const std::variant<_Types>&) [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’ is implicitly deleted because the default definition would be ill-formed:
+ 1396 |       variant(const variant& __rhs) = default;
+      |       ^~~~~~~
+/usr/include/c++/11/variant:1396:7: error: use of deleted function ‘constexpr std::_Enable_copy_move<false, false, false, false, _Tag>::_Enable_copy_move(const std::_Enable_copy_move<false, false, false, false, _Tag>&) [with _Tag = std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >]’
+In file included from /usr/include/c++/11/variant:38,
+                 from operand.hh:2,
+                 from tuple.hh:5,
+                 from tuple.cc:1:
+/usr/include/c++/11/bits/enable_special_members.h:304:15: note: declared here
+  304 |     constexpr _Enable_copy_move(_Enable_copy_move const&) noexcept  = delete;
+      |               ^~~~~~~~~~~~~~~~~
+In file included from operand.hh:2,
+                 from tuple.hh:5,
+                 from tuple.cc:1:
+/usr/include/c++/11/variant: In instantiation of ‘constexpr decltype(auto) std::__detail::__variant::__get(std::in_place_index_t<0>, _Union&&) [with _Union = std::__detail::__variant::_Variadic_union<Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&]’:
+/usr/include/c++/11/variant:291:30:   recursively required from ‘constexpr decltype(auto) std::__detail::__variant::__get(std::in_place_index_t<_Idx>, _Union&&) [with long unsigned int _Np = 2; _Union = std::__detail::__variant::_Variadic_union<Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&]’
+/usr/include/c++/11/variant:291:30:   required from ‘constexpr decltype(auto) std::__detail::__variant::__get(std::in_place_index_t<_Idx>, _Union&&) [with long unsigned int _Np = 3; _Union = std::__detail::__variant::_Variadic_union<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&]’
+/usr/include/c++/11/variant:300:30:   required from ‘constexpr decltype(auto) std::__detail::__variant::__get(_Variant&&) [with long unsigned int _Np = 3; _Variant = std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&]’
+/usr/include/c++/11/variant:1022:35:   required from ‘static constexpr decltype(auto) std::__detail::__variant::__gen_vtable_impl<std::__detail::__variant::_Multi_array<_Result_type (*)(_Visitor, _Variants ...)>, std::integer_sequence<long unsigned int, __indices ...> >::__visit_invoke(_Visitor&&, _Variants ...) [with _Result_type = void; _Visitor = std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&; _Variants = {std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&}; long unsigned int ...__indices = {3}]’
+/usr/include/c++/11/variant:1043:23:   required from ‘static constexpr auto std::__detail::__variant::__gen_vtable_impl<std::__detail::__variant::_Multi_array<_Result_type (*)(_Visitor, _Variants ...)>, std::integer_sequence<long unsigned int, __indices ...> >::_S_apply() [with _Result_type = void; _Visitor = std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&; _Variants = {std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&}; long unsigned int ...__indices = {3}]’
+/usr/include/c++/11/variant:968:56:   required from ‘static constexpr void std::__detail::__variant::__gen_vtable_impl<std::__detail::__variant::_Multi_array<_Result_type (*)(_Visitor, _Variants ...), __dimensions ...>, std::integer_sequence<long unsigned int, __indices ...> >::_S_apply_single_alt(_Tp&, _Tp*) [with bool __do_cookie = false; long unsigned int __index = 3; _Tp = std::__detail::__variant::_Multi_array<void (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&)>; _Result_type = void; _Visitor = std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&; long unsigned int ...__dimensions = {5}; _Variants = {std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&}; long unsigned int ...__indices = {}]’
+/usr/include/c++/11/variant:947:48:   required from ‘constexpr const _Array_type std::__detail::__variant::__gen_vtable<void, std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&>::_S_vtable’
+/usr/include/c++/11/variant:1724:45:   required from ‘constexpr decltype(auto) std::__do_visit(_Visitor&&, _Variants&& ...) [with _Result_type = void; _Visitor = std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>; _Variants = {std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&}]’
+/usr/include/c++/11/variant:427:23:   required from ‘void std::__detail::__variant::_Variant_storage<false, _Types ...>::_M_reset() [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:436:9:   required from ‘std::__detail::__variant::_Variant_storage<false, _Types ...>::~_Variant_storage() [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:511:12:   required from here
+/usr/include/c++/11/variant:1055:67:   in ‘constexpr’ expansion of ‘std::__detail::__variant::__gen_vtable_impl<std::__detail::__variant::_Multi_array<void (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&), 5>, std::integer_sequence<long unsigned int> >::_S_apply()’
+/usr/include/c++/11/variant:932:19:   in ‘constexpr’ expansion of ‘std::__detail::__variant::__gen_vtable_impl<std::__detail::__variant::_Multi_array<void (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&), 5>, std::integer_sequence<long unsigned int> >::_S_apply_all_alts<0, 1, 2, 3, 4>(__vtable, (std::make_index_sequence<5>(), std::make_index_sequence<5>()))’
+/usr/include/c++/11/variant:285:40: error: ‘union std::__detail::__variant::_Variadic_union<Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >’ has no member named ‘_M_first’
+  285 |     { return std::forward<_Union>(__u)._M_first._M_get(); }
+      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+/usr/include/c++/11/variant: In instantiation of ‘static constexpr auto std::__detail::__variant::__gen_vtable_impl<std::__detail::__variant::_Multi_array<_Result_type (*)(_Visitor, _Variants ...)>, std::integer_sequence<long unsigned int, __indices ...> >::_S_apply() [with _Result_type = void; _Visitor = std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&; _Variants = {std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&}; long unsigned int ...__indices = {3}]’:
+/usr/include/c++/11/variant:968:56:   required from ‘static constexpr void std::__detail::__variant::__gen_vtable_impl<std::__detail::__variant::_Multi_array<_Result_type (*)(_Visitor, _Variants ...), __dimensions ...>, std::integer_sequence<long unsigned int, __indices ...> >::_S_apply_single_alt(_Tp&, _Tp*) [with bool __do_cookie = false; long unsigned int __index = 3; _Tp = std::__detail::__variant::_Multi_array<void (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&)>; _Result_type = void; _Visitor = std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&; long unsigned int ...__dimensions = {5}; _Variants = {std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&}; long unsigned int ...__indices = {}]’
+/usr/include/c++/11/variant:947:48:   required from ‘constexpr const _Array_type std::__detail::__variant::__gen_vtable<void, std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&>::_S_vtable’
+/usr/include/c++/11/variant:1724:45:   required from ‘constexpr decltype(auto) std::__do_visit(_Visitor&&, _Variants&& ...) [with _Result_type = void; _Visitor = std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>; _Variants = {std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&}]’
+/usr/include/c++/11/variant:427:23:   required from ‘void std::__detail::__variant::_Variant_storage<false, _Types ...>::_M_reset() [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:436:9:   required from ‘std::__detail::__variant::_Variant_storage<false, _Types ...>::~_Variant_storage() [with _Types = {bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >}]’
+/usr/include/c++/11/variant:511:12:   required from here
+/usr/include/c++/11/variant:1043:45: error: invalid conversion from ‘decltype(auto) (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&)’ to ‘std::__detail::__variant::_Multi_array<void (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&)>::__untag_result<void (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&)>::element_type’ {aka ‘void (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&)’} [-fpermissive]
+ 1043 |           return _Array_type{&__visit_invoke};
+      |                                             ^
+      |                                             |
+      |                                             decltype(auto) (*)(std::__detail::__variant::_Variant_storage<false, bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::_M_reset()::<lambda(auto:1&&)>&&, std::variant<bool, Number, Atom, Tuple, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&)
+make: *** [Makefile:40: tuple.o] Error 1
