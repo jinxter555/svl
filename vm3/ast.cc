@@ -662,7 +662,33 @@ std::shared_ptr<ListExprAst> body) : ExprAst(top) {
   std::cout << "FlowExprAst adding c body\n";
   //body->print();
 }
-std::any FlowExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
+std::any FlowExprAst::evaluate(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> m_e_a = std::any_cast<std::shared_ptr<ExprAst>>( get_data());
+  auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
+
+  Operand a = std::any_cast<Operand>(m_e_a->evaluate(slc));
+  for(int i=0; i<l->get_member_size(); i++)  {
+    std::shared_ptr<ExprAst> m_e_b = std::any_cast<std::shared_ptr<ExprAst>>(l->get(i));
+    std::shared_ptr<ExprAst> match = std::dynamic_pointer_cast<ExprAst>(m_e_b->get_child("match"));
+    ast_op op =  std::any_cast<ast_op>(m_e_b->get_data());
+
+    if(op == ast_op::ast_default) {
+      std::cout << "default got a match\n";
+      continue;
+    }
+
+    Operand b = std::any_cast<Operand>(match->evaluate(slc));
+    if(a.bin_op(b, op)==true) {
+      std::any op_print = op;
+      std::cout << "got a match\n";
+      std::cout << a  << op_print << b << "\n";
+    }
+  }
+
+  return a;
+  
+
+}
 void FlowExprAst::codegen(std::vector<std::string> &code) const {}
 void FlowExprAst::print() { 
   std::shared_ptr<ExprAst> e = std::any_cast<std::shared_ptr<ExprAst>>( get_data());

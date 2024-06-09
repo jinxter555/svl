@@ -1,6 +1,7 @@
 module mhello
 $abc = 456
 print $abc
+print "\n"
 #
 flow 123 do
 == 123 -> 
@@ -10,6 +11,9 @@ flow 123 do
 != 222 -> 
   $b = 2+25
   print $b
+
+!= 1 ->
+  2 + 3
 
 default ->
   $c = 555

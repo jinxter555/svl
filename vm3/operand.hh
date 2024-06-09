@@ -15,6 +15,7 @@ private:
   OperandVariant value_;
   VarTypeEnum type_;
 public:
+  VarTypeEnum get_type() { return type_;};
   // Constructors for each supported type
   Operand(int value) ;
   Operand(float value) ;
@@ -45,6 +46,8 @@ public:
   Operand operator||(const Operand& other) const;
   Operand operator!() const;
 
+
+  bool bin_op(const Operand& other, ast_op op) const;
 
   friend std::ostream& operator<<(std::ostream& os, const Operand& operand);
 

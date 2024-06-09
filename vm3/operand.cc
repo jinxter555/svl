@@ -204,6 +204,31 @@ Operand Operand::operator||(const Operand& other) const {
 }
 
 
+bool Operand::bin_op(const Operand& other, ast_op op) const {
+  
+  if(type_ != other.type_) 
+    throw std::runtime_error("Unsupported operation > for unequal types"); 
+
+  switch(op){
+  case ast_op::eql:
+    return *this == other;
+  case ast_op::neql:
+    return *this != other;
+  case ast_op::gt:
+    return *this > other;
+  case ast_op::lt:
+    return *this < other;
+  case ast_op::lteq:
+    return *this <= other;
+  case ast_op::gteq:
+    return *this >= other;
+  default: 
+    return false;
+  }
+  return false;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   std::visit([&os](const auto& value) { os << value; }, operand.value_);
   return os;
