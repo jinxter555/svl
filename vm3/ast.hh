@@ -22,7 +22,7 @@ public:
   enum class ExprAstType {
      Print, DistCont, Operand, Number, Atom, Ident, Tuple, LTuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
-    Call, Case, CaseMatch, Flow, FlowMatch, Decl, BinOp};
+    Call, Case, CaseMatch, Flow, FlowMatch, Decl, BinOp, While};
 
   ExprAst(std::any d) : TreeNode(d) {}
   ExprAst();
@@ -57,19 +57,6 @@ public:
   ExprAstType whoami() override { return ExprAstType::DistCont;}
 };
 
-//----------------------------- Number Bin variable expr
-class NumberExprAst : public ExprAst {
-public:
-  NumberExprAst(Number n);
-  std::any evaluate(SvlmLangContext *slc) override ;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override; 
-  void codegen(std::vector<std::string> &code) const override;
-  void print() override;
-  ExprAstType whoami() override { 
-    //std::cout << "whoami, i am number\n";
-    return ExprAstType::Number;}
-private:
-};
 
 //----------------------------- Number Bin variable expr
 class OperandExprAst : public ExprAst {
@@ -100,19 +87,7 @@ public:
   ExprAstType whoami() override { return ExprAstType::Tuple;}
   void print() override;
 };
-
-//----------------------------- atom expr
-class AtomExprAst : public ExprAst {
-public:
-  AtomExprAst(Atom name);
-  std::any evaluate(SvlmLangContext *slc) override ;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override ;
-  void codegen(std::vector<std::string> &code) const override;
-  void print() override;
-  std::string name();
-  ExprAstType whoami() override { return ExprAstType::Atom;}
-private:
-};
+//----------------------------- Ident expr
 
 
 class IdentExprAst : public ExprAst {
@@ -271,7 +246,7 @@ public:
 };
 
 
-//----------------------------- Switch Bin variable expr
+//----------------------------- flow expr
 class FlowExprAst : public ExprAst {
 public:
   FlowExprAst (std::shared_ptr<ExprAst> top, std::shared_ptr<ListExprAst> body);
@@ -286,7 +261,7 @@ public:
 
 };
 
-//----------------------------- Case Bin variable expr
+//----------------------------- flow match expr
 class FlowMatchExprAst : public ExprAst {
 public:
   FlowMatchExprAst (std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body, ast_op op);
@@ -301,6 +276,18 @@ public:
 
 };
 
+//----------------------------- while expr
+class WhileExprAst : public ExprAst {
+public:
+  WhileExprAst (std::shared_ptr<ExprAst> cond, std::shared_ptr<ListExprAst> body);
+  std::any evaluate(SvlmLangContext *slc) override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+  ExprAstType whoami() override { 
+    std::cout << "I am Flow\n";
+    return ExprAstType::While;}
+};
 
 
 #endif

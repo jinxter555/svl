@@ -90,59 +90,7 @@ void OperandExprAst::print() {
   std::cout << o;
 }
 
-//----------------------------- number variable expr
-NumberExprAst::NumberExprAst(Number n) : ExprAst(n) {}
 
-
-void NumberExprAst::codegen(std::vector<std::string>& code) const {
-  //code.push_back("push " + std::to_string(value));
-  code.push_back("push " + std::to_string(1));
-}
-
-std::any NumberExprAst::evaluate(SvlmLangContext *slc) { return ExprAst::get_data(); }
-
-std::any NumberExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {
-  Number a = std::any_cast<Number>(this->evaluate(slc));
-  Number b = std::any_cast<Number>(r->evaluate(slc));
-  switch(op) {
-  case ast_op::plus:  return a+b;
-  case ast_op::minus: return a - b; 
-  case ast_op::mul:   return a * b; 
-  case ast_op::div:   return a / b;
-  case ast_op::eql:   return a == b;
-  case ast_op::neql:  return a != b;
-  case ast_op::gt:    return a > b;
-  case ast_op::lt:    return a < b;
-  case ast_op::lteq:  return a <= b;
-  case ast_op::gteq:  return a >= b;
-  case ast_op::and_:  return a && b;
-  case ast_op::or_:  return a || b;
-  case ast_op::not_:  return !a;
-  default: std::cerr << "wrong type:\n"; return 0;
-  }
-  return 1;
-} 
-
-void NumberExprAst::print() { 
-  TreeNode::print_data(); //std::cout << "\n";
-}
-//----------------------------- atom variable expr
-AtomExprAst::AtomExprAst(Atom name) : ExprAst(name) {}
-std::any AtomExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
-std::string AtomExprAst::name() { return std::any_cast<std::string>(get_data()); }
-void AtomExprAst::codegen(std::vector<std::string> &code) const {}
-void AtomExprAst::print() { print_data(); std::cout << "--\n";}
-
-std::any AtomExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {
-  Atom a = std::any_cast<Atom>(this->evaluate(slc));
-  Atom b = std::any_cast<Atom>(r->evaluate(slc));
-  switch(op) {
-  case ast_op::eql:   return a == b;
-  case ast_op::neql:  return a != b;
-  default: return false;
-  }
-  return 0;
-} 
 //----------------------------- ident expr
 IdentExprAst::IdentExprAst(std::string s) : ExprAst(s) {}
 std::any IdentExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
@@ -670,11 +618,13 @@ std::any FlowExprAst::evaluate(SvlmLangContext *slc) {
   for(int i=0; i<l->get_member_size(); i++)  {
     std::shared_ptr<ExprAst> m_e_b = std::any_cast<std::shared_ptr<ExprAst>>(l->get(i));
     std::shared_ptr<ExprAst> match = std::dynamic_pointer_cast<ExprAst>(m_e_b->get_child("match"));
+    std::shared_ptr<ListExprAst> cbody = std::dynamic_pointer_cast<ListExprAst>(m_e_b->get_child("cbody"));
     ast_op op =  std::any_cast<ast_op>(m_e_b->get_data());
 
     if(op == ast_op::ast_default) {
       std::cout << "default got a match\n";
-      continue;
+      return cbody->evaluate(slc);
+      // continue;
     }
 
     Operand b = std::any_cast<Operand>(match->evaluate(slc));
@@ -682,11 +632,11 @@ std::any FlowExprAst::evaluate(SvlmLangContext *slc) {
       std::any op_print = op;
       std::cout << "got a match\n";
       std::cout << a  << op_print << b << "\n";
+      return cbody->evaluate(slc);
+
     }
   }
-
-  return a;
-  
+  return false;
 
 }
 void FlowExprAst::codegen(std::vector<std::string> &code) const {}
@@ -722,6 +672,40 @@ void FlowMatchExprAst::print() {
   } //else { std::cout << " default  "; }
   //std::cout << " cbody ";
   l->print();
+}
+//--------------------  while expr
+WhileExprAst::WhileExprAst
+( std::shared_ptr<ExprAst> cond
+, std::shared_ptr<ListExprAst> body
+) : ExprAst(cond) {
+  add_child("cbody", body);
+}
+std::any WhileExprAst::evaluate(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> e;
+  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
+  int code_count = l->get_member_size();
+  std::cout  << "while eval!\n";
+  while( std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->ast_eval_continue) {
+    for(int i=0; i<code_count && slc->svlm_lang->ast_eval_continue; i++ ) {
+      e = std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
+        if(e==nullptr) { // could have been an empty  lists of newlines
+        break; }
+      //std::cout  << "i:" << i << "\n";
+      e->evaluate(slc);
+    }
+  }
+  return 0;
+}
+
+void WhileExprAst::codegen(std::vector<std::string> &code) const {}
+
+void WhileExprAst::print() {
+  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
+  std::cout  << "while "; cond->print(); std::cout  << " do\n";
+  l->print();
+  std::cout  << "end";
 }
 
 #endif

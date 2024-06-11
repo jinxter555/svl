@@ -3,12 +3,14 @@ $abc = 456
 print $abc
 print "\n"
 #
-flow 123 do
+flow 222 do
 == 123 -> 
   $a = 1+2 
   print $a
+  print "\n"
 
-!= 222 -> 
+== 222 -> 
+  print "hello b: "
   $b = 2+25
   print $b
 
