@@ -74,7 +74,7 @@ bool Operand::operator==(const Operand& other) const {
   if(type_ != other.type_) 
     throw std::runtime_error("Unsupported operation == for unequal types"); 
   
-  std::cout << "operand cmp==\n";
+  //std::cout << "operand cmp==\n";
   switch(type_) {
   case VarTypeEnum::bool_t: 
     return std::get<bool>(value_) == std::get<bool>(other.value_);

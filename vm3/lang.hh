@@ -60,6 +60,16 @@ enum class VarTypeEnum {
   ptr_t, // pointer maybe
   user_t,
 };
+enum class ControlFlow {
+  run,
+  ast_break, 
+  ast_continue,
+  ast_return,
+  ast_wait,
+  sleep,
+  stop,
+  ast_exit
+};
 
 
 typedef std::variant<int, float>  num_d_t;

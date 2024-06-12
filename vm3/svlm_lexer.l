@@ -42,6 +42,7 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 "repeat"        return SvlmParser::token::REPEAT;
 "until"        return SvlmParser::token::UNTIL;
 "return"        return SvlmParser::token::AST_RETURN;
+"break"        return SvlmParser::token::AST_BREAK;
 "default"        return SvlmParser::token::AST_DEFAULT;
 "print"        return SvlmParser::token::PRINT;
 "not"        return SvlmParser::token::NOT;

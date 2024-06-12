@@ -20,7 +20,7 @@ protected:
   std::shared_ptr<Tree> context_tree;
 public:
   enum class ExprAstType {
-     Print, DistCont, Operand, Number, Atom, Ident, Tuple, LTuple,
+     Print, ControlFlow, Operand, Number, Atom, Ident, Tuple, LTuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
     Call, Case, CaseMatch, Flow, FlowMatch, Decl, BinOp, While};
 
@@ -47,14 +47,14 @@ public:
 
 //----------------------------- discontinue  
 
-class DisContExprAst : public ExprAst { // to disable continue aka break loop for ListExprAst
+class ControlFlowExprAst : public ExprAst { // to disable continue aka break loop for ListExprAst
 public:
-  DisContExprAst(std::string kw); // break keyword 
+  ControlFlowExprAst(ControlFlow cf); // break keyword 
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void codegen(std::vector<std::string>& code) const override;
   void print() override;
-  ExprAstType whoami() override { return ExprAstType::DistCont;}
+  ExprAstType whoami() override { return ExprAstType::ControlFlow;}
 };
 
 

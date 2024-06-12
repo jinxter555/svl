@@ -22,6 +22,21 @@ SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) {
 
 }
 
+void SvlmLang::push_control_flow() {
+  control_flow_stack.push(control_flow);
+}
+
+void SvlmLang::pop_control_flow() {
+  if(control_flow_stack.empty()) {
+    std::cerr << "Can't pop control flow stack! it's empty\n";
+    return;
+  }
+  control_flow = control_flow_stack.top();
+  control_flow_stack.pop();
+}
+
+
+
 // both arguments and local variables are stored in lvars 
 void SvlmLangContext::fcall_stack_setup(std::vector<std::any> args, std::string callee) {
     full_symbol_t fst = current_context; 

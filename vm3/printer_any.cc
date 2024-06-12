@@ -37,7 +37,32 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     default: oc="out wrong type"; break;
     } 
     out << oc ; }
-  else if(a.type()  == typeid(int))
+  else if(a.type()  == typeid(ControlFlow)){
+    
+  std::string outstr;
+  switch(std::any_cast<ControlFlow>(a)){
+  case ControlFlow::run:
+    outstr = "run"; break;
+  case ControlFlow::ast_break:
+    outstr = "break"; break;
+  case ControlFlow::ast_continue:
+    outstr = "continue"; break;
+  case ControlFlow::ast_return:
+    outstr = "return"; break;
+  case ControlFlow::ast_wait:
+    outstr = "wait"; break;
+  case ControlFlow::sleep:
+    outstr = "sleep"; break;
+  case ControlFlow::stop:
+    outstr = "stop"; break;
+  case ControlFlow::ast_exit:
+    outstr = "exit"; break;
+  default: outstr = "error control state"; break;
+  };
+  std::cout << outstr << "\n";
+
+
+  } else if(a.type()  == typeid(int))
     out << std::any_cast<int>(a);
   else if(a.type()  == typeid(double))
     out << std::any_cast<double>(a);

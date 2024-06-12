@@ -27,8 +27,11 @@ public:
   // std::vector<std::any> svlm_stack;
   std::vector<std::shared_ptr<TMA>> svlm_stack;
   FrameSvlm frame;
-  bool ast_eval_continue = true;
+  ControlFlow control_flow = ControlFlow::run;
+  std::stack<ControlFlow> control_flow_stack;
 
+  void pop_control_flow();
+  void push_control_flow();
 private:
 
 };

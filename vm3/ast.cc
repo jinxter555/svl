@@ -42,14 +42,41 @@ void PrintExprAst::print() { print_data(); };
 
 
 //----------------------------- discontinue expr ast
-DisContExprAst::DisContExprAst(std::string kw) : ExprAst(kw) {};
-std::any DisContExprAst::evaluate(SvlmLangContext *slc) {
-  slc->svlm_lang->ast_eval_continue = false;
-  //std::cout << "discontinue with: "; print(); std::cout << "\n";
+ControlFlowExprAst::ControlFlowExprAst(ControlFlow cf) : ExprAst(cf) {};
+std::any ControlFlowExprAst::evaluate(SvlmLangContext *slc) {
+  slc->svlm_lang->control_flow = std::any_cast<ControlFlow>(get_data());
+  std::cout << "control flow with: "; print(); std::cout << "\n";
+  std::cout << "ast eval continue: " <<  static_cast<int>(slc->svlm_lang->control_flow)  << "\n";
   return false;
 }
-void DisContExprAst::codegen(std::vector<std::string>& code) const {};
-void DisContExprAst::print() { print_data(); };
+void ControlFlowExprAst::codegen(std::vector<std::string>& code) const {};
+void ControlFlowExprAst::print() { 
+  std::string outstr;
+  switch(std::any_cast<ControlFlow>(get_data())){
+  case ControlFlow::run:
+    outstr = "run"; break;
+  case ControlFlow::ast_break:
+    outstr = "break"; break;
+  case ControlFlow::ast_continue:
+    outstr = "continue"; break;
+  case ControlFlow::ast_return:
+    outstr = "return"; break;
+  case ControlFlow::ast_wait:
+    outstr = "wait"; break;
+  case ControlFlow::sleep:
+    outstr = "sleep"; break;
+  case ControlFlow::stop:
+    outstr = "stop"; break;
+  case ControlFlow::ast_exit:
+    outstr = "exit"; break;
+  default: outstr = "error control state"; break;
+  };
+  std::cout << outstr << "\n";
+
+
+
+
+}
 
 //----------------------------- Bin  variable expr
 //----------------------------- number variable expr
@@ -479,18 +506,17 @@ std::any ListExprAst::evaluate(SvlmLangContext *slc) {
   std::vector<std::any> result_list;
   int code_count = get_member_size();
   //std::cout  << "list eval!\n";
-  for(int i=0; i<code_count && slc->svlm_lang->ast_eval_continue; i++ ) {
+
+//  slc->svlm_lang->push_eval_continue();
+//  slc->svlm_lang->ast_eval_continue=true; // reset it to true regardless for the next run
+  for(int i=0; i<code_count && slc->svlm_lang->control_flow == ControlFlow::run ; i++ ) {
     e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
     if(e==nullptr) { // could have been an empty  lists of newlines
-      /*
-      std::cerr << "code count: " << code_count << "\n";
-      std::cerr << "list member: "<< i << " is null\n"; 
-      return result_list;
-      */
       break;}
     result_list.push_back(e->evaluate(slc)); 
   }
-  slc->svlm_lang->ast_eval_continue=true; // reset it to true regardless for the next run
+//  slc->svlm_lang->pop_eval_continue();
+
   return result_list;
 }
 
@@ -621,8 +647,12 @@ std::any FlowExprAst::evaluate(SvlmLangContext *slc) {
     std::shared_ptr<ListExprAst> cbody = std::dynamic_pointer_cast<ListExprAst>(m_e_b->get_child("cbody"));
     ast_op op =  std::any_cast<ast_op>(m_e_b->get_data());
 
-    if(op == ast_op::ast_default) {
-      std::cout << "default got a match\n";
+    if(op == ast_op::ast_default ) {
+//      std::cout << "default got a match\n";
+      if(cbody==nullptr) {
+        std::cout << "flow default code body is null\n";
+        return false;
+      }
       return cbody->evaluate(slc);
       // continue;
     }
@@ -630,8 +660,11 @@ std::any FlowExprAst::evaluate(SvlmLangContext *slc) {
     Operand b = std::any_cast<Operand>(match->evaluate(slc));
     if(a.bin_op(b, op)==true) {
       std::any op_print = op;
-      std::cout << "got a match\n";
-      std::cout << a  << op_print << b << "\n";
+ //     std::cout << "got a match\n"; std::cout << a  << op_print << b << "\n";
+      if(cbody==nullptr) {
+        std::cout << "operand code body is null\n";
+        return false;
+      }
       return cbody->evaluate(slc);
 
     }
@@ -671,7 +704,9 @@ void FlowMatchExprAst::print() {
     m->print_data();
   } //else { std::cout << " default  "; }
   //std::cout << " cbody ";
-  l->print();
+  if(l != nullptr) l->print();
+  else std::cout << " flow match cbody is null";
+
 }
 //--------------------  while expr
 WhileExprAst::WhileExprAst
@@ -685,16 +720,30 @@ std::any WhileExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
   std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
   int code_count = l->get_member_size();
+
   std::cout  << "while eval!\n";
-  while( std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->ast_eval_continue) {
-    for(int i=0; i<code_count && slc->svlm_lang->ast_eval_continue; i++ ) {
+
+  slc->svlm_lang->push_control_flow();
+  slc->svlm_lang->control_flow=ControlFlow::run;
+
+  while( std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->control_flow == ControlFlow::run) {
+    for(int i=0; i<code_count && slc->svlm_lang->control_flow == ControlFlow::run; i++ ) {
       e = std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
         if(e==nullptr) { // could have been an empty  lists of newlines
         break; }
-      //std::cout  << "i:" << i << "\n";
       e->evaluate(slc);
+
+      std::any cf = slc->svlm_lang->control_flow ; std::cout << "---code[i]: " << i << " continue?  " << cf << "\n";
+
+      if(slc->svlm_lang->control_flow  == ControlFlow::ast_break) break;
+    }
+    if(slc->svlm_lang->control_flow ==ControlFlow::ast_break) {
+      std::cout << "ast eval cont -- i have go to now\n";
+      break;
     }
   }
+  slc->svlm_lang->pop_control_flow();
+
   return 0;
 }
 

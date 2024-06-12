@@ -9,6 +9,16 @@ while $abc >= 5 do
   print "\n"
   $abc = $abc - 1
 
+  flow $abc do
+  == 10 ->
+    print "I have 10 break out\n"
+    break
+
+  == 30 ->
+    print "I have 30 break out\n"
+    break
+
+  end
 
 end
 

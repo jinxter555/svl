@@ -1,0 +1,10 @@
+module mhello
+$a = 2
+print "a is: "
+print $a
+print "\n";
+while $a >= 1 do
+  print $a
+  print "\n";
+  $a = $a - 1
+end

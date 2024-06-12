@@ -41,7 +41,7 @@ std::vector<std::string> lvar_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token              MODULE DEF DO END AST_RETURN AST_DEFAULT PRINT CASE FLOW WHILE REPEAT UNTIL
+%token              MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT CASE FLOW WHILE REPEAT UNTIL
 %token              PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
@@ -144,7 +144,8 @@ caller
 //--------------------------------------------------- exp eval
 exp
   : exp_num {$$ = $1; }
-  | AST_RETURN { $$ = std::make_shared<DisContExprAst>(std::string("return")); }
+  | AST_RETURN { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_return); }
+  | AST_BREAK { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_break); }
   ;
 
 print_exp
