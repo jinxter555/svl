@@ -30,7 +30,7 @@ public:
   ControlFlow control_flow = ControlFlow::run;
   std::stack<ControlFlow> control_flow_stack;
 
-  void pop_control_flow();
+  ControlFlow pop_control_flow();
   void push_control_flow();
 private:
 

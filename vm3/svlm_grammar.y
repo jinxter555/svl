@@ -41,7 +41,7 @@ std::vector<std::string> lvar_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token              MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT CASE FLOW WHILE REPEAT UNTIL
+%token              MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT CASE FLOW WHILE REPEAT UNTIL DONE
 %token              PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
@@ -61,7 +61,7 @@ std::vector<std::string> lvar_list;
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments case flow while_loop
+%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments case flow while_loop repeat_loop
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list flow_match_list
 %type <std::shared_ptr<CaseMatchExprAst>>  case_match
 %type <std::shared_ptr<FlowMatchExprAst>>  flow_match
@@ -101,6 +101,7 @@ statement
   | case
   | flow
   | while_loop
+  | repeat_loop
   | print_exp
   | comments {$$ = nullptr; }
   ;
@@ -285,12 +286,19 @@ comparison_ops
   | GTEQ  {$$ = ast_op::gteq; }
   ;
 
-//--------------------------------------------------- param list
+//--------------------------------------------------- while loop 
 while_loop
   : WHILE exp_num DO statement_list END {
     $$ = std::make_shared<WhileExprAst>($2, $4);
   }
   ;
+
+repeat_loop
+  : REPEAT statement_list UNTIL exp_num DONE {
+    $$ = std::make_shared<WhileExprAst>($4, $2);
+  }
+  ;
+
 
 
 

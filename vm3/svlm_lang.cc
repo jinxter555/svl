@@ -26,13 +26,15 @@ void SvlmLang::push_control_flow() {
   control_flow_stack.push(control_flow);
 }
 
-void SvlmLang::pop_control_flow() {
+ControlFlow SvlmLang::pop_control_flow() {
+  ControlFlow cf;
   if(control_flow_stack.empty()) {
     std::cerr << "Can't pop control flow stack! it's empty\n";
-    return;
+    return ControlFlow::error;
   }
-  control_flow = control_flow_stack.top();
+  cf = control_flow_stack.top();
   control_flow_stack.pop();
+  return cf;
 }
 
 

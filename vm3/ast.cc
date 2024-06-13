@@ -47,7 +47,7 @@ std::any ControlFlowExprAst::evaluate(SvlmLangContext *slc) {
   slc->svlm_lang->control_flow = std::any_cast<ControlFlow>(get_data());
   std::cout << "control flow with: "; print(); std::cout << "\n";
   std::cout << "ast eval continue: " <<  static_cast<int>(slc->svlm_lang->control_flow)  << "\n";
-  return false;
+  return slc->svlm_lang->control_flow;
 }
 void ControlFlowExprAst::codegen(std::vector<std::string>& code) const {};
 void ControlFlowExprAst::print() { 
@@ -505,17 +505,13 @@ std::any ListExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
   std::vector<std::any> result_list;
   int code_count = get_member_size();
-  //std::cout  << "list eval!\n";
 
-//  slc->svlm_lang->push_eval_continue();
-//  slc->svlm_lang->ast_eval_continue=true; // reset it to true regardless for the next run
   for(int i=0; i<code_count && slc->svlm_lang->control_flow == ControlFlow::run ; i++ ) {
     e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
     if(e==nullptr) { // could have been an empty  lists of newlines
       break;}
     result_list.push_back(e->evaluate(slc)); 
   }
-//  slc->svlm_lang->pop_eval_continue();
 
   return result_list;
 }
@@ -531,6 +527,7 @@ std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
     return 0;
   }
   slc->last_line=true;
+  slc->svlm_lang->control_flow=ControlFlow::run;
   std::any output = e->evaluate(slc);
   //std::cout << "output: " << output << "\n";
   slc->last_line=false;
@@ -554,7 +551,17 @@ std::any FuncExprAst::evaluate(SvlmLangContext *slc) {
   }
   //std::cout << "In function: "; print_data(); std::cout << " eval!\n";
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("fbody"));
-  return l->evaluate(slc);
+
+  slc->svlm_lang->push_control_flow();
+  slc->svlm_lang->control_flow=ControlFlow::run;
+  std::any result = l->evaluate(slc);
+  std::any cf = slc->svlm_lang->control_flow;
+  std::any rcf = slc->svlm_lang->pop_control_flow();
+  std::cout << "function return flow control is : " << cf << "\n";
+  std::cout << "function poped flow control is : " << rcf << "\n";
+
+
+  return result;
 }
 void FuncExprAst::print() {
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("fbody"));
@@ -719,6 +726,7 @@ std::any WhileExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
   std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
   std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
+  std::any result;
   int code_count = l->get_member_size();
 
   std::cout  << "while eval!\n";
@@ -729,22 +737,28 @@ std::any WhileExprAst::evaluate(SvlmLangContext *slc) {
   while( std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->control_flow == ControlFlow::run) {
     for(int i=0; i<code_count && slc->svlm_lang->control_flow == ControlFlow::run; i++ ) {
       e = std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
-        if(e==nullptr) { // could have been an empty  lists of newlines
-        break; }
-      e->evaluate(slc);
+      //if(e==nullptr)  break; // could have been an empty  lists of newlines
+      if(e==nullptr)  continue; // could have been an empty  lists of newlines
+      result = e->evaluate(slc);
 
-      std::any cf = slc->svlm_lang->control_flow ; std::cout << "---code[i]: " << i << " continue?  " << cf << "\n";
+      //std::any cf = slc->svlm_lang->control_flow ; std::cout << "---code[i]: " << i << " continue?  " << cf << "\n";
 
-      if(slc->svlm_lang->control_flow  == ControlFlow::ast_break) break;
+      if( slc->svlm_lang->control_flow  == ControlFlow::ast_break ||
+          slc->svlm_lang->control_flow  == ControlFlow::ast_return
+      ) break;
     }
-    if(slc->svlm_lang->control_flow ==ControlFlow::ast_break) {
-      std::cout << "ast eval cont -- i have go to now\n";
+    if(slc->svlm_lang->control_flow ==ControlFlow::ast_break ||
+      slc->svlm_lang->control_flow ==ControlFlow::ast_return) {
+      //std::cout << "ast eval cont -- i have go to now\n";
       break;
     }
   }
-  slc->svlm_lang->pop_control_flow();
 
-  return 0;
+  ControlFlow cf = slc->svlm_lang->pop_control_flow();        
+  if(slc->svlm_lang->control_flow != ControlFlow::ast_return) // if leave ast_return untouched
+    slc->svlm_lang->control_flow = cf;
+
+  return result;
 }
 
 void WhileExprAst::codegen(std::vector<std::string> &code) const {}

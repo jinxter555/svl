@@ -68,7 +68,8 @@ enum class ControlFlow {
   ast_wait,
   sleep,
   stop,
-  ast_exit
+  ast_exit,
+  error,
 };
 
 
