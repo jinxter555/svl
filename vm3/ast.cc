@@ -43,10 +43,18 @@ void PrintExprAst::print() { print_data(); };
 
 //----------------------------- discontinue expr ast
 ControlFlowExprAst::ControlFlowExprAst(ControlFlow cf) : ExprAst(cf) {};
+ControlFlowExprAst::ControlFlowExprAst
+( ControlFlow cf
+, std::shared_ptr<ExprAst> exp
+) : ExprAst(cf) {
+  add_child("exp", exp);
+}
+
 std::any ControlFlowExprAst::evaluate(SvlmLangContext *slc) {
   slc->svlm_lang->control_flow = std::any_cast<ControlFlow>(get_data());
   std::cout << "control flow with: "; print(); std::cout << "\n";
   std::cout << "ast eval continue: " <<  static_cast<int>(slc->svlm_lang->control_flow)  << "\n";
+  slc->svlm_lang->fc_exp = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
   return slc->svlm_lang->control_flow;
 }
 void ControlFlowExprAst::codegen(std::vector<std::string>& code) const {};
@@ -603,6 +611,10 @@ std::any CallExprAst::evaluate(SvlmLangContext *slc) {
     //std::cout << "in caller print and eval func_body ptr: " << func<< "\n";
     func->evaluate(slc);
     // func->print();
+    // handle return value
+    if(slc->svlm_lang->control_flow == ControlFlow::ast_return) {
+      return slc->svlm_lang->fc_exp->evaluate(slc); // return the return 
+    }
   } else {
     std::cerr << "function body is nullptr!\n";
   }

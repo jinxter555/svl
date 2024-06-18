@@ -97,7 +97,6 @@ statement
   | exp 
   | module
   | function
-  | caller
   | case
   | flow
   | while_loop
@@ -146,6 +145,7 @@ caller
 exp
   : exp_num {$$ = $1; }
   | AST_RETURN { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_return); }
+  | AST_RETURN exp_num { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_return, $2); }
   | AST_BREAK { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_break); }
   ;
 
@@ -163,7 +163,7 @@ exp_num
   | FLT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
   | tuple { $$ = $1; }
   | COLON STR { $$ = std::make_shared<OperandExprAst>(Operand(Atom($2))); }
-
+  | caller
   | exp_num MULTIPLY exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::mul); }
   | exp_num DIVIDE exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::div); }
   | exp_num PLUS exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::plus); }

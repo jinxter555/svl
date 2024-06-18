@@ -28,6 +28,7 @@ public:
   std::vector<std::shared_ptr<TMA>> svlm_stack;
   FrameSvlm frame;
   ControlFlow control_flow = ControlFlow::run;
+  std::shared_ptr<ExprAst> fc_exp; // flow control expression
   std::stack<ControlFlow> control_flow_stack;
 
   ControlFlow pop_control_flow();
