@@ -56,8 +56,8 @@ ControlFlowExprAst::ControlFlowExprAst
 
 std::any ControlFlowExprAst::evaluate(SvlmLangContext *slc) {
   slc->svlm_lang->control_flow = std::any_cast<ControlFlow>(get_data());
-  std::cout << "control flow with: "; print(); std::cout << "\n";
-  std::cout << "ast eval continue: " <<  static_cast<int>(slc->svlm_lang->control_flow)  << "\n";
+  //std::cout << "control flow with: "; print(); std::cout << "\n";
+  //std::cout << "ast eval continue: " <<  static_cast<int>(slc->svlm_lang->control_flow)  << "\n";
   slc->svlm_lang->fc_exp = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
   return slc->svlm_lang->control_flow;
 }
@@ -109,9 +109,7 @@ std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r
   case ast_op::minus: return a - b; 
   case ast_op::mul:   return a * b; 
   case ast_op::div:   return a / b;
-  case ast_op::eql:   
-    std::cout <<"cmp a == b\n";
-    return a == b;
+  case ast_op::eql:   return a == b;
   case ast_op::neql:  return a != b;
   case ast_op::gt:    return a > b;
   case ast_op::lt:    return a < b;
@@ -573,8 +571,8 @@ std::any FuncExprAst::evaluate(SvlmLangContext *slc) {
   std::any result = l->evaluate(slc);
   std::any cf = slc->svlm_lang->control_flow;
   std::any rcf = slc->svlm_lang->pop_control_flow();
-  std::cout << "function return flow control is : " << cf << "\n";
-  std::cout << "function poped flow control is : " << rcf << "\n";
+  //std::cout << "function return flow control is : " << cf << "\n";
+  //std::cout << "function poped flow control is : " << rcf << "\n";
 
 
   return result;
@@ -625,7 +623,6 @@ std::any CallExprAst::evaluate(SvlmLangContext *slc) {
     func->evaluate(slc);
     // func->print();
     // handle return value
-
     ControlFlow cf = slc->svlm_lang->pop_control_flow();        
     if(slc->svlm_lang->control_flow == ControlFlow::ast_return) {
       slc->svlm_lang->control_flow = cf;
@@ -800,5 +797,62 @@ void WhileExprAst::print() {
   l->print();
   std::cout  << "end";
 }
+
+//--------------------  while expr
+RepeatExprAst::RepeatExprAst
+( std::shared_ptr<ExprAst> cond
+, std::shared_ptr<ListExprAst> body
+) : ExprAst(cond) {
+  add_child("cbody", body);
+}
+std::any RepeatExprAst::evaluate(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> e;
+  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
+  std::any result;
+  int code_count = l->get_member_size();
+
+  std::cout  << "repeat eval!\n";
+
+  slc->svlm_lang->push_control_flow();
+  slc->svlm_lang->control_flow=ControlFlow::run;
+
+  do {
+    for(int i=0; i<code_count && slc->svlm_lang->control_flow == ControlFlow::run; i++ ) {
+      e = std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
+      //if(e==nullptr)  break; // could have been an empty  lists of newlines
+      if(e==nullptr)  continue; // could have been an empty  lists of newlines
+      result = e->evaluate(slc);
+
+      //std::any cf = slc->svlm_lang->control_flow ; std::cout << "---code[i]: " << i << " continue?  " << cf << "\n";
+
+      if( slc->svlm_lang->control_flow  == ControlFlow::ast_break ||
+          slc->svlm_lang->control_flow  == ControlFlow::ast_return
+      ) break;
+    }
+    if(slc->svlm_lang->control_flow ==ControlFlow::ast_break ||
+      slc->svlm_lang->control_flow ==ControlFlow::ast_return) {
+      //std::cout << "ast eval cont -- i have go to now\n";
+      break;
+    }
+  } while( !std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->control_flow == ControlFlow::run) ;
+
+  ControlFlow cf = slc->svlm_lang->pop_control_flow();        
+  if(slc->svlm_lang->control_flow != ControlFlow::ast_return) // if leave ast_return untouched
+    slc->svlm_lang->control_flow = cf;
+
+  return result;
+}
+
+void RepeatExprAst::codegen(std::vector<std::string> &code) const {}
+
+void RepeatExprAst::print() {
+  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
+  std::cout  << "repeat "; 
+  l->print();
+  std::cout  << "until " ; cond->print() ; std::cout <<  " done\n";
+}
+
 
 #endif
