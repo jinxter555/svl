@@ -138,6 +138,9 @@ caller
   : STR PAREN_L arg_list PAREN_R {
     std::shared_ptr<CallExprAst> caller = std::make_shared<CallExprAst>($1, $3); 
     $$ = caller;
+    std::cout  << "caller print: ";
+    caller->print();
+    std::cout  << "\n";
   }
 
 

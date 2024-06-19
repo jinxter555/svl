@@ -38,7 +38,11 @@ std::any PrintExprAst::evaluate(SvlmLangContext *slc) {
   return std::string("\n");
 }
 void PrintExprAst::codegen(std::vector<std::string>& code) const {};
-void PrintExprAst::print() { print_data(); };
+void PrintExprAst::print() { 
+  print_data(); 
+  auto exp  = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
+  exp->print();
+};
 
 
 //----------------------------- discontinue expr ast
@@ -79,7 +83,10 @@ void ControlFlowExprAst::print() {
     outstr = "exit"; break;
   default: outstr = "error control state"; break;
   };
-  std::cout << outstr << "\n";
+  std::cout << outstr << " ";
+  auto exp  = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
+  if(exp!=nullptr) exp->print();
+  std::cout << "\n";
 
 
 
@@ -120,7 +127,7 @@ std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r
 
 void OperandExprAst::print() { 
 //  TreeNode::print_data(); //std::cout << "\n";
-  std::cout << "operand print\n";
+  //std::cout << "operand print\n";
   Operand o = std::any_cast<Operand>(get_data());
   std::cout << o;
 }
@@ -244,7 +251,7 @@ TupleExprAst:: TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist)
 std::any TupleExprAst::evaluate(SvlmLangContext *slc) {
   //std::shared_ptr<ListExprAst> l = std::any_cast<std::shared_ptr<ListExprAst>>(get_data());
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
-  //std::cout << "tuple eval\n"; l->print();
+  std::cout << "tuple eval\n"; l->print();
   if(!this->evaluated) {
     //std::vector<std::any> elist = move(std::any_cast<std::vector<std::any>>(l->evaluate(slc)));
     Tuple elist(move(std::any_cast<std::vector<std::any>>(l->evaluate(slc))));
@@ -518,6 +525,7 @@ std::any ListExprAst::evaluate(SvlmLangContext *slc) {
     e = std::dynamic_pointer_cast<ExprAst>(TreeNode::get_member(i));
     if(e==nullptr) { // could have been an empty  lists of newlines
       break;}
+    // if e->whoami == func,  continue 
     result_list.push_back(e->evaluate(slc)); 
   }
 
@@ -588,7 +596,8 @@ CallExprAst::CallExprAst(std::string callee, std::shared_ptr<ListExprAst> args) 
 void CallExprAst::fcall_setup(SvlmLangContext *slc) { 
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("args"));
   auto args_evaluated = move(std::any_cast<std::vector<std::any>>(l->evaluate(slc)));
-  //std::cout << "with arguments evaluated:\n"; for(auto e : args_evaluated) { std::cout << e << "\n"; }
+  std::cout << "with arguments evaluated size: " << args_evaluated.size() << " list:\n"; 
+  for(auto e : args_evaluated) { std::cout << e << "\n"; }
   slc->fcall_stack_setup(args_evaluated, std::any_cast<std::string>(get_data())); // s
 
   //std::cout << "module: " << slc->current_context.smodule  << "\n";
@@ -609,12 +618,21 @@ std::any CallExprAst::evaluate(SvlmLangContext *slc) {
 
   if(func!=nullptr) {
     //std::cout << "in caller print and eval func_body ptr: " << func<< "\n";
+
+    slc->svlm_lang->push_control_flow();
+    slc->svlm_lang->control_flow=ControlFlow::run;
+
     func->evaluate(slc);
     // func->print();
     // handle return value
+
+    ControlFlow cf = slc->svlm_lang->pop_control_flow();        
     if(slc->svlm_lang->control_flow == ControlFlow::ast_return) {
+      slc->svlm_lang->control_flow = cf;
       return slc->svlm_lang->fc_exp->evaluate(slc); // return the return 
     }
+
+
   } else {
     std::cerr << "function body is nullptr!\n";
   }
