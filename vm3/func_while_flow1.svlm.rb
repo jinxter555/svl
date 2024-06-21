@@ -1,12 +1,14 @@
 module mhello
-$a = 5
+$a = 10
 print "a is: "
 print $a
 print "\n";
+pf()
+break
 
 def pf() do
   while $a >= 1 do
-    print $a
+    # print $a
     print "\n";
     flow $a do
     == 3 -> 
@@ -14,7 +16,10 @@ def pf() do
       break
     == 4 -> 
       print "I got 4\n"
-      break
+    default ->
+      print "d == I got "
+      print $a
+      print " \n"
     end
     $a = $a - 1
   end

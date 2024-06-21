@@ -109,18 +109,18 @@ std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r
   case ast_op::minus: return a - b; 
   case ast_op::mul:   return a * b; 
   case ast_op::div:   return a / b;
-  case ast_op::eql:   return a == b;
-  case ast_op::neql:  return a != b;
-  case ast_op::gt:    return a > b;
-  case ast_op::lt:    return a < b;
-  case ast_op::lteq:  return a <= b;
-  case ast_op::gteq:  return a >= b;
-  case ast_op::and_:  return a && b;
-  case ast_op::or_:  return a || b;
-  case ast_op::not_:  return !a;
+  case ast_op::eql:   return Operand(a == b);
+  case ast_op::neql:  return Operand(a != b);
+  case ast_op::gt:    return Operand(a > b);
+  case ast_op::lt:    return Operand(a < b);
+  case ast_op::lteq:  return Operand(a <= b);
+  case ast_op::gteq:  return Operand(a >= b);
+  case ast_op::and_:  return Operand(a && b);
+  case ast_op::or_:   return Operand(a || b);
+  case ast_op::not_:  return Operand(!a);
   default: std::cerr << "wrong type:\n"; return 0;
   }
-  return 1;
+  return Operand(false);
 } 
 
 void OperandExprAst::print() { 
@@ -675,6 +675,7 @@ std::any FlowExprAst::evaluate(SvlmLangContext *slc) {
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
 
   Operand a = std::any_cast<Operand>(m_e_a->evaluate(slc));
+
   for(int i=0; i<l->get_member_size(); i++)  {
     std::shared_ptr<ExprAst> m_e_b = std::any_cast<std::shared_ptr<ExprAst>>(l->get(i));
     std::shared_ptr<ExprAst> match = std::dynamic_pointer_cast<ExprAst>(m_e_b->get_child("match"));

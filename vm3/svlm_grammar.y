@@ -41,8 +41,9 @@ std::vector<std::string> lvar_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token              MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT CASE FLOW WHILE REPEAT UNTIL DONE
-%token              PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
+%token MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT CASE FLOW WHILE REPEAT UNTIL DONE IF THEN ELSE
+%token PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
+%token TRUE FALSE NIL
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
 %token <float>     FLT
@@ -61,11 +62,11 @@ std::vector<std::string> lvar_list;
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments case flow while_loop repeat_loop
+%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments 
+%type <std::shared_ptr<ExprAst>>  case flow while_loop repeat_loop if_then_else 
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list flow_match_list
 %type <std::shared_ptr<CaseMatchExprAst>>  case_match
-%type <std::shared_ptr<FlowMatchExprAst>>  flow_match
-
+%type <std::shared_ptr<FlowMatchExprAst>>  flow_match 
 %start program_start
 
 
@@ -100,6 +101,7 @@ statement
   | case
   | flow
   | while_loop
+  | if_then_else
   | repeat_loop
   | print_exp
   | comments {$$ = nullptr; }
@@ -161,6 +163,8 @@ tuple
 exp_num
   : INT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
   | FLT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
+  | TRUE { $$ = std::make_shared<OperandExprAst>(Operand(true)); }
+  | FALSE { $$ = std::make_shared<OperandExprAst>(Operand(false)); }
   | tuple { $$ = $1; }
   | COLON STR { $$ = std::make_shared<OperandExprAst>(Operand(Atom($2))); }
   | caller
@@ -296,6 +300,21 @@ while_loop
 repeat_loop
   : REPEAT statement_list UNTIL exp_num DONE {
     $$ = std::make_shared<RepeatExprAst>($4, $2);
+  }
+  ;
+
+if_then_else
+  : IF exp_num THEN statement_list END {
+    auto l = std::make_shared<ListExprAst>("if then end");
+    auto y = std::make_shared<OperandExprAst>(Operand(true));
+    l->add(std::make_shared<FlowMatchExprAst>(
+      y, $4, ast_op::eql));
+    std::shared_ptr<FlowExprAst> flow_ptr =
+      std::make_shared<FlowExprAst>($2, l);
+    $$ = flow_ptr;
+  }
+  | IF exp_num THEN statement_list ELSE statement_list END {
+
   }
   ;
 
