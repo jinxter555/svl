@@ -314,7 +314,13 @@ if_then_else
     $$ = flow_ptr;
   }
   | IF exp_num THEN statement_list ELSE statement_list END {
-
+    auto l = std::make_shared<ListExprAst>("if then else end");
+    auto y = std::make_shared<OperandExprAst>(Operand(true));
+    l->add(std::make_shared<FlowMatchExprAst>(y, $4, ast_op::eql));
+    l->add(std::make_shared<FlowMatchExprAst>(nullptr, $6, ast_op::ast_default));
+    std::shared_ptr<FlowExprAst> flow_ptr =
+      std::make_shared<FlowExprAst>($2, l);
+    $$ = flow_ptr;
   }
   ;
 
