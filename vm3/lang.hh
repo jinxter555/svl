@@ -13,6 +13,7 @@ enum class key_tok_t {
 enum class ast_op {
   noop,
   ast_default,
+  ast_else,
   plus,
   minus,
   mul,

@@ -16,6 +16,7 @@ private:
   VarTypeEnum type_;
 public:
   VarTypeEnum get_type() { return type_;};
+  void print_type() const;
   // Constructors for each supported type
   Operand(int value) ;
   Operand(float value) ;

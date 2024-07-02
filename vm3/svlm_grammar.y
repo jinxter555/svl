@@ -41,8 +41,9 @@ std::vector<std::string> lvar_list;
 
 
 %token YYEOF EOL COMMENT1 COMMENT2
-%token MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT CASE FLOW WHILE REPEAT UNTIL DONE IF THEN ELSE
-%token PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_R ARROW_L
+%token MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT 
+%token CASE FLOW WHILE REPEAT UNTIL DONE IS IF THEN ELSE WHEN WHERE
+%token PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_L ARROW_R
 %token TRUE FALSE NIL
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
@@ -55,14 +56,15 @@ std::vector<std::string> lvar_list;
 %nterm comments
 
 %nonassoc           ASSIGN
-%left               EQL NEQL GT LT GTEQ LTEQ AND OR 
+%left               AND OR 
+%left               EQL NEQL GT LT GTEQ LTEQ 
 %left               PLUS MINUS
 %left               MULTIPLY DIVIDE MODULO
 %precedence         UMINUS
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_num statement arg print_exp module function caller tuple comments 
+%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple comments literals variable
 %type <std::shared_ptr<ExprAst>>  case flow while_loop repeat_loop if_then_else 
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list flow_match_list
 %type <std::shared_ptr<CaseMatchExprAst>>  case_match
@@ -81,7 +83,8 @@ comments
 
 statement_list
   : statement_list EOS statement {
-    if($3!=nullptr) $1->add($3);
+    if($1==nullptr) {std::cerr << "statement syntax error"; yyerrok; }
+    if($1!=nullptr && $3!=nullptr) $1->add($3);
     $$ = $1;
   }
   | statement  {
@@ -145,9 +148,9 @@ caller
 
 //--------------------------------------------------- exp eval
 exp
-  : exp_num {$$ = $1; }
+  : exp_eval {$$ = $1; }
   | AST_RETURN { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_return); }
-  | AST_RETURN exp_num { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_return, $2); }
+  | AST_RETURN exp_eval { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_return, $2); }
   | AST_BREAK { $$ = std::make_shared<ControlFlowExprAst>(ControlFlow::ast_break); }
   ;
 
@@ -160,39 +163,33 @@ print_exp
 tuple
   : CUR_L arg_list CUR_R { $$ = std::make_shared<TupleExprAst>($2); }
 
-exp_num
-  : INT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
-  | FLT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
-  | TRUE { $$ = std::make_shared<OperandExprAst>(Operand(true)); }
-  | FALSE { $$ = std::make_shared<OperandExprAst>(Operand(false)); }
+exp_eval
+  : literals
+  | variable
   | tuple { $$ = $1; }
-  | COLON STR { $$ = std::make_shared<OperandExprAst>(Operand(Atom($2))); }
+  | PAREN_L exp_eval PAREN_R        { $$ = $2; }
   | caller
-  | exp_num MULTIPLY exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::mul); }
-  | exp_num DIVIDE exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::div); }
-  | exp_num PLUS exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::plus); }
-  | exp_num MINUS exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::minus); }
-  | exp_num GT exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::gt); }
-  | exp_num LT exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::lt); }
-  | exp_num LTEQ exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::lteq); }
-  | exp_num GTEQ exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::gteq); }
-  | exp_num EQL exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::eql); }
-  | exp_num NEQL exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::neql); }
-  | exp_num AND exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::and_); }
-  | exp_num OR exp_num { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::or_); }
-  | NOT exp_num { $$ = std::make_shared<BinOpExprAst>($2, $2, ast_op::not_); }
-
-  | PAREN_L exp_num PAREN_R        { $$ = $2; }
-  | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
-  | DOLLAR STR ASSIGN exp_num {           // global variable
+  | exp_eval MULTIPLY exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::mul); }
+  | exp_eval DIVIDE exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::div); }
+  | exp_eval PLUS exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::plus); }
+  | exp_eval MINUS exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::minus); }
+  | exp_eval GT exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::gt); }
+  | exp_eval LT exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::lt); }
+  | exp_eval LTEQ exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::lteq); }
+  | exp_eval GTEQ exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::gteq); }
+  | exp_eval EQL exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::eql); }
+  | exp_eval NEQL exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::neql); }
+  | exp_eval AND exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::and_); }
+  | exp_eval OR exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::or_); }
+  | NOT exp_eval { $$ = std::make_shared<BinOpExprAst>($2, $2, ast_op::not_); }
+  | DOLLAR STR ASSIGN exp_eval {           // global variable
     slc->add_mvar_name($2);               // add to context tree
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<GvarExprAst>(std::string($2)), 
       $4, ast_op::assign);
   }
 
-  | STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
-  | STR ASSIGN exp_num { 
+  | STR ASSIGN exp_eval { 
     lvar_list.push_back($1);
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<LvarExprAst>(std::string($1)), 
@@ -202,6 +199,21 @@ exp_num
     $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::assign);
   }
   ;
+
+literals
+  : INT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
+  | FLT { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
+  | TRUE { $$ = std::make_shared<OperandExprAst>(Operand(true)); }
+  | FALSE { $$ = std::make_shared<OperandExprAst>(Operand(false)); }
+  | COLON STR { $$ = std::make_shared<OperandExprAst>(Operand(Atom($2))); }
+  ;
+
+variable
+: STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
+  | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
+;
+
+
 
 //--------------------------------------------------- def function 
 function
@@ -221,27 +233,10 @@ function
   }
   ;
 
-//--------------------------------------------------- case statement list
-case
-  : CASE statement DO END {
-    std::shared_ptr<CaseExprAst> case_ptr =
-      std::make_shared<CaseExprAst>($2);
-    $$ = case_ptr;
-  }
-  ;
-
-case_match
-  : statement ARROW_R statement_list {
-
-  } 
-  | %empty {
-    $$ = std::make_shared<CaseMatchExprAst>(nullptr, ast_op::eql );
-  }
-  ;
 //--------------------------------------------------- flow statement list
 flow
-  // : FLOW exp_num DO flow_match_list END {
-  : FLOW exp_num DO flow_match_list END {
+  // : FLOW exp_eval DO flow_match_list END {
+  : FLOW exp_eval DO flow_match_list END {
     std::shared_ptr<FlowExprAst> flow_ptr =
       std::make_shared<FlowExprAst>($2, $4);
     $$ = flow_ptr;
@@ -250,11 +245,11 @@ flow
 
 flow_match_list
   : %empty {
-    std::cout << "empty flow match list\n";
+    //std::cout << "empty flow match list\n";
     $$ = std::make_shared<ListExprAst>(std::string("empty flow match list"));
   }
   | flow_match {
-    std::cout << "start flow match list\n";
+    //std::cout << "start flow match list\n";
     auto ast_current_context = std::make_shared<ListExprAst>(std::string("flow match list"));
     ast_current_context->add($1);
     $$ = ast_current_context;
@@ -276,11 +271,59 @@ flow_match
   : comparison_ops statement ARROW_R statement_list {
     $$ = std::make_shared<FlowMatchExprAst>($2, $4, $1);
   } 
-  | AST_DEFAULT ARROW_R statement_list {
-    $$ = std::make_shared<FlowMatchExprAst>(nullptr, $3, ast_op::ast_default);
+  | IS literals ARROW_R statement_list {
+    //std::cout << "flow match s->sl"; $1->print(); std::cout << "\n";
+    $$ = std::make_shared<FlowMatchExprAst>($2, $4, ast_op::eql);
+  } 
+  | IS variable WHEN statement ARROW_R statement_list {
+    // need to add make share vars
+    //$$ = std::make_shared<FlowMatchWhenExprAst>($2, $4, $6);
+  }
+  | ELSE ARROW_R statement_list {
+    $$ = std::make_shared<FlowMatchExprAst>(nullptr, $3, ast_op::ast_else);
   }
   ;
 
+//--------------------------------------------------- if then else end
+if_then_else
+  : IF exp_eval THEN statement_list END {
+    auto l = std::make_shared<ListExprAst>("if then end");
+    auto y = std::make_shared<OperandExprAst>(Operand(true));
+    l->add(std::make_shared<FlowMatchExprAst>(
+      y, $4, ast_op::eql));
+    std::shared_ptr<FlowExprAst> flow_ptr =
+      std::make_shared<FlowExprAst>($2, l);
+    $$ = flow_ptr;
+  }
+  | IF exp_eval THEN statement_list ELSE statement_list END {
+    auto l = std::make_shared<ListExprAst>("if then else end");
+    auto y = std::make_shared<OperandExprAst>(Operand(true));
+    l->add(std::make_shared<FlowMatchExprAst>(y, $4, ast_op::eql));
+    l->add(std::make_shared<FlowMatchExprAst>(nullptr, $6, ast_op::ast_else));
+    std::shared_ptr<FlowExprAst> flow_ptr =
+      std::make_shared<FlowExprAst>($2, l);
+    $$ = flow_ptr;
+  }
+  ;
+
+//--------------------------------------------------- case statement list
+case
+  : CASE statement DO END {
+    std::shared_ptr<CaseExprAst> case_ptr =
+      std::make_shared<CaseExprAst>($2);
+    $$ = case_ptr;
+  }
+  ;
+
+case_match
+  : statement ARROW_R statement_list {
+
+  } 
+  | %empty {
+    $$ = std::make_shared<CaseMatchExprAst>(nullptr, ast_op::eql );
+  }
+  ;
+//--------------------------------------------------- if then else end
 comparison_ops
   : EQL   { $$ = ast_op::eql; }
   | NEQL  {$$ = ast_op::neql; }
@@ -292,40 +335,16 @@ comparison_ops
 
 //--------------------------------------------------- while loop 
 while_loop
-  : WHILE exp_num DO statement_list END {
+  : WHILE exp_eval DO statement_list END {
     $$ = std::make_shared<WhileExprAst>($2, $4);
   }
   ;
 
 repeat_loop
-  : REPEAT statement_list UNTIL exp_num DONE {
+  : REPEAT statement_list UNTIL exp_eval DONE {
     $$ = std::make_shared<RepeatExprAst>($4, $2);
   }
   ;
-
-if_then_else
-  : IF exp_num THEN statement_list END {
-    auto l = std::make_shared<ListExprAst>("if then end");
-    auto y = std::make_shared<OperandExprAst>(Operand(true));
-    l->add(std::make_shared<FlowMatchExprAst>(
-      y, $4, ast_op::eql));
-    std::shared_ptr<FlowExprAst> flow_ptr =
-      std::make_shared<FlowExprAst>($2, l);
-    $$ = flow_ptr;
-  }
-  | IF exp_num THEN statement_list ELSE statement_list END {
-    auto l = std::make_shared<ListExprAst>("if then else end");
-    auto y = std::make_shared<OperandExprAst>(Operand(true));
-    l->add(std::make_shared<FlowMatchExprAst>(y, $4, ast_op::eql));
-    l->add(std::make_shared<FlowMatchExprAst>(nullptr, $6, ast_op::ast_default));
-    std::shared_ptr<FlowExprAst> flow_ptr =
-      std::make_shared<FlowExprAst>($2, l);
-    $$ = flow_ptr;
-  }
-  ;
-
-
-
 
 
 

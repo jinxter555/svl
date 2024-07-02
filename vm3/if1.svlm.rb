@@ -6,6 +6,5 @@ if $a>=6 then
   print "hello\n"
 else
   print "world\n"
-
 end
 break

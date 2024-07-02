@@ -20,6 +20,7 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     switch(op) {
     case ast_op::noop:  oc="-noop-"; break;
     case ast_op::ast_default:  oc="default"; break;
+    case ast_op::ast_else:  oc="else"; break;
     case ast_op::assign:  oc="="; break;
     case ast_op::plus:  oc="+"; break;
     case ast_op::minus: oc="-"; break;

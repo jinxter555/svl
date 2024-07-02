@@ -10,6 +10,17 @@ void TreeNode::add_child(const std::string &key, std::shared_ptr<TreeNode> child
     children[key] = child;
 }
 
+void TreeNode::add_child_data(const std::string &key, std::any data) {
+    std::shared_ptr<TreeNode> child = std::make_shared<TreeNode>();
+    if(child==nullptr) {
+      std::cerr << "Can't allocate memory for child in add_chil_data()!";
+      return;
+    }
+    child->set_data(data);
+    children[key] = child;
+}
+
+
 void TreeNode::add_member(std::shared_ptr<TreeNode> member) {
   members.push_back(member);
 }

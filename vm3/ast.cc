@@ -428,7 +428,8 @@ void BinOpExprAst::print() {
 
   l->print();
   print_data();
-  r->print();
+  if(r!=nullptr) r->print();
+  else std::cerr << "binop print right hand side null!\n";
   std::cout << " ";
 }
 
@@ -664,46 +665,74 @@ void CaseMatchExprAst::codegen(std::vector<std::string> &code) const {}
 void CaseMatchExprAst::print() { print_data(); std::cout << "\n";}
 
 //--------------------  flow expr
-FlowExprAst::FlowExprAst(std::shared_ptr<ExprAst> top, 
-std::shared_ptr<ListExprAst> body) : ExprAst(top) {
+FlowExprAst::FlowExprAst(
+  std::shared_ptr<ExprAst> top, 
+  std::shared_ptr<ListExprAst> body) 
+  : ExprAst(top) {
   add_child("cbody", body);
-  std::cout << "FlowExprAst adding c body\n";
-  //body->print();
+  //std::cout << "FlowExprAst adding c body\n";
 }
+
 std::any FlowExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> m_e_a = std::any_cast<std::shared_ptr<ExprAst>>( get_data());
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
-
-  Operand a = std::any_cast<Operand>(m_e_a->evaluate(slc));
+  if(l == nullptr) {
+    std::cerr << "FlowExprAst is null\n";
+    return false;
+  }
 
   for(int i=0; i<l->get_member_size(); i++)  {
     std::shared_ptr<ExprAst> m_e_b = std::any_cast<std::shared_ptr<ExprAst>>(l->get(i));
-    std::shared_ptr<ExprAst> match = std::dynamic_pointer_cast<ExprAst>(m_e_b->get_child("match"));
-    std::shared_ptr<ListExprAst> cbody = std::dynamic_pointer_cast<ListExprAst>(m_e_b->get_child("cbody"));
-    ast_op op =  std::any_cast<ast_op>(m_e_b->get_data());
 
-    if(op == ast_op::ast_default ) {
-//      std::cout << "default got a match\n";
-      if(cbody==nullptr) {
-        std::cout << "flow default code body is null\n";
-        return false;
-      }
-      return cbody->evaluate(slc);
-      // continue;
-    }
 
-    Operand b = std::any_cast<Operand>(match->evaluate(slc));
-    if(a.bin_op(b, op)==true) {
-      std::any op_print = op;
- //     std::cout << "got a match\n"; std::cout << a  << op_print << b << "\n";
-      if(cbody==nullptr) {
-        std::cout << "operand code body is null\n";
-        return false;
+    if(m_e_b->whoami() == ExprAstType::FlowMatch) {
+      std::shared_ptr<ExprAst> match = std::dynamic_pointer_cast<ExprAst>(m_e_b->get_child("match"));
+      
+      std::shared_ptr<ListExprAst> cbody = std::dynamic_pointer_cast<ListExprAst>(m_e_b->get_child("cbody"));
+      ast_op op =  std::any_cast<ast_op>(m_e_b->get_data());
+
+      if(op == ast_op::ast_else ) {
+        if(cbody==nullptr) {
+          std::cout << "flow default code body is null\n";
+          return false;
+        }
+        return cbody->evaluate(slc); // continue;
       }
-      return cbody->evaluate(slc);
+      auto match_binop = std::make_shared<BinOpExprAst>(m_e_a,  match, op); 
+      //std::cout << "match_binop \n"; match_binop->print(); std::cout << "end\n";
+
+      auto b = std::any_cast<Operand>(match_binop->evaluate(slc));
+      if(b == Operand(true)) {
+          // std::any op_print = op; std::cout << "got a match\n"; std::cout << a  << op_print << b << "\n";
+        if(cbody==nullptr) {
+          std::cout << "operand code body is null\n";
+          return false;
+        }
+        return cbody->evaluate(slc);
+
+      }
+    } else if(m_e_b->whoami() == ExprAstType::FlowMatchWhen) {
+      std::cout << "i am in flow match when!\n";
+      std::shared_ptr<AssignExprAst> assign_expr = std::any_cast<std::shared_ptr<AssignExprAst>>(m_e_b->get_data());
+      std::shared_ptr<ExprAst> match = std::dynamic_pointer_cast<ExprAst>(m_e_b->get_child("match"));
+      std::shared_ptr<ListExprAst> cbody = std::dynamic_pointer_cast<ListExprAst>(m_e_b->get_child("cbody"));
+      assign_expr->assign(slc, m_e_a->evaluate(slc));
+      auto b = std::any_cast<Operand>(match->evaluate(slc));
+      if(b == Operand(true)) {
+        if(cbody==nullptr) {
+          std::cout << "operand code body is null\n";
+          return false;
+        }
+        return cbody->evaluate(slc);
+
+      }
+
 
     }
   }
+
+
+
   return false;
 
 }
@@ -734,7 +763,7 @@ void FlowMatchExprAst::print() {
   std::cout << print_op;
   auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
-  if(op != ast_op::ast_default) {
+  if(op != ast_op::ast_else) {
     // std::cout << " match ";
     m->print_data();
   } //else { std::cout << " default  "; }
@@ -743,6 +772,33 @@ void FlowMatchExprAst::print() {
   else std::cout << " flow match cbody is null";
 
 }
+//--------------------  flow match when expr
+FlowMatchWhenExprAst::FlowMatchWhenExprAst(
+  std::shared_ptr<AssignExprAst> assign_expr,
+  std::shared_ptr<ExprAst> match,
+ std::shared_ptr<ListExprAst> body) : ExprAst(assign_expr) {
+  add_child("match", match);
+  add_child("cbody", body);
+}
+std::any FlowMatchWhenExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
+void FlowMatchWhenExprAst::codegen(std::vector<std::string> &code) const {}
+void FlowMatchWhenExprAst::print() { 
+  std::any print_op = get_data();  ast_op  op = std::any_cast<ast_op>(print_op);
+ // std::cout << "op "; 
+  std::cout << print_op;
+  auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
+  auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
+  if(op != ast_op::ast_else) {
+    // std::cout << " match ";
+    m->print_data();
+  } //else { std::cout << " default  "; }
+  //std::cout << " cbody ";
+  if(l != nullptr) l->print();
+  else std::cout << " flow match cbody is null";
+
+}
+
+
 //--------------------  while expr
 WhileExprAst::WhileExprAst
 ( std::shared_ptr<ExprAst> cond

@@ -190,8 +190,12 @@ Operand Operand::operator&&(const Operand& other) const {
 }
 
 Operand Operand::operator||(const Operand& other) const {
-  if(type_ != other.type_) 
+  if(type_ != other.type_)  {
+    std::cout << "self type: "; print_type(); 
+    std::cout << ",other type: "; other.print_type();
+
     throw std::runtime_error("Unsupported operation || for unequal types"); 
+  }
 
   switch(type_) {
   case VarTypeEnum::bool_t: 
@@ -232,4 +236,19 @@ bool Operand::bin_op(const Operand& other, ast_op op) const {
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   std::visit([&os](const auto& value) { os << value; }, operand.value_);
   return os;
+}
+
+void Operand::print_type()  const{
+  std::string outstr;
+  switch(type_) {
+  case VarTypeEnum::bool_t: outstr ="type bool"; break;
+  case VarTypeEnum::num_t: outstr ="type num_t"; break;
+  case VarTypeEnum::str_t: outstr ="type str_t"; break;
+  case VarTypeEnum::atom_t: outstr ="type atom_t"; break;
+  case VarTypeEnum::tuple_t: outstr ="type tuple_t"; break;
+  case VarTypeEnum::ptr_t: outstr ="type ptr_t"; break;
+  case VarTypeEnum::user_t: outstr ="type user_t"; break;
+  default: outstr ="type unknown"; break;
+  }
+  std::cout << outstr << "\n";
 }

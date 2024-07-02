@@ -22,7 +22,7 @@ public:
   enum class ExprAstType {
      Print, ControlFlow, Operand, Number, Atom, Ident, Tuple, LTuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
-    Call, Case, CaseMatch, Flow, FlowMatch, Decl, BinOp, While, Repeat};
+    Call, Case, CaseMatch, Flow, FlowMatch, FlowMatchWhen, Decl, BinOp, While, Repeat};
 
   ExprAst(std::any d) : TreeNode(d) {}
   ExprAst();
@@ -272,8 +272,20 @@ public:
   void codegen(std::vector<std::string> &code) const override;
   ExprAstType whoami() override { 
     std::cout << "I am FlowMatch\n";
-    return ExprAstType::CaseMatch;
+    return ExprAstType::FlowMatch;
     }
+
+};
+class FlowMatchWhenExprAst : public ExprAst {
+public:
+  FlowMatchWhenExprAst ( std::shared_ptr<AssignExprAst> assign_expr,
+    std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body);
+  std::any evaluate(SvlmLangContext *slc) override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+  ExprAstType whoami() override { std::cout << "I am FlowMatch\n"; return ExprAstType::FlowMatchWhen; }
+
 
 };
 
