@@ -1,12 +1,12 @@
 Makefile:85: warning: overriding recipe for target 'ast.o'
 Makefile:52: warning: ignoring old recipe for target 'ast.o'
 g++ -std=c++17 -g -c ast.cc
-ast.cc: In member function ‘virtual std::any FlowExprAst::evaluate(SvlmLangContext*)’:
-ast.cc:719:31: error: no match for ‘operator==’ (operand types are ‘std::any’ and ‘Operand’)
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |          ~~~~~~~~~~~~~~~~~~~~ ^~ ~~~~~~~~~~~~~
-      |                         |        |
-      |                         std::any Operand
+ast.cc: In member function ‘virtual std::any WhileExprAst::evaluate(SvlmLangContext*)’:
+ast.cc:828:30: error: no match for ‘operator==’ (operand types are ‘std::any’ and ‘Operand’)
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |          ~~~~~~~~~~~~~~~~~~~ ^~ ~~~~~~~~~~~~~
+      |                        |        |
+      |                        std::any Operand
 In file included from /usr/include/c++/11/iosfwd:40,
                  from /usr/include/c++/11/ios:38,
                  from /usr/include/c++/11/ostream:38,
@@ -18,9 +18,9 @@ In file included from /usr/include/c++/11/iosfwd:40,
   222 |     operator==(const fpos<_StateT>& __lhs, const fpos<_StateT>& __rhs)
       |     ^~~~~~~~
 /usr/include/c++/11/bits/postypes.h:222:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::fpos<_StateT>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::fpos<_StateT>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/stl_algobase.h:64,
                  from /usr/include/c++/11/bits/char_traits.h:39,
                  from /usr/include/c++/11/ios:40,
@@ -33,9 +33,9 @@ In file included from /usr/include/c++/11/bits/stl_algobase.h:64,
   466 |     operator==(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y)
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_pair.h:466:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::pair<_T1, _T2>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::pair<_T1, _T2>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
                  from /usr/include/c++/11/bits/char_traits.h:39,
                  from /usr/include/c++/11/ios:40,
@@ -48,9 +48,9 @@ In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
   420 |     operator==(const reverse_iterator<_Iterator>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_iterator.h:420:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::reverse_iterator<_Iterator>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::reverse_iterator<_Iterator>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
                  from /usr/include/c++/11/bits/char_traits.h:39,
                  from /usr/include/c++/11/ios:40,
@@ -63,9 +63,9 @@ In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
   459 |     operator==(const reverse_iterator<_IteratorL>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_iterator.h:459:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::reverse_iterator<_Iterator>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::reverse_iterator<_Iterator>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
                  from /usr/include/c++/11/bits/char_traits.h:39,
                  from /usr/include/c++/11/ios:40,
@@ -78,9 +78,9 @@ In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
  1585 |     operator==(const move_iterator<_IteratorL>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_iterator.h:1585:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::move_iterator<_IteratorL>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::move_iterator<_IteratorL>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
                  from /usr/include/c++/11/bits/char_traits.h:39,
                  from /usr/include/c++/11/ios:40,
@@ -93,9 +93,9 @@ In file included from /usr/include/c++/11/bits/stl_algobase.h:67,
  1648 |     operator==(const move_iterator<_Iterator>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_iterator.h:1648:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::move_iterator<_IteratorL>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::move_iterator<_IteratorL>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/string:41,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
                  from /usr/include/c++/11/bits/ios_base.h:41,
@@ -109,9 +109,9 @@ In file included from /usr/include/c++/11/string:41,
   218 |     operator==(const allocator<_T1>&, const allocator<_T2>&)
       |     ^~~~~~~~
 /usr/include/c++/11/bits/allocator.h:218:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::allocator<_CharT>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::allocator<_CharT>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/basic_string.h:48,
                  from /usr/include/c++/11/string:55,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
@@ -126,9 +126,9 @@ In file included from /usr/include/c++/11/bits/basic_string.h:48,
   535 |     operator==(basic_string_view<_CharT, _Traits> __x,
       |     ^~~~~~~~
 /usr/include/c++/11/string_view:535:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/basic_string.h:48,
                  from /usr/include/c++/11/string:55,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
@@ -143,9 +143,9 @@ In file included from /usr/include/c++/11/bits/basic_string.h:48,
   541 |     operator==(basic_string_view<_CharT, _Traits> __x,
       |     ^~~~~~~~
 /usr/include/c++/11/string_view:541:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/basic_string.h:48,
                  from /usr/include/c++/11/string:55,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
@@ -160,9 +160,9 @@ In file included from /usr/include/c++/11/bits/basic_string.h:48,
   564 |     operator==(__type_identity_t<basic_string_view<_CharT, _Traits>> __x,
       |     ^~~~~~~~
 /usr/include/c++/11/string_view:564:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘Operand’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘Operand’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/string:55,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
                  from /usr/include/c++/11/bits/ios_base.h:41,
@@ -176,9 +176,9 @@ In file included from /usr/include/c++/11/string:55,
  6226 |     operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/basic_string.h:6226:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Allocator>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Allocator>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/string:55,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
                  from /usr/include/c++/11/bits/ios_base.h:41,
@@ -192,9 +192,9 @@ In file included from /usr/include/c++/11/string:55,
  6234 |     operator==(const basic_string<_CharT>& __lhs,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/basic_string.h:6234:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::__cxx11::basic_string<_CharT>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::__cxx11::basic_string<_CharT>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/string:55,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
                  from /usr/include/c++/11/bits/ios_base.h:41,
@@ -208,9 +208,9 @@ In file included from /usr/include/c++/11/string:55,
  6248 |     operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/basic_string.h:6248:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Allocator>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Allocator>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/string:55,
                  from /usr/include/c++/11/bits/locale_classes.h:40,
                  from /usr/include/c++/11/bits/ios_base.h:41,
@@ -224,9 +224,9 @@ In file included from /usr/include/c++/11/string:55,
  6289 |     operator==(const _CharT* __lhs,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/basic_string.h:6289:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   mismatched types ‘const _CharT*’ and ‘std::any’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   mismatched types ‘const _CharT*’ and ‘std::any’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/locale_facets.h:48,
                  from /usr/include/c++/11/bits/basic_ios.h:37,
                  from /usr/include/c++/11/ios:44,
@@ -239,9 +239,9 @@ In file included from /usr/include/c++/11/bits/locale_facets.h:48,
   226 |     operator==(const istreambuf_iterator<_CharT, _Traits>& __a,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/streambuf_iterator.h:226:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::istreambuf_iterator<_CharT, _Traits>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::istreambuf_iterator<_CharT, _Traits>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/tuple:39,
                  from /usr/include/c++/11/bits/stl_map.h:63,
                  from /usr/include/c++/11/map:61,
@@ -252,9 +252,9 @@ In file included from /usr/include/c++/11/tuple:39,
   276 |     operator==(const array<_Tp, _Nm>& __one, const array<_Tp, _Nm>& __two)
       |     ^~~~~~~~
 /usr/include/c++/11/array:276:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::array<_Tp, _Nm>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::array<_Tp, _Nm>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/stl_map.h:63,
                  from /usr/include/c++/11/map:61,
                  from tree.hh:3,
@@ -264,9 +264,9 @@ In file included from /usr/include/c++/11/bits/stl_map.h:63,
  1524 |     operator==(const tuple<_TElements...>& __t,
       |     ^~~~~~~~
 /usr/include/c++/11/tuple:1524:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::tuple<_Tps ...>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::tuple<_Tps ...>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/map:61,
                  from tree.hh:3,
                  from ast.hh:3,
@@ -275,9 +275,9 @@ In file included from /usr/include/c++/11/map:61,
  1463 |     operator==(const map<_Key, _Tp, _Compare, _Alloc>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_map.h:1463:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::map<_Key, _Tp, _Compare, _Allocator>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::map<_Key, _Tp, _Compare, _Allocator>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/map:62,
                  from tree.hh:3,
                  from ast.hh:3,
@@ -286,9 +286,9 @@ In file included from /usr/include/c++/11/map:62,
  1128 |     operator==(const multimap<_Key, _Tp, _Compare, _Alloc>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_multimap.h:1128:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::multimap<_Key, _Tp, _Compare, _Allocator>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::multimap<_Key, _Tp, _Compare, _Allocator>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/vector:67,
                  from tree.hh:5,
                  from ast.hh:3,
@@ -297,9 +297,9 @@ In file included from /usr/include/c++/11/vector:67,
  1892 |     operator==(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_vector.h:1892:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::vector<_Tp, _Alloc>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::vector<_Tp, _Alloc>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/memory:76,
                  from tree.hh:6,
                  from ast.hh:3,
@@ -308,9 +308,9 @@ In file included from /usr/include/c++/11/memory:76,
   753 |     operator==(const unique_ptr<_Tp, _Dp>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/unique_ptr.h:753:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/memory:76,
                  from tree.hh:6,
                  from ast.hh:3,
@@ -319,9 +319,9 @@ In file included from /usr/include/c++/11/memory:76,
   760 |     operator==(const unique_ptr<_Tp, _Dp>& __x, nullptr_t) noexcept
       |     ^~~~~~~~
 /usr/include/c++/11/bits/unique_ptr.h:760:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/memory:76,
                  from tree.hh:6,
                  from ast.hh:3,
@@ -330,9 +330,9 @@ In file included from /usr/include/c++/11/memory:76,
   767 |     operator==(nullptr_t, const unique_ptr<_Tp, _Dp>& __x) noexcept
       |     ^~~~~~~~
 /usr/include/c++/11/bits/unique_ptr.h:767:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘Operand’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘Operand’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/shared_ptr.h:53,
                  from /usr/include/c++/11/memory:77,
                  from tree.hh:6,
@@ -342,9 +342,9 @@ In file included from /usr/include/c++/11/bits/shared_ptr.h:53,
  1410 |     operator==(const __shared_ptr<_Tp1, _Lp>& __a,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/shared_ptr_base.h:1410:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::__shared_ptr<_Tp1, _Lp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::__shared_ptr<_Tp1, _Lp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/shared_ptr.h:53,
                  from /usr/include/c++/11/memory:77,
                  from tree.hh:6,
@@ -354,9 +354,9 @@ In file included from /usr/include/c++/11/bits/shared_ptr.h:53,
  1416 |     operator==(const __shared_ptr<_Tp, _Lp>& __a, nullptr_t) noexcept
       |     ^~~~~~~~
 /usr/include/c++/11/bits/shared_ptr_base.h:1416:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/shared_ptr.h:53,
                  from /usr/include/c++/11/memory:77,
                  from tree.hh:6,
@@ -366,9 +366,9 @@ In file included from /usr/include/c++/11/bits/shared_ptr.h:53,
  1436 |     operator==(nullptr_t, const __shared_ptr<_Tp, _Lp>& __a) noexcept
       |     ^~~~~~~~
 /usr/include/c++/11/bits/shared_ptr_base.h:1436:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘Operand’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘Operand’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/memory:77,
                  from tree.hh:6,
                  from ast.hh:3,
@@ -377,9 +377,9 @@ In file included from /usr/include/c++/11/memory:77,
   437 |     operator==(const shared_ptr<_Tp>& __a, const shared_ptr<_Up>& __b) noexcept
       |     ^~~~~~~~
 /usr/include/c++/11/bits/shared_ptr.h:437:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::shared_ptr<_Tp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::shared_ptr<_Tp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/memory:77,
                  from tree.hh:6,
                  from ast.hh:3,
@@ -388,9 +388,9 @@ In file included from /usr/include/c++/11/memory:77,
   443 |     operator==(const shared_ptr<_Tp>& __a, nullptr_t) noexcept
       |     ^~~~~~~~
 /usr/include/c++/11/bits/shared_ptr.h:443:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::shared_ptr<_Tp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::shared_ptr<_Tp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/memory:77,
                  from tree.hh:6,
                  from ast.hh:3,
@@ -399,9 +399,9 @@ In file included from /usr/include/c++/11/memory:77,
   464 |     operator==(nullptr_t, const shared_ptr<_Tp>& __a) noexcept
       |     ^~~~~~~~
 /usr/include/c++/11/bits/shared_ptr.h:464:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘Operand’ is not derived from ‘const std::shared_ptr<_Tp>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘Operand’ is not derived from ‘const std::shared_ptr<_Tp>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from vm_type.hh:2,
                  from ast.hh:4,
                  from ast.cc:1:
@@ -409,9 +409,9 @@ In file included from vm_type.hh:2,
  1232 |   _VARIANT_RELATION_FUNCTION_TEMPLATE(==, equal)
       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /usr/include/c++/11/variant:1232:3: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::variant<_Types ...>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::variant<_Types ...>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/deque:67,
                  from /usr/include/c++/11/stack:60,
                  from vm_type.hh:3,
@@ -421,9 +421,9 @@ In file included from /usr/include/c++/11/deque:67,
  2247 |     operator==(const deque<_Tp, _Alloc>& __x, const deque<_Tp, _Alloc>& __y)
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_deque.h:2247:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::deque<_Tp, _Alloc>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::deque<_Tp, _Alloc>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/stack:61,
                  from vm_type.hh:3,
                  from ast.hh:4,
@@ -432,9 +432,9 @@ In file included from /usr/include/c++/11/stack:61,
   319 |     operator==(const stack<_Tp, _Seq>& __x, const stack<_Tp, _Seq>& __y)
       |     ^~~~~~~~
 /usr/include/c++/11/bits/stl_stack.h:319:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::stack<_Tp, _Seq>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::stack<_Tp, _Seq>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/unordered_map:47,
                  from opcode.hh:4,
                  from vm_type.hh:6,
@@ -444,9 +444,9 @@ In file included from /usr/include/c++/11/unordered_map:47,
  2134 |     operator==(const unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/unordered_map.h:2134:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::unordered_map<_Key1, _Tp1, _Hash1, _Pred1, _Alloc1>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::unordered_map<_Key1, _Tp1, _Hash1, _Pred1, _Alloc1>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/unordered_map:47,
                  from opcode.hh:4,
                  from vm_type.hh:6,
@@ -456,9 +456,9 @@ In file included from /usr/include/c++/11/unordered_map:47,
  2148 |     operator==(const unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
       |     ^~~~~~~~
 /usr/include/c++/11/bits/unordered_map.h:2148:5: note:   template argument deduction/substitution failed:
-ast.cc:719:46: note:   ‘std::any’ is not derived from ‘const std::unordered_multimap<_Key1, _Tp1, _Hash1, _Pred1, _Alloc1>’
-  719 |       if(match->evaluate(slc) == Operand(true)) {
-      |                                              ^
+ast.cc:828:45: note:   ‘std::any’ is not derived from ‘const std::unordered_multimap<_Key1, _Tp1, _Hash1, _Pred1, _Alloc1>’
+  828 |   while( cond->evaluate(slc) == Operand(true) && slc->svlm_lang->control_flow == ControlFlow::run) {
+      |                                             ^
 In file included from /usr/include/c++/11/bits/ios_base.h:46,
                  from /usr/include/c++/11/ios:42,
                  from /usr/include/c++/11/ostream:38,

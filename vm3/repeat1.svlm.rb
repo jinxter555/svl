@@ -7,4 +7,5 @@ repeat
   print $a
   print "\n";
   $a = $a + 1
-until $a == 10 done
+until $a > 10 done
+print $a

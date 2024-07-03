@@ -3,7 +3,7 @@ $abc = 22
 print $abc
 print "\n"
 
-while $abc >= 5 do
+while $abc > 5 do
   print "hello: "
   print $abc
   print "\n"

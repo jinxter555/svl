@@ -95,7 +95,9 @@ void ControlFlowExprAst::print() {
 
 //----------------------------- Bin  variable expr
 //----------------------------- number variable expr
-OperandExprAst::OperandExprAst(Operand o) : ExprAst(o) { }
+OperandExprAst::OperandExprAst(Operand o) : ExprAst(o) { 
+  add_child_data("value", o);
+}
 void OperandExprAst::codegen(std::vector<std::string>& code) const {
 }
 
@@ -111,7 +113,10 @@ std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r
   case ast_op::div:   return a / b;
   case ast_op::eql:   return Operand(a == b);
   case ast_op::neql:  return Operand(a != b);
-  case ast_op::gt:    return Operand(a > b);
+  case ast_op::gt:    
+  std::cout << "in greater!\n";
+  
+  return Operand(a > b);
   case ast_op::lt:    return Operand(a < b);
   case ast_op::lteq:  return Operand(a <= b);
   case ast_op::gteq:  return Operand(a >= b);
@@ -818,7 +823,9 @@ std::any WhileExprAst::evaluate(SvlmLangContext *slc) {
   slc->svlm_lang->push_control_flow();
   slc->svlm_lang->control_flow=ControlFlow::run;
 
-  while( std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->control_flow == ControlFlow::run) {
+
+  while( std::any_cast<Operand>(cond->evaluate(slc)) == Operand(true) 
+      && slc->svlm_lang->control_flow == ControlFlow::run) {
     for(int i=0; i<code_count && slc->svlm_lang->control_flow == ControlFlow::run; i++ ) {
       e = std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
       //if(e==nullptr)  break; // could have been an empty  lists of newlines
@@ -892,7 +899,8 @@ std::any RepeatExprAst::evaluate(SvlmLangContext *slc) {
       //std::cout << "ast eval cont -- i have go to now\n";
       break;
     }
-  } while( !std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->control_flow == ControlFlow::run) ;
+  //} while( !std::any_cast<bool>(cond->evaluate(slc)) && slc->svlm_lang->control_flow == ControlFlow::run) ;
+  } while( (std::any_cast<Operand>(cond->evaluate(slc))==Operand(false)) && slc->svlm_lang->control_flow == ControlFlow::run) ;
 
   ControlFlow cf = slc->svlm_lang->pop_control_flow();        
   if(slc->svlm_lang->control_flow != ControlFlow::ast_return) // if leave ast_return untouched
