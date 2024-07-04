@@ -2,6 +2,8 @@ module mhello
 $a = 5
 $b = $a +  num1()
 print $b
+$c = $a +  f1(1,2)
+print $c
 print  "hello"
 print "\n";
 break

@@ -65,6 +65,15 @@ std::vector<std::string> TreeNode::get_child_keys() const {
 std::any TreeNode::get_data() const {
   return data;
 }
+
+std::any TreeNode::get_child_data(const std::string& k) const {
+  auto child = get_child(k);
+  if(child)
+    return child->get_data();
+  std::cerr << "child " << k << "  not found!\n";
+  return nullptr;
+}
+
 void TreeNode::set_data(const std::any d) {
   data = d;
 }

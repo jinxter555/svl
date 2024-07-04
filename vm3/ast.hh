@@ -93,7 +93,7 @@ public:
 
 class IdentExprAst : public ExprAst {
 public:
-  IdentExprAst(std::string name);
+  IdentExprAst(const std::string &name);
   std::string name();
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
@@ -105,7 +105,7 @@ private:
 
 class AssignExprAst : public ExprAst { 
 public:
-  AssignExprAst(std::string name) : ExprAst(name) {}
+  AssignExprAst(ExprAstType t) : ExprAst(t) { }
   virtual ~AssignExprAst() {}
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   virtual std::string name() =0;
@@ -115,7 +115,7 @@ public:
 
 class GvarExprAst : public AssignExprAst {
 public:
-  GvarExprAst(std::string name);
+  GvarExprAst(const std::string &name);
   std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {
@@ -133,7 +133,7 @@ private:
 
 class LvarExprAst : public AssignExprAst {
 public:
-  LvarExprAst(std::string name);
+  LvarExprAst(const std::string &name);
   std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 

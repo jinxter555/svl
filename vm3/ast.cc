@@ -27,35 +27,39 @@ ExprAst::ExprAst() {
 ExprAst::~ExprAst() {}
 //----------------------------- print expr ast
 PrintExprAst::PrintExprAst(std::shared_ptr<ExprAst> exp)
- : ExprAst(std::string("print")) {
+ : ExprAst(ExprAstType::Print) {
   add_child("exp", exp);
 }
 std::any PrintExprAst::evaluate(SvlmLangContext *slc) { 
   auto exp  = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
   std::any  a = exp->evaluate(slc);
-  //std::cout << "printing: " << a;
   std::cout << a;
-  return std::string("\n");
+  return std::string("");
 }
 void PrintExprAst::codegen(std::vector<std::string>& code) const {};
 void PrintExprAst::print() { 
-  print_data(); 
+  std::cout << "print\n";
   auto exp  = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
   exp->print();
 };
 
 
 //----------------------------- discontinue expr ast
-ControlFlowExprAst::ControlFlowExprAst(ControlFlow cf) : ExprAst(cf) {};
+ControlFlowExprAst::ControlFlowExprAst(ControlFlow cf)
+ : ExprAst(ExprAstType::ControlFlow) {
+  add_child_data("value", cf);
+};
+
 ControlFlowExprAst::ControlFlowExprAst
 ( ControlFlow cf
 , std::shared_ptr<ExprAst> exp
 ) : ExprAst(cf) {
+  add_child_data("value", cf);
   add_child("exp", exp);
 }
 
 std::any ControlFlowExprAst::evaluate(SvlmLangContext *slc) {
-  slc->svlm_lang->control_flow = std::any_cast<ControlFlow>(get_data());
+  slc->svlm_lang->control_flow = std::any_cast<ControlFlow>(get_child_data("value"));
   //std::cout << "control flow with: "; print(); std::cout << "\n";
   //std::cout << "ast eval continue: " <<  static_cast<int>(slc->svlm_lang->control_flow)  << "\n";
   slc->svlm_lang->fc_exp = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
@@ -64,7 +68,7 @@ std::any ControlFlowExprAst::evaluate(SvlmLangContext *slc) {
 void ControlFlowExprAst::codegen(std::vector<std::string>& code) const {};
 void ControlFlowExprAst::print() { 
   std::string outstr;
-  switch(std::any_cast<ControlFlow>(get_data())){
+  switch(std::any_cast<ControlFlow>(get_child_data("value"))){
   case ControlFlow::run:
     outstr = "run"; break;
   case ControlFlow::ast_break:
@@ -95,13 +99,15 @@ void ControlFlowExprAst::print() {
 
 //----------------------------- Bin  variable expr
 //----------------------------- number variable expr
-OperandExprAst::OperandExprAst(Operand o) : ExprAst(o) { 
+OperandExprAst::OperandExprAst(Operand o) : ExprAst(ExprAstType::Operand) { 
   add_child_data("value", o);
 }
 void OperandExprAst::codegen(std::vector<std::string>& code) const {
 }
 
-std::any OperandExprAst::evaluate(SvlmLangContext *slc) { return ExprAst::get_data(); }
+std::any OperandExprAst::evaluate(SvlmLangContext *slc) { 
+  return get_child_data("value");
+}
 
 std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {
   Operand a = std::any_cast<Operand>(evaluate(slc));
@@ -113,10 +119,7 @@ std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r
   case ast_op::div:   return a / b;
   case ast_op::eql:   return Operand(a == b);
   case ast_op::neql:  return Operand(a != b);
-  case ast_op::gt:    
-  std::cout << "in greater!\n";
-  
-  return Operand(a > b);
+  case ast_op::gt:    return Operand(a > b);
   case ast_op::lt:    return Operand(a < b);
   case ast_op::lteq:  return Operand(a <= b);
   case ast_op::gteq:  return Operand(a >= b);
@@ -129,24 +132,33 @@ std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r
 } 
 
 void OperandExprAst::print() { 
-//  TreeNode::print_data(); //std::cout << "\n";
-  //std::cout << "operand print\n";
-  Operand o = std::any_cast<Operand>(get_data());
+  Operand o = std::any_cast<Operand>(get_child_data("value"));
   std::cout << o;
 }
 
 
 //----------------------------- ident expr
-IdentExprAst::IdentExprAst(std::string s) : ExprAst(s) {}
-std::any IdentExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
-std::string IdentExprAst::name() { return std::any_cast<std::string>(get_data()); }
+IdentExprAst::IdentExprAst(const std::string &s) : ExprAst(ExprAstType::Ident) {
+  add_child_data("value", s);
+}
+std::any IdentExprAst::evaluate(SvlmLangContext *slc) {
+  return get_child_data("value");
+}
+std::string IdentExprAst::name() { 
+  return std::any_cast<std::string>(get_child_data("value")); 
+}
 void IdentExprAst::codegen(std::vector<std::string> &code) const {}
-void IdentExprAst::print() { print_data(); std::cout << "\n";}
+void IdentExprAst::print() { 
+  std::string s = std::any_cast<std::string>(get_child_data("value"));
+  std::cout << s << "\n";
+}
 
 //----------------------------- global variable expr
 
-GvarExprAst::GvarExprAst(std::string name)
- : AssignExprAst(name) {}
+GvarExprAst::GvarExprAst(const std::string &name)
+ : AssignExprAst(ExprAstType::Gvar) {
+  add_child_data("value", name);
+}
 
 std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   full_symbol_t fst = slc->current_context;  
@@ -159,7 +171,7 @@ std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
     std::cout << "k: "; for( auto k : keys) { std::cout << k << " "; } std::cout << "\n";
     return 0;
   }
-  return  tn->get_data();
+  return  tn->get_data(); // this store values of the variable name! do not use get_child_data()
 }
 void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
     std::string name = this->name();
@@ -174,21 +186,22 @@ void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
 }
 
 std::string GvarExprAst::name() { 
-  return std::any_cast<std::string>(get_data()); 
+  return std::any_cast<std::string>(get_child_data("value")); 
 }
 
 void GvarExprAst::codegen(std::vector<std::string> &code) const {
 }
 
 void GvarExprAst::print() { 
-  print_data(); //std::cout << "\n";
+  std::cout << name() << "\n";
 }
 //----------------------------- local variable expr
-LvarExprAst::LvarExprAst(std::string name)
- : AssignExprAst(name) {
+LvarExprAst::LvarExprAst(const std::string &name)
+ : AssignExprAst(ExprAstType::Lvar) {
+  add_child_data("value", name);
 }
 std::string LvarExprAst::name() { 
-  return std::any_cast<std::string>(get_data()); 
+  return std::any_cast<std::string>(get_child_data("value"));
 }
 std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
   //std::map<std::string, std::shared_ptr<TreeNode>> lvars;
@@ -214,7 +227,7 @@ void LvarExprAst::assign(SvlmLangContext *slc, std::any d) {
   (*lvars_tma)[name()]= d;
 }
 void LvarExprAst::print() {
-  print_data(); //std::cout << "\n";
+  std::cout << name() << "\n";
 }
 
 

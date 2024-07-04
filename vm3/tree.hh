@@ -35,6 +35,7 @@ public:
 
   std::vector<std::string> get_child_keys() const;
   std::any get_data() const;
+  std::any get_child_data(const std::string &key) const;
   void set_data(const std::any d);
   void print_data();
 };

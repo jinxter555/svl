@@ -26,6 +26,8 @@ int main() {
   auto n1a1 = my_tree->get_node({"key1", "key2", "blah"});
   auto i = any_cast<int>(n1a1->get_data());
   cout << "i is " << i << "\n";
+   i = any_cast<int>(node1a->get_child_data("blah"));
+  cout << "get child data: i is " << i << "\n";
   cout << "\n";
 
   return 0;
