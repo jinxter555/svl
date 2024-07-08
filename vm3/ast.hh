@@ -22,7 +22,7 @@ public:
   enum class ExprAstType {
      Print, ControlFlow, Operand, Number, Atom, Ident, Tuple, LTuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
-    Call, Case, CaseMatch, Flow, FlowMatch, FlowMatchWhen, Decl, BinOp, While, Repeat};
+    Callee, Case, CaseMatch, Flow, FlowMatch, FlowMatchWhen, Decl, BinOp, While, Repeat};
 
   ExprAst(std::any d) : TreeNode(d) {}
   ExprAst();
@@ -146,7 +146,7 @@ public:
 private:
 };
 
-
+/*
 class ArgExprAst : public ExprAst {
 public:
   ArgExprAst(arg_name_pos_t arg);
@@ -159,7 +159,7 @@ public:
   arg_name_pos_t arg();
   ExprAstType whoami() override { return ExprAstType::Arg;}
 };
-
+*/
 
 class DeclExprAst : public ExprAst {
 public:
@@ -218,7 +218,7 @@ public:
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void print() override;
   void codegen(std::vector<std::string> &code) const override;
-  ExprAstType whoami() override { return ExprAstType::Call;}
+  ExprAstType whoami() override { return ExprAstType::Callee;}
 };
 
 //----------------------------- Switch Bin variable expr
@@ -284,7 +284,7 @@ public:
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void print() override;
   void codegen(std::vector<std::string> &code) const override;
-  ExprAstType whoami() override { std::cout << "I am FlowMatch\n"; return ExprAstType::FlowMatchWhen; }
+  ExprAstType whoami() override { std::cout << "I am FlowMatchWhen\n"; return ExprAstType::FlowMatchWhen; }
 
 
 };

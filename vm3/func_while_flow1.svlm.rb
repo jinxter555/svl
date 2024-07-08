@@ -11,12 +11,12 @@ def pf() do
     # print $a
     print "\n";
     flow $a do
-    == 3 -> 
+    is 3 -> 
       print "I got 3\n"
       break
-    == 4 -> 
+    is 4 -> 
       print "I got 4\n"
-    default ->
+    else ->
       print "d == I got "
       print $a
       print " \n"
