@@ -860,12 +860,14 @@ void FlowMatchWhenExprAst::print() {
 WhileExprAst::WhileExprAst
 ( std::shared_ptr<ExprAst> cond
 , std::shared_ptr<ListExprAst> body
-) : ExprAst(cond) {
+) : ExprAst(ExprAstType::While) {
   add_child("cbody", body);
+  add_child("cond", cond);
 }
 std::any WhileExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
-  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  //std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data("")); 
+  std::shared_ptr<ExprAst> cond  = std::dynamic_pointer_cast<ExprAst>(get_child("cond")); 
   std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
   std::any result;
   int code_count = l->get_member_size();
@@ -907,28 +909,31 @@ std::any WhileExprAst::evaluate(SvlmLangContext *slc) {
 void WhileExprAst::codegen(std::vector<std::string> &code) const {}
 
 void WhileExprAst::print() {
-  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  //std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  std::shared_ptr<ExprAst>  cond = std::dynamic_pointer_cast<ExprAst>(get_child("cond")); 
   std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
   std::cout  << "while "; cond->print(); std::cout  << " do\n";
   l->print();
   std::cout  << "end";
 }
 
-//--------------------  while expr
+//--------------------  reepat expr
 RepeatExprAst::RepeatExprAst
 ( std::shared_ptr<ExprAst> cond
 , std::shared_ptr<ListExprAst> body
-) : ExprAst(cond) {
+) : ExprAst(ExprAstType::Repeat) {
   add_child("cbody", body);
+  add_child("cond", cond);
 }
 std::any RepeatExprAst::evaluate(SvlmLangContext *slc) {
   std::shared_ptr<ExprAst> e;
-  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  //std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  std::shared_ptr<ExprAst>  cond = std::dynamic_pointer_cast<ExprAst>(get_child("cond")); 
   std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
   std::any result;
   int code_count = l->get_member_size();
 
-  std::cout  << "repeat eval!\n";
+  //std::cout  << "repeat eval!\n";
 
   slc->svlm_lang->push_control_flow();
   slc->svlm_lang->control_flow=ControlFlow::run;
@@ -964,7 +969,8 @@ std::any RepeatExprAst::evaluate(SvlmLangContext *slc) {
 void RepeatExprAst::codegen(std::vector<std::string> &code) const {}
 
 void RepeatExprAst::print() {
-  std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  //std::shared_ptr<ExprAst> cond = std::any_cast<std::shared_ptr<ExprAst>>(get_data()); 
+  std::shared_ptr<ExprAst> cond = std::dynamic_pointer_cast<ExprAst>(get_child("cond")); 
   std::shared_ptr<ListExprAst> l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody")); 
   std::cout  << "repeat "; 
   l->print();
