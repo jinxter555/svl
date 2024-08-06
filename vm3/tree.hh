@@ -37,6 +37,7 @@ public:
   std::any get_data() const;
   std::any get_child_data(const std::string &key) const;
   void set_data(const std::any d);
+  void set_child_data(const std::string& key, const std::any d);
   void print_data();
 };
 

@@ -1,33 +1,33 @@
 module mhello
-$a = 5
+$a = 10
 print "a is: "
 print $a
 print "\n";
-
 pf()
-return
+break
+
 def pf() do
-  b = 3
-  while  b >= 1  do
-    a = 5
-  while a >= 1 do
-    print a
+#  while $a >= 1 do
+    # print $a
     print "\n";
-    flow a do
-    == 3 -> 
+  
+    flow $a do
+    is 3 -> 
       print "I got 3\n"
       break
-    == 4 -> 
+    is 4 -> 
       print "I got 4\n"
-      break
+    is x when x == 5 -> 
+      print "when d == 10 I got "
+      print $a
+    else ->
+      print "d == I got "
+      print $a
+      print " \n"
     end
-    a = a - 1
-  end
-  print "b: "
-  print b
-  print "\n";
-  b = b - 1
-  end
+
+#    $a = $a - 1
+#  end
   print "end of while\n"
   555
 end

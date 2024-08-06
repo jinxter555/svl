@@ -71,8 +71,10 @@ Operand Operand::operator/(const Operand& other) const {
 }
 
 bool Operand::operator==(const Operand& other) const {
-  if(type_ != other.type_) 
-    throw std::runtime_error("Unsupported operation == for unequal types"); 
+  if(type_ != other.type_) {
+    //throw std::runtime_error("Unsupported operation == for unequal types"); 
+    return false;
+  }
   
   //std::cout << "operand cmp==\n";
   switch(type_) {

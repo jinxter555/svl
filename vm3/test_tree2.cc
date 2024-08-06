@@ -28,6 +28,10 @@ int main() {
   cout << "i is " << i << "\n";
    i = any_cast<int>(node1a->get_child_data("blah"));
   cout << "get child data: i is " << i << "\n";
+  node1b->set_child_data("blah", 5555);
+   i = any_cast<int>(node1a->get_child_data("blah"));
+  cout << "get child data: i is " << i << "\n";
+
   cout << "\n";
 
   return 0;

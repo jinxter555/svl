@@ -77,6 +77,14 @@ std::any TreeNode::get_child_data(const std::string& k) const {
 void TreeNode::set_data(const std::any d) {
   data = d;
 }
+void TreeNode::set_child_data(const std::string& k, const std::any d) {
+  auto child = get_child(k);
+  if(child==nullptr) {
+    std::cerr << "child " << k << "  not found!\n";
+    return;
+  }
+  child->data = d;
+}
 
 void TreeNode::print_data() {
   std::cout << data;

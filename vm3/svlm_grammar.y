@@ -64,11 +64,10 @@ std::vector<std::string> lvar_list;
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple comments literals variable
-%type <std::shared_ptr<ExprAst>>  case flow while_loop repeat_loop if_then_else 
-%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list flow_match_list
-%type <std::shared_ptr<CaseMatchExprAst>>  case_match
-%type <std::shared_ptr<FlowMatchExprAst>>  flow_match 
+%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple comments literals  variable
+%type <std::shared_ptr<ExprAst>>  case while_loop repeat_loop if_then_else 
+%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list case_match_list
+%type <std::shared_ptr<CaseMatchExprAst>>  case_match 
 %start program_start
 
 
@@ -102,7 +101,6 @@ statement
   | module
   | function
   | case
-  | flow
   | while_loop
   | if_then_else
   | repeat_loop
@@ -209,9 +207,9 @@ literals
   ;
 
 variable
-: STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
+  : STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
-;
+  ;
 
 
 
@@ -233,96 +231,81 @@ function
   }
   ;
 
-//--------------------------------------------------- flow statement list
-flow
-  // : FLOW exp_eval DO flow_match_list END {
-  : FLOW exp_eval DO flow_match_list END {
-    std::shared_ptr<FlowExprAst> flow_ptr =
-      std::make_shared<FlowExprAst>($2, $4);
-    $$ = flow_ptr;
+//--------------------------------------------------- CASE statement list
+case
+  // : case exp_eval DO case_match_list END {
+  : CASE exp_eval DO case_match_list END {
+    std::shared_ptr<CaseExprAst> case_ptr =
+      std::make_shared<CaseExprAst>($2, $4);
+    $$ = case_ptr;
   }
   ;
 
-flow_match_list
+case_match_list
   : %empty {
-    //std::cout << "empty flow match list\n";
-    $$ = std::make_shared<ListExprAst>(std::string("empty flow match list"));
+    //std::cout << "empty case match list\n";
+    $$ = std::make_shared<ListExprAst>(std::string("empty case match list"));
   }
-  | flow_match {
-    //std::cout << "start flow match list\n";
-    auto ast_current_context = std::make_shared<ListExprAst>(std::string("flow match list"));
+  | case_match {
+    //std::cout << "start case match list\n";
+    auto ast_current_context = std::make_shared<ListExprAst>(std::string("case match list"));
     ast_current_context->add($1);
     $$ = ast_current_context;
   }
-  | flow_match_list flow_match {
+  | case_match_list case_match {
     if($2 !=nullptr)
       $1->add($2);
     $$ = $1;
   }
-  | flow_match_list EOS flow_match {
+  | case_match_list EOS case_match {
     if($3 !=nullptr)
       $1->add($3);
     $$ = $1;
   }
-  | flow_match_list error EOS flow_match { yyerrok; }
+  | case_match_list error EOS case_match { yyerrok; }
   ;
 
-flow_match
-  : comparison_ops statement ARROW_R statement_list {
-    $$ = std::make_shared<FlowMatchExprAst>($2, $4, $1);
-  } 
-  | IS literals ARROW_R statement_list {
-    //std::cout << "flow match s->sl"; $1->print(); std::cout << "\n";
-    $$ = std::make_shared<FlowMatchExprAst>($2, $4, ast_op::eql);
+case_match
+  : 
+  IS literals ARROW_R statement_list {
+    //std::cout << "case match s->sl"; $1->print(); std::cout << "\n";
+    $$ = std::make_shared<CaseMatchIsExprAst>($2, $4);
   } 
   | IS variable WHEN statement ARROW_R statement_list {
-    // need to add make share vars
-    //$$ = std::make_shared<FlowMatchWhenExprAst>($2, $4, $6);
+    $$ = std::make_shared<CaseMatchWhenExprAst>($2, $4, $6);
   }
   | ELSE ARROW_R statement_list {
-    $$ = std::make_shared<FlowMatchExprAst>(nullptr, $3, ast_op::ast_else);
+    $$ = std::make_shared<CaseMatchElseExprAst>($3);
   }
   ;
 
 //--------------------------------------------------- if then else end
 if_then_else
+  :
+  ;
+/*
+if_then_else
   : IF exp_eval THEN statement_list END {
     auto l = std::make_shared<ListExprAst>("if then end");
     auto y = std::make_shared<OperandExprAst>(Operand(true));
-    l->add(std::make_shared<FlowMatchExprAst>(
+    l->add(std::make_shared<CaseMatchIsExprAst>(
       y, $4, ast_op::eql));
-    std::shared_ptr<FlowExprAst> flow_ptr =
-      std::make_shared<FlowExprAst>($2, l);
-    $$ = flow_ptr;
+    std::shared_ptr<CaseExprAst> case_ptr =
+      std::make_shared<CaseExprAst>($2, l);
+    $$ = case_ptr;
   }
   | IF exp_eval THEN statement_list ELSE statement_list END {
     auto l = std::make_shared<ListExprAst>("if then else end");
     auto y = std::make_shared<OperandExprAst>(Operand(true));
-    l->add(std::make_shared<FlowMatchExprAst>(y, $4, ast_op::eql));
-    l->add(std::make_shared<FlowMatchExprAst>(nullptr, $6, ast_op::ast_else));
-    std::shared_ptr<FlowExprAst> flow_ptr =
-      std::make_shared<FlowExprAst>($2, l);
-    $$ = flow_ptr;
-  }
-  ;
-
-//--------------------------------------------------- case statement list
-case
-  : CASE statement DO END {
+    l->add(std::make_shared<CaseMatchIsExprAst>(y, $4, ast_op::eql));
+    l->add(std::make_shared<CaseMatchIsExprAst>(nullptr, $6, ast_op::ast_else));
     std::shared_ptr<CaseExprAst> case_ptr =
-      std::make_shared<CaseExprAst>($2);
+      std::make_shared<CaseExprAst>($2, l);
     $$ = case_ptr;
   }
   ;
+  */
 
-case_match
-  : statement ARROW_R statement_list {
-
-  } 
-  | %empty {
-    $$ = std::make_shared<CaseMatchExprAst>(nullptr, ast_op::eql );
-  }
-  ;
 //--------------------------------------------------- if then else end
 comparison_ops
   : EQL   { $$ = ast_op::eql; }

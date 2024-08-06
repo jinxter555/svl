@@ -22,7 +22,7 @@ public:
   enum class ExprAstType {
      Print, ControlFlow, Operand, Number, Atom, Ident, Tuple, LTuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
-    Callee, Case, CaseMatch, Flow, FlowMatch, FlowMatchWhen, Decl, BinOp, While, Repeat};
+    Callee, Case, CaseMatch, CaseMatchIs, CaseMatchWhen, CaseMatchElse, Decl, BinOp, While, Repeat};
 
   ExprAst(std::any d) : TreeNode(d) {}
   ExprAst();
@@ -81,7 +81,7 @@ public:
   bool evaluated = false;
   TupleExprAst(std::shared_ptr<ListExprAst> tlist);
   TupleExprAst(const Tuple &t);
-  TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist);
+//  TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist);
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override;
   void codegen(std::vector<std::string> &code) const override;
@@ -221,73 +221,72 @@ public:
   ExprAstType whoami() override { return ExprAstType::Callee;}
 };
 
-//----------------------------- Switch Bin variable expr
-class CaseExprAst : public ExprAst {
-public:
-  CaseExprAst (std::shared_ptr<ExprAst> top);
-
-  std::any evaluate(SvlmLangContext *slc) override;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
-  void print() override;
-  void codegen(std::vector<std::string> &code) const override;
-  ExprAstType whoami() override { return ExprAstType::Case;}
-
-};
-
-//----------------------------- Case Bin variable expr
-class CaseMatchExprAst : public ExprAst {
-public:
-  CaseMatchExprAst (std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body, ast_op op);
-  std::any evaluate(SvlmLangContext *slc) override;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
-  void print() override;
-  void codegen(std::vector<std::string> &code) const override;
-  ExprAstType whoami() override { return ExprAstType::CaseMatch;}
-
-};
-
 
 //----------------------------- flow expr
-class FlowExprAst : public ExprAst {
+class CaseExprAst : public ExprAst {
 public:
-  FlowExprAst (std::shared_ptr<ExprAst> top, std::shared_ptr<ListExprAst> body);
+  CaseExprAst (std::shared_ptr<ExprAst> top, std::shared_ptr<ListExprAst> body);
 
   std::any evaluate(SvlmLangContext *slc) override;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void print() override;
   void codegen(std::vector<std::string> &code) const override;
   ExprAstType whoami() override { 
-    std::cout << "I am Flow\n";
-    return ExprAstType::Flow;}
+    std::cout << "I am Case\n";
+    return ExprAstType::Case;}
 
 };
 
-//----------------------------- flow match expr
-class FlowMatchExprAst : public ExprAst {
+class CaseMatchExprAst : public ExprAst {
 public:
-  FlowMatchExprAst (std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body, ast_op op);
+  CaseMatchExprAst(ExprAstType t) : ExprAst(t) { }
+  virtual bool match(std::shared_ptr<ExprAst> top, SvlmLangContext *slc) = 0 ;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  ExprAstType whoami() override { 
+    return ExprAstType::CaseMatch;
+  }
+};
+//----------------------------- flow match IS expr
+class CaseMatchIsExprAst : public CaseMatchExprAst {
+public:
+  CaseMatchIsExprAst (std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body);
   std::any evaluate(SvlmLangContext *slc) override;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void print() override;
   void codegen(std::vector<std::string> &code) const override;
   ExprAstType whoami() override { 
-    std::cout << "I am FlowMatch\n";
-    return ExprAstType::FlowMatch;
-    }
+    std::cout << "I am CaseMatchIs\n";
+    return ExprAstType::CaseMatchIs;
+  }
+  bool match(std::shared_ptr<ExprAst> top, SvlmLangContext *slc) override ;
 
 };
-class FlowMatchWhenExprAst : public ExprAst {
+//----------------------------- flow match When expr
+class CaseMatchWhenExprAst : public CaseMatchExprAst {
 public:
-  FlowMatchWhenExprAst ( std::shared_ptr<AssignExprAst> assign_expr,
+  CaseMatchWhenExprAst ( std::shared_ptr<ExprAst> assign,
     std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body);
   std::any evaluate(SvlmLangContext *slc) override;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void print() override;
   void codegen(std::vector<std::string> &code) const override;
-  ExprAstType whoami() override { std::cout << "I am FlowMatchWhen\n"; return ExprAstType::FlowMatchWhen; }
+  ExprAstType whoami() override { std::cout << "I am CaseMatchWhen\n"; return ExprAstType::CaseMatchWhen; }
 
+  bool match(std::shared_ptr<ExprAst> top, SvlmLangContext *slc) override ;
 
 };
+
+class CaseMatchElseExprAst : public CaseMatchExprAst {
+public:
+  CaseMatchElseExprAst (std::shared_ptr<ListExprAst> body);
+  bool match(std::shared_ptr<ExprAst> top, SvlmLangContext *slc) override ;
+  std::any evaluate(SvlmLangContext *slc) override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+};
+
 
 //----------------------------- while expr
 class WhileExprAst : public ExprAst {
