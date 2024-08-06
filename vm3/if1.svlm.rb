@@ -1,5 +1,5 @@
 module mhello
-$a = 6
+$a = 5
 print $a
 print "\n";
 if $a>=6 then

@@ -283,28 +283,23 @@ case_match
 if_then_else
   :
   ;
-/*
 if_then_else
   : IF exp_eval THEN statement_list END {
     auto l = std::make_shared<ListExprAst>("if then end");
     auto y = std::make_shared<OperandExprAst>(Operand(true));
-    l->add(std::make_shared<CaseMatchIsExprAst>(
-      y, $4, ast_op::eql));
-    std::shared_ptr<CaseExprAst> case_ptr =
-      std::make_shared<CaseExprAst>($2, l);
-    $$ = case_ptr;
+    l->add(std::make_shared<CaseMatchIsExprAst>(y, $4));
+    $$ = std::make_shared<CaseExprAst>($2, l);
   }
   | IF exp_eval THEN statement_list ELSE statement_list END {
     auto l = std::make_shared<ListExprAst>("if then else end");
     auto y = std::make_shared<OperandExprAst>(Operand(true));
-    l->add(std::make_shared<CaseMatchIsExprAst>(y, $4, ast_op::eql));
-    l->add(std::make_shared<CaseMatchIsExprAst>(nullptr, $6, ast_op::ast_else));
+    l->add(std::make_shared<CaseMatchIsExprAst>(y, $4));
+    l->add(std::make_shared<CaseMatchElseExprAst>($6));
     std::shared_ptr<CaseExprAst> case_ptr =
       std::make_shared<CaseExprAst>($2, l);
     $$ = case_ptr;
   }
   ;
-  */
 
 //--------------------------------------------------- if then else end
 comparison_ops
