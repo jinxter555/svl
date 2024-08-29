@@ -1,0 +1,5 @@
+g++
+%h %cpp -std=c++17
+-I/usr/lib/llvm-14/include
+-I/usr/share/doc/llvm-14-examples/examples/Kaleidoscope
+

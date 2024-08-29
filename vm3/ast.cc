@@ -152,6 +152,7 @@ void IdentExprAst::print() {
   std::string s = std::any_cast<std::string>(get_child_data("value"));
   std::cout << s << "\n";
 }
+std::any IdentExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {return 0;} 
 
 //----------------------------- global variable expr
 
@@ -263,23 +264,22 @@ TupleExprAst::TupleExprAst(std::shared_ptr<ListExprAst> tlist)
   add_child_data("value", nullptr);
 }
 
+/*
 TupleExprAst::TupleExprAst(const Tuple &t)
   : ExprAst(ExprAstType::Tuple)  { 
   add_child("ulist", nullptr); 
   add_child_data("value", t);
 }
-
+*/
 /*
 TupleExprAst:: TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist)
   : ExprAst(t) { add_child("ulist", tlist); }
 */
 std::any TupleExprAst::evaluate(SvlmLangContext *slc) {
-  //std::shared_ptr<ListExprAst> l = std::any_cast<std::shared_ptr<ListExprAst>>(get_data());
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
-  std::cout << "tuple eval\n"; l->print();
-  if(!this->evaluated) {
-    //std::vector<std::any> elist = move(std::any_cast<std::vector<std::any>>(l->evaluate(slc)));
-    Tuple elist(move(std::any_cast<std::vector<std::any>>(l->evaluate(slc))));
+
+  if(!evaluated) {
+    Operand elist(std::any_cast<std::vector<std::any>>(l->evaluate(slc)), VarTypeEnum::tuple_t);
     set_child_data("value", elist);
     evaluated = true;
     return elist;
@@ -287,92 +287,82 @@ std::any TupleExprAst::evaluate(SvlmLangContext *slc) {
   return get_child_data("value");
 };
 
-bool TupleExprAst::assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, std::vector<std::any> rtva){
-  if(l->get_member_size() != rtva.size()) return bool(false);
-
-  for(int i=0; i<l->get_member_size(); i++) {
-    std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
-
-    if(lexpr->whoami() == ExprAstType::Gvar || lexpr->whoami() == ExprAstType::Lvar) continue;
-   // left side == right hand side?
-   // std::any a = lexpr->get_data(); std::cout << a  << " =? " <<  rtva[i] << "\n";
-    if(lexpr->get_child_data("value").type() != rtva[i].type()) return bool(false);  // any type() not same
-
-    try {
-      Operand a = std::any_cast<Operand>(lexpr->get_child_data("value")); 
-      Operand b = std::any_cast<Operand>(rtva[i]); 
-      if(a != b) return bool(false);
-    } catch(const std::bad_any_cast& e) {}
 /*
-    try {
-      Number a_n = std::any_cast<Number>(lexpr->get_data()); 
-      Number b_n = std::any_cast<Number>(rtva[i]); 
-      if(a_n != b_n) return bool(false);
-    } catch(const std::bad_any_cast& e) {}
+ * check if the literals from left are equal to right except variables
+ * if they all matches, then assign the variables to the literals
+ */
+bool TupleExprAst::assign(SvlmLangContext *slc, const Operand& rside){
+  int i;
+  std::shared_ptr<ListExprAst> lside_expr = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
 
-    try {
-      Atom a_a = std::any_cast<Atom>(lexpr->get_data()); 
-      Atom b_a = std::any_cast<Atom>(rtva[i]); 
-      if(a_a != b_a) return bool(false);
-    } catch(const std::bad_any_cast& e) {}
-*/
+  if(lside_expr->get_member_size() != rside.list_size()) {
+    return bool(false);
   }
 
-  //std::cout << "assign\n";
-  for(int i=0; i<l->get_member_size(); i++) {
-    std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(l->get_member(i));
-    // have to all match here before assign
-    if(lexpr->whoami() == ExprAstType::Gvar ||
-      lexpr->whoami() == ExprAstType::Lvar) {
-      std::shared_ptr<AssignExprAst> lexprv 
-      =  std::dynamic_pointer_cast<AssignExprAst>(lexpr);
-      lexprv->assign(slc, rtva[i]);
-    }
+  //std::cout << "tuple assign 2nd part: check loop\n";
+  for(i=0; i<lside_expr->get_member_size(); i++) {
+    std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(lside_expr->get_member(i));
 
+    if(lexpr->whoami() == ExprAstType::Gvar || lexpr->whoami() == ExprAstType::Lvar) continue;
+
+    Operand a = std::any_cast<Operand>(lexpr->evaluate(slc)); 
+    Operand b = std::any_cast<Operand>(rside[i]); 
+    if(a != b) return bool(false);
+  }
+
+  //std::cout << "tuple assign 2nd part: assign loop\n";
+  for(i=0; i<lside_expr->get_member_size(); i++) {
+    std::shared_ptr<ExprAst> lexpr =  std::dynamic_pointer_cast<ExprAst>(lside_expr->get_member(i));
+    // have to all match here before assign
+    if(lexpr->whoami() == ExprAstType::Gvar 
+    || lexpr->whoami() == ExprAstType::Lvar) {
+      std::shared_ptr<AssignExprAst> lexpr_assign
+      =  std::dynamic_pointer_cast<AssignExprAst>(lexpr);
+      lexpr_assign->assign(slc, rside[i]);
+    }
   }
   return bool(true);
 
 }
 
 std::any TupleExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> rl, ast_op op) {
-  std::cout << "tuple uniop\n";
-  /*
-  auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
- // auto ltva = std::any_cast<Tuple>(l->get_data()).get_data(); // rtva is a vector of any now
+  Operand  right_value = std::any_cast<Operand>(rl->evaluate(slc));
 
-  std::cout << "tuple uniop1\n";
-  auto rtva = std::any_cast<Tuple>(rl->get_child_data("value")).get_data(); // this is a problem. rtva is a vector of any now
-  if(l==nullptr) std::cerr << "tpl l is nullptr\n";
-  std::cout << "tuple uniop2\n";
+  if(op == ast_op::assign) 
+    return assign(slc, right_value);
 
-  std::any op_print = op; 
+  //if(rl->whoami() != ExprAstType::Tuple) return bool(false);
+
+  Operand a = std::any_cast<Operand>(evaluate(slc));
+  Operand b = std::any_cast<Operand>(rl->evaluate(slc));
+  return a.opfunc(b, op);
+
+
+
+
+/*
   switch(op) {
   case ast_op::eql:  
-  case ast_op::neql:    {
-    Tuple a = std::any_cast<Tuple>(evaluate(slc));
-    Tuple b = std::any_cast<Tuple>(rl->evaluate(slc));
-    std::cout << "tuple n/eql uni_op\n";
-    return a.bin_op(b, op);
-  }
-  case ast_op::assign:  
-    return assign(slc, l, rtva);
-  default: 
-    std::cerr << "error operator! " << op_print << "\n"; 
+    std::cout << "== tuple with right hand side var\n";
     break;
+  case ast_op::neql:    
+    std::cout << "!= tuple n/eql uni_op\n";
+    break;
+  case ast_op::assign:  
+    return assign(slc, right_value);
+  default:  {
+    std::any op_print = op;
+    std::cerr << "tuple error operator! " << op_print << "\n"; 
+    break; }
   }
   return bool(false);
 */
-return false;
 } 
-
 
 void TupleExprAst::codegen(std::vector<std::string> &code) const {};
 void TupleExprAst::print() {
-  //std::vector<std::any> elist = std::any_cast<std::vector<std::any>>(get_data());
-  try {
-    Tuple elist = std::any_cast<Tuple>(get_child_data("value"));
-    elist.print();
-  } catch(const std::bad_any_cast& e) {}
+  Operand elist = std::any_cast<Operand>(get_child_data("value"));
+  std::cout << elist;
 }
 
 //----------------------------- decl expr
@@ -426,7 +416,7 @@ BinOpExprAst::BinOpExprAst
 ) : ExprAst(ExprAstType::BinOp) 
 { add_child("left", l);
   add_child("right", r);
-  add_child_data("value", op);
+  add_child_data("op", op);
   
 }
 
@@ -459,7 +449,7 @@ void BinOpExprAst::print() {
     std::dynamic_pointer_cast<ExprAst>(get_child("left"));
   std::shared_ptr<ExprAst> r = 
     std::dynamic_pointer_cast<ExprAst>(get_child("right"));
-  ast_op op = std::any_cast<ast_op>(ExprAst::get_child_data("value"));
+  ast_op op = std::any_cast<ast_op>(ExprAst::get_child_data("op"));
   std::string oc;
 
   // std::cout <<"binop b4 left-";
@@ -493,11 +483,9 @@ void BinOpExprAst::print() {
 }
 
 std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
-  std::shared_ptr<ExprAst> l = 
-    std::dynamic_pointer_cast<ExprAst>(get_child("left"));
-  std::shared_ptr<ExprAst> r = 
-    std::dynamic_pointer_cast<ExprAst>(get_child("right"));
-  ast_op op = std::any_cast<ast_op>(ExprAst::get_child_data("value"));
+  std::shared_ptr<ExprAst> l = std::dynamic_pointer_cast<ExprAst>(get_child("left"));
+  std::shared_ptr<ExprAst> r = std::dynamic_pointer_cast<ExprAst>(get_child("right"));
+  ast_op op = std::any_cast<ast_op>(ExprAst::get_child_data("op"));
 
   if(l ==nullptr) { std::cerr << "eval left handside is nullptr\n"; } 
   if(r ==nullptr) { std::cerr << "eval right handside r is nullptr\n"; }
@@ -505,39 +493,22 @@ std::any BinOpExprAst::evaluate(SvlmLangContext *slc) {
   if((l->whoami() == ExprAstType::Gvar || l->whoami() == ExprAstType::Lvar)) {
     if(op == ast_op::assign) {
       // assignment operation for both local and global/module
-      std::shared_ptr<AssignExprAst> al
+      std::shared_ptr<AssignExprAst> l_assign_expr
         = std::dynamic_pointer_cast<AssignExprAst>(get_child("left"));
 
       std::any b = r->evaluate(slc); 
-      al->assign(slc, b); 
+      l_assign_expr->assign(slc, b); 
       return b;
     } 
-
-    try {
-    Tuple a = std::any_cast<Tuple>(l->evaluate(slc)); 
-    Tuple b = std::any_cast<Tuple>(r->evaluate(slc)); 
-    return a.bin_op(b, op);
-    } catch(const std::bad_any_cast& e) { }
   } 
-
-  try {
-    //std::cout << "trying tuple1\n";
-    if(op != ast_op::assign) // to prevent var look up error 
-      Tuple a = std::any_cast<Tuple>(l->evaluate(slc)); 
-    Tuple b = std::any_cast<Tuple>(r->evaluate(slc)); 
+  if(l->whoami() == ExprAstType::Tuple ){ // if left hand is tuple, could be assign op =
     return l->uni_op(slc, r, op);
-  } catch(const std::bad_any_cast& e) { }
-
-  try {
-    // std::cout << "trying operand\n"; std::any op_print  = op; std::cout << "op: " << op_print << "\n";
-    Operand a = std::any_cast<Operand>(l->evaluate(slc)); 
-    OperandExprAst oea(a);
-    return oea.uni_op(slc, r, op);
-  } catch(const std::bad_any_cast& e) { 
-    //std::cerr << "operand cast error: " << e.what() << "\n"; 
   }
 
-  return 0;
+  Operand a = std::any_cast<Operand>(l->evaluate(slc)); 
+  Operand b = std::any_cast<Operand>(r->evaluate(slc)); 
+  return a.opfunc(b, op);
+
 }
 
 
@@ -778,9 +749,15 @@ void CaseMatchIsExprAst::print() {
 
 bool CaseMatchIsExprAst::match(std::shared_ptr<ExprAst> top, SvlmLangContext *slc) { 
   auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
-  auto a = std::any_cast<Operand>(top->evaluate(slc));
-  auto b = std::any_cast<Operand>(m->evaluate(slc));
-  return a == b;
+   Operand a = std::any_cast<Operand>(top->evaluate(slc));
+  if(m->whoami() == ExprAstType::Tuple) {
+    auto m_tuple  = std::dynamic_pointer_cast<TupleExprAst>(m);
+    //auto m_tuple = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
+    return m_tuple->assign(slc, a);
+  } else {
+    Operand b = std::any_cast<Operand>(m->evaluate(slc));
+    return a == b;
+  }
 }
 
 //--------------------  case match WHEN expr

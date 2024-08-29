@@ -20,7 +20,7 @@ protected:
   std::shared_ptr<Tree> context_tree;
 public:
   enum class ExprAstType {
-     Print, ControlFlow, Operand, Number, Atom, Ident, Tuple, LTuple,
+     Print, ControlFlow, Operand, Number, Atom, Ident, Tuple,
     Assign, Lvar, Gvar, Arg, List, Func, 
     Callee, Case, CaseMatch, CaseMatchIs, CaseMatchWhen, CaseMatchElse, Decl, BinOp, While, Repeat};
 
@@ -75,16 +75,16 @@ private:
 class ListExprAst;
 class TupleExprAst : public ExprAst {
 private:
-  bool assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, std::vector<std::any> rtva);
-
+  //bool assign(SvlmLangContext *slc, std::shared_ptr<ListExprAst> l, std::vector<std::any> rtva);
 public:
   bool evaluated = false;
   TupleExprAst(std::shared_ptr<ListExprAst> tlist);
-  TupleExprAst(const Tuple &t);
+  //TupleExprAst(const Tuple &t);
 //  TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist);
   std::any evaluate(SvlmLangContext *slc) override ;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override;
   void codegen(std::vector<std::string> &code) const override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override;
+  bool assign(SvlmLangContext *slc, const Operand& right_hand);
   ExprAstType whoami() override { return ExprAstType::Tuple;}
   void print() override;
 };
@@ -96,8 +96,8 @@ public:
   IdentExprAst(const std::string &name);
   std::string name();
   std::any evaluate(SvlmLangContext *slc) override ;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void codegen(std::vector<std::string> &code) const override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override;
   void print() override;
   ExprAstType whoami() override { return ExprAstType::Ident;}
 private:
@@ -119,7 +119,7 @@ public:
   std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {
-    std::cout << "gvar uni_oip\n";
+    std::cout << "gvar uni_op\n";
     return 0;
     } 
   void codegen(std::vector<std::string> &code) const override;

@@ -1,4 +1,4 @@
-#include "ast.cpp"
+#include "ast.cc"
 int main() {
   std::shared_ptr<ListExprAst> program = std::make_shared<ListExprAst>();
   //NumberExprAst a(3);

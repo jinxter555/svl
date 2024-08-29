@@ -87,13 +87,20 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
   else if(a.type()  == typeid(Operand)) {
     Operand  opr= std::any_cast<Operand>(a);
      out << opr; }
+/*
   else if(a.type()  == typeid(Tuple)) {
     Tuple t= std::any_cast<Tuple>(a);
     t.print(); }
+  else if(a.type()  == typeid(std::vector<Operand>)) {
+    std::vector<Operand> o_vector = std::any_cast<std::vector<Operand>>(a);
+    for (auto element : o_vector) {
+      out << element << " "; } }
+*/
   else if(a.type()  == typeid(std::vector<std::any>)) {
     std::vector<std::any> any_vector = std::any_cast<std::vector<std::any>>(a);
     for (std::any element : any_vector) {
       out << element << " "; } }
+
   else if(a.type()  == typeid(std::shared_ptr<ExprAst>)) {
     std::cout  << "code block\n";
     std::shared_ptr ast = std::any_cast<std::shared_ptr<ExprAst>>(a);

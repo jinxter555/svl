@@ -196,6 +196,9 @@ exp_eval
   | tuple ASSIGN tuple {
     $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::assign);
   }
+  | tuple ASSIGN variable {
+    $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::assign);
+  }
   ;
 
 literals
@@ -272,6 +275,12 @@ case_match
     $$ = std::make_shared<CaseMatchIsExprAst>($2, $4);
   } 
   | IS variable WHEN statement ARROW_R statement_list {
+    $$ = std::make_shared<CaseMatchWhenExprAst>($2, $4, $6);
+  }
+  | IS tuple ARROW_R statement_list {
+    $$ = std::make_shared<CaseMatchIsExprAst>($2, $4);
+  }
+  | IS tuple WHEN statement ARROW_R statement_list {
     $$ = std::make_shared<CaseMatchWhenExprAst>($2, $4, $6);
   }
   | ELSE ARROW_R statement_list {

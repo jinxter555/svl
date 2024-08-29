@@ -48,9 +48,11 @@ enum class DeclOpcodeAST {
   VAR
 };
 
-class Number; class Atom; class Tuple;
+class Number; class Atom; 
+class Operand;
 using OperandVariant = std::variant
-  <bool, Number, Atom, Tuple, std::string>;
+  //<bool, Number, Atom, std::string, std::vector<Operand>>;
+  <bool, Number, Atom, std::string>;
 
 enum class VarTypeEnum {
   bool_t,
@@ -58,6 +60,7 @@ enum class VarTypeEnum {
   str_t,
   atom_t,
   tuple_t,
+  list_t,
   ptr_t, // pointer maybe
   user_t,
 };

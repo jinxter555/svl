@@ -11,11 +11,13 @@ private:
   std::vector<std::any> tlist;
 public:
   Tuple(std::vector<std::any>  l) : tlist(l){};
+  Tuple(const Tuple& other);
+  Tuple() {};
   void print() ;
   std::vector<std::any> get_data() const;
   bool operator==(const Tuple& other) const;
   bool operator!=(const Tuple& other) const;
-  bool bin_op(const Tuple& other, ast_op op) const;
+  bool opfunc(const Tuple& other, ast_op op) const;
 };
 
 #endif
