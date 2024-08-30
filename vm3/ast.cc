@@ -729,9 +729,9 @@ void CaseMatchExprAst::print() {
 }
 
 //--------------------  Case match Is expr
-CaseMatchIsExprAst::CaseMatchIsExprAst(std::shared_ptr<ExprAst> match,
+CaseMatchIsExprAst::CaseMatchIsExprAst(std::shared_ptr<ExprAst> is_expr,
  std::shared_ptr<ListExprAst> body) : CaseMatchExprAst(ExprAstType::CaseMatchIs) {
-  add_child("match", match);
+  add_child("is", is_expr);
   add_child("cbody", body);
 }
 std::any CaseMatchIsExprAst::evaluate(SvlmLangContext *slc) {
@@ -740,56 +740,79 @@ std::any CaseMatchIsExprAst::evaluate(SvlmLangContext *slc) {
 
 void CaseMatchIsExprAst::codegen(std::vector<std::string> &code) const {}
 void CaseMatchIsExprAst::print() { 
-  auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
+  auto is_expr = std::dynamic_pointer_cast<ExprAst>(get_child("is"));
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
-  m->print();
+  is_expr->print();
   if(l != nullptr) l->print();
   else std::cout << " flow match cbody is null";
 }
 
 bool CaseMatchIsExprAst::match(std::shared_ptr<ExprAst> top, SvlmLangContext *slc) { 
-  auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
+  auto is_expr = std::dynamic_pointer_cast<ExprAst>(get_child("is"));
    Operand a = std::any_cast<Operand>(top->evaluate(slc));
-  if(m->whoami() == ExprAstType::Tuple) {
-    auto m_tuple  = std::dynamic_pointer_cast<TupleExprAst>(m);
-    //auto m_tuple = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
+  if(is_expr->whoami() == ExprAstType::Tuple) {
+    auto m_tuple  = std::dynamic_pointer_cast<TupleExprAst>(is_expr);
     return m_tuple->assign(slc, a);
   } else {
-    Operand b = std::any_cast<Operand>(m->evaluate(slc));
+    Operand b = std::any_cast<Operand>(is_expr->evaluate(slc));
     return a == b;
   }
 }
 
 //--------------------  case match WHEN expr
 CaseMatchWhenExprAst::CaseMatchWhenExprAst(
-  std::shared_ptr<ExprAst> assign,
-  std::shared_ptr<ExprAst> match,
+  std::shared_ptr<ExprAst> is_expr,
+  std::shared_ptr<ExprAst> when_expr,
  std::shared_ptr<ListExprAst> body) : CaseMatchExprAst(ExprAstType::CaseMatchWhen) {
-  add_child("match", match);
+  add_child("is", is_expr);
+  add_child("when", when_expr);
   add_child("cbody", body);
-  add_child("assign", assign);
 }
 std::any CaseMatchWhenExprAst::evaluate(SvlmLangContext *slc) {return get_data();}
 
 void CaseMatchWhenExprAst::codegen(std::vector<std::string> &code) const {}
 void CaseMatchWhenExprAst::print() { 
-  std::shared_ptr<AssignExprAst> assign_expr = 
-    std::any_cast<std::shared_ptr<AssignExprAst>>(get_child_data("assign"));
+  std::shared_ptr<AssignExprAst> is_expr = 
+    std::any_cast<std::shared_ptr<AssignExprAst>>(get_child_data("is"));
   std::cout << "is "; 
-  assign_expr->print();
-  auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
+  is_expr->print();
+  auto when_expr = std::dynamic_pointer_cast<ExprAst>(get_child("when"));
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("cbody"));
-  m->print_data();
+  when_expr->print_data();
   if(l != nullptr) l->print();
 }
 
 bool CaseMatchWhenExprAst::match(std::shared_ptr<ExprAst> top, SvlmLangContext *slc) { 
-  std::shared_ptr<AssignExprAst> assign = 
-    std::dynamic_pointer_cast<AssignExprAst>(get_child("assign"));
-  assign->assign(slc, top->evaluate(slc));
+  std::shared_ptr<ExprAst> is_expr = 
+    std::dynamic_pointer_cast<ExprAst>(get_child("is"));
+  
+  if(is_expr == nullptr) {
+    std::cerr << "casematchwhenexpr is_expr is null\n";
+    return false;
+  }
+  
 
-  auto m = std::dynamic_pointer_cast<ExprAst>(get_child("match"));
-  auto a = std::any_cast<Operand>(m->evaluate(slc));
+  if(is_expr->whoami() == ExprAstType::Lvar
+  || is_expr->whoami() == ExprAstType::Gvar) {
+    std::shared_ptr<AssignExprAst> assign_expr = 
+      std::dynamic_pointer_cast<AssignExprAst>(is_expr);
+
+    assign_expr->assign(slc, top->evaluate(slc));
+
+  } else if(is_expr->whoami() == ExprAstType::Tuple) {
+
+    std::shared_ptr<TupleExprAst> is_tuple_expr = 
+      std::dynamic_pointer_cast<TupleExprAst>(is_expr);
+
+    if(! is_tuple_expr->assign(slc, std::any_cast<Operand>(top->evaluate(slc)))) {
+      return false;
+    }
+
+  }
+
+  auto when_expr = std::dynamic_pointer_cast<ExprAst>(get_child("when"));
+  auto a = std::any_cast<Operand>(when_expr->evaluate(slc));
+
   return a == Operand(true);
 }
 

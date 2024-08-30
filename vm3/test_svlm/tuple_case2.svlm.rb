@@ -1,12 +1,16 @@
 module mhello
-$a = {5, 1055};
+$a = {3, 4};
 case $a do
-is {1, 4}  -> 
+is true -> 
+  print "hello\n"
+is $b when $b > 123 ->
+  print $a
+  print "world\n"
+is {2, 4}  -> 
   print $a
   print "exact!\n"
-is {$x, $y} when $x >= 3 -> 
+is {$x, 4} when $x >= 3 -> 
   print $x
-  print $y
   print "\n"
   print "got it 4\n"
 else ->

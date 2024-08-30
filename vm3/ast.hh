@@ -250,7 +250,7 @@ public:
 //----------------------------- flow match IS expr
 class CaseMatchIsExprAst : public CaseMatchExprAst {
 public:
-  CaseMatchIsExprAst (std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body);
+  CaseMatchIsExprAst (std::shared_ptr<ExprAst> is, std::shared_ptr<ListExprAst> cbody);
   std::any evaluate(SvlmLangContext *slc) override;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void print() override;
@@ -265,8 +265,10 @@ public:
 //----------------------------- flow match When expr
 class CaseMatchWhenExprAst : public CaseMatchExprAst {
 public:
-  CaseMatchWhenExprAst ( std::shared_ptr<ExprAst> assign,
-    std::shared_ptr<ExprAst> match, std::shared_ptr<ListExprAst> body);
+  CaseMatchWhenExprAst(
+    std::shared_ptr<ExprAst> is,
+    std::shared_ptr<ExprAst> when, 
+    std::shared_ptr<ListExprAst> body);
   std::any evaluate(SvlmLangContext *slc) override;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
   void print() override;
