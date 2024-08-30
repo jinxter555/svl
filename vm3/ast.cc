@@ -790,13 +790,12 @@ bool CaseMatchWhenExprAst::match(std::shared_ptr<ExprAst> top, SvlmLangContext *
     std::cerr << "casematchwhenexpr is_expr is null\n";
     return false;
   }
-  
 
   if(is_expr->whoami() == ExprAstType::Lvar
   || is_expr->whoami() == ExprAstType::Gvar) {
+
     std::shared_ptr<AssignExprAst> assign_expr = 
       std::dynamic_pointer_cast<AssignExprAst>(is_expr);
-
     assign_expr->assign(slc, top->evaluate(slc));
 
   } else if(is_expr->whoami() == ExprAstType::Tuple) {

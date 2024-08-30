@@ -386,14 +386,14 @@ namespace vslast {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // comparison_ops
-      char dummy1[sizeof (ast_op)];
-
       // FLT
-      char dummy2[sizeof (float)];
+      char dummy1[sizeof (float)];
 
       // INT
-      char dummy3[sizeof (int)];
+      char dummy2[sizeof (int)];
+
+      // case_match
+      char dummy3[sizeof (std::shared_ptr<CaseMatchExprAst>)];
 
       // comments
       // statement
@@ -403,28 +403,29 @@ namespace vslast {
       // exp
       // print_exp
       // tuple
-      // exp_num
+      // exp_eval
+      // literals
+      // variable
       // function
       // case
-      // flow
+      // if_then_else
+      // while_loop
+      // repeat_loop
       char dummy4[sizeof (std::shared_ptr<ExprAst>)];
-
-      // flow_match
-      char dummy5[sizeof (std::shared_ptr<FlowMatchExprAst>)];
 
       // statement_list
       // arg_list
-      // flow_match_list
-      char dummy6[sizeof (std::shared_ptr<ListExprAst>)];
+      // case_match_list
+      char dummy5[sizeof (std::shared_ptr<ListExprAst>)];
 
       // IDENT_STR
       // STR
       // DQSTR
       // param
-      char dummy7[sizeof (std::string)];
+      char dummy6[sizeof (std::string)];
 
       // param_list
-      char dummy8[sizeof (std::vector<std::string>)];
+      char dummy7[sizeof (std::vector<std::string>)];
     };
 
     /// The size of the largest semantic type.
@@ -481,44 +482,58 @@ namespace vslast {
     DEF = 262,                     // DEF
     DO = 263,                      // DO
     END = 264,                     // END
-    AST_RETURN = 265,              // AST_RETURN
-    AST_DEFAULT = 266,             // AST_DEFAULT
-    PRINT = 267,                   // PRINT
-    CASE = 268,                    // CASE
-    FLOW = 269,                    // FLOW
-    PAREN_L = 270,                 // PAREN_L
-    PAREN_R = 271,                 // PAREN_R
-    CUR_L = 272,                   // CUR_L
-    CUR_R = 273,                   // CUR_R
-    AT = 274,                      // AT
-    DOLLAR = 275,                  // DOLLAR
-    COLON = 276,                   // COLON
-    COMMA = 277,                   // COMMA
-    SEMICOLON = 278,               // SEMICOLON
-    ARROW_R = 279,                 // ARROW_R
-    ARROW_L = 280,                 // ARROW_L
-    IDENT_STR = 281,               // IDENT_STR
-    STR = 282,                     // STR
-    DQSTR = 283,                   // DQSTR
-    INT = 284,                     // INT
-    FLT = 285,                     // FLT
-    ASSIGN = 286,                  // ASSIGN
-    EQL = 287,                     // EQL
-    NEQL = 288,                    // NEQL
-    GT = 289,                      // GT
-    LT = 290,                      // LT
-    GTEQ = 291,                    // GTEQ
-    LTEQ = 292,                    // LTEQ
-    AND = 293,                     // AND
-    OR = 294,                      // OR
-    PLUS = 295,                    // PLUS
-    MINUS = 296,                   // MINUS
-    MULTIPLY = 297,                // MULTIPLY
-    DIVIDE = 298,                  // DIVIDE
-    MODULO = 299,                  // MODULO
-    UMINUS = 300,                  // UMINUS
-    NOT = 301,                     // NOT
-    EXPONENT = 302                 // EXPONENT
+    AST_BREAK = 265,               // AST_BREAK
+    AST_RETURN = 266,              // AST_RETURN
+    AST_DEFAULT = 267,             // AST_DEFAULT
+    PRINT = 268,                   // PRINT
+    CASE = 269,                    // CASE
+    FLOW = 270,                    // FLOW
+    WHILE = 271,                   // WHILE
+    REPEAT = 272,                  // REPEAT
+    UNTIL = 273,                   // UNTIL
+    DONE = 274,                    // DONE
+    IS = 275,                      // IS
+    IF = 276,                      // IF
+    THEN = 277,                    // THEN
+    ELSE = 278,                    // ELSE
+    WHEN = 279,                    // WHEN
+    WHERE = 280,                   // WHERE
+    PAREN_L = 281,                 // PAREN_L
+    PAREN_R = 282,                 // PAREN_R
+    CUR_L = 283,                   // CUR_L
+    CUR_R = 284,                   // CUR_R
+    AT = 285,                      // AT
+    DOLLAR = 286,                  // DOLLAR
+    COLON = 287,                   // COLON
+    COMMA = 288,                   // COMMA
+    SEMICOLON = 289,               // SEMICOLON
+    ARROW_L = 290,                 // ARROW_L
+    ARROW_R = 291,                 // ARROW_R
+    TRUE = 292,                    // TRUE
+    FALSE = 293,                   // FALSE
+    NIL = 294,                     // NIL
+    IDENT_STR = 295,               // IDENT_STR
+    STR = 296,                     // STR
+    DQSTR = 297,                   // DQSTR
+    INT = 298,                     // INT
+    FLT = 299,                     // FLT
+    ASSIGN = 300,                  // ASSIGN
+    AND = 301,                     // AND
+    OR = 302,                      // OR
+    EQL = 303,                     // EQL
+    NEQL = 304,                    // NEQL
+    GT = 305,                      // GT
+    LT = 306,                      // LT
+    GTEQ = 307,                    // GTEQ
+    LTEQ = 308,                    // LTEQ
+    PLUS = 309,                    // PLUS
+    MINUS = 310,                   // MINUS
+    MULTIPLY = 311,                // MULTIPLY
+    DIVIDE = 312,                  // DIVIDE
+    MODULO = 313,                  // MODULO
+    UMINUS = 314,                  // UMINUS
+    NOT = 315,                     // NOT
+    EXPONENT = 316                 // EXPONENT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -535,7 +550,7 @@ namespace vslast {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 48, ///< Number of tokens.
+        YYNTOKENS = 62, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -547,66 +562,83 @@ namespace vslast {
         S_DEF = 7,                               // DEF
         S_DO = 8,                                // DO
         S_END = 9,                               // END
-        S_AST_RETURN = 10,                       // AST_RETURN
-        S_AST_DEFAULT = 11,                      // AST_DEFAULT
-        S_PRINT = 12,                            // PRINT
-        S_CASE = 13,                             // CASE
-        S_FLOW = 14,                             // FLOW
-        S_PAREN_L = 15,                          // PAREN_L
-        S_PAREN_R = 16,                          // PAREN_R
-        S_CUR_L = 17,                            // CUR_L
-        S_CUR_R = 18,                            // CUR_R
-        S_AT = 19,                               // AT
-        S_DOLLAR = 20,                           // DOLLAR
-        S_COLON = 21,                            // COLON
-        S_COMMA = 22,                            // COMMA
-        S_SEMICOLON = 23,                        // SEMICOLON
-        S_ARROW_R = 24,                          // ARROW_R
-        S_ARROW_L = 25,                          // ARROW_L
-        S_IDENT_STR = 26,                        // IDENT_STR
-        S_STR = 27,                              // STR
-        S_DQSTR = 28,                            // DQSTR
-        S_INT = 29,                              // INT
-        S_FLT = 30,                              // FLT
-        S_ASSIGN = 31,                           // ASSIGN
-        S_EQL = 32,                              // EQL
-        S_NEQL = 33,                             // NEQL
-        S_GT = 34,                               // GT
-        S_LT = 35,                               // LT
-        S_GTEQ = 36,                             // GTEQ
-        S_LTEQ = 37,                             // LTEQ
-        S_AND = 38,                              // AND
-        S_OR = 39,                               // OR
-        S_PLUS = 40,                             // PLUS
-        S_MINUS = 41,                            // MINUS
-        S_MULTIPLY = 42,                         // MULTIPLY
-        S_DIVIDE = 43,                           // DIVIDE
-        S_MODULO = 44,                           // MODULO
-        S_UMINUS = 45,                           // UMINUS
-        S_NOT = 46,                              // NOT
-        S_EXPONENT = 47,                         // EXPONENT
-        S_YYACCEPT = 48,                         // $accept
-        S_program_start = 49,                    // program_start
-        S_comments = 50,                         // comments
-        S_statement_list = 51,                   // statement_list
-        S_statement = 52,                        // statement
-        S_module = 53,                           // module
-        S_arg_list = 54,                         // arg_list
-        S_arg = 55,                              // arg
-        S_caller = 56,                           // caller
-        S_exp = 57,                              // exp
-        S_print_exp = 58,                        // print_exp
-        S_tuple = 59,                            // tuple
-        S_exp_num = 60,                          // exp_num
-        S_function = 61,                         // function
-        S_case = 62,                             // case
-        S_flow = 63,                             // flow
-        S_flow_match_list = 64,                  // flow_match_list
-        S_flow_match = 65,                       // flow_match
-        S_comparison_ops = 66,                   // comparison_ops
-        S_param_list = 67,                       // param_list
-        S_param = 68,                            // param
-        S_EOS = 69                               // EOS
+        S_AST_BREAK = 10,                        // AST_BREAK
+        S_AST_RETURN = 11,                       // AST_RETURN
+        S_AST_DEFAULT = 12,                      // AST_DEFAULT
+        S_PRINT = 13,                            // PRINT
+        S_CASE = 14,                             // CASE
+        S_FLOW = 15,                             // FLOW
+        S_WHILE = 16,                            // WHILE
+        S_REPEAT = 17,                           // REPEAT
+        S_UNTIL = 18,                            // UNTIL
+        S_DONE = 19,                             // DONE
+        S_IS = 20,                               // IS
+        S_IF = 21,                               // IF
+        S_THEN = 22,                             // THEN
+        S_ELSE = 23,                             // ELSE
+        S_WHEN = 24,                             // WHEN
+        S_WHERE = 25,                            // WHERE
+        S_PAREN_L = 26,                          // PAREN_L
+        S_PAREN_R = 27,                          // PAREN_R
+        S_CUR_L = 28,                            // CUR_L
+        S_CUR_R = 29,                            // CUR_R
+        S_AT = 30,                               // AT
+        S_DOLLAR = 31,                           // DOLLAR
+        S_COLON = 32,                            // COLON
+        S_COMMA = 33,                            // COMMA
+        S_SEMICOLON = 34,                        // SEMICOLON
+        S_ARROW_L = 35,                          // ARROW_L
+        S_ARROW_R = 36,                          // ARROW_R
+        S_TRUE = 37,                             // TRUE
+        S_FALSE = 38,                            // FALSE
+        S_NIL = 39,                              // NIL
+        S_IDENT_STR = 40,                        // IDENT_STR
+        S_STR = 41,                              // STR
+        S_DQSTR = 42,                            // DQSTR
+        S_INT = 43,                              // INT
+        S_FLT = 44,                              // FLT
+        S_ASSIGN = 45,                           // ASSIGN
+        S_AND = 46,                              // AND
+        S_OR = 47,                               // OR
+        S_EQL = 48,                              // EQL
+        S_NEQL = 49,                             // NEQL
+        S_GT = 50,                               // GT
+        S_LT = 51,                               // LT
+        S_GTEQ = 52,                             // GTEQ
+        S_LTEQ = 53,                             // LTEQ
+        S_PLUS = 54,                             // PLUS
+        S_MINUS = 55,                            // MINUS
+        S_MULTIPLY = 56,                         // MULTIPLY
+        S_DIVIDE = 57,                           // DIVIDE
+        S_MODULO = 58,                           // MODULO
+        S_UMINUS = 59,                           // UMINUS
+        S_NOT = 60,                              // NOT
+        S_EXPONENT = 61,                         // EXPONENT
+        S_YYACCEPT = 62,                         // $accept
+        S_program_start = 63,                    // program_start
+        S_comments = 64,                         // comments
+        S_statement_list = 65,                   // statement_list
+        S_statement = 66,                        // statement
+        S_module = 67,                           // module
+        S_arg_list = 68,                         // arg_list
+        S_arg = 69,                              // arg
+        S_caller = 70,                           // caller
+        S_exp = 71,                              // exp
+        S_print_exp = 72,                        // print_exp
+        S_tuple = 73,                            // tuple
+        S_exp_eval = 74,                         // exp_eval
+        S_literals = 75,                         // literals
+        S_variable = 76,                         // variable
+        S_function = 77,                         // function
+        S_case = 78,                             // case
+        S_case_match_list = 79,                  // case_match_list
+        S_case_match = 80,                       // case_match
+        S_if_then_else = 81,                     // if_then_else
+        S_while_loop = 82,                       // while_loop
+        S_repeat_loop = 83,                      // repeat_loop
+        S_param_list = 84,                       // param_list
+        S_param = 85,                            // param
+        S_EOS = 86                               // EOS
       };
     };
 
@@ -643,16 +675,16 @@ namespace vslast {
       {
         switch (this->kind ())
     {
-      case symbol_kind::S_comparison_ops: // comparison_ops
-        value.move< ast_op > (std::move (that.value));
-        break;
-
       case symbol_kind::S_FLT: // FLT
         value.move< float > (std::move (that.value));
         break;
 
       case symbol_kind::S_INT: // INT
         value.move< int > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_case_match: // case_match
+        value.move< std::shared_ptr<CaseMatchExprAst> > (std::move (that.value));
         break;
 
       case symbol_kind::S_comments: // comments
@@ -663,20 +695,20 @@ namespace vslast {
       case symbol_kind::S_exp: // exp
       case symbol_kind::S_print_exp: // print_exp
       case symbol_kind::S_tuple: // tuple
-      case symbol_kind::S_exp_num: // exp_num
+      case symbol_kind::S_exp_eval: // exp_eval
+      case symbol_kind::S_literals: // literals
+      case symbol_kind::S_variable: // variable
       case symbol_kind::S_function: // function
       case symbol_kind::S_case: // case
-      case symbol_kind::S_flow: // flow
+      case symbol_kind::S_if_then_else: // if_then_else
+      case symbol_kind::S_while_loop: // while_loop
+      case symbol_kind::S_repeat_loop: // repeat_loop
         value.move< std::shared_ptr<ExprAst> > (std::move (that.value));
-        break;
-
-      case symbol_kind::S_flow_match: // flow_match
-        value.move< std::shared_ptr<FlowMatchExprAst> > (std::move (that.value));
         break;
 
       case symbol_kind::S_statement_list: // statement_list
       case symbol_kind::S_arg_list: // arg_list
-      case symbol_kind::S_flow_match_list: // flow_match_list
+      case symbol_kind::S_case_match_list: // case_match_list
         value.move< std::shared_ptr<ListExprAst> > (std::move (that.value));
         break;
 
@@ -715,20 +747,6 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, ast_op&& v, location_type&& l)
-        : Base (t)
-        , value (std::move (v))
-        , location (std::move (l))
-      {}
-#else
-      basic_symbol (typename Base::kind_type t, const ast_op& v, const location_type& l)
-        : Base (t)
-        , value (v)
-        , location (l)
-      {}
-#endif
-
-#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, float&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -757,13 +775,13 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::shared_ptr<ExprAst>&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, std::shared_ptr<CaseMatchExprAst>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::shared_ptr<ExprAst>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::shared_ptr<CaseMatchExprAst>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -771,13 +789,13 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::shared_ptr<FlowMatchExprAst>&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, std::shared_ptr<ExprAst>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::shared_ptr<FlowMatchExprAst>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::shared_ptr<ExprAst>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -850,16 +868,16 @@ namespace vslast {
         // Value type destructor.
 switch (yykind)
     {
-      case symbol_kind::S_comparison_ops: // comparison_ops
-        value.template destroy< ast_op > ();
-        break;
-
       case symbol_kind::S_FLT: // FLT
         value.template destroy< float > ();
         break;
 
       case symbol_kind::S_INT: // INT
         value.template destroy< int > ();
+        break;
+
+      case symbol_kind::S_case_match: // case_match
+        value.template destroy< std::shared_ptr<CaseMatchExprAst> > ();
         break;
 
       case symbol_kind::S_comments: // comments
@@ -870,20 +888,20 @@ switch (yykind)
       case symbol_kind::S_exp: // exp
       case symbol_kind::S_print_exp: // print_exp
       case symbol_kind::S_tuple: // tuple
-      case symbol_kind::S_exp_num: // exp_num
+      case symbol_kind::S_exp_eval: // exp_eval
+      case symbol_kind::S_literals: // literals
+      case symbol_kind::S_variable: // variable
       case symbol_kind::S_function: // function
       case symbol_kind::S_case: // case
-      case symbol_kind::S_flow: // flow
+      case symbol_kind::S_if_then_else: // if_then_else
+      case symbol_kind::S_while_loop: // while_loop
+      case symbol_kind::S_repeat_loop: // repeat_loop
         value.template destroy< std::shared_ptr<ExprAst> > ();
-        break;
-
-      case symbol_kind::S_flow_match: // flow_match
-        value.template destroy< std::shared_ptr<FlowMatchExprAst> > ();
         break;
 
       case symbol_kind::S_statement_list: // statement_list
       case symbol_kind::S_arg_list: // arg_list
-      case symbol_kind::S_flow_match_list: // flow_match_list
+      case symbol_kind::S_case_match_list: // case_match_list
         value.template destroy< std::shared_ptr<ListExprAst> > ();
         break;
 
@@ -1225,6 +1243,21 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_AST_BREAK (location_type l)
+      {
+        return symbol_type (token::AST_BREAK, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_AST_BREAK (const location_type& l)
+      {
+        return symbol_type (token::AST_BREAK, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_AST_RETURN (location_type l)
       {
         return symbol_type (token::AST_RETURN, std::move (l));
@@ -1295,6 +1328,156 @@ switch (yykind)
       make_FLOW (const location_type& l)
       {
         return symbol_type (token::FLOW, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WHILE (location_type l)
+      {
+        return symbol_type (token::WHILE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_WHILE (const location_type& l)
+      {
+        return symbol_type (token::WHILE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_REPEAT (location_type l)
+      {
+        return symbol_type (token::REPEAT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_REPEAT (const location_type& l)
+      {
+        return symbol_type (token::REPEAT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UNTIL (location_type l)
+      {
+        return symbol_type (token::UNTIL, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_UNTIL (const location_type& l)
+      {
+        return symbol_type (token::UNTIL, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DONE (location_type l)
+      {
+        return symbol_type (token::DONE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DONE (const location_type& l)
+      {
+        return symbol_type (token::DONE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IS (location_type l)
+      {
+        return symbol_type (token::IS, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_IS (const location_type& l)
+      {
+        return symbol_type (token::IS, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IF (location_type l)
+      {
+        return symbol_type (token::IF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_IF (const location_type& l)
+      {
+        return symbol_type (token::IF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_THEN (location_type l)
+      {
+        return symbol_type (token::THEN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_THEN (const location_type& l)
+      {
+        return symbol_type (token::THEN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ELSE (location_type l)
+      {
+        return symbol_type (token::ELSE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ELSE (const location_type& l)
+      {
+        return symbol_type (token::ELSE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WHEN (location_type l)
+      {
+        return symbol_type (token::WHEN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_WHEN (const location_type& l)
+      {
+        return symbol_type (token::WHEN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WHERE (location_type l)
+      {
+        return symbol_type (token::WHERE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_WHERE (const location_type& l)
+      {
+        return symbol_type (token::WHERE, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1435,6 +1618,21 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_ARROW_L (location_type l)
+      {
+        return symbol_type (token::ARROW_L, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ARROW_L (const location_type& l)
+      {
+        return symbol_type (token::ARROW_L, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_ARROW_R (location_type l)
       {
         return symbol_type (token::ARROW_R, std::move (l));
@@ -1450,16 +1648,46 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_ARROW_L (location_type l)
+      make_TRUE (location_type l)
       {
-        return symbol_type (token::ARROW_L, std::move (l));
+        return symbol_type (token::TRUE, std::move (l));
       }
 #else
       static
       symbol_type
-      make_ARROW_L (const location_type& l)
+      make_TRUE (const location_type& l)
       {
-        return symbol_type (token::ARROW_L, l);
+        return symbol_type (token::TRUE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FALSE (location_type l)
+      {
+        return symbol_type (token::FALSE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_FALSE (const location_type& l)
+      {
+        return symbol_type (token::FALSE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NIL (location_type l)
+      {
+        return symbol_type (token::NIL, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_NIL (const location_type& l)
+      {
+        return symbol_type (token::NIL, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1555,6 +1783,36 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_AND (location_type l)
+      {
+        return symbol_type (token::AND, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_AND (const location_type& l)
+      {
+        return symbol_type (token::AND, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OR (location_type l)
+      {
+        return symbol_type (token::OR, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_OR (const location_type& l)
+      {
+        return symbol_type (token::OR, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_EQL (location_type l)
       {
         return symbol_type (token::EQL, std::move (l));
@@ -1640,36 +1898,6 @@ switch (yykind)
       make_LTEQ (const location_type& l)
       {
         return symbol_type (token::LTEQ, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_AND (location_type l)
-      {
-        return symbol_type (token::AND, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_AND (const location_type& l)
-      {
-        return symbol_type (token::AND, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_OR (location_type l)
-      {
-        return symbol_type (token::OR, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_OR (const location_type& l)
-      {
-        return symbol_type (token::OR, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1804,7 +2032,7 @@ switch (yykind)
 
 
     /// Stored state numbers (used for stacks).
-    typedef signed char state_type;
+    typedef unsigned char state_type;
 
     /// Compute post-reduction state.
     /// \param yystate   the current state
@@ -1852,9 +2080,9 @@ switch (yykind)
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const signed char yytable_[];
+    static const short yytable_[];
 
-    static const signed char yycheck_[];
+    static const short yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
@@ -2096,9 +2324,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 234,     ///< Last index in yytable_.
-      yynnts_ = 22,  ///< Number of nonterminal symbols.
-      yyfinal_ = 45 ///< Termination state number.
+      yylast_ = 393,     ///< Last index in yytable_.
+      yynnts_ = 25,  ///< Number of nonterminal symbols.
+      yyfinal_ = 56 ///< Termination state number.
     };
 
 
@@ -2111,7 +2339,7 @@ switch (yykind)
 
 #line 14 "svlm_grammar.y"
 } // vslast
-#line 2115 "svlm_parser.hh"
+#line 2343 "svlm_parser.hh"
 
 
 
