@@ -264,17 +264,6 @@ TupleExprAst::TupleExprAst(std::shared_ptr<ListExprAst> tlist)
   add_child_data("value", nullptr);
 }
 
-/*
-TupleExprAst::TupleExprAst(const Tuple &t)
-  : ExprAst(ExprAstType::Tuple)  { 
-  add_child("ulist", nullptr); 
-  add_child_data("value", t);
-}
-*/
-/*
-TupleExprAst:: TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist)
-  : ExprAst(t) { add_child("ulist", tlist); }
-*/
 std::any TupleExprAst::evaluate(SvlmLangContext *slc) {
   auto l = std::dynamic_pointer_cast<ListExprAst>(get_child("ulist"));
 

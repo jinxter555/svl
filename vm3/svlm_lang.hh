@@ -33,6 +33,11 @@ public:
 
   ControlFlow pop_control_flow();
   void push_control_flow();
+  void reset() {
+    control_flow = ControlFlow::run;
+    while(!control_flow_stack.empty()) 
+      control_flow_stack.pop();
+  }
 private:
 
 };

@@ -98,6 +98,7 @@ SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {
 
 void SvlmLangContext::run_evaluate() {
   svlm_lang->ast_current_context->evaluate(this);
+  svlm_lang->reset();
 }
 std::any SvlmLangContext::evaluate_last_line() {
   std::any output = svlm_lang->ast_current_context->evaluate_last_line(this);

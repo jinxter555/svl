@@ -44,6 +44,7 @@ std::vector<std::string> lvar_list;
 %token MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT 
 %token CASE FLOW WHILE REPEAT UNTIL DONE IS IF THEN ELSE WHEN WHERE
 %token PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_L ARROW_R
+%token SQBRK_L SQBRK_R
 %token TRUE FALSE NIL
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
@@ -64,7 +65,7 @@ std::vector<std::string> lvar_list;
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple comments literals  variable
+%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple list comments literals  variable
 %type <std::shared_ptr<ExprAst>>  case while_loop repeat_loop if_then_else 
 %type <std::shared_ptr<ListExprAst>>  statement_list  arg_list case_match_list
 %type <std::shared_ptr<CaseMatchExprAst>>  case_match 
@@ -160,6 +161,9 @@ print_exp
 //--------------------------------------------------- exp var eval
 tuple
   : CUR_L arg_list CUR_R { $$ = std::make_shared<TupleExprAst>($2); }
+
+list
+  : SQBRK_L arg_list SQBRK_R { $$ = std::make_shared<ListExprAst>($2); }
 
 exp_eval
   : literals
