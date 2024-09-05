@@ -11,6 +11,10 @@
 
 
 class SvlmLangContext;
+enum class ExprAstType {
+  Print, ControlFlow, Operand, Number, Atom, Ident, Tuple,
+  Assign, Lvar, Gvar, Arg, List, CList, Func, 
+  Callee, Case, CaseMatch, CaseMatchIs, CaseMatchWhen, CaseMatchElse, Decl, BinOp, While, Repeat};
 
 
 class ExprAst : public TreeNode {
@@ -19,11 +23,6 @@ protected:
   full_symbol_t current_context; // where am i and who ami
   std::shared_ptr<Tree> context_tree;
 public:
-  enum class ExprAstType {
-     Print, ControlFlow, Operand, Number, Atom, Ident, Tuple,
-    Assign, Lvar, Gvar, Arg, List, Func, 
-    Callee, Case, CaseMatch, CaseMatchIs, CaseMatchWhen, CaseMatchElse, Decl, BinOp, While, Repeat};
-
   ExprAst(std::any d) : TreeNode(d) {}
   ExprAst();
   virtual ~ExprAst();
@@ -79,8 +78,6 @@ private:
 public:
   bool evaluated = false;
   TupleExprAst(std::shared_ptr<ListExprAst> tlist);
-  //TupleExprAst(const Tuple &t);
-//  TupleExprAst(const Tuple &t, std::shared_ptr<ListExprAst> tlist);
   std::any evaluate(SvlmLangContext *slc) override ;
   void codegen(std::vector<std::string> &code) const override;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override;
@@ -116,6 +113,8 @@ public:
 class GvarExprAst : public AssignExprAst {
 public:
   GvarExprAst(const std::string &name);
+  GvarExprAst(const std::string &name, VarTypeEnum scale_type);
+  GvarExprAst(const std::string &name, std::shared_ptr<ExprAst> idx_key, VarTypeEnum scale);
   std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {

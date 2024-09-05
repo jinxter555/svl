@@ -60,7 +60,9 @@ enum class VarTypeEnum {
   str_t,
   atom_t,
   tuple_t,
+  scalar_t,
   list_t,
+  map_t,
   ptr_t, // pointer maybe
   user_t,
 };

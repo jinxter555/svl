@@ -32,8 +32,15 @@ PrintExprAst::PrintExprAst(std::shared_ptr<ExprAst> exp)
 }
 std::any PrintExprAst::evaluate(SvlmLangContext *slc) { 
   auto exp  = std::dynamic_pointer_cast<ExprAst>(get_child("exp"));
-  std::any  a = exp->evaluate(slc);
-  std::cout << a;
+  std::any  d = exp->evaluate(slc);
+
+  try {
+    Operand elist(std::any_cast<std::vector<std::any>>(d), VarTypeEnum::list_t);
+    std::cout  << elist;
+    return std::string("");
+  } catch(const std::bad_any_cast& e) {}
+
+  std::cout << d;
   return std::string("");
 }
 void PrintExprAst::codegen(std::vector<std::string>& code) const {};
@@ -158,8 +165,35 @@ std::any IdentExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, 
 
 GvarExprAst::GvarExprAst(const std::string &name)
  : AssignExprAst(ExprAstType::Gvar) {
-  add_child_data("value", name);
+  add_child_data("name", name);
+  //add_child_data("scale", ExprAstType::VarScalar);
 }
+GvarExprAst::GvarExprAst(const std::string &name, VarTypeEnum scale_type)
+ : AssignExprAst(ExprAstType::Gvar) {
+  add_child_data("name", name);
+  add_child_data("scale_type", scale_type);
+}
+
+void pscale(VarTypeEnum scale) {
+
+  switch(scale) {
+  case VarTypeEnum::list_t:
+    std::cout << "gvar init var list\n";
+    break;
+  case VarTypeEnum::map_t:
+    std::cout << "gvar init var map\n";
+    break;
+  default: 
+    std::cout << "gvar init var default\n";
+  }
+}
+GvarExprAst::GvarExprAst(const std::string &name, std::shared_ptr<ExprAst> idx_key, VarTypeEnum scale) 
+  : AssignExprAst(ExprAstType::Gvar) {
+  add_child_data("name", name);
+  add_child_data("idx_key", idx_key);
+  add_child_data("scale", scale);
+}
+
 
 std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   full_symbol_t fst = slc->current_context;  
@@ -172,22 +206,33 @@ std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
     std::cout << "k: "; for( auto k : keys) { std::cout << k << " "; } std::cout << "\n";
     return 0;
   }
+  //VarTypeEnum scale = std::any_cast<VarTypeEnum>(get_child_data("scale"));
+  //pscale(scale);
+
+  //pscale(std::any_cast<VarTypeEnum>(tn->get_child_data("scale"))); // this store values of the variable name! do not use get_child_data()
   return  tn->get_data(); // this store values of the variable name! do not use get_child_data()
 }
 void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
-    std::string name = this->name();
-    //std::string name = name();
     full_symbol_t fst = slc->current_context;  
-    fst.mvar = name;
+    fst.mvar = name();
     std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
 
-//    slc->svlm_lang->context_tree->set_node(keys, d);
     slc->svlm_lang->context_tree->add_node(keys, d);
+    keys.push_back("scale");
+    slc->svlm_lang->context_tree->add_node(keys, VarTypeEnum::scalar_t);
+    if(d.type()  == typeid(std::vector<std::any>)) {
+      std::vector<std::any> l  = std::any_cast<std::vector<std::any>>(d);
+      std::cout << "assign is list,size: " << l.size() << "\n";
+      slc->svlm_lang->context_tree->add_node(keys, VarTypeEnum::list_t);
+    }
+
+
+
     slc->current_context = fst;
 }
 
 std::string GvarExprAst::name() { 
-  return std::any_cast<std::string>(get_child_data("value")); 
+  return std::any_cast<std::string>(get_child_data("name")); 
 }
 
 void GvarExprAst::codegen(std::vector<std::string> &code) const {
@@ -199,10 +244,10 @@ void GvarExprAst::print() {
 //----------------------------- local variable expr
 LvarExprAst::LvarExprAst(const std::string &name)
  : AssignExprAst(ExprAstType::Lvar) {
-  add_child_data("value", name);
+  add_child_data("name", name);
 }
 std::string LvarExprAst::name() { 
-  return std::any_cast<std::string>(get_child_data("value"));
+  return std::any_cast<std::string>(get_child_data("name"));
 }
 std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
   //std::map<std::string, std::shared_ptr<TreeNode>> lvars;
@@ -325,27 +370,6 @@ std::any TupleExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> rl,
   Operand a = std::any_cast<Operand>(evaluate(slc));
   Operand b = std::any_cast<Operand>(rl->evaluate(slc));
   return a.opfunc(b, op);
-
-
-
-
-/*
-  switch(op) {
-  case ast_op::eql:  
-    std::cout << "== tuple with right hand side var\n";
-    break;
-  case ast_op::neql:    
-    std::cout << "!= tuple n/eql uni_op\n";
-    break;
-  case ast_op::assign:  
-    return assign(slc, right_value);
-  default:  {
-    std::any op_print = op;
-    std::cerr << "tuple error operator! " << op_print << "\n"; 
-    break; }
-  }
-  return bool(false);
-*/
 } 
 
 void TupleExprAst::codegen(std::vector<std::string> &code) const {};
@@ -553,19 +577,26 @@ std::any ListExprAst::evaluate(SvlmLangContext *slc) {
 }
 
 std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
-  std::shared_ptr<ExprAst> 
-  e = std::dynamic_pointer_cast<ExprAst>(
+  std::shared_ptr<ExprAst> e_list, e_expr;
+  e_list = std::dynamic_pointer_cast<ExprAst>(
     TreeNode::get_member( ExprAst::get_member_size() -1));
+  std::any output;
 
-
-  if(e==nullptr){
+  if(e_list==nullptr){
     std::cerr << "eval expr is null\n";
     return 0;
   }
   slc->last_line=true;
   slc->svlm_lang->control_flow=ControlFlow::run;
-  std::any output = e->evaluate(slc);
-  //std::cout << "output: " << output << "\n";
+
+  if(e_list->whoami() == ExprAstType::List) {
+    //std::cout << "ev last line is list\n";
+    e_expr = std::dynamic_pointer_cast<ExprAst>( e_list->get_member( 0));
+    output = move(e_expr->evaluate(slc));
+  } else {
+    //std::cout << "ev last line is NOT list\n";
+    output = move(e_list->evaluate(slc));
+  }
   slc->last_line=false;
   return output;
 }

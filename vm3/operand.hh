@@ -25,6 +25,7 @@ public:
   Operand(const Number& value) ;
   Operand(const Atom& value) ;
   Operand(const std::string& value) ;
+  Operand(std::vector<Operand>  l, VarTypeEnum t); // tuple
   Operand(std::vector<std::any>  l, VarTypeEnum t); // tuple
 
   // Get the stored value (use with caution)

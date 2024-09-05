@@ -12,6 +12,10 @@ Operand::Operand(const Number &value) : value_(value) { type_ = VarTypeEnum::num
 Operand::Operand(const Atom &value) : value_(value) { type_ = VarTypeEnum::atom_t; }
 Operand::Operand(const std::string& value) : value_(value) { type_ = VarTypeEnum::str_t; }
 
+Operand::Operand(std::vector<Operand>  l, VarTypeEnum t) : type_(t) { 
+  list_ = move(l);
+}
+
 Operand::Operand(std::vector<std::any>  l, VarTypeEnum t) : type_(t) { 
   for(auto a: l) {
     list_.push_back(std::any_cast<Operand>(a));
