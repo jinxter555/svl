@@ -53,7 +53,7 @@ std::vector<std::string> lvar_list;
 %nterm EOS // end of statement
 %nterm <std::vector<std::string>> param_list 
 %nterm <std::string> param
-%nterm <ast_op> comparison_ops
+//%nterm <ast_op> comparison_ops
 %nterm comments
 
 %nonassoc           ASSIGN
@@ -65,9 +65,9 @@ std::vector<std::string> lvar_list;
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple list comments literals  variable
+%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple comments literals  variable
 %type <std::shared_ptr<ExprAst>>  case while_loop repeat_loop if_then_else 
-%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list case_match_list
+%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list case_match_list list
 %type <std::shared_ptr<CaseMatchExprAst>>  case_match 
 %start program_start
 
@@ -133,7 +133,7 @@ arg_list
   ;
 
 arg
-  : exp
+  : exp_eval
   ;
 
 
@@ -163,7 +163,7 @@ tuple
   : CUR_L arg_list CUR_R { $$ = std::make_shared<TupleExprAst>($2); }
 
 list
-  : SQBRK_L arg_list SQBRK_R { $$ = std::make_shared<ListExprAst>($2); }
+  : SQBRK_L arg_list SQBRK_R { $$ = $2; }
 
 exp_eval
   : literals
@@ -184,11 +184,20 @@ exp_eval
   | exp_eval AND exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::and_); }
   | exp_eval OR exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::or_); }
   | NOT exp_eval { $$ = std::make_shared<BinOpExprAst>($2, $2, ast_op::not_); }
+  
   | DOLLAR STR ASSIGN exp_eval {           // global variable
     slc->add_mvar_name($2);               // add to context tree
     $$ = std::make_shared<BinOpExprAst>(
-      std::make_shared<GvarExprAst>(std::string($2)), 
+      std::make_shared<GvarExprAst>(std::string($2), nullptr, VarTypeEnum::scalar_t), 
       $4, ast_op::assign);
+  }
+  | DOLLAR STR ASSIGN list {           // global variable
+    slc->add_mvar_name($2);               // add to context tree
+
+    $$ = std::make_shared<BinOpExprAst>(
+      std::make_shared<GvarExprAst>(std::string($2), nullptr, VarTypeEnum::list_t),
+      $4, ast_op::assign);
+
   }
 
   | STR ASSIGN exp_eval { 
@@ -197,6 +206,8 @@ exp_eval
       std::make_shared<LvarExprAst>(std::string($1)), 
       $3, ast_op::assign);
   }
+
+
   | tuple ASSIGN tuple {
     $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::assign);
   }
@@ -315,6 +326,7 @@ if_then_else
   ;
 
 //--------------------------------------------------- if then else end
+/*
 comparison_ops
   : EQL   { $$ = ast_op::eql; }
   | NEQL  {$$ = ast_op::neql; }
@@ -323,6 +335,7 @@ comparison_ops
   | LTEQ  {$$ = ast_op::lteq; }
   | GTEQ  {$$ = ast_op::gteq; }
   ;
+*/
 
 //--------------------------------------------------- while loop 
 while_loop
