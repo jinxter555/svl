@@ -65,6 +65,9 @@ std::vector<std::string> TreeNode::get_child_keys() const {
 std::any TreeNode::get_data() const {
   return data;
 }
+std::any& TreeNode::get_data_r() {
+  return data;
+}
 
 std::any TreeNode::get_child_data(const std::string& k) const {
   auto child = get_child(k);

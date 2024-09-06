@@ -165,13 +165,17 @@ std::any IdentExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, 
 
 GvarExprAst::GvarExprAst(const std::string &name)
  : AssignExprAst(ExprAstType::Gvar) {
+  std::shared_ptr<ExprAst> idx_key = nullptr;
   add_child_data("name", name);
-  //add_child_data("scale", ExprAstType::VarScalar);
+  //add_child_data("scale", VarTypeEnum::scalar_t);
+  add_child_data("idx_key", idx_key);
 }
 GvarExprAst::GvarExprAst(const std::string &name, VarTypeEnum scale_type)
  : AssignExprAst(ExprAstType::Gvar) {
+  std::shared_ptr<ExprAst> idx_key = nullptr;
   add_child_data("name", name);
   add_child_data("scale_type", scale_type);
+  add_child_data("idx_key", idx_key);
 }
 
 void pscale(VarTypeEnum scale) {
@@ -194,8 +198,20 @@ GvarExprAst::GvarExprAst(const std::string &name, std::shared_ptr<ExprAst> idx_k
   add_child_data("scale", scale);
 }
 
+int GvarExprAst::get_index(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> idx_key = std::any_cast<std::shared_ptr<ExprAst>>(get_child_data("idx_key"));
+  if(idx_key!=nullptr) {
+    Operand idx_key_o = std::any_cast<Operand>(idx_key->evaluate(slc));
+    Number index =std::get<Number>(idx_key_o.getValue());
+    //std::cout << "index: " << index << "\n";
+    return std::get<int>(index.get_data());
+  } else {
+    return -1;
+  }
+}
 
 std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
+  int index=-1;
   full_symbol_t fst = slc->current_context;  
   fst.mvar = name();
   std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
@@ -209,15 +225,39 @@ std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   //VarTypeEnum scale = std::any_cast<VarTypeEnum>(get_child_data("scale"));
   //pscale(scale);
 
+/*
+  std::shared_ptr<ExprAst> idx_key = std::any_cast<std::shared_ptr<ExprAst>>(get_child_data("idx_key"));
+  if(idx_key!=nullptr) {
+    auto list = std::any_cast<std::vector<std::any>>(tn->get_data());
+    Operand idx_key_o = std::any_cast<Operand>(idx_key->evaluate(slc));
+    Number index =std::get<Number>(idx_key_o.getValue());
+    //std::cout << "index: " << index << "\n";
+    return list[std::get<int>(index.get_data())];
+  }
+*/
+  if((index = get_index(slc)) != -1) {
+    auto list = std::any_cast<std::vector<std::any>>(tn->get_data());
+    return list[index];
+  }
+
   //pscale(std::any_cast<VarTypeEnum>(tn->get_child_data("scale"))); // this store values of the variable name! do not use get_child_data()
   return  tn->get_data(); // this store values of the variable name! do not use get_child_data()
 }
 void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
+  int index;
     full_symbol_t fst = slc->current_context;  
     fst.mvar = name();
     std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
 
+  if((index = get_index(slc)) != -1) {
+    std::shared_ptr<TreeNode> tn = slc->svlm_lang->context_tree->get_node(keys);
+    auto &list = std::any_cast<std::vector<std::any>&>(tn->get_data_r());
+    std::cout << "setting index: "  << index << " to value " << d << "\n";
+    list[index] = d;
+  } else {
     slc->svlm_lang->context_tree->add_node(keys, d);
+  }
+
     keys.push_back("scale");
     slc->svlm_lang->context_tree->add_node(keys, VarTypeEnum::scalar_t);
     if(d.type()  == typeid(std::vector<std::any>)) {

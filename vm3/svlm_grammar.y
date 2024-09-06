@@ -191,13 +191,19 @@ exp_eval
       std::make_shared<GvarExprAst>(std::string($2), nullptr, VarTypeEnum::scalar_t), 
       $4, ast_op::assign);
   }
+  | DOLLAR STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {           // global variable
+    slc->add_mvar_name($2);               // add to context tree
+    $$ = std::make_shared<BinOpExprAst>(
+      std::make_shared<GvarExprAst>(std::string($2), $4, VarTypeEnum::list_t), 
+      $7, ast_op::assign);
+  }
+
+
   | DOLLAR STR ASSIGN list {           // global variable
     slc->add_mvar_name($2);               // add to context tree
-
     $$ = std::make_shared<BinOpExprAst>(
       std::make_shared<GvarExprAst>(std::string($2), nullptr, VarTypeEnum::list_t),
       $4, ast_op::assign);
-
   }
 
   | STR ASSIGN exp_eval { 
@@ -227,6 +233,12 @@ literals
 variable
   : STR { $$ = std::make_shared<LvarExprAst>(std::string($1)); }
   | DOLLAR STR { $$ = std::make_shared<GvarExprAst>(std::string($2)); }
+  | DOLLAR STR SQBRK_L exp_eval SQBRK_R { 
+    $$ = std::make_shared<GvarExprAst>(
+      std::string($2), 
+      $4,
+      VarTypeEnum::list_t); 
+    }
   ;
 
 
