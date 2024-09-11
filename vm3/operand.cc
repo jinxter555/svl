@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 #include "operand.hh"
+#include "ast.hh"
 
 
 Operand::Operand(bool value) : value_(value) { type_ = VarTypeEnum::bool_t; }
@@ -17,8 +18,13 @@ Operand::Operand(std::vector<Operand>  l, VarTypeEnum t) : type_(t) {
 }
 
 Operand::Operand(std::vector<std::any>  l, VarTypeEnum t) : type_(t) { 
-  for(auto a: l) {
-    list_.push_back(std::any_cast<Operand>(a));
+  for(std::any a: l) {
+    if(a.type() == typeid(std::vector<std::any>)) {
+      Operand a_l(std::any_cast<std::vector<std::any>>(a), VarTypeEnum::list_t);
+      list_.push_back(a_l);
+    } else {
+      list_.push_back(std::any_cast<Operand>(a));
+    }
   }
 }
 
@@ -277,6 +283,8 @@ std::ostream& operator<<(std::ostream& os, const Operand& operand) {
     Operand::list_print(os, '[', ']', operand);
   } else if(operand.type_ == VarTypeEnum::tuple_t) {
     Operand::list_print(os, '{', '}', operand);
+  } else if(operand.type_ == VarTypeEnum::map_t) {
+    Operand::map_print(os, operand);
   } else {
     std::visit([&os](const auto& value) { os << value; }, operand.value_);
   }
@@ -290,6 +298,15 @@ void Operand::list_print(std::ostream& os, char b, char e, const Operand& ol) {
     os << ol.list_[i] << ","; 
   }
   os << ol.list_[i] << e;
+}
+void Operand::map_print(std::ostream& os, const Operand& om) {
+  std::shared_ptr<MapExprAst> tn = om.map_;
+  std::cout << "%{";
+  for(auto k : tn->get_child_keys()){
+    auto v =std::any_cast<Operand>( tn->get_child_data(k));
+    std::cout << k << ":" << " " << v << ",\n";
+  }
+  std::cout << "}";
 }
 
 /*

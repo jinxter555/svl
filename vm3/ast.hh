@@ -12,8 +12,8 @@
 
 class SvlmLangContext;
 enum class ExprAstType {
-  Print, ControlFlow, Operand, Number, Atom, Ident, Tuple,
-  Assign, Lvar, Gvar, Arg, List, CList, Func, 
+  Print, ControlFlow, Operand, Number, Atom, Ident, Tuple, KV, Map,
+  Assign, Lvar, Gvar, Arg, List, CList, Func,
   Callee, Case, CaseMatch, CaseMatchIs, CaseMatchWhen, CaseMatchElse, Decl, BinOp, While, Repeat};
 
 
@@ -146,21 +146,6 @@ public:
 private:
 };
 
-/*
-class ArgExprAst : public ExprAst {
-public:
-  ArgExprAst(arg_name_pos_t arg);
-  ArgExprAst(std::string name, unsigned char pos);
-  std::any evaluate(SvlmLangContext *slc) override ;
-  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
-  void codegen(std::vector<std::string> &code) const override;
-  void print() override;
-  std::string name();
-  arg_name_pos_t arg();
-  ExprAstType whoami() override { return ExprAstType::Arg;}
-};
-*/
-
 class DeclExprAst : public ExprAst {
 public:
   DeclExprAst (std::shared_ptr<IdentExprAst> l, DeclOpcodeAST doa) ;
@@ -186,7 +171,7 @@ private:
 
 class ListExprAst : public ExprAst {
 public:
-  ListExprAst() {}
+  ListExprAst() : ExprAst(ExprAstType::List) {}
   ListExprAst(std::any d);
   void add(std::shared_ptr<ExprAst> e);
   std::shared_ptr<ExprAst> get(int n);
@@ -197,6 +182,19 @@ public:
   void print() override;
   void codegen(std::vector<std::string> &code) const override;
   ExprAstType whoami() override { return ExprAstType::List;}
+};
+
+class MapExprAst : public ExprAst{
+private:
+  bool evaluated = false;
+public:
+  MapExprAst() : ExprAst(ExprAstType::Map) {}
+  void add( const std::string &key, std::shared_ptr<ExprAst> e);
+  std::any evaluate(SvlmLangContext *slc) override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+  ExprAstType whoami() override { return ExprAstType::Map;}
 };
 
 class FuncExprAst : public ExprAst {

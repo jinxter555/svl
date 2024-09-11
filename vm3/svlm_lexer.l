@@ -75,7 +75,6 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 "-"             return SvlmParser::token::MINUS;
 "*"             return SvlmParser::token::MULTIPLY;
 "/"             return SvlmParser::token::DIVIDE;
-"%"             return SvlmParser::token::MODULO;
 "!"             return SvlmParser::token::NOT;
 "^"             return SvlmParser::token::EXPONENT;
 "("             return SvlmParser::token::PAREN_L;
@@ -86,10 +85,12 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 "]"             return SvlmParser::token::SQBRK_R;
 "@"             return SvlmParser::token::AT;
 "$"             return SvlmParser::token::DOLLAR;
+"."             return SvlmParser::token::DOT;
 ","             return SvlmParser::token::COMMA;
 ":"             return SvlmParser::token::COLON;
 ";"             return SvlmParser::token::SEMICOLON;
 "="             return SvlmParser::token::ASSIGN;
+"%"             return SvlmParser::token::PERCENT;
 
 {dqstring}        { 
   std::string result = raw_to_escaped_string(YYText()); 

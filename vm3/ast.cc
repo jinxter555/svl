@@ -40,6 +40,12 @@ std::any PrintExprAst::evaluate(SvlmLangContext *slc) {
     return std::string("");
   } catch(const std::bad_any_cast& e) {}
 
+  try {
+    std::shared_ptr<MapExprAst> m = std::any_cast<std::shared_ptr<MapExprAst>>(d);
+    m->print();
+    return std::string("");
+  } catch(const std::bad_any_cast& e) {}
+
   std::cout << d;
   return std::string("");
 }
@@ -140,7 +146,8 @@ std::any OperandExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r
 
 void OperandExprAst::print() { 
   Operand o = std::any_cast<Operand>(get_child_data("value"));
-  std::cout << o;
+  // std::cout << o;
+  std::cout << "operand: " << o;
 }
 
 
@@ -266,7 +273,12 @@ void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
       slc->svlm_lang->context_tree->add_node(keys, VarTypeEnum::list_t);
     }
 
-
+    try{
+      Operand o = std::any_cast<Operand>(d);
+      slc->svlm_lang->context_tree->add_node(keys, o.get_type());
+      if(o.get_type() == VarTypeEnum::map_t) 
+        std::cout << "assign is map,size\n";
+    } catch(const std::bad_any_cast& e) {}
 
     slc->current_context = fst;
 }
@@ -641,7 +653,38 @@ std::any ListExprAst::evaluate_last_line(SvlmLangContext *slc) {
   return output;
 }
 
-//--------------------
+//-------------------- MapExprAst
+void MapExprAst::add( const std::string &key, std::shared_ptr<ExprAst> e){
+  add_child_data(key, e);
+}
+
+std::any MapExprAst::evaluate(SvlmLangContext *slc) { 
+  std::shared_ptr<MapExprAst> tn = std::make_shared<MapExprAst>();
+  for(auto k : get_child_keys()){
+    std::shared_ptr<ExprAst> v =std::any_cast<std::shared_ptr<ExprAst>>( get_child_data(k));
+    tn->add_child_data(k, v->evaluate(slc));
+  }
+  tn->evaluated = true;
+  return Operand(tn); 
+}
+void MapExprAst::print( ) {
+  std::cout << "%{";
+  //for(auto k : get_child_keys()){ std::cout << "k: " << k <<"\n"; }
+  //std::cout << "}"; return;
+  for(auto k : get_child_keys()){
+    std::shared_ptr<ExprAst> v =std::any_cast<std::shared_ptr<ExprAst>>( get_child_data(k));
+    if(v == nullptr) continue;
+    std::cout << k << ":" << " ";
+    v->print();
+     std::cout  << ",\n";
+  }
+  std::cout << "}";
+}
+
+void MapExprAst::codegen(std::vector<std::string> &code) const { }
+
+
+//-------------------- FuncExprAst
 FuncExprAst::FuncExprAst(
   std::string name, 
   std::vector<std::string> args, 
@@ -679,8 +722,7 @@ void FuncExprAst::print() {
   l->print();
   std::cout << "}";
 }
-void FuncExprAst::codegen(std::vector<std::string> &code) const {
-}
+void FuncExprAst::codegen(std::vector<std::string> &code) const { }
 
 
 //--------------------

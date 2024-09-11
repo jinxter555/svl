@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <tuple>
 #include "lang.hh"
 %}
 
@@ -43,8 +44,9 @@ std::vector<std::string> lvar_list;
 %token YYEOF EOL COMMENT1 COMMENT2
 %token MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT 
 %token CASE FLOW WHILE REPEAT UNTIL DONE IS IF THEN ELSE WHEN WHERE
-%token PAREN_L PAREN_R CUR_L CUR_R AT DOLLAR COLON COMMA SEMICOLON ARROW_L ARROW_R
+%token PAREN_L PAREN_R CUR_L CUR_R ARROW_L ARROW_R
 %token SQBRK_L SQBRK_R
+%token DOT AT DOLLAR COLON COMMA SEMICOLON
 %token TRUE FALSE NIL
 %token <std::string> IDENT_STR STR DQSTR
 %token <int>  INT
@@ -60,15 +62,20 @@ std::vector<std::string> lvar_list;
 %left               AND OR 
 %left               EQL NEQL GT LT GTEQ LTEQ 
 %left               PLUS MINUS
-%left               MULTIPLY DIVIDE MODULO
+%left               MULTIPLY DIVIDE PERCENT
 %precedence         UMINUS
 %precedence         NOT
 %right              EXPONENT
 
-%type <std::shared_ptr<ExprAst>>  exp exp_eval statement arg print_exp module function caller tuple comments literals  variable
+%type <std::shared_ptr<ExprAst>>  exp exp_eval statement print_exp module function caller
+%type <std::shared_ptr<ExprAst>>  arg  
+%type <std::tuple<std::string, std::shared_ptr<ExprAst>>>  kv_pair
+%type <std::shared_ptr<ExprAst>>  tuple comments literals  variable 
 %type <std::shared_ptr<ExprAst>>  case while_loop repeat_loop if_then_else 
-%type <std::shared_ptr<ListExprAst>>  statement_list  arg_list case_match_list list
+%type <std::shared_ptr<ListExprAst>>  statement_list case_match_list arg_list list 
 %type <std::shared_ptr<CaseMatchExprAst>>  case_match 
+%type <std::shared_ptr<MapExprAst>>  map kv_pair_list
+%type <std::string>  map_key
 %start program_start
 
 
@@ -135,7 +142,39 @@ arg_list
 arg
   : exp_eval
   ;
+//--------------------------------------------------- map list
+map
+  : PERCENT CUR_L kv_pair_list CUR_R {
+    std::cout << "map here!\n";
+    $$ = $3;
+  }
+  ;
 
+kv_pair_list
+  : kv_pair_list COMMA kv_pair {
+    $1->add(std::get<0>($3), std::get<1>($3));
+    $$ = $1;
+  }
+  | kv_pair {
+    auto ast_current_context = std::make_shared<MapExprAst>();
+    ast_current_context->add(std::get<0>($1), std::get<1>($1));
+    $$ = ast_current_context;
+  }
+  | %empty {$$ = std::make_shared<MapExprAst>();
+  }
+  ;
+
+kv_pair
+  : map_key COLON exp_eval {
+    //std::cout << $1 << " : "; $3->print(); std::cout << "\n"; 
+
+    $$ = {$1,$3};
+  }
+  ;
+map_key
+  : DQSTR
+  | STR
+  ;
 
 //--------------------------------------------------- caller/callee 
 caller
@@ -168,7 +207,9 @@ list
 exp_eval
   : literals
   | variable
+  | list  { $$ = $1; }
   | tuple { $$ = $1; }
+  | map { $$ = $1; }
   | PAREN_L exp_eval PAREN_R        { $$ = $2; }
   | caller
   | exp_eval MULTIPLY exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::mul); }
@@ -184,6 +225,16 @@ exp_eval
   | exp_eval AND exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::and_); }
   | exp_eval OR exp_eval { $$ = std::make_shared<BinOpExprAst>($1, $3, ast_op::or_); }
   | NOT exp_eval { $$ = std::make_shared<BinOpExprAst>($2, $2, ast_op::not_); }
+
+
+/*
+  | DOLLAR STR ASSIGN list {           // global variable
+    slc->add_mvar_name($2);               // add to context tree
+    $$ = std::make_shared<BinOpExprAst>(
+      std::make_shared<GvarExprAst>(std::string($2), nullptr, VarTypeEnum::list_t),
+      $4, ast_op::assign);
+  }
+  */
   
   | DOLLAR STR ASSIGN exp_eval {           // global variable
     slc->add_mvar_name($2);               // add to context tree
@@ -199,12 +250,6 @@ exp_eval
   }
 
 
-  | DOLLAR STR ASSIGN list {           // global variable
-    slc->add_mvar_name($2);               // add to context tree
-    $$ = std::make_shared<BinOpExprAst>(
-      std::make_shared<GvarExprAst>(std::string($2), nullptr, VarTypeEnum::list_t),
-      $4, ast_op::assign);
-  }
 
   | STR ASSIGN exp_eval { 
     lvar_list.push_back($1);
@@ -239,6 +284,7 @@ variable
       $4,
       VarTypeEnum::list_t); 
     }
+  // map[key] = value
   ;
 
 

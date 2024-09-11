@@ -4,17 +4,19 @@
 #include <stdexcept>
 #include <iostream>
 #include <any>
+#include <memory>
 #include "lang.hh"
 #include "number.hh"
 #include "atom.hh"
 
 
-
+class MapExprAst;
 class Operand {
 private:
   OperandVariant value_;
   VarTypeEnum type_;
   std::vector<Operand> list_;
+  std::shared_ptr<MapExprAst> map_;
 public:
   VarTypeEnum get_type() { return type_;};
   void print_type() const;
@@ -24,6 +26,9 @@ public:
   Operand(bool value) ;
   Operand(const Number& value) ;
   Operand(const Atom& value) ;
+  Operand(std::shared_ptr<MapExprAst> m) { 
+    type_ = VarTypeEnum::map_t;
+    map_ = m; };
   Operand(const std::string& value) ;
   Operand(std::vector<Operand>  l, VarTypeEnum t); // tuple
   Operand(std::vector<std::any>  l, VarTypeEnum t); // tuple
@@ -59,12 +64,16 @@ public:
   Operand opfunc(const Operand& other, ast_op op) ;
   //void push_back(std::vector<Operand> &, const Operand& other); // for list
   bool list_cmp(const Operand& other) const; // for list
+
   static void list_print(std::ostream& os, char b, char e, const Operand& ol) ;
+
   int list_size() const { 
     if(type_ == VarTypeEnum::list_t || type_ == VarTypeEnum::tuple_t) 
       return  list_.size(); 
     return 0;
   }
+
+  static void map_print(std::ostream& os, const Operand& om) ;
 
   friend std::ostream& operator<<(std::ostream& os, const Operand& operand);
   //friend std::ostream& operator<<(std::ostream& os, const std::vector<Operand> operand_vector) ;
