@@ -14,6 +14,7 @@ private:
   std::vector<std::shared_ptr<TreeNode>> members;
   std::shared_ptr<TreeNode> parent; // not yet implemented
   std::any data;
+  std::any *tn_error=nullptr;
 public:
 
   virtual ~TreeNode() {};
@@ -23,7 +24,7 @@ public:
   void add_child(const std::string &key, std::shared_ptr<TreeNode> child);
   void add_child_data(const std::string &key, std::any data);
   void add_member(std::shared_ptr<TreeNode> m);
-  bool TreeNode::has_child(const std::string &key) ;
+  bool has_child(const std::string &key) ;
 
   std::shared_ptr<TreeNode> get_child(const std::string& key) const;
 
@@ -38,6 +39,7 @@ public:
   std::any get_data() const;
   std::any& get_data_r() ;
   std::any get_child_data(const std::string &key) const;
+  std::any& get_child_data_r(const std::string& k);
   void set_data(const std::any d);
   void set_child_data(const std::string& key, const std::any d);
   void print_data();
