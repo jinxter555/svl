@@ -16,16 +16,19 @@ Operand::Operand(const Atom &value) : value_(value) { type_ = VarTypeEnum::atom_
 Operand::Operand(const std::string& value) : value_(value) { type_ = VarTypeEnum::str_t; }
 
 Operand::Operand(std::vector<Operand>  l, VarTypeEnum t) : type_(t) { 
-  list_ = move(l);
+  std::cout << "operand list init of operand : \n";
+  *list_ = move(l);
 }
 
 Operand::Operand(std::vector<std::any>  l, VarTypeEnum t) : type_(t) { 
+  std::cout << "operand list init of any : \n";
+  list_ = std::make_shared<std::vector<Operand>>();
   for(std::any a: l) {
     if(a.type() == typeid(std::vector<std::any>)) {
       Operand a_l(std::any_cast<std::vector<std::any>>(a), VarTypeEnum::list_t);
-      list_.push_back(a_l);
+      list_->push_back(a_l);
     } else {
-      list_.push_back(std::any_cast<Operand>(a));
+      list_->push_back(std::any_cast<Operand>(a));
     }
   }
 }
@@ -240,10 +243,10 @@ Operand Operand::operator||(const Operand& other) const {
 
 bool Operand::list_cmp(const Operand& other) const{
   int i, l;
-  l = list_.size();
-  if(l != other.list_.size()) return false;
+  l = list_->size();
+  if(l != other.list_->size()) return false;
   for(i=0; i<l; i++) {
-    if(list_[i]!=other.list_[i]) return false; 
+    if(  (*list_)[i]!=  (*other.list_)[i]) return false; 
   }
   return true;
 }
@@ -298,10 +301,10 @@ std::ostream& operator<<(std::ostream& os, const Operand& operand) {
 void Operand::list_print(std::ostream& os, char b, char e, const Operand& ol) {
   int i;
   os << b;
-  for(i=0; i<ol.list_.size()-1; i++) {
-    os << ol.list_[i] << ","; 
+  for(i=0; i<ol.list_->size()-1; i++) {
+    os <<  (*ol.list_)[i] << ","; 
   }
-  os << ol.list_[i] << e;
+  os <<  (*ol.list_)[i] << e;
 }
 void Operand::map_print(std::ostream& os, const Operand& om) {
   std::shared_ptr<MapExprAst> tn = om.map_;

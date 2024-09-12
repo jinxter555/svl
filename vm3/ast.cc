@@ -235,26 +235,15 @@ std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
   std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
   slc->current_context = fst;
   std::shared_ptr<TreeNode> tn = slc->svlm_lang->context_tree->get_node(keys);
+
   if(tn==nullptr){
     std::cerr << "variable name: " << fst.mvar << " doesn't exist\n";
     std::cout << "k: "; for( auto k : keys) { std::cout << k << " "; } std::cout << "\n";
     return 0;
   }
-  //VarTypeEnum scale = std::any_cast<VarTypeEnum>(get_child_data("scale"));
-  //pscale(scale);
-
-/*
-  std::shared_ptr<ExprAst> idx_key = std::any_cast<std::shared_ptr<ExprAst>>(get_child_data("idx_key"));
-  if(idx_key!=nullptr) {
-    auto list = std::any_cast<std::vector<std::any>>(tn->get_data());
-    Operand idx_key_o = std::any_cast<Operand>(idx_key->evaluate(slc));
-    Number index =std::get<Number>(idx_key_o.getValue());
-    //std::cout << "index: " << index << "\n";
-    return list[std::get<int>(index.get_data())];
-  }
-*/
   if((index = get_index_i(slc)) != -1) {
-    auto list = std::any_cast<std::vector<std::any>>(tn->get_data());
+    //auto list = std::any_cast<std::vector<std::any>>(tn->get_data());
+    auto list = std::any_cast<Operand>(tn->get_data());
     return list[index];
   }
 
@@ -270,38 +259,44 @@ std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
 void GvarExprAst::assign(SvlmLangContext *slc, std::any d) {
   int index; std::string index_s;
 
-    full_symbol_t fst = slc->current_context;  
-    fst.mvar = name();
-    std::vector<std::string> keys = move(slc->get_sym_key(key_tok_t::mvar, fst));
-    std::shared_ptr<TreeNode> tn = slc->svlm_lang->context_tree->get_node(keys);
+  full_symbol_t fst = slc->current_context;  
+  fst.mvar = name();
+  std::vector<std::string> keys_v = move(slc->get_sym_key(key_tok_t::mvar, fst));
+  std::vector<std::string> keys_t;
+  keys_t = keys_v; keys_t.push_back("scale");
+  std::shared_ptr<TreeNode> tn = slc->svlm_lang->context_tree->get_node(keys_v);
 
 
   if((index = get_index_i(slc)) != -1) {
-    auto &list = std::any_cast<std::vector<std::any>&>(tn->get_data_r());
+    //auto &list = std::any_cast<std::vector<std::any>&>(tn->get_data_r());
+    auto &list = std::any_cast<Operand&>(tn->get_data_r());
     std::cout << "setting index: "  << index << " to value " << d << "\n";
-    list[index] = d;
+    list[index] = std::any_cast<Operand>(d);
+    return;
   } else if((index_s = get_index_s(slc)) != "") {
     Operand &map = std::any_cast<Operand&>(tn->get_data_r());
     //std::cout << "map operand: " << map << "\n";
     map[index_s] = std::any_cast<Operand>(d);
-  } else {
-    slc->svlm_lang->context_tree->add_node(keys, d);
+    return;
+  } 
+
+    // assign list to gvar
+  if(d.type()  == typeid(std::vector<std::any>)) {
+    std::vector<std::any> l  = std::any_cast<std::vector<std::any>>(d);
+    Operand elist(l, VarTypeEnum::list_t);
+    //slc->svlm_lang->context_tree->add_node(keys_v, d);
+    slc->svlm_lang->context_tree->add_node(keys_v, elist);
+    std::cout << "assign is list: " << l.size() << "\n";
+    slc->svlm_lang->context_tree->add_node(keys_t, VarTypeEnum::list_t);
+    return ;
   }
 
-    keys.push_back("scale");
-    slc->svlm_lang->context_tree->add_node(keys, VarTypeEnum::scalar_t);
-    if(d.type()  == typeid(std::vector<std::any>)) {
-      std::vector<std::any> l  = std::any_cast<std::vector<std::any>>(d);
-      //std::cout << "assign is list: " << l.size() << "\n";
-      slc->svlm_lang->context_tree->add_node(keys, VarTypeEnum::list_t);
-    }
-
-    try{
-      Operand o = std::any_cast<Operand>(d);
-      slc->svlm_lang->context_tree->add_node(keys, o.get_type());
-    } catch(const std::bad_any_cast& e) {}
-
-    slc->current_context = fst;
+  try{
+    Operand o = std::any_cast<Operand>(d);
+    slc->svlm_lang->context_tree->add_node(keys_t, o.get_type());
+  } catch(const std::bad_any_cast& e) {}
+  slc->svlm_lang->context_tree->add_node(keys_v, d);
+  slc->current_context = fst;
 }
 
 std::string GvarExprAst::name() { 

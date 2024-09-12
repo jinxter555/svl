@@ -15,7 +15,8 @@ class Operand {
 private:
   OperandVariant value_;
   VarTypeEnum type_;
-  std::vector<Operand> list_;
+  //std::vector<Operand> list_;
+  std::shared_ptr<std::vector<Operand>> list_;
   std::shared_ptr<MapExprAst> map_;
   Operand* operand_error=nullptr;
 public:
@@ -47,10 +48,10 @@ public:
   Operand operator/(const Operand& other) const;
 
   Operand &operator[](int i) {
-    return list_[i];
+    return (*list_)[i];
   };
   const Operand &operator[](int i) const{
-    return list_[i];
+    return (*list_)[i];
   };
 
   const Operand &operator[](std::string i) const;
@@ -77,7 +78,7 @@ public:
 
   int list_size() const { 
     if(type_ == VarTypeEnum::list_t || type_ == VarTypeEnum::tuple_t) 
-      return  list_.size(); 
+      return  list_->size(); 
     return 0;
   }
 
