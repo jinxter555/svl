@@ -5,7 +5,9 @@
 #include "operand.hh"
 #include "ast.hh"
 
+Operand operand_nil;
 
+Operand::Operand() { type_ = VarTypeEnum::nil_t; }
 Operand::Operand(bool value) : value_(value) { type_ = VarTypeEnum::bool_t; }
 Operand::Operand(int value) : value_(Number(value)) { type_ = VarTypeEnum::num_t; }
 Operand::Operand(float value) : value_(Number(value)) { type_ = VarTypeEnum::num_t; }
@@ -279,7 +281,9 @@ Operand Operand::opfunc(const Operand& other, ast_op op) {
 
 
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
-  if(operand.type_ == VarTypeEnum::list_t) {
+  if(operand.type_ == VarTypeEnum::nil_t) {
+    std::cout << "nil";
+  } else if(operand.type_ == VarTypeEnum::list_t) {
     Operand::list_print(os, '[', ']', operand);
   } else if(operand.type_ == VarTypeEnum::tuple_t) {
     Operand::list_print(os, '{', '}', operand);
@@ -322,15 +326,42 @@ std::ostream& operator<<(std::ostream& os, const std::vector<Operand> operand_ve
   return os;
 }*/
 
+Operand &Operand::operator[](std::string i) {
+  std::cout << "setting map to:\n ";
+  try {
+    auto &a_o = std::any_cast<Operand&>(map_->get_child_data_r(i));
+    return a_o;
+  } catch(const std::bad_any_cast& e) {
+    std::cout << "add key to map to:\n ";
+    map_->add_child_data(i, operand_nil);
+    auto &a_o = std::any_cast<Operand&>(map_->get_child_data_r(i));
+    return a_o;
+  }
+  //return *operand_error;
+  return operand_nil;
+}
+
+const Operand &Operand::operator[](std::string i) const {
+  std::cout << "reading from map:\n ";
+  try {
+    auto &a_o = std::any_cast<Operand&>(map_->get_child_data_r(i));
+    return a_o;
+  } catch(const std::bad_any_cast& e) {}
+  //return *operand_error;
+  return operand_nil;
+}
+
 
 void Operand::print_type()  const{
   std::string outstr;
+
   switch(type_) {
   case VarTypeEnum::bool_t: outstr ="type bool"; break;
   case VarTypeEnum::num_t: outstr ="type num_t"; break;
   case VarTypeEnum::str_t: outstr ="type str_t"; break;
   case VarTypeEnum::atom_t: outstr ="type atom_t"; break;
   case VarTypeEnum::list_t: outstr ="type list_t"; break;
+  case VarTypeEnum::map_t: outstr ="type map_t"; break;
   case VarTypeEnum::ptr_t: outstr ="type ptr_t"; break;
   case VarTypeEnum::user_t: outstr ="type user_t"; break;
   default: outstr ="type unknown"; break;

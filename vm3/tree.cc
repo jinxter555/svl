@@ -9,6 +9,10 @@ void TreeNode::add_child(const std::string &key, std::shared_ptr<TreeNode> child
     // children[key] = move(child);
     children[key] = child;
 }
+bool TreeNode::has_child(const std::string &key) {
+   if (children.find(key) != children.end())  return true;
+   return false;
+}
 
 void TreeNode::add_child_data(const std::string &key, std::any data) {
     std::shared_ptr<TreeNode> child = std::make_shared<TreeNode>();
@@ -75,6 +79,13 @@ std::any TreeNode::get_child_data(const std::string& k) const {
     return child->get_data();
   std::cerr << "child " << k << "  not found!\n";
   return nullptr;
+}
+std::any& TreeNode::get_child_data_r(const std::string& k) {
+  auto child = get_child(k);
+  if(child)
+    return child->get_data_r();
+  std::cerr << "child " << k << "  not found!\n";
+  return *tn_error;
 }
 
 void TreeNode::set_data(const std::any d) {

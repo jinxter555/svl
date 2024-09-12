@@ -17,10 +17,10 @@ private:
   VarTypeEnum type_;
   std::vector<Operand> list_;
   std::shared_ptr<MapExprAst> map_;
+  Operand* operand_error=nullptr;
 public:
-  VarTypeEnum get_type() { return type_;};
-  void print_type() const;
   // Constructors for each supported type
+  Operand();
   Operand(int value) ;
   Operand(float value) ;
   Operand(bool value) ;
@@ -33,6 +33,9 @@ public:
   Operand(std::vector<Operand>  l, VarTypeEnum t); // tuple
   Operand(std::vector<std::any>  l, VarTypeEnum t); // tuple
 
+  //
+  VarTypeEnum get_type() { return type_;};
+  void print_type() const;
   // Get the stored value (use with caution)
   const OperandVariant& getValue() const ;
 
@@ -42,12 +45,17 @@ public:
   Operand operator-(const Operand& other) const ;
   Operand operator*(const Operand& other) const;
   Operand operator/(const Operand& other) const;
+
   Operand &operator[](int i) {
     return list_[i];
   };
   const Operand &operator[](int i) const{
     return list_[i];
   };
+
+  const Operand &operator[](std::string i) const;
+  Operand &operator[](std::string i) ;
+
 
   bool operator==(const Operand& other) const;
   bool operator!=(const Operand& other) const;

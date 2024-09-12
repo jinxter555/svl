@@ -55,6 +55,7 @@ using OperandVariant = std::variant
   <bool, Number, Atom, std::string>;
 
 enum class VarTypeEnum {
+  nil_t,
   bool_t,
   num_t,
   str_t,

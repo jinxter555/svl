@@ -128,7 +128,8 @@ public:
     //std::cout << "whoami, i am gvar\n";
     return ExprAstType::Gvar;}
 private:
-   int get_index(SvlmLangContext *slc);
+   int get_index_i(SvlmLangContext *slc);
+   std::string get_index_s(SvlmLangContext *slc);
 };
 
 class LvarExprAst : public AssignExprAst {

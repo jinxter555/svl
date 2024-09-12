@@ -273,6 +273,7 @@ literals
   | TRUE { $$ = std::make_shared<OperandExprAst>(Operand(true)); }
   | FALSE { $$ = std::make_shared<OperandExprAst>(Operand(false)); }
   | COLON STR { $$ = std::make_shared<OperandExprAst>(Operand(Atom($2))); }
+  | DQSTR { $$ = std::make_shared<OperandExprAst>(Operand($1)); }
   ;
 
 variable

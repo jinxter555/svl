@@ -23,6 +23,7 @@ public:
   void add_child(const std::string &key, std::shared_ptr<TreeNode> child);
   void add_child_data(const std::string &key, std::any data);
   void add_member(std::shared_ptr<TreeNode> m);
+  bool TreeNode::has_child(const std::string &key) ;
 
   std::shared_ptr<TreeNode> get_child(const std::string& key) const;
 

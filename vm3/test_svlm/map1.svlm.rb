@@ -1,7 +1,8 @@
 module mhello
 #$a = %{hello: 2}
 $a = %{"hello": 2}
-print $a
+$b = %{"world": 2333.33}
+print $a["what"]
 return
 #if {$x, $y} = $c then
 if $a == $b then
