@@ -169,6 +169,27 @@ void IdentExprAst::print() {
 std::any IdentExprAst::uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) {return 0;} 
 
 //----------------------------- global variable expr
+int AssignExprAst::get_index_i(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> idx_key = std::any_cast<std::shared_ptr<ExprAst>>(get_child_data("idx_key"));
+  if(idx_key!=nullptr) {
+    Operand idx_key_o = std::any_cast<Operand>(idx_key->evaluate(slc));
+    if(idx_key_o.get_type() != VarTypeEnum::num_t) return -1;
+    Number index =std::get<Number>(idx_key_o.getValue());
+    //std::cout << "index: " << index << "\n";
+    return std::get<int>(index.get_data());
+  } else {
+    return -1;
+  }
+}
+std::string AssignExprAst::get_index_s(SvlmLangContext *slc) {
+  std::shared_ptr<ExprAst> idx_key = std::any_cast<std::shared_ptr<ExprAst>>(get_child_data("idx_key"));
+  if(idx_key!=nullptr) {
+    Operand idx_key_o = std::any_cast<Operand>(idx_key->evaluate(slc));
+    return std::get<std::string>(idx_key_o.getValue());
+  } else {
+    return "";
+  }
+}
 
 GvarExprAst::GvarExprAst(const std::string &name)
  : AssignExprAst(ExprAstType::Gvar) {
@@ -203,29 +224,6 @@ GvarExprAst::GvarExprAst(const std::string &name, std::shared_ptr<ExprAst> idx_k
   add_child_data("name", name);
   add_child_data("idx_key", idx_key);
   add_child_data("scale", scale);
-}
-
-int GvarExprAst::get_index_i(SvlmLangContext *slc) {
-  std::shared_ptr<ExprAst> idx_key = std::any_cast<std::shared_ptr<ExprAst>>(get_child_data("idx_key"));
-  if(idx_key!=nullptr) {
-    Operand idx_key_o = std::any_cast<Operand>(idx_key->evaluate(slc));
-    if(idx_key_o.get_type() != VarTypeEnum::num_t) return -1;
-    Number index =std::get<Number>(idx_key_o.getValue());
-    //std::cout << "index: " << index << "\n";
-    return std::get<int>(index.get_data());
-  } else {
-    return -1;
-  }
-}
-
-std::string GvarExprAst::get_index_s(SvlmLangContext *slc) {
-  std::shared_ptr<ExprAst> idx_key = std::any_cast<std::shared_ptr<ExprAst>>(get_child_data("idx_key"));
-  if(idx_key!=nullptr) {
-    Operand idx_key_o = std::any_cast<Operand>(idx_key->evaluate(slc));
-    return std::get<std::string>(idx_key_o.getValue());
-  } else {
-    return "";
-  }
 }
 
 std::any GvarExprAst::evaluate(SvlmLangContext *slc) {
@@ -312,12 +310,26 @@ void GvarExprAst::print() {
 //----------------------------- local variable expr
 LvarExprAst::LvarExprAst(const std::string &name)
  : AssignExprAst(ExprAstType::Lvar) {
+  std::shared_ptr<ExprAst> idx_key = nullptr;
   add_child_data("name", name);
+  //add_child_data("scale", VarTypeEnum::scalar_t);
+  add_child_data("idx_key", idx_key);
 }
 std::string LvarExprAst::name() { 
   return std::any_cast<std::string>(get_child_data("name"));
 }
+LvarExprAst::LvarExprAst
+  ( const std::string &name
+  , std::shared_ptr<ExprAst> idx_key
+  , VarTypeEnum scale
+  ) : AssignExprAst(ExprAstType::Lvar) {
+  add_child_data("name", name);
+  add_child_data("idx_key", idx_key);
+  add_child_data("scale", scale);
+
+}
 std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
+  int index=-1; std::string index_s="";
   //std::map<std::string, std::shared_ptr<TreeNode>> lvars;
   if (slc->svlm_lang->svlm_stack.empty()) { std::cerr << "empty stack: Can't find local variable!\n"; return 0; }
   if (slc->svlm_lang->svlm_stack.back()==nullptr) { std::cerr << "stack ack is empty!\n"; return 0; }
@@ -329,46 +341,58 @@ std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
   }
   std::any a = (*lvars_tma)[name()];
   //std::cout << "eval lvar " << name() << " = " << a << "\n";
+
+  if((index = get_index_i(slc)) != -1) {
+    auto list = std::any_cast<Operand>(a);
+    return list[index];
+  }
+
+  if((index_s = get_index_s(slc)) != "") {
+    auto const map = std::any_cast<Operand>(a);
+    return map[index_s];
+  }
+
   return a;
 }
 void LvarExprAst::codegen(std::vector<std::string> &code) const {
 }
 void LvarExprAst::assign(SvlmLangContext *slc, std::any d) {
+  int index=-1; std::string index_s="";
   //std::cout << "assign lvar " << name() << " = " << d << "\n";
     if(slc->svlm_lang->svlm_stack.empty()) { std::cerr << "empty stack: to assign local variable!\n"; return; }
   std::shared_ptr<TMA> lvars_tma 
     = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
-  (*lvars_tma)[name()]= d;
+
+  std::any &l_var = (*lvars_tma)[name()];
+
+  if((index = get_index_i(slc)) != -1) {
+    //auto &list = std::any_cast<std::vector<std::any>&>(tn->get_data_r());
+    auto &list = std::any_cast<Operand&>(l_var);
+    std::cout << "setting index: "  << index << " to value " << d << "\n";
+    list[index] = std::any_cast<Operand>(d);
+    return;
+  } else if((index_s = get_index_s(slc)) != "") {
+    Operand &map = std::any_cast<Operand&>(l_var);
+    //std::cout << "map operand: " << map << "\n";
+    map[index_s] = std::any_cast<Operand>(d);
+    return;
+  } 
+    // assign list to gvar
+  // have to assign again using list_t
+  if(d.type()  == typeid(std::vector<std::any>)) {
+    std::vector<std::any> l  = std::any_cast<std::vector<std::any>>(d);
+    Operand elist(l, VarTypeEnum::list_t);
+    std::cout << "lvar " << name() << " is a list\n";
+    //(*lvars_tma)[name()]= elist;
+    l_var = elist;
+    return ;
+  }
+  //(*lvars_tma)[name()]= d;
+  l_var = d;
 }
 void LvarExprAst::print() {
   std::cout << name() << "\n";
 }
-
-
-
-//----------------------------- func arg expr
-/*
-ArgExprAst::ArgExprAst(std::string name, unsigned char pos) {
-  arg_name_pos_t arg;
-  arg.name = name;
-  arg.pos = pos;
-  set_data(arg);
-}
-
-ArgExprAst::ArgExprAst(arg_name_pos_t arg) : ExprAst(arg) {}
-void ArgExprAst::codegen(std::vector<std::string> &code) const {
-}
-std::string ArgExprAst::name() { 
-  return std::any_cast<std::string>(get_data()); 
-}
-arg_name_pos_t ArgExprAst::arg() { 
-  return std::any_cast<arg_name_pos_t>(get_data()); 
-}
-std::any ArgExprAst::evaluate(SvlmLangContext *slc) {
-  return 0;
-}
-void ArgExprAst::print() { print_data(); std::cout << "\n";}
-*/
 
 //----------------------------- tuple expr
 TupleExprAst::TupleExprAst(std::shared_ptr<ListExprAst> tlist)

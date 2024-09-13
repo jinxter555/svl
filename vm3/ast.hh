@@ -108,6 +108,9 @@ public:
   virtual std::string name() =0;
   virtual void assign(SvlmLangContext *slc, std::any d) = 0;
   ExprAstType whoami() override { return ExprAstType::Assign;}
+
+  int get_index_i(SvlmLangContext *slc);
+  std::string get_index_s(SvlmLangContext *slc);
 };
 
 class GvarExprAst : public AssignExprAst {
@@ -127,14 +130,12 @@ public:
   ExprAstType whoami() override { 
     //std::cout << "whoami, i am gvar\n";
     return ExprAstType::Gvar;}
-private:
-   int get_index_i(SvlmLangContext *slc);
-   std::string get_index_s(SvlmLangContext *slc);
 };
 
 class LvarExprAst : public AssignExprAst {
 public:
   LvarExprAst(const std::string &name);
+  LvarExprAst(const std::string &name, std::shared_ptr<ExprAst> idx_key, VarTypeEnum scale);
   std::string name() override;
   std::any evaluate(SvlmLangContext *slc) override ;
   std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 

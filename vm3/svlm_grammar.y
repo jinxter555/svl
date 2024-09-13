@@ -254,8 +254,15 @@ exp_eval
   | STR ASSIGN exp_eval { 
     lvar_list.push_back($1);
     $$ = std::make_shared<BinOpExprAst>(
-      std::make_shared<LvarExprAst>(std::string($1)), 
+      std::make_shared<LvarExprAst>(std::string($1), nullptr, VarTypeEnum::scalar_t), 
       $3, ast_op::assign);
+  }
+  | STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {           // global variable
+    lvar_list.push_back($1);
+    $$ = std::make_shared<BinOpExprAst>(
+      std::make_shared<LvarExprAst>(std::string($1), $3, VarTypeEnum::list_t), 
+      $6, ast_op::assign);
+
   }
 
 
@@ -284,8 +291,13 @@ variable
       std::string($2), 
       $4,
       VarTypeEnum::list_t); 
-    }
-  // map[key] = value
+  }
+  | STR SQBRK_L exp_eval SQBRK_R { 
+    $$ = std::make_shared<LvarExprAst>(
+      std::string($1), 
+      $3,
+      VarTypeEnum::list_t); 
+  }
   ;
 
 
