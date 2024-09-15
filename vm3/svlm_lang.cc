@@ -15,8 +15,8 @@ SvlmLang::SvlmLang(std::shared_ptr<Tree> tp) {
     cc->add_child("code", ast_current_context);
     cc->add_child("data", ast_current_context);
     cc->add_child("stack", ast_current_context);
-    frame.sp=0;
-    frame.fp=0;
+    //frame.sp=0;
+    //frame.fp=0;
 
     ast_current_contexts.push(ast_current_context);
 
@@ -56,7 +56,7 @@ void SvlmLangContext::fcall_stack_setup(std::vector<std::any> args, std::string 
 
     std::map<std::string, std::shared_ptr<TreeNode>> lvars = lvar_node->get_children();
 
-    auto lvars_tma = std::make_shared<TMA>();
+    std::shared_ptr<TMA> lvars_tma = std::make_shared<TMA>();
 
 
     for (const auto& [k, v] : lvars)  // set up all the local vars names including argument names
@@ -68,17 +68,11 @@ void SvlmLangContext::fcall_stack_setup(std::vector<std::any> args, std::string 
       (*lvars_tma)[k] = args[i];
     }
 
-    svlm_lang->svlm_stack.push_back(lvars_tma);
+    FrameSvlm frame{lvars_tma, 0 };
+    //svlm_lang->svlm_stack.push_back(lvars_tma);
+    svlm_lang->svlm_stack.push_back(frame);
 
   }
-
-/*
-void SvlmLang::fcall_args_setup(std::vector<std::any> args){
-  frame.sp = svlm_stack.size(); // set current stack pointer
-  svlm_frames.push_back(frame);
-  //for(auto a :args) { svlm_stack.push_back(a); }
-  frame.fp = svlm_stack.size();
-}*/
 
 //--------------------------------------------------------------------
 SvlmLangContext::SvlmLangContext(SvlmLang *s) : svlm_lang(s) {

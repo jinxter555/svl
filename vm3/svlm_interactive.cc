@@ -55,7 +55,9 @@ void SvlmInteractive::print_stack(const std::string& message) {
     std::cout << i++ << ": " << (*it) << "\n";
   }*/
 
-  for (const auto& sharedMap : svlm_lang.svlm_stack) {
+  //for (const auto& sharedMap : svlm_lang.svlm_stack) {
+  for (const auto& frame : svlm_lang.svlm_stack) {
+    auto sharedMap  = frame.lvars;
     std::cout << i++ << ":";
     for (const auto& keyValue : *sharedMap) {
       std::any second  = keyValue.second;

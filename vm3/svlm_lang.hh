@@ -6,7 +6,6 @@
 #include "ast.hh"
 #include "universe.hh"
 #include "lang.hh"
-#include "frame_svlm.hh"
 
 
 
@@ -23,10 +22,11 @@ public:
   std::stack<std::shared_ptr<ListExprAst>> ast_current_contexts;
   std::shared_ptr<ListExprAst> ast_current_context;
   
-  std::vector<FrameSvlm> svlm_frames;
+  //std::vector<FrameSvlm> svlm_frames;
   // std::vector<std::any> svlm_stack;
-  std::vector<std::shared_ptr<TMA>> svlm_stack;
-  FrameSvlm frame;
+  //std::vector<std::shared_ptr<TMA>> svlm_stack;
+  std::vector<FrameSvlm> svlm_stack;
+  //FrameSvlm frame;
   ControlFlow control_flow = ControlFlow::run;
   std::shared_ptr<ExprAst> fc_exp; // flow control expression
   std::stack<ControlFlow> control_flow_stack;

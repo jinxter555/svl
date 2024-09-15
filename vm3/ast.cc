@@ -332,8 +332,14 @@ std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
   int index=-1; std::string index_s="";
   //std::map<std::string, std::shared_ptr<TreeNode>> lvars;
   if (slc->svlm_lang->svlm_stack.empty()) { std::cerr << "empty stack: Can't find local variable!\n"; return 0; }
-  if (slc->svlm_lang->svlm_stack.back()==nullptr) { std::cerr << "stack ack is empty!\n"; return 0; }
-  std::shared_ptr<TMA> lvars_tma = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
+  // if (slc->svlm_lang->svlm_stack.back()==nullptr) { std::cerr << "stack ack is empty!\n"; return 0; }
+  if (slc->svlm_lang->svlm_stack.size()==0) { std::cerr << "stack ack is empty!\n"; return 0; }
+
+  //std::shared_ptr<TMA> lvars_tma = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
+  FrameSvlm frame = slc->svlm_lang->svlm_stack.back();
+  std::shared_ptr<TMA> lvars_tma = frame.lvars;
+
+
   if(lvars_tma==nullptr) { std::cerr << "lvar_tma is null for " << name() << " !\n"; return 0;}
 
   if( ! (*lvars_tma).count(name()) ) {
@@ -360,8 +366,8 @@ void LvarExprAst::assign(SvlmLangContext *slc, std::any d) {
   int index=-1; std::string index_s="";
   //std::cout << "assign lvar " << name() << " = " << d << "\n";
     if(slc->svlm_lang->svlm_stack.empty()) { std::cerr << "empty stack: to assign local variable!\n"; return; }
-  std::shared_ptr<TMA> lvars_tma 
-    = std::any_cast<std::shared_ptr<TMA>>(slc->svlm_lang->svlm_stack.back());
+  FrameSvlm frame = slc->svlm_lang->svlm_stack.back();
+  std::shared_ptr<TMA> lvars_tma = frame.lvars;
 
   std::any &l_var = (*lvars_tma)[name()];
 
