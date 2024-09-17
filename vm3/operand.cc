@@ -17,18 +17,21 @@ Operand::Operand(const std::string& value) : value_(value) { type_ = VarTypeEnum
 
 Operand::Operand(std::vector<Operand>  l, VarTypeEnum t) : type_(t) { 
   std::cout << "operand list init of operand : \n";
-  *list_ = move(l);
+  auto &list_ = std::get<LIST_T>(value_);
+  list_ = move(l);
 }
 
 Operand::Operand(std::vector<std::any>  l, VarTypeEnum t) : type_(t) { 
   std::cout << "operand list init of any : \n";
-  list_ = std::make_shared<std::vector<Operand>>();
+  //std::vector<Operand> &list_ = std::get<LIST_T>(value_);
+  value_ = move(std::vector<Operand> {});
+  std::vector<Operand> &list_ = std::get<std::vector<Operand>>(value_);
   for(std::any a: l) {
     if(a.type() == typeid(std::vector<std::any>)) {
       Operand a_l(std::any_cast<std::vector<std::any>>(a), VarTypeEnum::list_t);
-      list_->push_back(a_l);
+      list_.push_back(a_l);
     } else {
-      list_->push_back(std::any_cast<Operand>(a));
+      list_.push_back(std::any_cast<Operand>(a));
     }
   }
 }
@@ -243,10 +246,12 @@ Operand Operand::operator||(const Operand& other) const {
 
 bool Operand::list_cmp(const Operand& other) const{
   int i, l;
-  l = list_->size();
-  if(l != other.list_->size()) return false;
+ auto &list_ = std::get<LIST_T>(value_);
+ auto &other_list_ = std::get<LIST_T>(other.value_);
+  l = list_.size();
+  if(l != other_list_.size()) return false;
   for(i=0; i<l; i++) {
-    if(  (*list_)[i]!=  (*other.list_)[i]) return false; 
+    if(  list_[i]!=  other_list_[i]) return false; 
   }
   return true;
 }
@@ -283,6 +288,10 @@ Operand Operand::opfunc(const Operand& other, ast_op op) {
 }
 
 
+std::ostream& operator<<(std::ostream& os, const LIST_T& operands) {
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   if(operand.type_ == VarTypeEnum::nil_t) {
     std::cout << "nil";
@@ -301,10 +310,11 @@ std::ostream& operator<<(std::ostream& os, const Operand& operand) {
 void Operand::list_print(std::ostream& os, char b, char e, const Operand& ol) {
   int i;
   os << b;
-  for(i=0; i<ol.list_->size()-1; i++) {
-    os <<  (*ol.list_)[i] << ","; 
+  auto &ol_list_ = std::get<LIST_T>(ol.value_);
+  for(i=0; i<ol_list_.size()-1; i++) {
+    os <<  ol_list_[i] << ","; 
   }
-  os <<  (*ol.list_)[i] << e;
+  os <<  ol_list_[i] << e;
 }
 void Operand::map_print(std::ostream& os, const Operand& om) {
   std::shared_ptr<MapExprAst> tn = om.map_;

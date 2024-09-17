@@ -12,8 +12,8 @@
 
 class SvlmLangContext;
 enum class ExprAstType {
-  Print, ControlFlow, Operand, Number, Atom, Ident, Tuple, KV, Map,
-  Assign, Lvar, Gvar, Arg, List, CList, Func,
+  Print, ControlFlow, Operand, Ident, Tuple, Map, Tree,
+  Assign, Lvar, Gvar, List, Func,
   Callee, Case, CaseMatch, CaseMatchIs, CaseMatchWhen, CaseMatchElse, Decl, BinOp, While, Repeat};
 
 
@@ -198,6 +198,24 @@ public:
   void codegen(std::vector<std::string> &code) const override;
   ExprAstType whoami() override { return ExprAstType::Map;}
 };
+
+class TreeExprAst : public ExprAst{
+public:
+  TreeExprAst() ;
+  TreeExprAst(std::shared_ptr<OperandExprAst> cmd) ;
+  TreeExprAst(std::shared_ptr<OperandExprAst> cmd, std::shared_ptr<ExprAst> e) ;
+
+  std::any evaluate(SvlmLangContext *slc) override;
+  std::any uni_op(SvlmLangContext *slc, std::shared_ptr<ExprAst> r, ast_op op) override {return 0;} 
+  void print() override;
+  void codegen(std::vector<std::string> &code) const override;
+  ExprAstType whoami() override { return ExprAstType::Tree;}
+};
+
+
+
+
+
 
 class FuncExprAst : public ExprAst {
 public:

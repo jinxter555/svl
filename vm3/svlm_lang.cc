@@ -68,7 +68,7 @@ void SvlmLangContext::fcall_stack_setup(std::vector<std::any> args, std::string 
       (*lvars_tma)[k] = args[i];
     }
 
-    FrameSvlm frame{lvars_tma, 0 };
+    FrameSvlm frame{move(lvars_tma), 0};
     //svlm_lang->svlm_stack.push_back(lvars_tma);
     svlm_lang->svlm_stack.push_back(frame);
 

@@ -343,7 +343,8 @@ std::any LvarExprAst::evaluate(SvlmLangContext *slc) {
   if(lvars_tma==nullptr) { std::cerr << "lvar_tma is null for " << name() << " !\n"; return 0;}
 
   if( ! (*lvars_tma).count(name()) ) {
-    std::cerr << "unknown local variable: " << name() << " !\n"; return 0;
+    std::cerr << "unknown local variable: " << name() << "!\n"; 
+    return Operand();
   }
   std::any a = (*lvars_tma)[name()];
   //std::cout << "eval lvar " << name() << " = " << a << "\n";
@@ -1104,6 +1105,25 @@ void RepeatExprAst::print() {
   l->print();
   std::cout  << "until " ; cond->print() ; std::cout <<  " done\n";
 }
+
+//--------------------  tree expr
+TreeExprAst::TreeExprAst() : ExprAst(ExprAstType::Tree) {
+
+}
+TreeExprAst::TreeExprAst(std::shared_ptr<OperandExprAst> cmd) : ExprAst(ExprAstType::Tree) {
+
+}
+TreeExprAst::TreeExprAst(std::shared_ptr<OperandExprAst> cmd, std::shared_ptr<ExprAst> e) 
+: ExprAst(ExprAstType::Tree) {
+
+}
+std::any TreeExprAst::evaluate(SvlmLangContext *slc) {
+  return 0;
+}
+void TreeExprAst::print() {
+
+}
+void TreeExprAst::codegen(std::vector<std::string> &code) const {}
 
 
 #endif

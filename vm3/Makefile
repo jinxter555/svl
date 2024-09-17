@@ -42,7 +42,7 @@ tuple.o: tuple.cc tuple.hh
 number.o: number.cc number.hh
 	$(CC) -c number.cc
 
-operand.o: operand.cc operand.hh
+operand.o: operand.cc operand.hh lang.hh
 	$(CC) -c operand.cc
 
 atom.o: atom.cc atom.hh

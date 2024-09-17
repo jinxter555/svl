@@ -5,8 +5,11 @@
 #include <any>
 #include <map>
 
-#define TM std::map<std::string, std::shared_ptr<TreeNode>>
+#define TMN std::map<std::string, std::shared_ptr<TreeNode>>
 #define TMA std::map<std::string, std::any>
+
+#define LIST_PTR std::shared_ptr<std::vector<Operand>>
+#define LIST_T std::vector<Operand>
 
 enum class key_tok_t {
   app=10, api, smodule, mvar, mvar_total_count,
@@ -55,10 +58,11 @@ class Number; class Atom;
 class Operand;
 using OperandVariant = std::variant
   //<bool, Number, Atom, std::string, std::vector<Operand>>;
-  <bool, Number, Atom, std::string>;
+  <bool, Number, Atom, std::string, LIST_T>;
 
 enum class VarTypeEnum {
   nil_t,
+  undefined_t,
   bool_t,
   num_t,
   str_t,
@@ -94,9 +98,3 @@ public:
 
 
 typedef std::variant<int, float>  num_d_t;
-
-typedef struct {
-  unsigned char pos; // argument postition from 0 - 255
-  std::string name;
-} arg_name_pos_t;
-

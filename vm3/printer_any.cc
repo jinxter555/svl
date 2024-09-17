@@ -103,8 +103,8 @@ std::ostream& operator << (std::ostream& out, std::any& a) {
     std::cout  << "code block\n";
     std::shared_ptr ast = std::any_cast<std::shared_ptr<ExprAst>>(a);
     ast->print(); }
-  else if(a.type()  == typeid(TM)) {
-    TM lvars = std::any_cast<TM>(a);
+  else if(a.type()  == typeid(TMN)) {
+    TMN lvars = std::any_cast<TMN>(a);
     std::cout  << "Tree node\n";
     for (const auto& [key, _] :  lvars) {
       std::any  v = lvars[key]->get_data();
