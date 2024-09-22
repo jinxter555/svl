@@ -1,0 +1,59 @@
+SHELL := /bin/bash
+CC=g++ -std=c++17 -g
+# Define temporary directory
+TMPDIR = /dev/shm
+
+
+# Define compiler and flags (adjust as needed)
+#CFLAGS = -Wall -O2
+
+# Define object files and target executable
+OBJECTS_PS = svlm_parser.o asm_parser.o svlm_scanner.o asm_scanner.o
+OBJECTS = ast.o assembler_interactive.o assembly.o commandline.o number.o printer_any.o \
+svlm_interactive.o tree.o vm.o assembler.o atom.o my_helpers.o \
+opcode.o prompt.o svlm_lang.o tuple.o \
+
+TARGET = main.out
+
+# Main rule: build the target executable
+.PHONY: all clean
+
+all: $(OBJECTS_PS) $(TARGET)
+
+########################################################################
+svlm_parser.o: svlm_grammar.y
+	bison -d $^
+
+svlm_scanner.o: svlm_lexer.l svlm_scanner.hh svlm_scanner_internal.hh
+	flex svlm_lexer.l
+
+asm_parser.o: asm_grammar.y
+	bison  -d $^ 
+
+asm_scanner.o: asm_lexer.l asm_scanner.hh asm_scanner_internal.hh
+	flex asm_lexer.l
+
+
+########################################################################
+
+
+# Compile source files into object files (output to /dev/shm)
+$(OBJECTS): %.o: %.cc
+	$(CC) $(CFLAGS) -c $< -o $(TMPDIR)/$@ -fPIC -DPIC -I$(TMPDIR)
+
+# Link object files into the executable (output to /dev/shm)
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(TMPDIR)/$@ $(OBJECTS) -L$(TMPDIR)
+
+# Clean rule: remove object files and target executable
+clean:
+	rm -f $(TMPDIR)/$(OBJECTS) $(TMPDIR)/$(TARGET)
+
+# Implicit rule for header files (compile if source depends on it)
+%.o: %.hh
+	$(CC) $(CFLAGS) -c $< -o $(TMPDIR)/$@ -fPIC -DPIC -I$(TMPDIR)
+
+# Use temporary directory for intermediate files
+CPPFLAGS += -I$(TMPDIR)
+
+.PHONY: .PHONY all clean

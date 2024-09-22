@@ -1,0 +1,7 @@
+In file included from lang.hh:11,
+                 from operand.hh:8,
+                 from operand.cc:5:
+number.hh:36:5: error: ‘num_d_t’ does not name a type; did you mean ‘uid_t’?
+   36 |     num_d_t data_;
+      |     ^~~~~~~
+      |     uid_t
