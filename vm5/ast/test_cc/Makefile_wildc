@@ -1,0 +1,2 @@
+print2: $(wildcard *.cc)
+	ls -la  $?
