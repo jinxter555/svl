@@ -23,7 +23,7 @@ Operand Operand::type_str(OperandType t) {
   switch(t) {
   case OperandType::nil_t:  outstr ="nil_t"; break;
   case OperandType::type_t:  outstr ="type"; break;
-  case OperandType::err_t:  outstr ="err"; break;
+  case OperandType::err_t:  outstr ="err_t"; break;
   case OperandType::bool_t: outstr ="bool"; break;
   case OperandType::num_t:  outstr ="num_t"; break;
   case OperandType::str_t:  outstr ="str_t"; break;
@@ -110,7 +110,7 @@ Operand Operand::whatami() const {
   Operand w = type_str(type_);
   if(type_ == OperandType::err_t) {
     OperandErrorCode err = get<OperandErrorCode>(value_);
-    return w +  err_str(err);
+    return w +  " " + err_str(err);
   }
   return w;
 }
@@ -118,8 +118,11 @@ Operand Operand::whatami() const {
 Operand Operand::operator+(const Operand& other) const {
   if(type_ != other.type_) { 
     cout << "error! " << *this << " + " << other << "\n";
+    return Operand(OperandErrorCode::invalid_op_t);
+    /*
     throw std::runtime_error("Unsupported operation + for unequal types"); 
     return Operand(OperandType::err_t);
+    */
   }
 
   switch(type_) {
@@ -357,5 +360,9 @@ std::ostream& operator<<(std::ostream& os, const OperandType& t) {
 
 std::ostream& operator<<(std::ostream& os, const AstOp& t_op) {
   cout << Operand::ast_op_str(t_op);
+  return os;
+}
+std::ostream& operator<<(std::ostream& os, const OperandErrorCode& err) {
+  cout << Operand::err_str(err);
   return os;
 }

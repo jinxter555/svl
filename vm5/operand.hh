@@ -26,6 +26,7 @@ public:
   Operand();
   Operand(OperandType t) : type_(t) {} //  just type
   Operand(AstOp op) : value_(op) {} //  just type
+  Operand(OperandErrorCode c) : value_(c), type_(OperandType::err_t) {} //  just type
   Operand(int value) ;
   Operand(float value) ;
   Operand(bool value) ;
