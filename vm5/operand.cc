@@ -4,7 +4,9 @@
 #include <iostream>
 #include "operand.hh"
 
+
 Operand operand_nil;
+std::ostream& operator << (std::ostream& out, const any& a);
 
 Operand::Operand() { type_ = OperandType::nil_t; }
 Operand::Operand(bool v) : value_(v) { type_ = OperandType::bool_t; }
@@ -16,14 +18,108 @@ Operand::Operand(const char* v) : value_(string(v)) { type_ = OperandType::str_t
 
 const OperandVariant& Operand::getValue() const { return value_; }
 
+Operand Operand::type_str(OperandType t) {
+  string outstr;
+  switch(t) {
+  case OperandType::nil_t:  outstr ="nil_t"; break;
+  case OperandType::type_t:  outstr ="type"; break;
+  case OperandType::err_t:  outstr ="err"; break;
+  case OperandType::bool_t: outstr ="bool"; break;
+  case OperandType::num_t:  outstr ="num_t"; break;
+  case OperandType::str_t:  outstr ="str_t"; break;
+  case OperandType::atom_t: outstr ="atom_t"; break;
+  case OperandType::list_t: outstr ="list_t"; break;
+  case OperandType::map_t:  outstr ="map_t"; break;
+  case OperandType::ast_op_t:  outstr ="ast_opt_t"; break;
+  case OperandType::except_t:  outstr ="except_t"; break;
+  case OperandType::any_t:  outstr ="any_t"; break;
+  default: outstr ="type unknown"; break;
+  }
+  return Operand(outstr);
+}
+Operand Operand::ast_op_str(AstOp t_op) {
+  std::string oc;
+
+  switch(t_op) {
+  case AstOp::noop:  oc="-noop-"; break;
+  case AstOp::ast_default:  oc="default"; break;
+  case AstOp::ast_else:  oc="else"; break;
+  case AstOp::assign:  oc="="; break;
+  case AstOp::plus:  oc="+"; break;
+  case AstOp::minus: oc="-"; break;
+  case AstOp::mul:   oc="*"; break;
+  case AstOp::div:   oc="/"; break;
+  case AstOp::eql:   oc="=="; break;
+  case AstOp::neql:  oc="!="; break;
+  case AstOp::gt:    oc=">"; break;
+  case AstOp::lt:    oc="<"; break;
+  case AstOp::lteq:  oc="<="; break;
+  case AstOp::gteq:  oc=">="; break;
+  case AstOp::and_:  oc="&&"; break;
+  case AstOp::or_:  oc="||"; break;
+  case AstOp::not_:  oc="!"; break;
+  default: oc="not ast operator"; break;
+  } 
+  return Operand(oc);
+}
 
 
+Operand Operand::err_str(OperandErrorCode err) {
+  string outstr;
+  
+  switch(err) {
+  case OperandErrorCode::invalid_op_t:
+    outstr = "invalid operand operation";
+    break;
+  case OperandErrorCode::unassigned_t:
+    outstr = "operand has not been assigned value";
+    break;
+  case OperandErrorCode::undefined_t:
+    outstr = "no such operand. it's undefined";
+    break;
+  default:
+    outstr = "unknown error!";
+    break;
+  }
+  return Operand(outstr);
+}
+
+//-----------------------------------------------------------------------
+Operand Operand::type_str() const{
+  return type_str(type_);
+}
+
+Operand Operand::err_str() const {
+  if(type_ != OperandType::err_t) {
+    return Operand("");
+  }
+  OperandErrorCode err = get<OperandErrorCode>(value_);
+  return err_str(err);
+}
+
+Operand Operand::ast_op_str() const {
+  if(type_ != OperandType::ast_op_t) {
+    return Operand("");
+  }
+  AstOp op_t = get<AstOp>(value_);
+  return ast_op_str(op_t);
+}
+//-----------------------------------------------------------------------
+
+Operand Operand::whatami() const {
+  Operand w = type_str(type_);
+  if(type_ == OperandType::err_t) {
+    OperandErrorCode err = get<OperandErrorCode>(value_);
+    return w +  err_str(err);
+  }
+  return w;
+}
 
 Operand Operand::operator+(const Operand& other) const {
   if(type_ != other.type_) { 
     cout << "error! " << *this << " + " << other << "\n";
     throw std::runtime_error("Unsupported operation + for unequal types"); 
-    return Operand(OperandType::invalid_op_t);
+    return Operand(OperandType::err_t);
   }
 
   switch(type_) {
@@ -214,30 +310,30 @@ Operand Operand::operator||(const Operand& other) const {
   }
 }
 
-Operand Operand::opfunc(const Operand& other, ast_op op) {
+Operand Operand::opfunc(const Operand& other, AstOp op) {
   
   // if(type_ != other.type_) throw std::runtime_error("Unsupported operation > for unequal types"); 
 
   switch(op){
-  case ast_op::plus:  return *this + other;
-  case ast_op::minus: return *this - other; 
-  case ast_op::mul:   return *this * other; 
-  case ast_op::div:   return *this / other;
-  case ast_op::eql:
+  case AstOp::plus:  return *this + other;
+  case AstOp::minus: return *this - other; 
+  case AstOp::mul:   return *this * other; 
+  case AstOp::div:   return *this / other;
+  case AstOp::eql:
     return *this == other;
-  case ast_op::neql:
+  case AstOp::neql:
     return *this != other;
-  case ast_op::gt:
+  case AstOp::gt:
     return *this > other;
-  case ast_op::lt:
+  case AstOp::lt:
     return *this < other;
-  case ast_op::lteq:
+  case AstOp::lteq:
     return *this <= other;
-  case ast_op::gteq:
+  case AstOp::gteq:
     return *this >= other;
-  case ast_op::and_:  return *this && other;
-  case ast_op::or_:   return *this && other;
-  case ast_op::not_:  return *this && other;
+  case AstOp::and_:  return *this && other;
+  case AstOp::or_:   return *this && other;
+  case AstOp::not_:  return *this && other;
   default: 
     return false;
   }
@@ -246,9 +342,8 @@ Operand Operand::opfunc(const Operand& other, ast_op op) {
 
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   switch(operand.type_) {
-  case OperandType::nil_t:          cout << "nil"; break;
-  case OperandType::invalid_op_t:   cout << "invalid operation on operand!"; break;
-  case OperandType::unassigned_t:   cout << "operand unassigned!"; break;
+  case OperandType::nil_t:   cout << "nil"; break;
+  case OperandType::err_t:   cout << "error operand!"; break;
   default: 
     std::visit([&os](const auto& value) { os << value; }, operand.value_);
   }
@@ -256,57 +351,11 @@ std::ostream& operator<<(std::ostream& os, const Operand& operand) {
 }
 
 std::ostream& operator<<(std::ostream& os, const OperandType& t) {
-  switch(t) {
-  case OperandType::nil_t:          cout << "nil"; break;
-  case OperandType::invalid_op_t:   cout << "invalid operation on operand!"; break;
-  case OperandType::unassigned_t:   cout << "operand unassigned!"; break;
-  case OperandType::num_t:   cout << "num_t"; break;
-  case OperandType::str_t:   cout << "str_t"; break;
-  case OperandType::bool_t:   cout << "bool_t"; break;
-  default: cout << "unknown operand type!"; break; 
-  }
+  cout << Operand::type_str(t);
   return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const ast_op& t_op) {
-  std::string oc;
-  switch(t_op) {
-  case ast_op::noop:  oc="-noop-"; break;
-  case ast_op::ast_default:  oc="default"; break;
-  case ast_op::ast_else:  oc="else"; break;
-  case ast_op::assign:  oc="="; break;
-  case ast_op::plus:  oc="+"; break;
-  case ast_op::minus: oc="-"; break;
-  case ast_op::mul:   oc="*"; break;
-  case ast_op::div:   oc="/"; break;
-  case ast_op::eql:   oc="=="; break;
-  case ast_op::neql:  oc="!="; break;
-  case ast_op::gt:    oc=">"; break;
-  case ast_op::lt:    oc="<"; break;
-  case ast_op::lteq:  oc="<="; break;
-  case ast_op::gteq:  oc=">="; break;
-  case ast_op::and_:  oc="&&"; break;
-  case ast_op::or_:  oc="||"; break;
-  case ast_op::not_:  oc="!"; break;
-  default: oc="out wrong type"; break; } 
-  std::cout << oc ; 
+std::ostream& operator<<(std::ostream& os, const AstOp& t_op) {
+  cout << Operand::ast_op_str(t_op);
   return os;
-
-}
-
-void Operand::print_type()  const{
-  std::string outstr;
-
-  switch(type_) {
-  case OperandType::bool_t: outstr ="type bool"; break;
-  case OperandType::num_t: outstr ="type num_t"; break;
-  case OperandType::str_t: outstr ="type str_t"; break;
-  case OperandType::atom_t: outstr ="type atom_t"; break;
-  case OperandType::list_t: outstr ="type list_t"; break;
-  case OperandType::map_t: outstr ="type map_t"; break;
-  case OperandType::ptr_t: outstr ="type ptr_t"; break;
-  case OperandType::user_t: outstr ="type user_t"; break;
-  default: outstr ="type unknown"; break;
-  }
-  std::cout << outstr << "\n";
 }

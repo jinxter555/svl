@@ -1,20 +1,20 @@
 #include "../lang.hh"
 #include "../operand.hh"
 
+
+class Entity;
+using entity_ptr = shared_ptr<Entity>;
 class Entity : public Operand {
 protected:
-  OperandType e_type_;
-
   vector<Entity> members;
-  map<string, Entity> children;
-  shared_ptr<Entity>  parent;
+
+  map<string, entity_ptr> children;
+  entity_ptr  parent;
 public:
   Entity() {}
-  Entity(OperandType t) : e_type_(t) {
-    type_ = t;
-  }
+  Entity(OperandType t)  { type_ = t; }
+  Entity(Operand v) : Operand(v) {}
 
-  Entity(Operand v) : Operand(v) {e_type_ = v.type_;}
   //Operand get_operand() { return *this; }
   const Operand get_operand() const { return *this; }
 
@@ -25,23 +25,29 @@ public:
   const Entity &operator[](int i) const;
   Entity &operator[](int i) ;
 
-  void list_add(Entity e) {
-    //e_type_ = OperandType::list_t;
-    members.push_back(e);
-  };
+  //-------------------------------------------
+  // void add_node(string k, entity_ptr vptr){ children[k] = vptr; }
+  //-------------------------------------------
 
-  void list_print() const {
-    int i, s = members.size();
+  void list_add(Entity e);
+  void list_print() const;
 
-    cout << "[";
-    for(i=0; i<s-1; i++) { cout << members[i] << ","; }
-    cout << members[i] << "]";
-  }
-
-  //friend ostream& operator<<(ostream& os, const Entity& e);
+  //-------------------------------------------
   friend ostream& operator<<(ostream& os, const Entity& e);
 
-  using Operand::print_type;
+  //-------------------------------------------
+  using Operand::type_print;
+  using Operand::type_get;
+
+  using Operand::type_str;
+  using Operand::err_str;
+  using Operand::ast_op_str;
+  using Operand::whatami;
+
+  //-------------------------------------------
+
+
+
   using Operand::operator+;
   using Operand::operator-;
   using Operand::operator*;

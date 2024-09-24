@@ -13,7 +13,7 @@
 using namespace  std;
 
 
-enum class ast_op {
+enum class AstOp {
   noop,
   ast_default,
   ast_else,
@@ -33,15 +33,17 @@ enum class ast_op {
   assign,
 };
 
-
-class Operand; class Number;
-using OperandVariant = variant<bool, ast_op, Number, string>;
-
-enum class OperandType {
-  nil_t,            // assigned unknown value
+enum class OperandErrorCode {
   unassigned_t,     // defined but hasn't been assigned a value
   undefined_t,      // not such variable exist
   invalid_op_t,     // invalid operation has been applied to operand
+};
+
+
+enum class OperandType {
+  nil_t,            // assigned unknown value
+  type_t,           // recursive type
+  err_t,            // error code
   bool_t,
   num_t,
   str_t,
@@ -50,9 +52,15 @@ enum class OperandType {
   scalar_t,
   list_t,
   map_t,
-  ptr_t, // pointer maybe
-  user_t,
+  ast_op_t,
+  except_t,
+  any_t,
 };
+
+class Operand; class Number;
+using OperandVariant = variant<bool, AstOp, Number, string, OperandErrorCode, OperandType, any>;
+
+
 enum class ControlFlow {
   run,
   ast_break, 

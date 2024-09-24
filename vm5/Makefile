@@ -3,7 +3,7 @@ CC=g++ -std=c++17 -g
 # Define temporary directory
 TMPDIR = /dev/shm
 
-objects = atom.o operand.o number.o
+objects = atom.o operand.o number.o printer_any.o
 
 all: $(objects)
 #	$(CC)  $^ -o all
