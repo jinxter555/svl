@@ -13,7 +13,7 @@ class Operand {
 protected:
   OperandVariant value_;
   OperandType type_;
-  Operand* operand_error=nullptr;
+//  Operand* operand_error=nullptr;
 
 /*
   vector<Operand> members;

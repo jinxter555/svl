@@ -8,13 +8,11 @@ int main() {
   Operand s3("str3");
   Operand s4("str4");
   Operand nil;
-  Operand invalid(OperandType::invalid_op_t);
 
   cout << i1 + i2 << "\n";
   cout << s1 + s2 << "\n";
   cout << s3 + s4 << "\n";
   cout << nil << "\n";
-  cout << invalid << "\n";
   cout << i1 + s4 << "\n";
 
   return 0;

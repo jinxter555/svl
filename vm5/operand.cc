@@ -5,7 +5,7 @@
 #include "operand.hh"
 
 
-Operand operand_nil;
+//Operand operand_nil;
 std::ostream& operator << (std::ostream& out, const any& a);
 
 Operand::Operand() { type_ = OperandType::nil_t; }
@@ -15,6 +15,13 @@ Operand::Operand(float v) : value_(Number(v)) { type_ = OperandType::num_t; }
 Operand::Operand(const Number& v) : value_(v) { type_ = OperandType::num_t; }
 Operand::Operand(const string& v) : value_(v) { type_ = OperandType::str_t; }
 Operand::Operand(const char* v) : value_(string(v)) { type_ = OperandType::str_t; }
+/*
+Operand::Operand(const char* v)  { 
+  printf("operand init char*: %s ", v);
+  value_ = move(string(v));
+  type_ = OperandType::str_t; 
+}
+*/
 
 const OperandVariant& Operand::getValue() const { return value_; }
 
@@ -91,7 +98,7 @@ Operand Operand::type_str() const{
 
 Operand Operand::err_str() const {
   if(type_ != OperandType::err_t) {
-    return Operand("");
+    return Operand(string(""));
   }
   OperandErrorCode err = get<OperandErrorCode>(value_);
   return err_str(err);
@@ -99,7 +106,7 @@ Operand Operand::err_str() const {
 
 Operand Operand::ast_op_str() const {
   if(type_ != OperandType::ast_op_t) {
-    return Operand("");
+    return Operand(string(""));
   }
   AstOp op_t = get<AstOp>(value_);
   return ast_op_str(op_t);
@@ -110,14 +117,14 @@ Operand Operand::whatami() const {
   Operand w = type_str(type_);
   if(type_ == OperandType::err_t) {
     OperandErrorCode err = get<OperandErrorCode>(value_);
-    return w +  " " + err_str(err);
+    return w +  string(": ") + err_str(err);
   }
   return w;
 }
 
 Operand Operand::operator+(const Operand& other) const {
   if(type_ != other.type_) { 
-    cout << "error! " << *this << " + " << other << "\n";
+    cout << "error! " << *this << " + '" << other << "'\n";
     return Operand(OperandErrorCode::invalid_op_t);
     /*
     throw std::runtime_error("Unsupported operation + for unequal types"); 
@@ -189,6 +196,8 @@ bool Operand::operator==(const Operand& other) const {
     return std::get<Number>(value_) == std::get<Number>(other.value_);
   case OperandType::str_t: 
     return std::get<std::string>(value_) == std::get<std::string>(other.value_);
+  case OperandType::err_t: 
+    return std::get<OperandErrorCode>(value_) == std::get<OperandErrorCode>(other.value_);
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }
@@ -346,7 +355,8 @@ Operand Operand::opfunc(const Operand& other, AstOp op) {
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   switch(operand.type_) {
   case OperandType::nil_t:   cout << "nil"; break;
-  case OperandType::err_t:   cout << "error operand!"; break;
+  //case OperandType::err_t:   cout << "error operand!"; break;
+  case OperandType::err_t:   cout << operand.whatami(); break;
   default: 
     std::visit([&os](const auto& value) { os << value; }, operand.value_);
   }

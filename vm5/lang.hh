@@ -57,6 +57,7 @@ enum class OperandType {
   any_t,
 };
 
+class Entity; using entity_ptr = shared_ptr<Entity>;
 class Operand; class Number;
 using OperandVariant = variant<bool, AstOp, Number, string, OperandErrorCode, OperandType, any>;
 
