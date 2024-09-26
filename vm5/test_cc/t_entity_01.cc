@@ -14,8 +14,14 @@ int main() {
   Operand s1(move(string("hello"))) ;
 
   Entity e1 = o1;
-  Operand o3 = e1;
+  Entity e3 = s1;
 
+  cout << "e1 = o1, e1: " << e1 << "\n";
+  cout << "e1 = o1, o1: " << o1 << "\n";
+  cout << "e3 = s1, s1: " << s1 << "\n";
+  cout << "e3 = s1, s1: " << e3 << "\n";
+
+  Operand o3 = e1;
 
   cout << i1 + i2 << "\n";
   cout << o1 + i2 << "\n";

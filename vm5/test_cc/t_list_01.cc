@@ -9,15 +9,22 @@ int main() {
   Operand i1(1);
   Operand i2(2);
   Operand i3(3);
-  AstList l1;
+  AstList l1,l2;
   l1.add(i1);
   l1.add(i2);
   l1.add(i3);
+  l2.add(l1);
+  l2.add(l1);
+  l2.add(l2);
 
 
-  cout << "list1: " << list1 << "\n";
+
+  cout << "l1 type: " << l1.type_str() << "\n";
+  cout << "l1: " << l1 << "\n\n";
+  cout << "l2 type: " << l2.type_str() << "\n";
+  cout << "l2: " << l2 << "\n\n";
   //cout << "l1: " << (Entity) l1 << "\n";
-  l1.print();
+  //l1.print();
 
   return 0;
 }

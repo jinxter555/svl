@@ -5,26 +5,24 @@ TMPDIR = /dev/shm
 ast_o := $(wildcard ../*.o)
 core_o := $(wildcard ../../*.o)
 
-all: a.out b.out c.out map.out
+all: t_entity_01.out t_entity_02.out  t_list_01.out
 #all: $(objects)
 
-objects := t_entity_01 t_entity_02
 
+t_entity_01.out: t_entity_01.o $(ast_o)
+	$(CC)  $^  -o $@
 
-a.out: t_entity_01.o
-	$(CC)  $^ $(ast_o) $(core_o) -o $@
+t_entity_02.out: t_entity_02.o $(ast_o)
+	$(CC)  $^ -o $@
 
-b.out: t_entity_02.o
-	$(CC)  $^ $(ast_o) $(core_o) -o $@
+t_list_01.out: t_list_01.o $(ast_o)
+	$(CC)  $^ -o $@
 
-c.out: t_list_01.o
-	$(CC)  $^ $(ast_o) $(core_o) -o $@
-map.out: t_map_01.o
-	$(CC)  $^ $(ast_o) $(core_o) -o $@
 
 
 #$(objects): %.o: %.cc
 #	$(CC) -c $^ -o $@
 
 clean:
-	rm -f all out *.o *.gch *.out
+	rm -f all out *.o *.gch *.out t_entity_01 t_entity_02
+	rm -f all out *.o *.gch *.out 

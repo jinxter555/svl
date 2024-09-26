@@ -35,11 +35,14 @@ public:
   Operand(const char* value) ;
 
   //
-  OperandType type_get() const { return type_;};
-  void type_print() const;
+  OperandType get_type() const { return type_;};
+  const OperandVariant& get_value() const ;
 
-  // Get the stored value (use with caution)
-  const OperandVariant& getValue() const ;
+  inline Number _get_number() const ;
+
+  int _get_int() const ;
+  float _get_float() const ;
+  const string& _get_str() const ;
 
   static Operand type_str(OperandType t);
   static Operand err_str(OperandErrorCode err);

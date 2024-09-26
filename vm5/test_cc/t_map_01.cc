@@ -20,6 +20,10 @@ int main() {
   m1.print();
   cout << "m2: " << m1.whatami() << "\n";
   m2.print();
+  m1.set("hello", Operand(555));
+  m1.print();
+  cout << "\n\n";
+  m2.print();
 
   return 0;
 }
