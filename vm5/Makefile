@@ -1,14 +1,15 @@
 SHELL := /bin/bash
-CC=g++ -std=c++17 -g
+CC=g++ -std=c++17  -g
 # Define temporary directory
 TMPDIR = /dev/shm
 MAKE=make
 
-objects = atom.o operand.o number.o printer_any.o entity.o ast.o
+#objects = atom.o operand.o number.o printer_any.o entity.o list_entity.o ast.o 
+objects = atom.o operand.o number.o printer_any.o entity.o list_entity.o operand_entity.o
 #objects = (wildcard: *.cc)
 
-all: test_cc_d $(objects) 
-#all: $(objects) 
+#all: test_cc_d $(objects) 
+all: $(objects)  test_cc_d
 
 $(objects): %.o: %.cc
 	$(CC) -c $^ -o $@

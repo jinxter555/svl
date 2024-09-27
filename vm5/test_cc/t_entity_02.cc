@@ -1,13 +1,14 @@
-#include "../entity.hh"
+#include "../operand_entity.hh"
 
 ostream& operator<<(ostream& os, const OperandType& t);
 
 int main() {
-  Entity s1(string("hello")) ;
-  Entity s2(string("world")) ;
+  OperandEntity s1(string("hello"));
+  OperandEntity i1(Operand(11)) ;
+  OperandEntity i2(12) ;
   cout << "s1:" << s1 << "\n";
-  Entity list1(OperandType::list_t);
-  Entity list2(OperandType::list_t);
+  cout << "i1:" << i1 << "\n";
+  cout << "i2:" << i2 << "\n";
 
   return 0;
 }
