@@ -1,7 +1,7 @@
 #include "number.hh"
 
-Number::Number(int value) : data_(value) {}
-Number::Number(float value) : data_(value) {}
+Number::Number(s_integer value) : data_(value) {}
+Number::Number(s_float value) : data_(value) {}
 
 struct Number::AddVisitor {
   template <typename T, typename U>
@@ -32,7 +32,8 @@ struct Number::DivideVisitor {
     } else {
       // Handle division by zero
       std::cerr << "Error: Division by zero!" << std::endl;
-      return Number(0);
+      throw std::runtime_error("Division by zero"); 
+      return Number(0l);
     }
   }
 };

@@ -27,11 +27,11 @@ const OperandVariant& Operand::get_value() const { return value_; }
 Number Operand::_get_number() const { return get<Number>(value_); }
 
 int Operand::_get_int() const { 
-  Number n = _get_number(); return get<int>(n.get_data()); 
+  Number n = _get_number(); return get<s_integer>(n.get_data()); 
 }
 float Operand::_get_float() const { 
   Number n = _get_number();
-  return get<float>(n.get_data()); 
+  return get<s_float>(n.get_data()); 
 }
 const string& Operand::_get_str() const { return get<string>(value_); }
 

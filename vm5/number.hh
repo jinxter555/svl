@@ -5,12 +5,17 @@
 #include <iostream>
 #include "lang.hh"
 
-using num_d_t= std::variant<int, float> ;
+
+using s_integer = long;
+using s_float = double;
+using num_d_t= std::variant<s_integer, s_float> ;
 
 class Number {
 public:
-    Number(int value);
-    Number(float value);
+    Number(int v) : data_(v) {};
+    Number(float v) : data_(v) {};
+    Number(s_integer value);
+    Number(s_float value);
 
     Number operator+(const Number& other) const ;
     Number operator-(const Number& other) const;
@@ -29,7 +34,8 @@ public:
     bool operator!() const;
 
     void print() const; // New method to print data_
-    std::variant<int, float> get_data() const; // New method to get data_
+    //std::variant<int, float> get_data() const; // New method to get data_
+    num_d_t get_data() const; // New method to get data_
     std::string getCurrentType() const; // New method to get the current type
     friend std::ostream& operator<<(std::ostream& os, const Number& number);
 
