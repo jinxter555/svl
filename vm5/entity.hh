@@ -13,38 +13,36 @@ protected:
   unordered_map<string, entity_u_ptr> children;
   entity_s_ptr  parent;
 public:
-  //static Entity entity_undef_error; static Entity entity_mem_error;
-  //static const Entity* entity_error=nullptr;
 
   Entity() {}
   Entity(const OperandType &t)  { type_ = t; }
   Entity(const Operand &v) : Operand(v) {}
-  //Entity(Operand & const v) : Operand(v) {}
   Entity(const Entity &v) ;
-  //entity_u_ptr clone() const;
-  // entity_u_ptr clone_operand() const;
-  //-------------------------------------------
   const Operand _get_operand() const { return *this; }
   
-  void list_print() const;
-  void map_print() const;
   //-------------------------------------------
   virtual entity_u_ptr clone() const = 0;
 
   virtual const Entity& add(const Entity& v)=0;
-  virtual const entity_u_ptr& add(entity_u_ptr &vptr) =0;         // for list
-  virtual entity_u_ptr add(const Entity &k, const Entity& v)=0;   // for both list and map
+  virtual const entity_u_ptr& add(entity_u_ptr &vptr) =0;    // for list
+  virtual const Entity& add(const Entity &k, const Entity& v)=0;   // for map
 
   virtual const Entity& get(const Entity &k) = 0;
   virtual const Entity& set(const Entity &k, const Entity &v) = 0;
   virtual const Entity& set(const Entity &k, entity_u_ptr &vptr) = 0;
 
   virtual const ListEntity& get_list(const Entity &k) = 0;
-//  virtual const AstMap& get_map(const Entity &k) = 0;
+  virtual const MapEntity&  get_map(const Entity &k) = 0;
+  virtual Entity& to_str() const =0;
+
+  virtual void print() const =0;
+
   //-------------------------------------------
+  
   friend ostream& operator<<(ostream& os, const Entity& e);
   friend ostream& operator<<(ostream& os, const entity_u_ptr& vptr) ;
   //-------------------------------------------
+/*
   using Operand::get_type;
   using Operand::get_value;
   using Operand::_get_number;
@@ -56,7 +54,9 @@ public:
   using Operand::err_str;
   using Operand::ast_op_str;
   using Operand::whatami;
-  //-------------------------------------------
+ */ 
+//-------------------------------------------
+/*
   using Operand::operator+;
   using Operand::operator-;
   using Operand::operator*;
@@ -72,4 +72,5 @@ public:
   using Operand::operator&&;
   using Operand::operator||;
   using Operand::operator!;
+*/
 };

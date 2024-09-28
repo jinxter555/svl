@@ -4,6 +4,7 @@
 ostream& operator<<(ostream& os, const OperandType& t);
 
 int main() {
+  OperandEntity i0(0);
   OperandEntity i1(1);
   OperandEntity i2(2);
   OperandEntity i3(3);
@@ -12,9 +13,13 @@ int main() {
   l1.add(i1);
   l1.add(i2);
   l1.add(i3);
+
   l2.add(l1);
   l2.add(l1);
   l2.add(l2);
+
+
+
 
 
 
@@ -33,9 +38,20 @@ int main() {
   l1.set(i2, i5);
   cout << "l1: " << l1 << "\n";
 
+  //const ListEntity& mylist = l2.get_list(1);
+  auto &mylist = l2.get_list(1);
+  //mylist.print_list();
+  cout << "mylist: " << mylist << "\n";
+  cout << "l2: " << l2 << "\n\n";
 
-  //cout << "l1: " << (Entity) l1 << "\n";
-  //l1.print();
+  ListEntity l4 = l1;
+  cout << "l4: " << l4 << "\n";
+  ListEntity l5(l1);
+  cout << "l1: " << l1 << "\n";
+  cout << "l5: " << l5 << "\n";
+
+
+
 
   return 0;
 }

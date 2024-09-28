@@ -3,10 +3,9 @@
 #include <stdexcept>
 #include <iostream>
 #include "operand.hh"
+#include "operand_tostr.hh"
 
-
-//Operand operand_nil;
-std::ostream& operator << (std::ostream& out, const any& a);
+string Operand::nil_str=string("nil");
 
 Operand::Operand() { type_ = OperandType::nil_t; }
 Operand::Operand(bool v) : value_(v) { type_ = OperandType::bool_t; }
@@ -15,27 +14,29 @@ Operand::Operand(float v) : value_(Number(v)) { type_ = OperandType::num_t; }
 Operand::Operand(const Number& v) : value_(v) { type_ = OperandType::num_t; }
 Operand::Operand(const string& v) : value_(v) { type_ = OperandType::str_t; }
 Operand::Operand(const char* v) : value_(string(v)) { type_ = OperandType::str_t; }
-/*
-Operand::Operand(const char* v)  { 
-  printf("operand init char*: %s ", v);
-  value_ = move(string(v));
-  type_ = OperandType::str_t; 
-}
-*/
 
-const OperandVariant& Operand::get_value() const { return value_; }
+const OperandVariant& Operand::_get_value() const { return value_; }
+
+const string& Operand::_get_str() const { 
+  if(type_==OperandType::str_t) return get<string>(value_); 
+  if(type_==OperandType::nil_t) return nil_str;
+  return get_str()._get_str();
+}
+
 Number Operand::_get_number() const { return get<Number>(value_); }
 
-int Operand::_get_int() const { 
+s_integer Operand::_get_int() const { 
   Number n = _get_number(); return get<s_integer>(n.get_data()); 
 }
-float Operand::_get_float() const { 
+
+s_float Operand::_get_float() const { 
   Number n = _get_number();
   return get<s_float>(n.get_data()); 
 }
-const string& Operand::_get_str() const { return get<string>(value_); }
 
-Operand Operand::type_str(OperandType t) {
+
+/*
+Operand Operand::to_str(OperandType t) {
   string outstr;
   switch(t) {
   case OperandType::nil_t:  outstr ="nil_t"; break;
@@ -49,12 +50,12 @@ Operand Operand::type_str(OperandType t) {
   case OperandType::map_t:  outstr ="map_t"; break;
   case OperandType::ast_op_t:  outstr ="ast_opt_t"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
-  case OperandType::any_t:  outstr ="any_t"; break;
+  //case OperandType::any_t:  outstr ="any_t"; break;
   default: outstr ="type unknown"; break;
   }
   return Operand(outstr);
 }
-Operand Operand::ast_op_str(AstOp t_op) {
+Operand Operand::to_str(AstOp t_op) {
   std::string oc;
 
   switch(t_op) {
@@ -73,15 +74,14 @@ Operand Operand::ast_op_str(AstOp t_op) {
   case AstOp::lteq:  oc="<="; break;
   case AstOp::gteq:  oc=">="; break;
   case AstOp::and_:  oc="&&"; break;
-  case AstOp::or_:  oc="||"; break;
+  case AstOp::or_:   oc="||"; break;
   case AstOp::not_:  oc="!"; break;
   default: oc="not ast operator"; break;
   } 
   return Operand(oc);
 }
 
-
-Operand Operand::err_str(OperandErrorCode err) {
+Operand Operand::to_str(OperandErrorCode err) {
   string outstr;
   
   switch(err) {
@@ -102,32 +102,26 @@ Operand Operand::err_str(OperandErrorCode err) {
 }
 
 //-----------------------------------------------------------------------
-Operand Operand::type_str() const{
-  return type_str(type_);
+Operand Operand::to_str() const {
+  return visit([this](auto arg) {
+    return to_str(arg);
+  }, value_);
+}
+*/
+
+Operand Operand::to_str() const {
+  return Operand(
+    visit(OperandToStringVisitor(), value_)
+  );
 }
 
-Operand Operand::err_str() const {
-  if(type_ != OperandType::err_t) {
-    return Operand(string(""));
-  }
-  OperandErrorCode err = get<OperandErrorCode>(value_);
-  return err_str(err);
-}
-
-Operand Operand::ast_op_str() const {
-  if(type_ != OperandType::ast_op_t) {
-    return Operand(string(""));
-  }
-  AstOp op_t = get<AstOp>(value_);
-  return ast_op_str(op_t);
-}
 //-----------------------------------------------------------------------
 
 Operand Operand::whatami() const {
-  Operand w = type_str(type_);
+  Operand w = OperandToStringVisitor()(type_);
   if(type_ == OperandType::err_t) {
     OperandErrorCode err = get<OperandErrorCode>(value_);
-    return w +  string(": ") + err_str(err);
+    return w +  Operand(": ") + OperandToStringVisitor()(err);
   }
   return w;
 }
@@ -365,24 +359,10 @@ Operand Operand::opfunc(const Operand& other, AstOp op) {
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   switch(operand.type_) {
   case OperandType::nil_t:   cout << "nil"; break;
-  //case OperandType::err_t:   cout << "error operand!"; break;
   case OperandType::err_t:   cout << operand.whatami(); break;
+  case OperandType::str_t:   cout << operand._to_str(); break;
   default: 
-    std::visit([&os](const auto& value) { os << value; }, operand.value_);
+    cout << operand.to_str();
   }
-  return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const OperandType& t) {
-  cout << Operand::type_str(t);
-  return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const AstOp& t_op) {
-  cout << Operand::ast_op_str(t_op);
-  return os;
-}
-std::ostream& operator<<(std::ostream& os, const OperandErrorCode& err) {
-  cout << Operand::err_str(err);
   return os;
 }

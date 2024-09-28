@@ -6,7 +6,6 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
-#include <any>
 #include <string>
 #include "number.hh"
 
@@ -55,7 +54,6 @@ enum class OperandType {
   map_t,
   ast_op_t,
   except_t,
-  any_t,
 };
 
 class Entity; 
@@ -68,15 +66,13 @@ using list_u_ptr = unique_ptr<AstList>;
 using list_s_ptr = shared_ptr<AstList>;
 using list_ptr = AstList *;
 
-
-/*
 class AstMap; 
 using map_u_ptr = unique_ptr<AstMap>;
 using map_s_ptr = shared_ptr<AstMap>;
 using map_ptr = AstMap *;
-*/
+
 class Operand; class Number;
-using OperandVariant = variant<bool, AstOp, Number, string, OperandErrorCode, OperandType, any>;
+using OperandVariant = variant<bool, AstOp, Number, string, OperandErrorCode, OperandType>;
 using operand_ptr = Operand *;
 
 

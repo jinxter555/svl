@@ -17,18 +17,23 @@ public:
     return error;
   };
 
-  entity_u_ptr add(const Entity &k, const Entity& v) override { return nullptr; }; // this is for map not
+  const Entity& add(const Entity &k, const Entity& v) override 
+    { return OperandEntity::undef_error; }; // this is for map or list not here
+
   inline const Entity&   get(const Entity &k) override {return undef_error; };
   const Entity&   get(int i) {return undef_error;};
 
   const Entity& set(const Entity &k, const Entity &v) override {return undef_error;};
   const Entity& set(const Entity &k, entity_u_ptr &vptr) override {return undef_error;};
- // const MapEntity&   get_map(const Entity &k) override;
+ const MapEntity&   get_map(const Entity &k) override {};
   const ListEntity&  get_list(const Entity &k) override {
     return ListEntity::undef_error;
   };
  // Entity& get_ref(int i) ;
+  Entity& to_str() const override {};
   entity_u_ptr clone() const override;
+
+  void print() const override;
 
 
   //-------------------------------------------

@@ -6,6 +6,7 @@
 #include "lang.hh"
 
 
+
 using s_integer = long;
 using s_float = double;
 using num_d_t= std::variant<s_integer, s_float> ;
@@ -39,6 +40,7 @@ public:
     std::string getCurrentType() const; // New method to get the current type
     friend std::ostream& operator<<(std::ostream& os, const Number& number);
 
+    std::string to_str() const;
     
 private:
     num_d_t data_;
@@ -57,6 +59,9 @@ private:
     struct AndVisitor;
     struct OrVisitor;
     struct NotVisitor;
+
+
+
 };
 
 #endif // NUMBER_H
