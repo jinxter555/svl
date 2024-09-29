@@ -33,10 +33,18 @@ enum class AstOp {
 };
 
 enum class OperandErrorCode {
-  unassigned_t,     // defined but hasn't been assigned a value
-  undefined_t,      // not such variable exist
-  invalid_op_t,     // invalid operation has been applied to operand
-  mem_alloc_t,     // invalid operation has been applied to operand
+  no_error_t,         // has not encountered any errors
+  dvide_zero_t,       // divided by zero
+  unassigned_t,       // defined but hasn't been assigned a value
+  undefined_t,        // not such variable exist
+  invalid_op_t,       // invalid operation has been applied to operand
+  mem_alloc_t,        // invalid operation has been applied to operand
+};
+enum class EntityStatusCode {
+  ok,
+  entity_already_exist,
+  entity_not_found,
+  key_not_found,
 };
 
 

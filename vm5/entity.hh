@@ -12,7 +12,10 @@ protected:
   vector<entity_u_ptr> members;
   unordered_map<string, entity_u_ptr> children;
   entity_s_ptr  parent;
+  Operand operation_status; // errors operating on members or children 
+
 public:
+  static entity_u_ptr *error;
 
   Entity() {}
   Entity(const OperandType &t)  { type_ = t; }
@@ -25,6 +28,8 @@ public:
 
   virtual const Entity& add(const Entity& v)=0;
   virtual const entity_u_ptr& add(entity_u_ptr &vptr) =0;    // for list
+
+  virtual const Entity& add(const Entity &k, entity_u_ptr& vptr)=0 ;  // for bison and ast to add 
   virtual const Entity& add(const Entity &k, const Entity& v)=0;   // for map
 
   virtual const Entity& get(const Entity &k) = 0;

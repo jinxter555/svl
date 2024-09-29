@@ -39,6 +39,14 @@ const Entity& MapEntity::add(const Entity &k, const Entity& v) {
   return  *children[k_str];
 }
 
+const Entity& MapEntity::add(const Entity &k, entity_u_ptr& vptr) {
+  auto k_str = k._get_operand()._get_str();
+  children[k_str] = move(vptr);
+  return  *children[k_str];
+
+}
+
+
 const Entity&   MapEntity::get(const Entity &k) {
   auto k_str = k._get_operand()._get_str();
   if(children[k_str] == nullptr) {
@@ -60,5 +68,26 @@ const Entity& MapEntity::set(const Entity &k, entity_u_ptr &vptr) {
   }
   children[k_str] = move(vptr);
   return  *children[k_str];
+}
 
+//------------------------------------- entity 
+bool MapEntity::has_key(const Entity &k)  {
+  auto k_str = k._get_operand()._get_str();
+  return has_key(k);
+}
+bool MapEntity::has_key(const string  &k)  {
+  if(children[k] == nullptr)
+    return false;
+  return true;
+}
+//------------------------------------- entity : list
+
+const MapEntity& MapEntity::get_map(const Entity &k) {
+
+} 
+const ListEntity& MapEntity::get_list(const Entity &k) {
+
+}
+Operand MapEntity::to_str() const {
+  return Operand("{}");
 }

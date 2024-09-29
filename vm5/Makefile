@@ -4,7 +4,7 @@ CC=g++ -std=c++17  -g
 TMPDIR = /dev/shm
 MAKE=make
 
-objects = atom.o operand.o number.o printer_any.o entity.o list_entity.o operand_entity.o operand_tostr.o
+objects = atom.o operand.o number.o printer_any.o entity.o list_entity.o map_entity.o operand_entity.o operand_tostr.o
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
 
