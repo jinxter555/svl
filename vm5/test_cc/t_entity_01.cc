@@ -3,8 +3,13 @@
 ostream& operator<<(ostream& os, const OperandType& t);
 
 int main() {
+  Operand nil;
+  Operand b1(true) ;
+  Operand b2(false) ;
+  cout << "nil b1 b2: " << nil << " " << b1 << " " << b2 << "\n";
   Operand o1(11) ;
   cout << "o1: " << o1 << "\n";
+  
   Operand o2("hello") ;
   cout << "str o2: " << o2 << "\n";
 

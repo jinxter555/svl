@@ -29,7 +29,7 @@ public:
   const ListEntity&  get_list(const Entity &k) override;
   const ListEntity&  get_list(int i) ;
 
-  Entity& to_str() const override {};
+  Operand to_str() const override {};
   entity_u_ptr clone() const override;
   void print() const override;
   void print_list() { cout << "hello mr list!\n"; this->print();}

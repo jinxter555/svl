@@ -30,7 +30,7 @@ public:
     return ListEntity::undef_error;
   };
  // Entity& get_ref(int i) ;
-  Entity& to_str() const override {};
+  Operand to_str() const override;
   entity_u_ptr clone() const override;
 
   void print() const override;

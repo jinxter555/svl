@@ -33,7 +33,7 @@ public:
 
   virtual const ListEntity& get_list(const Entity &k) = 0;
   virtual const MapEntity&  get_map(const Entity &k) = 0;
-  virtual Entity& to_str() const =0;
+  virtual Operand to_str() const = 0;
 
   virtual void print() const =0;
 

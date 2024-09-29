@@ -11,8 +11,10 @@ entity_u_ptr OperandEntity::clone() const {
   return make_unique<OperandEntity>(*this);
 }
 
+Operand OperandEntity::to_str() const {
+  return Operand::to_str();
+};
 
 void OperandEntity::print() const {
-  //cout << _get_operand();
-  cout << Operand::_to_str();
+  cout << to_str();
 };

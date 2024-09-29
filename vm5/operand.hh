@@ -13,6 +13,7 @@ protected:
   OperandVariant value_;
   OperandType type_;
 public:
+  const static string nil_str;
   // Constructors for each supported type
   Operand();
   Operand(OperandType t) : type_(t) {} //  just type
@@ -25,37 +26,23 @@ public:
   Operand(const Number& value) ;
   Operand(const string& value) ;
   Operand(const char* value) ;
-
-
-  static string nil_str;
-
   //--------------------------------------------------------- Overload primative operator
-  void set_type(const OperandType &t) { type_=t;};
-
   const OperandVariant& _get_value() const ;
   inline Number _get_number() const ;
 
   s_integer _get_int() const ;
   s_float _get_float() const ;
   const string& _get_str() const ;
-  const string& _to_str() const { return  _get_str();};
+  const string& _to_str() const ;
+
+  void set_type(const OperandType &t) { type_= t; };
   OperandType _get_type() const { return type_;};
 
   //--------------------------------------------------------- Overload math operator
-  Operand get_str() const {return to_str();}; 
+  Operand get_str() const;
   Operand to_str() const; 
 
-
-/*
-  static Operand to_str(OperandType t);
-  static Operand to_str(OperandVariant v);
-  static Operand to_str(OperandErrorCode err);
-  static Operand to_str(AstOp op); 
-*/
-
-
   Operand whatami() const;  // introspection type + value
-
   //--------------------------------------------------------- Overload math operator
   Operand operator+(const Operand& other) const ;
   Operand operator-(const Operand& other) const ;
