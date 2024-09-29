@@ -11,6 +11,7 @@ class Entity : public Operand {
 protected:
   vector<entity_u_ptr> members;
   unordered_map<string, entity_u_ptr> children;
+  //map<string, entity_u_ptr> children;
   entity_s_ptr  parent;
   Operand operation_status; // errors operating on members or children 
 
@@ -36,8 +37,9 @@ public:
   virtual const Entity& set(const Entity &k, const Entity &v) = 0;
   virtual const Entity& set(const Entity &k, entity_u_ptr &vptr) = 0;
 
-  virtual const ListEntity& get_list(const Entity &k) = 0;
-  virtual const MapEntity&  get_map(const Entity &k) = 0;
+  //virtual const ListEntity& get_list(const Entity &k) = 0;
+  //virtual const map_u_ptr&  get_map(const Entity &k) = 0;
+  //virtual Operand to_str() const = 0;
   virtual Operand to_str() const = 0;
 
   virtual void print() const =0;

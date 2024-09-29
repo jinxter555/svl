@@ -5,7 +5,7 @@ TMPDIR = /dev/shm
 ast_o := $(wildcard ../*.o)
 core_o := $(wildcard ../../*.o)
 
-all: t_entity_01.out t_entity_02.out  t_list_01.out t_list_02.out
+all: t_entity_01.out t_entity_02.out  t_list_01.out t_list_02.out t_map_01.out
 #all: $(objects)
 
 
@@ -19,6 +19,9 @@ t_list_01.out: t_list_01.o $(ast_o)
 	$(CC)  $^ -o $@
 
 t_list_02.out: t_list_02.o $(ast_o)
+	$(CC)  $^ -o $@
+
+t_map_01.out: t_map_01.o $(ast_o)
 	$(CC)  $^ -o $@
 
 

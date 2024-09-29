@@ -27,8 +27,8 @@ public:
   const Entity& set(const Entity &k, entity_u_ptr &vptr) override {return undef_error;};
 
   const Entity& add(const Entity &k, entity_u_ptr& vptr) override { return MapEntity::undef_error;}; 
-  const MapEntity&   get_map(const Entity &k) override { return MapEntity::invalid_error; };
-  const ListEntity&  get_list(const Entity &k) override { return ListEntity::undef_error; };
+//  const MapEntity&   get_map(const Entity &k) override { return MapEntity::invalid_error; };
+//  const ListEntity&  get_list(const Entity &k) override { return ListEntity::undef_error; };
 
  // Entity& get_ref(int i) ;
   Operand to_str() const override;

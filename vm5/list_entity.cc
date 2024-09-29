@@ -32,16 +32,18 @@ const Entity& ListEntity::get(const Entity &key) {
   return get(key._get_int());
 }
 const Entity& ListEntity::get(int i) {
-  //if(i > members.size()) return entity_undef_error;
+  if(i > members.size() || i < 0) return ListEntity::undef_error;
   return *members[i];
 }
 
+/*
 const ListEntity&  ListEntity::get_list(const Entity &key) {
   return get_list(key._get_int());
 }
 const MapEntity&  ListEntity::get_map(const Entity &k) { 
   return MapEntity::undef_error;
 };
+*/
 const ListEntity&  ListEntity::get_list(int i) {
   if(i > members.size() || i<0 ) return ListEntity::undef_error;
 
@@ -64,7 +66,7 @@ const Entity& ListEntity::set(const Entity &key, const Entity &v ) {
 
 const Entity& ListEntity::set(const Entity &key, entity_u_ptr &vptr ) {
   int i = key._get_int();
-  // if(i > members.size() || i < 0) return entity_undef_error;
+  if(i > members.size() || i < 0) return ListEntity::undef_error;
   members[i] = move(vptr);
   return *members[i];
 }

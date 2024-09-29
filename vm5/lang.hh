@@ -4,6 +4,7 @@
 #pragma once
 #include <variant>
 #include <vector>
+#include <map>
 #include <unordered_map>
 #include <memory>
 #include <string>
@@ -40,6 +41,7 @@ enum class OperandErrorCode {
   invalid_op_t,       // invalid operation has been applied to operand
   mem_alloc_t,        // invalid operation has been applied to operand
 };
+
 enum class EntityStatusCode {
   ok,
   entity_already_exist,
