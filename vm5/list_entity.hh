@@ -20,7 +20,7 @@ public:
     override { return ListEntity::invalid_error; }; // this is for map not
 
 
-  inline const Entity&   get(const Entity &k) override ;
+  const Entity&   get(const Entity &k) override ;
   const Entity&   get(int i) ;
 
 

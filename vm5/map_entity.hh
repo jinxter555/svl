@@ -1,6 +1,7 @@
 #pragma once
 #include "entity.hh"
 #include "list_entity.hh"
+#include "operand_entity.hh"
 
 class MapEntity : public Entity {
 public:
@@ -17,14 +18,14 @@ public:
   entity_u_ptr clone() const override;
 
   const Entity& add(const Entity &v) override { return MapEntity::undef_error;};
+
   const entity_u_ptr& add(entity_u_ptr &vptr) override { return *Entity::error ; };
 
   const Entity& add(const Entity &k, const Entity& v) override ; 
-
   const Entity& add(const Entity &k, entity_u_ptr& vptr) override; 
 
   const Entity& get(const string &k) ;
-  inline const Entity&   get(const Entity &k) override ;
+  const Entity&   get(const Entity &k) override ;
 
   const Entity& set(const Entity &k, const Entity &v) override;
   const Entity& set(const Entity &k, entity_u_ptr &vptr) override;

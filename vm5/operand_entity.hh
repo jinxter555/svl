@@ -19,6 +19,7 @@ public:
 
   const Entity& add(const Entity &k, const Entity& v) override 
     { return OperandEntity::undef_error; }; // this is for map or list not here
+  const Entity& add(const Entity &k, entity_u_ptr& vptr) override { return OperandEntity::undef_error;}; 
 
   inline const Entity&   get(const Entity &k) override {return undef_error; };
   const Entity&   get(int i) {return undef_error;};
@@ -26,7 +27,6 @@ public:
   const Entity& set(const Entity &k, const Entity &v) override {return undef_error;};
   const Entity& set(const Entity &k, entity_u_ptr &vptr) override {return undef_error;};
 
-  const Entity& add(const Entity &k, entity_u_ptr& vptr) override { return MapEntity::undef_error;}; 
 //  const MapEntity&   get_map(const Entity &k) override { return MapEntity::invalid_error; };
 //  const ListEntity&  get_list(const Entity &k) override { return ListEntity::undef_error; };
 

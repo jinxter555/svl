@@ -71,15 +71,8 @@ using entity_u_ptr = unique_ptr<Entity>;
 using entity_s_ptr = shared_ptr<Entity>;
 using entity_ptr = Entity *;
 
-class AstList; 
-using list_u_ptr = unique_ptr<AstList>;
-using list_s_ptr = shared_ptr<AstList>;
-using list_ptr = AstList *;
-
-class AstMap; 
-using map_u_ptr = unique_ptr<AstMap>;
-using map_s_ptr = shared_ptr<AstMap>;
-using map_ptr = AstMap *;
+class AstExpr; 
+using astexpr_u_ptr = unique_ptr<AstExpr>;
 
 class Operand; class Number;
 using OperandVariant = variant<bool, AstOp, Number, string, OperandErrorCode, OperandType>;
