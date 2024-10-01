@@ -38,6 +38,7 @@ public:
   Operand(const string&);
   Operand(const char* value);
   Operand(OperandType);
+  Operand(OperandType, const OperandVariant&);
   Operand(AstOp);
   Operand(OperandErrorCode);
   Operand(OperandStatusCode);
@@ -52,6 +53,8 @@ public:
   OperandType _get_type() const;
   //--------------------------------------------------------- Overload math operator
   Operand get_str() const;
+  Operand get_type() const;
+
   Operand to_str() const; 
   Operand whatami() const;  // introspection type + value
   //--------------------------------------------------------- Overload math operator
@@ -76,8 +79,9 @@ public:
   //--------------------------------------------------------- Overload math logic operator
   Operand opfunc(const Operand& other, AstOp op) ;
   //--------------------------------------------------------- 
-  struct OperandVisitor {
-    //template <typename T> OperandVariant operator()(T value) const;                                                                                                                                   
+/*
+  struct GetValue {
+    template <typename T> OperandVariant operator()(T value) const;                                                                                                                                   
     OperandVariant operator()(const entity_u_ptr& v) const  ;                                                                                                           
     OperandVariant operator()(Entity *v) const ;
     OperandVariant operator()(const string &s) const ;
@@ -87,7 +91,16 @@ public:
     OperandVariant operator()(const OperandType ) const ;
     OperandVariant operator()(bool) const ;
     OperandVariant operator()(AstOp) const ;
+
   };                            
+  */
 };
+
+struct GetOperandValue{
+template <typename T> OperandVariant operator()(T value) const;                                                                                                                                   
+OperandVariant operator()(const entity_u_ptr& v) const  ;                                                                                                           
+OperandVariant operator()(Entity *v) const ;
+};
+
 
 #endif

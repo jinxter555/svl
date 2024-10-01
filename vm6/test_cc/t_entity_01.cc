@@ -18,6 +18,10 @@ int main() {
   cout << "f1: " << f1 << "\n";
   cout << "s1: " << s1 << "\n";
 
+  cout << "i1.get_type(): " << i1.get_type() << "\n";
+  cout << "s1.get_type(): " << s1.get_type() << "\n";
+  cout << "f1.get_type(): " << f1.get_type() << "\n";
+
   //cout << o1 << "\n";
   return 0;
 }
