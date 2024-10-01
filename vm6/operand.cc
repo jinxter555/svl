@@ -11,23 +11,29 @@ const string Operand::nil_str=string("nil");
   
 Operand::Operand() { type_ = OperandType::nil_t; }
 Operand::Operand(bool v) : value_(v), type_(OperandType::bool_t) {}
-Operand::Operand(s_integer v) : value_ (v) {type_ = OperandType::s_int_t;}
-Operand::Operand(s_float v) : value_(v) {   type_ = OperandType::s_float_t;}
+Operand::Operand(s_integer v) : value_ (Number(v)) {type_ = OperandType::num_t;}
+Operand::Operand(s_float v) : value_(Number(v)) {   type_ = OperandType::num_t;}
+Operand::Operand(const Number& v) : value_(v) { type_ = OperandType::num_t; }
 Operand::Operand(OperandType t) : type_(t) {} //  meta program type of types
 Operand::Operand(AstOp v) : type_(OperandType::ast_op_t), value_(v) {} //  just type
 Operand::Operand(OperandErrorCode v) : type_(OperandType::err_t), value_(v) {} //  just type
 Operand::Operand(OperandStatusCode v) : value_(v) {} //  just type
 Operand::Operand(const string& v) : value_(v), type_(OperandType::str_t) {}
 Operand::Operand(const char* v) : value_(string(v)) { type_ = OperandType::str_t; }
-//Operand::Operand(const entity_u_ptr &vptr)   { //value_= make_unique<Entity>(*vptr); }
+Operand::Operand(entity_u_ptr vptr)   { value_= move(vptr); }
 
 //-----------------------------------------------------------------------
+
+void Operand::set_type(const OperandType &t) { type_= t; };
+OperandType Operand::_get_type() const { return type_;};
+
+//---------------------------  for cout print out or other viewers
 Operand Operand::get_str() const {
   return to_str();
 }
 Operand Operand::to_str() const {
   return Operand(
-    variant_visit(OperandToStringVisitor(), value_)
+    visit(OperandToStringVisitor(), value_)
   );
 }
 //---------------------------  for cout print out or other viewers
@@ -36,16 +42,48 @@ const string Operand::_get_str() const {
 }
 const string Operand::_to_str() const { 
   if(type_==OperandType::str_t) { 
-    return variant_get<string>(value_); 
+    return get<string>(value_); 
   }
   if(type_==OperandType::nil_t) return nil_str;
   return to_str()._to_str();
 }
 //---------------------------  for cout print out or other viewers
-s_integer Operand::_get_int() const { return variant_get<s_integer>(value_); }
-s_float Operand::_get_float() const { return variant_get<s_float>(value_); }
+Number Operand::_get_number() const { 
+  return get<Number>(value_); 
+}
+s_integer Operand::_get_int() const { 
+  Number n = _get_number(); 
+  return get<s_integer>(n.get_data()); 
+}
+s_float Operand::_get_float() const { 
+  Number n = _get_number();
+  return get<s_float>(n.get_data()); 
+}
+//-----------------------------------------------------------------------
+Operand Operand::whatami() const {
+  Operand w = OperandToStringVisitor()(type_);
+  if(type_ == OperandType::err_t) {
+    OperandErrorCode err = get<OperandErrorCode>(value_);
+    return w +  Operand(": ")._to_str() + OperandToStringVisitor()(err);
+  }
+  return w;
+}
+
 //-----------------------------------------------------------------------
 std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   cout << operand._to_str();
   return os;
 }
+
+
+//template <typename T>
+//OperandVariant Operand::OperandVisitor::operator()(T value) const { return value; }
+OperandVariant Operand::OperandVisitor::operator()(const entity_u_ptr& v) const { return v->clone(); }                                                                                                                                                                      
+OperandVariant Operand::OperandVisitor::operator()(Entity *v) const { return v->clone(); }  
+OperandVariant Operand::OperandVisitor::operator()(const string &s) const { return s; }
+OperandVariant Operand::OperandVisitor::operator()(const Number &n) const {return n; }
+OperandVariant Operand::OperandVisitor::operator()(const OperandStatusCode n) const {return n; }
+OperandVariant Operand::OperandVisitor::operator()(const OperandErrorCode n) const {return n; }
+OperandVariant Operand::OperandVisitor::operator()(const OperandType n) const {return n; }
+OperandVariant Operand::OperandVisitor::operator()(bool n) const {return n; }
+OperandVariant Operand::OperandVisitor::operator()(AstOp n) const {return n; }

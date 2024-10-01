@@ -1,4 +1,5 @@
 #include "../operand.hh"
+#include "../entity.hh"
 
 int main() {
   Operand i1(10l);

@@ -1,13 +1,12 @@
-#include "../operand_entity.hh"
-#include "../list_entity.hh"
+#include "../entity.hh"
 
-ostream& operator<<(ostream& os, const OperandType& t);
 
 int main() {
   OperandEntity i1(1l);
   OperandEntity i2(2l);
   OperandEntity i3(3l);
   OperandEntity i4=i1+i2+i3;
+
   ListEntity l1, l2;
   l1.add(i1);
   l1.add(i2);

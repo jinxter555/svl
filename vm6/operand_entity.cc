@@ -16,6 +16,6 @@ Operand OperandEntity::to_str() const {
 };
 
 void OperandEntity::print() const {
-  cout << "opent print\n";
-//  cout << to_str();
+//  cout << "opent print\n";
+  cout << to_str();
 };

@@ -10,16 +10,7 @@
 #include <memory>
 #include <string>
 #include <iostream>
-
-#ifdef __BOOST__
-  #define variant_user boost::variant
-  #define variant_get boost::get
-  #define variant_visit boost::apply_visitor
-#else
-  #define variant_user std::variant
-  #define variant_get get
-  #define variant_visit visit
-#endif
+#include "number.hh"
 
 
 using namespace  std;

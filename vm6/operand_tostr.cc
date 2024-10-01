@@ -5,11 +5,10 @@ Operand OperandToStringVisitor::operator()(bool b) const {
  return string("false");
 }
 
-Operand OperandToStringVisitor::operator()(s_integer i) const {
- return to_string(i);
-}
-Operand OperandToStringVisitor::operator()(s_float f) const {
-  return to_string(f);
+//Operand OperandToStringVisitor::operator()(s_integer i) const { return to_string(i); }
+//Operand OperandToStringVisitor::operator()(s_float f) const { return to_string(f); }
+Operand OperandToStringVisitor::operator()(const Number &n) const {
+  return n.to_str();
 }
 Operand OperandToStringVisitor::operator()(const std::string& s) const {
   return s;
@@ -96,4 +95,4 @@ Operand OperandToStringVisitor::operator()(AstOp t_op) const {
   } 
   return Operand(oc);
 }
-//Operand OperandToStringVisitor::operator()(const entity_u_ptr &vptr) const { return "entity ptr"; }
+Operand OperandToStringVisitor::operator()(const entity_u_ptr &vptr) const { return "entity ptr"; }
