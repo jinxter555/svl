@@ -6,34 +6,34 @@
 #include "operand_tostr.hh"
 #include "entity.hh"
 
+Nil nil;
 const string Operand::nil_str=string("nil");
 //Operand(int value) ; //Operand(float value) ;
   
-Operand::Operand() { type_ = OperandType::nil_t; }
-Operand::Operand(bool v) : value_(v), type_(OperandType::bool_t) {}
-Operand::Operand(s_integer v) : value_ (Number(v)) {type_ = OperandType::num_t;}
-Operand::Operand(s_float v) : value_(Number(v)) {   type_ = OperandType::num_t;}
-Operand::Operand(const Number& v) : value_(v) {     type_ = OperandType::num_t;}
-Operand::Operand(OperandType t) : type_(t) {} //  meta program type of types
-Operand::Operand(OperandType t, const OperandVariant& v ) : type_(t) { 
-  value_ = visit(GetOperandValue(), v); 
-  } 
-Operand::Operand(AstOp v) : type_(OperandType::ast_op_t), value_(v) {} //  just type
-Operand::Operand(OperandErrorCode v) : type_(OperandType::err_t), value_(v) {} //  just type
+Operand::Operand() { value_ = nil; }
+Operand::Operand(bool v) : value_(v) {}
+Operand::Operand(s_integer v) : value_ (Number(v)) {}
+Operand::Operand(s_float v) : value_(Number(v)) {   }
+Operand::Operand(const Number& v) : value_(v) {     ;}
+
+Operand::Operand(OperandType v) : value_(v) {} //  meta program type of types
+Operand::Operand(AstOpCode v) : value_(v) {} //  just type
+Operand::Operand(OperandErrorCode v) : value_(v) {} //  just type
 Operand::Operand(OperandStatusCode v) : value_(v) {} //  just type
-Operand::Operand(const string& v) : value_(v), type_(OperandType::str_t) {}
-Operand::Operand(const char* v) : value_(string(v)) { type_ = OperandType::str_t; }
+
+Operand::Operand(const OperandVariant& v ) { value_ = visit(GetOperandValue(), v); } 
+Operand::Operand(const string& v) : value_(v) {}
+Operand::Operand(const char* v) : value_(string(v)) {}
+
 Operand::Operand(entity_u_ptr vptr)   { value_= move(vptr); }
-
+Operand::Operand(list_u_ptr vptr)   { value_= move(vptr); }
 //-----------------------------------------------------------------------
-
-void Operand::set_type(const OperandType &t) { type_= t; };
-OperandType Operand::_get_type() const { return type_;};
+OperandType Operand::_get_type() const { 
+  return( visit(GetOperandType(), value_));
+};
 
 Operand Operand::get_type() const {
-  return(
-    Operand(OperandType::type_t, _get_type())
-  );
+  return( visit(GetOperandType(), value_));
 }
 
 //---------------------------  for cout print out or other viewers
@@ -50,10 +50,9 @@ const string Operand::_get_str() const {
   return  _to_str();
 }
 const string Operand::_to_str() const { 
-  if(type_==OperandType::str_t) { 
+  //OperandType type = visit(GetOperandType(), value_);
+   if (holds_alternative<string>(value_))
     return get<string>(value_); 
-  }
-  if(type_==OperandType::nil_t) return nil_str;
   return to_str()._to_str();
 }
 //---------------------------  for cout print out or other viewers
@@ -69,9 +68,14 @@ s_float Operand::_get_float() const {
   return get<s_float>(n.get_data()); 
 }
 //-----------------------------------------------------------------------
+e_members_t& Operand::_get_members() {
+  return get<e_members_t>(value_); 
+
+};
+//-----------------------------------------------------------------------
 Operand Operand::whatami() const {
-  Operand w = OperandToStringVisitor()(type_);
-  if(type_ == OperandType::err_t) {
+  Operand w = get_type();
+  if(_get_type() == OperandType::err_t) {
     OperandErrorCode err = get<OperandErrorCode>(value_);
     return w +  Operand(": ")._to_str() + OperandToStringVisitor()(err);
   }
@@ -84,22 +88,26 @@ std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   return os;
 }
 
+//-----------------------------------------------------------------------
 template <typename T>
 OperandVariant GetOperandValue::operator()(T value) const { return value; }
-OperandVariant GetOperandValue::operator()(const entity_u_ptr& v) const { return v->clone(); }                                                                                                                                                                      
+OperandVariant GetOperandValue::operator()(const entity_u_ptr& v) const { return v->clone(); }
+OperandVariant GetOperandValue::operator()(const list_u_ptr& v) const { return v->clone(); }
 OperandVariant GetOperandValue::operator()(Entity *v) const { return v->clone(); }  
+OperandVariant GetOperandValue::operator()(const e_members_t& v) const { 
+  return false;
+}
 
-/*
-template <typename T>
-OperandVariant Operand::GetValue::operator()(T value) const { return value; }
-OperandVariant Operand::GetValue::operator()(const entity_u_ptr& v) const { return v->clone(); }                                                                                                                                                                      
-OperandVariant Operand::GetValue::operator()(Entity *v) const { return v->clone(); }  
-
-OperandVariant Operand::GetValue::operator()(const string &s) const { return s; }
-OperandVariant Operand::GetValue::operator()(const Number &n) const {return n; }
-OperandVariant Operand::GetValue::operator()(const OperandStatusCode n) const {return n; }
-OperandVariant Operand::GetValue::operator()(const OperandErrorCode n) const {return n; }
-OperandVariant Operand::GetValue::operator()(const OperandType n) const {return n; }
-OperandVariant Operand::GetValue::operator()(bool n) const {return n; }
-OperandVariant Operand::GetValue::operator()(AstOp n) const {return n; }
-*/
+//-----------------------------------------------------------------------
+OperandType GetOperandType::operator()(const Nil& v) const  { return OperandType::nil_t; }
+OperandType GetOperandType::operator()(const bool v) const  { return OperandType::bool_t; }
+OperandType GetOperandType::operator()(const entity_u_ptr& v) const { return OperandType::ptr_t;}
+OperandType GetOperandType::operator()(const list_u_ptr& v) const { return OperandType::ptr_t;}
+OperandType GetOperandType::operator()(Entity *v) const { return OperandType::ptr_t;}
+OperandType GetOperandType::operator()(const e_members_t& v) const { return OperandType::list_t; }
+OperandType GetOperandType::operator()(const string& v) const { return OperandType::str_t; }
+OperandType GetOperandType::operator()(const Number& v) const { return OperandType::num_t; }
+OperandType GetOperandType::operator()(const AstOpCode& v) const { return OperandType::ast_op_t; }
+OperandType GetOperandType::operator()(const OperandType& v) const { return OperandType::type_t; }
+OperandType GetOperandType::operator()(const OperandStatusCode& v) const { return OperandType::status_t; }
+OperandType GetOperandType::operator()(const OperandErrorCode& v) const { return OperandType::err_t; }

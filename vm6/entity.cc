@@ -6,14 +6,15 @@ Entity::Entity() { parent = nullptr; }
 Entity::Entity(const Operand &v)  {
   //value_ = visit(GetValue(), v.value_);
   value_ = visit(GetOperandValue(), v.value_);
-  type_  = v.type_;
   parent = nullptr;
 } 
-Entity::Entity(const Entity &v) { parent = nullptr; } 
+Entity::Entity(const Entity &v) { 
+  parent = nullptr; 
+  value_ = visit(GetOperandValue(), v.value_);
+} 
 
 Operand Entity::_get_operand() { 
-  Operand nv= type_;
-  //nv.value_ = visit(GetValue(), this->value_); 
+  Operand nv; //nv.value_ = visit(GetValue(), this->value_); 
   nv.value_ = visit(GetOperandValue(), this->value_); 
   return nv;
 }

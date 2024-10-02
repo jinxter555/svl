@@ -4,17 +4,14 @@ ListEntity ListEntity::undef_error=ListEntity(OperandErrorCode::undefined_t);
 ListEntity ListEntity::mem_error=ListEntity(OperandErrorCode::mem_alloc_t);
 ListEntity ListEntity::invalid_error=ListEntity(OperandErrorCode::invalid_op_t);
 
-ListEntity::ListEntity() { type_ = OperandType::list_t; }
-ListEntity::ListEntity(const Operand& v) : Entity(v) { type_ = OperandType::err_t; }
+ListEntity::ListEntity() {}
+ListEntity::ListEntity(const Operand& v) : Entity(v) { }
 
 
 
 ListEntity::ListEntity(const ListEntity& l) {
-  entity_u_ptr nl = l.clone();
-  if(nl->type_ != OperandType::list_t) return;
-  type_ = nl->type_;
-  //value_ = nl->value_;
-  members = move(nl->members);
+  entity_u_ptr new_l = l.clone();
+  members = move(new_l->members);
 };
 
 const Entity& ListEntity::add(const Entity &v) { 

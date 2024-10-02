@@ -3,19 +3,23 @@
 #pragma once
 #include "lang.hh"
 
-class Operand; 
-class Entity;
+class Nil{};
+class Entity; class OperandEntity; class ListEntity; 
+
 using entity_u_ptr = unique_ptr<Entity>;
+using e_members_t = vector<entity_u_ptr>;
+
+using list_u_ptr = unique_ptr<ListEntity>;
+using operand_u_ptr=unique_ptr<OperandEntity>;
 
 using OperandVariant=std::variant
-< bool, AstOp
-, string, OperandErrorCode
+< Nil
+, bool, string, Number
+, AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
-, Number
-, entity_u_ptr
+, entity_u_ptr , list_u_ptr
+, e_members_t
 >;
-
-using o_u_ptr=unique_ptr<Operand>;
 
 class Operand {
   friend class Entity;
@@ -23,7 +27,7 @@ class Operand {
   friend class ListEntity;
   friend class MapEntity;
 protected:
-  OperandType type_;
+//  OperandType type_;
   OperandVariant value_;
 public:
   const static string nil_str;
@@ -34,23 +38,28 @@ public:
   Operand(bool) ;
   Operand(s_integer);
   Operand(s_float);
+
+  Operand(OperandType);
+  Operand(AstOpCode);
+  Operand(OperandErrorCode);
+  Operand(OperandStatusCode);
+
   Operand(const Number& value) ;
   Operand(const string&);
   Operand(const char* value);
-  Operand(OperandType);
-  Operand(OperandType, const OperandVariant&);
-  Operand(AstOp);
-  Operand(OperandErrorCode);
-  Operand(OperandStatusCode);
+  Operand(const OperandVariant&);
+
   Operand(entity_u_ptr);
+  Operand(list_u_ptr);
   //--------------------------------------------------------- Overload primative operator
   inline Number _get_number() const ;
   s_integer _get_int() const ;
   s_float _get_float() const ;
   const string _get_str() const ;
   const string _to_str() const ;
-  void set_type(const OperandType &t);
   OperandType _get_type() const;
+  //--------------------------------------------------------- Overload entity ..
+  e_members_t& _get_members();
   //--------------------------------------------------------- Overload math operator
   Operand get_str() const;
   Operand get_type() const;
@@ -77,29 +86,32 @@ public:
   //--------------------------------------------------------- Overload math logic operator
   Operand operator!() const;
   //--------------------------------------------------------- Overload math logic operator
-  Operand opfunc(const Operand& other, AstOp op) ;
+  Operand opfunc(const Operand& other, AstOpCode op) ;
   //--------------------------------------------------------- 
-/*
-  struct GetValue {
-    template <typename T> OperandVariant operator()(T value) const;                                                                                                                                   
-    OperandVariant operator()(const entity_u_ptr& v) const  ;                                                                                                           
-    OperandVariant operator()(Entity *v) const ;
-    OperandVariant operator()(const string &s) const ;
-    OperandVariant operator()(const Number &n) const ;
-    OperandVariant operator()(const OperandStatusCode ) const ;
-    OperandVariant operator()(const OperandErrorCode) const ;
-    OperandVariant operator()(const OperandType ) const ;
-    OperandVariant operator()(bool) const ;
-    OperandVariant operator()(AstOp) const ;
-
-  };                            
-  */
 };
 
 struct GetOperandValue{
 template <typename T> OperandVariant operator()(T value) const;                                                                                                                                   
 OperandVariant operator()(const entity_u_ptr& v) const  ;                                                                                                           
+OperandVariant operator()(const list_u_ptr& v) const  ;                                                                                                           
 OperandVariant operator()(Entity *v) const ;
+OperandVariant operator()(const e_members_t& v) const  ;                                                                                                           
+};
+
+struct GetOperandType{
+OperandType operator()(const bool v) const ;
+OperandType operator()(const Nil& v) const ;
+OperandType operator()(const Number& v) const ;
+OperandType operator()(const string& v) const ;
+OperandType operator()(const AstOpCode& v) const ;
+OperandType operator()(const OperandType& v) const ;
+OperandType operator()(const OperandStatusCode& v) const ;
+OperandType operator()(const OperandErrorCode& v) const ;
+
+OperandType operator()(const entity_u_ptr& v) const  ;                                                                                                           
+OperandType operator()(const list_u_ptr& v) const  ;                                                                                                           
+OperandType operator()(Entity *v) const ;
+OperandType operator()(const e_members_t& v) const  ;                                                                                                           
 };
 
 

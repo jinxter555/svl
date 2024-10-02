@@ -2,12 +2,18 @@
 
 
 int main() {
+  //OperandEntity i1(12345l);
   OperandEntity i1(1l);
   OperandEntity i2(2l);
   OperandEntity i3(3l);
   OperandEntity i4=i1+i2+i3;
 
   ListEntity l1, l2;
+
+  cout << "i1 : " << i1 << "\n";
+  cout << "l1 type: " << l1.get_type() << "\n";
+  cout << "l1: " << l1 << "\n";
+
   l1.add(i1);
   l1.add(i2);
   l1.add(i3);
@@ -31,7 +37,6 @@ int main() {
   OperandEntity i5 = i4 + i4 + i4;
   l1.set(i2, i5);
   cout << "l1: " << l1 << "\n";
-
 
   //cout << "l1: " << (Entity) l1 << "\n";
   //l1.print();

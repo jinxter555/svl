@@ -19,20 +19,22 @@ using EntityVariant = variant<entity_u_ptr, oe_u_ptr>;
 class Entity : public Operand {
   friend class OperandEntity;
   friend class ListEntity;
+  friend class MapEntity;
 protected:
-  vector<entity_u_ptr> members;
   //vector<EntityVariant> members;
   //unordered_map<string, entity_u_ptr> children;
-  //map<string, entity_u_ptr> children;
+  //e_members_t &members=_get_members();
+  vector<entity_u_ptr> members;
+  map<string, entity_u_ptr> children;
   entity_u_ptr  parent;
   Operand operation_status; // errors operating on members or children 
 public:
   Entity();
   Entity(const Operand&);
   Entity(const Entity &v) ;
-  Operand _get_operand();
 
   //-------------------------------------------
+  Operand _get_operand(); // neneds to be virutal
   virtual entity_u_ptr clone() const = 0;
   virtual const Entity& add(const Entity& v)=0;
   virtual const entity_u_ptr& add(entity_u_ptr &vptr) =0;    // for list
@@ -95,6 +97,7 @@ public:
 
   const Entity& add(const Entity &k, const Entity& v) 
     override { return ListEntity::invalid_error; }; // this is for map not
+
   const Entity& add(const Entity &k, entity_u_ptr& vptr) 
     override { return ListEntity::invalid_error; }; // this is for map not
 
@@ -102,8 +105,6 @@ public:
   const Entity&   get(int i) ;
   const Entity& set(const Entity &k, const Entity &v) override;
   const Entity& set(const Entity &k, entity_u_ptr &vptr) override;
-
-
   const ListEntity&  get_list(int i) ;
 
   using Operand::_get_type;  // for error handling to findout if err_t instead of map_t

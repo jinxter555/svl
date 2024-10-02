@@ -16,7 +16,7 @@
 using namespace  std;
 
 
-enum class AstOp {
+enum class AstOpCode {
   noop,
   ast_default,
   ast_else,
@@ -67,6 +67,7 @@ enum class OperandType {
   err_t,            // error code
   bool_t,
   num_t,
+  status_t,
   s_int_t,
   s_float_t,
   str_t,
@@ -76,6 +77,7 @@ enum class OperandType {
   list_t,
   map_t,
   ast_op_t,
+  ptr_t,
   except_t,
 };
 

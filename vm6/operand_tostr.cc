@@ -1,5 +1,9 @@
 #include "operand_tostr.hh"
+#include "entity.hh"
 
+Operand OperandToStringVisitor::operator()(const Nil &n) const {
+  return string("nil");
+}
 Operand OperandToStringVisitor::operator()(bool b) const {
  if(b==true) return string("true");
  return string("false");
@@ -28,7 +32,7 @@ Operand OperandToStringVisitor::operator()(OperandType t) const {
   case OperandType::ast_op_t:  outstr ="ast_opt_t"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
   //case OperandType::any_t:  outstr ="any_t"; break;
-  default: outstr ="type unknown"; break;
+  default: outstr ="i have forgotten to add. type unknown"; break;
   }
   return outstr;
 }
@@ -69,30 +73,38 @@ Operand OperandToStringVisitor::operator()(OperandErrorCode err) const {
   return outstr;
 }
 
-Operand OperandToStringVisitor::operator()(AstOp t_op) const {
+Operand OperandToStringVisitor::operator()(AstOpCode t_op) const {
   std::string oc;
 
 
   switch(t_op) {
-  case AstOp::noop:  oc="-noop-"; break;
-  case AstOp::ast_default:  oc="default"; break;
-  case AstOp::ast_else:  oc="else"; break;
-  case AstOp::assign:  oc="="; break;
-  case AstOp::plus:  oc="+"; break;
-  case AstOp::minus: oc="-"; break;
-  case AstOp::mul:   oc="*"; break;
-  case AstOp::div:   oc="/"; break;
-  case AstOp::eql:   oc="=="; break;
-  case AstOp::neql:  oc="!="; break;
-  case AstOp::gt:    oc=">"; break;
-  case AstOp::lt:    oc="<"; break;
-  case AstOp::lteq:  oc="<="; break;
-  case AstOp::gteq:  oc=">="; break;
-  case AstOp::and_:  oc="&&"; break;
-  case AstOp::or_:   oc="||"; break;
-  case AstOp::not_:  oc="!"; break;
+  case AstOpCode::noop:  oc="-noop-"; break;
+  case AstOpCode::ast_default:  oc="default"; break;
+  case AstOpCode::ast_else:  oc="else"; break;
+  case AstOpCode::assign:  oc="="; break;
+  case AstOpCode::plus:  oc="+"; break;
+  case AstOpCode::minus: oc="-"; break;
+  case AstOpCode::mul:   oc="*"; break;
+  case AstOpCode::div:   oc="/"; break;
+  case AstOpCode::eql:   oc="=="; break;
+  case AstOpCode::neql:  oc="!="; break;
+  case AstOpCode::gt:    oc=">"; break;
+  case AstOpCode::lt:    oc="<"; break;
+  case AstOpCode::lteq:  oc="<="; break;
+  case AstOpCode::gteq:  oc=">="; break;
+  case AstOpCode::and_:  oc="&&"; break;
+  case AstOpCode::or_:   oc="||"; break;
+  case AstOpCode::not_:  oc="!"; break;
   default: oc="not ast operator"; break;
   } 
   return Operand(oc);
 }
-Operand OperandToStringVisitor::operator()(const entity_u_ptr &vptr) const { return "entity ptr"; }
+Operand OperandToStringVisitor::operator()(const entity_u_ptr &vptr) const { 
+  return Operand("list entity ptr: ") + vptr->to_str();
+}
+Operand OperandToStringVisitor::operator()(const list_u_ptr &vptr) const { 
+  return Operand("list entity ptr: ") + vptr->to_str(); 
+}
+Operand OperandToStringVisitor::operator()(const e_members_t &vptr) const { 
+  return Operand("list members: ");
+}

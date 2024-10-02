@@ -3,7 +3,9 @@
 
 //-----------------------------------------------------------------------
 Operand Operand::operator+(const Operand& other) const {
-  if(type_ != other.type_) { 
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) { 
     cout << "error! " << *this << " + '" << other << "'\n";
     return Operand(OperandErrorCode::invalid_op_t);
     /*
@@ -25,7 +27,10 @@ Operand Operand::operator+(const Operand& other) const {
 
   // Overload subtraction operator (similar approach)
 Operand Operand::operator-(const Operand& other) const {
-  if(type_ != other.type_) 
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+
+  if(type_ != other_type_) 
     throw std::runtime_error("Unsupported operation + for unequal types"); 
 
   switch(type_) {
@@ -37,7 +42,9 @@ Operand Operand::operator-(const Operand& other) const {
 }
 
 Operand Operand::operator*(const Operand& other) const {
-  if(type_ != other.type_) 
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) 
     throw std::runtime_error("Unsupported operation * for unequal types"); 
 
   switch(type_) {
@@ -49,7 +56,9 @@ Operand Operand::operator*(const Operand& other) const {
 }
 
 Operand Operand::operator/(const Operand& other) const {
-  if(type_ != other.type_) 
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) 
     throw std::runtime_error("Unsupported operation / for unequal types"); 
 
   switch(type_) {
@@ -61,7 +70,9 @@ Operand Operand::operator/(const Operand& other) const {
 }
 
 bool Operand::operator==(const Operand& other) const {
-  if(type_ != other.type_) {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) {
     //throw std::runtime_error("Unsupported operation == for unequal types"); 
     return false;
   }
@@ -81,7 +92,9 @@ bool Operand::operator==(const Operand& other) const {
   }
 }
 bool Operand::operator!=(const Operand& other) const {
-  if(type_ != other.type_) {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) {
     //throw std::runtime_error("Unsupported operation != for unequal types"); 
     return false;
   }
@@ -99,7 +112,9 @@ bool Operand::operator!=(const Operand& other) const {
 }
 
 bool Operand::operator>=(const Operand& other) const {
-  if(type_ != other.type_) {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) {
     //throw std::runtime_error("Unsupported operation >= for unequal types"); 
     return false;
   }
@@ -115,7 +130,9 @@ bool Operand::operator>=(const Operand& other) const {
 }
 
 bool Operand::operator<=(const Operand& other) const {
-  if(type_ != other.type_) {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) {
     //throw std::runtime_error("Unsupported operation <= for unequal types"); 
     return false;
   }
@@ -130,7 +147,9 @@ bool Operand::operator<=(const Operand& other) const {
 }
 
 bool Operand::operator<(const Operand& other) const {
-  if(type_ != other.type_) {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) {
     //throw std::runtime_error("Unsupported operation < for unequal types"); 
     return false;
   }
@@ -145,7 +164,9 @@ bool Operand::operator<(const Operand& other) const {
 }
 
 bool Operand::operator>(const Operand& other) const {
-  if(type_ != other.type_) {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+  if(type_ != other_type_) {
     //throw std::runtime_error("Unsupported operation > for unequal types"); 
     return false;
   }
@@ -160,6 +181,7 @@ bool Operand::operator>(const Operand& other) const {
 }
 
 Operand Operand::operator!() const {
+  auto type_ = _get_type();
   switch(type_) {
   case OperandType::bool_t: 
     return !get<bool>(value_);
@@ -171,10 +193,12 @@ Operand Operand::operator!() const {
 }
 
 Operand Operand::operator&&(const Operand& other) const {
-  if(type_ != other.type_) {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+
+  if(type_ != other_type_) {
     throw std::runtime_error("Unsupported operation && for unequal types"); 
   }
-
   switch(type_) {
   case OperandType::bool_t: 
     return get<bool>(value_) && get<bool>(other.value_);
@@ -186,7 +210,10 @@ Operand Operand::operator&&(const Operand& other) const {
 }
 
 Operand Operand::operator||(const Operand& other) const {
-  if(type_ != other.type_)  {
+  auto type_ = _get_type();
+  auto other_type_ = other._get_type();
+
+  if(type_ != other_type_)  {
     throw std::runtime_error("Unsupported operation || for unequal types"); 
   }
 
@@ -200,30 +227,30 @@ Operand Operand::operator||(const Operand& other) const {
   }
 }
 
-Operand Operand::opfunc(const Operand& other, AstOp op) {
+Operand Operand::opfunc(const Operand& other, AstOpCode op) {
   
   // if(type_ != other.type_) throw std::runtime_error("Unsupported operation > for unequal types"); 
 
   switch(op){
-  case AstOp::plus:  return *this + other;
-  case AstOp::minus: return *this - other; 
-  case AstOp::mul:   return *this * other; 
-  case AstOp::div:   return *this / other;
-  case AstOp::eql:
+  case AstOpCode::plus:  return *this + other;
+  case AstOpCode::minus: return *this - other; 
+  case AstOpCode::mul:   return *this * other; 
+  case AstOpCode::div:   return *this / other;
+  case AstOpCode::eql:
     return *this == other;
-  case AstOp::neql:
+  case AstOpCode::neql:
     return *this != other;
-  case AstOp::gt:
+  case AstOpCode::gt:
     return *this > other;
-  case AstOp::lt:
+  case AstOpCode::lt:
     return *this < other;
-  case AstOp::lteq:
+  case AstOpCode::lteq:
     return *this <= other;
-  case AstOp::gteq:
+  case AstOpCode::gteq:
     return *this >= other;
-  case AstOp::and_:  return *this && other;
-  case AstOp::or_:   return *this && other;
-  case AstOp::not_:  return *this && other;
+  case AstOpCode::and_:  return *this && other;
+  case AstOpCode::or_:   return *this && other;
+  case AstOpCode::not_:  return *this && other;
   default: 
     return false;
   }
