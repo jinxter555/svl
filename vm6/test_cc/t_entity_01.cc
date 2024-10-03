@@ -17,6 +17,8 @@ int main() {
   cout << "i2: " << i2 << "\n";
   cout << "f1: " << f1 << "\n";
   cout << "s1: " << s1 << "\n";
+  cout << "i1 + f1: " << i1+f1 << "\n";
+
 
   cout << "i1.get_type(): " << i1.get_type() << "\n";
   cout << "s1.get_type(): " << s1.get_type() << "\n";

@@ -8,8 +8,8 @@ MAKE=make
 objects = operand.o operand_tostr.o operand_math.o entity.o operand_entity.o number.o list_entity.o #map_entity.o
 headers  := (wildcard: *.hh)
 
-#all: test_cc_d $(objects) 
-all: $(objects) 
+all: $(objects)  test_cc_d
+#all: $(objects) 
 
 
 

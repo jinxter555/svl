@@ -2,18 +2,9 @@
 #define _ENTITY_H_
 
 #pragma once
-
-#include "lang.hh"
 #include "operand.hh"
 
 class Entity; using entity_u_ptr = unique_ptr<Entity>;
-class OperandEntity; using oe_u_ptr = unique_ptr<OperandEntity>;
-class ListEntity; using le_u_ptr = unique_ptr<ListEntity>;
-class MapEntity; using me_u_ptr = unique_ptr<MapEntity>;
-
-//using EntityVariant = variant<entity_u_ptr, oe_u_ptr, le_u_ptr,  me_u_ptr>;
-using EntityVariant = variant<entity_u_ptr, oe_u_ptr>;
-//using EntityVariant = variant<entity_u_ptr, oe_u_ptr>;
 
 
 class Entity : public Operand {
@@ -21,13 +12,10 @@ class Entity : public Operand {
   friend class ListEntity;
   friend class MapEntity;
 protected:
-  //vector<EntityVariant> members;
   //unordered_map<string, entity_u_ptr> children;
-  //e_members_t &members=_get_members();
   vector<entity_u_ptr> members;
   map<string, entity_u_ptr> children;
   entity_u_ptr  parent;
-  Operand operation_status; // errors operating on members or children 
 public:
   Entity();
   Entity(const Operand&);

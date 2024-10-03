@@ -28,6 +28,9 @@ Operand::Operand(const char* v) : value_(string(v)) {}
 Operand::Operand(entity_u_ptr vptr)   { value_= move(vptr); }
 Operand::Operand(list_u_ptr vptr)   { value_= move(vptr); }
 //-----------------------------------------------------------------------
+OperandVariant Operand::_get_value() const {
+  return visit(GetOperandValue(), value_);
+};
 OperandType Operand::_get_type() const { 
   return( visit(GetOperandType(), value_));
 };

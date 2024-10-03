@@ -4,6 +4,7 @@
 #include "lang.hh"
 
 class Nil{};
+extern Nil nil;
 class Entity; class OperandEntity; class ListEntity; 
 
 using entity_u_ptr = unique_ptr<Entity>;
@@ -27,7 +28,6 @@ class Operand {
   friend class ListEntity;
   friend class MapEntity;
 protected:
-//  OperandType type_;
   OperandVariant value_;
 public:
   const static string nil_str;
@@ -52,6 +52,7 @@ public:
   Operand(entity_u_ptr);
   Operand(list_u_ptr);
   //--------------------------------------------------------- Overload primative operator
+  OperandVariant _get_value() const;
   inline Number _get_number() const ;
   s_integer _get_int() const ;
   s_float _get_float() const ;

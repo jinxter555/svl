@@ -33,14 +33,6 @@ const Entity& ListEntity::get(int i) {
   return *members[i];
 }
 
-/*
-const ListEntity&  ListEntity::get_list(const Entity &key) {
-  return get_list(key._get_int());
-}
-const MapEntity&  ListEntity::get_map(const Entity &k) { 
-  return MapEntity::undef_error;
-};
-*/
 const ListEntity&  ListEntity::get_list(int i) {
   if(i > members.size() || i<0 ) return ListEntity::undef_error;
 

@@ -39,3 +39,7 @@ u_entity_ptr_01.out: u_entity_ptr_01.o $(ast_o)
 clean:
 	rm -f all out *.o *.gch *.out t_entity_01 t_entity_02
 	rm -f all out *.o *.gch *.out 
+
+remake:
+	make clean
+	make
