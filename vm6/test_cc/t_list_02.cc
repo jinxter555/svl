@@ -1,7 +1,4 @@
-#include "../operand_entity.hh"
-#include "../list_entity.hh"
-
-ostream& operator<<(ostream& os, const OperandType& t);
+#include "../entity.hh"
 
 int main() {
   long z=0;

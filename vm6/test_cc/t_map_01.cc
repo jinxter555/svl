@@ -1,5 +1,4 @@
-#include "../operand_entity.hh"
-#include "../map_entity.hh"
+#include "../entity.hh"
 
 
 int main() {

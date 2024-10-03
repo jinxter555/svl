@@ -1,13 +1,10 @@
-#include "map_entity.hh"
-#include "operand_entity.hh"
+#include "entity.hh"
 
 
-MapEntity MapEntity::undef_error=MapEntity(OperandErrorCode::undefined_t);
-MapEntity MapEntity::mem_error=MapEntity(OperandErrorCode::mem_alloc_t);
-MapEntity MapEntity::invalid_error=MapEntity(OperandErrorCode::invalid_op_t);
+MapEntity::MapEntity() {}
 
-MapEntity::MapEntity() { type_ = OperandType::map_t; }
-MapEntity::MapEntity(const Operand& v) : Entity(v) { type_ = OperandType::err_t; }
+MapEntity nil_map;
+entity_u_ptr nil_ptr = make_unique<OperandEntity>(); 
 
 
 
@@ -29,20 +26,37 @@ const Entity& MapEntity::add(const Entity &k, const Entity& v) {
   //if(children[k_str] != nullptr) { 
   if(has_key(k_str)) {
     cerr << "key: " << k_str << " already exist!";
-    return MapEntity::invalid_error;
+    return nil_map;
   }
   children[k_str] = v.clone();
   return  *children[k_str];
 }
+//------------------------------------- 
+bool MapEntity::has_key(const Entity &k)  {
+  string k_str = k._get_operand()._get_str();
+  return has_key(k);
+}
+bool MapEntity::has_key(const string  &k)  {
+  //if(children[k] == nullptr)
+  if(!children[k])
+    return false;
+  return true;
+}
+//------------------------------------- 
 
 const Entity& MapEntity::add(const Entity &k, entity_u_ptr& vptr) {
   auto k_str = k._get_operand()._get_str();
   children[k_str] = move(vptr);
   return  *children[k_str];
-
 }
-const Entity& MapEntity::add(const Entity &v) { return MapEntity::undef_error;};
-const entity_u_ptr& MapEntity::add(entity_u_ptr &vptr) { return nullptr; };
+
+const Entity& MapEntity::add(const Entity &v) { return nil_map;};
+const entity_u_ptr& MapEntity::add(entity_u_ptr &vptr) { 
+  //entity_u_ptr nptr = make_unique<Entity>();
+  //return nptr; 
+  //return nullptr;
+  return nil_ptr;
+};
 
 
 const Entity&  MapEntity::get(const Entity &k) {
@@ -53,7 +67,7 @@ const Entity&  MapEntity::get(const Entity &k) {
 const Entity&  MapEntity::get(const string &k) {
   if(!has_key(k)){
     cerr << "key: " << k << " does not exist!";
-    return MapEntity::undef_error;
+    return nil_map;
   }
   return  *children[k];
 }
@@ -70,43 +84,13 @@ const Entity& MapEntity::set(const Entity &k, entity_u_ptr &vptr) {
   //if(children[k_str] == nullptr) {
   if(!has_key(k_str)){
     cerr << "key: " << k_str << " does not exist!";
-    return MapEntity::undef_error;
+    return nil_map;
   }
   children[k_str] = move(vptr);
   return  *children[k_str];
 }
 
 //------------------------------------- 
-bool MapEntity::has_key(const Entity &k)  {
-  string k_str = k._get_operand()._get_str();
-  return has_key(k);
-}
-bool MapEntity::has_key(const string  &k)  {
-  //if(children[k] == nullptr)
-  if(!children[k])
-    return false;
-  return true;
-}
-//------------------------------------- 
-Operand MapEntity::to_str() const {
-  vector<Operand> kv_paires ;
-  Operand colon(":");
-  Operand q("\"");
-
-  for (auto const& [key, val] : children) {
-    Operand outstr = q + Operand(key) + q  + colon + " " + val->to_str();
-    kv_paires.push_back(outstr);
-  }
-
-  int i, s = kv_paires.size();
-  Operand outstr("{");
-  for(i=0; i<s-1; i++) {
-    outstr = outstr + kv_paires[i] + ", ";
-  }
-  outstr = outstr + kv_paires[i] + "}";
-  return outstr;
-
-}
 
 const ListEntity MapEntity::get_keys() const {
   ListEntity key_list;
@@ -124,29 +108,29 @@ vector<string> MapEntity::get_keys_vecstr() const {
   return key_list;
 }
 
-void MapEntity::print() const {
-  cout << to_str();
-/*
-  if(children.empty()) {cout << "{}"; return;}
+Operand MapEntity::_get_operand() const { 
+  return Operand();
+}
 
-  cout << "{";
+//------------------------------------- 
+Operand MapEntity::to_str() const {
+  vector<OperandEntity> kv_paires ;
+  OperandEntity colon(":");
+  OperandEntity q("\"");
+  OperandEntity outstr("{");
+
   for (auto const& [key, val] : children) {
-    std::cout << key << ':'  << val << ",";
+    outstr = q + OperandEntity(key) + q  + colon + " " + val->to_str();
+    kv_paires.push_back(
+      outstr.clone()
+    );
   }
-  cout << "}";
-*/
-}
 
-/*
-const map_u_ptr& MapEntity::get_map(const Entity &k) {
-  auto k_str = k._get_operand()._get_str();
-  if(!has_key(k_str)) return nullptr;
-
-  return  *children[k_str];
-
-} 
-const ListEntity& MapEntity::get_list(const Entity &k) {
-  return ListEntity::undef_error;
+  int i, s = kv_paires.size();
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + kv_paires[i] + ", ";
+  }
+  outstr = outstr + kv_paires[i] + "}";
+  return outstr;
 
 }
-*/

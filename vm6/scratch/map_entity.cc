@@ -1,14 +1,9 @@
-#include "map_entity.hh"
-#include "operand_entity.hh"
+#include "entity.hh"
 
 
-MapEntity MapEntity::undef_error=MapEntity(OperandErrorCode::undefined_t);
-MapEntity MapEntity::mem_error=MapEntity(OperandErrorCode::mem_alloc_t);
-MapEntity MapEntity::invalid_error=MapEntity(OperandErrorCode::invalid_op_t);
+MapEntity::MapEntity() {}
 
-MapEntity::MapEntity() { type_ = OperandType::map_t; }
-MapEntity::MapEntity(const Operand& v) : Entity(v) { type_ = OperandType::err_t; }
-
+MapEntity nil_map;
 
 
 
@@ -24,11 +19,13 @@ entity_u_ptr MapEntity::clone() const {
 
 const Entity& MapEntity::add(const Entity &k, const Entity& v) {
   auto k_str = k._get_operand()._get_str();
+  auto k_o = k._get_operand();
+
   cout << "k_str: " << k_str << "\n";
   //if(children[k_str] != nullptr) { 
   if(has_key(k_str)) {
     cerr << "key: " << k_str << " already exist!";
-    return MapEntity::invalid_error;
+    return nil_map;
   }
   children[k_str] = v.clone();
   return  *children[k_str];
@@ -40,17 +37,20 @@ const Entity& MapEntity::add(const Entity &k, entity_u_ptr& vptr) {
   return  *children[k_str];
 
 }
+const Entity& MapEntity::add(const Entity &v) { return nil_map;};
+const entity_u_ptr& MapEntity::add(entity_u_ptr &vptr) { return nullptr; };
 
 
 const Entity&  MapEntity::get(const Entity &k) {
   auto k_str = k._get_operand()._get_str();
   return get(k_str);
 }
+//const Entity&  MapEntity::get(const entity_u_ptr &k) { }
 
 const Entity&  MapEntity::get(const string &k) {
   if(!has_key(k)){
     cerr << "key: " << k << " does not exist!";
-    return MapEntity::undef_error;
+    return nil_map;
   }
   return  *children[k];
 }
@@ -67,7 +67,7 @@ const Entity& MapEntity::set(const Entity &k, entity_u_ptr &vptr) {
   //if(children[k_str] == nullptr) {
   if(!has_key(k_str)){
     cerr << "key: " << k_str << " does not exist!";
-    return MapEntity::undef_error;
+    return nil_map;
   }
   children[k_str] = move(vptr);
   return  *children[k_str];
@@ -119,6 +119,10 @@ vector<string> MapEntity::get_keys_vecstr() const {
     key_list.push_back(key);
   }
   return key_list;
+}
+
+Operand MapEntity::_get_operand() const { 
+  return Operand();
 }
 
 void MapEntity::print() const {

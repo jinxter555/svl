@@ -23,7 +23,13 @@ const entity_u_ptr& ListEntity::add(entity_u_ptr &vptr) {
   members.push_back(move(vptr));
   return members.back();
 }
+const Entity& ListEntity::add(const Entity &k, const Entity& v) 
+{ return ListEntity::invalid_error; }; // this is for map not
+const Entity& ListEntity::add(const Entity &k, entity_u_ptr& vptr) 
+{ return ListEntity::invalid_error; }; // this is for map not
 
+
+s_integer ListEntity::size() const { return members.size(); }
 
 const Entity& ListEntity::get(const Entity &key) {
   return get(key._get_int());
@@ -83,6 +89,10 @@ Operand ListEntity::to_str() const {
 
 void ListEntity::print() const {
   cout << to_str();
+}
+
+Operand ListEntity::_get_operand() const { 
+  return Operand();
 }
 
 //Entity ListEntity::evaluate(Entity *ctxt) {return entity_undef_error; }

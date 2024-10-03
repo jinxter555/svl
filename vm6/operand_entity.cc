@@ -2,9 +2,23 @@
 
 OperandEntity::OperandEntity()  {}
 OperandEntity::OperandEntity(const Operand &v) : Entity(v) {}
+OperandEntity OperandEntity::operator=(const OperandEntity &v) { 
+  set(v); 
+  return *this; 
+}
+
+void OperandEntity::set(const OperandEntity &v) {
+  value_ = visit(GetOperandValue(), v.value_); 
+}
 
 entity_u_ptr OperandEntity::clone() const { 
   return make_unique<OperandEntity>(*this);
+}
+
+Operand OperandEntity::_get_operand() const { 
+  Operand nv; //nv.value_ = visit(GetValue(), this->value_); 
+  nv.value_ = visit(GetOperandValue(), this->value_); 
+  return nv;
 }
 
 Operand OperandEntity::to_str() const {

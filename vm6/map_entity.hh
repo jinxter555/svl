@@ -1,9 +1,7 @@
 #pragma once
 #include "entity.hh"
-#include "list_entity.hh"
-#include "operand_entity.hh"
 
-class MapEntity : public Entity {
+class MapEntity : public VEntity {
 public:
   static MapEntity error;
 

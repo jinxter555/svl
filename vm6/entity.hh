@@ -4,24 +4,20 @@
 #pragma once
 #include "operand.hh"
 
-class Entity; using entity_u_ptr = unique_ptr<Entity>;
-
-
 class Entity : public Operand {
   friend class OperandEntity;
   friend class ListEntity;
   friend class MapEntity;
 protected:
-  //unordered_map<string, entity_u_ptr> children;
+  //map<string, entity_u_ptr> children;
+  unordered_map<string, entity_u_ptr> children;
   vector<entity_u_ptr> members;
-  map<string, entity_u_ptr> children;
   entity_u_ptr  parent;
 public:
   Entity();
   Entity(const Operand&);
   Entity(const Entity &v) ;
 
-  Operand _get_operand(); // neneds to be virutal
   //-------------------------------------------
   friend ostream& operator<<(ostream& os, const Entity& e);
   friend ostream& operator<<(ostream& os, const entity_u_ptr& vptr) ;
@@ -29,6 +25,7 @@ public:
   virtual entity_u_ptr clone() const = 0;
   virtual void print() const =0;
   virtual Operand to_str() const =0;
+  virtual Operand _get_operand() const =0; 
 };
 
 class OperandEntity : public Entity {
@@ -36,9 +33,13 @@ public:
   static entity_u_ptr error;
   OperandEntity();
   OperandEntity(const Operand &v);
+  void set(const OperandEntity &v);
   void print() const ;
   entity_u_ptr clone() const override;
-  Operand to_str() const ;
+  Operand to_str() const override;
+  Operand _get_operand() const  override; 
+  OperandEntity operator=(const OperandEntity &v);
+
 };
 
 class VEntity :  public Entity {
@@ -58,8 +59,8 @@ public:
 
 };
 
-
 class ListEntity : public VEntity {
+protected:
 public:
   static ListEntity undef_error; 
   static ListEntity mem_error;
@@ -71,11 +72,8 @@ public:
   const Entity& add(const Entity &v) override ;
   const entity_u_ptr& add(entity_u_ptr &vptr) override;
 
-  const Entity& add(const Entity &k, const Entity& v) 
-    override { return ListEntity::invalid_error; }; // this is for map not
-
-  const Entity& add(const Entity &k, entity_u_ptr& vptr) 
-    override { return ListEntity::invalid_error; }; // this is for map not
+  const Entity& add(const Entity &k, const Entity& v) override ;
+  const Entity& add(const Entity &k, entity_u_ptr& vptr) override ;
 
   const Entity&   get(const Entity &k) override ;
   const Entity&   get(int i) ;
@@ -83,12 +81,49 @@ public:
   const Entity& set(const Entity &k, entity_u_ptr &vptr) override;
   const ListEntity&  get_list(int i) ;
 
-  using Operand::_get_type;  // for error handling to findout if err_t instead of map_t
+  s_integer size() const;
+
 
   Operand to_str() const override ;
+  Operand _get_operand() const override ;
   entity_u_ptr clone() const override;
   void print() const override;
 };
 
+
+class MapEntity : public VEntity {
+public:
+  MapEntity();
+  //MapEntity(const MapEntity& m);
+
+  entity_u_ptr clone() const override;
+
+  const Entity& add(const Entity &v) override ;
+  const entity_u_ptr& add(entity_u_ptr &vptr) override ;
+
+  const Entity& add(const Entity &k, const Entity& v) override ; 
+  const Entity& add(const Entity &k, entity_u_ptr& vptr) override; 
+
+  const Entity& get(const Entity &k) override ;
+  const Entity& get(const string &k) ;
+
+  const Entity& set(const Entity &k, const Entity &v) override;
+  const Entity& set(const Entity &k, entity_u_ptr &vptr) override;
+
+
+  inline bool has_key(const string &k) ;
+  inline bool has_key(const Entity &k) ;
+
+  Operand to_str() const override;
+  Operand _get_operand() const override;
+
+  void print() const override;
+
+  const ListEntity get_keys() const;
+  vector<string> get_keys_vecstr() const;
+
+
+
+};
 
 #endif
