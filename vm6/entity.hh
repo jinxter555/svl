@@ -24,7 +24,7 @@ public:
   //-------------------------------------------
   virtual entity_u_ptr clone() const = 0;
   virtual void print() const =0;
-  virtual Operand to_str() const =0;
+  virtual OperandEntity to_str() const =0;
   virtual Operand _get_operand() const =0; 
 };
 
@@ -36,7 +36,8 @@ public:
   void set(const OperandEntity &v);
   void print() const ;
   entity_u_ptr clone() const override;
-  Operand to_str() const override;
+  OperandEntity to_str() const override;
+  const string _to_str() const;
   Operand _get_operand() const  override; 
   OperandEntity operator=(const OperandEntity &v);
 
@@ -84,7 +85,7 @@ public:
   s_integer size() const;
 
 
-  Operand to_str() const override ;
+  OperandEntity to_str() const override ;
   Operand _get_operand() const override ;
   entity_u_ptr clone() const override;
   void print() const override;
@@ -114,7 +115,7 @@ public:
   inline bool has_key(const string &k) ;
   inline bool has_key(const Entity &k) ;
 
-  Operand to_str() const override;
+  OperandEntity to_str() const override;
   Operand _get_operand() const override;
 
   void print() const override;

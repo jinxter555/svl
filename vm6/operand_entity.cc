@@ -21,11 +21,16 @@ Operand OperandEntity::_get_operand() const {
   return nv;
 }
 
-Operand OperandEntity::to_str() const {
-  return Operand::to_str();
+const string OperandEntity::_to_str() const {
+  return Operand::_to_str();
+}
+OperandEntity OperandEntity::to_str() const {
+  if (holds_alternative<string>(value_))
+    return *this;
+  return OperandEntity(Operand::to_str());
 };
 
 void OperandEntity::print() const {
 //  cout << "opent print\n";
-  cout << to_str();
+  cout << _to_str();
 };

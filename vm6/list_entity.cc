@@ -75,10 +75,10 @@ entity_u_ptr ListEntity::clone() const {
   return new_list;
 }
 
-Operand ListEntity::to_str() const {
+OperandEntity ListEntity::to_str() const {
   int i, s = members.size();
-  Operand outstr("[");
-  if(s==0) {return "[]";}
+  OperandEntity outstr("[");
+  if(s==0) {return OperandEntity("[]");}
 
   for(i=0; i<s-1; i++) {
     outstr = outstr + members[i]->to_str() + ",";

@@ -113,24 +113,27 @@ Operand MapEntity::_get_operand() const {
 }
 
 //------------------------------------- 
-Operand MapEntity::to_str() const {
-  vector<OperandEntity> kv_paires ;
+OperandEntity MapEntity::to_str() const {
+  //vector<OperandEntity> kv_paires ;
+  ListEntity kv_paires ;
   OperandEntity colon(":");
   OperandEntity q("\"");
-  OperandEntity outstr("{");
+  OperandEntity outstr;
 
   for (auto const& [key, val] : children) {
     outstr = q + OperandEntity(key) + q  + colon + " " + val->to_str();
-    kv_paires.push_back(
-      outstr.clone()
-    );
+    kv_paires.add( outstr);
   }
 
+  outstr=OperandEntity("{");
   int i, s = kv_paires.size();
   for(i=0; i<s-1; i++) {
-    outstr = outstr + kv_paires[i] + ", ";
+    outstr = outstr + kv_paires.get(i) + ", ";
   }
-  outstr = outstr + kv_paires[i] + "}";
-  return outstr;
+  outstr = outstr + kv_paires.get(i) + "}";
+  return outstr._get_operand();
 
+}
+void MapEntity::print() const {
+  cout << to_str();
 }

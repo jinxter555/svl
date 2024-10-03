@@ -23,11 +23,14 @@ int main() {
   //i5.set( i4 + i1);
   i5 = i4 + i1;
 
+  OperandEntity s3 = s2.to_str();
+
 
   cout << "s1:" << s1 << "\n";
   cout << "s1 geto:" << s1._get_operand() << "\n";
   cout << "s2:" << s2 << "\n";
   cout << "s2 geto:" << s2._get_operand() << "\n";
+  cout << "s3:" << s3 << "\n";
 
   cout << "i1:" << i1 << "\n";
   cout << "i2:" << i2 << "\n";

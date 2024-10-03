@@ -7,7 +7,11 @@ int main() {
   Operand b1(true) ;
   Operand b2(false) ;
   Operand i1(Number(123l)) ;
-  Operand i2(123l) ;
+  Operand i2(125l) ;
+  Operand i3 = i1 * i2;
+  cout << "i3: " << i3 << "\n";
+  i3 = i1 + i2;
+  cout << "i3: " << i3 << "\n";
   Operand f1(1.23) ;
   cout << "nil b1 b2: " << nil << " " << b1 << " " << b2 << "\n";
 
