@@ -5,7 +5,7 @@ ListEntity ListEntity::mem_error=ListEntity(OperandErrorCode::mem_alloc_t);
 ListEntity ListEntity::invalid_error=ListEntity(OperandErrorCode::invalid_op_t);
 
 ListEntity::ListEntity() {}
-ListEntity::ListEntity(const Operand& v) : Entity(v) { }
+ListEntity::ListEntity(const Operand& v) : VEntity(v) {}
 
 
 

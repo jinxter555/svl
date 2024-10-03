@@ -27,7 +27,10 @@ ostream& operator<<(ostream& os, const Entity& e) {
 }
 
 ostream& operator<<(ostream& os, const entity_u_ptr& ptr) {
+  cout << "ptr:";
   ptr->print();
   return os;
 }
-
+//----------------------------
+VEntity::VEntity() { }
+VEntity::VEntity(const Operand& v) : Entity(v){}

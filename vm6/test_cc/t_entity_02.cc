@@ -16,6 +16,7 @@ int main() {
   OperandEntity i2(22l) ;
   OperandEntity i3(33l) ;
   OperandEntity f1(12.345) ;
+  entity_u_ptr f1_c  = f1.clone();
   Operand f1_o = f1._get_operand();
   OperandEntity i4 = i2 + i3;
   cout << "s1:" << s1 << "\n";
@@ -27,6 +28,7 @@ int main() {
   cout << "i2:" << i2 << "\n";
   cout << "f1:" << f1 << "\n";
   cout << "f1_o:" << f1_o << "\n";
+  cout << "f1_c:" << f1_c << "\n";
   cout << "i4:" << i4 << "\n";
 
   return 0;
