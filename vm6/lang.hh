@@ -73,11 +73,12 @@ enum class OperandType {
   str_t,
   atom_t,
   tuple_t,
-  scalar_t,
+  scalar_t,     // operand  entity
   list_t,
   map_t,
   ast_op_t,
   ptr_t,
+  uptr_t,
   except_t,
 };
 

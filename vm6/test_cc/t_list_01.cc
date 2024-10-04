@@ -23,11 +23,11 @@ int main() {
 
 
 
-  cout << "l1 type: " << l1 << "\n";
+  cout << "l1 type: " << l1.get_type() << "\n";
   cout << "l1: " << l1 << "\n";
   cout << "l1[1]: " << l1.get(1) ;
   cout << "\n\n";
-  cout << "l2 type: " << l2 << "\n";
+  cout << "l2 type: " << l2.get_type() << "\n";
   cout << "l2[1]: " << l2.get(1) << "\n";
   cout << "l2: " << l2 << "\n\n";
   const Entity &l3 = l2.get(1);

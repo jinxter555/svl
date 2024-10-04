@@ -18,6 +18,8 @@ public:
   Entity(const Operand&);
   Entity(const Entity &v) ;
 
+  Entity& new_tree();
+
   //-------------------------------------------
   friend ostream& operator<<(ostream& os, const Entity& e);
   friend ostream& operator<<(ostream& os, const entity_u_ptr& vptr) ;
@@ -72,7 +74,7 @@ public:
   ListEntity(const Operand &v);
   const Entity& add(const Entity &v) ;
   const entity_u_ptr& add(entity_u_ptr &vptr) ;
-  const entity_u_ptr& add(entity_u_ptr &&vptr) ;
+  const entity_u_ptr& add(entity_u_ptr &&vptr);
 
   const Entity& add(const Entity &k, const Entity& v) override ;
   const Entity& add(const Entity &k, entity_u_ptr& vptr) override ;
@@ -84,6 +86,9 @@ public:
   const ListEntity&  get_list(int i) ;
 
   s_integer size() const;
+
+  OperandType _get_type() { return OperandType::list_t; }
+  Operand get_type() { return OperandType::list_t; }
 
 
   OperandEntity to_str() const override ;
@@ -103,6 +108,7 @@ public:
 //  const Entity& add(const Entity &v) override ;
 //  const entity_u_ptr& add(entity_u_ptr &vptr) override ;
 
+  const Entity& add(const string &k, const Entity& v); 
   const Entity& add(const Entity &k, const Entity& v) override ; 
   const Entity& add(const Entity &k, entity_u_ptr& vptr) override; 
 
@@ -111,6 +117,7 @@ public:
 
   const Entity& set(const Entity &k, const Entity &v) override;
   const Entity& set(const Entity &k, entity_u_ptr &vptr) override;
+
 
 
   inline bool has_key(const string &k) ;
@@ -124,6 +131,8 @@ public:
   const ListEntity get_keys() const;
   vector<string> get_keys_vecstr() const;
 
+  OperandType _get_type() { return OperandType::map_t; }
+  Operand get_type() { return OperandType::map_t; }
 
 
 };

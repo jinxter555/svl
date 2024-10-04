@@ -5,13 +5,15 @@
 
 class Nil{};
 extern Nil nil;
-class Entity; class OperandEntity; class ListEntity; 
+class Entity; class OperandEntity; class ListEntity;  class MapEntity;
 class AstNode;
 
 using entity_u_ptr = unique_ptr<Entity>;
 using e_members_t = vector<entity_u_ptr>;
+using e_children_t = unordered_map<string, entity_u_ptr>;
 
 using list_u_ptr = unique_ptr<ListEntity>;
+using map_u_ptr = unique_ptr<MapEntity>;
 using operand_u_ptr=unique_ptr<OperandEntity>;
 
 using OperandVariant=std::variant
@@ -21,7 +23,7 @@ using OperandVariant=std::variant
 , OperandStatusCode, OperandType
 , entity_u_ptr , list_u_ptr
 , e_members_t
-//, AstNode
+, e_children_t
 >;
 
 class Operand {
@@ -30,6 +32,7 @@ class Operand {
   friend class ListEntity;
   friend class MapEntity;
 protected:
+  OperandType type_;
   OperandVariant value_;
 public:
   const static string nil_str;
@@ -63,6 +66,7 @@ public:
   OperandType _get_type() const;
   //--------------------------------------------------------- Overload entity ..
   e_members_t& _get_members();
+  e_children_t& _get_children();
   //--------------------------------------------------------- Overload math operator
   Operand get_str() const;
   Operand get_type() const;
@@ -99,6 +103,7 @@ OperandVariant operator()(const entity_u_ptr& v) const  ;
 OperandVariant operator()(const list_u_ptr& v) const  ;                                                                                                           
 OperandVariant operator()(Entity *v) const ;
 OperandVariant operator()(const e_members_t& v) const  ;                                                                                                           
+OperandVariant operator()(const e_children_t& v) const  ;                                                                                                           
 };
 
 struct GetOperandType{
@@ -115,6 +120,7 @@ OperandType operator()(const entity_u_ptr& v) const  ;
 OperandType operator()(const list_u_ptr& v) const  ;                                                                                                           
 OperandType operator()(Entity *v) const ;
 OperandType operator()(const e_members_t& v) const  ;                                                                                                           
+OperandType operator()(const e_children_t& v) const  ;                                                                                                           
 };
 
 

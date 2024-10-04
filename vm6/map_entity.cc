@@ -1,12 +1,14 @@
 #include "entity.hh"
 
 
-MapEntity::MapEntity() {}
 
-MapEntity nil_map;
+const MapEntity nil_map;
 entity_u_ptr nil_ptr = make_unique<OperandEntity>(); 
 
-
+MapEntity::MapEntity() {
+  value_ = nil;
+  parent = nullptr;
+}
 
 entity_u_ptr MapEntity::clone() const {
   entity_u_ptr new_map = make_unique<MapEntity>();
@@ -14,21 +16,25 @@ entity_u_ptr MapEntity::clone() const {
   for (auto const& [key, val] : children) {
    new_map->children[key]=(val->clone()); 
   }
-
   return new_map;
 }
 
+//------------------------------------- 
 const Entity& MapEntity::add(const Entity &k, const Entity& v) {
   auto k_str = k._get_operand()._get_str();
-  auto k_o = k._get_operand();
+  return  add(k_str, v);
+}
 
-  cout << "k_str: " << k_str << "\n";
-  //if(children[k_str] != nullptr) { 
-  if(has_key(k_str)) {
-    cerr << "key: " << k_str << " already exist!";
+const Entity& MapEntity::add(const string &k_str, const Entity& v) {
+  if(has_key(k_str)) 
     return nil_map;
-  }
   children[k_str] = v.clone();
+  return  *children[k_str];
+}
+
+const Entity& MapEntity::add(const Entity &k, entity_u_ptr& vptr) {
+  auto k_str = k._get_operand()._get_str();
+  children[k_str] = move(vptr);
   return  *children[k_str];
 }
 //------------------------------------- 
@@ -43,24 +49,6 @@ bool MapEntity::has_key(const string  &k)  {
   return true;
 }
 //------------------------------------- 
-
-const Entity& MapEntity::add(const Entity &k, entity_u_ptr& vptr) {
-  auto k_str = k._get_operand()._get_str();
-  children[k_str] = move(vptr);
-  return  *children[k_str];
-}
-
-/*
-const Entity& MapEntity::add(const Entity &v) { return nil_map;};
-const entity_u_ptr& MapEntity::add(entity_u_ptr &vptr) { 
-  //entity_u_ptr nptr = make_unique<Entity>();
-  //return nptr; 
-  //return nullptr;
-  return nil_ptr;
-};
-*/
-
-
 const Entity&  MapEntity::get(const Entity &k) {
   auto k_str = k._get_operand()._get_str();
   return get(k_str);

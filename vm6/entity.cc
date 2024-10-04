@@ -1,14 +1,23 @@
 #include "entity.hh"
 
-
 Entity::Entity() { 
   value_ = nil;
   parent = nullptr; 
 }
 
+Entity& Entity::new_tree() {
+  /*
+  value_ = make_unique<MapEntity>();
+  value_->add("members", 1);
+
+  parent = nullptr; 
+*/
+  return *this;
+
+}
+
 Entity::Entity(const Operand &v)  {
   value_ = visit(GetOperandValue(), v.value_);
-
   parent = nullptr;
 } 
 
@@ -29,5 +38,8 @@ ostream& operator<<(ostream& os, const entity_u_ptr& ptr) {
 }
 
 //----------------------------
-VEntity::VEntity() { }
+VEntity::VEntity() {
+  value_ = nil;
+  parent = nullptr; 
+}
 VEntity::VEntity(const Operand& v) : Entity(v){}

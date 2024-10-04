@@ -4,7 +4,7 @@ ListEntity ListEntity::undef_error=ListEntity(OperandErrorCode::undefined_t);
 ListEntity ListEntity::mem_error=ListEntity(OperandErrorCode::mem_alloc_t);
 ListEntity ListEntity::invalid_error=ListEntity(OperandErrorCode::invalid_op_t);
 
-ListEntity::ListEntity() {}
+ListEntity::ListEntity() :  VEntity(OperandType::list_t){}
 ListEntity::ListEntity(const Operand& v) : VEntity(v) {}
 
 

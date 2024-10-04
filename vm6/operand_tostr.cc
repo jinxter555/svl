@@ -108,3 +108,6 @@ Operand OperandToStringVisitor::operator()(const list_u_ptr &vptr) const {
 Operand OperandToStringVisitor::operator()(const e_members_t &vptr) const { 
   return Operand("list members: ");
 }
+Operand OperandToStringVisitor::operator()(const e_children_t &vptr) const { 
+  return Operand("children: ");
+}
