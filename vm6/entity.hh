@@ -48,8 +48,8 @@ public:
   VEntity();
   VEntity(const Operand&);
   //-------------------------------------------
-  virtual const Entity& add(const Entity& v)=0;
-  virtual const entity_u_ptr& add(entity_u_ptr &vptr) =0;    // for list
+  //virtual const Entity& add(const Entity& v)=0;
+  //virtual const entity_u_ptr& add(entity_u_ptr &vptr) =0;    // for list
 
   virtual const Entity& add(const Entity &k, entity_u_ptr& vptr)=0 ;  // for bison and ast to add 
   virtual const Entity& add(const Entity &k, const Entity& v)=0;   // for map
@@ -70,8 +70,9 @@ public:
   ListEntity();
   ListEntity(const ListEntity& l);
   ListEntity(const Operand &v);
-  const Entity& add(const Entity &v) override ;
-  const entity_u_ptr& add(entity_u_ptr &vptr) override;
+  const Entity& add(const Entity &v) ;
+  const entity_u_ptr& add(entity_u_ptr &vptr) ;
+  const entity_u_ptr& add(entity_u_ptr &&vptr) ;
 
   const Entity& add(const Entity &k, const Entity& v) override ;
   const Entity& add(const Entity &k, entity_u_ptr& vptr) override ;
@@ -99,8 +100,8 @@ public:
 
   entity_u_ptr clone() const override;
 
-  const Entity& add(const Entity &v) override ;
-  const entity_u_ptr& add(entity_u_ptr &vptr) override ;
+//  const Entity& add(const Entity &v) override ;
+//  const entity_u_ptr& add(entity_u_ptr &vptr) override ;
 
   const Entity& add(const Entity &k, const Entity& v) override ; 
   const Entity& add(const Entity &k, entity_u_ptr& vptr) override; 

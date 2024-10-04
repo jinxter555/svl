@@ -50,6 +50,7 @@ const Entity& MapEntity::add(const Entity &k, entity_u_ptr& vptr) {
   return  *children[k_str];
 }
 
+/*
 const Entity& MapEntity::add(const Entity &v) { return nil_map;};
 const entity_u_ptr& MapEntity::add(entity_u_ptr &vptr) { 
   //entity_u_ptr nptr = make_unique<Entity>();
@@ -57,6 +58,7 @@ const entity_u_ptr& MapEntity::add(entity_u_ptr &vptr) {
   //return nullptr;
   return nil_ptr;
 };
+*/
 
 
 const Entity&  MapEntity::get(const Entity &k) {

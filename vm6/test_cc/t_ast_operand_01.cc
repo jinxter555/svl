@@ -1,4 +1,3 @@
-#include "../operand_entity.hh"
 #include "../ast.hh"
 
 int main() {

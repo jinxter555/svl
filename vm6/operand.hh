@@ -6,6 +6,7 @@
 class Nil{};
 extern Nil nil;
 class Entity; class OperandEntity; class ListEntity; 
+class AstNode;
 
 using entity_u_ptr = unique_ptr<Entity>;
 using e_members_t = vector<entity_u_ptr>;
@@ -20,6 +21,7 @@ using OperandVariant=std::variant
 , OperandStatusCode, OperandType
 , entity_u_ptr , list_u_ptr
 , e_members_t
+//, AstNode
 >;
 
 class Operand {
