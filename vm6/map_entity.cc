@@ -1,17 +1,15 @@
 #include "entity.hh"
 
-
-
 const MapEntity nil_map;
 entity_u_ptr nil_ptr = make_unique<OperandEntity>(); 
 
 MapEntity::MapEntity() {
-  value_ = nil;
+  type_ = OperandType::map_t;
   parent = nullptr;
 }
 
 entity_u_ptr MapEntity::clone() const {
-  entity_u_ptr new_map = make_unique<MapEntity>();
+  map_u_ptr new_map = make_unique<MapEntity>();
 
   for (auto const& [key, val] : children) {
    new_map->children[key]=(val->clone()); 
@@ -86,7 +84,6 @@ const ListEntity MapEntity::get_keys() const {
   ListEntity key_list;
   for (auto const& [key, val] : children) {
     key_list.add(OperandEntity(key));
-    Operand v = val->to_str();
   }
   return key_list;
 }
@@ -98,32 +95,30 @@ vector<string> MapEntity::get_keys_vecstr() const {
   return key_list;
 }
 
-Operand MapEntity::_get_operand() const { 
-  return Operand();
-}
-
 //------------------------------------- 
 OperandEntity MapEntity::to_str() const {
   //vector<OperandEntity> kv_paires ;
-  ListEntity kv_paires ;
-  OperandEntity colon(":");
-  OperandEntity q("\"");
-  OperandEntity outstr;
+  vector<Operand> kv_paires ;
+  Operand colon(":");
+  Operand q("\"");
+  Operand outstr;
 
   for (auto const& [key, val] : children) {
-    outstr = q + OperandEntity(key) + q  + colon + " " + val->to_str();
-    kv_paires.add( outstr);
+    outstr = q + key + q  + colon + " " + val->to_str()._to_str();
+    kv_paires.push_back(visit(GetOperandValue(), outstr.value_));
   }
 
-  outstr=OperandEntity("{");
+  outstr=Operand("{");
   int i, s = kv_paires.size();
   for(i=0; i<s-1; i++) {
-    outstr = outstr + kv_paires.get(i) + ", ";
+    outstr = outstr + kv_paires[i] + ", ";
   }
-  outstr = outstr + kv_paires.get(i) + "}";
-  return outstr._get_operand();
-
+  outstr = outstr + kv_paires[i] + "}";
+  return OperandEntity(outstr);
 }
+
+
+
 void MapEntity::print() const {
   cout << to_str();
 }

@@ -3,14 +3,13 @@
 
 #include <variant>
 #include <iostream>
-#include "lang.hh"
-#include "boost/variant.hpp"
 
+using namespace std;
 
 
 using s_integer = long;
 using s_float = double;
-using num_d_t= boost::variant<s_integer, s_float> ;
+using num_d_t = variant<s_integer, s_float>;
 
 class Number {
 public:

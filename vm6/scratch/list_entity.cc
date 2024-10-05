@@ -1,20 +1,24 @@
-#include "list_entity.hh"
+#include "entity.hh"
 
 ListEntity ListEntity::undef_error=ListEntity(OperandErrorCode::undefined_t);
 ListEntity ListEntity::mem_error=ListEntity(OperandErrorCode::mem_alloc_t);
 ListEntity ListEntity::invalid_error=ListEntity(OperandErrorCode::invalid_op_t);
 
-ListEntity::ListEntity() { type_ = OperandType::list_t; }
-ListEntity::ListEntity(const Operand& v) : Entity(v) { type_ = OperandType::err_t; }
+Operand list_type(OperandType::list_t, nil);
+
+//ListEntity::ListEntity() : VEntity (OperandType::list_t) {
+ListEntity::ListEntity() : VEntity(list_type) {
+  type_ = OperandType::list_t;
+  parent = nullptr;
+}
+
+ListEntity::ListEntity(const Operand& v) : VEntity(v) {}
 
 
 
 ListEntity::ListEntity(const ListEntity& l) {
-  entity_u_ptr nl = l.clone();
-  if(nl->type_ != OperandType::list_t) return;
-  type_ = nl->type_;
-  value_ = nl->value_;
-  members = move(nl->members);
+  entity_u_ptr new_l = l.clone();
+  members = move(new_l->members);
 };
 
 const Entity& ListEntity::add(const Entity &v) { 
@@ -26,7 +30,17 @@ const entity_u_ptr& ListEntity::add(entity_u_ptr &vptr) {
   members.push_back(move(vptr));
   return members.back();
 }
+const entity_u_ptr& ListEntity::add(entity_u_ptr &&vptr) {
+  members.push_back(move(vptr));
+  return members.back();
+}
+const Entity& ListEntity::add(const Entity &k, const Entity& v) 
+{ return ListEntity::invalid_error; }; // this is for map not
+const Entity& ListEntity::add(const Entity &k, entity_u_ptr& vptr) 
+{ return ListEntity::invalid_error; }; // this is for map not
 
+
+s_integer ListEntity::size() const { return members.size(); }
 
 const Entity& ListEntity::get(const Entity &key) {
   return get(key._get_int());
@@ -36,14 +50,6 @@ const Entity& ListEntity::get(int i) {
   return *members[i];
 }
 
-/*
-const ListEntity&  ListEntity::get_list(const Entity &key) {
-  return get_list(key._get_int());
-}
-const MapEntity&  ListEntity::get_map(const Entity &k) { 
-  return MapEntity::undef_error;
-};
-*/
 const ListEntity&  ListEntity::get_list(int i) {
   if(i > members.size() || i<0 ) return ListEntity::undef_error;
 
@@ -80,10 +86,10 @@ entity_u_ptr ListEntity::clone() const {
   return new_list;
 }
 
-Operand ListEntity::to_str() const {
+OperandEntity ListEntity::to_str() const {
   int i, s = members.size();
-  Operand outstr("[");
-  if(s==0) {return "[]";}
+  OperandEntity outstr("[");
+  if(s==0) {return OperandEntity("[]");}
 
   for(i=0; i<s-1; i++) {
     outstr = outstr + members[i]->to_str() + ",";
@@ -94,6 +100,10 @@ Operand ListEntity::to_str() const {
 
 void ListEntity::print() const {
   cout << to_str();
+}
+
+Operand ListEntity::_get_operand() const { 
+  return Operand();
 }
 
 //Entity ListEntity::evaluate(Entity *ctxt) {return entity_undef_error; }

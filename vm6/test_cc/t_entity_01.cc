@@ -20,7 +20,9 @@ int main() {
   cout << "i1: " << i1 << "\n";
   cout << "i2: " << i2 << "\n";
   cout << "f1: " << f1 << "\n";
+  cout << "f1 gettype: " << f1.get_type() << "\n";
   cout << "s1: " << s1 << "\n";
+  cout << "s1 gettype: " << s1.get_type() << "\n";
   cout << "i1 + f1: " << i1+f1 << "\n";
 
 

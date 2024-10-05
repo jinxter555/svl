@@ -21,8 +21,9 @@ using OperandVariant=std::variant
 , bool, string, Number
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
-//, entity_u_ptr , list_u_ptr
-//, e_members_t , e_children_t
+, entity_u_ptr , list_u_ptr
+, e_members_t
+, e_children_t
 >;
 
 class Operand {
@@ -116,13 +117,11 @@ OperandType operator()(const OperandType& v) const ;
 OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
 
-/*
 OperandType operator()(const entity_u_ptr& v) const  ;                                                                                                           
 OperandType operator()(const list_u_ptr& v) const  ;                                                                                                           
 OperandType operator()(Entity *v) const ;
 OperandType operator()(const e_members_t& v) const  ;                                                                                                           
 OperandType operator()(const e_children_t& v) const  ;                                                                                                           
-*/
 };
 
 

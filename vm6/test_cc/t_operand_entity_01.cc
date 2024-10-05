@@ -3,17 +3,16 @@
 
 int main() {
   OperandEntity n1(123l);
-  OperandEntity i1(Operand(11l)) ;
-  cout << "n1:" << n1 << "\n";
-  cout << "n1 whatami:" << n1._get_operand().whatami() << "\n";
+  cout << "i1:" << n1 << "\n";
+  cout << "i1 whatami:" << n1._get_operand().whatami() << "\n";
 
   OperandEntity s1("hello");
-  cout << "s1: " << s1 << "\n";
-  cout << "s1: whatami() " << s1._get_operand().whatami() << "\n";
-  cout << "s1: gettype() " << s1.get_type() << "\n";
+  cout << "s1:" << s1 << "\n";
+  cout << "s1:" << s1._get_operand().whatami() << "\n";
 
 
   OperandEntity s2(string("hello,world"));
+  OperandEntity i1(Operand(11l)) ;
   OperandEntity i2(22l) ;
   OperandEntity i3(33l) ;
   OperandEntity f1(12.345) ;
@@ -24,7 +23,6 @@ int main() {
 
   //i5.set( i4 + i1);
   i5 = i4.opfunc(i1, AstOpCode::plus);
-  //i5 = OperandEntity(555l);
 
   OperandEntity s3 = s2.to_str();
 

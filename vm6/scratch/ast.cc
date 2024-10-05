@@ -1,22 +1,28 @@
 #include "ast.hh"
-#include "map_entity.hh"
-#include "operand_entity.hh"
-//-------------------------------------- Ast Node
 
-
-AstExpr::AstExpr(const Operand &v) { node = make_unique<OperandEntity>(v); }
-AstExpr::AstExpr(const OperandEntity &v) { node = make_unique<OperandEntity>(v); }
-AstExpr::AstExpr(const ListEntity &v) { node = make_unique<ListEntity>(v); }
-AstExpr::AstExpr(const MapEntity &v) { node = make_unique<MapEntity>(v); }
-
-//-------------------------------------- Ast Operand
-AstOperand::AstOperand(const Operand &v) {
-  node = make_unique<OperandEntity>(v);
+void AstNode::add(const OperandEntity& v) { 
+  ListEntity::add(v);
 }
 
-void AstOperand::print() const {
+//--------------------------------------------------------- 
+entity_u_ptr& AstNode::operator[] (int index) { return ListEntity::members[index]; }
+/*
+const entity_u_ptr& AstNode::operator[] (int index) const {
+  return ListEntity::members[index];
 }
-const astexpr_u_ptr& AstOperand::evaluate(astexpr_u_ptr &ast_ctxt) {
-  //return this;
+*/
+//--------------------------------------------------------- 
+entity_u_ptr& AstNode::operator[] (const string &k) {
+  return MapEntity::children[k];
 }
-//-------------------------------------- Ast Root
+
+// assignment
+/*
+const entity_u_ptr& AstNode::operator[] (const string &k) const {
+  return MapEntity::children[k];
+}
+*/
+//--------------------------------------------------------- 
+
+void AstNode::print_l() const { cout << ListEntity::to_str() << "\n"; }
+void AstNode::print_m() const { cout << MapEntity::to_str() << "\n"; }

@@ -2,11 +2,14 @@
 
 int main() {
   long z=0;
-  OperandEntity i0(z);
-  OperandEntity i1(1l);
-  OperandEntity i2(2l);
-  OperandEntity i3(3l);
-  OperandEntity i4=i1+i2+i3;
+  Operand i0(z);
+  Operand i1(1l);
+  Operand i2(2l);
+  Operand i3(3l);
+  Operand o_i4=i1+i2+i3;
+  OperandEntity i4(o_i4);
+
+
   ListEntity l1, l2;
   l1.add(i1);
   l1.add(i2);
@@ -30,10 +33,10 @@ int main() {
   cout << "l2: " << l2 << "\n\n";
   const Entity &l3 = l2.get(1);
   cout << "l3: " << l3 << "\n";
-  l1.set(i1, i4);
+  l1.set(OperandEntity(i1), i4);
   // auto i5 = i4 + i4 + i4; // pure function auto  won't compile
-  OperandEntity i5 = i4 + i4 + i4;
-  l1.set(i2, i5);
+  OperandEntity i5 =i4.opfunc(i4, AstOpCode::mul );
+  l1.set(OperandEntity(i2), i5);
   cout << "l1: " << l1 << "\n";
 
   //const ListEntity& mylist = l2.get_list(1);

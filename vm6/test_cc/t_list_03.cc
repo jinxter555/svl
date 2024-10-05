@@ -6,6 +6,8 @@ int main() {
   OperandEntity i1(1l);
   OperandEntity i2(2l);
   OperandEntity i3(3l);
+  //OperandEntity i4=i1.opfunc(i2.opfunc(i3, AstOpCode::plus), AstOpCode::plus);
+  OperandEntity i4=i1.opfunc(i2.opfunc(i3, AstOpCode::plus), AstOpCode::plus);
 
   ListEntity l1, l2;
 
@@ -31,7 +33,10 @@ int main() {
   cout << "l2: " << l2 << "\n\n";
   const Entity &l3 = l2.get(1);
   cout << "l3: " << l3 << "\n";
+  l1.set(i1, i4);
   // auto i5 = i4 + i4 + i4; // pure function auto  won't compile
+  OperandEntity i5 = i4.opfunc(i4, AstOpCode::mul);
+  l1.set(i2, i5);
   cout << "l1: " << l1 << "\n";
 
   //cout << "l1: " << (Entity) l1 << "\n";

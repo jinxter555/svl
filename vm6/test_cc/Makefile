@@ -6,7 +6,7 @@ ast_o := $(wildcard ../*.o)
 core_o := $(wildcard ../../*.o)
 
 # all: t_entity_01.out t_entity_02.out  t_list_01.out  t_list_02.out # t_map_01.out t_ast_operand_01.out  u_entity_ptr_01.out
-all: t_entity_01.out t_entity_02.out  t_list_01.out  t_list_02.out  t_map_01.out t_astnode_01.out
+all: t_entity_01.out t_entity_02.out  t_list_01.out   t_list_02.out  t_map_01.out #t_astnode_01.out
 #all: t_operand_01.out 
 #all: $(objects)
 
