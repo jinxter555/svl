@@ -4,6 +4,14 @@ const MapEntity nil_map;
 entity_u_ptr nil_ptr = make_unique<OperandEntity>(); 
 
 MapEntity::MapEntity() { parent = nullptr; }
+MapEntity::MapEntity(const MapEntity& m) {
+  map_u_ptr new_map = make_unique<MapEntity>();
+
+  for (auto const& [key, val] : m.children) {
+   new_map->children[key]=(val->clone()); 
+  }
+  children = move(new_map->children);
+}
 
 entity_u_ptr MapEntity::clone() const {
   map_u_ptr new_map = make_unique<MapEntity>();

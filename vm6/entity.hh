@@ -74,7 +74,7 @@ public:
   e_children_t children;
 
   MapEntity();
-  //MapEntity(const MapEntity& m);
+  MapEntity(const MapEntity& m);
 
   entity_u_ptr clone() const override;
 

@@ -37,13 +37,20 @@ int main() {
   m1.add("five", i5);
 
   m2.add(m1_s, m1);
+
   m2.add(m2_s, m1);
 
-  cout << "m1: " << m1 << "\n\n";
+  cout << "m1: " << m1 << "\n";
   cout << "m2: " << m2 << "\n\n";
   m2.set(m2_s, m2);
-  cout << "m2: " << m2 << "\n\n";
+  cout << "m2: " << m2 << "\n";
   cout << "m2 type: " << m2.get_type() << "\n\n";
+
+  auto m3=m1;
+  cout << "m1: " << m1 << "\n";
+  cout << "m3: " << m3 << "\n";
+  cout << "m3 type: " << m3.get_type() << "\n\n";
+
 
 
   return 0;
