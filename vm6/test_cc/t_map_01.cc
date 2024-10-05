@@ -11,10 +11,24 @@ int main() {
   OperandEntity three("three");
   OperandEntity m1_s("m1");
   OperandEntity m2_s("m2");
+  ListEntity l1, l2;
+  l1.add(i1);
+  l1.add(i2);
+  l1.add(i3);
+  l2.add(l1);
+  l2.add(l2);
+
   MapEntity m1, m2;
+  
+  cout << "m1: " << m1 << "\n";
+  cout << "m2: " << m2 << "\n\n";
+
+
   m1.add(one,i1);
   m1.add(two, i2);
   m1.add(three, i3);
+  m1.add("l1", l1);
+  m1.add("l2", l2);
   OperandEntity i4 = i3.opfunc(i1, AstOpCode::plus);
   //m1.add("four", i3+i1);
   m1.add("four", i4);

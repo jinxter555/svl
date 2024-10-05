@@ -3,10 +3,7 @@
 const MapEntity nil_map;
 entity_u_ptr nil_ptr = make_unique<OperandEntity>(); 
 
-MapEntity::MapEntity() {
-  type_ = OperandType::map_t;
-  parent = nullptr;
-}
+MapEntity::MapEntity() { parent = nullptr; }
 
 entity_u_ptr MapEntity::clone() const {
   map_u_ptr new_map = make_unique<MapEntity>();
@@ -18,7 +15,7 @@ entity_u_ptr MapEntity::clone() const {
 }
 
 //------------------------------------- 
-const Entity& MapEntity::add(const Entity &k, const Entity& v) {
+const Entity& MapEntity::add(const OperandEntity &k, const Entity& v) {
   auto k_str = k._get_operand()._get_str();
   return  add(k_str, v);
 }
@@ -30,13 +27,13 @@ const Entity& MapEntity::add(const string &k_str, const Entity& v) {
   return  *children[k_str];
 }
 
-const Entity& MapEntity::add(const Entity &k, entity_u_ptr& vptr) {
+const Entity& MapEntity::add(const OperandEntity &k, entity_u_ptr& vptr) {
   auto k_str = k._get_operand()._get_str();
   children[k_str] = move(vptr);
   return  *children[k_str];
 }
 //------------------------------------- 
-bool MapEntity::has_key(const Entity &k)  {
+bool MapEntity::has_key(const OperandEntity &k)  {
   string k_str = k._get_operand()._get_str();
   return has_key(k);
 }
@@ -47,7 +44,7 @@ bool MapEntity::has_key(const string  &k)  {
   return true;
 }
 //------------------------------------- 
-const Entity&  MapEntity::get(const Entity &k) {
+const Entity&  MapEntity::get(const OperandEntity &k) {
   auto k_str = k._get_operand()._get_str();
   return get(k_str);
 }
@@ -62,12 +59,12 @@ const Entity&  MapEntity::get(const string &k) {
 
 
 
-const Entity& MapEntity::set(const Entity &k, const Entity &v) {
+const Entity& MapEntity::set(const OperandEntity &k, const Entity &v) {
   entity_u_ptr vptr  = v.clone();
   return set(k, vptr);
 }
 
-const Entity& MapEntity::set(const Entity &k, entity_u_ptr &vptr) {
+const Entity& MapEntity::set(const OperandEntity &k, entity_u_ptr &vptr) {
   auto k_str = k._get_operand()._get_str();
   //if(children[k_str] == nullptr) {
   if(!has_key(k_str)){
@@ -98,6 +95,8 @@ vector<string> MapEntity::get_keys_vecstr() const {
 //------------------------------------- 
 OperandEntity MapEntity::to_str() const {
   //vector<OperandEntity> kv_paires ;
+  if(children.empty()) return Operand();
+
   vector<Operand> kv_paires ;
   Operand colon(":");
   Operand q("\"");
@@ -118,6 +117,7 @@ OperandEntity MapEntity::to_str() const {
 }
 
 
+OperandEntity MapEntity::get_type() const { return Operand(OperandType::map_t); }
 
 void MapEntity::print() const {
   cout << to_str();

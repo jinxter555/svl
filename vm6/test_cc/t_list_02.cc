@@ -24,15 +24,17 @@ int main() {
 
 
 
-  cout << "l1 type: " << l1 << "\n";
   cout << "l1: " << l1 << "\n";
+  cout << "l1 type: " << l1.get_type() << "\n";
   cout << "l1[1]: " << l1.get(1) ;
   cout << "\n\n";
-  cout << "l2 type: " << l2 << "\n";
+
+  cout << "l2 type: " << l2.get_type() << "\n";
   cout << "l2[1]: " << l2.get(1) << "\n";
   cout << "l2: " << l2 << "\n\n";
   const Entity &l3 = l2.get(1);
-  cout << "l3: " << l3 << "\n";
+  cout << "l3: " << l3 << "\n\n";
+
   l1.set(OperandEntity(i1), i4);
   // auto i5 = i4 + i4 + i4; // pure function auto  won't compile
   OperandEntity i5 =i4.opfunc(i4, AstOpCode::mul );

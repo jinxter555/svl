@@ -1,18 +1,5 @@
 #include "entity.hh"
 
-ListEntity ListEntity::undef_error=ListEntity(OperandErrorCode::undefined_t);
-ListEntity ListEntity::mem_error=ListEntity(OperandErrorCode::mem_alloc_t);
-ListEntity ListEntity::invalid_error=ListEntity(OperandErrorCode::invalid_op_t);
-
-Operand list_type(OperandType::list_t, nil);
-
-//ListEntity::ListEntity() : VEntity (OperandType::list_t) {
-ListEntity::ListEntity() : VEntity(list_type) {
-  type_ = OperandType::list_t;
-}
-
-ListEntity::ListEntity(const Operand& v) : VEntity(v) {}
-
 
 /*
 ListEntity::ListEntity(const ListEntity& l) {
@@ -20,6 +7,9 @@ ListEntity::ListEntity(const ListEntity& l) {
   //members = move(new_l->members);
 };
 */
+ListEntity nil_list;
+
+ListEntity::ListEntity()  {}
 ListEntity::ListEntity(const ListEntity& l) {
   for(auto &e : l.members) {
      members.push_back(e->clone()); 
@@ -53,25 +43,25 @@ const entity_u_ptr& ListEntity::add(entity_u_ptr &&vptr) {
   members.push_back(move(vptr));
   return members.back();
 }
-const Entity& ListEntity::add(const Entity &k, const Entity& v) 
-{ return ListEntity::invalid_error; }; // this is for map not
-const Entity& ListEntity::add(const Entity &k, entity_u_ptr& vptr) 
-{ return ListEntity::invalid_error; }; // this is for map not
+const Entity& ListEntity::add(const OperandEntity &k, const Entity& v) 
+{ return nil_entity; }; // this is for map not
+const Entity& ListEntity::add(const OperandEntity &k, entity_u_ptr& vptr) 
+{ return nil_entity; }; // this is for map not
 
 
 s_integer ListEntity::size() const { return members.size(); }
 
 //--------------------------------------
-const Entity& ListEntity::get(const Entity &key) {
+const Entity& ListEntity::get(const OperandEntity &key) {
   return get(key._get_int());
 }
 const Entity& ListEntity::get(int i) {
-  if(i > members.size() || i < 0) return ListEntity::undef_error;
+  if(i > members.size() || i < 0) return nil_entity;
   return *members[i];
 }
 
 const ListEntity&  ListEntity::get_list(int i) {
-  if(i > members.size() || i<0 ) return ListEntity::undef_error;
+  if(i > members.size() || i<0 ) return nil_list;
 
   entity_u_ptr &rptr =  members[i];
   //unique_ptr<Entity> &rptr =  members[i];
@@ -86,14 +76,14 @@ const ListEntity&  ListEntity::get_list(int i) {
 }
 
 //--------------------------------------
-const Entity& ListEntity::set(const Entity &key, const Entity &v ) {
+const Entity& ListEntity::set(const OperandEntity &key, const Entity &v ) {
   entity_u_ptr vptr  = v.clone();
   return set(key, vptr );
 }
 
-const Entity& ListEntity::set(const Entity &key, entity_u_ptr &vptr ) {
+const Entity& ListEntity::set(const OperandEntity &key, entity_u_ptr &vptr ) {
   int i = key._get_int();
-  if(i > members.size() || i < 0) return ListEntity::undef_error;
+  if(i > members.size() || i < 0) return nil_entity;
   members[i] = move(vptr);
   return *members[i];
 }
@@ -114,6 +104,9 @@ void ListEntity::print() const {
   cout << to_str();
 }
 
+OperandEntity ListEntity::get_type() const {
+  return Operand(OperandType::list_t);
+};
 
 //Entity ListEntity::evaluate(Entity *ctxt) {return entity_undef_error; }
 
