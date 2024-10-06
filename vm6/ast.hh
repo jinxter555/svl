@@ -18,13 +18,11 @@ public:
   using MapEntity::get;
   using MapEntity::to_str;
 
-/*
   entity_u_ptr clone() {return nullptr;} 
-  OperandEntity to_str() { return Operand("");}
-  OperandEntity get_type() { return Operand(OperandType::nil_t);}
+ // OperandEntity to_str() { return Operand("astnode123");}
+  OperandEntity get_type() { return Operand(OperandType::str_t);}
   void print() {};
   const Entity&   get(int i) { return nil_entity;};
-*/
 };
 
 class AstExpr : public AstNode {

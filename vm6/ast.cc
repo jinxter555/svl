@@ -15,11 +15,14 @@ entity_u_ptr& AstNode::operator[] (const string &k) { return MapEntity::children
     entity_u_ptr vptr1 = make_unique<OperandEntity>(Operand("hello123"));
     entity_u_ptr vptr2 = make_unique<ListEntity>();
     entity_u_ptr vptr3 = make_unique<AstNode>();
-    //AstNode::MapEntity::add(Operand("k2"), vptr1->clone());
-    //AstNode::MapEntity::add(OperandEntity("k2"), vptr1->clone());
-    add(Operand("system"), vptr1);
+    entity_u_ptr vptr4 = make_unique<MapEntity>();
+
+    add(Operand("system1"), move(vptr1));
+    add(Operand("system2"), move(vptr2));
     add("hello1", Operand("world1"));
     add("hello2", "world2");
+    add(string("hello23"), move(vptr3));
+    add(string("hello24"), move(vptr4));
     cout << to_str() << "\n";;
     return 0;
   }
