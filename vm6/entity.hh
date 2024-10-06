@@ -50,13 +50,13 @@ public:
   const entity_u_ptr& add(entity_u_ptr &vptr) ;
   const entity_u_ptr& add(entity_u_ptr &&vptr);
 
-  const Entity& add(const OperandEntity &k, const Entity& v) override ;
-  const Entity& add(const OperandEntity &k, entity_u_ptr& vptr) override ;
+  const Entity& add(const OperandEntity &k, const Entity& v) override final;
+  const Entity& add(const OperandEntity &k, entity_u_ptr& vptr) override final;
 
-  const Entity&   get(const OperandEntity &k) override ;
+  const Entity&   get(const OperandEntity &k) override final;
   const Entity&   get(int i) ;
-  const Entity& set(const OperandEntity &k, const Entity &v) override;
-  const Entity& set(const OperandEntity &k, entity_u_ptr &vptr) override;
+  const Entity& set(const OperandEntity &k, const Entity &v) override final;
+  const Entity& set(const OperandEntity &k, entity_u_ptr &vptr) override final;
   const ListEntity&  get_list(int i) ;
 
   s_integer size() const;
@@ -81,15 +81,16 @@ public:
 //  const Entity& add(const Entity &v) override ;
 //  const entity_u_ptr& add(entity_u_ptr &vptr) override ;
 
-  const Entity& add(const OperandEntity &k, const Entity& v) override ; 
-  const Entity& add(const OperandEntity &k, entity_u_ptr& vptr) override; 
+  const Entity& add(const OperandEntity &k, const Entity& v) override final;
+  const Entity& add(const OperandEntity &k, entity_u_ptr& vptr) override final; 
   const Entity& add(const string &k_str, const Entity& v) ;
+  const Entity& add(const string &k_str, const Operand& v) ;
 
-  const Entity& get(const OperandEntity &k) override ;
+  const Entity& get(const OperandEntity &k) override final;
   const Entity& get(const string &k) ;
 
-  const Entity& set(const OperandEntity &k, const Entity &v) override;
-  const Entity& set(const OperandEntity &k, entity_u_ptr &vptr) override;
+  const Entity& set(const OperandEntity &k, const Entity &v) override final;
+  const Entity& set(const OperandEntity &k, entity_u_ptr &vptr) override final;
 
 
   inline bool has_key(const string &k) ;

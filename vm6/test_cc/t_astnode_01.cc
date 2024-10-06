@@ -1,6 +1,7 @@
 #include "../ast.hh"
 
 int main() {
+/*
   OperandEntity i1(101l);
   OperandEntity i2(102l);
   OperandEntity i3(103l);
@@ -9,15 +10,17 @@ int main() {
   OperandEntity s3("str3");
   OperandEntity s4("str4");
 
-/*
   ListEntity l1;
   l1.add(i1);
   l1.add(i2);
   l1.add(i2);
 */
 
-  AstNode an1;
+  AstExpr ex1;
+  cout << "astnode1\n";
+  ex1.a();
 
+/*
   an1.add(i1);
   an1.add(i2);
   an1.add(i3);
@@ -44,9 +47,9 @@ int main() {
   an1.print_m();
 
 
-
   cout << "\n";
 //  cout << "l1: " <<  l1 << "\n";
+*/
 
   return 0;
 }

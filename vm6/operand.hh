@@ -54,8 +54,6 @@ public:
   Operand(const OperandVariant&);
   Operand(const OperandType, const OperandVariant&);
 
-  Operand(entity_u_ptr);
-  Operand(list_u_ptr);
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const;
   inline Number _get_number() const ;

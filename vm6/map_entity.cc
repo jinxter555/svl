@@ -34,6 +34,12 @@ const Entity& MapEntity::add(const string &k_str, const Entity& v) {
   children[k_str] = v.clone();
   return  *children[k_str];
 }
+const Entity& MapEntity::add(const string &k_str, const Operand& v) {
+  if(has_key(k_str)) 
+    return nil_map;
+  children[k_str] = make_unique<OperandEntity>(v);
+  return  *children[k_str];
+}
 
 const Entity& MapEntity::add(const OperandEntity &k, entity_u_ptr& vptr) {
   auto k_str = k._get_operand()._get_str();
