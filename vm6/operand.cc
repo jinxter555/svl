@@ -45,25 +45,27 @@ Operand::Operand(const char* v)
 
 Operand::Operand(const OperandVariant& v ) { 
   type_ = visit(GetOperandType(), v); 
-  value_ = visit(GetOperandValue(), v); 
+  value_ = v; // visit(GetOperandValue(), v); 
 } 
 
 //Operand::Operand(entity_u_ptr vptr) : type_(OperandType::uptr_t) { value_= move(vptr); }
 //Operand::Operand(list_u_ptr vptr) { value_= move(vptr); }
 
 Operand::Operand(const OperandType t, const OperandVariant& v) 
-  : type_(t), value_(visit(GetOperandValue(), v)) { }
+  : type_(t), value_(v) { }
 
 //-----------------------------------------------------------------------
 OperandVariant Operand::_get_value() const {
   return visit(GetOperandValue(), value_);
 };
 OperandType Operand::_get_type() const { 
-  return( visit(GetOperandType(), value_));
+  //return( visit(GetOperandType(), value_));
+  return type_;
 };
 
 Operand Operand::get_type() const {
-  return( visit(GetOperandType(), value_));
+  //return( visit(GetOperandType(), value_));
+  return type_;
 }
 
 //---------------------------  for cout print out or other viewers

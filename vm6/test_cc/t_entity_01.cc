@@ -7,6 +7,7 @@ int main() {
   Operand b1(true) ;
   Operand b2(false) ;
   Operand i1(Number(123l)) ;
+  OperandVariant si_1 = i1._get_value(); // cout << "si_1: " << si_1 << "\n"; // no ostream overload won't work with si_1 
   Operand i2(125l) ;
   Operand i3 = i1 * i2;
   cout << "i3: " << i3 << "\n";
