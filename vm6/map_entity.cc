@@ -2,7 +2,8 @@
 
 const MapEntity nil_map;
 
-MapEntity::MapEntity() { parent = nullptr; }
+MapEntity::MapEntity() : Entity(OperandType::map_t) { parent = nullptr; }
+
 MapEntity::MapEntity(const MapEntity& m) {
   map_u_ptr new_map = make_unique<MapEntity>();
 

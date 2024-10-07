@@ -12,12 +12,12 @@
 //void AstNode::print_m() const { cout << MapEntity::to_str() << "\n"; }
 
   int AstExpr::a()  {
-    entity_u_ptr vptr1 = make_unique<Operand>("hello123");
+   operand_u_ptr vptr1 = make_unique<Operand>("hello123");
     entity_u_ptr vptr2 = make_unique<ListEntity>();
     entity_u_ptr vptr3 = make_unique<AstNode>();
     entity_u_ptr vptr4 = make_unique<MapEntity>();
 
-    add(Operand("system1"), move(vptr1));
+    add(Operand("system1"), 123l);
     add(Operand("system2"), move(vptr2));
     add(string("hello1"), Operand("world1"));
     add(string("hello2"), "world2");
@@ -29,11 +29,6 @@
 
 AstOperand::AstOperand() {};
 AstOperand::AstOperand(const Operand&v) {
-   add("value", 
-   make_unique<Operand>(v)
-   );
 }
-astexpr_u_ptr& AstOperand::evaluate(astexpr_u_ptr& ast_ctxt) {
-  auto e = AstNode::get("value")._get_operand();
 
-}
+//astexpr_u_ptr& AstOperand::evaluate(astexpr_u_ptr& ast_ctxt) { }

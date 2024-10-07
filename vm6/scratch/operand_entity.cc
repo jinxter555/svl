@@ -1,36 +1,43 @@
 #include "entity.hh"
 
-OperandEntity::OperandEntity()  {}
-OperandEntity::OperandEntity(const Operand &v) : Entity(v) {}
-OperandEntity OperandEntity::operator=(const OperandEntity &v) { 
-  set(v); 
-  return *this; 
-}
+OperandEntity nil_entity;
 
-void OperandEntity::set(const OperandEntity &v) {
-  value_ = visit(GetOperandValue(), v.value_); 
+OperandEntity::OperandEntity()  {}
+OperandEntity::OperandEntity(const Operand &v) : value_(v), type_(v.type_) { }
+OperandEntity OperandEntity::operator=(const OperandEntity &v) { 
+  value_ = v.value_;
+  type_ =  v.type_;
+  return *this; 
 }
 
 entity_u_ptr OperandEntity::clone() const { 
   return make_unique<OperandEntity>(*this);
 }
 
-Operand OperandEntity::_get_operand() const { 
-  Operand nv; //nv.value_ = visit(GetValue(), this->value_); 
-  nv.value_ = visit(GetOperandValue(), this->value_); 
-  return nv;
-}
-
 const string OperandEntity::_to_str() const {
-  return Operand::_to_str();
+  return value_._to_str();
 }
 OperandEntity OperandEntity::to_str() const {
-  if (holds_alternative<string>(value_))
+  if (holds_alternative<string>(value_.value_))
     return *this;
-  return OperandEntity(Operand::to_str());
+  return OperandEntity(value_.to_str());
 };
 
 void OperandEntity::print() const {
 //  cout << "opent print\n";
   cout << _to_str();
+};
+
+OperandEntity OperandEntity::opfunc(const OperandEntity& other, AstOpCode op) {
+  return value_.opfunc(other.value_, op);
+}
+
+s_integer OperandEntity::_get_int() const { return value_._get_int(); }
+s_float OperandEntity::_get_float() const { return value_._get_float(); }
+
+Operand OperandEntity::_get_operand() const { 
+  return visit(GetOperandValue(), value_.value_); 
+}
+OperandEntity OperandEntity::get_type() const {
+  return Operand(type_);
 };

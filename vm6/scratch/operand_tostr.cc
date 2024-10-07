@@ -99,11 +99,14 @@ Operand OperandToStringVisitor::operator()(AstOpCode t_op) const {
   } 
   return Operand(oc);
 }
+
 Operand OperandToStringVisitor::operator()(const entity_u_ptr &vptr) const { 
-  return Operand("list entity ptr: ") + vptr->to_str();
+  //return Operand("entity ptr: ") + vptr->to_str();
+  return vptr->to_str();
 }
+/*
 Operand OperandToStringVisitor::operator()(const list_u_ptr &vptr) const { 
-  return Operand("list entity ptr: ") + vptr->to_str(); 
+  return Operand("list entity ptr: ") + vptr->_to_str(); 
 }
 Operand OperandToStringVisitor::operator()(const e_members_t &vptr) const { 
   return Operand("list members: ");
@@ -111,3 +114,4 @@ Operand OperandToStringVisitor::operator()(const e_members_t &vptr) const {
 Operand OperandToStringVisitor::operator()(const e_children_t &vptr) const { 
   return Operand("children: ");
 }
+*/

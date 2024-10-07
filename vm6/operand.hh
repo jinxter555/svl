@@ -35,7 +35,11 @@ using OperandVariant=std::variant
 
 template <typename T>
 class Primordial {
+protected:
+  OperandType type_;
 public:
+ // Primordial(OperandType);
+  Primordial(OperandType t) : type_(t) {};
   virtual unique_ptr<T> clone() const=0;
   virtual Operand to_str() const =0;
   virtual Operand get_type() const=0;
@@ -47,7 +51,7 @@ class Operand : public Primordial<Operand> {
   friend class ListEntity;
   friend class MapEntity;
 protected:
-  OperandType type_;
+  //OperandType type_;
   OperandVariant value_;
 public:
   const static string nil_str;

@@ -9,7 +9,8 @@ ListEntity::ListEntity(const ListEntity& l) {
 */
 ListEntity nil_list;
 
-ListEntity::ListEntity()  {}
+ListEntity::ListEntity() : Entity(OperandType::list_t) {}
+
 ListEntity::ListEntity(const ListEntity& l) {
   for(auto &e : l.members) {
     auto v = visit(GetOperandValue(), e.value_); 

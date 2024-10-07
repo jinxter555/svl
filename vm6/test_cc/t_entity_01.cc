@@ -6,9 +6,21 @@ int main() {
   Operand nil;
   Operand b1(true) ;
   Operand b2(false) ;
+  cout << "nil b1 b2: " << nil << " " << b1 << " " << b2 << "\n";
+
+
   Operand i1(Number(123l)) ;
+  cout << "i1: " << i1 << "\n";
+  cout << "i1 gettype: " << i1.get_type() << "\n";
   OperandVariant si_1 = i1._get_value(); // cout << "si_1: " << si_1 << "\n"; // no ostream overload won't work with si_1 
   Operand i2(125l) ;
+
+  Number n1(123l);
+  Number n2(456l);
+  Number n3 = n1 + n2;
+  cout << "n3: " << n3 << "\n";
+
+
   Operand i3 = i1 * i2;
   cout << "i3: " << i3 << "\n";
   i3 = i1 + i2;

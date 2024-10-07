@@ -28,7 +28,7 @@ public:
 class AstExpr : public AstNode {
 public:
   int a();
-  virtual astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
+  //virtual astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
 };
 
 class AstOperand : public AstExpr {
@@ -36,5 +36,5 @@ public:
   AstOperand();
   AstOperand(const Operand&);
 
-  astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
+  //astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
 };

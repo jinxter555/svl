@@ -9,63 +9,65 @@
 Nil nil;
 Operand nil_operand=Operand();
 
+//Primordial::Primordial(OperandType t) : Primordial(t) {}
+
 const string Operand::nil_str=string("nil");
   
 Operand::Operand() 
-  : type_(OperandType::nil_t)
+  : Primordial(OperandType::nil_t)
   , value_(nil) {}
 Operand::Operand(bool v)
-  : type_(OperandType::bool_t)
+  : Primordial(OperandType::bool_t)
   , value_(v) {}
 Operand::Operand(s_integer v) 
-  : type_(OperandType::num_t)
+  : Primordial(OperandType::num_t)
   , value_(Number(v)) {}
 Operand::Operand(s_float v) 
-  : type_(OperandType::num_t)
+  : Primordial(OperandType::num_t)
   , value_(Number(v)) {}
 Operand::Operand(const Number& v) 
-  : type_(OperandType::num_t)
+  : Primordial(OperandType::num_t)
   , value_(v) {}
 Operand::Operand(OperandType v) 
-  : type_(OperandType::type_t)
+  : Primordial(OperandType::type_t)
   , value_(v) {} //  meta program type of types
 Operand::Operand(AstOpCode v) 
-  : type_(OperandType::ast_op_t)
+  : Primordial(OperandType::ast_op_t)
   , value_(v) {} 
 Operand::Operand(OperandErrorCode v) 
-  : type_(OperandType::err_t)
+  : Primordial(OperandType::err_t)
   , value_(v) {} 
 Operand::Operand(OperandStatusCode v) 
-  : type_(OperandType::status_t)
+  : Primordial(OperandType::status_t)
   , value_(v) {} //  just type
 Operand::Operand(const string& v) 
-  : type_(OperandType::str_t)
+  : Primordial(OperandType::str_t)
   , value_(v) {}
 Operand::Operand(const char* v) 
-  : type_(OperandType::str_t)
+  : Primordial(OperandType::str_t)
   , value_(string(v)) {}
 
-Operand::Operand(const OperandVariant& v ) { 
-  type_ = visit(GetOperandType(), v); 
+Operand::Operand(const OperandVariant& v ) 
+  : Primordial(visit(GetOperandType(), v)) {
   value_ = visit(GetOperandValue(), v); 
 } 
 
-Operand::Operand(entity_u_ptr &vptr) : type_(OperandType::uptr_t) { 
+Operand::Operand(entity_u_ptr &vptr) : Primordial(OperandType::uptr_t) { 
   value_= vptr->clone(); 
 }
-Operand::Operand(entity_u_ptr &&vptr) : type_(OperandType::uptr_t) { 
+Operand::Operand(entity_u_ptr &&vptr) : Primordial(OperandType::uptr_t) { 
   value_= move(vptr);
 }
 
-Operand::Operand(const OperandType t, const OperandVariant& v) : type_(t){
+Operand::Operand(const OperandType t, const OperandVariant& v) : Primordial(t){
    value_  = visit(GetOperandValue(), v);
 }
 
-//Operand::Operand(const Operand &v) : type_(v.type_), value_(visit(GetOperandValue(), v.value_)){}
+//Operand::Operand(const Operand &v) : Primordial(v.Primordial), value_(visit(GetOperandValue(), v.value_)){}
 //-----------------------------------------------------------------------
 Operand Operand::clone_val() const {
   Operand nv;
-  nv.type_ = type_;
+  nv.type_= type_;
   nv.value_  = visit(GetOperandValue(), value_);
   return nv;
 
