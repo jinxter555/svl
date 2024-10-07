@@ -7,7 +7,7 @@ int main() {
   Operand i2(2l);
   Operand i3(3l);
   Operand o_i4=i1+i2+i3;
-  Operand i4=o_i4.clone();
+  Operand i4=o_i4.clone_val();
 
 
   ListEntity l1, l2;
@@ -32,7 +32,7 @@ int main() {
   cout << "l2 type: " << l2.get_type() << "\n";
   cout << "l2[1]: " << l2.get(1) << "\n";
   cout << "l2: " << l2 << "\n\n";
-  auto l3 = l2.get(1).clone();
+  auto l3 = l2.get(1).clone_val();
   cout << "l3: " << l3 << "\n\n";
 
   l1.set(i1, i4);
@@ -42,7 +42,7 @@ int main() {
   cout << "l1: " << l1 << "\n";
 
   //const ListEntity& mylist = l2.get_list(1);
-  auto mylist = l2.get(1).clone();
+  auto mylist = l2.get(1).clone_val();
   //mylist.print_list();
   cout << "mylist: " << mylist << "\n";
   cout << "l2: " << l2 << "\n\n";

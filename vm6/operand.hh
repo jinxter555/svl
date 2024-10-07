@@ -33,14 +33,16 @@ using OperandVariant=std::variant
 //, e_members_t , e_children_t
 >;
 
+template <typename T>
 class Primordial {
 public:
+  virtual unique_ptr<T> clone() const=0;
   virtual Operand to_str() const =0;
   virtual Operand get_type() const=0;
   virtual void print() const =0;
 };
 
-class Operand : public Primordial {
+class Operand : public Primordial<Operand> {
   friend class Entity;
   friend class ListEntity;
   friend class MapEntity;
@@ -74,7 +76,8 @@ public:
   //Operand operator=(const Operand &v);
 
   //--------------------------------------------------------- Overload primative operator
-  Operand clone() const;
+  Operand clone_val() const;
+  unique_ptr<Operand> clone() const override ;
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const;
   inline Number _get_number() const ;
@@ -118,7 +121,8 @@ public:
 };
 
 struct GetOperandValue{
-template <typename T> OperandVariant operator()(T value) const;                                                                                                                                   
+template <typename T> 
+OperandVariant operator()(T value) const;                                                                                                                                   
 OperandVariant operator()(const entity_u_ptr& v) const  ;                                                                                                           
 /*
 OperandVariant operator()(const list_u_ptr& v) const  ;                                                                                                           
@@ -127,6 +131,14 @@ OperandVariant operator()(const e_members_t& v) const  ;
 OperandVariant operator()(const e_children_t& v) const  ;                                                                                                           
 */
 };
+
+struct GetOperandClone{
+template <typename T> 
+operand_u_ptr operator()(T value) const;                                                                                                                                   
+operand_u_ptr operator()(const entity_u_ptr& v) const  ;                                                                                                           
+};
+
+
 
 struct GetOperandType{
 OperandType operator()(const bool v) const ;

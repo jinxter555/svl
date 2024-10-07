@@ -20,9 +20,9 @@ public:
 
   entity_u_ptr clone() {return nullptr;} 
  // OperandEntity to_str() { return Operand("astnode123");}
-  OperandEntity get_type() { return Operand(OperandType::str_t);}
+  Operand get_type() { return Operand(OperandType::str_t);}
   void print() {};
-  const Entity&   get(int i) { return nil_entity;};
+  //const Entity&   get(int i) { return nil_entity;};
 };
 
 class AstExpr : public AstNode {
@@ -34,7 +34,7 @@ public:
 class AstOperand : public AstExpr {
 public:
   AstOperand();
-  AstOperand(const OperandEntity&);
+  AstOperand(const Operand&);
 
   astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
 };

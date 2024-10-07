@@ -6,7 +6,7 @@ int main() {
   Operand i1(1l);
   Operand i2(2l);
   Operand i3(3l);
-  Operand i4 = i1.clone();
+  Operand i4 = i1.clone_val();
 
   ListEntity l1, l2;
 
@@ -30,7 +30,7 @@ int main() {
   cout << "l2 type: " << l2.get_type() << "\n";
   cout << "l2[1]: " << l2.get(1) << "\n";
   cout << "l2: " << l2 << "\n\n";
-  const Operand l3 = l2.get(1).clone();
+  const Operand l3 = l2.get(1).clone_val();
   cout << "l3: " << l3 << "\n";
   // auto i5 = i4 + i4 + i4; // pure function auto  won't compile
   cout << "l1: " << l1 << "\n";

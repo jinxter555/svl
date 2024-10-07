@@ -1,7 +1,7 @@
 #include "operand.hh"
 
 extern Operand nil_operand;
-class Entity : public Primordial {
+class Entity : public Primordial<Entity> {
   friend class OperandEntity;
   friend class ListEntity;
   friend class MapEntity;
