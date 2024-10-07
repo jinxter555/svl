@@ -2,16 +2,18 @@
 
 
 int main() {
-  OperandEntity i1(1l);
-  OperandEntity i2(2l);
-  OperandEntity i3(3l);
+  Operand i1(1l);
+  Operand i2(2l);
+  Operand i3(3l);
 
-  OperandEntity one("one");
-  OperandEntity two("two");
-  OperandEntity three("three");
-  OperandEntity m1_s("m1");
-  OperandEntity m2_s("m2");
+  Operand one("one");
+  Operand two("two");
+  Operand three("three");
+  Operand m1_s("m1");
+  Operand m2_s("m2");
+
   ListEntity l1, l2;
+
   l1.add(i1);
   l1.add(i2);
   l1.add(i3);
@@ -24,17 +26,17 @@ int main() {
   cout << "m2: " << m2 << "\n\n";
 
 
-  m1.add(one,i1);
+  m1.add(one, i1);
   m1.add(two, i2);
   m1.add(three, i3);
-  m1.add("l1", l1);
-  m1.add("l2", l2);
-  OperandEntity i4 = i3.opfunc(i1, AstOpCode::plus);
+  m1.add(string("l1"), l1);
+  m1.add(string("l2"), l2);
+  Operand i4 = i3.opfunc(i1, AstOpCode::plus);
   //m1.add("four", i3+i1);
-  m1.add("four", i4);
+  m1.add(string("four"), i4);
   //m1.add("five", i3+i2);
-  OperandEntity i5 = i3.opfunc(i2, AstOpCode::plus);
-  m1.add("five", i5);
+  Operand i5 = i3.opfunc(i2, AstOpCode::plus);
+  m1.add(string("five"), i5);
 
   m2.add(m1_s, m1);
 
@@ -47,7 +49,7 @@ int main() {
   cout << "m2 type: " << m2.get_type() << "\n\n";
 
   auto m3=m1;
-  m3.add("myworld", "myhello");
+  m3.add(string("myworld"), "myhello");
   cout << "m1: " << m1 << "\n";
   cout << "m3: " << m3 << "\n";
   cout << "m3 type: " << m3.get_type() << "\n\n";

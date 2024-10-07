@@ -26,3 +26,15 @@ entity_u_ptr& AstNode::operator[] (const string &k) { return MapEntity::children
     cout << to_str() << "\n";;
     return 0;
   }
+
+AstOperand::AstOperand() {};
+AstOperand::AstOperand(const OperandEntity&v) {
+   add("value", 
+   make_unique<OperandEntity>(v)
+   );
+}
+astexpr_u_ptr& AstOperand::evaluate(astexpr_u_ptr& ast_ctxt) {
+  auto e = AstNode::get("value")._get_operand();
+
+
+}

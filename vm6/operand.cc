@@ -7,6 +7,8 @@
 #include "entity.hh"
 
 Nil nil;
+Operand nil_operand=Operand();
+
 const string Operand::nil_str=string("nil");
   
 Operand::Operand() 
@@ -45,29 +47,40 @@ Operand::Operand(const char* v)
 
 Operand::Operand(const OperandVariant& v ) { 
   type_ = visit(GetOperandType(), v); 
-  value_ = v; // visit(GetOperandValue(), v); 
+  value_ = visit(GetOperandValue(), v); 
 } 
 
-//Operand::Operand(entity_u_ptr vptr) : type_(OperandType::uptr_t) { value_= move(vptr); }
-//Operand::Operand(list_u_ptr vptr) { value_= move(vptr); }
+Operand::Operand(entity_u_ptr &vptr) : type_(OperandType::uptr_t) { 
+  value_= vptr->clone(); 
+}
+Operand::Operand(entity_u_ptr &&vptr) : type_(OperandType::uptr_t) { 
+  value_= move(vptr);
+}
 
-Operand::Operand(const OperandType t, const OperandVariant& v) 
-  : type_(t), value_(v) { }
+Operand::Operand(const OperandType t, const OperandVariant& v) : type_(t){
+   value_  = visit(GetOperandValue(), v);
+}
 
+//Operand::Operand(const Operand &v) : type_(v.type_), value_(visit(GetOperandValue(), v.value_)){}
+//-----------------------------------------------------------------------
+Operand Operand::clone() const {
+  Operand nv;
+  nv.type_ = type_;
+  nv.value_  = visit(GetOperandValue(), value_);
+  return nv;
+
+}
 //-----------------------------------------------------------------------
 OperandVariant Operand::_get_value() const {
   return visit(GetOperandValue(), value_);
 };
 OperandType Operand::_get_type() const { 
-  //return( visit(GetOperandType(), value_));
-  return type_;
+  return type_; //return( visit(GetOperandType(), value_));
 };
 
 Operand Operand::get_type() const {
-  //return( visit(GetOperandType(), value_));
-  return type_;
+  return type_; //return( visit(GetOperandType(), value_));
 }
-
 //---------------------------  for cout print out or other viewers
 Operand Operand::get_str() const {
   return to_str();
@@ -124,11 +137,15 @@ std::ostream& operator<<(std::ostream& os, const Operand& operand) {
   return os;
 }
 
+void Operand::print() const {
+  cout << *this;
+}
+
 //-----------------------------------------------------------------------
 template <typename T>
 OperandVariant GetOperandValue::operator()(T value) const { return value; }
-/*
 OperandVariant GetOperandValue::operator()(const entity_u_ptr& v) const { return v->clone(); }
+/*
 OperandVariant GetOperandValue::operator()(const list_u_ptr& v) const { return v->clone(); }
 OperandVariant GetOperandValue::operator()(Entity *v) const { return v->clone(); }  
 OperandVariant GetOperandValue::operator()(const e_members_t& v) const { return false; }
@@ -146,8 +163,8 @@ OperandType GetOperandType::operator()(const OperandErrorCode& v) const { return
 OperandType GetOperandType::operator()(const Number& v) const { return OperandType::num_t; }
 OperandType GetOperandType::operator()(const string& v) const { return OperandType::str_t; }
 
-/*
 OperandType GetOperandType::operator()(const entity_u_ptr& v) const { return OperandType::ptr_t;}
+/*
 OperandType GetOperandType::operator()(const list_u_ptr& v) const { return OperandType::ptr_t;}
 OperandType GetOperandType::operator()(Entity *v) const { return OperandType::ptr_t;}
 OperandType GetOperandType::operator()(const e_members_t& v) const { return OperandType::list_t; }

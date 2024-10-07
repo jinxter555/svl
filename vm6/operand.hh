@@ -5,29 +5,43 @@
 
 class Nil{};
 extern Nil nil;
-class Entity; class OperandEntity; class ListEntity;  class MapEntity;
-class AstNode;
+class Entity; class ListEntity;  class MapEntity;
+
+
+class AstNode; class AstExpr;
+class Operand;
+using operand_u_ptr=unique_ptr<Operand>;
 
 using entity_u_ptr = unique_ptr<Entity>;
-using e_members_t = vector<entity_u_ptr>;
-using e_children_t = unordered_map<string, entity_u_ptr>;
+//using e_members_t = vector<entity_u_ptr>;
+using e_members_t = vector<Operand>;
+using e_children_t = unordered_map<string, Operand>;
 
 using list_u_ptr = unique_ptr<ListEntity>;
 using map_u_ptr = unique_ptr<MapEntity>;
-using operand_u_ptr=unique_ptr<OperandEntity>;
+
+
+using astexpr_u_ptr = unique_ptr<AstExpr>;
 
 using OperandVariant=std::variant
 < Nil
 , bool, string, Number
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
-//, entity_u_ptr , list_u_ptr
+, entity_u_ptr
+// , list_u_ptr
 //, e_members_t , e_children_t
 >;
 
-class Operand {
+class Primordial {
+public:
+  virtual Operand to_str() const =0;
+  virtual Operand get_type() const=0;
+  virtual void print() const =0;
+};
+
+class Operand : public Primordial {
   friend class Entity;
-  friend class OperandEntity;
   friend class ListEntity;
   friend class MapEntity;
 protected:
@@ -48,12 +62,19 @@ public:
   Operand(OperandErrorCode);
   Operand(OperandStatusCode);
 
-  Operand(const Number& value) ;
+  Operand(const Number&) ;
   Operand(const string&);
-  Operand(const char* value);
+  Operand(const char* );
   Operand(const OperandVariant&);
   Operand(const OperandType, const OperandVariant&);
+  //Operand(const Operand&);
+  Operand(entity_u_ptr &);
+  Operand(entity_u_ptr &&);
 
+  //Operand operator=(const Operand &v);
+
+  //--------------------------------------------------------- Overload primative operator
+  Operand clone() const;
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const;
   inline Number _get_number() const ;
@@ -67,9 +88,10 @@ public:
   e_children_t& _get_children();
   //--------------------------------------------------------- Overload math operator
   Operand get_str() const;
-  Operand get_type() const;
+  Operand get_type() const override;
 
-  Operand to_str() const; 
+  Operand to_str() const override; 
+  void  print() const override; 
   Operand whatami() const;  // introspection type + value
   //--------------------------------------------------------- Overload math operator
   friend ostream& operator<<(ostream& os, const Operand& operand);
@@ -98,10 +120,12 @@ public:
 struct GetOperandValue{
 template <typename T> OperandVariant operator()(T value) const;                                                                                                                                   
 OperandVariant operator()(const entity_u_ptr& v) const  ;                                                                                                           
+/*
 OperandVariant operator()(const list_u_ptr& v) const  ;                                                                                                           
 OperandVariant operator()(Entity *v) const ;
 OperandVariant operator()(const e_members_t& v) const  ;                                                                                                           
 OperandVariant operator()(const e_children_t& v) const  ;                                                                                                           
+*/
 };
 
 struct GetOperandType{
@@ -113,9 +137,8 @@ OperandType operator()(const AstOpCode& v) const ;
 OperandType operator()(const OperandType& v) const ;
 OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
-
-/*
 OperandType operator()(const entity_u_ptr& v) const  ;                                                                                                           
+/*
 OperandType operator()(const list_u_ptr& v) const  ;                                                                                                           
 OperandType operator()(Entity *v) const ;
 OperandType operator()(const e_members_t& v) const  ;                                                                                                           

@@ -12,7 +12,9 @@ int main() {
   Operand i3 = i1 * i2;
   cout << "i3: " << i3 << "\n";
   i3 = i1 + i2;
-  cout << "i3: " << i3 << "\n";
+  Operand i4(i3._get_value());
+  cout << "i3: " << i3 << " gettype:" << i3.get_type()<< "\n";
+  cout << "i4: " << i4 << " gettype:" << i4.get_type()<< "\n";
   Operand f1(1.23) ;
   cout << "nil b1 b2: " << nil << " " << b1 << " " << b2 << "\n";
 

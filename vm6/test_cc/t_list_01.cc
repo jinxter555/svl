@@ -3,9 +3,10 @@
 
 int main() {
   //OperandEntity i1(12345l);
-  OperandEntity i1(1l);
-  OperandEntity i2(2l);
-  OperandEntity i3(3l);
+  Operand i1(1l);
+  Operand i2(2l);
+  Operand i3(3l);
+  Operand i4 = i1.clone();
 
   ListEntity l1, l2;
 
@@ -29,7 +30,7 @@ int main() {
   cout << "l2 type: " << l2.get_type() << "\n";
   cout << "l2[1]: " << l2.get(1) << "\n";
   cout << "l2: " << l2 << "\n\n";
-  const Entity &l3 = l2.get(1);
+  const Operand l3 = l2.get(1).clone();
   cout << "l3: " << l3 << "\n";
   // auto i5 = i4 + i4 + i4; // pure function auto  won't compile
   cout << "l1: " << l1 << "\n";

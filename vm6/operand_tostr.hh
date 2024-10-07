@@ -12,9 +12,8 @@ struct OperandToStringVisitor {
   Operand operator()(OperandErrorCode err) const;
   Operand operator()(OperandStatusCode status) const;
   Operand operator()(AstOpCode t_op) const;
-
-/*
   Operand operator()(const entity_u_ptr&) const;
+/*
   Operand operator()(const list_u_ptr&) const;
   Operand operator()(const map_u_ptr&) const;
   Operand operator()(const e_members_t&) const;

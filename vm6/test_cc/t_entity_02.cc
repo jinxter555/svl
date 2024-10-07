@@ -2,38 +2,38 @@
 
 
 int main() {
-  OperandEntity n1(123l);
-  OperandEntity i1(Operand(11l)) ;
+  Operand n1(123l);
+  Operand i1(Operand(11l)) ;
   cout << "n1:" << n1 << "\n";
-  cout << "n1 whatami:" << n1._get_operand().whatami() << "\n";
+  cout << "n1 whatami:" << n1.whatami() << "\n";
 
-  OperandEntity s1("hello");
+  Operand s1("hello");
   cout << "s1: " << s1 << "\n";
-  cout << "s1: whatami() " << s1._get_operand().whatami() << "\n";
+  cout << "s1: whatami() " << s1.whatami() << "\n";
   cout << "s1: gettype() " << s1.get_type() << "\n";
 
 
-  OperandEntity s2(string("hello,world"));
-  OperandEntity i2(22l) ;
-  OperandEntity i3(33l) ;
-  OperandEntity f1(12.345) ;
-  entity_u_ptr f1_c  = f1.clone();
-  Operand f1_o = f1._get_operand();
-  OperandEntity i5 ;
-  OperandEntity i4 = i2.opfunc(i3, AstOpCode::plus);
+  Operand s2(string("hello,world"));
+  Operand i2(22l) ;
+  Operand i3(33l) ;
+  Operand f1(12.345) ;
+  Operand f1_c  = f1.clone();
+  Operand f1_o = f1.clone();
+  Operand i5 ;
+  Operand i4 = i2.opfunc(i3, AstOpCode::plus);
 
   //i5.set( i4 + i1);
   i5 = i4.opfunc(i1, AstOpCode::plus);
-  //i5 = OperandEntity(555l);
+  //i5 = Operand(555l);
 
-  OperandEntity s3 = s2.to_str();
+  Operand s3 = s2.to_str();
 
 
   cout << "s1:" << s1 << "\n";
-  cout << "s1 geto:" << s1._get_operand() << "\n";
+  cout << "s1 geto:" << s1.clone() << "\n";
   cout << "s1 gettype:" << s1.get_type() << "\n";
   cout << "s2:" << s2 << "\n";
-  cout << "s2 geto:" << s2._get_operand() << "\n";
+  cout << "s2 geto:" << s2.clone() << "\n";
   cout << "s3:" << s3 << "\n";
 
   cout << "i1:" << i1 << "\n";

@@ -7,7 +7,7 @@ int main() {
   Operand i2(2l);
   Operand i3(3l);
   Operand o_i4=i1+i2+i3;
-  OperandEntity i4(o_i4);
+  Operand i4=o_i4.clone();
 
 
   ListEntity l1, l2;
@@ -32,17 +32,17 @@ int main() {
   cout << "l2 type: " << l2.get_type() << "\n";
   cout << "l2[1]: " << l2.get(1) << "\n";
   cout << "l2: " << l2 << "\n\n";
-  const Entity &l3 = l2.get(1);
+  auto l3 = l2.get(1).clone();
   cout << "l3: " << l3 << "\n\n";
 
-  l1.set(OperandEntity(i1), i4);
+  l1.set(i1, i4);
   // auto i5 = i4 + i4 + i4; // pure function auto  won't compile
-  OperandEntity i5 =i4.opfunc(i4, AstOpCode::mul );
-  l1.set(OperandEntity(i2), i5);
+  Operand i5 =i4.opfunc(i4, AstOpCode::mul );
+  l1.set(i2, i5);
   cout << "l1: " << l1 << "\n";
 
   //const ListEntity& mylist = l2.get_list(1);
-  auto &mylist = l2.get_list(1);
+  auto mylist = l2.get(1).clone();
   //mylist.print_list();
   cout << "mylist: " << mylist << "\n";
   cout << "l2: " << l2 << "\n\n";
