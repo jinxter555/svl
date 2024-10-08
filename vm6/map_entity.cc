@@ -23,6 +23,10 @@ entity_u_ptr MapEntity::clone() const {
 }
 
 //------------------------------------- 
+const Entity& MapEntity::add(const Operand &v) {return nil_map;}
+const Entity& MapEntity::add(const Entity &v) {return nil_map;}
+const Entity& MapEntity::add(entity_u_ptr&&v) {return nil_map;}
+//------------------------------------- 
 const Entity& MapEntity::add(const Operand &k, const Entity& v) {
   auto k_str = k._get_str();
   return  add(k_str, v);

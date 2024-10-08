@@ -25,6 +25,10 @@ int main() {
 
 
 
+  Operand i1(123l);
+  vptr2->add(Operand(1l));
+  vptr2->add(string("what"));
+
   vptr4->add("three", "world3");
   vptr4->add("four", "world4");
   vptr4->print();

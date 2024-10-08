@@ -11,6 +11,11 @@ public:
   Entity(const OperandType &t);
 
   virtual entity_u_ptr clone() const = 0;
+
+  //-------------------------------------------
+  virtual const Entity& add(const Operand &v) =0;  // for list
+  virtual const Entity& add(const Entity &v) =0;  // for list
+  virtual const Entity& add(entity_u_ptr &&vptr) =0;  // for list
   //-------------------------------------------
   virtual const Entity& add(const Operand &k, const Entity& v)=0;
   virtual const Entity& add(const Operand &k, const Operand& v)=0;
@@ -83,6 +88,9 @@ public:
 
 //  const Entity& add(const Entity &v) override ;
 //  const entity_u_ptr& add(entity_u_ptr &vptr) override ;
+  const Entity& add(const Operand &v) override ;
+  const Entity& add(const Entity &v) override;
+  const Entity& add(entity_u_ptr &&vptr) override;
 
   const Entity& add(const Operand&k, const Entity& v) override final;
   const Entity& add(const Operand&k, const Operand& v) override final;
