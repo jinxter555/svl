@@ -112,11 +112,11 @@ Number Operand::_get_number() const {
 }
 s_integer Operand::_get_int() const { 
   Number n = _get_number(); 
-  return get<s_integer>(n.get_data()); 
+  return get<s_integer>(n.get_value()); 
 }
 s_float Operand::_get_float() const { 
   Number n = _get_number();
-  return get<s_float>(n.get_data()); 
+  return get<s_float>(n.get_value()); 
 }
 //-----------------------------------------------------------------------
 /*

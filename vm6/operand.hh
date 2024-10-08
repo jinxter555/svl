@@ -2,49 +2,11 @@
 #define _OPERAND_HH_
 #pragma once
 #include "lang.hh"
-
-class Nil{};
-extern Nil nil;
-class Entity; class ListEntity;  class MapEntity;
+#include "number.hh"
 
 
-class AstNode; class AstExpr;
-class Operand;
-using operand_u_ptr=unique_ptr<Operand>;
 
-using entity_u_ptr = unique_ptr<Entity>;
-//using e_members_t = vector<entity_u_ptr>;
-using e_members_t = vector<Operand>;
-using e_children_t = unordered_map<string, Operand>;
-
-using list_u_ptr = unique_ptr<ListEntity>;
-using map_u_ptr = unique_ptr<MapEntity>;
-
-
-using astexpr_u_ptr = unique_ptr<AstExpr>;
-
-using OperandVariant=std::variant
-< Nil
-, bool, string, Number
-, AstOpCode, OperandErrorCode
-, OperandStatusCode, OperandType
-, entity_u_ptr
-// , list_u_ptr
-//, e_members_t , e_children_t
->;
-
-template <typename T>
-class Primordial {
-protected:
-  OperandType type_;
-public:
- // Primordial(OperandType);
-  Primordial(OperandType t) : type_(t) {};
-  virtual unique_ptr<T> clone() const=0;
-  virtual Operand to_str() const =0;
-  virtual Operand get_type() const=0;
-  virtual void print() const =0;
-};
+//--------------------------------------------------------- 
 
 class Operand : public Primordial<Operand> {
   friend class Entity;
@@ -91,8 +53,7 @@ public:
   const string _to_str() const ;
   OperandType _get_type() const;
   //--------------------------------------------------------- Overload entity ..
-  e_members_t& _get_members();
-  e_children_t& _get_children();
+  //e_members_t& _get_members(); e_children_t& _get_children();
   //--------------------------------------------------------- Overload math operator
   Operand get_str() const;
   Operand get_type() const override;

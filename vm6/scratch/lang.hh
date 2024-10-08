@@ -10,7 +10,6 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include "number.hh"
 
 
 using namespace  std;
@@ -97,5 +96,27 @@ enum class ControlFlow {
 
 using s_integer = long;
 using s_float = double;
+
+
+//--------------------------------------------------------- 
+class Nil{};
+extern Nil nil;
+
+class Operand;
+using operand_u_ptr=unique_ptr<Operand>;
+//--------------------------------------------------------- 
+template <typename T>
+class Primordial {
+protected:
+  OperandType type_;
+public:
+ // Primordial(OperandType);
+  Primordial(OperandType t) : type_(t) {};
+  virtual unique_ptr<T> clone() const=0;
+  virtual Operand to_str() const =0;
+  virtual Operand get_type() const=0;
+  virtual void print() const =0;
+};
+
 
 #endif

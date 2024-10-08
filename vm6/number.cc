@@ -1,7 +1,8 @@
 #include "number.hh"
 
-Number::Number(s_integer value) : data_(value) {}
-Number::Number(s_float value) : data_(value) {}
+
+Number::Number(s_integer value) : type_(OperandType::s_int_t), value_(value) {}
+Number::Number(s_float value) : type_(OperandType::s_float_t), value_(value) {}
 
 struct Number::AddVisitor {
   template <typename T, typename U>
@@ -104,69 +105,73 @@ struct Number::NotVisitor {
 
 
 Number Number::operator+(const Number& other) const {
-  return visit(Number::AddVisitor{}, data_, other.data_);
+  return visit(Number::AddVisitor{}, value_, other.value_);
 }
 
 Number Number::operator-(const Number& other) const {
-  return visit(Number::SubtractVisitor{}, data_, other.data_);
+  return visit(Number::SubtractVisitor{}, value_, other.value_);
 }
 
 Number Number::operator*(const Number& other) const {
-  return visit(Number::MultiplyVisitor{}, data_, other.data_);
+  return visit(Number::MultiplyVisitor{}, value_, other.value_);
 }
 
 Number Number::operator/(const Number& other) const {
-  return visit(Number::DivideVisitor{}, data_, other.data_);
+  return visit(Number::DivideVisitor{}, value_, other.value_);
 }
 
 bool Number::operator==(const Number& other) const {
-  return visit(Number::EqlVisitor{}, data_, other.data_);
+  return visit(Number::EqlVisitor{}, value_, other.value_);
 }
 bool Number::operator!=(const Number& other) const {
-  return visit(Number::NeqlVisitor{}, data_, other.data_);
+  return visit(Number::NeqlVisitor{}, value_, other.value_);
 }
 bool Number::operator>=(const Number& other) const {
-  return visit(Number::GtEqVisitor{}, data_, other.data_);
+  return visit(Number::GtEqVisitor{}, value_, other.value_);
 }
 bool Number::operator<=(const Number& other) const {
-  return visit(Number::LtEqVisitor{}, data_, other.data_);
+  return visit(Number::LtEqVisitor{}, value_, other.value_);
 }
 bool Number::operator<(const Number& other) const {
-  return visit(Number::LtVisitor{}, data_, other.data_);
+  return visit(Number::LtVisitor{}, value_, other.value_);
 }
 bool Number::operator>(const Number& other) const {
-  return visit(Number::GtVisitor{}, data_, other.data_);
+  return visit(Number::GtVisitor{}, value_, other.value_);
 }
 
 bool Number::operator&&(const Number& other) const {
-  return visit(Number::AndVisitor{}, data_, other.data_);
+  return visit(Number::AndVisitor{}, value_, other.value_);
 }
 bool Number::operator||(const Number& other) const {
-  return visit(Number::OrVisitor{}, data_, other.data_);
+  return visit(Number::OrVisitor{}, value_, other.value_);
 }
 bool Number::operator!() const {
-  return visit(Number::NotVisitor{}, data_);
+  return visit(Number::NotVisitor{}, value_);
 }
 
-void Number::print() const {
-  visit([](auto val) {
-    std::cout << val;
-  }, data_);
+string Number::_to_str() const {
+  return visit([](auto val) { return to_string(val);
+  }, value_);
 }
 string Number::to_str() const {
-  return visit([](auto val) {
-    return to_string(val);
-  }, data_);
+  return _to_str();
+}
+
+
+void Number::print() const {
+  cout << _to_str();
 }
 
 std::ostream& operator<<(std::ostream& os, const Number& number) {
-  visit([&os](const auto& value) { os << value; }, number.data_);
+  //visit([&os](const auto& value) { os << value; }, number.value_);
+  cout << number.to_str();
   return os;
 }
 
-num_d_t Number::get_data() const {
-   return data_;
+num_d_t Number::get_value() const {
+   return value_;
 }
+OperandType Number::get_type() const { return type_; }
 
 std::string Number::getCurrentType() const {
   return visit([](auto val) -> std::string {
@@ -177,5 +182,5 @@ std::string Number::getCurrentType() const {
     } else {
       return "unknown";
     }
-  }, data_);
+  }, value_);
 }

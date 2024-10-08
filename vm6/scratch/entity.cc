@@ -1,7 +1,7 @@
 #include "entity.hh"
 
-//Entity::Entity() : value_(nil) {}
-//Entity::Entity(const Operand &v)  { value_ = visit(GetOperandValue(), v.value_); }
+Entity::Entity() : Primordial(OperandType::nil_t) {}
+Entity::Entity(const OperandType &t) : Primordial(t) {}
 
 ostream& operator<<(ostream& os, const Entity& e) {
   e.print();

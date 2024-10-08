@@ -7,6 +7,8 @@ class Entity : public Primordial<Entity> {
   friend class MapEntity;
 protected:
 public:
+  Entity();
+  Entity(const OperandType &t);
 
   virtual entity_u_ptr clone() const = 0;
   //-------------------------------------------

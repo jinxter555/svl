@@ -2,15 +2,12 @@
 #define _OPERAND_HH_
 #pragma once
 #include "lang.hh"
+#include "number.hh"
 
-class Nil{};
-extern Nil nil;
 class Entity; class ListEntity;  class MapEntity;
 
 
 class AstNode; class AstExpr;
-class Operand;
-using operand_u_ptr=unique_ptr<Operand>;
 
 using entity_u_ptr = unique_ptr<Entity>;
 //using e_members_t = vector<entity_u_ptr>;
@@ -29,29 +26,14 @@ using OperandVariant=std::variant
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
 , entity_u_ptr
-// , list_u_ptr
-//, e_members_t , e_children_t
 >;
-
-template <typename T>
-class Primordial {
-protected:
-  OperandType type_;
-public:
- // Primordial(OperandType);
-  //Primordial(OperandType t) : type_(t) {};
-  virtual unique_ptr<T> clone() const=0;
-  virtual Operand to_str() const =0;
-  virtual Operand get_type() const=0;
-  virtual void print() const =0;
-};
 
 class Operand : public Primordial<Operand> {
   friend class Entity;
   friend class ListEntity;
   friend class MapEntity;
 protected:
-  OperandType type_;
+  //OperandType type_;
   OperandVariant value_;
 public:
   const static string nil_str;

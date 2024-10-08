@@ -44,8 +44,11 @@ Operand Operand::operator-(const Operand& other) const {
 Operand Operand::operator*(const Operand& other) const {
   auto type_ = _get_type();
   auto other_type_ = other._get_type();
-  if(type_ != other_type_) 
+
+  if(type_ != other_type_)  {
+    //cout << "this get_type: " << get_type() << "\n"; cout << "other get_type: " << other.get_type() << "\n";
     throw std::runtime_error("Unsupported operation * for unequal types"); 
+  }
 
   switch(type_) {
   case OperandType::num_t: 
