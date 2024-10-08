@@ -16,9 +16,60 @@ int main() {
   l1.add(i2);
 */
 
-  AstExpr ex1;
+  AstOperand ex1;
+  MapEntity node;
+
+  operand_u_ptr vptr1 = make_unique<Operand>("hello123");
+  entity_u_ptr vptr2 = make_unique<ListEntity>();
+  entity_u_ptr vptr4 = make_unique<MapEntity>();
+
+
+
+  vptr4->add("three", "world3");
+  vptr4->add("four", "world4");
+  vptr4->print();
+  cout << "\n\n";
+  node.add(Operand("system22"), move(vptr2));
+  node.add(Operand("system3"), move(vptr4));
+  node.add(Operand("system3"), move(vptr4));
+
+//  if(vptr2 == nullptr) { cout << "vptr2 listentity bombed!\n"; exit(1); }
+//  if(vptr4 == nullptr) { cout << "vptr4 mapentity bombed!\n"; exit(1); }
+
+  auto o3 = Operand(string("system3"));
+  auto &e = node.get(o3);
+  auto e_cv = node.get(o3).clone_val();
+  cout << "e system3: " << e << "\n";
+  cout << "e system3 cloned value: " << e_cv << "\n";
+
+  cout << "after move vptr4";
+  //vptr4->print();
+  cout << "\n\n";
+
+  node.add(Operand("system11"), Operand("world11"));
+  node.add(Operand("system2"), Operand("world2"));
+  //node.add(Operand("system3"), vptr4);
+  node.print();
+  cout << "\n\n";
+
+  //vptr4->print();
+  cout << "\n\n";
+
+return 0;
+
+  node.add(Operand("system2"), move(vptr2));
+  //node.add(string("hello1"), Operand("world1"));
+  //node.add(string("hello2"), "world2");
+  node.add(string("hello23"), move(vptr4));
+  node.add(string("hello24"), move(vptr4));
+
   cout << "astnode1\n";
-  ex1.a();
+  cout << "map node\n";
+  vptr2->print();
+  vptr4->print();
+  //node.print();
+  cout << "\nex1--\n";
+  ex1.test_a();
 
 /*
   an1.add(i1);

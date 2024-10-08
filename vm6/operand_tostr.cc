@@ -104,6 +104,11 @@ Operand OperandToStringVisitor::operator()(const entity_u_ptr &vptr) const {
   //return Operand("entity ptr: ") + vptr->to_str();
   return vptr->to_str();
 }
+Operand OperandToStringVisitor::operator()(const operand_u_ptr &vptr) const { 
+  cout << "in operand ptr 2 str : \n";
+  //return Operand("operand ptr: ") + vptr->to_str();
+  return vptr->to_str();
+}
 /*
 Operand OperandToStringVisitor::operator()(const list_u_ptr &vptr) const { 
   return Operand("list entity ptr: ") + vptr->_to_str(); 

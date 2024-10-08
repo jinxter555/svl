@@ -50,6 +50,7 @@ const Entity& MapEntity::add(const Operand &k, entity_u_ptr&& vptr) {
   return add(k_str, move(vptr));
 }
 const Entity& MapEntity::add(const string &k_str, entity_u_ptr&& vptr) {
+  if(vptr==nullptr) return nil_map;
   if(has_key(k_str)) return nil_map;
   children[k_str] = move(vptr);
   return  *this;

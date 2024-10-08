@@ -13,6 +13,7 @@ struct OperandToStringVisitor {
   Operand operator()(OperandStatusCode status) const;
   Operand operator()(AstOpCode t_op) const;
   Operand operator()(const entity_u_ptr&) const;
+  Operand operator()(const operand_u_ptr&) const;
 /*
   Operand operator()(const list_u_ptr&) const;
   Operand operator()(const map_u_ptr&) const;

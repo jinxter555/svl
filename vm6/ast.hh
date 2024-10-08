@@ -1,10 +1,12 @@
 #pragma once
 #include "entity.hh"
 
-class AstNode : public MapEntity {
+class QueNode 
+: public MapEntity 
+, public ListEntity {
 public:
   //void add(const ListEntity&);
-  AstNode() {}
+  QueNode() {}
   //--- list
   entity_u_ptr& operator[](int); //const entity_u_ptr& operator[](int) const;
   //--- map 
@@ -25,16 +27,24 @@ public:
   //const Entity&   get(int i) { return nil_entity;};
 };
 
-class AstExpr : public AstNode {
+class AstExpr : public Primordial<AstExpr> {
+protected:
+  QueNode node;
 public:
-  int a();
-  //virtual astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
+  AstExpr();
+  AstExpr(const OperandType&);
+  virtual astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt) = 0;
 };
 
 class AstOperand : public AstExpr {
 public:
   AstOperand();
   AstOperand(const Operand&);
+  int test_a();
 
-  //astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
+  unique_ptr<AstExpr> clone() const override {};
+  Operand to_str() const override {};
+  Operand get_type() const override {};
+  void print() const override {};
+  astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
 };

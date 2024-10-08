@@ -75,7 +75,11 @@ enum class OperandType {
   scalar_t,     // operand  entity
   list_t,
   map_t,
-  ast_op_t,
+  ast_op_t,     // ast operator type
+  ast_operand_t, // ast operand type
+  ast_atom_t,
+  ast_list_t,
+  ast_map_t,
   ptr_t,
   uptr_t,
   except_t,
