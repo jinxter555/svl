@@ -38,7 +38,7 @@ int main() {
   Operand i5 = i3.opfunc(i2, AstOpCode::plus);
   m1.add(string("five"), i5);
 
-  m2.add(m1_s, m1);
+  auto mr = m2.add(m1_s, m1).get_type();
 
   m2.add(m2_s, m1);
 

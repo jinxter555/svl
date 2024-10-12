@@ -12,6 +12,7 @@ class Operand : public Primordial<Operand> {
   friend class Entity;
   friend class ListEntity;
   friend class MapEntity;
+  friend class QueNode;
 protected:
   //OperandType type_;
   OperandVariant value_;
@@ -49,6 +50,7 @@ public:
   inline Number _get_number() const ;
   s_integer _get_int() const ;
   s_float _get_float() const ;
+  entity_u_ptr& _get_entity_u_ptr() ;
   const string _get_str() const ;
   const string _to_str() const ;
   OperandType _get_type() const;
@@ -87,22 +89,28 @@ public:
 
 struct GetOperandValue{
 template <typename T> 
-OperandVariant operator()(T value) const;                                                                                                                                   
-OperandVariant operator()(const entity_u_ptr& v) const  ;                                                                                                           
+OperandVariant operator()(T value) const;
+OperandVariant operator()(const entity_u_ptr& v) const  ;
 /*
-OperandVariant operator()(const list_u_ptr& v) const  ;                                                                                                           
+OperandVariant operator()(const list_u_ptr& v) const  ;
 OperandVariant operator()(Entity *v) const ;
-OperandVariant operator()(const e_members_t& v) const  ;                                                                                                           
-OperandVariant operator()(const e_children_t& v) const  ;                                                                                                           
+OperandVariant operator()(const e_members_t& v) const  ; 
+OperandVariant operator()(const e_children_t& v) const  ;
 */
 };
 
 struct GetOperandClone{
 template <typename T> 
-operand_u_ptr operator()(T value) const;                                                                                                                                   
-operand_u_ptr operator()(const entity_u_ptr& v) const  ;                                                                                                           
+operand_u_ptr operator()(T value) const;
+operand_u_ptr operator()(const entity_u_ptr& v) const  ;
 };
 
+struct GetOperandNode_by_key{
+string k;
+template <typename T>
+const Operand& operator()(T value) const;
+const Operand& operator()(const entity_u_ptr& v) const  ;
+};
 
 
 struct GetOperandType{
@@ -114,12 +122,12 @@ OperandType operator()(const AstOpCode& v) const ;
 OperandType operator()(const OperandType& v) const ;
 OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
-OperandType operator()(const entity_u_ptr& v) const  ;                                                                                                           
+OperandType operator()(const entity_u_ptr& v) const  ;
 /*
-OperandType operator()(const list_u_ptr& v) const  ;                                                                                                           
+OperandType operator()(const list_u_ptr& v) const  ;
 OperandType operator()(Entity *v) const ;
-OperandType operator()(const e_members_t& v) const  ;                                                                                                           
-OperandType operator()(const e_children_t& v) const  ;                                                                                                           
+OperandType operator()(const e_members_t& v) const  ; 
+OperandType operator()(const e_children_t& v) const  ;
 */
 };
 

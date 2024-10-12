@@ -109,7 +109,7 @@ class Operand; class Number;
 using operand_u_ptr=unique_ptr<Operand>;
 //--------------------------------------------------------- 
 class Entity; class ListEntity;  class MapEntity;
-class AstNode; class AstExpr;
+class QueNode; class AstNode; class AstExpr;
 //--------------------------------------------------------- 
 using entity_u_ptr = unique_ptr<Entity>;
 using e_members_t = vector<Operand>;

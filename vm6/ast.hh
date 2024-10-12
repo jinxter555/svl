@@ -4,13 +4,12 @@
 class QueNode 
 : public MapEntity 
 , public ListEntity {
+private:
+
+  Entity *add_raw_node();
 public:
   //void add(const ListEntity&);
   QueNode() {}
-  //--- list
-  entity_u_ptr& operator[](int); //const entity_u_ptr& operator[](int) const;
-  //--- map 
-  entity_u_ptr& operator[](const string&); //const entity_u_ptr& operator[](const string&) const;
 
   void print_l() const;
   void print_m() const;
@@ -20,11 +19,14 @@ public:
   using MapEntity::get;
   using MapEntity::to_str;
 
-  entity_u_ptr clone() {return nullptr;} 
+  entity_u_ptr clone() ;
  // OperandEntity to_str() { return Operand("astnode123");}
   Operand get_type() { return Operand(OperandType::str_t);}
   void print() {};
-  //const Entity&   get(int i) { return nil_entity;};
+
+
+  const Operand& get_branch(const vector<string> &keys);
+  const Operand& add_branch(const vector<string> &keys);
 };
 
 class AstExpr : public Primordial<AstExpr> {
@@ -42,9 +44,9 @@ public:
   AstOperand(const Operand&);
   int test_a();
 
-  unique_ptr<AstExpr> clone() const override {};
-  Operand to_str() const override {};
-  Operand get_type() const override {};
+  unique_ptr<AstExpr> clone() const override {return nullptr;};
+  Operand to_str() const override { return "";};
+  Operand get_type() const override { return OperandType::nil_t;};
   void print() const override {};
   astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
 };

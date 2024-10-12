@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------- 
 
-void QueNode::print_l() const { cout << ListEntity::to_str() << "\n"; }
-void QueNode::print_m() const { cout << MapEntity::to_str() << "\n"; }
-
 //--------------------------------------------------------- 
 AstExpr::AstExpr(const OperandType &t) : Primordial(t) {}
 

@@ -59,7 +59,6 @@ int main() {
   //vptr4->print();
   cout << "\n\n";
 
-return 0;
 
   node.add(Operand("system2"), move(vptr2));
   //node.add(string("hello1"), Operand("world1"));
@@ -69,8 +68,6 @@ return 0;
 
   cout << "astnode1\n";
   cout << "map node\n";
-  vptr2->print();
-  vptr4->print();
   //node.print();
   cout << "\nex1--\n";
   ex1.test_a();

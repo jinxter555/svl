@@ -53,13 +53,30 @@ const Entity& ListEntity::add(const Operand &k, entity_u_ptr&& vptr) { return ni
 
 //--------------------------------------
 const Operand& ListEntity::get(const Operand &key) {
-  return get(key._get_int());
+  return get_nonconst(key._get_int());
 }
-
 const Operand& ListEntity::get(int i) {
+  return get_nonconst(i);
+}
+Operand& ListEntity::get_nonconst(const Operand &key) {
+  return get_nonconst(key._get_int());
+}
+Operand& ListEntity::get_nonconst(int i) {
   if(i > members.size() || i < 0) return nil_operand;
   return members[i];
 }
+
+Entity * ListEntity::get_raw_ptr(const Operand&k) {
+  int i =  k._get_int();
+  return  get_raw_ptr(i);
+}
+
+Entity*  ListEntity::get_raw_ptr(int i) {
+  if(i > members.size() || i < 0) return nullptr;
+  auto value = visit(GetOperandValue(), members[i].value_);
+  return  std::get<entity_u_ptr>(value).get();
+}
+
 //--------------------------------------
 s_integer ListEntity::size() const { return members.size(); }
 

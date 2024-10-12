@@ -118,6 +118,10 @@ s_float Operand::_get_float() const {
   Number n = _get_number();
   return get<s_float>(n.get_value()); 
 }
+
+entity_u_ptr& Operand::_get_entity_u_ptr() {
+  return get<entity_u_ptr>(value_); 
+}
 //-----------------------------------------------------------------------
 /*
 e_members_t& Operand::_get_members() {
@@ -165,6 +169,14 @@ operand_u_ptr GetOperandClone::operator()(T value) const {
 }
 operand_u_ptr GetOperandClone::operator()(const entity_u_ptr& v) const { 
   return make_unique<Operand>(v->clone()); 
+}
+//-------------------------------
+template <typename T>
+const Operand& GetOperandNode_by_key::operator()(T value) const { 
+  return nil_operand;
+}
+const Operand& GetOperandNode_by_key::operator()(const entity_u_ptr& v) const { 
+  return v->get(k);
 }
 
 //-----------------------------------------------------------------------
