@@ -51,6 +51,7 @@ public:
   s_integer _get_int() const ;
   s_float _get_float() const ;
   entity_u_ptr& _get_entity_u_ptr() ;
+  Entity* _get_entity_raw_ptr();
   const string _get_str() const ;
   const string _to_str() const ;
   OperandType _get_type() const;
@@ -111,6 +112,25 @@ template <typename T>
 const Operand& operator()(T value) const;
 const Operand& operator()(const entity_u_ptr& v) const  ;
 };
+
+struct GetOperand_eptr{
+template <typename T>
+Entity* operator()(T value) const;
+Entity* operator()(const entity_u_ptr& v) const  ;
+
+
+/*
+Entity* operator()(const bool v) const ;
+Entity* operator()(const Nil& v) const ;
+Entity* operator()(const Number& v) const ;
+Entity* operator()(const string& v) const ;
+Entity* operator()(const AstOpCode& v) const ;
+Entity* operator()(const OperandType& v) const ;
+Entity* operator()(const OperandStatusCode& v) const ;
+Entity* operator()(const OperandErrorCode& v) const ;
+*/
+};
+
 
 
 struct GetOperandType{

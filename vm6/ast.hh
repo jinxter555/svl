@@ -26,7 +26,7 @@ public:
 
 
   const Operand& get_branch(const vector<string> &keys);
-  const Operand& add_branch(const vector<string> &keys);
+  const Operand& add_branch(const vector<string> &keys, const Operand& operand=nil_operand);
 };
 
 class AstExpr : public Primordial<AstExpr> {

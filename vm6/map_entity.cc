@@ -2,7 +2,7 @@
 
 const MapEntity nil_map;
 
-MapEntity::MapEntity() : Entity(OperandType::map_t) { parent = nullptr; }
+MapEntity::MapEntity() : Entity(OperandType::map_t) { parent = nullptr; type_= OperandType::map_t; }
 
 MapEntity::MapEntity(const MapEntity& m) {
   map_u_ptr new_map = make_unique<MapEntity>();
@@ -35,7 +35,7 @@ const Entity& MapEntity::add(const Operand &k, const Entity& v) {
 const Entity& MapEntity::add(const string &k_str, const Entity& v) {
   if(has_key(k_str)) 
     return nil_map;
-  cout << "map adding k: " << k_str << " ev " << v <<"\n";
+  //cout << "map adding k: " << k_str << " ev " << v <<"\n";
   children[k_str] = v.clone();
   return  *this;
 }
@@ -43,11 +43,14 @@ const Entity& MapEntity::add(const Operand &k, const Operand& v) {
   auto k_str = k._get_str();
   return  add(k_str, v);
 }
+//template <typename T>
+//Entity* GetOperand_eptr::operator()(T value) const { return nullptr; }
+
 const Entity& MapEntity::add(const string &k_str, const Operand& v) {
   if(has_key(k_str)) 
     return nil_map;
-  cout << "map adding k: " << k_str << " ov " << v <<"\n";
   children[k_str] = visit(GetOperandValue(), v.value_); 
+  //cout << "map adding k: " << k_str << " ov " << v <<"\n";
   return  *this;
 }
 
@@ -98,11 +101,12 @@ Operand&  MapEntity::get_nonconst(const Operand &k) {
 
 Operand&  MapEntity::get_nonconst(const string &k) {
   if(!has_key(k)){
-    cerr << "key: " << k << " does not exist!";
+    cerr << "get_nonconst key: " << k << " does not exist!\n";
     return nil_operand;
   }
   return  children[k];
 }
+
 Entity*  MapEntity::get_raw_ptr(const Operand &k) {
   auto k_str = k._get_str();
   return get_raw_ptr(k_str);
@@ -110,11 +114,12 @@ Entity*  MapEntity::get_raw_ptr(const Operand &k) {
 
 Entity*  MapEntity::get_raw_ptr(const string &k) {
   if(!has_key(k)){
-    cerr << "key: " << k << " does not exist!";
+    //cerr << "raw pointer key: " << k << " does not exist!\n";
     return nullptr;
   }
-  auto value = visit(GetOperandValue(), children[k].value_);
-  return  std::get<entity_u_ptr>(value).get();
+  //auto value = visit(GetOperand_eptr(), children[k].value_);
+  auto value = children[k]._get_entity_raw_ptr();
+  return  value;
 }
 
 
@@ -129,7 +134,7 @@ const Entity& MapEntity::set(const Operand &k, const Entity &v) {
 const Entity& MapEntity::set(const Operand &k, const Operand&v) {
   auto k_str = k._get_str();
   if(!has_key(k_str)){
-    cerr << "key: " << k_str << " does not exist!";
+    cerr << "entity setting operand-value key: " << k_str << " does not exist!\n";
     return nil_map;
   }
   children[k_str] = visit(GetOperandValue(), v.value_); 
@@ -140,7 +145,7 @@ const Entity& MapEntity::set(const Operand &k, const Operand&v) {
 const Entity& MapEntity::set(const Operand &k, entity_u_ptr &&vptr) {
   auto k_str = k._get_str();
   if(!has_key(k_str)){
-    cerr << "key: " << k_str << " does not exist!";
+    cerr << "entity set vptr key: " << k_str << " does not exist!\n";
     return nil_map;
   }
   children[k_str] = move(vptr);

@@ -42,38 +42,55 @@ const Operand& QueNode::get_branch(const vector<string> &keys) {
 
 
 
-const Operand& QueNode::add_branch(const vector<string> &keys) {
-  int i=0, s = keys.size();
+const Operand& QueNode::add_branch(const vector<string> &keys, const Operand& operand) {
+  int i=0, s = keys.size(); 
+  auto k = keys[i];
   if(s==0) return nil_operand;
 
-  Entity* curr_ptr = (MapEntity*) this;
-  Entity *next_ptr;
-
-
-  curr_ptr->add(keys[0], MapEntity());
-
-
-  for(i=0 ; i<s; i++) {
-    MapEntity next_map;
-    if(i<s-2) { 
-      next_map.add(keys[i+1], MapEntity());
-      cout << "curr map" << curr_ptr->to_str() << "\n";
-      cout << "next map: " << next_map << "\n";
-    } else {
-      next_map.add(keys[i+1], Operand());
-      curr_ptr->set(keys[i], next_map);
-      cout << "curr map 2" << curr_ptr->to_str() << "\n";
-      cout << "next map 2: " << next_map << "\n";
-      break;
-    }
-    auto k = keys[i];
-    auto next_ptr = curr_ptr->get_raw_ptr(k);
-    curr_ptr->set(k, next_map);
-    curr_ptr->print();
-    curr_ptr = next_ptr;
-    cout << "k : " << k << "\n";
+  Entity *curr_ptr = (MapEntity*) this;
+  Entity *next_ptr, *prev_ptr = curr_ptr;
+  if(s==1) {
+    curr_ptr->add(k, operand);
+    return operand;
   }
-  return curr_ptr->get(keys[i-1]);
+
+
+  //curr_ptr->add(keys[0], MapEntity());
+
+  // skip all the existing keys
+  for(i=0 ; i<s; i++) { 
+    curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
+    if(curr_ptr==nullptr) { curr_ptr=prev_ptr; break; }
+    prev_ptr = curr_ptr;
+  }
+  //cout << "i: " << i << "\n";
+  //if(curr_ptr==nullptr) { cout << "curr_ptr is null bomb!\n";}
+  curr_ptr->add(keys[i], MapEntity());
+  //curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
+  //return nil_operand;
+
+
+  for(; i<s; i++) {
+    MapEntity next_map;
+    if(i==s-1) {
+      curr_ptr->set(keys[i], operand);
+      return nil_operand;
+    } 
+    //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
+    //cout << "keys[" << i<< "]: " << keys[i] << "\n";
+    next_map.add(keys[i+1], MapEntity());
+    //cout <<"nextmap: "; next_map.print();  cout << "\n";
+    curr_ptr->set(keys[i], next_map);
+    //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
+    curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
+    //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
+    //cout << "\n\n";
+  }
+  MapEntity::print();
+
+
+  //return curr_ptr->get(keys[s-1]);
+  return nil_operand;
 }
 
 

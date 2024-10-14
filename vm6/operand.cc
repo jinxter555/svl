@@ -122,6 +122,9 @@ s_float Operand::_get_float() const {
 entity_u_ptr& Operand::_get_entity_u_ptr() {
   return get<entity_u_ptr>(value_); 
 }
+Entity* Operand::_get_entity_raw_ptr() {
+  return visit(GetOperand_eptr(), value_);
+}
 //-----------------------------------------------------------------------
 /*
 e_members_t& Operand::_get_members() {
@@ -179,6 +182,23 @@ const Operand& GetOperandNode_by_key::operator()(const entity_u_ptr& v) const {
   return v->get(k);
 }
 
+//-------------------------------
+template <typename T>
+Entity* GetOperand_eptr::operator()(T value) const { return nullptr; }
+Entity* GetOperand_eptr::operator()(const entity_u_ptr& v) const { 
+  return v.get();
+}
+
+/*
+Entity* GetOperand_eptr::operator()(const bool v) const {return nullptr;};
+Entity* GetOperand_eptr::operator()(const Nil& v) const {return nullptr;};
+Entity* GetOperand_eptr::operator()(const Number& v) const {return nullptr;};
+Entity* GetOperand_eptr::operator()(const string& v) const {return nullptr;};
+Entity* GetOperand_eptr::operator()(const AstOpCode& v) const {return nullptr;};
+Entity* GetOperand_eptr::operator()(const OperandType& v) const {return nullptr;};
+Entity* GetOperand_eptr::operator()(const OperandStatusCode& v) const {return nullptr;};
+Entity* GetOperand_eptr::operator()(const OperandErrorCode& v) const {return nullptr;};
+*/
 //-----------------------------------------------------------------------
 OperandType GetOperandType::operator()(const Nil& v) const  { return OperandType::nil_t; }
 OperandType GetOperandType::operator()(const bool v) const  { return OperandType::bool_t; }
