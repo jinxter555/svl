@@ -25,19 +25,26 @@ const Operand& QueNode::get_branch(const vector<string> &keys) {
 
   auto k = keys[i];
   auto curr_ptr = MapEntity::get_raw_ptr(k);
+  auto prev_ptr = curr_ptr;
   auto &curr_operand = MapEntity::get(k);
   if(curr_ptr==nullptr) return nil_operand;
 
   for(i=1 ; i<s; i++) {
     auto k = keys[i];
+    //cout << "keys[" << i<< "]: " << keys[i] << "\n";
     auto next_ptr = curr_ptr->get_raw_ptr(Operand(k));
+    auto &curr_operand = curr_ptr->get(k);
     if(next_ptr==nullptr) {
+      //cout << "nullptr keys[" << i<< "]: " << keys[i] << "\n";
       return curr_operand;
     }
+    prev_ptr = curr_ptr;
     curr_ptr = next_ptr;
-    auto &curr_operand = curr_ptr->get(k);
+    //auto &curr_operand = curr_ptr->get(k);
   }
-  return curr_operand;
+  cout << "i: " << i << "\n";
+  auto &re_operand= prev_ptr->get(keys[i-1]);
+  return re_operand;
 }
 
 
@@ -78,17 +85,19 @@ const Operand& QueNode::add_branch(const vector<string> &keys, const Operand& op
     } 
     //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
     //cout << "keys[" << i<< "]: " << keys[i] << "\n";
+
     next_map.add(keys[i+1], MapEntity());
+
     //cout <<"nextmap: "; next_map.print();  cout << "\n";
     curr_ptr->set(keys[i], next_map);
+
     //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
+
     //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
     //cout << "\n\n";
   }
-  MapEntity::print();
-
-
+  //MapEntity::print();
   //return curr_ptr->get(keys[s-1]);
   return nil_operand;
 }
