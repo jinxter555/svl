@@ -39,6 +39,8 @@ public:
   //Operand(const Operand&);
   Operand(entity_u_ptr &);
   Operand(entity_u_ptr &&);
+  Operand(astexpr_u_ptr &);
+  Operand(astexpr_u_ptr &&);
 
   //Operand operator=(const Operand &v);
 
@@ -92,6 +94,7 @@ struct GetOperandValue{
 template <typename T> 
 OperandVariant operator()(T value) const;
 OperandVariant operator()(const entity_u_ptr& v) const  ;
+OperandVariant operator()(const astexpr_u_ptr& v) const  ;
 /*
 OperandVariant operator()(const list_u_ptr& v) const  ;
 OperandVariant operator()(Entity *v) const ;
@@ -104,6 +107,7 @@ struct GetOperandClone{
 template <typename T> 
 operand_u_ptr operator()(T value) const;
 operand_u_ptr operator()(const entity_u_ptr& v) const  ;
+operand_u_ptr operator()(const astexpr_u_ptr& v) const  ;
 };
 
 struct GetOperandNode_by_key{
@@ -117,6 +121,7 @@ struct GetOperand_eptr{
 template <typename T>
 Entity* operator()(T value) const;
 Entity* operator()(const entity_u_ptr& v) const  ;
+Entity* operator()(const astexpr_u_ptr& v) const  ;
 
 
 /*
@@ -143,6 +148,7 @@ OperandType operator()(const OperandType& v) const ;
 OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
 OperandType operator()(const entity_u_ptr& v) const  ;
+OperandType operator()(const astexpr_u_ptr& v) const  ;
 /*
 OperandType operator()(const list_u_ptr& v) const  ;
 OperandType operator()(Entity *v) const ;

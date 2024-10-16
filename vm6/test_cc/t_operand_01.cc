@@ -1,5 +1,5 @@
 #include "../operand.hh"
-#include "../entity.hh"
+#include "../ast.hh"
 
 int main() {
   Operand i1(10l);

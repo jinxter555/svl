@@ -70,7 +70,6 @@ int main() {
   cout << "map node\n";
   //node.print();
   cout << "\nex1--\n";
-  ex1.test_a();
 
 /*
   an1.add(i1);

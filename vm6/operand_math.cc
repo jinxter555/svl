@@ -1,5 +1,7 @@
 #include "operand.hh"
-#include "entity.hh"
+//#include "entity.hh"
+#include "ast.hh"
+
 
 //-----------------------------------------------------------------------
 Operand Operand::operator+(const Operand& other) const {

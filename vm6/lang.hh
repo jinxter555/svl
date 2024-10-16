@@ -124,6 +124,7 @@ using OperandVariant=std::variant
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
 , entity_u_ptr
+, astexpr_u_ptr
 >;
 //--------------------------------------------------------- 
 template <typename T>

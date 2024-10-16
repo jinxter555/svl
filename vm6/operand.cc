@@ -4,7 +4,8 @@
 #include <iostream>
 #include "operand.hh"
 #include "operand_tostr.hh"
-#include "entity.hh"
+//#include "entity.hh"
+#include "ast.hh"
 
 Nil nil;
 Operand nil_operand=Operand();
@@ -58,6 +59,14 @@ Operand::Operand(entity_u_ptr &vptr) : Primordial(OperandType::uptr_t) {
 Operand::Operand(entity_u_ptr &&vptr) : Primordial(OperandType::uptr_t) { 
   value_= move(vptr);
 }
+
+Operand::Operand(astexpr_u_ptr &vptr) : Primordial(OperandType::uptr_t) { 
+  value_= vptr->clone(); 
+}
+Operand::Operand(astexpr_u_ptr &&vptr) : Primordial(OperandType::uptr_t) { 
+  value_= move(vptr);
+}
+
 
 Operand::Operand(const OperandType t, const OperandVariant& v) : Primordial(t){
    value_  = visit(GetOperandValue(), v);
@@ -158,6 +167,7 @@ void Operand::print() const {
 template <typename T>
 OperandVariant GetOperandValue::operator()(T value) const { return value; }
 OperandVariant GetOperandValue::operator()(const entity_u_ptr& v) const { return v->clone(); }
+OperandVariant GetOperandValue::operator()(const astexpr_u_ptr& v) const { return v->clone(); }
 
 /*
 OperandVariant GetOperandValue::operator()(const list_u_ptr& v) const { return v->clone(); }
@@ -173,6 +183,9 @@ operand_u_ptr GetOperandClone::operator()(T value) const {
 operand_u_ptr GetOperandClone::operator()(const entity_u_ptr& v) const { 
   return make_unique<Operand>(v->clone()); 
 }
+operand_u_ptr GetOperandClone::operator()(const astexpr_u_ptr& v) const { 
+  return make_unique<Operand>(v->clone()); 
+}
 //-------------------------------
 template <typename T>
 const Operand& GetOperandNode_by_key::operator()(T value) const { 
@@ -185,9 +198,8 @@ const Operand& GetOperandNode_by_key::operator()(const entity_u_ptr& v) const {
 //-------------------------------
 template <typename T>
 Entity* GetOperand_eptr::operator()(T value) const { return nullptr; }
-Entity* GetOperand_eptr::operator()(const entity_u_ptr& v) const { 
-  return v.get();
-}
+Entity* GetOperand_eptr::operator()(const entity_u_ptr& v) const { return v.get(); }
+Entity* GetOperand_eptr::operator()(const astexpr_u_ptr& v) const { return nullptr; }
 
 /*
 Entity* GetOperand_eptr::operator()(const bool v) const {return nullptr;};
@@ -212,6 +224,7 @@ OperandType GetOperandType::operator()(const Number& v) const { return OperandTy
 OperandType GetOperandType::operator()(const string& v) const { return OperandType::str_t; }
 
 OperandType GetOperandType::operator()(const entity_u_ptr& v) const { return OperandType::ptr_t;}
+OperandType GetOperandType::operator()(const astexpr_u_ptr& v) const { return OperandType::ptr_t;}
 /*
 OperandType GetOperandType::operator()(const list_u_ptr& v) const { return OperandType::ptr_t;}
 OperandType GetOperandType::operator()(Entity *v) const { return OperandType::ptr_t;}

@@ -1,3 +1,4 @@
+#pragma once
 #include "operand.hh"
 
 extern Operand nil_operand;

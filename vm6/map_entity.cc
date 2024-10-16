@@ -1,4 +1,5 @@
 #include "entity.hh"
+#include "ast.hh"
 
 const MapEntity nil_map;
 

@@ -1,6 +1,6 @@
-#include "../entity.hh"
+#include "../ast.hh"
+//#include "../entity.hh"
 
-ostream& operator<<(ostream& os, const OperandType& t);
 
 int main() {
   Operand nil;

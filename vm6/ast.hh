@@ -31,9 +31,36 @@ public:
   const Operand& add_branch(const vector<string> &keys, entity_u_ptr&& e);
 };
 
-class AstExpr : public Primordial<AstExpr> {
+class Tree : public Primordial<Tree> {
 protected:
   QueNode node;
+public:
+  Tree(const OperandType&t) : Primordial(t) {};
+
+
+};
+
+class SvlmAst : Tree {
+public:
+  SvlmAst(const OperandType&t) : Tree(t) {};
+
+  void add_module();
+  void add_class();
+  void add_function();
+  void add_mvar();
+  void add_ovar();
+  void add_lvar();
+
+  unique_ptr<Tree> clone() const override {return nullptr;};
+  Operand to_str() const override { return "";};
+  Operand get_type() const override { return OperandType::nil_t;};
+  void print() const override {};
+
+};
+
+
+class AstExpr : public Primordial<AstExpr> {
+protected:
 public:
   AstExpr();
   AstExpr(const OperandType&);
@@ -41,12 +68,13 @@ public:
 };
 
 class AstOperand : public AstExpr {
+protected:
+  Operand operand;
 public:
   AstOperand();
   AstOperand(const Operand&);
-  int test_a();
-
-  unique_ptr<AstExpr> clone() const override {return nullptr;};
+  // unique_ptr<AstExpr> clone() const override {return nullptr;};
+  astexpr_u_ptr clone() const override {return nullptr;};
   Operand to_str() const override { return "";};
   Operand get_type() const override { return OperandType::nil_t;};
   void print() const override {};

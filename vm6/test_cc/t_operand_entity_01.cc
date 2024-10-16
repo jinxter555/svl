@@ -2,6 +2,7 @@
 
 
 int main() {
+  /*
   OperandEntity n1(123l);
   cout << "i1:" << n1 << "\n";
   cout << "i1 whatami:" << n1._get_operand().whatami() << "\n";
@@ -42,6 +43,6 @@ int main() {
   cout << "f1_c:" << f1_c << "\n";
   cout << "i4:" << i4 << "\n";
   cout << "i5:" << i5 << "\n";
-
+*/
   return 0;
 }

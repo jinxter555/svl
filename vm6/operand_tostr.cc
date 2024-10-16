@@ -1,5 +1,6 @@
 #include "operand_tostr.hh"
-#include "entity.hh"
+#include "ast.hh"
+//#include "entity.hh"
 
 Operand OperandToStringVisitor::operator()(const Nil &n) const {
   return string("nil");
@@ -101,6 +102,10 @@ Operand OperandToStringVisitor::operator()(AstOpCode t_op) const {
 }
 
 Operand OperandToStringVisitor::operator()(const entity_u_ptr &vptr) const { 
+  //return Operand("entity ptr: ") + vptr->to_str();
+  return vptr->to_str();
+}
+Operand OperandToStringVisitor::operator()(const astexpr_u_ptr &vptr) const { 
   //return Operand("entity ptr: ") + vptr->to_str();
   return vptr->to_str();
 }

@@ -2,7 +2,7 @@
 
 
 int main() {
-  Number n1(123);
+  Number n1(123l);
   Number f1(123.3456);
   double f2= 123.3456;
 
