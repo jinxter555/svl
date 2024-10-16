@@ -72,6 +72,7 @@ protected:
   Operand operand;
 public:
   AstOperand();
+  AstOperand(const OperandVariant&);
   AstOperand(const Operand&);
   // unique_ptr<AstExpr> clone() const override {return nullptr;};
   astexpr_u_ptr clone() const override {return nullptr;};
