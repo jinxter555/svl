@@ -20,14 +20,17 @@ public:
   virtual const Entity& add(const Operand &v) =0;  // for list
   virtual const Entity& add(const Entity &v) =0;  // for list
   virtual const Entity& add(entity_u_ptr &&vptr) =0;  // for list
+  virtual const Entity& add(astexpr_u_ptr &&vptr) =0;  // for list
   //-------------------------------------------
   virtual const Entity& add(const Operand &k, const Entity& v)=0;
   virtual const Entity& add(const Operand &k, const Operand& v)=0;
   virtual const Entity& add(const Operand &k, entity_u_ptr&& vptr)=0;
+  virtual const Entity& add(const Operand &k, astexpr_u_ptr&& vptr)=0;
 
   virtual const Entity& set(const Operand &k, const Entity& v) = 0;
   virtual const Entity& set(const Operand &k, const Operand& v) = 0;
   virtual const Entity& set(const Operand &k, entity_u_ptr&& vptr) = 0;
+  virtual const Entity& set(const Operand &k, astexpr_u_ptr&& vptr) = 0;
 
   virtual const Operand& get(const Operand &k) = 0;
   virtual Operand&  get_nonconst(const Operand &k) =0;
@@ -55,14 +58,16 @@ public:
 
   entity_u_ptr clone() const override;
 
-  const Entity& add(const Operand &v) ;
-  const Entity& add(const Entity &v) ;
+  const Entity& add(const Operand &v) override final;
+  const Entity& add(const Entity &v) override final;
 //  const entity_u_ptr& add(entity_u_ptr &vptr) ;
-  const Entity& add(entity_u_ptr &&vptr);
+  const Entity& add(entity_u_ptr &&vptr) override final;
+  const Entity& add(astexpr_u_ptr &&vptr) override final;
 
   const Entity& add(const Operand &k, const Entity& v) override final;
   const Entity& add(const Operand &k, const Operand& v) override final;
   const Entity& add(const Operand &k, entity_u_ptr&& vptr) override final;
+  const Entity& add(const Operand &k, astexpr_u_ptr&& vptr) override final;
 
   const Operand&   get(const Operand &k) override final;
   Operand&  get_nonconst(const Operand &k) override final;
@@ -75,6 +80,7 @@ public:
   const Entity& set(const Operand &k, const Entity &v) override final;
   const Entity& set(const Operand &k, const Operand &v) override final;
   const Entity& set(const Operand &k, entity_u_ptr &&vptr) override final;
+  const Entity& set(const Operand &k, astexpr_u_ptr &&vptr) override final;
   //const ListEntity&  get_list(int i) ;
 
   s_integer size() const;
@@ -102,12 +108,15 @@ public:
   const Entity& add(const Operand &v) override ;
   const Entity& add(const Entity &v) override;
   const Entity& add(entity_u_ptr &&vptr) override;
+  const Entity& add(astexpr_u_ptr &&vptr) override;
 
   const Entity& add(const Operand&k, const Entity& v) override final;
   const Entity& add(const Operand&k, const Operand& v) override final;
   const Entity& add(const Operand &k, entity_u_ptr&& vptr) override final; 
+  const Entity& add(const Operand &k, astexpr_u_ptr&& vptr) override final; 
 
-  const Entity& add(const string&k, entity_u_ptr&& vptr) ; 
+  const Entity& add(const string &k, astexpr_u_ptr&& vptr) ; 
+  const Entity& add(const string &k, entity_u_ptr&& vptr) ; 
   const Entity& add(const string &k_str, const Entity& v) ;
   const Entity& add(const string &k_str, const Operand& v) ;
 
@@ -119,6 +128,7 @@ public:
   const Entity& set(const Operand &k, const Entity &v) override final;
   const Entity& set(const Operand &k, const Operand& v) override final;
   const Entity& set(const Operand &k, entity_u_ptr &&vptr) override final;
+  const Entity& set(const Operand &k, astexpr_u_ptr &&vptr) override final;
 
   Entity *get_raw_ptr(const Operand &k) override final;
   Entity *get_raw_ptr(const string &k);

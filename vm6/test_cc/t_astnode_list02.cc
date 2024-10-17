@@ -28,7 +28,10 @@ int main() {
   vector<string> keys3b  = {"hello", "one-one", "two"};
   vector<string> keys4 = {"hello", "one-one", "two", "three", "four1", "Five"};
 
-  node.add_branch(keys4, move(l1));
+  AstOperand o1(Operand(123l));
+  o1.print(); cout << "\n";
+  //node.add_branch(keys4, move(l1));
+  node.add_branch(keys4, o1.clone());
   node.print_m();
 
 

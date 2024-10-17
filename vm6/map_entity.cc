@@ -27,6 +27,7 @@ entity_u_ptr MapEntity::clone() const {
 const Entity& MapEntity::add(const Operand &v) {return nil_map;}
 const Entity& MapEntity::add(const Entity &v) {return nil_map;}
 const Entity& MapEntity::add(entity_u_ptr&&v) {return nil_map;}
+const Entity& MapEntity::add(astexpr_u_ptr&&v) {return nil_map;}
 //------------------------------------- 
 const Entity& MapEntity::add(const Operand &k, const Entity& v) {
   auto k_str = k._get_str();
@@ -65,6 +66,17 @@ const Entity& MapEntity::add(const string &k_str, entity_u_ptr&& vptr) {
   children[k_str] = move(vptr);
   return  *this;
 }
+const Entity& MapEntity::add(const Operand &k, astexpr_u_ptr&& vptr) {
+  auto k_str = k._get_str();
+  return add(k_str, move(vptr));
+}
+const Entity& MapEntity::add(const string &k_str, astexpr_u_ptr&& vptr) {
+  if(vptr==nullptr) return nil_map;
+  if(has_key(k_str)) return nil_map;
+  children[k_str] = move(vptr);
+  return  *this;
+}
+
 //------------------------------------- 
 bool MapEntity::has_key(const Operand &k)  {
   string k_str = k._get_str();
@@ -119,8 +131,7 @@ Entity*  MapEntity::get_raw_ptr(const string &k) {
     return nullptr;
   }
   //auto value = visit(GetOperand_eptr(), children[k].value_);
-  auto value = children[k]._get_entity_raw_ptr();
-  return  value;
+  return children[k]._get_entity_raw_ptr();
 }
 
 
@@ -144,6 +155,15 @@ const Entity& MapEntity::set(const Operand &k, const Operand&v) {
 
 
 const Entity& MapEntity::set(const Operand &k, entity_u_ptr &&vptr) {
+  auto k_str = k._get_str();
+  if(!has_key(k_str)){
+    cerr << "entity set vptr key: " << k_str << " does not exist!\n";
+    return nil_map;
+  }
+  children[k_str] = move(vptr);
+  return  *this;
+}
+const Entity& MapEntity::set(const Operand &k, astexpr_u_ptr &&vptr) {
   auto k_str = k._get_str();
   if(!has_key(k_str)){
     cerr << "entity set vptr key: " << k_str << " does not exist!\n";

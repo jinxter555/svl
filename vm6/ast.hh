@@ -69,15 +69,31 @@ public:
 
 class AstOperand : public AstExpr {
 protected:
-  Operand operand;
+  Operand value_;
 public:
   AstOperand();
+  AstOperand(const OperandVariant);
   AstOperand(const OperandVariant&);
   AstOperand(const Operand&);
   // unique_ptr<AstExpr> clone() const override {return nullptr;};
-  astexpr_u_ptr clone() const override {return nullptr;};
-  Operand to_str() const override { return "";};
-  Operand get_type() const override { return OperandType::nil_t;};
-  void print() const override {};
+  astexpr_u_ptr clone() const override;
+  Operand to_str() const override;
+  Operand get_type() const override;
+  void print() const override;
   astexpr_u_ptr& evaluate(astexpr_u_ptr& ast_ctxt);
+};
+
+class AstBinOp : public AstExpr, public MapEntity {
+protected:
+public:
+  AstBinOp(const astexpr_u_ptr& l, const astexpr_u_ptr& r, AstOpCode op);
+  AstBinOp(astexpr_u_ptr&& l, astexpr_u_ptr&& r, AstOpCode op);
+
+
+
+};
+
+class AstList: public AstExpr, public ListEntity {
+protected:
+public:
 };

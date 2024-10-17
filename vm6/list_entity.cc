@@ -46,10 +46,15 @@ const Entity& ListEntity::add(entity_u_ptr &&vptr) {
   members.push_back(move(vptr));
   return *this;
 }
+const Entity& ListEntity::add(astexpr_u_ptr &&vptr) {
+  members.push_back(move(vptr));
+  return *this;
+}
 
 const Entity& ListEntity::add(const Operand &k, const Entity& v) { return nil_list; };
 const Entity& ListEntity::add(const Operand &k, const Operand& v) { return nil_list; };
 const Entity& ListEntity::add(const Operand &k, entity_u_ptr&& vptr) { return nil_list; }; 
+const Entity& ListEntity::add(const Operand &k, astexpr_u_ptr&& vptr) { return nil_list; }; 
 
 
 //--------------------------------------
@@ -74,8 +79,7 @@ Entity * ListEntity::get_raw_ptr(const Operand&k) {
 
 Entity*  ListEntity::get_raw_ptr(int i) {
   if(i > members.size() || i < 0) return nullptr;
-  auto value = visit(GetOperandValue(), members[i].value_);
-  return  std::get<entity_u_ptr>(value).get();
+  return members[i]._get_entity_raw_ptr();
 }
 
 //--------------------------------------
@@ -106,6 +110,12 @@ const Entity& ListEntity::set(const Operand &key, const Entity &v ) {
   return set(key, move(vptr) );
 }
 const Entity& ListEntity::set(const Operand &key, entity_u_ptr &&vptr ) {
+  int i = key._get_int();
+  if(i > members.size() || i < 0) return nil_list;
+  members[i] = move(vptr);
+  return *this;
+}
+const Entity& ListEntity::set(const Operand &key, astexpr_u_ptr &&vptr ) {
   int i = key._get_int();
   if(i > members.size() || i < 0) return nil_list;
   members[i] = move(vptr);
