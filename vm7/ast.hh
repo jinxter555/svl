@@ -80,9 +80,25 @@ public:
   //-------------------------------------------
   bool add(const Operand &k, const Operand& v) override final ;
   bool add(const Operand &k, astexpr_u_ptr&& vptr) override final ;
+  bool add(const string &k, const Operand& v) ;
+  bool add(const string &k, astexpr_u_ptr&& vptr) ;
   //-------------------------------------------
   bool set(const Operand &k, const Operand& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
+
+  bool set(const string &k, const Operand& v) ;
+  bool set(const string &k, astexpr_u_ptr&& vptr) ;
+
+  //-------------------------------------------
+  inline bool has_key(const string &k) ;
+  inline bool has_key(const Operand &k) ;
+
+  s_integer size() const;
+  Operand to_str() const override ;
+  Operand get_type() const override;
+
+  void print() const override;
+
 
 
 };

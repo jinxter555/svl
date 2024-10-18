@@ -15,6 +15,9 @@ const string Operand::nil_str=string("nil");
 Operand::Operand() 
   : AstExpr(OperandType::nil_t)
   , value_(nil) {}
+Operand::Operand(const Nil& n) 
+  : AstExpr(OperandType::nil_t)
+  , value_(nil) {}
 Operand::Operand(bool v)
   : AstExpr(OperandType::bool_t)
   , value_(v) {}
@@ -159,6 +162,8 @@ template <typename T>
 const Operand& GetOperandNode_by_key::operator()(T value) const { 
   return nil_operand;
 }
+
+
 
 //-------------------------------
 //-------------------------------------------

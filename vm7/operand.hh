@@ -17,6 +17,7 @@ public:
   // Operand(int value) ; //Operand(float value) 
   //--------
   Operand();
+  Operand(const Nil&);
   Operand(bool) ;
   Operand(s_integer);
   Operand(s_float);
