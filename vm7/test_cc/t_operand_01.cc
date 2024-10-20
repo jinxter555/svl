@@ -21,6 +21,7 @@ int main() {
 
   oref1 = oref1 + 12345l;
   cout << "i1: " << i1 << "\n";
+  cout << "i1.getv(): " << i1.getv() << "\n";
   cout << "oref1: " << oref1<< "\n";
 
   return 0;

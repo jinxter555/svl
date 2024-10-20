@@ -22,11 +22,14 @@ astexpr_u_ptr AstList::clone() const {
 }
 //--------------------------------------
 const Operand& AstList::getv(const Operand &k)  {
+  //cout << "1getv k(" << k << ")";
   return getv(k._get_int());
 }
 const Operand& AstList::getv(int i)  {
-  if(list_[i] == nullptr) return nil_operand;
-  cout << "gettype: " << list_[i].get_type() << "\n";
+  //cout << "1getv(" << i << ")\n";
+  //return nil_operand;
+  if(list_[i] == nil_ast_ptr) return nil_operand;
+  //cout << "2getv(" << i << ")";
   return list_[i].getv();
 }
 const Operand& AstList::getv()  {

@@ -55,7 +55,11 @@ Operand::Operand(const OperandVariant& v )
 } 
 
 Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) { 
-  value_= vptr->clone(); 
+  if(vptr==nullptr) {
+    type_ = OperandType::nil_t;
+    value_ = nil;
+  } else
+    value_= vptr->clone(); 
 }
 Operand::Operand(astexpr_u_ptr &&vptr) : AstExpr(OperandType::uptr_t) { 
   value_= move(vptr);

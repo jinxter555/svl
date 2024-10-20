@@ -14,7 +14,7 @@ all: $(objects)  test_cc_d
 
 
 $(objects): %.o: %.cc 
-	$(CC) -c $^ -o $@
+	$(CC) -g -c $^ -o $@
 
 test_cc_d:
 	$(MAKE) -C test_cc 
