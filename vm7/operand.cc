@@ -62,10 +62,13 @@ Operand::Operand(astexpr_u_ptr &&vptr) : AstExpr(OperandType::uptr_t) {
 }
 
 Operand::Operand(const OperandType t, const OperandVariant& v) : AstExpr(t){
-   value_  = visit(GetOperandValue(), v);
+  value_  = visit(GetOperandValue(), v);
 }
 
+
 //Operand::Operand(const Operand &v) : AstExpr(v.type_), value_(visit(GetOperandValue(), v.value_)){}
+//Operand::Operand(const AstExpr &v) : AstExpr(v.type_) { value_ = visit(GetOperandValue(), v); }
+
 //-----------------------------------------------------------------------
 Operand Operand::clone_val() const {
   Operand nv;
@@ -82,6 +85,11 @@ astexpr_u_ptr Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
   return clone();
 }
 //-----------------------------------------------------------------------
+const Operand& Operand::getv() {
+  return *this;
+}
+
+
 OperandVariant Operand::_get_value() const {
   return visit(GetOperandValue(), value_);
 };
@@ -167,10 +175,10 @@ const Operand& GetOperandNode_by_key::operator()(T value) const {
 
 //-------------------------------
 //-------------------------------------------
-bool Operand::add(const Operand &v) {return false;}  // for list
+bool Operand::add(const AstExpr &v) {return false;}  // for list
 bool Operand::add(astexpr_u_ptr &&vptr) {return false;}  // for list
 //-------------------------------------------
-bool Operand::add(const Operand &k, const Operand& v) {return false;}
+bool Operand::add(const Operand &k, const AstExpr& v) {return false;}
 bool Operand::add(const Operand &k, astexpr_u_ptr&& vptr) {return false;}
   //-------------------------------------------
 bool Operand::set(const Operand &k, const Operand& v) {return false;}
@@ -180,5 +188,11 @@ const Operand& Operand::getv(const Operand &k)  {
   return nil_operand;
 }
 const astexpr_u_ptr& Operand::getptr(const Operand &k) {
+  return nil_ast_ptr;
+}
+
+astexpr_u_ptr& Operand::_get_astexpr_u_ptr() {
+  if (holds_alternative<astexpr_u_ptr>(value_)) 
+    return get<astexpr_u_ptr>(value_); 
   return nil_ast_ptr;
 }

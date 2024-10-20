@@ -40,7 +40,7 @@ public:
 
   //--------------------------------------------------------- Overload primative operator
   Operand clone_val() const;
-  unique_ptr<AstExpr> clone() const override ;
+  astexpr_u_ptr clone() const override; 
 
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
@@ -83,17 +83,20 @@ public:
   //--------------------------------------------------------- 
 
   //-------------------------------------------
-  bool add(const Operand &v) override final ;  // for list
+  bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr) override final  ;  // for list
   //-------------------------------------------
-  bool add(const Operand &k, const Operand& v) override final ;
+  bool add(const Operand &k, const AstExpr& v) override final ;
   bool add(const Operand &k, astexpr_u_ptr&& vptr) override final ;
   //-------------------------------------------
   bool set(const Operand &k, const Operand& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
+  const Operand& getv()  override final ;
   const Operand& getv(const Operand &k)  override final ;
   const astexpr_u_ptr& getptr(const Operand &k) override final;
+  astexpr_u_ptr& _get_astexpr_u_ptr();
+
 };
 
 //--------------------------------------------------------- 

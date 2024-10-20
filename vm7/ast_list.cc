@@ -1,4 +1,4 @@
-#include "ast.hh"
+#include "ast_list.hh"
 #include "operand.hh"
 AstList::AstList() : AstExpr(OperandType::list_t) {}
 
@@ -9,7 +9,7 @@ AstList nil_list;
 
 AstList::AstList(const AstList& l) {
   for(auto &e : l.list_) {
-     list_.push_back(e->clone()); 
+     list_.push_back(e.clone()); 
   }
 };
 
@@ -17,19 +17,33 @@ astexpr_u_ptr AstList::clone() const {
   list_u_ptr new_list = make_unique<AstList>();
 
   for(auto &e : list_) 
-    new_list->list_.push_back(e->clone()); 
+    new_list->list_.push_back(e.clone()); 
   return new_list;
 }
+//--------------------------------------
 const Operand& AstList::getv(const Operand &k)  {
+  return getv(k._get_int());
+}
+const Operand& AstList::getv(int i)  {
+  if(list_[i] == nullptr) return nil_operand;
+  cout << "gettype: " << list_[i].get_type() << "\n";
+  return list_[i].getv();
+}
+const Operand& AstList::getv()  {
+  cerr << "calling AstList::getv()!\n";
   return nil_operand;
 }
+//--------------------------------------
 
 const astexpr_u_ptr& AstList::getptr(const Operand &k) {
-  return nil_ast_ptr;
+  return getptr(k._get_int());
+}
+const astexpr_u_ptr& AstList::getptr(int i) {
+  return list_[i]._get_astexpr_u_ptr();
 }
 
 //--------------------------------------
-bool AstList::add(const Operand& v)  {
+bool AstList::add(const AstExpr& v)  {
   list_.push_back(v.clone()); 
   return true;
 }
@@ -39,8 +53,8 @@ bool AstList::add(astexpr_u_ptr &&vptr) {
   return true;
 }
 
-bool AstList::add(const Operand &k, const Operand& v) { return false; };
-bool AstList::add(const Operand &k, astexpr_u_ptr&& vptr) { return false; }; 
+bool AstList::add(const Operand &k, const AstExpr& v) { return false; }
+bool AstList::add(const Operand &k, astexpr_u_ptr&& vptr) { return false; }
 
 
 //--------------------------------------
@@ -67,9 +81,9 @@ Operand AstList::to_str() const {
   if(s==0) {return Operand("[]");}
 
   for(i=0; i<s-1; i++) {
-    outstr = outstr + list_[i]->to_str() + ",";
+    outstr = outstr + list_[i].to_str() + ",";
   }
-  outstr = outstr + list_[i]->to_str() + "]";
+  outstr = outstr + list_[i].to_str() + "]";
   return outstr;
 }
 

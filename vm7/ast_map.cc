@@ -1,4 +1,4 @@
-#include "ast.hh"
+#include "ast_map.hh"
 #include "operand.hh"
 
 AstMap::AstMap() : AstExpr(OperandType::map_t) {}
@@ -7,7 +7,7 @@ astexpr_u_ptr AstMap::clone() const {
   map_u_ptr new_map = make_unique<AstMap>();
 
   for (auto const& [key, val] : map_) {
-    new_map->map_[key] = val->clone();
+    new_map->map_[key] = val.clone();
   }
   return new_map;
 }
@@ -16,6 +16,9 @@ astexpr_u_ptr AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
   return nullptr;
 }
 
+const Operand& AstMap::getv()  {
+  return nil_operand;
+}
 
 const Operand& AstMap::getv(const Operand &k)  {
   return nil_operand;
@@ -26,13 +29,13 @@ const astexpr_u_ptr& AstMap::getptr(const Operand &k) {
 }
 
 //--------------------------------------
-bool AstMap::add(const Operand& v)  { return false; }
+bool AstMap::add(const AstExpr& v)  { return false; }
 bool AstMap::add(astexpr_u_ptr &&vptr) { return false; }
 //--------------------------------------
-bool AstMap::add(const Operand &k, const Operand& v) {
+bool AstMap::add(const Operand &k, const AstExpr& v) {
   return add(k._get_str(), v);
 }
-bool AstMap::add(const string &k, const Operand& v) {
+bool AstMap::add(const string &k, const AstExpr& v) {
   if(has_key(k)) return false;
   map_[k] = move(v.clone());
   return true; 
@@ -95,7 +98,7 @@ Operand AstMap::to_str() const {
   string outstr;
 
   for (auto const& [key, val] : map_) {
-    outstr = q + key + q  + colon + " " + val->to_str()._to_str();
+    outstr = q + key + q  + colon + " " + val.to_str()._to_str();
     kv_paires.push_back(outstr);
   }
 
