@@ -51,6 +51,7 @@ public:
   string _get_str() const ;
   string _to_str() const ;
   OperandType _get_type() const;
+  AstExpr* _get_astexpr_raw_ptr();
   //--------------------------------------------------------- Overload math operator
   Operand get_str() const;
   Operand get_type() const override;
@@ -118,6 +119,13 @@ string k;
 template <typename T>
 const Operand& operator()(T value) const;
 };
+
+struct GetOperand_astexpr_ptr {
+template <typename T>
+AstExpr* operator()(T value) const;
+AstExpr* operator()(const astexpr_u_ptr& v) const  ;
+};
+
 
 
 struct GetOperandType{

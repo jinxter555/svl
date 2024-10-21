@@ -92,6 +92,15 @@ astexpr_u_ptr Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
 const Operand& Operand::getv() {
   return *this;
 }
+//-----------------------------------------------------------------------
+AstExpr* Operand::_get_astexpr_raw_ptr() {
+  return visit(GetOperand_astexpr_ptr(), value_);
+  //return nullptr;
+}
+
+
+
+//-----------------------------------------------------------------------
 
 
 OperandVariant Operand::_get_value() const {
@@ -175,7 +184,10 @@ const Operand& GetOperandNode_by_key::operator()(T value) const {
   return nil_operand;
 }
 
+template <typename T>
+AstExpr* GetOperand_astexpr_ptr::operator()(T value) const { return nullptr; }
 
+AstExpr* GetOperand_astexpr_ptr::operator()(const astexpr_u_ptr& v) const  { return v.get(); }
 
 //-------------------------------
 //-------------------------------------------
