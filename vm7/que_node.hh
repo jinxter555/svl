@@ -27,9 +27,9 @@ public:
 
 
   const Operand& get_branch(const vector<string> &keys);
-  const Operand& add_branch(const vector<string> &keys, const Operand& operand=nil_operand);
-  const Operand& add_branch(const vector<string> &keys, const AstExpr& e);
-  const Operand& add_branch(const vector<string> &keys, astexpr_u_ptr&& e);
+  bool add_branch(const vector<string> &keys, const Operand& operand=nil_operand);
+  bool add_branch(const vector<string> &keys, const AstExpr& e);
+  bool add_branch(const vector<string> &keys, astexpr_u_ptr&& e);
 };
 
 class Tree : public Primordial<Tree> {
@@ -37,7 +37,6 @@ protected:
   QueNode node;
 public:
   Tree(const OperandType&t) : Primordial(t) {};
-
 
 };
 

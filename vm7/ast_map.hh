@@ -13,6 +13,7 @@ public:
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
   const Operand& getv()  override final ;
   const Operand& getv(const Operand &k)  override final ;
+  const Operand& getv(const string &k) ;
 
   //-------------------------------------------
   const astexpr_u_ptr& getptr(const Operand &k) override final;

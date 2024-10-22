@@ -28,6 +28,9 @@ int main() {
 
 
   m1.add(one, i1);
+  cout << m1 << "\n";
+  auto rptr  = m1.get_raw_ptr(one);
+  cout << rptr << "\n";
   m1.add(two, i2);
   m1.add(three, i3);
   m1.add(string("l1"), l1);

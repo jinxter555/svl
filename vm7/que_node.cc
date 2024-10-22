@@ -11,17 +11,19 @@ const Operand& QueNode::get_branch(const vector<string> &keys) {
 
   auto k = keys[i];
   auto curr_ptr = AstMap::get_raw_ptr(k);
+  if(curr_ptr==nullptr) return nil_operand;
+
   auto prev_ptr = curr_ptr;
   auto &curr_operand = AstMap::getv(k);
-  if(curr_ptr==nullptr) return nil_operand;
+  if(s==1) return curr_operand;
+
 
   for(i=1 ; i<s; i++) {
     auto k = keys[i];
     //cout << "keys[" << i<< "]: " << keys[i] << "\n";
-    auto next_ptr = curr_ptr->get_raw_ptr(Operand(k));
+    auto next_ptr = curr_ptr->get_raw_ptr(k);
     auto &curr_operand = curr_ptr->getv(k);
     if(next_ptr==nullptr) {
-      //cout << "nullptr keys[" << i<< "]: " << keys[i] << "\n";
       return curr_operand;
     }
     prev_ptr = curr_ptr;
@@ -33,16 +35,16 @@ const Operand& QueNode::get_branch(const vector<string> &keys) {
 }
 
 
-const Operand& QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e) {
+bool QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e) {
   int i=0, s = keys.size(); 
   auto k = keys[i];
-  if(s==0) return nil_operand;
+  if(s==0) return false;
 
   AstExpr *curr_ptr = (AstMap*) this;
   AstExpr *next_ptr, *prev_ptr = curr_ptr;
   if(s==1) {
     curr_ptr->add(k, move(e));
-    return nil_operand;
+    return true;
   }
   //curr_ptr->add(keys[0], MapEntity());
   // skip all the existing keys
@@ -55,15 +57,17 @@ const Operand& QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e
 
   for(; i<s; i++) {
     AstMap next_map;
+    cout << "keys[" << i<< "]: " << keys[i] << "\n";
     if(i==s-1) {
       curr_ptr->set(keys[i], move(e));
-      return nil_operand;
+      return true;
     } 
     next_map.add(keys[i+1], AstMap());
     curr_ptr->set(keys[i], next_map);
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
+    if(curr_ptr==nullptr) return false;
   }
-  return nil_operand;
+  return true;
 }
 
 
@@ -71,21 +75,21 @@ const Operand& QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e
 
 //--------------------------------------------------------- 
 
-const Operand& QueNode::add_branch(const vector<string> &keys, const AstExpr& e) {
+bool QueNode::add_branch(const vector<string> &keys, const AstExpr& e) {
   Operand ov(e.clone());
   return add_branch(keys, ov);
 }
 
-const Operand& QueNode::add_branch(const vector<string> &keys, const Operand& operand) {
+bool QueNode::add_branch(const vector<string> &keys, const Operand& operand) {
   int i=0, s = keys.size(); 
   auto k = keys[i];
-  if(s==0) return nil_operand;
+  if(s==0) return false;
 
   AstExpr*curr_ptr = (AstMap*) this;
   AstExpr *next_ptr, *prev_ptr = curr_ptr;
   if(s==1) {
     curr_ptr->add(k, operand);
-    return operand;
+    return true;
   }
 
 
@@ -108,7 +112,7 @@ const Operand& QueNode::add_branch(const vector<string> &keys, const Operand& op
     AstMap next_map;
     if(i==s-1) {
       curr_ptr->set(keys[i], operand);
-      return nil_operand;
+      return true;
     } 
     //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
     //cout << "keys[" << i<< "]: " << keys[i] << "\n";
@@ -120,13 +124,17 @@ const Operand& QueNode::add_branch(const vector<string> &keys, const Operand& op
 
     //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
+    if(curr_ptr==nullptr) { 
+      cerr << "trying to overwrite node !\n";
+      return false;
+    }
 
     //cout << "curr_ptr->print(): "; curr_ptr->print(); cout << "\n";
     //cout << "\n\n";
   }
   //MapEntity::print();
   //return curr_ptr->get(keys[s-1]);
-  return nil_operand;
+  return true;
 }
 
 

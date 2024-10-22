@@ -21,7 +21,15 @@ const Operand& AstMap::getv()  {
 }
 
 const Operand& AstMap::getv(const Operand &k)  {
-  return nil_operand;
+  return(getv(k._get_str()));
+}
+const Operand& AstMap::getv(const string &k)  {
+  if(!has_key(k)){
+    cerr << "key: " << k << " does not exist!";
+    return nil_operand;
+  }
+  return  map_[k];
+
 }
 
 const astexpr_u_ptr& AstMap::getptr(const Operand &k) {

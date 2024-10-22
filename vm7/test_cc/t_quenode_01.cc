@@ -13,17 +13,26 @@ int main() {
 
   //vector<string> keys1 = {"hello"};
   vector<string> keys1 = {"hello", "one", "two"};
+  vector<string> keys2 = {"hello", "one", "two", "three", "four", "Five"};
 
-
-  vector<string> keys2 = {"hello", "one", "two2", "three", "four", "Five"};
+  vector<string> keys2b = {"hello", "one", "two"};
   vector<string> keys3 = {"hello", "one-one", "two", "three", "four", "Five"};
   vector<string> keys3b  = {"hello", "one-one", "two"};
 
 
+  cout << "key blah: " << node.get_branch({"blah"}) << "\n\n";
+
+
+  node.add_branch(keys0, 55555l);
+  node.print_m();
+
   node.add_branch(keys1, 123l);
   node.print_m();
   node.add_branch(keys2, 456l);
-  node.print_m();
+  //node.print_m();
+
+
+
   node.add_branch(keys3, 789l);
   node.print_m();
 
@@ -33,8 +42,12 @@ int main() {
   auto &ov1 = node.get_branch(keys1);
   cout << "ov1: " << ov1 << "\n";
 
-  //auto &ov1b = node.get_branch(keys1b);
-  //cout << "ov1b: " << ov1b << "\n";
+  auto &ov2 = node.get_branch(keys2);
+  cout << "ov2: " << ov2 << "\n";
+
+  auto &ov2b = node.get_branch(keys2b);
+  cout << "ov2b: " << ov2b << "\n";
+
 
   auto &ov3 = node.get_branch(keys3);
   cout << "ov3: " << ov3 << "\n";
