@@ -27,9 +27,9 @@ public:
 
 
   const Operand& get_branch(const vector<string> &keys);
-  bool add_branch(const vector<string> &keys, const Operand& operand=nil_operand);
-  bool add_branch(const vector<string> &keys, const AstExpr& e);
-  bool add_branch(const vector<string> &keys, astexpr_u_ptr&& e);
+  bool add_branch(const vector<string> &keys, const Operand& operand=nil_operand, bool overwrite=false);
+  bool add_branch(const vector<string> &keys, const AstExpr& e, bool overwrite=false);
+  bool add_branch(const vector<string> &keys, astexpr_u_ptr&& e, bool overwrite=false);
 };
 
 class Tree : public Primordial<Tree> {

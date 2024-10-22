@@ -25,10 +25,9 @@ int main() {
 
   node.add_branch(keys0, 55555l);
   node.print_m();
-
   node.add_branch(keys1, 123l);
   node.print_m();
-  node.add_branch(keys2, 456l);
+  node.add_branch(keys2, 456l, false);
   //node.print_m();
 
 

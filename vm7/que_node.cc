@@ -35,7 +35,7 @@ const Operand& QueNode::get_branch(const vector<string> &keys) {
 }
 
 
-bool QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e) {
+bool QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e, bool overwrite) {
   int i=0, s = keys.size(); 
   auto k = keys[i];
   if(s==0) return false;
@@ -65,7 +65,7 @@ bool QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e) {
     next_map.add(keys[i+1], AstMap());
     curr_ptr->set(keys[i], next_map);
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
-    if(curr_ptr==nullptr) return false;
+    if(curr_ptr==nullptr)  return false;
   }
   return true;
 }
@@ -75,12 +75,12 @@ bool QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e) {
 
 //--------------------------------------------------------- 
 
-bool QueNode::add_branch(const vector<string> &keys, const AstExpr& e) {
+bool QueNode::add_branch(const vector<string> &keys, const AstExpr& e, bool overwrite) {
   Operand ov(e.clone());
   return add_branch(keys, ov);
 }
 
-bool QueNode::add_branch(const vector<string> &keys, const Operand& operand) {
+bool QueNode::add_branch(const vector<string> &keys, const Operand& operand, bool overwrite) {
   int i=0, s = keys.size(); 
   auto k = keys[i];
   if(s==0) return false;
@@ -98,7 +98,12 @@ bool QueNode::add_branch(const vector<string> &keys, const Operand& operand) {
   // skip all the existing keys
   for(i=0 ; i<s; i++) { 
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
-    if(curr_ptr==nullptr) { curr_ptr=prev_ptr; break; }
+    if(curr_ptr == nullptr) { curr_ptr = prev_ptr; break; }
+    if(curr_ptr->type_ != OperandType::map_t && overwrite==true) { 
+      cout << "keys[" << i<< "]: " << keys[i] << " is leaf-node!\n";
+      curr_ptr = prev_ptr;
+      break;
+    }
     prev_ptr = curr_ptr;
   }
   //cout << "i: " << i << "\n";
