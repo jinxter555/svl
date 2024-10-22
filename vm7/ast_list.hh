@@ -14,6 +14,9 @@ public:
   const astexpr_u_ptr& getptr(const Operand &k) override final;
   const astexpr_u_ptr& getptr(int i) ;
 
+  AstExpr *get_raw_ptr(const Operand &k) override final;
+  AstExpr *get_raw_ptr(int i);
+
   //-------------------------------------------
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr)override final  ;  // for list
@@ -21,7 +24,7 @@ public:
   bool add(const Operand &k, const AstExpr& v) override final ;
   bool add(const Operand &k, astexpr_u_ptr&& vptr) override final ;
   //-------------------------------------------
-  bool set(const Operand &k, const Operand& v) override final ;
+  bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
 

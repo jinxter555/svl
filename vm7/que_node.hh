@@ -28,7 +28,7 @@ public:
 
   const Operand& get_branch(const vector<string> &keys);
   const Operand& add_branch(const vector<string> &keys, const Operand& operand=nil_operand);
-  const Operand& add_branch(const vector<string> &keys, const Operand& e);
+  const Operand& add_branch(const vector<string> &keys, const AstExpr& e);
   const Operand& add_branch(const vector<string> &keys, astexpr_u_ptr&& e);
 };
 

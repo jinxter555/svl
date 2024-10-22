@@ -45,6 +45,14 @@ const astexpr_u_ptr& AstList::getptr(int i) {
   return list_[i]._get_astexpr_u_ptr();
 }
 
+AstExpr *AstList::get_raw_ptr(const Operand &k) {
+  return get_raw_ptr(k._get_int());
+}
+AstExpr *AstList::get_raw_ptr(int i) {
+   if(i > list_.size() || i < 0) return nullptr;
+  return list_[i]._get_astexpr_raw_ptr();
+
+}
 //--------------------------------------
 bool AstList::add(const AstExpr& v)  {
   list_.push_back(v.clone()); 
@@ -64,7 +72,7 @@ bool AstList::add(const Operand &k, astexpr_u_ptr&& vptr) { return false; }
 s_integer AstList::size() const { return list_.size(); }
 
 //--------------------------------------
-bool AstList::set(const Operand &key, const Operand &v ) {
+bool AstList::set(const Operand &key, const AstExpr &v ) {
   int i = key._get_int();
   if(i > size() || i < 0) return false;
   list_[i] = v.clone();

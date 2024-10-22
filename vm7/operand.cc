@@ -97,6 +97,13 @@ AstExpr* Operand::_get_astexpr_raw_ptr() {
   return visit(GetOperand_astexpr_ptr(), value_);
   //return nullptr;
 }
+AstExpr *Operand::get_raw_ptr(const Operand &k) {
+  return nullptr;
+
+}
+AstExpr *Operand::get_raw_ptr(const string &k) {
+  return nullptr;
+}
 
 
 
@@ -197,7 +204,7 @@ bool Operand::add(astexpr_u_ptr &&vptr) {return false;}  // for list
 bool Operand::add(const Operand &k, const AstExpr& v) {return false;}
 bool Operand::add(const Operand &k, astexpr_u_ptr&& vptr) {return false;}
   //-------------------------------------------
-bool Operand::set(const Operand &k, const Operand& v) {return false;}
+bool Operand::set(const Operand &k, const AstExpr& v) {return false;}
 bool Operand::set(const Operand &k, astexpr_u_ptr&& vptr){return false;}
 
 const Operand& Operand::getv(const Operand &k)  {

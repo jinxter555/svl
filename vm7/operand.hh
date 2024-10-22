@@ -36,6 +36,7 @@ public:
   Operand(astexpr_u_ptr &);
   Operand(astexpr_u_ptr &&);
 
+
   //Operand operator=(const Operand &v);
 
   //--------------------------------------------------------- Overload primative operator
@@ -53,6 +54,9 @@ public:
   OperandType _get_type() const;
   AstExpr* _get_astexpr_raw_ptr();
   //--------------------------------------------------------- Overload math operator
+  AstExpr *get_raw_ptr(const Operand &k) override final;
+  AstExpr *get_raw_ptr(const string &k);
+  //-------
   Operand get_str() const;
   Operand get_type() const override;
 
@@ -90,7 +94,7 @@ public:
   bool add(const Operand &k, const AstExpr& v) override final ;
   bool add(const Operand &k, astexpr_u_ptr&& vptr) override final ;
   //-------------------------------------------
-  bool set(const Operand &k, const Operand& v) override final ;
+  bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
   const Operand& getv()  override final ;

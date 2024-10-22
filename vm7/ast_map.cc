@@ -27,6 +27,20 @@ const Operand& AstMap::getv(const Operand &k)  {
 const astexpr_u_ptr& AstMap::getptr(const Operand &k) {
   return nil_ast_ptr;
 }
+AstExpr *AstMap::get_raw_ptr(const Operand &k) {
+  auto k_str = k._get_str();
+  return get_raw_ptr(k_str);
+}
+AstExpr *AstMap::get_raw_ptr(const string &k) {
+  if(!has_key(k)){
+    //cerr << "raw pointer key: " << k << " does not exist!\n";
+    return nullptr;
+  }
+  //auto value = visit(GetOperand_eptr(), children[k].value_);
+  return map_[k]._get_astexpr_raw_ptr();
+
+}
+
 
 //--------------------------------------
 bool AstMap::add(const AstExpr& v)  { return false; }
@@ -51,10 +65,10 @@ bool AstMap::add(const string &k, astexpr_u_ptr&& vptr) {
   return true; 
 }
 //------------------------------------- 
-bool AstMap::set(const Operand &k, const Operand& v) {
+bool AstMap::set(const Operand &k, const AstExpr& v) {
   return set(k._get_str(), v);
 }
-bool AstMap::set(const string &k, const Operand& v) { 
+bool AstMap::set(const string &k, const AstExpr& v) { 
   if(!has_key(k)){
     cerr << "map set operand and key: " << k << " does not exist!\n";
     return false;

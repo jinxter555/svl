@@ -1,12 +1,14 @@
 #pragma once
 #include "lang.hh"
 
-class Operand;
 using astexpr_u_ptr = unique_ptr<AstExpr>;
 class AstExpr : public Primordial<AstExpr> {
   friend class Operand;
+  friend class QueNode;
 protected:
   astexpr_u_ptr nil_ast_ptr=nullptr;
+
+  virtual AstExpr *get_raw_ptr(const Operand &k)=0;
 public:
   AstExpr();
   AstExpr(const OperandType);
@@ -20,7 +22,7 @@ public:
   virtual bool add(const Operand &k, const AstExpr& v)=0;
   virtual bool add(const Operand &k, astexpr_u_ptr&& vptr)=0;
 
-  virtual bool set(const Operand &k, const Operand& v) = 0;
+  virtual bool set(const Operand &k, const AstExpr& v) = 0;
   virtual bool set(const Operand &k, astexpr_u_ptr&& vptr) = 0;
 
   virtual const Operand& getv() = 0;
