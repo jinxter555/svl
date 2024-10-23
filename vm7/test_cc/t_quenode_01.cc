@@ -27,7 +27,7 @@ int main() {
   node.print_m();
   node.add_branch(keys1, 123l);
   node.print_m();
-  node.add_branch(keys2, 456l, false);
+  node.add_branch(keys2, 456l, true);
   //node.print_m();
 
 

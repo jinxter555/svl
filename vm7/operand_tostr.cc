@@ -51,6 +51,22 @@ Operand OperandToStringVisitor::operator()(OperandStatusCode s) const {
   }
   return outstr;
 }
+Operand OperandToStringVisitor::operator()(ControlFlow cf) const { 
+  string outstr;
+  switch(cf) {
+  case ControlFlow::run: 
+    outstr = "run"; break;
+  case ControlFlow::ast_break:
+    outstr = "break"; break;
+  case ControlFlow:: ast_continue:
+    outstr = "continue"; break;
+  case  ControlFlow::ast_return:
+    outstr = "return"; break;
+  default:
+    outstr = "ast run state unknown"; break;
+  }
+  return outstr;
+}
 
 Operand OperandToStringVisitor::operator()(OperandErrorCode err) const {
   string outstr;

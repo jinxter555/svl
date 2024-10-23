@@ -2,9 +2,17 @@
 
 QueNode nil_qnode;
 
-astexpr_u_ptr QueNode::clone() {return nullptr;} 
+astexpr_u_ptr QueNode::clone() {
+  list_u_ptr nl = make_unique<AstList>();
+  nl->add(AstList::clone());
+  nl->add(AstMap::clone());
+  return nl;
+}
 
-
+QueNode::QueNode() {
+  AstList::type_ = OperandType::quenode_t;
+  AstMap::type_ = OperandType::quenode_t;
+}
 const Operand& QueNode::get_branch(const vector<string> &keys) {
   int i=0, s = keys.size();
   if(s==0) return nil_operand;
@@ -51,6 +59,12 @@ bool QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e, bool ove
   for(i=0 ; i<s; i++) { 
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
     if(curr_ptr==nullptr) { curr_ptr=prev_ptr; break; }
+    if(curr_ptr->type_ != OperandType::map_t && overwrite==true) { 
+      cout << "keys[" << i<< "]: " << keys[i] << " is leaf-node!\n";
+      curr_ptr = prev_ptr;
+      break;
+    }
+    prev_ptr = curr_ptr;
     prev_ptr = curr_ptr;
   }
   curr_ptr->add(keys[i], AstMap());

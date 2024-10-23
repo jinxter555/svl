@@ -26,6 +26,7 @@ public:
   Operand(AstOpCode);
   Operand(OperandErrorCode);
   Operand(OperandStatusCode);
+  Operand(ControlFlow);
 
   Operand(const Number&) ;
   Operand(const string&);
@@ -139,6 +140,7 @@ OperandType operator()(const Number& v) const ;
 OperandType operator()(const string& v) const ;
 OperandType operator()(const AstOpCode& v) const ;
 OperandType operator()(const OperandType& v) const ;
+OperandType operator()(const ControlFlow& v) const ;
 OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
 OperandType operator()(const astexpr_u_ptr& v) const  ;

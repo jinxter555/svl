@@ -75,6 +75,8 @@ enum class OperandType {
   scalar_t,     // operand  entity
   list_t,
   map_t,
+  quenode_t,
+  control_t,
   ast_op_t,     // ast operator type
   ast_operand_t, // ast operand type
   ast_atom_t,
@@ -118,6 +120,7 @@ using astexpr_u_ptr = unique_ptr<AstExpr>;
 using OperandVariant=std::variant
 < Nil
 , bool, string, Number
+, ControlFlow
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
 , astexpr_u_ptr

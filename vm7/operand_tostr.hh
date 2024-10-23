@@ -11,6 +11,7 @@ struct OperandToStringVisitor {
   Operand operator()(OperandType t) const;
   Operand operator()(OperandErrorCode err) const;
   Operand operator()(OperandStatusCode status) const;
+  Operand operator()(ControlFlow cf) const;
   Operand operator()(AstOpCode t_op) const;
   Operand operator()(const astexpr_u_ptr&) const;
   Operand operator()(const operand_u_ptr&) const;

@@ -33,6 +33,9 @@ Operand::Operand(const Number& v)
 Operand::Operand(OperandType v) 
   : AstExpr(OperandType::type_t)
   , value_(v) {} //  meta program type of types
+Operand::Operand(ControlFlow v) 
+  : AstExpr(OperandType::control_t)
+  , value_(v) {} //  meta program type of types
 Operand::Operand(AstOpCode v) 
   : AstExpr(OperandType::ast_op_t)
   , value_(v) {} 
