@@ -4,6 +4,7 @@
 using astexpr_u_ptr = unique_ptr<AstExpr>;
 class AstExpr : public Primordial<AstExpr> {
   friend class Operand;
+  friend class AstList;
   friend class QueNode;
 protected:
   astexpr_u_ptr nil_ast_ptr=nullptr;
@@ -28,6 +29,7 @@ public:
   virtual const Operand& getv() = 0;
   virtual const Operand& getv(const Operand &k) = 0;
   virtual const astexpr_u_ptr& getptr(const Operand &k) = 0;
+  virtual vector<string> _get_keys() const =0;
 
   //-------------------------------------------
   friend ostream& operator<<(ostream& os, const AstExpr& e);

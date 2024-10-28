@@ -3,6 +3,8 @@
 #include "operand.hh"
 
 class AstMap: public AstExpr{
+  friend class SvlmAst;
+  friend class Tree;
 protected:
   unordered_map<string, Operand> map_;
   //map<string, Operand> map_;
@@ -38,9 +40,12 @@ public:
   inline bool has_key(const string &k) ;
   inline bool has_key(const Operand &k) ;
 
-  s_integer size() const;
+  s_integer size() const override;
   Operand to_str() const override ;
   Operand get_type() const override;
+
+  //AstList get_keys() const;
+  vector<string> _get_keys() const override final;
 
   void print() const override;
 };

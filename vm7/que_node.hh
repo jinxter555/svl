@@ -34,7 +34,9 @@ public:
 
 class Tree : public Primordial<Tree> {
 protected:
-  QueNode node;
+  QueNode root;
 public:
   Tree(const OperandType&t) : Primordial(t) {};
+  s_integer size() const override {return 0;};
+
 };

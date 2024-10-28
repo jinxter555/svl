@@ -27,8 +27,10 @@ public:
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
+  //-------------------------------------------
+  vector<string> _get_keys() const override final;
 
-  s_integer size() const;
+  s_integer size() const override;
   Operand to_str() const override ;
   Operand get_type() const override;
 

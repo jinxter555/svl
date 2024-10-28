@@ -132,3 +132,11 @@ Operand AstMap::to_str() const {
   outstr = outstr + kv_paires[i] + "}";
   return (outstr);
 }
+
+vector<string> AstMap::_get_keys() const {
+  vector<string> key_list;
+  for (auto const& [key, val] : map_) {
+    key_list.push_back(key);
+  }
+  return key_list;
+}

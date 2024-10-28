@@ -54,12 +54,14 @@ public:
   string _to_str() const ;
   OperandType _get_type() const;
   AstExpr* _get_astexpr_raw_ptr();
+  vector<string> _get_keys() const override final;
   //--------------------------------------------------------- Overload math operator
   AstExpr *get_raw_ptr(const Operand &k) override final;
   AstExpr *get_raw_ptr(const string &k);
   //-------
   Operand get_str() const;
   Operand get_type() const override;
+  s_integer size() const override;
 
   Operand to_str() const override; 
   Operand whatami() const;  // introspection type + value

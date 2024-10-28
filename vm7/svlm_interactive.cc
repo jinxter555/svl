@@ -2,47 +2,43 @@
 #include "svlm_interactive.hh"
 #include "my_helpers.hh"
 
-#include "vm_type.hh"
 #include "lang.hh"
 
 
-std::ostream& operator << (std::ostream& out, std::any& a) ;
 
 extern SvlmInteractive svlm_it;
 
 SvlmInteractive::SvlmInteractive
 ( const std::string&hf
 , const std::string&ps
-, std::shared_ptr<Tree> tp
-) : LangPrompt(hf, ps), svlm_lang(tp) {
+) 
+: LangPrompt(hf, ps)
+, svlm_lang(OperandType::svlm_lang_t) 
+, slc(OperandType::svlm_ctxt_t) {
+
   init_command_functions();
 };
 
 void SvlmInteractive::print_tree(const std::string& line) {
   std::vector<std::string> vstr = split_string(line, " ");
-  auto children = svlm_lang.context_tree->get_children(vstr);
+  auto children = svlm_lang.root.get_branch(vstr)._get_keys();
+
   for(auto c : children) { std::cout << "child: " << c << "\n"; }
 
-  auto node = svlm_lang.context_tree->get_node(vstr);
 
-  for(int i=0; node!=nullptr && i<node->get_member_size(); i++) {
-    auto node_mem = node->get_member(i);
-    if(node_mem == nullptr) break;
-    std::cout << i << ": "; node_mem->print_data(); std::cout << "\n"; 
-  }
-
-  if(node) {std::cout << "value: "; node->print_data(); std::cout << "\n";}
 }
 
 void SvlmInteractive::print_ast(const std::string& line) {
+  
   std::vector<std::string> vstr = split_string(line, " ");
+  /*
   std::shared_ptr<TreeNode> cc  = 
     svlm_lang.context_tree->get_node({SVLM_AST_TREE});
   std::shared_ptr<ListExprAst> program = 
     std::dynamic_pointer_cast<ListExprAst>(cc->get_child("code"));
   program->print();
+*/
 }
-
 
 void SvlmInteractive::print_stack(const std::string& message) {
   int i=0;
@@ -53,7 +49,6 @@ void SvlmInteractive::print_stack(const std::string& message) {
     it != svlm_lang.svlm_stack.end(); ++it) {
     if((*it)==nullptr) { std::cerr << "nullptr in stack!\n"; break;}
     std::cout << i++ << ": " << (*it) << "\n";
-  }*/
 
   //for (const auto& sharedMap : svlm_lang.svlm_stack) {
   for (const auto& frame : svlm_lang.svlm_stack) {
@@ -65,6 +60,7 @@ void SvlmInteractive::print_stack(const std::string& message) {
     }
     std::cout << std::endl;
   }
+  }*/
 
   std::cout << '\n';
 
@@ -109,8 +105,9 @@ void SvlmInteractive::parse(const std::string &line) {
   // evaluate ast_current_context pop back members
 }
 void SvlmInteractive::evaluate_line() {
-  std::any output = slc.evaluate_last_line();
-  std::cout << output << "\n";
+  auto output = slc.evaluate_last_line();
+  std::cout << "evaluate line" << "\n";
+  cout << output;
 }
 
 void SvlmInteractive::load(const std::string &cfn) {
@@ -148,12 +145,12 @@ void SvlmInteractive::interact(const std::string &cline) {
 std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std::string> &ptk) {
   std::vector<std::string> keys;
   std::vector<std::string> children;
-  keys = {rlsvlm_current_context_key};
+  keys = {rlsvlm_loc};
   keys.insert(keys.end(), ptk.begin(), ptk.end());
   
   // std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
 
-  children = svlm_lang.context_tree->get_children(keys);
+  children = svlm_lang.root.get_branch(keys)._get_keys();
   children.push_back("");
   return children;
 }
@@ -165,18 +162,16 @@ void SvlmInteractive::set_ui_commands() {
 
   for(auto const&[command, fun] : SvlmInteractive::command_functions) {
     if(command =="") continue;
-    keys = {rlsvlm_current_context_key, command};
-    svlm_lang.context_tree->add_node({keys}, 1);
+    keys = {rlsvlm_loc, command};
+    add_readline(command);
   }
+}
 
-  std::shared_ptr<TreeNode> ptree_node 
-    = svlm_lang.context_tree->get_node({rlsvlm_current_context_key, "!!print_tree"});
-
-  if(ptree_node!=nullptr) {
-    std::shared_ptr<TreeNode> uni_node = svlm_lang.context_tree->get_node({CONTEXT_UNIV});
-    ptree_node->add_child({CONTEXT_UNIV}, uni_node);
-  } else
-    std::cerr << "Can't add the universe to !print_tree\n";
+#define rl_loc "readline", "commands"
+void SvlmInteractive::add_readline(const string& cmd) {
+  std::vector<std::string> keys;
+  keys = {rlsvlm_loc, cmd};
+  svlm_lang.root.add_branch({rl_loc, cmd}, 1l);
 }
 
                                                                                                             

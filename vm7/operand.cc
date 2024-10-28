@@ -123,6 +123,13 @@ OperandType Operand::_get_type() const {
 Operand Operand::get_type() const {
   return type_; 
 }
+vector<string> Operand::_get_keys() const {
+  auto node = visit(GetOperand_astexpr_ptr(), value_);
+  if(node == nullptr) return {};
+  return node->_get_keys(); 
+}
+
+s_integer Operand::size() const {return 0;}
 //---------------------------  for cout print out or other viewers
 Operand Operand::get_str() const {
   return to_str();

@@ -6,22 +6,22 @@
 
 #include "prompt.hh"
 #include "svlm_scanner.hh"
-#include "svlm_lang.hh"
+#include "lang.hh"
 #include "svlm_parser.hh"
 
 #define CONTEXT_UNIV "svlvm"
-#define rlsvlm_current_context_key  CONTEXT_UNIV, "readline",  "commands", "svlm"
+#define rlsvlm_loc  CONTEXT_UNIV, "readline",  "commands", "svlm"
 
 
 class SvlmInteractive : public LangPrompt {
 private:
-  SvlmLang svlm_lang; // static or not static to be determined
-  SvlmLangContext slc {&svlm_lang};
+  SvlmAst svlm_lang; // static or not static to be determined
+  SvlmAst slc;
   vslast::SvlmScanner svlm_scanner { std::cin, std::cerr };
   //vslast::SvlmParser svlm_parser { &svlm_scanner , &svlm_lang };
   vslast::SvlmParser svlm_parser { &svlm_scanner , &slc};
 public:
-  SvlmInteractive(const std::string&hf, const std::string&ps, std::shared_ptr<Tree> tp);//  : LangPrompt(hf, ps) {};
+  SvlmInteractive(const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
   void accept_prompt(const std::string&l) override; // readyline prompt
   void parse(const std::string &line) override; // parse readline line
   void parse_prompt(const std::string &line); // parse readline line
@@ -30,6 +30,9 @@ public:
   void run_program(const std::string &l="") override;
 
   void evaluate_line();       // evaluate ast_current_context pop back members
+
+  void add_readline(const string&);
+  vector<string> get_readline_cmds(const string&);
 
 
 

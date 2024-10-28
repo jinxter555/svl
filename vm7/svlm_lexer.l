@@ -8,7 +8,6 @@
 %}
 
 %option c++ interactive noyylineno nodefault outfile="svlm_scanner.cc" 
-%option noyyfree noyyrealloc noyyalloc
 
 
 dseq            ([[:digit:]]+)
@@ -26,6 +25,7 @@ dqstring        \"([^"\\]|\\[^\n\\])*\"
 %{
 #define YY_USER_ACTION yylloc->columns(yyleng);
 std::string raw_to_escaped_string(const std::string& raw_string);
+//%option noyyfree noyyrealloc noyyalloc
 %}
 
 %%

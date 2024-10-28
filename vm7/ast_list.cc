@@ -1,15 +1,17 @@
 #include "ast_list.hh"
 #include "operand.hh"
-AstList::AstList() : AstExpr(OperandType::list_t) {}
+
+
 
 
 
 AstList nil_list;
 
+AstList::AstList() : AstExpr(OperandType::list_t) {}
 
 AstList::AstList(const AstList& l) {
   for(auto &e : l.list_) {
-     list_.push_back(e.clone()); 
+    list_.push_back(e.clone()); 
   }
 };
 
@@ -36,6 +38,8 @@ const Operand& AstList::getv()  {
   cerr << "calling AstList::getv()!\n";
   return nil_operand;
 }
+
+vector<string> AstList::_get_keys() const {return {}; }
 //--------------------------------------
 
 const astexpr_u_ptr& AstList::getptr(const Operand &k) {
