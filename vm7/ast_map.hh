@@ -26,11 +26,11 @@ public:
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr)override final  ;  // for list
   //-------------------------------------------
-  Operand& add(const Operand &k, const AstExpr& v, bool overwrite=false) override final ;
-  Operand& add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false) override final ;
+  bool add(const Operand &k, const AstExpr& v, bool overwrite=false) override final ;
+  bool add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false) override final ;
 
-  Operand& add(const string &k, const AstExpr& v, bool overwrite=false) ;
-  Operand& add(const string &k, astexpr_u_ptr&& vptr, bool overwrite=false);
+  bool add(const string &k, const AstExpr& v, bool overwrite=false) ;
+  bool add(const string &k, astexpr_u_ptr&& vptr, bool overwrite=false);
   //-------------------------------------------
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
@@ -40,7 +40,7 @@ public:
 
   //-------------------------------------------
   bool add_branch(const vector<string> &keys, const Operand& operand, bool overwrite=false) ;
-  bool add_branch2(const vector<string> &keys, const Operand& operand, bool overwrite=false) ;
+  Operand& get_branch(const vector<string> &keys) ;
   //-------------------------------------------
   bool has_key(const Operand &k) ;
   bool has_key(const string &k) ;

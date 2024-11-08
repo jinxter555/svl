@@ -96,15 +96,27 @@ Operand& Operand::getv() {
   return *this;
 }
 //-----------------------------------------------------------------------
-AstExpr* Operand::_get_astexpr_raw_ptr() {
-  return visit(GetOperand_astexpr_ptr(), value_);
-}
 AstExpr *Operand::get_raw_ptr(const Operand &k) {
-  auto k_str = k._get_str();
-  return get_raw_ptr(k_str);
+  string k_str; s_integer k_i;
+   if (holds_alternative<string>(k.value_)) {
+    k_str = k._get_str();
+    return get_raw_ptr(k_str);
+   }
+   if (holds_alternative<Number>(k.value_)) {
+    auto ptr = _get_astexpr_raw_ptr();
+    k_i =  k._get_int();
+    return ptr->get_raw_ptr(k_i);
+   }
+   return nullptr;
 }
+
 AstExpr *Operand::get_raw_ptr(const string &k) {
-  cout << "in operand get raw ptr!\n";
+  auto ptr = _get_astexpr_raw_ptr();
+  if(ptr==nullptr) return nullptr;
+  return ptr->get_raw_ptr(k);
+}
+
+AstExpr* Operand::_get_astexpr_raw_ptr() {
   return visit(GetOperand_astexpr_ptr(), value_);
 }
 
@@ -210,13 +222,15 @@ bool Operand::add(astexpr_u_ptr &&vvptr) {
 } 
 
 //-------------------------------------------
-Operand& Operand::add(const Operand &k, const AstExpr& v, bool overwrite) {
+bool Operand::add(const Operand &k, const AstExpr& v, bool overwrite) {
   auto &vptr = _get_astexpr_u_ptr();
-  if(vptr==nil_ast_ptr) return nil_operand;
+  if(vptr==nil_ast_ptr) return false;
   return vptr->add(k, v, overwrite);
 }
 
-Operand& Operand::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) {
+bool Operand::add(const Operand &k, astexpr_u_ptr&& vvptr, bool overwrite) {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return false;
   return vptr->add(k, move(vptr), overwrite);
 }
 //-------------------------------------------

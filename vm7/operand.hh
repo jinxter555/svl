@@ -98,8 +98,8 @@ public:
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr) override final  ;  // for list
   //-------------------------------------------
-  Operand& add(const Operand &k, const AstExpr& v, bool overwrite=false) override final ;
-  Operand& add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false) override final ;
+  bool add(const Operand &k, const AstExpr& v, bool overwrite=false) override final ;
+  bool add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false) override final ;
   //-------------------------------------------
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;

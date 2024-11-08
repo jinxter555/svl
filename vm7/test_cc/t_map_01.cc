@@ -21,7 +21,7 @@ int main() {
   l2.add(l1);
   l2.add(l2);
 
-  AstMap m1, m2;
+  AstMap m1, m2, mr;
   
   cout << "m1: " << m1 << "\n";
   cout << "m2: " << m2 << "\n\n";
@@ -32,11 +32,9 @@ int main() {
 
 
 
-  return 0;
 
 
-  auto &one1b = m1.add(one, make_unique<AstMap>());
-  cout <<  "one1b add : " << one1b.add("two", i2) << "\n";;
+  m1.add(one, make_unique<AstMap>());
 
   cout << m1 << "\n";
   auto rptr  = m1.get_raw_ptr(one);
@@ -52,10 +50,10 @@ int main() {
   Operand i5 = i3.opfunc(i2, AstOpCode::plus);
   m1.add(string("five"), i5);
 
-  auto &mr = m2.add(m1_s, m1);
-  mr.add("m1", m1);
 
   m2.add(m2_s, m1);
+  mr.add(string("m1"), m1);
+  mr.add(m2_s, m1);
 
   cout << "m1: " << m1 << "\n";
   cout << "m2: " << m2 << "\n\n";

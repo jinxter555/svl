@@ -68,8 +68,8 @@ bool AstList::add(astexpr_u_ptr &&vptr) {
   return true;
 }
 
-Operand& AstList::add(const Operand &k, const AstExpr& v, bool overwrite) { return nil_operand; }
-Operand& AstList::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) { return nil_operand; }
+bool AstList::add(const Operand &k, const AstExpr& v, bool overwrite) { return false; }
+bool AstList::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) { return false; }
 
 
 //--------------------------------------
