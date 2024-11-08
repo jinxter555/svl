@@ -11,6 +11,7 @@ int main() {
 
   const Operand &oref= i1.getv();
   auto oref1 = oref.clone_val();
+  auto oref1b = oref.clone();
 
 
   cout << i1 + i2 << "\n";
@@ -23,6 +24,9 @@ int main() {
   cout << "i1: " << i1 << "\n";
   cout << "i1.getv(): " << i1.getv() << "\n";
   cout << "oref1: " << oref1<< "\n";
+  cout << "oref1 type: " << oref1.get_type()<< "\n";
+  cout << "oref1b : " << oref1b<< "\n";
+  cout << "oref1b type : " << oref1b->get_type() << "\n";
 
   return 0;
 }

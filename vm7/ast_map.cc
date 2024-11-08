@@ -24,7 +24,7 @@ Operand& AstMap::getv(const Operand &k)  {
   return(getv(k._get_str()));
 }
 Operand& AstMap::getv(const string &k)  {
-  if(!has_key(k)){
+  if(this==nullptr || !has_key(k)){
     cerr << "getv key: " << k << " does not exist!\n";
     return nil_operand;
   }
@@ -37,6 +37,9 @@ astexpr_u_ptr& AstMap::get_u_ptr(const Operand &k) {
   return get_u_ptr(k_str);
 }
 astexpr_u_ptr& AstMap::get_u_ptr(const string &k) {
+  if(this == nullptr || !has_key(k)){
+    return nil_ast_ptr;
+  }
   return map_[k]._get_astexpr_u_ptr();
 }
 
@@ -45,8 +48,8 @@ AstExpr *AstMap::get_raw_ptr(const Operand &k) {
   return get_raw_ptr(k_str);
 }
 AstExpr *AstMap::get_raw_ptr(const string &k) {
-  if(!has_key(k)){
-    cerr << "raw pointer key: " << k << " does not exist!\n";
+  if(this == nullptr || !has_key(k)){
+    //cerr << "raw pointer key: " << k << " does not exist!\n";
     return nullptr;
   }
   //auto value = visit(GetOperand_eptr(), children[k].value_);
@@ -85,8 +88,7 @@ bool AstMap::add_branch(const vector<string> &keys, const Operand& operand, bool
   string k;
   AstMap *curr=this, *next;
   for(int i=0; i<s-1; i++) {
-    k = keys[i];
-    cout << "keys[" << i<< "]: " << keys[i] << "\n";
+    k = keys[i]; //cout << "keys[" << i<< "]: " << keys[i] << "\n";
     next =(AstMap*) curr->get_raw_ptr(k);
     if(next==nullptr || next->type_ != OperandType::map_t) {
       if(!curr->add(keys[i], make_unique<AstMap>(), overwrite)) {
@@ -106,11 +108,12 @@ Operand& AstMap::get_branch(const vector<string> &keys) {
 
   if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
   for(int i=0; i<s-1; i++) {
-    k = keys[i];
+    k = keys[i]; // cout << "keys[" << i<< "]: " << keys[i] << "\n";
     next = (AstMap*) curr->get_raw_ptr(k);
     if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
     curr = next;
   }
+
   return curr->getv(keys.back());
 }
 

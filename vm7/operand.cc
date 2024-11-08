@@ -61,10 +61,14 @@ Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) {
   if(vptr==nullptr) {
     type_ = OperandType::nil_t;
     value_ = nil;
-  } else
+  } else {
+    type_ = vptr->type_;
     value_= vptr->clone(); 
+  }
 }
+
 Operand::Operand(astexpr_u_ptr &&vptr) : AstExpr(OperandType::uptr_t) { 
+  type_ = vptr->type_;
   value_= move(vptr);
 }
 
