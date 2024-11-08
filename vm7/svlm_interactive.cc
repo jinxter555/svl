@@ -17,13 +17,45 @@ SvlmInteractive::SvlmInteractive
 , slc(OperandType::svlm_ctxt_t) {
 
   init_command_functions();
+
+
+  vector<string> keys0 = {CONTEXT_UNIV, "bigbang"};
+  //vector<string> keys1 = {"hello", "one", "two1", "three"};
+  //vector<string> keys1b = {"hello", "one", "two1"};
+
+  //vector<string> keys1 = {"hello"};
+  vector<string> keys1 = {CONTEXT_UNIV,"hello", "one", "two"};
+  vector<string> keys2 = {CONTEXT_UNIV,"hello", "one", "two", "three", "four", "Five"};
+
+  vector<string> keys2b = {CONTEXT_UNIV,"hello", "one", "two"};
+  vector<string> keys3 = {CONTEXT_UNIV,"hello", "one-one", "two", "three", "four", "Five"};
+  vector<string> keys3b  = {CONTEXT_UNIV,"hello", "one-one", "two"};
+
+  svlm_lang.root.add_branch(keys0, 55555l);
+  //svlm_lang.root.print_m();
+  svlm_lang.root.add_branch(keys1, 123l);
+  auto &ov = svlm_lang.root.get_branch(keys1);
+  cout << "ov keys1: " << ov << "\n";
+  svlm_lang.root.add_branch(keys2, 456l, true);
+  svlm_lang.root.add_branch(keys3, "somestrval");
+  //node.print_m();
+
+
+  
 };
 
 void SvlmInteractive::print_tree(const std::string& line) {
   std::vector<std::string> vstr = split_string(line, " ");
   auto children = svlm_lang.root.get_branch(vstr)._get_keys();
 
+  if(children.empty()) {
+    auto &value= svlm_lang.root.get_branch(vstr);
+    cout << value << "\n";
+    return;
+  }
+
   for(auto c : children) { std::cout << "child: " << c << "\n"; }
+  //svlm_lang.root.print();
 
 
 }
@@ -105,9 +137,10 @@ void SvlmInteractive::parse(const std::string &line) {
   // evaluate ast_current_context pop back members
 }
 void SvlmInteractive::evaluate_line() {
-  auto output = slc.evaluate_last_line();
+  auto output_ptr = slc.evaluate_last_line();
   std::cout << "evaluate line" << "\n";
-  cout << output;
+  if(output_ptr)
+    cout << output_ptr;
 }
 
 void SvlmInteractive::load(const std::string &cfn) {
@@ -135,9 +168,12 @@ void SvlmInteractive::interact(const std::string &cline) {
   std::string line = move(reduce(cline));
   std::vector<std::string> tokens= move(split_string(line, " "));
   std::string command = tokens.front();
+
+  //cout << "interact: " << line << "\n";
   if(command_functions[command] != nullptr) {
     std::string args =  move(trim(match(line, command)));
     (command_functions[command])(args);
+    cout << "args: " << args << "\n";
   } else 
     std::cerr << command << " not found!\n";
 }
@@ -146,12 +182,16 @@ std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std:
   std::vector<std::string> keys;
   std::vector<std::string> children;
   keys = {rlsvlm_loc};
+  //keys = {CONTEXT_UNIV};
   keys.insert(keys.end(), ptk.begin(), ptk.end());
   
-  // std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+  std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
 
   children = svlm_lang.root.get_branch(keys)._get_keys();
   children.push_back("");
+
+  std::cout << "children: "; for(auto k: children) { std::cout << k << ","; } std::cout << "\n";
+
   return children;
 }
 
@@ -160,18 +200,49 @@ void SvlmInteractive::set_ui_commands() {
   std::string command; int list_index=0;
   std::vector<std::string> keys;
 
+  //svlm_lang.root.print_m();
+
   for(auto const&[command, fun] : SvlmInteractive::command_functions) {
     if(command =="") continue;
     keys = {rlsvlm_loc, command};
     add_readline(command);
   }
+
+  vector<string> vstr ;
+  vstr = {"svlvm", "readline", "commands", "svlm", "!!print_tree","svlvm","hello"};
+  auto &v= svlm_lang.root.get_branch(vstr);
+  cout << "v: " << v << "\n\n";
+  cout << "v.one: " << v.getv(string("one")) << "\n";
+
+
+  keys = v._get_keys() ;
+  std::cout << "hello keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n\n";
+  //cout << "v.hello: " << v._get_keys() << "\n";
+
+
+  vstr = {"svlvm", "readline", "commands", "svlm", "!!print_tree","svlvm","hello", "one"};
+  auto &v2= svlm_lang.root.get_branch(vstr);
+  cout << "v2: " <<  v2 << "\n";
+  keys = v2._get_keys() ;
+  std::cout << "one keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n\n";
+
+
 }
 
-#define rl_loc "readline", "commands"
 void SvlmInteractive::add_readline(const string& cmd) {
   std::vector<std::string> keys;
   keys = {rlsvlm_loc, cmd};
-  svlm_lang.root.add_branch({rl_loc, cmd}, 1l);
+
+  //cout << "adding to: " <<  cmd << " readline\n";
+
+  if(cmd == "!!print_tree") {
+    auto &univ = svlm_lang.root.get_branch({CONTEXT_UNIV});
+    svlm_lang.root.add_branch({rlsvlm_loc, cmd, CONTEXT_UNIV}, univ);
+    auto &univ2 = svlm_lang.root.get_branch({CONTEXT_UNIV});
+    cout << "universe2: " << univ << "\n\n";
+  } else
+    svlm_lang.root.add_branch({rlsvlm_loc, cmd}, nil_operand);
+
 }
 
                                                                                                             

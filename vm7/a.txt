@@ -1,0 +1,8 @@
+universe:
+  {"readline":
+    {"commands": 
+      {"svlm": 
+        {"!!print_stack": nil,
+         "!!print_goodbye": nil, "!!print_ast": nil}}}, "hello": {"one-one": {"two": {"three": {"four": {"Five": somestrval}}}}, "one": {"two": {"three": {"four": {"Five": 456}}}}}, "null": 55555}
+
+

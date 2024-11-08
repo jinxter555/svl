@@ -20,16 +20,21 @@ public:
   virtual bool add(astexpr_u_ptr &&vptr) =0;  // for list
 
   //-------------------------------------------
-  virtual bool add(const Operand &k, const AstExpr& v)=0;
-  virtual bool add(const Operand &k, astexpr_u_ptr&& vptr)=0;
+  virtual Operand& add(const Operand &k, const AstExpr& v, bool overwrite=false)=0;
+
+  virtual Operand& add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false)=0;
 
   virtual bool set(const Operand &k, const AstExpr& v) = 0;
   virtual bool set(const Operand &k, astexpr_u_ptr&& vptr) = 0;
 
-  virtual const Operand& getv() = 0;
-  virtual const Operand& getv(const Operand &k) = 0;
-  virtual const astexpr_u_ptr& getptr(const Operand &k) = 0;
+  virtual Operand& getv() = 0;
+  virtual Operand& getv(const Operand &k) = 0;
+  virtual astexpr_u_ptr& get_u_ptr(const Operand &k) = 0;
   virtual vector<string> _get_keys() const =0;
+
+  //-------------------------------------------
+  //virtual Operand& get_branch(const Operand&k) =0 ;
+  //virtual bool add_branch(const Operand&k, const AstExpr& e, bool overwrite=false)=0;
 
   //-------------------------------------------
   friend ostream& operator<<(ostream& os, const AstExpr& e);

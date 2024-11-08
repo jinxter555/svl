@@ -14,8 +14,8 @@ public:
 
   static struct option long_options[];
   bool interactive=false;
-  bool assembly_lang=true;
-  bool svlm_lang=false;
+  bool assembly_lang=false;
+  bool svlm_lang=true;
   bool run=false;
 
   Commandline(int argc, char* argv[]);

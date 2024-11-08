@@ -10,6 +10,7 @@
 #include "svlm_parser.hh"
 
 #define CONTEXT_UNIV "svlvm"
+// read line command location
 #define rlsvlm_loc  CONTEXT_UNIV, "readline",  "commands", "svlm"
 
 

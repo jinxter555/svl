@@ -55,9 +55,6 @@ public:
   OperandType _get_type() const;
   AstExpr* _get_astexpr_raw_ptr();
   vector<string> _get_keys() const override final;
-  //--------------------------------------------------------- Overload math operator
-  AstExpr *get_raw_ptr(const Operand &k) override final;
-  AstExpr *get_raw_ptr(const string &k);
   //-------
   Operand get_str() const;
   Operand get_type() const override;
@@ -67,7 +64,14 @@ public:
   Operand whatami() const;  // introspection type + value
 
   void  print() const override; 
-  //--------------------------------------------------------- Overload math operator
+  //--------------------------------------------------------- 
+  AstExpr *get_raw_ptr(const Operand &k) override final;
+  AstExpr *get_raw_ptr(const string &k);
+  astexpr_u_ptr& get_u_ptr(const Operand &k) override final;
+  astexpr_u_ptr& get_u_ptr();
+  astexpr_u_ptr& _get_astexpr_u_ptr();
+
+  //--------------------------------------------------------- 
   friend ostream& operator<<(ostream& os, const Operand& operand);
   //--------------------------------------------------------- Overload math operator
   Operand operator+(const Operand& other) const ;
@@ -86,7 +90,7 @@ public:
   Operand operator||(const Operand& other) const;
   //--------------------------------------------------------- Overload math logic operator
   Operand operator!() const;
-  //--------------------------------------------------------- Overload math logic operator
+  //--------------------------------------------------------- 
   Operand opfunc(const Operand& other, AstOpCode op) ;
   //--------------------------------------------------------- 
 
@@ -94,16 +98,14 @@ public:
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr) override final  ;  // for list
   //-------------------------------------------
-  bool add(const Operand &k, const AstExpr& v) override final ;
-  bool add(const Operand &k, astexpr_u_ptr&& vptr) override final ;
+  Operand& add(const Operand &k, const AstExpr& v, bool overwrite=false) override final ;
+  Operand& add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false) override final ;
   //-------------------------------------------
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
-  const Operand& getv()  override final ;
-  const Operand& getv(const Operand &k)  override final ;
-  const astexpr_u_ptr& getptr(const Operand &k) override final;
-  astexpr_u_ptr& _get_astexpr_u_ptr();
+  Operand& getv()  override final ;
+  Operand& getv(const Operand &k)  override final ;
 
 };
 
@@ -120,20 +122,11 @@ operand_u_ptr operator()(T value) const;
 operand_u_ptr operator()(const astexpr_u_ptr& v) const  ;
 };
 
-
-struct GetOperandNode_by_key{
-string k;
-template <typename T>
-const Operand& operator()(T value) const;
-};
-
 struct GetOperand_astexpr_ptr {
 template <typename T>
 AstExpr* operator()(T value) const;
 AstExpr* operator()(const astexpr_u_ptr& v) const  ;
 };
-
-
 
 struct GetOperandType{
 OperandType operator()(const bool v) const ;

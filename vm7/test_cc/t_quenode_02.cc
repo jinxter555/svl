@@ -8,10 +8,7 @@ int main() {
 
 
   vector<string> keys0 = {"bigbang"};
-  //vector<string> keys1 = {"hello", "one", "two1", "three"};
-  //vector<string> keys1b = {"hello", "one", "two1"};
 
-  //vector<string> keys1 = {"hello"};
   vector<string> keys1 = {"hello", "one", "two"};
   vector<string> keys2 = {"hello", "one", "two", "three", "four", "Five"};
 
@@ -19,17 +16,32 @@ int main() {
   vector<string> keys3 = {"hello", "one-one", "two", "three", "four", "Five"};
   vector<string> keys3b  = {"hello", "one-one", "two"};
 
+  vector<string> d1 = {"world", "one-one", "two"};
+
+
+
   vector<string> vstr1 = {"svlvm", "readline", "commands", "svlm", "!!print_tree","svlvm","hello", "world"};
   vector<string> vstr1b = {"svlvm", "readline", "commands", "svlm", "!!print_tree","svlvm"};
 
   cout << "key blah: " << node.get_branch({"blah"}) << "\n\n";
 
 
-  node.add_branch(keys0, 55555l);
-  node.print_m();
-  node.add_branch(keys1, 123l);
-  node.print_m();
-  node.add_branch(keys2, 456l, true);
+  //node.add_branch(keys0, 55555l); node.print_m();
+  node.add_branch(keys1, 123l); node.print_m(); cout << "\n\n";
+  node.add_branch(keys2, 456l, true); node.print_m(); cout << "\n\n";
+
+  auto &dv1 = node.get_branch({"hello"});
+  cout << "dv1: " << dv1 << "\n";
+  dv1.add(Operand("world"), 5555l);
+
+  return 0;
+
+
+
+
+
+
+
   node.add_branch(vstr1, 8888l);
   //node.print_m();
 

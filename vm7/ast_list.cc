@@ -23,18 +23,18 @@ astexpr_u_ptr AstList::clone() const {
   return new_list;
 }
 //--------------------------------------
-const Operand& AstList::getv(const Operand &k)  {
+Operand& AstList::getv(const Operand &k)  {
   //cout << "1getv k(" << k << ")";
   return getv(k._get_int());
 }
-const Operand& AstList::getv(int i)  {
+Operand& AstList::getv(int i)  {
   //cout << "1getv(" << i << ")\n";
   //return nil_operand;
   if(list_[i] == nil_ast_ptr) return nil_operand;
   //cout << "2getv(" << i << ")";
   return list_[i].getv();
 }
-const Operand& AstList::getv()  {
+Operand& AstList::getv()  {
   cerr << "calling AstList::getv()!\n";
   return nil_operand;
 }
@@ -42,10 +42,10 @@ const Operand& AstList::getv()  {
 vector<string> AstList::_get_keys() const {return {}; }
 //--------------------------------------
 
-const astexpr_u_ptr& AstList::getptr(const Operand &k) {
-  return getptr(k._get_int());
+astexpr_u_ptr& AstList::get_u_ptr(const Operand &k) {
+  return get_u_ptr(k._get_int());
 }
-const astexpr_u_ptr& AstList::getptr(int i) {
+astexpr_u_ptr& AstList::get_u_ptr(int i) {
   return list_[i]._get_astexpr_u_ptr();
 }
 
@@ -68,8 +68,8 @@ bool AstList::add(astexpr_u_ptr &&vptr) {
   return true;
 }
 
-bool AstList::add(const Operand &k, const AstExpr& v) { return false; }
-bool AstList::add(const Operand &k, astexpr_u_ptr&& vptr) { return false; }
+Operand& AstList::add(const Operand &k, const AstExpr& v, bool overwrite) { return nil_operand; }
+Operand& AstList::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) { return nil_operand; }
 
 
 //--------------------------------------

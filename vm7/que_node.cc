@@ -2,6 +2,12 @@
 
 QueNode nil_qnode;
 
+std::ostream& operator << (std::ostream& out, vector<string> vs) {
+  std::cout << "keys: "; for(auto k: vs) { std::cout << k << ","; } std::cout << "\n\n";
+  return out;
+}
+
+
 astexpr_u_ptr QueNode::clone() {
   list_u_ptr nl = make_unique<AstList>();
   nl->add(AstList::clone());
@@ -13,33 +19,72 @@ QueNode::QueNode() {
   AstList::type_ = OperandType::quenode_t;
   AstMap::type_ = OperandType::quenode_t;
 }
-const Operand& QueNode::get_branch(const vector<string> &keys) {
+
+
+Operand& QueNode::get_branch2(const vector<string> &keys) {
+  string k;
+  int i=0, s = keys.size();
+  if(s==0) return nil_operand;
+  AstExpr *curr_ptr, *prev_ptr;
+
+  k = keys[i++]; curr_ptr = AstMap::get_raw_ptr(k);
+  if(curr_ptr==nullptr) return nil_operand;
+
+return nil_operand;
+
+}
+
+Operand& QueNode::get_branch(const vector<string> &keys) {
   int i=0, s = keys.size();
   if(s==0) return nil_operand;
 
   auto k = keys[i];
   auto curr_ptr = AstMap::get_raw_ptr(k);
+
   if(curr_ptr==nullptr) return nil_operand;
+  if(s==1) return AstMap::getv(k);
 
   auto prev_ptr = curr_ptr;
-  auto &curr_operand = AstMap::getv(k);
-  if(s==1) return curr_operand;
+  AstExpr* next_ptr;
 
 
   for(i=1 ; i<s; i++) {
     auto k = keys[i];
-    //cout << "keys[" << i<< "]: " << keys[i] << "\n";
-    auto next_ptr = curr_ptr->get_raw_ptr(k);
-    auto &curr_operand = curr_ptr->getv(k);
+    next_ptr = curr_ptr->get_raw_ptr(k);
+    cout << "keys[" << i<< "]: " << keys[i] << " addr " << next_ptr << "\n\n" ;
+
     if(next_ptr==nullptr) {
-      return curr_operand;
+      cout << "curr_ptr: "; curr_ptr->print(); cout << "\n";
+      return  curr_ptr->getv(k);
     }
+
+    next_ptr->print();
+    cout <<"\n\n";
+    if(k=="one") {
+      cout << "1one is here!\n";
+      next_ptr->print();
+      cout <<"\n\n";
+    }
+
     prev_ptr = curr_ptr;
     curr_ptr = next_ptr;
   }
-  //cout << "i: " << i << "\n";
-  auto &re_operand= prev_ptr->getv(keys[i-1]);
-  return re_operand;
+  cout << "s: " << s << " i: " << i << "\n";
+/*
+  cout << "curr_ptr->print: "; curr_ptr->print(); cout << "\n\n";
+  cout << "next_ptr->print: "; next_ptr->print(); cout << "\n\n";
+  cout << "prev_ptr->print: "; prev_ptr->print(); cout << "\n\n";
+
+  auto k2  = prev_ptr->_get_keys();
+  auto k3  = curr_ptr->_get_keys();
+  auto k4  = next_ptr->_get_keys();
+  std::cout << "one k2 keys: "; for(auto k: k2) { std::cout << k << ","; } std::cout << "\n\n";
+  std::cout << "one k3 keys: "; for(auto k: k3) { std::cout << k << ","; } std::cout << "\n\n";
+  std::cout << "one k4 keys: "; for(auto k: k3) { std::cout << k << ","; } std::cout << "\n\n";
+*/
+
+  //auto &re_operand= prev_ptr->getv(keys[i-1]);
+  return  prev_ptr->getv(keys[i-1]);
 }
 
 
@@ -60,7 +105,7 @@ bool QueNode::add_branch(const vector<string> &keys, astexpr_u_ptr&& e, bool ove
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
     if(curr_ptr==nullptr) { curr_ptr=prev_ptr; break; }
     if(curr_ptr->type_ != OperandType::map_t && overwrite==true) { 
-      cout << "keys[" << i<< "]: " << keys[i] << " is leaf-node!\n";
+      cout << "overwrite keys[" << i<< "]: " << keys[i] << " is leaf-node!\n";
       curr_ptr = prev_ptr;
       break;
     }
@@ -114,7 +159,7 @@ bool QueNode::add_branch(const vector<string> &keys, const Operand& operand, boo
     curr_ptr = curr_ptr->get_raw_ptr(keys[i]);
     if(curr_ptr == nullptr) { curr_ptr = prev_ptr; break; }
     if(curr_ptr->type_ != OperandType::map_t && overwrite==true) { 
-      cout << "keys[" << i<< "]: " << keys[i] << " is leaf-node!\n";
+      cout << "overwrite keys[" << i<< "]: " << keys[i] << " is leaf-node!\n";
       curr_ptr = prev_ptr;
       break;
     }

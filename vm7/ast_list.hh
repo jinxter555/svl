@@ -8,11 +8,11 @@ public:
   AstList(const AstList& l);
   astexpr_u_ptr clone() const override; 
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
-  const Operand& getv()  override final ;
-  const Operand& getv(const Operand &k)  override final ;
-  const Operand& getv(int i)  ;
-  const astexpr_u_ptr& getptr(const Operand &k) override final;
-  const astexpr_u_ptr& getptr(int i) ;
+  Operand& getv()  override final ;
+  Operand& getv(const Operand &k)  override final ;
+  Operand& getv(int i)  ;
+  astexpr_u_ptr& get_u_ptr(const Operand &k) override final;
+  astexpr_u_ptr& get_u_ptr(int i) ;
 
   AstExpr *get_raw_ptr(const Operand &k) override final;
   AstExpr *get_raw_ptr(int i);
@@ -21,8 +21,8 @@ public:
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr)override final  ;  // for list
   //-------------------------------------------
-  bool add(const Operand &k, const AstExpr& v) override final ;
-  bool add(const Operand &k, astexpr_u_ptr&& vptr) override final ;
+  Operand& add(const Operand &k, const AstExpr& v, bool overwrite=false) override final ;
+  Operand& add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false) override final ;
   //-------------------------------------------
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;

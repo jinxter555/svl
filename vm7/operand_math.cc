@@ -90,6 +90,10 @@ bool Operand::operator==(const Operand& other) const {
     return get<Number>(value_) == get<Number>(other.value_);
   case OperandType::str_t: 
     return get<std::string>(value_) == get<std::string>(other.value_);
+  case OperandType::nil_t: 
+    if( holds_alternative<Nil>(value_) 
+    && holds_alternative<Nil>(other.value_)) return true;
+    return false;
   case OperandType::err_t: 
     return get<OperandErrorCode>(value_) == get<OperandErrorCode>(other.value_);
   default: 

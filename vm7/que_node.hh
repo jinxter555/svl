@@ -23,10 +23,11 @@ public:
   astexpr_u_ptr clone() ;
  // OperandEntity to_str() { return Operand("astnode123");}
   Operand get_type() { return Operand(OperandType::str_t);}
-  void print() {};
+  void print() { print_m(); print_l();};
 
 
-  const Operand& get_branch(const vector<string> &keys);
+  Operand& get_branch(const vector<string> &keys);
+  Operand& get_branch2(const vector<string> &keys);
   bool add_branch(const vector<string> &keys, const Operand& operand=nil_operand, bool overwrite=false);
   bool add_branch(const vector<string> &keys, const AstExpr& e, bool overwrite=false);
   bool add_branch(const vector<string> &keys, astexpr_u_ptr&& e, bool overwrite=false);

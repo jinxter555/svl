@@ -92,27 +92,23 @@ astexpr_u_ptr Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
   return clone();
 }
 //-----------------------------------------------------------------------
-const Operand& Operand::getv() {
+Operand& Operand::getv() {
   return *this;
 }
 //-----------------------------------------------------------------------
 AstExpr* Operand::_get_astexpr_raw_ptr() {
   return visit(GetOperand_astexpr_ptr(), value_);
-  //return nullptr;
 }
 AstExpr *Operand::get_raw_ptr(const Operand &k) {
-  return nullptr;
-
+  auto k_str = k._get_str();
+  return get_raw_ptr(k_str);
 }
 AstExpr *Operand::get_raw_ptr(const string &k) {
-  return nullptr;
+  cout << "in operand get raw ptr!\n";
+  return visit(GetOperand_astexpr_ptr(), value_);
 }
 
-
-
 //-----------------------------------------------------------------------
-
-
 OperandVariant Operand::_get_value() const {
   return visit(GetOperandValue(), value_);
 };
@@ -197,34 +193,60 @@ operand_u_ptr GetOperandClone::operator()(const astexpr_u_ptr& v) const {
 }
 //-------------------------------
 template <typename T>
-const Operand& GetOperandNode_by_key::operator()(T value) const { 
-  return nil_operand;
-}
-
-template <typename T>
 AstExpr* GetOperand_astexpr_ptr::operator()(T value) const { return nullptr; }
-
 AstExpr* GetOperand_astexpr_ptr::operator()(const astexpr_u_ptr& v) const  { return v.get(); }
 
 //-------------------------------
 //-------------------------------------------
-bool Operand::add(const AstExpr &v) {return false;}  // for list
-bool Operand::add(astexpr_u_ptr &&vptr) {return false;}  // for list
-//-------------------------------------------
-bool Operand::add(const Operand &k, const AstExpr& v) {return false;}
-bool Operand::add(const Operand &k, astexpr_u_ptr&& vptr) {return false;}
-  //-------------------------------------------
-bool Operand::set(const Operand &k, const AstExpr& v) {return false;}
-bool Operand::set(const Operand &k, astexpr_u_ptr&& vptr){return false;}
+bool Operand::add(const AstExpr &v) {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return false;
+  return vptr->add(v);
+}  
+bool Operand::add(astexpr_u_ptr &&vvptr) {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return false;
+  return vptr->add(move(vvptr));
+} 
 
-const Operand& Operand::getv(const Operand &k)  {
-  return nil_operand;
+//-------------------------------------------
+Operand& Operand::add(const Operand &k, const AstExpr& v, bool overwrite) {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return nil_operand;
+  return vptr->add(k, v, overwrite);
 }
-const astexpr_u_ptr& Operand::getptr(const Operand &k) {
-  return nil_ast_ptr;
+
+Operand& Operand::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) {
+  return vptr->add(k, move(vptr), overwrite);
+}
+//-------------------------------------------
+bool Operand::set(const Operand &k, const AstExpr& v) {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return false;
+  return vptr->set(k, v);
+}
+bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return false;
+  return vptr->set(k, move(vvptr));
+}
+//-------------------------------------------
+
+Operand& Operand::getv(const Operand &k)  {
+  auto &ptr = _get_astexpr_u_ptr();
+  if(ptr == nil_ast_ptr) nil_operand;
+  return ptr->getv(k);
+}
+astexpr_u_ptr& Operand::get_u_ptr(const Operand &k) {
+  auto &ptr = _get_astexpr_u_ptr();
+  if(ptr==nil_ast_ptr) return nil_ast_ptr;
+  return ptr->get_u_ptr(k);
 }
 
 astexpr_u_ptr& Operand::_get_astexpr_u_ptr() {
+  return get_u_ptr();
+}
+astexpr_u_ptr& Operand::get_u_ptr() {
   if (holds_alternative<astexpr_u_ptr>(value_)) 
     return get<astexpr_u_ptr>(value_); 
   return nil_ast_ptr;

@@ -4,9 +4,8 @@ CC=g++ -std=c++17 -g
 TMPDIR = /dev/shm
 core_o := $(wildcard ../ast_list.o ../operand.o ../ast_map.o ../number.o ../operand_tostr.o ../operand_visitors.o ../operand_math.o ../ast.o ../que_node.o)
 
-# all: t_entity_01.out t_entity_02.out  t_list_01.out  t_list_02.out # t_map_01.out t_ast_operand_01.out  u_entity_ptr_01.out
-#all: t_entity_01.out t_entity_02.out  t_list_01.out   t_list_02.out  _astnode_01.out t_astnode_02.out t_astnode_02.out t_astnode_list01.out t_astnode_list02.out
-all: t_operand_01.out t_list_01.out t_map_01.out t_quenode_01.out
+all: t_operand_01.out t_list_01.out t_map_01.out t_map_02.out # t_quenode_01.out t_quenode_02.out
+# all: t_quenode_02.out
 #all: t_operand_01.out 
 #all: $(objects)
 
@@ -28,7 +27,13 @@ t_list_02.out: t_list_02.o $(core_o)
 t_map_01.out: t_map_01.o $(core_o)
 	$(CC)  $^ -o $@
 
+t_map_02.out: t_map_02.o $(core_o)
+	$(CC)  $^ -o $@
+
 t_quenode_01.out: t_quenode_01.o $(core_o)
+	$(CC)  $^  -g -o $@
+
+t_quenode_02.out: t_quenode_02.o $(core_o)
 	$(CC)  $^  -g -o $@
 
 
