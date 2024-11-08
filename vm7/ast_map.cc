@@ -101,6 +101,28 @@ bool AstMap::add_branch(const vector<string> &keys, const Operand& operand, bool
   return true;
 }
 
+bool AstMap::add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite) {
+  int i=0, s = keys.size();  
+  string k;
+  AstMap *curr=this, *next;
+  for(int i=0; i<s-1; i++) {
+    k = keys[i]; //cout << "keys[" << i<< "]: " << keys[i] << "\n";
+    next =(AstMap*) curr->get_raw_ptr(k);
+    if(next==nullptr || next->type_ != OperandType::map_t) {
+      if(!curr->add(keys[i], make_unique<AstMap>(), overwrite)) {
+        return false;
+      }
+    }
+    curr =(AstMap*) curr->get_raw_ptr(k);
+  }
+  curr->add(keys.back(), move(vvptr), overwrite);
+  return true;
+}
+
+
+
+
+
 //------------------------------------- 
 Operand& AstMap::get_branch(const vector<string> &keys) {
   int i=0, s = keys.size();  

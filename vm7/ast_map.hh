@@ -40,6 +40,7 @@ public:
 
   //-------------------------------------------
   bool add_branch(const vector<string> &keys, const Operand& operand, bool overwrite=false) ;
+  bool add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite=false) ;
   Operand& get_branch(const vector<string> &keys) ;
   //-------------------------------------------
   bool has_key(const Operand &k) ;
