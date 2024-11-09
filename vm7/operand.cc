@@ -4,11 +4,11 @@
 #include <iostream>
 #include "operand.hh"
 #include "operand_tostr.hh"
+#include "ast_map.hh"
 
 
 Nil nil;
 Operand nil_operand=Operand();
-
 
 const string Operand::nil_str=string("nil");
   
@@ -236,6 +236,24 @@ bool Operand::add(const Operand &k, astexpr_u_ptr&& vvptr, bool overwrite) {
   auto &vptr = _get_astexpr_u_ptr();
   if(vptr==nil_ast_ptr) return false;
   return vptr->add(k, move(vptr), overwrite);
+}
+bool Operand::add_branch(const vector<string> &keys, const Operand& operand, bool overwrite)  {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return false;
+  auto ptr =(AstMap*) vptr.get();
+  return ptr->add_branch(keys, operand, overwrite);
+}
+bool Operand::add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite) {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return false;
+  auto ptr =(AstMap*) vptr.get();
+  return ptr->add_branch(keys, move(vvptr), overwrite);
+}
+Operand& Operand::get_branch(const vector<string> &keys) {
+  auto &vptr = _get_astexpr_u_ptr();
+  if(vptr==nil_ast_ptr) return nil_operand;
+  auto ptr =(AstMap*) vptr.get();
+  return ptr->get_branch(keys);
 }
 //-------------------------------------------
 bool Operand::set(const Operand &k, const AstExpr& v) {

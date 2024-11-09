@@ -25,6 +25,7 @@ int main() {
   cout << "\nv2: " << v2 <<  "\n";
   cout << "v2 type: " << v2.get_type() << "\n";
 
+
   auto& v2b = m1.get_branch(k2b);
   cout << "\nv2b: " << v2b <<  "\n";
 
@@ -35,10 +36,13 @@ int main() {
 
   auto& v1b = m1.get_branch(k1);
   cout << "\nv1b: " << v1b <<  " " << v1b.get_type() << "\n";
+//  v1b.add(Operand("three3"), Operand(333l));
+  v1b.add_branch({"three-three", "four", "five"}, Operand(333l));
 
   cout << "\n";
   cout << "m1: " << m1.get_type() << " " << m1 << "\n";
   cout << "\n";
+
 
 
   return 0;

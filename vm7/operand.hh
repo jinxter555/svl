@@ -101,6 +101,10 @@ public:
   bool add(const Operand &k, const AstExpr& v, bool overwrite=false) override final ;
   bool add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false) override final ;
   //-------------------------------------------
+  bool add_branch(const vector<string> &keys, const Operand& operand, bool overwrite=false) override final;
+  bool add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite=false) override final;
+  Operand& get_branch(const vector<string> &keys) override final;
+  //-------------------------------------------
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
