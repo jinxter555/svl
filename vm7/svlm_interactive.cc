@@ -185,12 +185,12 @@ std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std:
   //keys = {CONTEXT_UNIV};
   keys.insert(keys.end(), ptk.begin(), ptk.end());
   
-  std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+ // std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
 
   children = svlm_lang.root.get_branch(keys)._get_keys();
   children.push_back("");
 
-  std::cout << "children: "; for(auto k: children) { std::cout << k << ","; } std::cout << "\n";
+  // std::cout << "children: "; for(auto k: children) { std::cout << k << ","; } std::cout << "\n";
 
   return children;
 }
@@ -236,10 +236,9 @@ void SvlmInteractive::add_readline(const string& cmd) {
   //cout << "adding to: " <<  cmd << " readline\n";
 
   if(cmd == "!!print_tree") {
-    auto &univ = svlm_lang.root.get_branch({CONTEXT_UNIV});
-    svlm_lang.root.add_branch({rlsvlm_loc, cmd, CONTEXT_UNIV}, univ);
-    auto &univ2 = svlm_lang.root.get_branch({CONTEXT_UNIV});
-    cout << "universe2: " << univ << "\n\n";
+    //auto &univ = svlm_lang.root.get_branch({CONTEXT_UNIV});
+    auto univ_ptr = svlm_lang.root.AstMap::get_raw_ptr(string(CONTEXT_UNIV));
+    svlm_lang.root.add_branch({rlsvlm_loc, cmd, CONTEXT_UNIV}, unique_ptr<AstExpr>(univ_ptr));
   } else
     svlm_lang.root.add_branch({rlsvlm_loc, cmd}, nil_operand);
 

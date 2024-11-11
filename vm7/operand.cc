@@ -270,7 +270,9 @@ bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
 
 Operand& Operand::getv(const Operand &k)  {
   auto &ptr = _get_astexpr_u_ptr();
-  if(ptr == nil_ast_ptr) nil_operand;
+  if(ptr == nil_ast_ptr) return nil_operand;
+  if(ptr == nullptr) return nil_operand;
+  cout << "getv ptr: " <<  ptr << "\n";
   return ptr->getv(k);
 }
 astexpr_u_ptr& Operand::get_u_ptr(const Operand &k) {

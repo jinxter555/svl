@@ -5,10 +5,10 @@ TMPDIR = /dev/shm
 MAKE=make
 
 #objects = atom.o operand.o number.o printer_any.o entity.o list_entity.o map_entity.o operand_entity.o 
-objects = operand.o operand_tostr.o operand_math.o number.o ast.o ast_list.o ast_map.o operand_visitors.o   que_node.o # svlm_ast.o prompt.o svlm_scanner.o svlm_parser.o  svlm_interactive.o  my_helpers.o commandline.cc main.cc
+objects = operand.o operand_tostr.o operand_math.o number.o ast.o ast_list.o ast_map.o operand_visitors.o   que_node.o  svlm_ast.o prompt.o svlm_scanner.o svlm_parser.o  svlm_interactive.o  my_helpers.o commandline.cc main.cc
 headers  := (wildcard: *.hh)
 
-all: $(objects)  test_cc_d  # main.out
+all: $(objects)  test_cc_d  main.out
 #all: $(objects) 
 
 svlm_scanner.cc: svlm_lexer.l
@@ -18,7 +18,7 @@ svlm_parser.cc: svlm_grammar.y
 	bison -d svlm_grammar.y
 
 main.out: $(objects) 
-	$(CC) $^ -o main.out -lreadline
+	$(CC) $^ -o /dev/shm/main.out -lreadline
 
 $(objects): %.o: %.cc 
 	$(CC) -g -c $^ -o $@

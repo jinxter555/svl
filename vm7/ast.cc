@@ -14,6 +14,7 @@ ostream& operator<<(ostream& os, const AstExpr& e) {
 
 ostream& operator<<(ostream& os, const astexpr_u_ptr& ptr) {
   //cout << "ptr:";
-  ptr->print();
+  if(ptr==nullptr) { cout << "astexpr_u_ptr is null\n"; } 
+  else ptr->print();
   return os;
 }
