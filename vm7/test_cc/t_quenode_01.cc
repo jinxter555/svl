@@ -2,7 +2,7 @@
 
 int main() {
   QueNode node;
-  AstMap nil_map;
+  AstMap nil_map, m1;
 
   cout << nil_map << "\n";
 
@@ -26,9 +26,28 @@ int main() {
 
 
   node.add_branch(keys0, 55555l);
-  node.print_m();
+  m1.add_branch(keys0, 55555l);
+
+  cout << "node : " << node << "\n";
+  cout << "m1 : " << m1 << "\n";
+  cout << "\n";
+
   node.add_branch(keys1, 123l);
+  node.AstList::add(Operand("hello1111"));
+  node.AstList::add(Operand("world1111"));
+  m1.add_branch(keys1, 123l);
+
+  cout << "node : " << node << "\n";
+  cout << "m1 : " << m1 << "\n";
+  cout << "\n";
+
   node.print_m();
+  node.add_branch(keys2, 666l);
+  m1.add_branch(keys2, 666l);
+  node.print();
+  m1.print();
+  cout << "\n";
+
   node.add_branch(keys2, 456l, true);
   node.add_branch(vstr1, 8888l);
   //node.print_m();
@@ -37,6 +56,7 @@ int main() {
 
   node.add_branch(keys3, 789l);
   node.print_m();
+  cout << "\n";
 
   auto &ov0 = node.get_branch(keys0);
   cout << "ov0: " << ov0 << "\n";

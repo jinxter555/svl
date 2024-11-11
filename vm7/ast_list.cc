@@ -106,6 +106,7 @@ Operand AstList::to_str() const {
 }
 
 void AstList::print() const {
+  if(this==nullptr || type_ != OperandType::list_t) return;
   cout << to_str();
 }
 

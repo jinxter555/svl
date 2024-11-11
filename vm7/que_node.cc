@@ -15,11 +15,21 @@ astexpr_u_ptr QueNode::clone() {
 }
 
 QueNode::QueNode() {
-  AstList::type_ = OperandType::quenode_t;
-  AstMap::type_ = OperandType::quenode_t;
+  AstList::type_ = OperandType::list_t;
+  AstMap::type_ = OperandType::map_t;
 }
 
 
 //--------------------------------------------------------- 
-void QueNode::print_l() const { cout << AstList::to_str() << "\n"; }
-void QueNode::print_m() const { cout << AstMap::to_str() << "\n"; }
+void QueNode::print_l() const { 
+  cout << AstList::to_str(); 
+}
+void QueNode::print_m() const { cout << AstMap::to_str(); }
+void QueNode::print() const { 
+  if(map_.size()!=0 ) print_m(); 
+  if(list_.size()!=0 ) print_l(); 
+}
+ostream& operator<<(ostream& os, const QueNode& e) {
+  e.print();
+  return os;
+}

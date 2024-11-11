@@ -26,7 +26,8 @@ public:
   astexpr_u_ptr clone() ;
  // OperandEntity to_str() { return Operand("astnode123");}
   Operand get_type() { return Operand(OperandType::str_t);}
-  void print() { print_m(); print_l();};
+  void print() const ;
+  friend ostream& operator<<(ostream& os, const QueNode& e) ;
 
 };
 
