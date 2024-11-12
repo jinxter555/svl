@@ -24,7 +24,8 @@ Operand& AstMap::getv(const Operand &k)  {
   return(getv(k._get_str()));
 }
 Operand& AstMap::getv(const string &k)  {
-  if(this==nullptr || !has_key(k)){
+  //if(this==nullptr || !has_key(k)){
+  if(!has_key(k)){
     cerr << "getv key: " << k << " does not exist!\n";
     return nil_operand;
   }
@@ -66,7 +67,7 @@ bool AstMap::add(const Operand &k, const AstExpr& v, bool overwrite) {
   return add(k._get_str(), v, overwrite);
 }
 bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
-  if(this==nullptr) {return false;}
+  //if(this==nullptr) {return false;}
   if(!overwrite && has_key(k)) return false;
   map_[k] = move(v.clone());
   return true;
@@ -76,7 +77,7 @@ bool AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) {
   return add(k._get_str(), move(vptr), overwrite);
 }
 bool AstMap::add(const string &k, astexpr_u_ptr&& vptr, bool overwrite) {
-  if(this==nullptr) {return false;}
+  //if(this==nullptr) {return false;}
 
   if(has_key(k) && !overwrite) return false;
   map_[k] = move(vptr);
@@ -171,7 +172,8 @@ bool AstMap::has_key(const Operand &k)  {
   return has_key(k_str);
 }
 bool AstMap::has_key(const string  &k)  {
-  if(this==nullptr || type_ != OperandType::map_t) return false;
+ // if(this==nullptr || type_ != OperandType::map_t) return false;
+  if(type_ != OperandType::map_t) return false;
   if (map_.find(k) != map_.end())  {
     return true;
   }
@@ -179,8 +181,14 @@ bool AstMap::has_key(const string  &k)  {
 }
 //------------------------------------- 
 s_integer  AstMap::size() const { return map_.size(); }
-void AstMap::print() const { cout << to_str(); }
-Operand AstMap::get_type() const { return Operand(OperandType::map_t); }
+void AstMap::print() const { 
+  // if(this==nullptr) return;
+  cout << to_str(); 
+}
+Operand AstMap::get_type() const { 
+  return type_;
+  return Operand(OperandType::map_t); 
+}
 
 Operand AstMap::to_str() const {
 

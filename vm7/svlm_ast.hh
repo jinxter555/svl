@@ -10,7 +10,8 @@ protected:
 public:
   SvlmAst(const OperandType&t) : Tree(t) {};
 
-  void add_module();
+  void add_program(const Operand&);
+  void add_module(const Operand&);
   void add_class();
   void add_function();
   void add_mvar();
@@ -26,3 +27,11 @@ public:
   void run_evaluate();
   astexpr_u_ptr evaluate_last_line();
 };  
+
+
+class AstBinOp : public AstMap {
+public:
+  AstBinOp (std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOpCode op);
+
+
+};

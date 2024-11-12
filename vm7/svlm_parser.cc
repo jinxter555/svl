@@ -199,6 +199,10 @@ namespace vslast {
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_statement_list: // statement_list
+        value.copy< unique_ptr<AstList> > (YY_MOVE (that.value));
+        break;
+
       default:
         break;
     }
@@ -242,6 +246,10 @@ namespace vslast {
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
         value.move< std::string > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_statement_list: // statement_list
+        value.move< unique_ptr<AstList> > (YY_MOVE (s.value));
         break;
 
       default:
@@ -359,6 +367,10 @@ namespace vslast {
         value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_statement_list: // statement_list
+        value.YY_MOVE_OR_COPY< unique_ptr<AstList> > (YY_MOVE (that.value));
+        break;
+
       default:
         break;
     }
@@ -386,6 +398,10 @@ namespace vslast {
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
         value.move< std::string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_statement_list: // statement_list
+        value.move< unique_ptr<AstList> > (YY_MOVE (that.value));
         break;
 
       default:
@@ -417,6 +433,10 @@ namespace vslast {
         value.copy< std::string > (that.value);
         break;
 
+      case symbol_kind::S_statement_list: // statement_list
+        value.copy< unique_ptr<AstList> > (that.value);
+        break;
+
       default:
         break;
     }
@@ -443,6 +463,10 @@ namespace vslast {
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
         value.move< std::string > (that.value);
+        break;
+
+      case symbol_kind::S_statement_list: // statement_list
+        value.move< unique_ptr<AstList> > (that.value);
         break;
 
       default:
@@ -717,6 +741,10 @@ namespace vslast {
         yylhs.value.emplace< std::string > ();
         break;
 
+      case symbol_kind::S_statement_list: // statement_list
+        yylhs.value.emplace< unique_ptr<AstList> > ();
+        break;
+
       default:
         break;
     }
@@ -737,8 +765,14 @@ namespace vslast {
         {
           switch (yyn)
             {
+  case 2: // program_start: statement_list
+#line 73 "svlm_grammar.y"
+                    { slc->add_module(Operand("mname"));}
+#line 772 "svlm_parser.cc"
+    break;
 
-#line 742 "svlm_parser.cc"
+
+#line 776 "svlm_parser.cc"
 
             default:
               break;
@@ -938,31 +972,31 @@ namespace vslast {
   const signed char
   SvlmParser::yypact_[] =
   {
-      -1,     0,    -1
+      -1,     0,    -1,    -1
   };
 
   const signed char
   SvlmParser::yydefact_[] =
   {
-       2,     0,     1
+       3,     0,     2,     1
   };
 
   const signed char
   SvlmParser::yypgoto_[] =
   {
-      -1,    -1
+      -1,    -1,    -1
   };
 
   const signed char
   SvlmParser::yydefgoto_[] =
   {
-       0,     1
+       0,     1,     2
   };
 
   const signed char
   SvlmParser::yytable_[] =
   {
-       2
+       3
   };
 
   const signed char
@@ -974,19 +1008,19 @@ namespace vslast {
   const signed char
   SvlmParser::yystos_[] =
   {
-       0,    66,     0
+       0,    66,    67,     0
   };
 
   const signed char
   SvlmParser::yyr1_[] =
   {
-       0,    65,    66
+       0,    65,    66,    67
   };
 
   const signed char
   SvlmParser::yyr2_[] =
   {
-       0,     2,     0
+       0,     2,     1,     0
   };
 
 
@@ -1005,7 +1039,7 @@ namespace vslast {
   "NIL", "IDENT_STR", "STR", "DQSTR", "INT", "FLT", "ASSIGN", "AND", "OR",
   "EQL", "NEQL", "GT", "LT", "GTEQ", "LTEQ", "PLUS", "MINUS", "MULTIPLY",
   "DIVIDE", "PERCENT", "UMINUS", "NOT", "EXPONENT", "$accept",
-  "program_start", YY_NULLPTR
+  "program_start", "statement_list", YY_NULLPTR
   };
 #endif
 
@@ -1014,7 +1048,7 @@ namespace vslast {
   const signed char
   SvlmParser::yyrline_[] =
   {
-       0,    71,    71
+       0,    73,    73,    79
   };
 
   void
@@ -1099,9 +1133,9 @@ namespace vslast {
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 1103 "svlm_parser.cc"
+#line 1137 "svlm_parser.cc"
 
-#line 73 "svlm_grammar.y"
+#line 113 "svlm_grammar.y"
 
 
 //--------------------------------------------------- EOS end of statement

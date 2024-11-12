@@ -40,6 +40,7 @@ int main() {
   cout << "node : " << node << "\n";
   cout << "m1 : " << m1 << "\n";
   cout << "\n";
+  return 0;
 
   node.print_m();
   node.add_branch(keys2, 666l);

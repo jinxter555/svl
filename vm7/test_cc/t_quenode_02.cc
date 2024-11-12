@@ -15,6 +15,7 @@ int main() {
   vector<string> keys2b = {"hello", "one", "two"};
   vector<string> keys3 = {"hello", "one-one", "two", "three", "four", "Five"};
   vector<string> keys3b  = {"hello", "one-one", "two"};
+  vector<string> keys4  = {"clone"};
 
   vector<string> d1 = {"world", "one-one", "two"};
 
@@ -73,6 +74,14 @@ int main() {
   cout << "ov5 getkeys: ";
   auto keys = ov5._get_keys() ;
   std::cout << "one keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n\n";
+
+  node.add_branch(keys4, node.clone());
+  cout << "clone: " << node << "\n\n";
+  node.print();
+  cout << "\n\n";
+
+
+
 
 
 

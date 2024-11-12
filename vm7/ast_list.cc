@@ -106,11 +106,12 @@ Operand AstList::to_str() const {
 }
 
 void AstList::print() const {
-  if(this==nullptr || type_ != OperandType::list_t) return;
+  //if(this==nullptr) return;
   cout << to_str();
 }
 
 Operand AstList::get_type() const {
+  return type_;
   return Operand(OperandType::list_t);
 };
 

@@ -28,7 +28,7 @@ test_cc_d:
 
 
 clean:
-	rm -f out *.o *.gch *.out
+	rm -f out *.o *.gch 
 	rm -f svlm_scanner.cc
 	rm -f svlm_parser.cc
 	cd test_cc; make clean
