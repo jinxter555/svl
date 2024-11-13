@@ -843,12 +843,12 @@ return SvlmParser::token::FALSE;
 case 24:
 YY_RULE_SETUP
 #line 59 "svlm_lexer.l"
-yylval->emplace<int>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
+yylval->emplace<s_integer>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 60 "svlm_lexer.l"
-yylval->emplace<float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
+yylval->emplace<s_float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP

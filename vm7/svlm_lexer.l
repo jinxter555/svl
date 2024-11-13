@@ -55,8 +55,8 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 "not"        return SvlmParser::token::NOT;
 "true"        return SvlmParser::token::TRUE;
 "false"        return SvlmParser::token::FALSE;
-{integer}   yylval->emplace<int>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
-{float}     yylval->emplace<float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
+{integer}   yylval->emplace<s_integer>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
+{float}     yylval->emplace<s_float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
 {blank}     yylloc->step();
 {identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::STR;
 

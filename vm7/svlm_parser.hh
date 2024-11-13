@@ -387,18 +387,23 @@ namespace vslast {
     union union_type
     {
       // FLT
-      char dummy1[sizeof (float)];
+      char dummy1[sizeof (s_float)];
 
       // INT
-      char dummy2[sizeof (int)];
+      char dummy2[sizeof (s_integer)];
 
       // IDENT_STR
       // STR
       // DQSTR
       char dummy3[sizeof (std::string)];
 
+      // statement
+      // exp_eval
+      // literals
+      char dummy4[sizeof (unique_ptr<AstExpr>)];
+
       // statement_list
-      char dummy4[sizeof (unique_ptr<AstList>)];
+      char dummy5[sizeof (unique_ptr<AstList>)];
     };
 
     /// The size of the largest semantic type.
@@ -595,7 +600,10 @@ namespace vslast {
         S_EXPONENT = 64,                         // EXPONENT
         S_YYACCEPT = 65,                         // $accept
         S_program_start = 66,                    // program_start
-        S_statement_list = 67                    // statement_list
+        S_statement_list = 67,                   // statement_list
+        S_statement = 68,                        // statement
+        S_exp_eval = 69,                         // exp_eval
+        S_literals = 70                          // literals
       };
     };
 
@@ -633,17 +641,23 @@ namespace vslast {
         switch (this->kind ())
     {
       case symbol_kind::S_FLT: // FLT
-        value.move< float > (std::move (that.value));
+        value.move< s_float > (std::move (that.value));
         break;
 
       case symbol_kind::S_INT: // INT
-        value.move< int > (std::move (that.value));
+        value.move< s_integer > (std::move (that.value));
         break;
 
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
         value.move< std::string > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_exp_eval: // exp_eval
+      case symbol_kind::S_literals: // literals
+        value.move< unique_ptr<AstExpr> > (std::move (that.value));
         break;
 
       case symbol_kind::S_statement_list: // statement_list
@@ -674,13 +688,13 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, float&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, s_float&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const float& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const s_float& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -688,13 +702,13 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, int&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, s_integer&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const int& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const s_integer& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -709,6 +723,20 @@ namespace vslast {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, unique_ptr<AstExpr>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const unique_ptr<AstExpr>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -754,17 +782,23 @@ namespace vslast {
 switch (yykind)
     {
       case symbol_kind::S_FLT: // FLT
-        value.template destroy< float > ();
+        value.template destroy< s_float > ();
         break;
 
       case symbol_kind::S_INT: // INT
-        value.template destroy< int > ();
+        value.template destroy< s_integer > ();
         break;
 
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
         value.template destroy< std::string > ();
+        break;
+
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_exp_eval: // exp_eval
+      case symbol_kind::S_literals: // literals
+        value.template destroy< unique_ptr<AstExpr> > ();
         break;
 
       case symbol_kind::S_statement_list: // statement_list
@@ -871,18 +905,18 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, float v, location_type l)
+      symbol_type (int tok, s_float v, location_type l)
         : super_type (token_kind_type (tok), std::move (v), std::move (l))
 #else
-      symbol_type (int tok, const float& v, const location_type& l)
+      symbol_type (int tok, const s_float& v, const location_type& l)
         : super_type (token_kind_type (tok), v, l)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, int v, location_type l)
+      symbol_type (int tok, s_integer v, location_type l)
         : super_type (token_kind_type (tok), std::move (v), std::move (l))
 #else
-      symbol_type (int tok, const int& v, const location_type& l)
+      symbol_type (int tok, const s_integer& v, const location_type& l)
         : super_type (token_kind_type (tok), v, l)
 #endif
       {}
@@ -1638,14 +1672,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_INT (int v, location_type l)
+      make_INT (s_integer v, location_type l)
       {
         return symbol_type (token::INT, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_INT (const int& v, const location_type& l)
+      make_INT (const s_integer& v, const location_type& l)
       {
         return symbol_type (token::INT, v, l);
       }
@@ -1653,14 +1687,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_FLT (float v, location_type l)
+      make_FLT (s_float v, location_type l)
       {
         return symbol_type (token::FLT, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_FLT (const float& v, const location_type& l)
+      make_FLT (const s_float& v, const location_type& l)
       {
         return symbol_type (token::FLT, v, l);
       }
@@ -2224,9 +2258,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 0,     ///< Last index in yytable_.
-      yynnts_ = 3,  ///< Number of nonterminal symbols.
-      yyfinal_ = 3 ///< Termination state number.
+      yylast_ = 49,     ///< Last index in yytable_.
+      yynnts_ = 6,  ///< Number of nonterminal symbols.
+      yyfinal_ = 13 ///< Termination state number.
     };
 
 
@@ -2239,7 +2273,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2243 "svlm_parser.hh"
+#line 2277 "svlm_parser.hh"
 
 
 

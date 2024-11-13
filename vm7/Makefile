@@ -5,7 +5,8 @@ TMPDIR = /dev/shm
 MAKE=make
 
 #objects = atom.o operand.o number.o printer_any.o entity.o list_entity.o map_entity.o operand_entity.o 
-objects = operand.o operand_tostr.o operand_math.o number.o ast.o ast_list.o ast_map.o operand_visitors.o   que_node.o  svlm_ast.o prompt.o svlm_scanner.o svlm_parser.o  svlm_interactive.o  my_helpers.o commandline.cc main.cc
+objects = operand.o operand_tostr.o operand_math.o number.o ast.o ast_list.o ast_map.o operand_visitors.o  que_node.o  svlm_ast.o prompt.o \
+my_helpers.o commandline.o svlm_interactive.o main.o svlm_parser.o svlm_scanner.o 
 headers  := (wildcard: *.hh)
 
 all: $(objects)  test_cc_d  main.out

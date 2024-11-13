@@ -45,8 +45,8 @@ namespace vslast {
 %token DOT AT DOLLAR COLON COMMA SEMICOLON
 %token TRUE FALSE NIL
 %token <std::string> IDENT_STR STR DQSTR
-%token <int>  INT
-%token <float>     FLT
+%token <s_integer>  INT
+%token <s_float>     FLT
  
 %nterm EOS // end of statement
 %nterm <std::vector<std::string>> param_list 
@@ -64,7 +64,7 @@ namespace vslast {
 %right              EXPONENT
 
 %type <unique_ptr<AstList>> statement_list
-%type <unique_ptr<ExprAst>> module literals exp_eval
+%type <unique_ptr<AstExpr>> module literals exp_eval statement
 
 %start program_start
 
@@ -74,37 +74,52 @@ program_start
   ;
 
 statement_list
-//  : statement_List EOS statement {
-//  : statement_List EOS { }
-  :
+  : statement_list EOS statement {
+    if($1==nullptr) {std::cerr << "statement syntax error"; yyerrok; }
+    if($1!=nullptr && $3!=nullptr) $1->add($3);
+    $$ = $1;
+  }
+  | statement  {
+    auto new_list = std::make_unique<AstList>();
+    new_list->add(move($1));
+    $$ = move(new_list);
+  }
+
+  | statement_list error EOS statement { yyerrok; }
+  | %empty { $$ = std::make_unique<AstList>(); }
+  ;
+
+statement
+  : %empty {$$=nullptr;} // end of each statement
+  | exp_eval { $$ = move($1); }
   ;
 
 exp_eval
-  : literals
-  | exp_eval MULTIPLY exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::mul); }
-  | exp_eval DIVIDE exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::div); }
-  | exp_eval PLUS exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::plus); }
-  | exp_eval MINUS exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::minus); }
-  | exp_eval GT exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::gt); }
-  | exp_eval LT exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::lt); }
-  | exp_eval LTEQ exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::lteq); }
-  | exp_eval GTEQ exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::gteq); }
-  | exp_eval EQL exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::eql); }
-  | exp_eval NEQL exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::neql); }
-  | exp_eval AND exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::and_); }
-  | exp_eval OR exp_eval { $$ = make_unique<AstBinOP>($1, $3, AstOpCode::or_); }
-  | NOT exp_eval { $$ = make_unique<AstBinOP>($2, $2, AstOpCode::not_); }
+  : literals  { $$ = move($1); }
+  | exp_eval MULTIPLY exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::mul); }
+  | exp_eval DIVIDE exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::div); }
+  | exp_eval PLUS exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::plus); }
+  | exp_eval MINUS exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::minus); }
+  | exp_eval GT exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::gt); }
+  | exp_eval LT exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::lt); }
+  | exp_eval LTEQ exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::lteq); }
+  | exp_eval GTEQ exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::gteq); }
+  | exp_eval EQL exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::eql); }
+  | exp_eval NEQL exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::neql); }
+  | exp_eval AND exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::and_); }
+  | exp_eval OR exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::or_); }
+  | NOT exp_eval { $$ = make_unique<AstBinOp>(move($2), move($2), AstOpCode::not_); }
   ;
 
 
 
 literals
-  : INT { $$ = make_unique<OperandExprAst>(Operand($1)); }
-  | FLT { $$ = make_unique<OperandExprAst>(Operand($1)); }
-  | TRUE { $$ = make_unique<OperandExprAst>(Operand(true)); }
-  | FALSE { $$ = make_unique<OperandExprAst>(Operand(false)); }
+  : INT { $$ = make_unique<Operand>($1); }
+  | FLT { $$ = make_unique<Operand>($1); }
+  | TRUE { $$ = make_unique<Operand>(true); }
+  | FALSE { $$ = make_unique<Operand>(false); }
   //| COLON STR { $$ = std::make_unique<OperandExprAst>(Operand(Atom($2))); }
-  | DQSTR { $$ = make_unique<OperandExprAst>(Operand($1)); }
+  | DQSTR { $$ = make_unique<Operand>($1); }
   ;
 
 

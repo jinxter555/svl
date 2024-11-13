@@ -32,6 +32,4 @@ public:
 class AstBinOp : public AstMap {
 public:
   AstBinOp (std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOpCode op);
-
-
 };

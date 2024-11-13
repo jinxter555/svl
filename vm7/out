@@ -1,0 +1,66 @@
+bison -d svlm_grammar.y
+svlm_grammar.y:67.29-34: warning: symbol ‘module’ is used, but is not defined as a token and has no rules [-Wother]
+   67 | %type <unique_ptr<AstExpr>> module literals exp_eval statement
+      |                             ^~~~~~
+svlm_grammar.y: warning: 5 nonterminals useless in grammar [-Wother]
+svlm_grammar.y: warning: 2 rules useless in grammar [-Wother]
+svlm_grammar.y:51.8-10: warning: nonterminal useless in grammar: EOS [-Wother]
+   51 | %nterm EOS // end of statement
+      |        ^~~
+svlm_grammar.y:52.35-44: warning: nonterminal useless in grammar: param_list [-Wother]
+   52 | %nterm <std::vector<std::string>> param_list 
+      |                                   ^~~~~~~~~~
+svlm_grammar.y:53.22-26: warning: nonterminal useless in grammar: param [-Wother]
+   53 | %nterm <std::string> param
+      |                      ^~~~~
+svlm_grammar.y:55.8-15: warning: nonterminal useless in grammar: comments [-Wother]
+   55 | %nterm comments
+      |        ^~~~~~~~
+svlm_grammar.y:67.29-34: warning: nonterminal useless in grammar: module [-Wother]
+   67 | %type <unique_ptr<AstExpr>> module literals exp_eval statement
+      |                             ^~~~~~
+svlm_grammar.y:77.5-81.3: warning: rule useless in grammar [-Wother]
+   77 |   : statement_list EOS statement {
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+svlm_grammar.y:88.5-51: warning: rule useless in grammar [-Wother]
+   88 |   | statement_list error EOS statement { yyerrok; }
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+svlm_grammar.y: warning: 1 reduce/reduce conflict [-Wconflicts-rr]
+svlm_grammar.y: note: rerun with option '-Wcounterexamples' to generate conflict counterexamples
+svlm_grammar.y:93.5-24: warning: rule useless in parser due to conflicts [-Wother]
+   93 |   : %empty {$$=nullptr;} // end of each statement
+      |     ^~~~~~~~~~~~~~~~~~~~
+g++ -std=c++17  -ggdb -g -c svlm_parser.cc -o svlm_parser.o
+svlm_grammar.y: In member function ‘virtual int vslast::SvlmParser::parse()’:
+svlm_grammar.y:94:97: error: use of deleted function ‘std::unique_ptr<_Tp, _Dp>& std::unique_ptr<_Tp, _Dp>::operator=(const std::unique_ptr<_Tp, _Dp>&) [with _Tp = AstExpr; _Dp = std::default_delete<AstExpr>]’
+   94 |   | exp_eval
+      |                                                                                                 ^
+In file included from /usr/include/c++/11/memory:76,
+                 from lang.hh:10,
+                 from svlm_grammar.y:6:
+/usr/include/c++/11/bits/unique_ptr.h:469:19: note: declared here
+  469 |       unique_ptr& operator=(const unique_ptr&) = delete;
+      |                   ^~~~~~~~
+svlm_grammar.y:98:97: error: use of deleted function ‘std::unique_ptr<_Tp, _Dp>& std::unique_ptr<_Tp, _Dp>::operator=(const std::unique_ptr<_Tp, _Dp>&) [with _Tp = AstExpr; _Dp = std::default_delete<AstExpr>]’
+   98 |   : literals
+      |                                                                                                 ^
+In file included from /usr/include/c++/11/memory:76,
+                 from lang.hh:10,
+                 from svlm_grammar.y:6:
+/usr/include/c++/11/bits/unique_ptr.h:469:19: note: declared here
+  469 |       unique_ptr& operator=(const unique_ptr&) = delete;
+      |                   ^~~~~~~~
+/usr/include/c++/11/bits/unique_ptr.h: In instantiation of ‘typename std::_MakeUniq<_Tp>::__single_object std::make_unique(_Args&& ...) [with _Tp = AstBinOp; _Args = {std::unique_ptr<AstExpr, std::default_delete<AstExpr> >&, std::unique_ptr<AstExpr, std::default_delete<AstExpr> >&, AstOpCode}; typename std::_MakeUniq<_Tp>::__single_object = std::unique_ptr<AstBinOp, std::default_delete<AstBinOp> >]’:
+svlm_grammar.y:99:99:   required from here
+/usr/include/c++/11/bits/unique_ptr.h:962:30: error: use of deleted function ‘std::unique_ptr<_Tp, _Dp>::unique_ptr(const std::unique_ptr<_Tp, _Dp>&) [with _Tp = AstExpr; _Dp = std::default_delete<AstExpr>]’
+  962 |     { return unique_ptr<_Tp>(new _Tp(std::forward<_Args>(__args)...)); }
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/11/bits/unique_ptr.h:468:7: note: declared here
+  468 |       unique_ptr(const unique_ptr&) = delete;
+      |       ^~~~~~~~~~
+In file included from svlm_grammar.y:26,
+                 from svlm_parser.cc:51:
+svlm_ast.hh:34:38: note:   initializing argument 1 of ‘AstBinOp::AstBinOp(std::unique_ptr<AstExpr>, std::unique_ptr<AstExpr>, AstOpCode)’
+   34 |   AstBinOp (std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOpCode op);
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~^
+make: *** [Makefile:25: svlm_parser.o] Error 1
