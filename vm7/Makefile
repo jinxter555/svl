@@ -9,7 +9,7 @@ objects = operand.o operand_tostr.o operand_math.o number.o ast.o ast_list.o ast
 my_helpers.o commandline.o svlm_interactive.o main.o svlm_parser.o svlm_scanner.o 
 headers  := (wildcard: *.hh)
 
-all: $(objects)  test_cc_d  main.out
+all: svlm_scanner.cc svlm_parser.cc $(objects)  test_cc_d  main.out 
 #all: $(objects) 
 
 svlm_scanner.cc: svlm_lexer.l

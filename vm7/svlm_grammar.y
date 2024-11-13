@@ -76,8 +76,8 @@ program_start
 statement_list
   : statement_list EOS statement {
     if($1==nullptr) {std::cerr << "statement syntax error"; yyerrok; }
-    if($1!=nullptr && $3!=nullptr) $1->add($3);
-    $$ = $1;
+    if($1!=nullptr && $3!=nullptr) $1->add(move($3));
+    $$ = move($1);
   }
   | statement  {
     auto new_list = std::make_unique<AstList>();
@@ -122,8 +122,12 @@ literals
   | DQSTR { $$ = make_unique<Operand>($1); }
   ;
 
-
-
+//--------------------------------------------------- EOS end of statement
+EOS
+  : SEMICOLON
+  | EOL
+  | COMMENT2
+  ;
 
 %%
 

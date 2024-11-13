@@ -603,7 +603,8 @@ namespace vslast {
         S_statement_list = 67,                   // statement_list
         S_statement = 68,                        // statement
         S_exp_eval = 69,                         // exp_eval
-        S_literals = 70                          // literals
+        S_literals = 70,                         // literals
+        S_EOS = 71                               // EOS
       };
     };
 
@@ -2031,7 +2032,7 @@ switch (yykind)
 
 #if YYDEBUG
     // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-    static const signed char yyrline_[];
+    static const unsigned char yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r) const;
     /// Print the state stack on the debug stream.
@@ -2258,8 +2259,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 49,     ///< Last index in yytable_.
-      yynnts_ = 6,  ///< Number of nonterminal symbols.
+      yylast_ = 62,     ///< Last index in yytable_.
+      yynnts_ = 7,  ///< Number of nonterminal symbols.
       yyfinal_ = 13 ///< Termination state number.
     };
 
@@ -2273,7 +2274,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2277 "svlm_parser.hh"
+#line 2278 "svlm_parser.hh"
 
 
 

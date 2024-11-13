@@ -1,0 +1,12 @@
+module mhello1
+$what = 123
+$hello = 555
+print "what is it "
+print $what
+print "\n"
+#p1();
+return
+def p1() do
+  print "hello world\n"
+end
+
