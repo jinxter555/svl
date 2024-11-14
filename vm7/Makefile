@@ -21,7 +21,7 @@ svlm_parser.cc: svlm_grammar.y
 main.out: $(objects) 
 	$(CC) $^ -o /dev/shm/main.out -lreadline
 
-$(objects): %.o: %.cc 
+$(objects): %.o: %.cc
 	$(CC) -g -c $^ -o $@
 
 test_cc_d:

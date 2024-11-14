@@ -1,4 +1,5 @@
 #include "svlm_ast.hh"
+#include "svlm_interactive.hh"
 
 /*
 #define rl_loc "readline", "commands"
@@ -19,11 +20,33 @@ astexpr_u_ptr SvlmAst::evaluate_last_line() {
 #define MOD "modules"
 void SvlmAst::add_module(const Operand& n) {
   root.add_branch({MOD}, n);
-
+}
+void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
+  cout << "adding mod!" << MOD << "\n";
+  cout << "code: " << c << " type: " << c->get_type() << "\n";
+  cout << "\n";
+  auto nm = make_unique<AstMap>();
+  nm->add(n, move(c));
+  root.add_branch({CONTEXT_UNIV, MOD}, move(nm));
+  //cout << "root: " << root << "\n";
 }
 
 AstBinOp::AstBinOp(std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOpCode op) {
   add(string("left"), move(l));
   add(string("right"), move(r));
   add(string("op"), Operand(op));
+}
+void AstBinOp::print() {
+  cout << "AstBinOp:\n";
+  auto &l = getv(Operand("left"));
+  auto &r = getv(Operand("right"));
+  auto &o= getv(string("op"));
+  l.print();
+  o.print();
+  r.print();
+}
+Operand AstBinOp::to_str() const { 
+  //return  l.to_str() + o.to_str() +  r.to_str();
+  //const Operand &l = getv(Operand("left"));
+  return AstMap::to_str();
 }

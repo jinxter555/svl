@@ -34,6 +34,7 @@ namespace vslast {
 #define yylex(x,y) scanner->lex(x,y)
 
 
+//%type <unique_ptr<AstExpr>> module literals exp_eval statement
 }
 
 
@@ -63,20 +64,26 @@ namespace vslast {
 %precedence         NOT
 %right              EXPONENT
 
-%type <unique_ptr<AstList>> statement_list
-%type <unique_ptr<AstExpr>> module literals exp_eval statement
+%type <list_u_ptr> statement_list
+%type <astexpr_u_ptr> module literals exp_eval statement
 
 %start program_start
 
 %%
 program_start
-  :  statement_list { slc->add_module(Operand("mname"));}
+  :  statement_list { 
+    //slc->add_module(Operand("mname"));
+    cout << "program start:" << *$1 << "\n";
+    $1->print();
+    cout << "\n";
+    slc->add_code(Operand("mname"), move($1));
+    }
   ;
 
 statement_list
   : statement_list EOS statement {
-    if($1==nullptr) {std::cerr << "statement syntax error"; yyerrok; }
-    if($1!=nullptr && $3!=nullptr) $1->add(move($3));
+    if($1==nullptr) { yyerrok; }
+    if($1!=nullptr && $3!=nullptr) { $1->add(move($3)); }
     $$ = move($1);
   }
   | statement  {
@@ -84,7 +91,6 @@ statement_list
     new_list->add(move($1));
     $$ = move(new_list);
   }
-
   | statement_list error EOS statement { yyerrok; }
   | %empty { $$ = std::make_unique<AstList>(); }
   ;
@@ -126,7 +132,8 @@ literals
 EOS
   : SEMICOLON
   | EOL
-  | COMMENT2
+//  | COMMENT3
+//  | YYEOF
   ;
 
 %%

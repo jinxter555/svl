@@ -19,8 +19,8 @@ private:
   SvlmAst svlm_lang; // static or not static to be determined
   SvlmAst slc;
   vslast::SvlmScanner svlm_scanner { std::cin, std::cerr };
-  //vslast::SvlmParser svlm_parser { &svlm_scanner , &svlm_lang };
-  vslast::SvlmParser svlm_parser { &svlm_scanner , &slc};
+  vslast::SvlmParser svlm_parser { &svlm_scanner , &svlm_lang };
+  //vslast::SvlmParser svlm_parser { &svlm_scanner , &slc};
 public:
   SvlmInteractive(const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
   void accept_prompt(const std::string&l) override; // readyline prompt

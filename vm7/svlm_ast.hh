@@ -17,6 +17,7 @@ public:
   void add_mvar();
   void add_ovar();
   void add_lvar();
+  void add_code(const Operand&, unique_ptr<AstExpr>);
 //  void add_readline_cmds(const string& cmd);
 //  vector<string> get_readline_cmds(const string& cmd);
 
@@ -31,5 +32,8 @@ public:
 
 class AstBinOp : public AstMap {
 public:
-  AstBinOp (std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOpCode op);
+  AstBinOp (unique_ptr<AstExpr> l, unique_ptr<AstExpr> r, AstOpCode op);
+  Operand to_str() const override;
+  Operand get_type() const override { return OperandType::map_t;};
+  void print() ;
 };

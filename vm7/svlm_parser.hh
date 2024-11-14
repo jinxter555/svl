@@ -386,24 +386,24 @@ namespace vslast {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // statement
+      // exp_eval
+      // literals
+      char dummy1[sizeof (astexpr_u_ptr)];
+
+      // statement_list
+      char dummy2[sizeof (list_u_ptr)];
+
       // FLT
-      char dummy1[sizeof (s_float)];
+      char dummy3[sizeof (s_float)];
 
       // INT
-      char dummy2[sizeof (s_integer)];
+      char dummy4[sizeof (s_integer)];
 
       // IDENT_STR
       // STR
       // DQSTR
-      char dummy3[sizeof (std::string)];
-
-      // statement
-      // exp_eval
-      // literals
-      char dummy4[sizeof (unique_ptr<AstExpr>)];
-
-      // statement_list
-      char dummy5[sizeof (unique_ptr<AstList>)];
+      char dummy5[sizeof (std::string)];
     };
 
     /// The size of the largest semantic type.
@@ -641,6 +641,16 @@ namespace vslast {
       {
         switch (this->kind ())
     {
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_exp_eval: // exp_eval
+      case symbol_kind::S_literals: // literals
+        value.move< astexpr_u_ptr > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_statement_list: // statement_list
+        value.move< list_u_ptr > (std::move (that.value));
+        break;
+
       case symbol_kind::S_FLT: // FLT
         value.move< s_float > (std::move (that.value));
         break;
@@ -653,16 +663,6 @@ namespace vslast {
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
         value.move< std::string > (std::move (that.value));
-        break;
-
-      case symbol_kind::S_statement: // statement
-      case symbol_kind::S_exp_eval: // exp_eval
-      case symbol_kind::S_literals: // literals
-        value.move< unique_ptr<AstExpr> > (std::move (that.value));
-        break;
-
-      case symbol_kind::S_statement_list: // statement_list
-        value.move< unique_ptr<AstList> > (std::move (that.value));
         break;
 
       default:
@@ -684,6 +684,34 @@ namespace vslast {
 #else
       basic_symbol (typename Base::kind_type t, const location_type& l)
         : Base (t)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, astexpr_u_ptr&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const astexpr_u_ptr& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, list_u_ptr&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const list_u_ptr& v, const location_type& l)
+        : Base (t)
+        , value (v)
         , location (l)
       {}
 #endif
@@ -730,34 +758,6 @@ namespace vslast {
       {}
 #endif
 
-#if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, unique_ptr<AstExpr>&& v, location_type&& l)
-        : Base (t)
-        , value (std::move (v))
-        , location (std::move (l))
-      {}
-#else
-      basic_symbol (typename Base::kind_type t, const unique_ptr<AstExpr>& v, const location_type& l)
-        : Base (t)
-        , value (v)
-        , location (l)
-      {}
-#endif
-
-#if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, unique_ptr<AstList>&& v, location_type&& l)
-        : Base (t)
-        , value (std::move (v))
-        , location (std::move (l))
-      {}
-#else
-      basic_symbol (typename Base::kind_type t, const unique_ptr<AstList>& v, const location_type& l)
-        : Base (t)
-        , value (v)
-        , location (l)
-      {}
-#endif
-
       /// Destroy the symbol.
       ~basic_symbol ()
       {
@@ -782,6 +782,16 @@ namespace vslast {
         // Value type destructor.
 switch (yykind)
     {
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_exp_eval: // exp_eval
+      case symbol_kind::S_literals: // literals
+        value.template destroy< astexpr_u_ptr > ();
+        break;
+
+      case symbol_kind::S_statement_list: // statement_list
+        value.template destroy< list_u_ptr > ();
+        break;
+
       case symbol_kind::S_FLT: // FLT
         value.template destroy< s_float > ();
         break;
@@ -794,16 +804,6 @@ switch (yykind)
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
         value.template destroy< std::string > ();
-        break;
-
-      case symbol_kind::S_statement: // statement
-      case symbol_kind::S_exp_eval: // exp_eval
-      case symbol_kind::S_literals: // literals
-        value.template destroy< unique_ptr<AstExpr> > ();
-        break;
-
-      case symbol_kind::S_statement_list: // statement_list
-        value.template destroy< unique_ptr<AstList> > ();
         break;
 
       default:
@@ -2259,7 +2259,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 62,     ///< Last index in yytable_.
+      yylast_ = 64,     ///< Last index in yytable_.
       yynnts_ = 7,  ///< Number of nonterminal symbols.
       yyfinal_ = 13 ///< Termination state number.
     };

@@ -1,4 +1,5 @@
 #include "ast.hh"
+#include "operand.hh"
 
 //--------------------------------------------------------- 
 
@@ -8,6 +9,7 @@ AstExpr::AstExpr() : Primordial(OperandType::nil_t) {}
 AstExpr::AstExpr(const OperandType t) : Primordial(t) {}
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const AstExpr& e) {
+//  if(e == nil_operand)  cerr << "AstExpr is nil"; else e.print();
   e.print();
   return os;
 }
