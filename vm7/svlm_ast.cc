@@ -38,13 +38,7 @@ AstBinOp::AstBinOp(std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOp
 }
 void AstBinOp::print() {
   cout << "AstBinOp:\n";
-  return;
-  auto &l = getv(Operand("left"));
-  auto &r = getv(Operand("right"));
-  auto &o= getv(string("op"));
-  l.print();
-  o.print();
-  r.print();
+  cout << to_str();
 }
 Operand AstBinOp::to_str() const { 
   auto &l = (*this)["left"];

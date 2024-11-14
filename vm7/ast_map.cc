@@ -41,6 +41,7 @@ Operand& AstMap::operator[] (const Operand& k) {
 }
 const Operand& AstMap::operator[] (const Operand &k) const {
   const string i = k._get_str();
+  if(!has_key(i)) return nil_operand;
   return map_.at(i); 
 }
 
@@ -180,11 +181,11 @@ bool AstMap::set(const string &k, astexpr_u_ptr&& vptr) {
   return  true;
 }
 //------------------------------------- 
-bool AstMap::has_key(const Operand &k)  {
+bool AstMap::has_key(const Operand &k)  const {
   string k_str = k._get_str();
   return has_key(k_str);
 }
-bool AstMap::has_key(const string  &k)  {
+bool AstMap::has_key(const string  &k)  const {
  // if(this==nullptr || type_ != OperandType::map_t) return false;
   if(type_ != OperandType::map_t) return false;
   if (map_.find(k) != map_.end())  {
@@ -192,6 +193,7 @@ bool AstMap::has_key(const string  &k)  {
   }
   return false;
 }
+
 //------------------------------------- 
 s_integer  AstMap::size() const { return map_.size(); }
 void AstMap::print() const { 

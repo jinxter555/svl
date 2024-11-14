@@ -54,6 +54,7 @@ public:
   string _to_str() const ;
   OperandType _get_type() const;
   AstExpr* _get_astexpr_raw_ptr();
+  AstExpr* _get_astexpr_raw_ptr() const;
   vector<string> _get_keys() const override final;
   //-------
   Operand get_str() const;
@@ -69,6 +70,7 @@ public:
   AstExpr *get_raw_ptr(const string &k);
   astexpr_u_ptr& get_u_ptr(const Operand &k) override final;
   astexpr_u_ptr& get_u_ptr();
+  const   astexpr_u_ptr& get_u_ptr() const;
   astexpr_u_ptr& _get_astexpr_u_ptr();
 
   //--------------------------------------------------------- 

@@ -103,12 +103,12 @@ Operand& Operand::getv() {
 
 //--------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
+  return const_cast<Operand&>(as_const(*this)[k]); 
+}
+const Operand& Operand::operator[] (const Operand &k) const {
   auto ptr = _get_astexpr_raw_ptr();
   if(ptr==nullptr) return nil_operand;
   return (*ptr)[k];
-}
-const Operand& Operand::operator[] (const Operand &k) const {
-  return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
 }
 //-----------------------------------------------------------------------
 AstExpr *Operand::get_raw_ptr(const Operand &k) {
@@ -132,6 +132,9 @@ AstExpr *Operand::get_raw_ptr(const string &k) {
 }
 
 AstExpr* Operand::_get_astexpr_raw_ptr() {
+  return visit(GetOperand_astexpr_ptr(), value_);
+}
+AstExpr* Operand::_get_astexpr_raw_ptr() const {
   return visit(GetOperand_astexpr_ptr(), value_);
 }
 

@@ -19,7 +19,6 @@ public:
 
   Operand& operator[] (const Operand& k) override final;
   const Operand& operator[] (const Operand &k) const override final;
-  Operand& operator[] (const string& k) ;
 
   //-------------------------------------------
   astexpr_u_ptr& get_u_ptr(const Operand &k) override final;
@@ -47,8 +46,8 @@ public:
   bool add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite=false) override final;
   Operand& get_branch(const vector<string> &keys) override final;
   //-------------------------------------------
-  bool has_key(const Operand &k) ;
-  bool has_key(const string &k) ;
+  bool has_key(const Operand &k) const;
+  bool has_key(const string &k) const ;
 
   s_integer size() const override;
   Operand to_str() const override ;
