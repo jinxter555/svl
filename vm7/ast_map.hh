@@ -19,6 +19,7 @@ public:
 
   Operand& operator[] (const Operand& k) override final;
   const Operand& operator[] (const Operand &k) const override final;
+  Operand& operator[] (const string& k) ;
 
   //-------------------------------------------
   astexpr_u_ptr& get_u_ptr(const Operand &k) override final;

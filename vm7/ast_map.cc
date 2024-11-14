@@ -37,11 +37,13 @@ Operand& AstMap::getv(const string &k)  {
 }
 //--------------------------------------
 Operand& AstMap::operator[] (const Operand& k) {
-  return map_[k._get_str()];
-}
-const Operand& AstMap::operator[] (const Operand &k) const {
   return const_cast<Operand&>(as_const(*this)[k._get_str()]); 
 }
+const Operand& AstMap::operator[] (const Operand &k) const {
+  const string i = k._get_str();
+  return map_.at(i); 
+}
+
 //--------------------------------------
 
 astexpr_u_ptr& AstMap::get_u_ptr(const Operand &k) {

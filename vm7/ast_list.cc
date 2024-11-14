@@ -24,17 +24,19 @@ astexpr_u_ptr AstList::clone() const {
 }
 //--------------------------------------
 Operand& AstList::operator[] (const Operand& k) {
-  return list_[k._get_int()];
-
+  return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
 }
 const Operand& AstList::operator[] (const Operand &k) const {
-  return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
+  int index = k._get_int();
+  if(index > list_.size() || index < 0) return nil_operand;
+  return list_[index]; 
 }
 
 Operand& AstList::operator[] (int index) { 
   return const_cast<Operand&>(as_const(*this)[index]); 
 }
 const Operand& AstList::operator[] (int index) const { 
+  cout << "i am in const []\n";
   if(index > list_.size() || index < 0) return nil_operand;
   return list_[index]; 
 }
