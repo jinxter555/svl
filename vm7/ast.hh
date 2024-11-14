@@ -20,6 +20,10 @@ public:
   virtual bool add(astexpr_u_ptr &&vptr) =0;  // for list
 
   //-------------------------------------------
+  virtual Operand& operator[] (const Operand& k) =0;
+  virtual const Operand& operator[] (const Operand &k) const =0;
+
+  //-------------------------------------------
   virtual bool add(const Operand &k, const AstExpr& v, bool overwrite=false)=0;
 
   virtual bool add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false)=0;

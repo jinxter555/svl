@@ -1,3 +1,4 @@
+#include <utility>
 #include "ast_map.hh"
 #include "operand.hh"
 
@@ -20,6 +21,8 @@ Operand& AstMap::getv()  {
   return nil_operand;
 }
 
+
+
 Operand& AstMap::getv(const Operand &k)  {
   return(getv(k._get_str()));
 }
@@ -32,6 +35,14 @@ Operand& AstMap::getv(const string &k)  {
   return  map_[k];
 
 }
+//--------------------------------------
+Operand& AstMap::operator[] (const Operand& k) {
+  return map_[k._get_str()];
+}
+const Operand& AstMap::operator[] (const Operand &k) const {
+  return const_cast<Operand&>(as_const(*this)[k._get_str()]); 
+}
+//--------------------------------------
 
 astexpr_u_ptr& AstMap::get_u_ptr(const Operand &k) {
   auto k_str = k._get_str();

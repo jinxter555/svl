@@ -1,5 +1,5 @@
-#include "ast_list.hh"
 #include "operand.hh"
+#include "ast_list.hh"
 
 
 
@@ -22,6 +22,23 @@ astexpr_u_ptr AstList::clone() const {
     new_list->list_.push_back(e.clone()); 
   return new_list;
 }
+//--------------------------------------
+Operand& AstList::operator[] (const Operand& k) {
+  return list_[k._get_int()];
+
+}
+const Operand& AstList::operator[] (const Operand &k) const {
+  return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
+}
+
+Operand& AstList::operator[] (int index) { 
+  return const_cast<Operand&>(as_const(*this)[index]); 
+}
+const Operand& AstList::operator[] (int index) const { 
+  if(index > list_.size() || index < 0) return nil_operand;
+  return list_[index]; 
+}
+
 //--------------------------------------
 Operand& AstList::getv(const Operand &k)  {
   //cout << "1getv k(" << k << ")";

@@ -1,4 +1,6 @@
 #include "ast.hh"
+#include "operand.hh"
+#include <utility>
 
 class AstList: public AstExpr{
 protected:
@@ -16,6 +18,14 @@ public:
 
   AstExpr *get_raw_ptr(const Operand &k) override final;
   AstExpr *get_raw_ptr(int i);
+
+
+  //-------------------------------------------
+  Operand& operator[] (const Operand& k) override final;
+  const Operand& operator[] (const Operand &k) const override final;
+
+  Operand& operator[] (int index) ;
+  const Operand& operator[] (int index) const ;
 
   //-------------------------------------------
   bool add(const AstExpr &v) override final ;  // for list

@@ -2,6 +2,7 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <utility>
 #include "operand.hh"
 #include "operand_tostr.hh"
 #include "ast_map.hh"
@@ -98,6 +99,16 @@ astexpr_u_ptr Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
 //-----------------------------------------------------------------------
 Operand& Operand::getv() {
   return *this;
+}
+
+//--------------------------------------
+Operand& Operand::operator[] (const Operand& k) {
+  auto ptr = _get_astexpr_raw_ptr();
+  if(ptr==nullptr) return nil_operand;
+  return (*ptr)[k];
+}
+const Operand& Operand::operator[] (const Operand &k) const {
+  return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
 }
 //-----------------------------------------------------------------------
 AstExpr *Operand::get_raw_ptr(const Operand &k) {
