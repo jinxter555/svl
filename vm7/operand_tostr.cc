@@ -28,7 +28,9 @@ Operand OperandToStringVisitor::operator()(OperandType t) const {
   case OperandType::atom_t: outstr ="atom_t"; break;
   case OperandType::list_t: outstr ="list_t"; break;
   case OperandType::map_t:  outstr ="map_t"; break;
-  case OperandType::ast_op_t:  outstr ="ast_opt_t"; break;
+  case OperandType::uptr_t:  outstr ="uptr_t"; break;
+  case OperandType::ast_op_t:  outstr ="ast_op_t"; break;
+  case OperandType::ast_binop_t:  outstr ="ast_binop_t"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
   //case OperandType::any_t:  outstr ="any_t"; break;
   default: outstr ="i have forgotten to add. type unknown"; break;

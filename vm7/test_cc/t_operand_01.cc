@@ -1,3 +1,4 @@
+#include <cassert>
 #include "../operand.hh"
 
 int main() {
@@ -27,6 +28,12 @@ int main() {
   cout << "oref1 type: " << oref1.get_type()<< "\n";
   cout << "oref1b : " << oref1b<< "\n";
   cout << "oref1b type : " << oref1b->get_type() << "\n";
+
+  Operand oc1(AstOpCode::mul);
+  cout << "oc1: " <<  oc1  << "\n";
+  cout << "oc1: " <<  oc1.get_opcode()  << "\n";
+  //Operand oc2() = oc1._get_opcode();
+
 
   return 0;
 }

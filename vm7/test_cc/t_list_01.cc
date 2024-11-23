@@ -1,3 +1,4 @@
+#include <cassert>
 #include "../operand.hh"
 #include "../ast_list.hh"
 
@@ -12,10 +13,14 @@ int main() {
   AstList l1, l2;
 
   cout << "i1 : " << i1 << "\n";
+  cout << "i1.clone() : " << i1.clone() << "\n";
   cout << "l1 type: " << l1.get_type() << "\n";
   cout << "l1: " << l1 << "\n";
 
-  l1.add(i1);
+
+
+  assert(l1.add(i1)==true);
+
   l1.add(i2);
   l1.add(i3);
   l2.add(l1);
@@ -31,8 +36,10 @@ int main() {
   cout << "l2 type: " << l2.get_type() << "\n";
   cout << "l2[1]: " << l2.getv(1) << "\n";
   cout << "l2: " << l2 << "\n\n";
-  const Operand& l3 = l2.getv(1);//.clone_val();
-  cout << "l3: " << l3 << "\n";
+  const Operand& ov2 = l2.getv(1);//.clone_val();
+  const Operand& ov2b = l2[1];//.clone_val();
+  cout << "ov2: " << ov2 << "\n";
+  cout << "ov2b: " << ov2b << "\n";
   // auto i5 = i4 + i4 + i4; // pure function auto  won't compile
   cout << "l1: " << l1 << "\n";
 

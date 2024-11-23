@@ -7,7 +7,10 @@
 
 AstList nil_list;
 
-AstList::AstList() : AstExpr(OperandType::list_t) {}
+AstList::AstList() 
+: AstExpr(OperandType::list_t) 
+//, myself(this) 
+{}
 
 AstList::AstList(const AstList& l) {
   for(auto &e : l.list_) {
@@ -21,6 +24,9 @@ astexpr_u_ptr AstList::clone() const {
   for(auto &e : list_) 
     new_list->list_.push_back(e.clone()); 
   return new_list;
+}
+Operand AstList::clone_val() const {
+  return Operand();
 }
 //--------------------------------------
 Operand& AstList::operator[] (const Operand& k) {
@@ -36,7 +42,6 @@ Operand& AstList::operator[] (int index) {
   return const_cast<Operand&>(as_const(*this)[index]); 
 }
 const Operand& AstList::operator[] (int index) const { 
-  cout << "i am in const []\n";
   if(index > list_.size() || index < 0) return nil_operand;
   return list_[index]; 
 }
@@ -47,11 +52,9 @@ Operand& AstList::getv(const Operand &k)  {
   return getv(k._get_int());
 }
 Operand& AstList::getv(int i)  {
-  //cout << "1getv(" << i << ")\n";
-  //return nil_operand;
   if(list_[i] == nil_ast_ptr) return nil_operand;
-  //cout << "2getv(" << i << ")";
-  return list_[i].getv();
+  //return list_[i].getv();
+  return list_[i];
 }
 Operand& AstList::getv()  {
   cerr << "calling AstList::getv()!\n";
@@ -60,20 +63,37 @@ Operand& AstList::getv()  {
 
 vector<string> AstList::_get_keys() const {return {}; }
 //--------------------------------------
+astexpr_u_ptr& AstList::get_u_ptr_nc() { 
+  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
+}
+const astexpr_u_ptr& AstList::get_u_ptr() const {
+  cerr << "I should NOT be here in  AstList::get_u_ptr()\n";
+  return nil_ast_ptr;
+}
 
-astexpr_u_ptr& AstList::get_u_ptr(const Operand &k) {
+astexpr_u_ptr& AstList::get_u_ptr_nc(const Operand&k) { 
+  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr(k))); 
+}
+
+const astexpr_u_ptr& AstList::get_u_ptr(const Operand &k) const {
   return get_u_ptr(k._get_int());
 }
-astexpr_u_ptr& AstList::get_u_ptr(int i) {
-  return list_[i]._get_astexpr_u_ptr();
+const astexpr_u_ptr& AstList::get_u_ptr(int i) const {
+  return list_[i].get_u_ptr();
 }
 
-AstExpr *AstList::get_raw_ptr(const Operand &k) {
+
+//--------------------------------------
+AstExpr *AstList::get_raw_ptr() const {
+  return (AstList*)this;
+}
+
+AstExpr *AstList::get_raw_ptr(const Operand &k) const {
   return get_raw_ptr(k._get_int());
 }
-AstExpr *AstList::get_raw_ptr(int i) {
+AstExpr *AstList::get_raw_ptr(int i) const {
    if(i > list_.size() || i < 0) return nullptr;
-  return list_[i]._get_astexpr_raw_ptr();
+  return list_[i].get_raw_ptr();
 
 }
 //--------------------------------------
@@ -83,6 +103,7 @@ bool AstList::add(const AstExpr& v)  {
 }
 
 bool AstList::add(astexpr_u_ptr &&vptr) {
+  if(vptr==nullptr) return false;
   list_.push_back(move(vptr));
   return true;
 }
@@ -135,5 +156,11 @@ Operand AstList::get_type() const {
 };
 
 astexpr_u_ptr AstList::evaluate(astexpr_u_ptr &ctxt) {
-  return nullptr;
+  int i, s = size();
+  list_u_ptr result_list = make_unique<AstList>();
+  cout << "in list eval!\n";
+  for(i=0; i<s; i++) {
+    result_list->add(list_[i].evaluate(ctxt));
+  }
+  return result_list;
 }

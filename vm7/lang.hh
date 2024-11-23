@@ -82,6 +82,8 @@ enum class OperandType {
   ast_atom_t,
   ast_list_t,
   ast_map_t,
+  ast_binop_t,
+  ast_func_t,
   ptr_t,
   uptr_t,
   except_t,

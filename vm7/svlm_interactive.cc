@@ -35,17 +35,21 @@ SvlmInteractive::SvlmInteractive
   //svlm_lang.root.print_m();
   svlm_lang.root.add_branch(keys1, 123l);
   auto &ov = svlm_lang.root.get_branch(keys1);
-  cout << "ov keys1: " << ov << "\n";
+  //cout << "ov keys1: " << ov << "\n";
   svlm_lang.root.add_branch(keys2, 456l, true);
   svlm_lang.root.add_branch(keys3, "somestrval");
   //node.print_m();
-
 
   
 };
 
 void SvlmInteractive::print_tree(const std::string& line) {
   std::vector<std::string> vstr = split_string(line, " ");
+  if(vstr.size() == 1 && vstr.back() == ""){ 
+    cout << "Universe: " << CONTEXT_UNIV << "\n";
+    vstr = {CONTEXT_UNIV}; 
+  }
+
   auto children = svlm_lang.root.get_branch(vstr)._get_keys();
 
   if(children.empty()) {
@@ -120,7 +124,7 @@ void SvlmInteractive::accept_prompt(const std::string &line) {
 }
 
 void SvlmInteractive::parse_prompt(const std::string &line) {
-    slc.interactive = true;
+    svlm_lang.interactive = true;
     if(line[0] == '!' && line[1] == '!') 
       interact(line);
     else {
@@ -137,7 +141,7 @@ void SvlmInteractive::parse(const std::string &line) {
   // evaluate ast_current_context pop back members
 }
 void SvlmInteractive::evaluate_line() {
-  auto output_ptr = slc.evaluate_last_line();
+  auto output_ptr = svlm_lang.evaluate_last_line();
   std::cout << "evaluate line" << "\n";
   if(output_ptr)
     cout << output_ptr;
@@ -160,7 +164,7 @@ void SvlmInteractive::load(const std::string &cfn) {
 
 void SvlmInteractive::run_program(const std::string &l) {
   std::cout << "run program\n";
-  //slc.run_evaluate();
+  svlm_lang.run_evaluate();
 
 }
 
@@ -208,6 +212,7 @@ void SvlmInteractive::set_ui_commands() {
     add_readline(command);
   }
 
+/*
   vector<string> vstr ;
   vstr = {"svlvm", "readline", "commands", "svlm", "!!print_tree","svlvm","hello"};
   auto &v= svlm_lang.root.get_branch(vstr);
@@ -225,7 +230,7 @@ void SvlmInteractive::set_ui_commands() {
   cout << "v2: " <<  v2 << "\n";
   keys = v2._get_keys() ;
   std::cout << "one keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n\n";
-
+*/
 
 }
 

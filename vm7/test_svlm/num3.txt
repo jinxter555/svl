@@ -1,2 +1,6 @@
-123 + 456
-789 + 123
+1+2
+module world do
+  def func1() do
+    1+2
+  end
+end

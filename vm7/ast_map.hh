@@ -7,6 +7,7 @@ class AstMap: public AstExpr{
   friend class Tree;
 protected:
   //unordered_map<string, Operand> map_;
+  Operand myself;
   map<string, Operand> map_;
 public:
   AstMap();
@@ -17,14 +18,21 @@ public:
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k) ;
 
+  Operand clone_val() const override final;
   Operand& operator[] (const Operand& k) override final;
   const Operand& operator[] (const Operand &k) const override final;
 
   //-------------------------------------------
-  astexpr_u_ptr& get_u_ptr(const Operand &k) override final;
-  astexpr_u_ptr& get_u_ptr(const string&) ;
-  AstExpr *get_raw_ptr(const Operand &k) override final;
-  AstExpr *get_raw_ptr(const string &k);
+  const astexpr_u_ptr& get_u_ptr(const Operand &k) const override final;
+  const astexpr_u_ptr& get_u_ptr(const string&) const ;
+  astexpr_u_ptr& get_u_ptr_nc(const Operand &k) override final;
+
+  const astexpr_u_ptr& get_u_ptr() const override final;
+  astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
+
+  AstExpr *get_raw_ptr(const Operand &k) const override final;
+  AstExpr *get_raw_ptr(const string &k) const ;
+  AstExpr *get_raw_ptr() const override final;
   //-------------------------------------------
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr)override final  ;  // for list

@@ -10,15 +10,11 @@ Operand Operand::operator+(const Operand& other) const {
   if(type_ != other_type_) { 
     cout << "error! " << *this << " + '" << other << "'\n";
     return Operand(OperandErrorCode::invalid_op_t);
-    /*
-    throw std::runtime_error("Unsupported operation + for unequal types"); 
-    return Operand(OperandType::err_t);
-    */
   }
 
   switch(type_) {
   case OperandType::num_t: 
-    return Operand(get<Number>(value_) + get<Number>(other.value_));
+    return _get_number() + other._get_number();
   case OperandType::str_t: 
     return Operand(get<std::string>(value_) + get<std::string>(other.value_));
   default: 
@@ -37,7 +33,7 @@ Operand Operand::operator-(const Operand& other) const {
 
   switch(type_) {
   case OperandType::num_t: 
-    return Operand(get<Number>(value_) - get<Number>(other.value_));
+    return _get_number() - other._get_number();
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }
@@ -54,7 +50,7 @@ Operand Operand::operator*(const Operand& other) const {
 
   switch(type_) {
   case OperandType::num_t: 
-    return Operand(get<Number>(value_) * get<Number>(other.value_));
+    return _get_number() * other._get_number();
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }
@@ -68,7 +64,7 @@ Operand Operand::operator/(const Operand& other) const {
 
   switch(type_) {
   case OperandType::num_t: 
-    return Operand(get<Number>(value_) / get<Number>(other.value_));
+    return _get_number() / other._get_number();
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }
@@ -241,27 +237,20 @@ Operand Operand::opfunc(const Operand& other, AstOpCode op) {
   // if(type_ != other.type_) throw std::runtime_error("Unsupported operation > for unequal types"); 
 
   switch(op){
-  case AstOpCode::plus:  return *this + other;
-  case AstOpCode::minus: return *this - other; 
-  case AstOpCode::mul:   return *this * other; 
-  case AstOpCode::div:   return *this / other;
-  case AstOpCode::eql:
-    return *this == other;
-  case AstOpCode::neql:
-    return *this != other;
-  case AstOpCode::gt:
-    return *this > other;
-  case AstOpCode::lt:
-    return *this < other;
-  case AstOpCode::lteq:
-    return *this <= other;
-  case AstOpCode::gteq:
-    return *this >= other;
-  case AstOpCode::and_:  return *this && other;
-  case AstOpCode::or_:   return *this && other;
-  case AstOpCode::not_:  return *this && other;
-  default: 
-    return false;
+  case AstOpCode::plus:   return *this + other;
+  case AstOpCode::minus:  return *this - other; 
+  case AstOpCode::mul:    return *this * other; 
+  case AstOpCode::div:    return *this / other;
+  case AstOpCode::eql:    return *this == other;
+  case AstOpCode::neql:   return *this != other;
+  case AstOpCode::gt:     return *this > other;
+  case AstOpCode::lt:     return *this < other;
+  case AstOpCode::lteq:   return *this <= other;
+  case AstOpCode::gteq:   return *this >= other;
+  case AstOpCode::and_:   return *this && other;
+  case AstOpCode::or_:    return *this && other;
+  case AstOpCode::not_:   return *this && other;
+  default:                return false;
   }
   return false;
 }

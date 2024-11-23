@@ -2,7 +2,10 @@
 #include "ast_map.hh"
 #include "operand.hh"
 
-AstMap::AstMap() : AstExpr(OperandType::map_t) {}
+AstMap::AstMap() 
+: AstExpr(OperandType::map_t)
+//, myself(this) 
+{}
 
 astexpr_u_ptr AstMap::clone() const {
   map_u_ptr new_map = make_unique<AstMap>();
@@ -13,12 +16,19 @@ astexpr_u_ptr AstMap::clone() const {
   return new_map;
 }
 
+Operand AstMap::clone_val() const {
+  cerr << "I should NOT be here in  AstMap::clone_val()\n";
+  return Operand();
+};
+
 astexpr_u_ptr AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
   return nullptr;
 }
 
 Operand& AstMap::getv()  {
+  cerr << "I should NOT be here in  AstMap::getv()\n";
   return nil_operand;
+  //return myself;
 }
 
 
@@ -46,29 +56,45 @@ const Operand& AstMap::operator[] (const Operand &k) const {
 }
 
 //--------------------------------------
+astexpr_u_ptr& AstMap::get_u_ptr_nc(const Operand&k) { 
+  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr(k))); 
+}
 
-astexpr_u_ptr& AstMap::get_u_ptr(const Operand &k) {
+const astexpr_u_ptr& AstMap::get_u_ptr(const Operand &k) const {
   auto k_str = k._get_str();
   return get_u_ptr(k_str);
 }
-astexpr_u_ptr& AstMap::get_u_ptr(const string &k) {
+const astexpr_u_ptr& AstMap::get_u_ptr(const string &k) const {
   if(this == nullptr || !has_key(k)){
     return nil_ast_ptr;
   }
-  return map_[k]._get_astexpr_u_ptr();
+  return map_.at(k).get_u_ptr();
+}
+const astexpr_u_ptr& AstMap::get_u_ptr() const {
+  cerr << "I should NOT be here in  AstMap::get_u_ptr()\n";
+  return nil_ast_ptr;
+}
+astexpr_u_ptr& AstMap::get_u_ptr_nc() { 
+  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
 }
 
-AstExpr *AstMap::get_raw_ptr(const Operand &k) {
+//--------------------------------------
+AstExpr *AstMap::get_raw_ptr() const {
+  return (AstExpr*)this;
+}
+
+
+AstExpr *AstMap::get_raw_ptr(const Operand &k) const {
   auto k_str = k._get_str();
   return get_raw_ptr(k_str);
 }
-AstExpr *AstMap::get_raw_ptr(const string &k) {
+AstExpr *AstMap::get_raw_ptr(const string &k) const {
   if(this == nullptr || !has_key(k)){
     //cerr << "raw pointer key: " << k << " does not exist!\n";
     return nullptr;
   }
   //auto value = visit(GetOperand_eptr(), children[k].value_);
-  return map_[k]._get_astexpr_raw_ptr();
+  return map_.at(k).get_raw_ptr();
 
 }
 
@@ -83,7 +109,11 @@ bool AstMap::add(const Operand &k, const AstExpr& v, bool overwrite) {
 bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
   //if(this==nullptr) {return false;}
   if(!overwrite && has_key(k)) return false;
-  map_[k] = move(v.clone());
+  if(v.type_ == OperandType::map_t || v.type_ == OperandType::list_t)
+    map_[k] = move(v.clone());
+  else {
+    map_[k] = v.clone_val();
+  }
   return true;
 }
 

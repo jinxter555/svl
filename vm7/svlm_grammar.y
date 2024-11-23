@@ -15,7 +15,7 @@
 %define api.namespace {vslast}
 %define api.value.type variant
 %parse-param {SvlmScanner* scanner}
-%parse-param {SvlmAst* slc}
+%parse-param {SvlmAst* svlm_lang}
 
 
  
@@ -34,7 +34,6 @@ namespace vslast {
 #define yylex(x,y) scanner->lex(x,y)
 
 
-//%type <unique_ptr<AstExpr>> module literals exp_eval statement
 }
 
 
@@ -65,7 +64,7 @@ namespace vslast {
 %right              EXPONENT
 
 %type <list_u_ptr> statement_list
-%type <astexpr_u_ptr> module literals exp_eval statement
+%type <astexpr_u_ptr> module function literals exp_eval statement
 
 %start program_start
 
@@ -76,7 +75,7 @@ program_start
     cout << "program start:" << *$1 << "\n";
     $1->print();
     cout << "\n";
-    slc->add_code(Operand("mname"), move($1));
+    svlm_lang->add_code(Operand("mname"), move($1));
     }
   ;
 
@@ -98,7 +97,26 @@ statement_list
 statement
   : %empty {$$=nullptr;} // end of each statement
   | exp_eval { $$ = move($1); }
+  | module { $$ = move($1); }
+  | function { $$ = move($1); }
+
   ;
+
+module 
+  : MODULE STR DO statement_list END 
+  {
+    cout << "module : " << $2 << "\n";
+    svlm_lang->add_module($2, move($4));
+  }
+  ;
+
+function 
+  : DEF STR PAREN_L PAREN_R DO statement_list END {
+    $$ = make_unique<AstFunc>($2, move($6));
+  }
+  ;
+
+
 
 exp_eval
   : literals  { $$ = move($1); }

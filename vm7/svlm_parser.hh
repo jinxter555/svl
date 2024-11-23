@@ -387,6 +387,8 @@ namespace vslast {
     union union_type
     {
       // statement
+      // module
+      // function
       // exp_eval
       // literals
       char dummy1[sizeof (astexpr_u_ptr)];
@@ -602,9 +604,11 @@ namespace vslast {
         S_program_start = 66,                    // program_start
         S_statement_list = 67,                   // statement_list
         S_statement = 68,                        // statement
-        S_exp_eval = 69,                         // exp_eval
-        S_literals = 70,                         // literals
-        S_EOS = 71                               // EOS
+        S_module = 69,                           // module
+        S_function = 70,                         // function
+        S_exp_eval = 71,                         // exp_eval
+        S_literals = 72,                         // literals
+        S_EOS = 73                               // EOS
       };
     };
 
@@ -642,6 +646,8 @@ namespace vslast {
         switch (this->kind ())
     {
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_module: // module
+      case symbol_kind::S_function: // function
       case symbol_kind::S_exp_eval: // exp_eval
       case symbol_kind::S_literals: // literals
         value.move< astexpr_u_ptr > (std::move (that.value));
@@ -783,6 +789,8 @@ namespace vslast {
 switch (yykind)
     {
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_module: // module
+      case symbol_kind::S_function: // function
       case symbol_kind::S_exp_eval: // exp_eval
       case symbol_kind::S_literals: // literals
         value.template destroy< astexpr_u_ptr > ();
@@ -932,7 +940,7 @@ switch (yykind)
     };
 
     /// Build a parser object.
-    SvlmParser (SvlmScanner* scanner_yyarg, SvlmAst* slc_yyarg);
+    SvlmParser (SvlmScanner* scanner_yyarg, SvlmAst* svlm_lang_yyarg);
     virtual ~SvlmParser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -2259,22 +2267,22 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 64,     ///< Last index in yytable_.
-      yynnts_ = 7,  ///< Number of nonterminal symbols.
-      yyfinal_ = 13 ///< Termination state number.
+      yylast_ = 83,     ///< Last index in yytable_.
+      yynnts_ = 9,  ///< Number of nonterminal symbols.
+      yyfinal_ = 19 ///< Termination state number.
     };
 
 
     // User arguments.
     SvlmScanner* scanner;
-    SvlmAst* slc;
+    SvlmAst* svlm_lang;
 
   };
 
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2278 "svlm_parser.hh"
+#line 2286 "svlm_parser.hh"
 
 
 

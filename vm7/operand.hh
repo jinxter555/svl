@@ -9,6 +9,8 @@
 //--------------------------------------------------------- 
 
 class Operand : public AstExpr {
+friend class AstMap;
+friend class AstList;
 protected:
   OperandVariant value_;
 public:
@@ -36,6 +38,7 @@ public:
   //Operand(const Operand&);
   Operand(astexpr_u_ptr &);
   Operand(astexpr_u_ptr &&);
+  Operand(AstExpr *);
 
 
   //Operand operator=(const Operand &v);
@@ -47,16 +50,16 @@ public:
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const;
-  inline Number _get_number() const ;
+  Number _get_number() const ;
   s_integer _get_int() const ;
   s_float _get_float() const ;
   string _get_str() const ;
   string _to_str() const ;
   OperandType _get_type() const;
-  AstExpr* _get_astexpr_raw_ptr();
-  AstExpr* _get_astexpr_raw_ptr() const;
+  AstOpCode _get_opcode() const;
   vector<string> _get_keys() const override final;
   //-------
+  Operand get_opcode() const;
   Operand get_str() const;
   Operand get_type() const override;
   s_integer size() const override;
@@ -66,13 +69,18 @@ public:
 
   void  print() const override; 
   //--------------------------------------------------------- 
-  AstExpr *get_raw_ptr(const Operand &k) override final;
-  AstExpr *get_raw_ptr(const string &k);
-  AstExpr *get_raw_ptr(s_integer i);
-  astexpr_u_ptr& get_u_ptr(const Operand &k) override final;
-  astexpr_u_ptr& get_u_ptr();
-  const   astexpr_u_ptr& get_u_ptr() const;
-  astexpr_u_ptr& _get_astexpr_u_ptr();
+  AstExpr *get_raw_ptr(const Operand &k) const override final;
+  AstExpr *get_raw_ptr() const override final;
+
+  AstExpr *get_raw_ptr(const string &k) const ;
+  AstExpr *get_raw_ptr(const s_integer i) const ;
+
+  const astexpr_u_ptr& get_u_ptr(const Operand &k) const override final;
+  astexpr_u_ptr& get_u_ptr_nc(const Operand &k) override final;
+
+  const astexpr_u_ptr& get_u_ptr() const override;
+  astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
+
 
   //--------------------------------------------------------- 
   friend ostream& operator<<(ostream& os, const Operand& operand);
@@ -113,9 +121,11 @@ public:
 
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
-
+  
   Operand& operator[] (const Operand& k) override final;
   const Operand& operator[] (const Operand &k) const override final;
+
+
 
 };
 
@@ -132,11 +142,18 @@ operand_u_ptr operator()(T value) const;
 operand_u_ptr operator()(const astexpr_u_ptr& v) const  ;
 };
 
+/*
 struct GetOperand_astexpr_ptr {
 template <typename T>
 AstExpr* operator()(T value) const;
 AstExpr* operator()(const astexpr_u_ptr& v) const  ;
 };
+struct GetOperand_u_ptr {
+template <typename T>
+const astexpr_u_ptr& operator()(T value) const;
+const astexpr_u_ptr& operator()(const astexpr_u_ptr& v) const  ;
+};
+*/
 
 struct GetOperandType{
 OperandType operator()(const bool v) const ;
@@ -150,6 +167,13 @@ OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
 OperandType operator()(const astexpr_u_ptr& v) const  ;
 };
+
+struct GetOperandAstOpCode{
+template <typename T>
+AstOpCode operator()(T value) const;
+AstOpCode operator()(const AstOpCode &v) const  ;
+};
+
 
 extern Operand nil_operand;
 

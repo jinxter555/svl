@@ -5,6 +5,7 @@
 class AstList: public AstExpr{
 protected:
   vector<Operand> list_;
+  Operand myself;
 public:
   AstList();
   AstList(const AstList& l);
@@ -13,11 +14,17 @@ public:
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(int i)  ;
-  astexpr_u_ptr& get_u_ptr(const Operand &k) override final;
-  astexpr_u_ptr& get_u_ptr(int i) ;
+  const astexpr_u_ptr& get_u_ptr(const Operand &k) const override final;
+  astexpr_u_ptr& get_u_ptr_nc(const Operand &k) override final;
 
-  AstExpr *get_raw_ptr(const Operand &k) override final;
-  AstExpr *get_raw_ptr(int i);
+  const astexpr_u_ptr& get_u_ptr(int i) const ;
+
+  const astexpr_u_ptr& get_u_ptr() const override final;
+  astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
+
+  AstExpr *get_raw_ptr(const Operand &k) const override final;
+  AstExpr *get_raw_ptr(int i) const;
+  AstExpr *get_raw_ptr() const override final;
 
 
   //-------------------------------------------
@@ -27,6 +34,8 @@ public:
   Operand& operator[] (int index) ;
   const Operand& operator[] (int index) const ;
 
+  //-------------------------------------------
+  Operand clone_val() const override final;
   //-------------------------------------------
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr)override final  ;  // for list

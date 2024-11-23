@@ -10,6 +10,8 @@ int main() {
   Operand one("one");
   Operand two("two");
   Operand three("three");
+  Operand opstr("op");
+  Operand op(AstOpCode::plus);
   Operand l("left");
   Operand r("right");
 
@@ -20,6 +22,7 @@ int main() {
   m1.add(three, i3);
   m1.add(l, i1);
   m1.add(r, i2);
+  m1.add(opstr, op);
 
   auto &v1 = m1[one];
   cout << "v1: " << v1 << "\n";
@@ -32,6 +35,10 @@ int main() {
   const Operand &v2 = m1[two];
   cout << "v2: " << v2 << "\n";
   cout << "m1[two]: " << m1[two]<< "\n";
+  cout << "op: " << op << "\n";
+  cout << "op: getopcode: " << op.get_opcode() << "\n";
+  cout << "m1[opstr]: " << m1[opstr]<< "\n";
+  cout << "m1[opstr]:get_Opcode " << m1[opstr].get_opcode() << "\n";
 
 
 
