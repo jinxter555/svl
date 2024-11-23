@@ -22,9 +22,11 @@ void SvlmAst::add_module(const Operand& n) {
   root.add_branch({MOD}, n);
 }
 void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
+/*
   cout << "adding mod!" << MOD << "\n";
   cout << "code: " << c << " type: " << c->get_type() << "\n";
   cout << "\n";
+ */ 
   auto nm = make_unique<AstMap>();
   nm->add(n, move(c));
   root.add_branch({CONTEXT_UNIV, MOD}, move(nm));
