@@ -76,7 +76,12 @@ enum class OperandType {
   list_t,
   map_t,
   quenode_t,
+
+  ptr_t,
+  uptr_t,
+
   control_t,
+
   ast_mod_t,     // ast operator type
   ast_op_t,     // ast operator type
   ast_operand_t, // ast operand type
@@ -89,8 +94,8 @@ enum class OperandType {
   ast_mvar_t,
   ast_lvar_t,
   ast_ovar_t,
-  ptr_t,
-  uptr_t,
+  ast_print_t,
+
   except_t,
   svlm_lang_t,
   svlm_ctxt_t,

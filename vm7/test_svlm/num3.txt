@@ -1,6 +1,7 @@
 module Main do
   def main() do
     1+2
+    print 1111+2222
   end
   def func2() do
     3+4

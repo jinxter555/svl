@@ -38,6 +38,7 @@ Operand OperandToStringVisitor::operator()(OperandType t) const {
   case OperandType::ast_mvar_t:  outstr ="ast_mvar_t"; break;
   case OperandType::ast_lvar_t:  outstr ="ast_lvar_t"; break;
   case OperandType::ast_ovar_t:  outstr ="ast_ovar_t"; break;
+  case OperandType::ast_print_t:  outstr ="ast_print_t"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
   //case OperandType::any_t:  outstr ="any_t"; break;
   default: outstr ="i have forgotten to add. type unknown"; break;

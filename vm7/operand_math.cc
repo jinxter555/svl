@@ -17,6 +17,8 @@ Operand Operand::operator+(const Operand& other) const {
     return _get_number() + other._get_number();
   case OperandType::str_t: 
     return Operand(get<std::string>(value_) + get<std::string>(other.value_));
+  case OperandType::uptr_t: 
+    return Operand();
   default: 
     std::cout << "type int: " << static_cast<int>(type_) << "\n";
     throw std::runtime_error("Unsupported operation"); 

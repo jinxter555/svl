@@ -64,7 +64,7 @@ namespace vslast {
 %right              EXPONENT
 
 %type <list_u_ptr> statement_list
-%type <astexpr_u_ptr> module function literals exp_eval statement
+%type <astexpr_u_ptr> module function literals exp_eval statement print_exp
 
 %start program_start
 
@@ -99,7 +99,7 @@ statement
   | exp_eval { $$ = move($1); }
   | module { $$ = move($1); }
   | function { $$ = move($1); }
-
+  | print_exp {$$ = move($1); }
   ;
 
 module 
@@ -144,6 +144,13 @@ literals
   | FALSE { $$ = make_unique<Operand>(false); }
   //| COLON STR { $$ = std::make_unique<OperandExprAst>(Operand(Atom($2))); }
   | DQSTR { $$ = make_unique<Operand>($1); }
+  ;
+
+
+
+print_exp
+  : PRINT exp_eval { $$ = std::make_unique<AstPrint>(move($2)); }
+  //| PRINT DQSTR { $$ = std::make_unique<AstPrint> (std::make_unique<AstPrint>($2)); }
   ;
 
 //--------------------------------------------------- EOS end of statement

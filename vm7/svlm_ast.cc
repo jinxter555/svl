@@ -1,16 +1,6 @@
 #include "svlm_ast.hh"
 #include "svlm_interactive.hh"
 
-/*
-#define rl_loc "readline", "commands"
-
-void SvlmAst::add_readline_cmds(const string&cmd) {
-  root.add_branch({rl_loc, cmd}, 1l);
-}
-vector<string> SvlmAst::get_readline_cmds(const string& cmd) {
-  auto &v = root.get_branch({rl_loc});
-}
-*/
 
 astexpr_u_ptr SvlmAst::evaluate_last_line() {
   return nullptr;
@@ -43,7 +33,7 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   vector<string> func_keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
   switch(t) {
   case OperandType::ast_mod_t:
-    cout << "ast_mod_t!\n";
+    //cout << "ast_mod_t!\n";
     //root.add_branch(func_keys, nil_operand);
     //return nil_operand;
     break;
@@ -62,8 +52,7 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   }
   auto &msub_node = root.get_branch(func_keys);
   if(msub_node==nil_operand) {
-    cout << "creating new func_node!\n";
-    root.add_branch(func_keys, make_unique<AstMap>());
+    root.add_branch(func_keys, make_unique<AstMap>(), true);
     auto &nd= root.get_branch(func_keys);
     return nd;
   }
@@ -86,10 +75,12 @@ void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
 
 void SvlmAst::run_evaluate() {
   cout << "run eval!\n";
-  auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main"});
+  auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main", "function", "main", "code"});
+
   auto &c = l.get_u_ptr();
-  
+  cout << "l is: ";
   l.print();
+  cout << "\n";
   cout << "code list type: " <<  l.get_type() << "\n";
   cout << "size: " <<  l.size() << "\n";
 
@@ -121,22 +112,26 @@ Operand AstBinOp::to_str() const {
 }
 astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ast_ctxt) {
   cout << "in astbinop eval!\n";
-  auto &l = (*this)["left"];
-  auto &r = (*this)["right"];
+  auto &l = (*this)["left"].getv();
+  auto &r = (*this)["right"].getv();
+  //auto &l = (*this)["left"];
+  //auto &r = (*this)["right"];
   auto &o = (*this)["op"];
+  /*
   cout << "opcode" << o.get_opcode() << "\n";
   cout << "str: " << l.to_str() + o.to_str() +  r.to_str() << "\n";
   cout << "num: " << l._get_number() << " " <<   r._get_number() << "\n";
-
+  */
   return make_unique<Operand>(l.opfunc(r, o._get_opcode()));
 }
 
 
-AstFunc::AstFunc(const Operand &n, astexpr_u_ptr c) {
+//-----------------------------------------------------------------------
+AstFunc::AstFunc(const Operand &n, astexpr_u_ptr code_ptr) {
   name = n._to_str();
   type_ = OperandType::ast_func_t;
   add(string("name"), n);
-  add(string("code"), move(c));
+  add(string("code"), move(code_ptr));
 }
 
 astexpr_u_ptr AstFunc::evaluate(astexpr_u_ptr& ast_ctxt) {
@@ -155,4 +150,24 @@ void AstFunc::print() const {
   for(s_integer i=0; i<l.size(); i++) {
     cout << l[i] << "\n";
   }
+}
+
+//-----------------------------------------------------------------------
+AstPrint::AstPrint(astexpr_u_ptr ptr) {
+  type_= OperandType::ast_print_t;
+  add(string("exp"), move(ptr));
+}
+Operand AstPrint::get_type() const { return OperandType::ast_print_t;}
+OperandType AstPrint::_get_type() const { return OperandType::ast_print_t;}
+Operand AstPrint::to_str() const {
+  auto &exp = map_.at(string("exp"));
+  return Operand("print ") + exp.to_str();
+}
+void AstPrint::print() const {
+  cout << to_str();
+}
+astexpr_u_ptr AstPrint::evaluate(astexpr_u_ptr& ast_ctxt) {
+  auto &exp = map_.at(string("exp"));
+  cout << exp.evaluate(ast_ctxt);
+  return make_unique<Operand>("\n");
 }

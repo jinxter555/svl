@@ -68,3 +68,16 @@ public:
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override;
   void print() const override;
 };
+
+
+class AstPrint : public AstMap { 
+private:
+  OperandType type_;
+public:
+  AstPrint(astexpr_u_ptr);
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override;
+  void print() const override;
+};

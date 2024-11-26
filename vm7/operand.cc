@@ -328,7 +328,7 @@ bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
 }
 //-----------------------------------------------------------------------
 Operand& Operand::getv() {
-  cout << "Operand::getv(): type " << get_type() << "\n";
+  //cout << "Operand::getv(): type " << get_type() << "\n";
 
   if(type_==OperandType::uptr_t) {
     auto &ptr = get_u_ptr();
