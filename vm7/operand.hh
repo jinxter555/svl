@@ -55,7 +55,7 @@ public:
   s_float _get_float() const ;
   string _get_str() const ;
   string _to_str() const ;
-  OperandType _get_type() const;
+  OperandType _get_type() const override ;
   AstOpCode _get_opcode() const;
   vector<string> _get_keys() const override final;
   //-------

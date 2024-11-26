@@ -15,27 +15,54 @@ vector<string> SvlmAst::get_readline_cmds(const string& cmd) {
 astexpr_u_ptr SvlmAst::evaluate_last_line() {
   return nullptr;
 }
+
+
+
 #define MOD "modules"
 void SvlmAst::add_module(const Operand& n, astexpr_u_ptr clist) {
   s_integer i, s=clist->size();
-  auto nm = make_unique<AstMap>();
-  vector<string> func_keys = {CONTEXT_UNIV, MOD, "function"};
+
   for(i=0; i < s; i++) {
-    auto &nan = clist->getv(i);
-    cout << "nan" << i << ":" << nan << "\n";
-    switch(nan.get_type()._get_type()) {
-    case OperandType::ast_func_t: {
-      auto func_name = nan.getv("name")._to_str();
-      vector<string> k = func_keys;
-      cout << "ast_func_t!\n";
-      k.push_back(func_name);
-      root.add_branch(k, move(nm));
-      }
-    default:
-      cerr << "unknown nan type!\n";
-    }
+    auto &nan = clist->getv(i); 
+    if(nan._get_type() != OperandType::uptr_t) { continue; }
+
+    auto &nan_vptr = nan.get_u_ptr_nc();
+    auto &sub_node = get_module_subnode(n,  nan_vptr->_get_type());
+    if(sub_node==nil_operand) { continue; }
+
+    auto sub_node_name = nan.getv("name")._to_str();
+    sub_node.add(sub_node_name, move(nan_vptr), true);
+
   }
 }
+
+
+Operand& SvlmAst::get_module_subnode(const Operand& n, const OperandType t) {
+  vector<string> func_keys = {CONTEXT_UNIV, MOD, n._to_str()};
+  switch(t) {
+  case OperandType::ast_func_t:
+    func_keys.push_back("function");
+    break;
+  case OperandType::ast_mvar_t:
+    func_keys.push_back("mvar");
+    break;
+  case OperandType::ast_class_t:
+    func_keys.push_back("class");
+    break;
+  default:
+    cerr << "unknown module subtype: " << Operand(t) << "! \n";
+    return nil_operand;
+  }
+  auto &msub_node = root.get_branch(func_keys);
+  if(msub_node==nil_operand) {
+    cout << "creating new func_node!\n";
+    root.add_branch(func_keys, make_unique<AstMap>());
+    auto &nd= root.get_branch(func_keys);
+    return nd;
+  }
+  return msub_node;
+}
+
 void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
   cout << "adding mod!" << MOD << "\n";
   cout << "code: " << c << " type: " << c->get_type() << "\n";
@@ -100,6 +127,7 @@ astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ast_ctxt) {
 
 AstFunc::AstFunc(const Operand &n, astexpr_u_ptr c) {
   name = n._to_str();
+  type_ = OperandType::ast_func_t;
   add(string("name"), n);
   add(string("code"), move(c));
 }
@@ -113,3 +141,11 @@ Operand AstFunc::to_str() const {
   return string("func: ") + name;
 }
 Operand AstFunc::get_type() const { return OperandType::ast_func_t;}
+OperandType AstFunc::_get_type() const { return OperandType::ast_func_t;}
+void AstFunc::print() const { 
+  cout << to_str();
+  const Operand &l = map_.at("code");
+  for(s_integer i=0; i<l.size(); i++) {
+    cout << l[i] << "\n";
+  }
+}

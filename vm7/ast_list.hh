@@ -55,6 +55,7 @@ public:
   s_integer size() const override;
   Operand to_str() const override ;
   Operand get_type() const override;
+  OperandType _get_type() const override;
 
   void print() const override;
 };

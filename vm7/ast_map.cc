@@ -234,6 +234,9 @@ Operand AstMap::get_type() const {
   return type_;
   return Operand(OperandType::map_t); 
 }
+OperandType AstMap::_get_type() const { 
+  return OperandType::map_t; 
+}
 
 Operand AstMap::to_str() const {
 

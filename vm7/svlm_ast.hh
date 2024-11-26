@@ -19,6 +19,8 @@ public:
   void add_lvar();
   void add_code(const Operand&, unique_ptr<AstExpr>);
 
+  Operand& get_module_subnode(const Operand&, const OperandType t);
+
   astexpr_u_ptr& get_context() {
     return root.AstMap::get_u_ptr_nc(string("context"));
   }
@@ -28,6 +30,7 @@ public:
   unique_ptr<Tree> clone() const override {return nullptr;};
   Operand to_str() const override { return "";};
   Operand get_type() const override { return OperandType::nil_t;};
+  OperandType _get_type() const override { return OperandType::nil_t;};
   void print() const override {};
   void run_evaluate();
   astexpr_u_ptr evaluate_last_line();
@@ -56,10 +59,12 @@ public:
 class AstFunc: public AstMap {
 private:
   string name;
+  OperandType type_;
 public:
   AstFunc(const Operand&,  astexpr_u_ptr) ; 
   Operand to_str() const override;
   Operand get_type() const override ;
+  OperandType _get_type() const override;
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override;
-  void print() {};
+  void print() const override;
 };

@@ -1,6 +1,8 @@
-1+2
 module world do
   def func1() do
     1+2
+  end
+  def func2() do
+    3+4
   end
 end

@@ -160,11 +160,13 @@ OperandVariant Operand::_get_value() const {
   return visit(GetOperandValue(), value_);
 };
 OperandType Operand::_get_type() const { 
+  //cout << "i am in _get_type(): " << Operand(type_) << "\n";
+  //cout << "i am in _get_type() int: " << int(type_) << "\n";
   return type_; 
 };
 
 Operand Operand::get_type() const {
-  return type_; 
+  return _get_type(); 
 }
 Operand Operand::get_opcode() const {
   return _get_opcode();
@@ -342,7 +344,7 @@ Operand& Operand::getv(const Operand &k)  {
   auto &ptr = get_u_ptr();
   if(ptr == nil_ast_ptr) return nil_operand;
   if(ptr == nullptr) return nil_operand;
-  cout << "getv ptr: " <<  ptr << "\n";
+  //cout << "getv ptr: " <<  ptr << "\n";
   return ptr->getv(k);
 }
 

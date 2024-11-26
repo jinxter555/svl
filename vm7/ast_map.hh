@@ -60,6 +60,7 @@ public:
   s_integer size() const override;
   Operand to_str() const override ;
   Operand get_type() const override;
+  OperandType _get_type() const override;
 
   //AstList get_keys() const;
   vector<string> _get_keys() const override final;

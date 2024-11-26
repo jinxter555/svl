@@ -154,6 +154,9 @@ Operand AstList::get_type() const {
   return type_;
   return Operand(OperandType::list_t);
 };
+OperandType AstList::_get_type() const {
+  return OperandType::list_t;
+};
 
 astexpr_u_ptr AstList::evaluate(astexpr_u_ptr &ctxt) {
   int i, s = size();

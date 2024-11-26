@@ -84,6 +84,8 @@ bool Operand::operator==(const Operand& other) const {
     return get<bool>(value_) == get<bool>(other.value_);
   case OperandType::num_t: 
     return get<Number>(value_) == get<Number>(other.value_);
+  case OperandType::type_t: 
+    return get<OperandType>(value_) == get<OperandType>(other.value_);
   case OperandType::str_t: 
     return get<std::string>(value_) == get<std::string>(other.value_);
   case OperandType::nil_t: 

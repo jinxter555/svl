@@ -83,7 +83,11 @@ enum class OperandType {
   ast_list_t,
   ast_map_t,
   ast_binop_t,
+  ast_class_t,
   ast_func_t,
+  ast_mvar_t,
+  ast_lvar_t,
+  ast_ovar_t,
   ptr_t,
   uptr_t,
   except_t,
@@ -140,6 +144,7 @@ public:
   virtual unique_ptr<T> clone() const=0;
   virtual Operand to_str() const =0;
   virtual Operand get_type() const=0;
+  virtual OperandType _get_type() const=0;
   virtual void print() const =0;
   virtual s_integer size() const=0;
 };
