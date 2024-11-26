@@ -77,6 +77,7 @@ enum class OperandType {
   map_t,
   quenode_t,
   control_t,
+  ast_mod_t,     // ast operator type
   ast_op_t,     // ast operator type
   ast_operand_t, // ast operand type
   ast_atom_t,

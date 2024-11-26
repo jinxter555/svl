@@ -19,15 +19,17 @@ astexpr_u_ptr SvlmAst::evaluate_last_line() {
 
 
 #define MOD "modules"
-void SvlmAst::add_module(const Operand& n, astexpr_u_ptr clist) {
+void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
   s_integer i, s=clist->size();
+
+  get_module_subnode(mod_name, OperandType::ast_mod_t);
 
   for(i=0; i < s; i++) {
     auto &nan = clist->getv(i); 
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
     auto &nan_vptr = nan.get_u_ptr_nc();
-    auto &sub_node = get_module_subnode(n,  nan_vptr->_get_type());
+    auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
     if(sub_node==nil_operand) { continue; }
 
     auto sub_node_name = nan.getv("name")._to_str();
@@ -37,9 +39,14 @@ void SvlmAst::add_module(const Operand& n, astexpr_u_ptr clist) {
 }
 
 
-Operand& SvlmAst::get_module_subnode(const Operand& n, const OperandType t) {
-  vector<string> func_keys = {CONTEXT_UNIV, MOD, n._to_str()};
+Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType t) {
+  vector<string> func_keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
   switch(t) {
+  case OperandType::ast_mod_t:
+    cout << "ast_mod_t!\n";
+    //root.add_branch(func_keys, nil_operand);
+    //return nil_operand;
+    break;
   case OperandType::ast_func_t:
     func_keys.push_back("function");
     break;
@@ -79,7 +86,7 @@ void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
 
 void SvlmAst::run_evaluate() {
   cout << "run eval!\n";
-  auto& l = root.get_branch({CONTEXT_UNIV, MOD, "mname"});
+  auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main"});
   auto &c = l.get_u_ptr();
   
   l.print();

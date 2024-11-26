@@ -175,13 +175,17 @@ Operand& AstMap::get_branch(const vector<string> &keys) {
 
   if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
   for(int i=0; i<s-1; i++) {
-    k = keys[i]; // cout << "keys[" << i<< "]: " << keys[i] << "\n";
+    k = keys[i];  //cout << "keys[" << i<< "]: " << keys[i] << "\n";
     next = (AstMap*) curr->get_raw_ptr(k);
     if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
     curr = next;
   }
 
-  return curr->getv(keys.back());
+  if(curr==nullptr) {
+    //cerr << "curr is null!\n";
+    return nil_operand;
+  } else
+    return curr->getv(keys.back());
 }
 
 
