@@ -4,7 +4,21 @@
 
 
 
-#define MOD "modules"
+#define MOD "module"
+#define FRAMES "frames"
+SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
+  auto vptr = make_unique<AstList>();
+  if(! root.add_branch({CONTEXT_UNIV, FRAMES}, move(vptr))) {
+    cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
+    exit(1);
+  }
+}
+
+astexpr_u_ptr& SvlmAst::get_context() {
+  auto &c= root.get_branch({CONTEXT_UNIV, FRAMES});
+  return c.get_u_ptr_nc();
+}
+
 void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
   s_integer i, s=clist->size();
 
@@ -70,29 +84,29 @@ void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
 astexpr_u_ptr SvlmAst::evaluate_last_line() {
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Prompt", "last", "code"});
   //l.print(); cout << "\n";
-  auto &c = l.get_u_ptr();
-  return l.evaluate(l.get_u_ptr_nc());
+  auto &ctxt = get_context();
+  return l.evaluate(ctxt);
   //return nullptr;
 }
 
 
 void SvlmAst::run_evaluate() {
-  cout << "run eval!\n";
+  cout << "Run eval Main::main \n";
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main", "function", "main", "code"});
-  auto &c = l.get_u_ptr();
+  //auto &c = l.get_u_ptr_nc();
+  auto &ctxt = get_context();
 
-  cout << "l is: ";
-  l.print();
-  cout << "\n";
-  cout << "code list type: " <<  l.get_type() << "\n";
-  cout << "size: " <<  l.size() << "\n";
+  cout << "l is: " << l << "\n";
+  //cout << "size: " <<  l.size() << "\n";
+  l.evaluate(ctxt);
 
+/*
   for(s_integer i=0; i<l.size();  i++){
     auto &c = l[i];
-    cout << "c: " << c << "\n";
-    cout << "c::getype " << c.get_type() << "\n";
-    cout << "c::evaluate " << c.evaluate(c.get_u_ptr_nc()) << "\n";
+    c.evaluate(c.get_u_ptr_nc());
   }
+*/
+
 }
 //-----------------------------------------------------------------------
 
@@ -114,7 +128,7 @@ Operand AstBinOp::to_str() const {
   return  l.to_str() + o.to_str() +  r.to_str();
 }
 astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ast_ctxt) {
-  cout << "in astbinop eval!\n";
+  //cout << "in astbinop eval!\n";
   auto &l = (*this)["left"].getv();
   auto &r = (*this)["right"].getv();
   //auto &l = (*this)["left"];
@@ -171,6 +185,7 @@ void AstPrint::print() const {
 }
 astexpr_u_ptr AstPrint::evaluate(astexpr_u_ptr& ast_ctxt) {
   auto &exp = map_.at(string("exp"));
-  cout << exp.evaluate(ast_ctxt);
-  return make_unique<Operand>("\n");
+  cout << exp.evaluate(ast_ctxt) << "\n";
+  //return make_unique<Operand>("\n");
+  return nullptr;
 }

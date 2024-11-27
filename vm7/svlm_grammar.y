@@ -71,10 +71,7 @@ namespace vslast {
 %%
 program_start
   :  statement_list { 
-    //slc->add_module(Operand("mname"));
-    cout << "program start:" << *$1 << "\n";
-    $1->print();
-    cout << "\n";
+    //cout << "program start:" << *$1 << "\n"; $1->print(); cout << "\n";
     svlm_lang->add_code(Operand("Prompt"), move($1));
     }
   ;

@@ -142,9 +142,12 @@ void SvlmInteractive::parse(const std::string &line) {
 }
 void SvlmInteractive::evaluate_line() {
   auto output_ptr = svlm_lang.evaluate_last_line();
-  std::cout << "evaluate line" << "\n";
-  if(output_ptr)
-    cout << output_ptr;
+  // std::cout << "evaluate line" << "\n";
+
+  if(output_ptr && output_ptr->size()>0) {
+    //cout << "size: " << output_ptr->size() << "\n";
+    cout << output_ptr << "\n";
+  }
 }
 
 void SvlmInteractive::load(const std::string &cfn) {
@@ -177,7 +180,7 @@ void SvlmInteractive::interact(const std::string &cline) {
   if(command_functions[command] != nullptr) {
     std::string args =  move(trim(match(line, command)));
     (command_functions[command])(args);
-    cout << "args: " << args << "\n";
+    //cout << "args: " << args << "\n";
   } else 
     std::cerr << command << " not found!\n";
 }

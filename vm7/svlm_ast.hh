@@ -8,7 +8,7 @@ protected:
   bool interactive=false;
 
 public:
-  SvlmAst(const OperandType&t) : Tree(t) {};
+  SvlmAst(const OperandType&t);
 
   void add_program(const Operand&);
   void add_module(const Operand&, astexpr_u_ptr);
@@ -21,9 +21,7 @@ public:
 
   Operand& get_module_subnode(const Operand&, const OperandType t);
 
-  astexpr_u_ptr& get_context() {
-    return root.AstMap::get_u_ptr_nc(string("context"));
-  }
+  astexpr_u_ptr& get_context() ;
 //  void add_readline_cmds(const string& cmd);
 //  vector<string> get_readline_cmds(const string& cmd);
 

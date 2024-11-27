@@ -37,9 +37,8 @@ Operand& AstMap::getv(const Operand &k)  {
   return(getv(k._get_str()));
 }
 Operand& AstMap::getv(const string &k)  {
-  //if(this==nullptr || !has_key(k)){
   if(!has_key(k)){
-    cerr << "getv key: " << k << " does not exist!\n";
+    //cerr << "getv key: " << k << " does not exist!\n";
     return nil_operand;
   }
   return  map_[k];
