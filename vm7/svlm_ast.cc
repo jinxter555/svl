@@ -2,10 +2,6 @@
 #include "svlm_interactive.hh"
 
 
-astexpr_u_ptr SvlmAst::evaluate_last_line() {
-  return nullptr;
-}
-
 
 
 #define MOD "modules"
@@ -60,24 +56,31 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
 }
 
 void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
-  cout << "adding mod!" << MOD << "\n";
-  cout << "code: " << c << " type: " << c->get_type() << "\n";
-  cout << "\n";
+  //cout << "add code:" << MOD << " " << n << "\n";
+  auto &msub_node = get_module_subnode(n, OperandType::ast_mod_t);
   auto nm = make_unique<AstMap>();
-  nm->add(n, move(c));
-  root.add_branch({CONTEXT_UNIV, MOD}, move(nm));
+  nm->add(string("code"), move(c));
+  msub_node.add(string("last"), move(nm), true);
 
-  auto& l = root.get_branch({CONTEXT_UNIV, MOD, "mname"});
-  cout << "after adding mod!" << MOD << n << "\n";
-  l.print();
-  cout << "\n";
+  auto& l = root.get_branch({CONTEXT_UNIV, MOD, n._to_str()});
+  //l.print(); cout << "\n";
 }
+
+
+astexpr_u_ptr SvlmAst::evaluate_last_line() {
+  auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Prompt", "last", "code"});
+  //l.print(); cout << "\n";
+  auto &c = l.get_u_ptr();
+  return l.evaluate(l.get_u_ptr_nc());
+  //return nullptr;
+}
+
 
 void SvlmAst::run_evaluate() {
   cout << "run eval!\n";
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main", "function", "main", "code"});
-
   auto &c = l.get_u_ptr();
+
   cout << "l is: ";
   l.print();
   cout << "\n";

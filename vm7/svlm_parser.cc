@@ -835,7 +835,7 @@ namespace vslast {
     cout << "program start:" << *yystack_[0].value.as < list_u_ptr > () << "\n";
     yystack_[0].value.as < list_u_ptr > ()->print();
     cout << "\n";
-    svlm_lang->add_code(Operand("mname"), move(yystack_[0].value.as < list_u_ptr > ()));
+    svlm_lang->add_code(Operand("Prompt"), move(yystack_[0].value.as < list_u_ptr > ()));
     }
 #line 841 "svlm_parser.cc"
     break;

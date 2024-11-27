@@ -75,7 +75,7 @@ program_start
     cout << "program start:" << *$1 << "\n";
     $1->print();
     cout << "\n";
-    svlm_lang->add_code(Operand("mname"), move($1));
+    svlm_lang->add_code(Operand("Prompt"), move($1));
     }
   ;
 
