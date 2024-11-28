@@ -108,7 +108,7 @@ unique_ptr<AstExpr> Operand::clone() const {
   return visit(GetOperandClone(), value_);
 }
 
-astexpr_u_ptr Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
+Operand Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
   auto &ptr = get_u_ptr();
   if(ptr==nullptr) return clone();
   return ptr->evaluate(ast_ctxt);

@@ -158,9 +158,10 @@ OperandType AstList::_get_type() const {
   return OperandType::list_t;
 };
 
-astexpr_u_ptr AstList::evaluate(astexpr_u_ptr &ctxt) {
+Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
   int i, s = size();
-  list_u_ptr result_list = make_unique<AstList>();
+  //list_u_ptr result_list = make_unique<AstList>();
+  astexpr_u_ptr result_list = make_unique<AstList>();
   //cout << "in list eval!\n";
   for(i=0; i<s; i++) {
     result_list->add(list_[i].evaluate(ctxt));

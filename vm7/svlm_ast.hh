@@ -31,7 +31,7 @@ public:
   OperandType _get_type() const override { return OperandType::nil_t;};
   void print() const override {};
   void run_evaluate();
-  astexpr_u_ptr evaluate_last_line();
+  Operand evaluate_last_line();
 };  
 
 
@@ -41,7 +41,7 @@ public:
   AstBinOp (unique_ptr<AstExpr> l, unique_ptr<AstExpr> r, AstOpCode op);
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
   void print() ;
 };
 
@@ -63,7 +63,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
   void print() const override;
 };
 
@@ -76,6 +76,6 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
   void print() const override;
 };

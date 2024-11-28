@@ -21,8 +21,8 @@ Operand AstMap::clone_val() const {
   return Operand();
 };
 
-astexpr_u_ptr AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
-  return nullptr;
+Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
+  return Operand();
 }
 
 Operand& AstMap::getv()  {

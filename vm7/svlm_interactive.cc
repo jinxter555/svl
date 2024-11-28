@@ -7,6 +7,7 @@
 
 
 extern SvlmInteractive svlm_it;
+astexpr_u_ptr nil_ast_ptr=nullptr;
 
 SvlmInteractive::SvlmInteractive
 ( const std::string&hf
@@ -141,12 +142,16 @@ void SvlmInteractive::parse(const std::string &line) {
   // evaluate ast_current_context pop back members
 }
 void SvlmInteractive::evaluate_line() {
-  auto output_ptr = svlm_lang.evaluate_last_line();
+  auto result = svlm_lang.evaluate_last_line();
   // std::cout << "evaluate line" << "\n";
 
-  if(output_ptr && output_ptr->size()>0) {
-    //cout << "size: " << output_ptr->size() << "\n";
-    cout << output_ptr << "\n";
+
+  if(result.size()>0 ) {
+    auto &v = result[0l].getv();
+    if(v==nil_operand) { // Operand_math != is notworking 
+    } else 
+      cout << v << "\n";
+
   }
 }
 

@@ -13,7 +13,7 @@ protected:
 public:
   AstExpr();
   AstExpr(const OperandType);
-  virtual astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) = 0;
+  virtual Operand evaluate(astexpr_u_ptr& ast_ctxt) = 0;
   
 
   virtual bool add(const AstExpr &v) =0;  // for list

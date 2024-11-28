@@ -13,7 +13,7 @@ public:
   AstMap();
 
   astexpr_u_ptr clone() const override; 
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k) ;

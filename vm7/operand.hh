@@ -47,7 +47,7 @@ public:
   Operand clone_val() const;
   astexpr_u_ptr clone() const override; 
 
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override final;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const;
   Number _get_number() const ;

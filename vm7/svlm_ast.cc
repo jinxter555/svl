@@ -81,7 +81,7 @@ void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
 }
 
 
-astexpr_u_ptr SvlmAst::evaluate_last_line() {
+Operand SvlmAst::evaluate_last_line() {
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Prompt", "last", "code"});
   //l.print(); cout << "\n";
   auto &ctxt = get_context();
@@ -127,8 +127,8 @@ Operand AstBinOp::to_str() const {
   auto &o = (*this)["op"];
   return  l.to_str() + o.to_str() +  r.to_str();
 }
-astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ast_ctxt) {
-  //cout << "in astbinop eval!\n";
+Operand AstBinOp::evaluate(astexpr_u_ptr& ast_ctxt) {
+  cout << "in astbinop eval!\n";
   auto &l = (*this)["left"].getv();
   auto &r = (*this)["right"].getv();
   //auto &l = (*this)["left"];
@@ -139,7 +139,9 @@ astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ast_ctxt) {
   cout << "str: " << l.to_str() + o.to_str() +  r.to_str() << "\n";
   cout << "num: " << l._get_number() << " " <<   r._get_number() << "\n";
   */
-  return make_unique<Operand>(l.opfunc(r, o._get_opcode()));
+  astexpr_u_ptr result = make_unique<Operand>(l.opfunc(r, o._get_opcode()));
+  return result;
+
 }
 
 
@@ -151,7 +153,7 @@ AstFunc::AstFunc(const Operand &n, astexpr_u_ptr code_ptr) {
   add(string("code"), move(code_ptr));
 }
 
-astexpr_u_ptr AstFunc::evaluate(astexpr_u_ptr& ast_ctxt) {
+Operand AstFunc::evaluate(astexpr_u_ptr& ast_ctxt) {
   auto &l = map_["code"];
   cout << "in func eval!\n";
   return l.evaluate(ast_ctxt);
@@ -183,9 +185,9 @@ Operand AstPrint::to_str() const {
 void AstPrint::print() const {
   cout << to_str();
 }
-astexpr_u_ptr AstPrint::evaluate(astexpr_u_ptr& ast_ctxt) {
+Operand AstPrint::evaluate(astexpr_u_ptr& ast_ctxt) {
   auto &exp = map_.at(string("exp"));
   cout << exp.evaluate(ast_ctxt) << "\n";
   //return make_unique<Operand>("\n");
-  return nullptr;
+  return Operand();
 }
