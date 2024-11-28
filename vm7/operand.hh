@@ -142,6 +142,14 @@ operand_u_ptr operator()(T value) const;
 operand_u_ptr operator()(const astexpr_u_ptr& v) const  ;
 };
 
+struct OperandEvaluate {
+astexpr_u_ptr &ctxt;
+OperandEvaluate(astexpr_u_ptr&c);
+template <typename T> 
+Operand operator()(T v) ;
+Operand operator()(astexpr_u_ptr& v) ;
+};
+
 /*
 struct GetOperand_astexpr_ptr {
 template <typename T>

@@ -42,6 +42,11 @@ public:
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
+  Operand& getv()  override { 
+    cout << "bin op getv()!\n"; 
+    return AstMap::getv();
+    //return nil_operand;
+  };
   void print() ;
 };
 

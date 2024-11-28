@@ -127,19 +127,23 @@ Operand AstBinOp::to_str() const {
   auto &o = (*this)["op"];
   return  l.to_str() + o.to_str() +  r.to_str();
 }
-Operand AstBinOp::evaluate(astexpr_u_ptr& ast_ctxt) {
-  cout << "in astbinop eval!\n";
-  auto &l = (*this)["left"].getv();
-  auto &r = (*this)["right"].getv();
-  //auto &l = (*this)["left"];
-  //auto &r = (*this)["right"];
+Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
+  //cout << "in astbinop eval!\n";
+  auto &l = (*this)["left"];
+  auto &r = (*this)["right"];
   auto &o = (*this)["op"];
+
+  auto lv = l.evaluate(ctxt);
+  auto rv = r.evaluate(ctxt);
   /*
+  cout << "lv: " << lv << lv.get_type() << "\n";
+  cout << "rv: " << rv << rv.get_type() << "\n";
   cout << "opcode" << o.get_opcode() << "\n";
   cout << "str: " << l.to_str() + o.to_str() +  r.to_str() << "\n";
   cout << "num: " << l._get_number() << " " <<   r._get_number() << "\n";
   */
-  astexpr_u_ptr result = make_unique<Operand>(l.opfunc(r, o._get_opcode()));
+  auto result = lv.opfunc(rv, o._get_opcode());
+  //cout << "result: " << result << "\n";
   return result;
 
 }

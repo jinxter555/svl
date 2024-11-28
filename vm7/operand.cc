@@ -108,10 +108,14 @@ unique_ptr<AstExpr> Operand::clone() const {
   return visit(GetOperandClone(), value_);
 }
 
-Operand Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
+Operand Operand::evaluate(astexpr_u_ptr& ctxt) {
+  /*
   auto &ptr = get_u_ptr();
   if(ptr==nullptr) return clone();
-  return ptr->evaluate(ast_ctxt);
+  return ptr->evaluate(ctxt);
+  //return getv().clone();
+  */
+  return visit(OperandEvaluate(ctxt), value_);
 
 }
 //--------------------------------------
@@ -267,6 +271,11 @@ operand_u_ptr GetOperandClone::operator()(T value) const {
 operand_u_ptr GetOperandClone::operator()(const astexpr_u_ptr& v) const { 
   return make_unique<Operand>(v->clone()); 
 }
+
+template <typename T> 
+Operand OperandEvaluate::operator()(T v) { return v; }
+Operand OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
+OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
 //-------------------------------
 /*
 AstExpr* GetOperand_astexpr_ptr::operator()(T value) const { return nullptr; }

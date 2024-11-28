@@ -7,17 +7,22 @@
 Operand Operand::operator+(const Operand& other) const {
   auto type_ = _get_type();
   auto other_type_ = other._get_type();
+
   if(type_ != other_type_) { 
     cout << "error! " << *this << " + '" << other << "'\n";
     return Operand(OperandErrorCode::invalid_op_t);
   }
 
   switch(type_) {
-  case OperandType::num_t: 
-    return _get_number() + other._get_number();
+  case OperandType::num_t:  {
+    return  _get_number() + other._get_number();
+    //cout << "operator: r" << r << "\n";
+    //return r;
+  }
   case OperandType::str_t: 
     return Operand(get<std::string>(value_) + get<std::string>(other.value_));
   case OperandType::uptr_t: 
+    cout << "operator+ uptr_t\n";
     return Operand();
   default: 
     std::cout << "type int: " << static_cast<int>(type_) << "\n";
