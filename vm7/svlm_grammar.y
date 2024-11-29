@@ -50,7 +50,7 @@ namespace vslast {
  
 %nterm EOS // end of statement
 %nterm <std::vector<std::string>> param_list 
-%nterm <std::string> param
+%nterm <std::string> param DOTSTR
 //%nterm <ast_op> comparison_ops
 %nterm comments
 
@@ -152,7 +152,9 @@ literals
   ;
 
 caller
-  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
+//  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
+  : DOTSTR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
+  ;
 
 
 
@@ -161,6 +163,11 @@ caller
 print_exp
   : PRINT exp_eval { $$ = std::make_unique<AstPrint>(move($2)); }
   //| PRINT DQSTR { $$ = std::make_unique<AstPrint> (std::make_unique<AstPrint>($2)); }
+  ;
+
+DOTSTR
+  : STR
+  | DOTSTR DOT STR { $$ = $1 + std::string(".")+ $3; }
   ;
 
 //--------------------------------------------------- EOS end of statement

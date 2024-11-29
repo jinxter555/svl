@@ -1,5 +1,6 @@
 #include "svlm_ast.hh"
 #include "svlm_interactive.hh"
+#include "my_helpers.hh"
 
 
 
@@ -213,22 +214,37 @@ Operand AstPrint::evaluate(astexpr_u_ptr& ctxt) {
 //-----------------------------------------------------------------------
 AstCaller::AstCaller(const Operand& callee) {
   type_= OperandType::ast_caller_t;
-  add(string("callee"), callee);
+  auto modfunc = split_string(callee._to_str(), ".");
+  //cout << "modfunc size" << modfunc.size() << "\n";
+  if(modfunc.size() > 1) {
+    add(string("callee_mod"), Operand(modfunc[0]));
+    add(string("callee_func"),Operand(modfunc[1]));
+  } else {
+    add(string("callee_mod"), nil_operand);
+    add(string("callee_func"),Operand(modfunc[0]));
+  }
 }
 Operand AstCaller::get_type() const { return OperandType::ast_caller_t;}
 OperandType AstCaller::_get_type() const { return OperandType::ast_caller_t;}
 Operand AstCaller::to_str() const {
-  auto &exp = map_.at(string("callee"));
+  auto &exp = map_.at(string("callee_func"));
   return Operand(" ") + exp.to_str();
 }
 void AstCaller::print() const {
   cout << to_str();
 }
 Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
-  //cout << "AstCaller:\n";
-  auto &callee = map_.at(string("callee"));
+  string module_str;
+  auto &callee_func = map_.at(string("callee_func"));
+  auto &callee_mod = map_.at(string("callee_mod"));
 
-  vector<string> keys = {MOD, get_current_module(ctxt),  "function", callee._to_str(), "code"};
+  if(callee_mod == nil_operand)  {
+    module_str  = get_current_module(ctxt);
+  } else {
+    module_str = callee_mod._to_str();
+  }
+  vector<string> keys = {MOD, module_str,  "function", callee_func._to_str(), "code"};
+
   //cout << "keys: " ; for(auto k : keys) { cout << k << ", "; } cout << "\n";
   auto &code = ctxt->get_branch(keys);
   auto result  = code.evaluate(ctxt);

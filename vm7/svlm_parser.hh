@@ -408,6 +408,7 @@ namespace vslast {
       // IDENT_STR
       // STR
       // DQSTR
+      // DOTSTR
       char dummy5[sizeof (std::string)];
     };
 
@@ -614,7 +615,8 @@ namespace vslast {
         S_literals = 73,                         // literals
         S_caller = 74,                           // caller
         S_print_exp = 75,                        // print_exp
-        S_EOS = 76                               // EOS
+        S_DOTSTR = 76,                           // DOTSTR
+        S_EOS = 77                               // EOS
       };
     };
 
@@ -677,6 +679,7 @@ namespace vslast {
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
+      case symbol_kind::S_DOTSTR: // DOTSTR
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -823,6 +826,7 @@ switch (yykind)
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
+      case symbol_kind::S_DOTSTR: // DOTSTR
         value.template destroy< std::string > ();
         break;
 
@@ -2280,7 +2284,7 @@ switch (yykind)
     enum
     {
       yylast_ = 93,     ///< Last index in yytable_.
-      yynnts_ = 12,  ///< Number of nonterminal symbols.
+      yynnts_ = 13,  ///< Number of nonterminal symbols.
       yyfinal_ = 27 ///< Termination state number.
     };
 
@@ -2294,7 +2298,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2298 "svlm_parser.hh"
+#line 2302 "svlm_parser.hh"
 
 
 
