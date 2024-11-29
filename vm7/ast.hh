@@ -36,6 +36,9 @@ public:
   virtual Operand& getv(const Operand &k) = 0;
   virtual vector<string> _get_keys() const =0;
 
+  virtual Operand& back() = 0;
+  virtual Operand& front() = 0;
+
   virtual const astexpr_u_ptr& get_u_ptr(const Operand &k) const = 0;
   virtual astexpr_u_ptr& get_u_ptr_nc(const Operand &k) = 0;
 

@@ -95,6 +95,7 @@ enum class OperandType {
   ast_lvar_t,
   ast_ovar_t,
   ast_print_t,
+  ast_caller_t,
 
   except_t,
   svlm_lang_t,

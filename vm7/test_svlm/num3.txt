@@ -1,15 +1,20 @@
+# what is up
+
 module Main do
   def main() do
     print 2+3
     print 1111+2222
+    func2()
   end
   def func2() do
+    print "hello func2"
     3+4
   end
 end
 
 module Helper do
   def me() do
+    print "Helper me!\n";
     5+6
   end
 end

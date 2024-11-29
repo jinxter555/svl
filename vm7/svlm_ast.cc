@@ -15,8 +15,17 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
 }
 
 astexpr_u_ptr& SvlmAst::get_context() {
+  auto &c= root.get_branch({CONTEXT_UNIV});
+  return c.get_u_ptr_nc();
+}
+astexpr_u_ptr& SvlmAst::get_frames() {
   auto &c= root.get_branch({CONTEXT_UNIV, FRAMES});
   return c.get_u_ptr_nc();
+}
+string SvlmAst::get_current_module() {
+  auto& f = get_frames()->back();
+  auto &m = f[string("current_module")];
+  return m._to_str();
 }
 
 void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
@@ -40,30 +49,30 @@ void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
 
 
 Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType t) {
-  vector<string> func_keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
+  vector<string> keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
   switch(t) {
   case OperandType::ast_mod_t:
     //cout << "ast_mod_t!\n";
-    //root.add_branch(func_keys, nil_operand);
+    //root.add_branch(keys, nil_operand);
     //return nil_operand;
     break;
   case OperandType::ast_func_t:
-    func_keys.push_back("function");
+    keys.push_back("function");
     break;
   case OperandType::ast_mvar_t:
-    func_keys.push_back("mvar");
+    keys.push_back("mvar");
     break;
   case OperandType::ast_class_t:
-    func_keys.push_back("class");
+    keys.push_back("class");
     break;
   default:
     cerr << "unknown module subtype: " << Operand(t) << "! \n";
     return nil_operand;
   }
-  auto &msub_node = root.get_branch(func_keys);
+  auto &msub_node = root.get_branch(keys);
   if(msub_node==nil_operand) {
-    root.add_branch(func_keys, make_unique<AstMap>(), true);
-    auto &nd= root.get_branch(func_keys);
+    root.add_branch(keys, make_unique<AstMap>(), true);
+    auto &nd= root.get_branch(keys);
     return nd;
   }
   return msub_node;
@@ -91,12 +100,18 @@ Operand SvlmAst::evaluate_last_line() {
 
 
 void SvlmAst::run_evaluate() {
-  cout << "Run eval Main::main \n";
+  //cout << "Run eval Main::main \n";
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main", "function", "main", "code"});
   //auto &c = l.get_u_ptr_nc();
   auto &ctxt = get_context();
+  auto &frames = get_frames();
 
-  cout << "l is: " << l << "\n";
+  auto nm = make_unique<AstMap>();
+  nm->add(string("lvars"), make_unique<AstMap>());
+  nm->add(string("current_module"), Operand("Main"));
+  frames->add(move(nm));
+
+  //cout << "l is: " << l << "\n";
   //cout << "size: " <<  l.size() << "\n";
   l.evaluate(ctxt);
 
@@ -118,7 +133,7 @@ AstBinOp::AstBinOp(std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOp
   add(string("op"), Operand(op));
 }
 void AstBinOp::print() {
-  cout << "AstBinOp:\n";
+  //cout << "AstBinOp:\n";
   cout << to_str();
 }
 Operand AstBinOp::to_str() const { 
@@ -157,10 +172,10 @@ AstFunc::AstFunc(const Operand &n, astexpr_u_ptr code_ptr) {
   add(string("code"), move(code_ptr));
 }
 
-Operand AstFunc::evaluate(astexpr_u_ptr& ast_ctxt) {
+Operand AstFunc::evaluate(astexpr_u_ptr& ctxt) {
   auto &l = map_["code"];
   cout << "in func eval!\n";
-  return l.evaluate(ast_ctxt);
+  return l.evaluate(ctxt);
 }
 Operand AstFunc::to_str() const {
   return string("func: ") + name;
@@ -189,9 +204,46 @@ Operand AstPrint::to_str() const {
 void AstPrint::print() const {
   cout << to_str();
 }
-Operand AstPrint::evaluate(astexpr_u_ptr& ast_ctxt) {
+Operand AstPrint::evaluate(astexpr_u_ptr& ctxt) {
   auto &exp = map_.at(string("exp"));
-  cout << exp.evaluate(ast_ctxt) << "\n";
+  cout << exp.evaluate(ctxt) << "\n";
   //return make_unique<Operand>("\n");
   return Operand();
+}
+//-----------------------------------------------------------------------
+AstCaller::AstCaller(const Operand& callee) {
+  type_= OperandType::ast_caller_t;
+  add(string("callee"), callee);
+}
+Operand AstCaller::get_type() const { return OperandType::ast_caller_t;}
+OperandType AstCaller::_get_type() const { return OperandType::ast_caller_t;}
+Operand AstCaller::to_str() const {
+  auto &exp = map_.at(string("callee"));
+  return Operand(" ") + exp.to_str();
+}
+void AstCaller::print() const {
+  cout << to_str();
+}
+Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
+  //cout << "AstCaller:\n";
+  auto &callee = map_.at(string("callee"));
+
+  vector<string> keys = {MOD, get_current_module(ctxt),  "function", callee._to_str(), "code"};
+  //cout << "keys: " ; for(auto k : keys) { cout << k << ", "; } cout << "\n";
+  auto &code = ctxt->get_branch(keys);
+  auto result  = code.evaluate(ctxt);
+  cout << "ast_caller result: " << result << "\n";
+
+  return Operand();
+}
+
+astexpr_u_ptr& AstCaller::get_frames(astexpr_u_ptr& ctxt) {
+  auto &c= ctxt->get_branch({FRAMES});
+  return c.get_u_ptr_nc();
+}
+string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
+  auto& f = get_frames(ctxt)->back();
+  auto &m = f[string("current_module")];
+  //cout << "current module: " << m._to_str() << "\n";
+  return m._to_str();
 }

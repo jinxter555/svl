@@ -22,6 +22,9 @@ public:
   Operand& get_module_subnode(const Operand&, const OperandType t);
 
   astexpr_u_ptr& get_context() ;
+  astexpr_u_ptr& get_frames() ;
+
+  string get_current_module() ;
 //  void add_readline_cmds(const string& cmd);
 //  vector<string> get_readline_cmds(const string& cmd);
 
@@ -41,7 +44,7 @@ public:
   AstBinOp (unique_ptr<AstExpr> l, unique_ptr<AstExpr> r, AstOpCode op);
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
-  Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   Operand& getv()  override { 
     cout << "bin op getv()!\n"; 
     return AstMap::getv();
@@ -56,7 +59,7 @@ class AstAssign : public AstMap{
 public:
   AstAssign(OperandType t) : type_(t) { }
   virtual std::string name() =0;
-  virtual void assign(astexpr_u_ptr& ast_ctxt) = 0;
+  virtual void assign(astexpr_u_ptr& ctxt) = 0;
 };
 
 class AstFunc: public AstMap {
@@ -68,7 +71,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
 };
 
@@ -81,6 +84,21 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
+};
+
+class AstCaller : public AstMap {
+private:
+  OperandType type_;
+  bool evaluated=false;
+public:
+  AstCaller(const Operand&);
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
+  void print() const override;
+  string get_current_module(astexpr_u_ptr& ctxt) ;
+  astexpr_u_ptr& get_frames(astexpr_u_ptr& ctxt) ;
 };

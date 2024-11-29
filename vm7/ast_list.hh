@@ -14,6 +14,10 @@ public:
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(int i)  ;
+
+  Operand& back() override final;
+  Operand& front() override final;
+
   const astexpr_u_ptr& get_u_ptr(const Operand &k) const override final;
   astexpr_u_ptr& get_u_ptr_nc(const Operand &k) override final;
 

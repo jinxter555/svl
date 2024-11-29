@@ -121,6 +121,9 @@ public:
 
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
+
+  Operand& back()  override final ;
+  Operand& front()  override final ;
   
   Operand& operator[] (const Operand& k) override final;
   const Operand& operator[] (const Operand &k) const override final;

@@ -48,7 +48,7 @@ const Operand& AstList::operator[] (int index) const {
 
 //--------------------------------------
 Operand& AstList::getv(const Operand &k)  {
-  //cout << "1getv k(" << k << ")";
+  //cout << "AstList::getv k(" << k << ")";
   return getv(k._get_int());
 }
 Operand& AstList::getv(int i)  {
@@ -60,6 +60,8 @@ Operand& AstList::getv()  {
   cerr << "calling AstList::getv()!\n";
   return nil_operand;
 }
+Operand& AstList::back() { return list_.back(); }
+Operand& AstList::front() { return list_.front(); }
 
 vector<string> AstList::_get_keys() const {return {}; }
 //--------------------------------------

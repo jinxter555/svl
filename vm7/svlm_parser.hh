@@ -387,10 +387,12 @@ namespace vslast {
     union union_type
     {
       // statement
+      // comments
       // module
       // function
       // exp_eval
       // literals
+      // caller
       // print_exp
       char dummy1[sizeof (astexpr_u_ptr)];
 
@@ -605,12 +607,14 @@ namespace vslast {
         S_program_start = 66,                    // program_start
         S_statement_list = 67,                   // statement_list
         S_statement = 68,                        // statement
-        S_module = 69,                           // module
-        S_function = 70,                         // function
-        S_exp_eval = 71,                         // exp_eval
-        S_literals = 72,                         // literals
-        S_print_exp = 73,                        // print_exp
-        S_EOS = 74                               // EOS
+        S_comments = 69,                         // comments
+        S_module = 70,                           // module
+        S_function = 71,                         // function
+        S_exp_eval = 72,                         // exp_eval
+        S_literals = 73,                         // literals
+        S_caller = 74,                           // caller
+        S_print_exp = 75,                        // print_exp
+        S_EOS = 76                               // EOS
       };
     };
 
@@ -648,10 +652,12 @@ namespace vslast {
         switch (this->kind ())
     {
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_comments: // comments
       case symbol_kind::S_module: // module
       case symbol_kind::S_function: // function
       case symbol_kind::S_exp_eval: // exp_eval
       case symbol_kind::S_literals: // literals
+      case symbol_kind::S_caller: // caller
       case symbol_kind::S_print_exp: // print_exp
         value.move< astexpr_u_ptr > (std::move (that.value));
         break;
@@ -792,10 +798,12 @@ namespace vslast {
 switch (yykind)
     {
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_comments: // comments
       case symbol_kind::S_module: // module
       case symbol_kind::S_function: // function
       case symbol_kind::S_exp_eval: // exp_eval
       case symbol_kind::S_literals: // literals
+      case symbol_kind::S_caller: // caller
       case symbol_kind::S_print_exp: // print_exp
         value.template destroy< astexpr_u_ptr > ();
         break;
@@ -2271,9 +2279,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 95,     ///< Last index in yytable_.
-      yynnts_ = 10,  ///< Number of nonterminal symbols.
-      yyfinal_ = 22 ///< Termination state number.
+      yylast_ = 93,     ///< Last index in yytable_.
+      yynnts_ = 12,  ///< Number of nonterminal symbols.
+      yyfinal_ = 27 ///< Termination state number.
     };
 
 
@@ -2286,7 +2294,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2290 "svlm_parser.hh"
+#line 2298 "svlm_parser.hh"
 
 
 

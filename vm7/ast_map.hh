@@ -18,6 +18,9 @@ public:
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k) ;
 
+  Operand& back() override final;
+  Operand& front() override final;
+
   Operand clone_val() const override final;
   Operand& operator[] (const Operand& k) override final;
   const Operand& operator[] (const Operand &k) const override final;

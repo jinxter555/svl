@@ -64,7 +64,7 @@ namespace vslast {
 %right              EXPONENT
 
 %type <list_u_ptr> statement_list
-%type <astexpr_u_ptr> module function literals exp_eval statement print_exp
+%type <astexpr_u_ptr> module function literals exp_eval statement print_exp caller comments
 
 %start program_start
 
@@ -97,7 +97,14 @@ statement
   | module { $$ = move($1); }
   | function { $$ = move($1); }
   | print_exp {$$ = move($1); }
+  | comments { $$ = nullptr; }
   ;
+
+comments
+  :  COMMENT1 { $$=nullptr; }
+  ;
+
+
 
 module 
   : MODULE STR DO statement_list END 
@@ -117,6 +124,7 @@ function
 
 exp_eval
   : literals  { $$ = move($1); }
+  | caller { $$ = move($1); }
   | exp_eval MULTIPLY exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::mul); }
   | exp_eval DIVIDE exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::div); }
   | exp_eval PLUS exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::plus); }
@@ -143,6 +151,11 @@ literals
   | DQSTR { $$ = make_unique<Operand>($1); }
   ;
 
+caller
+  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
+
+
+
 
 
 print_exp
@@ -154,7 +167,7 @@ print_exp
 EOS
   : SEMICOLON
   | EOL
-//  | COMMENT3
+  | COMMENT2
 //  | YYEOF
   ;
 

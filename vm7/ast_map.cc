@@ -31,6 +31,8 @@ Operand& AstMap::getv()  {
   return nil_operand;
 }
 
+Operand& AstMap::back() { return nil_operand;}
+Operand& AstMap::front() { return nil_operand;}
 
 
 Operand& AstMap::getv(const Operand &k)  {

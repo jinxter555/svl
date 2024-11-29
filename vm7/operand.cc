@@ -276,12 +276,7 @@ template <typename T>
 Operand OperandEvaluate::operator()(T v) { return v; }
 Operand OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
 OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
-//-------------------------------
-/*
-AstExpr* GetOperand_astexpr_ptr::operator()(T value) const { return nullptr; }
-AstExpr* GetOperand_astexpr_ptr::operator()(const astexpr_u_ptr& v) const  { return v.get(); }
-*/
-//-------------------------------
+
 //-------------------------------------------
 bool Operand::add(const AstExpr &v) {
   auto &vptr = get_u_ptr();
@@ -346,6 +341,25 @@ Operand& Operand::getv() {
   } else
     return *this;
 }
+//-----------------------------------------------------------------------
+Operand& Operand::front() {
+  if(type_==OperandType::uptr_t) {
+    auto &ptr = get_u_ptr();
+    if(ptr==nil_ast_ptr) return nil_operand;
+    return ptr->front();
+  } else
+    return nil_operand;
+}
+Operand& Operand::back() {
+  if(type_==OperandType::uptr_t) {
+    auto &ptr = get_u_ptr();
+    if(ptr==nil_ast_ptr) return nil_operand;
+    return ptr->back();
+  } else
+    return nil_operand;
+}
+
+
 //-------------------------------------------
 
 Operand& Operand::getv(const Operand &k)  {
@@ -353,7 +367,7 @@ Operand& Operand::getv(const Operand &k)  {
   auto &ptr = get_u_ptr();
   if(ptr == nil_ast_ptr) return nil_operand;
   if(ptr == nullptr) return nil_operand;
-  //cout << "getv ptr: " <<  ptr << "\n";
+  //cout << "Operand::getv(" <<  k << ")\n";
   return ptr->getv(k);
 }
 
