@@ -10,11 +10,12 @@ module Main do
   end
   def func2() do
     print "hello func2"
-    3+4
+    $myvar1 = 123*3+4
   end
   def func3() do
-    $myvar1 = 123
-    print "hello func3"
+    $myvar2 = $myvar1 + 33
+    print "hello func3, $myvar1: "
+    print $myvar1
   end
 end
 

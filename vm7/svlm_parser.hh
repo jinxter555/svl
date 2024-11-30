@@ -393,6 +393,7 @@ namespace vslast {
       // exp_eval
       // literals
       // caller
+      // variable
       // print_exp
       char dummy1[sizeof (astexpr_u_ptr)];
 
@@ -614,9 +615,10 @@ namespace vslast {
         S_exp_eval = 72,                         // exp_eval
         S_literals = 73,                         // literals
         S_caller = 74,                           // caller
-        S_print_exp = 75,                        // print_exp
-        S_DOTSTR = 76,                           // DOTSTR
-        S_EOS = 77                               // EOS
+        S_variable = 75,                         // variable
+        S_print_exp = 76,                        // print_exp
+        S_DOTSTR = 77,                           // DOTSTR
+        S_EOS = 78                               // EOS
       };
     };
 
@@ -660,6 +662,7 @@ namespace vslast {
       case symbol_kind::S_exp_eval: // exp_eval
       case symbol_kind::S_literals: // literals
       case symbol_kind::S_caller: // caller
+      case symbol_kind::S_variable: // variable
       case symbol_kind::S_print_exp: // print_exp
         value.move< astexpr_u_ptr > (std::move (that.value));
         break;
@@ -807,6 +810,7 @@ switch (yykind)
       case symbol_kind::S_exp_eval: // exp_eval
       case symbol_kind::S_literals: // literals
       case symbol_kind::S_caller: // caller
+      case symbol_kind::S_variable: // variable
       case symbol_kind::S_print_exp: // print_exp
         value.template destroy< astexpr_u_ptr > ();
         break;
@@ -2284,8 +2288,8 @@ switch (yykind)
     enum
     {
       yylast_ = 103,     ///< Last index in yytable_.
-      yynnts_ = 13,  ///< Number of nonterminal symbols.
-      yyfinal_ = 29 ///< Termination state number.
+      yynnts_ = 14,  ///< Number of nonterminal symbols.
+      yyfinal_ = 30 ///< Termination state number.
     };
 
 
@@ -2298,7 +2302,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2302 "svlm_parser.hh"
+#line 2306 "svlm_parser.hh"
 
 
 

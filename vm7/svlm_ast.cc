@@ -152,19 +152,19 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
   //cout << "in astbinop eval!\n";
   auto &l = (*this)["left"];
   auto &r = (*this)["right"];
-  auto &o = (*this)["op"];
+  auto opcode = (*this)["op"]._get_opcode();
+
+  auto rv = r.evaluate(ctxt);
+
+  if(opcode == AstOpCode::assign) {
+    AstMvar* variable =(AstMvar*) l.get_raw_ptr();
+    variable->assign(ctxt, rv);
+    return rv;
+  }
 
   auto lv = l.evaluate(ctxt);
-  auto rv = r.evaluate(ctxt);
-  /*
-  cout << "lv: " << lv << lv.get_type() << "\n";
-  cout << "rv: " << rv << rv.get_type() << "\n";
-  cout << "opcode" << o.get_opcode() << "\n";
-  cout << "str: " << l.to_str() + o.to_str() +  r.to_str() << "\n";
-  cout << "num: " << l._get_number() << " " <<   r._get_number() << "\n";
-  */
-  auto result = lv.opfunc(rv, o._get_opcode());
-  //cout << "result: " << result << "\n";
+
+  auto result = lv.opfunc(rv, opcode);
   return result;
 
 }
@@ -294,8 +294,18 @@ void AstMvar::print() const {
 
 // to get value from tree: module 'mname' mvar 'vname'
 Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
-  assign(ctxt, 8888l);
-  return Operand();
+  //cout << "AstMvar::evalaute\n";
+  auto &c= ctxt->get_branch({"svlm_lang"});
+  auto ptr = c.get_svlm_ptr();
+  if(ptr==nullptr) {
+    cerr << "In AstMvar::evaluate svlmlang is null!\n";
+    return Operand();
+  }
+  auto mod_name = ptr->get_current_module();
+  auto var_name = name();
+
+  auto &sub_node = ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
+  return sub_node.getv(var_name).clone_val();
 }
 // to assign value to tree: module 'mname' mvar 'vname'
 void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
@@ -305,8 +315,6 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
     cerr << "In AstMvar::Assign svlmlang is null!\n";
     return;
   }
-  //cout << "current module is: " << ptr->get_current_module() << "\n";
-  //cout << "svlmlang is good!\n";
   auto mod_name = ptr->get_current_module();
   auto var_name = name();
 
