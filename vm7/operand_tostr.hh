@@ -15,6 +15,7 @@ struct OperandToStringVisitor {
   Operand operator()(AstOpCode t_op) const;
   Operand operator()(const astexpr_u_ptr&) const;
   Operand operator()(const operand_u_ptr&) const;
+  Operand operator()(svlm_ast_ptr) const;
 /*
   Operand operator()(const list_u_ptr&) const;
   Operand operator()(const map_u_ptr&) const;

@@ -14,6 +14,9 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
     exit(1);
   }
 }
+Operand SvlmAst::to_str() const {
+  return string("SvlmAst PTR");
+}
 
 astexpr_u_ptr& SvlmAst::get_context() {
   auto &c= root.get_branch({CONTEXT_UNIV});
@@ -39,12 +42,13 @@ void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
     auto &nan_vptr = nan.get_u_ptr_nc();
+
+    // sub_node could be FUNC, CLASS, VAR
     auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
     if(sub_node==nil_operand) { continue; }
 
     auto sub_node_name = nan.getv("name")._to_str();
     sub_node.add(sub_node_name, move(nan_vptr), true);
-
   }
 }
 
@@ -103,6 +107,7 @@ Operand SvlmAst::evaluate_last_line() {
 void SvlmAst::run_evaluate() {
   //cout << "Run eval Main::main \n";
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main", "function", "main", "code"});
+  root.add_branch({CONTEXT_UNIV, "svlm_lang"}, Operand(this));
   //auto &c = l.get_u_ptr_nc();
   auto &ctxt = get_context();
   auto &frames = get_frames();
@@ -262,4 +267,49 @@ string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
   auto &m = f[string("current_module")];
   //cout << "current module: " << m._to_str() << "\n";
   return m._to_str();
+}
+
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+AstMvar::AstMvar(const string &name) : AstAssign(OperandType::ast_mvar_t) { 
+  // store in module tree mvar get module
+  cout << "varname: " << name << "\n";
+  add(string("name"), Operand(name));
+  
+
+}
+
+string AstMvar::name() { 
+  return getv(string("name"))._to_str();
+}
+Operand AstMvar::get_type() const { return OperandType::ast_mvar_t;}
+OperandType AstMvar::_get_type() const { return OperandType::ast_mvar_t;}
+Operand AstMvar::to_str() const {
+  auto &name= map_.at(string("name"));
+  return name.to_str();
+}
+void AstMvar::print() const {
+  cout << to_str();
+}
+
+// to get value from tree: module 'mname' mvar 'vname'
+Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
+  assign(ctxt, 8888l);
+  return Operand();
+}
+// to assign value to tree: module 'mname' mvar 'vname'
+void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
+  auto &c= ctxt->get_branch({"svlm_lang"});
+  auto ptr = c.get_svlm_ptr();
+  if(ptr==nullptr) {
+    cerr << "In AstMvar::Assign svlmlang is null!\n";
+    return;
+  }
+  //cout << "current module is: " << ptr->get_current_module() << "\n";
+  //cout << "svlmlang is good!\n";
+  auto mod_name = ptr->get_current_module();
+  auto var_name = name();
+
+  auto &sub_node = ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
+  sub_node.add(var_name, v, true);
 }

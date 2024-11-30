@@ -15,7 +15,8 @@ SvlmInteractive::SvlmInteractive
 ) 
 : LangPrompt(hf, ps)
 , svlm_lang(OperandType::svlm_lang_t) 
-, slc(OperandType::svlm_ctxt_t) {
+//, slc(OperandType::svlm_ctxt_t) 
+{
 
   init_command_functions();
 

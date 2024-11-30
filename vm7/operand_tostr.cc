@@ -1,4 +1,5 @@
 #include "operand_tostr.hh"
+#include "svlm_ast.hh"
 
 Operand OperandToStringVisitor::operator()(const Nil &n) const {
   return string("nil");
@@ -15,6 +16,10 @@ Operand OperandToStringVisitor::operator()(const Number &n) const {
 }
 Operand OperandToStringVisitor::operator()(const std::string& s) const {
   return s;
+}
+Operand OperandToStringVisitor::operator()(svlm_ast_ptr v) const {
+  //return string("SvlmAst ptr");
+  return v->to_str();
 }
 Operand OperandToStringVisitor::operator()(OperandType t) const {
   string outstr;
@@ -40,6 +45,7 @@ Operand OperandToStringVisitor::operator()(OperandType t) const {
   case OperandType::ast_ovar_t:  outstr ="ast_ovar_t"; break;
   case OperandType::ast_print_t:  outstr ="ast_print_t"; break;
   case OperandType::ast_caller_t:  outstr ="ast_caller_t"; break;
+  case OperandType::svlm_ast_ptr_t:  outstr ="svlm_ast_ptr_t"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
   //case OperandType::any_t:  outstr ="any_t"; break;
   default: outstr ="i have forgotten to add. type unknown"; break;

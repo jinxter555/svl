@@ -138,6 +138,13 @@ exp_eval
   | exp_eval AND exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::and_); }
   | exp_eval OR exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::or_); }
   | NOT exp_eval { $$ = make_unique<AstBinOp>(move($2), move($2), AstOpCode::not_); }
+  | DOLLAR STR ASSIGN exp_eval { 
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstMvar>($2),
+        move($4), 
+        AstOpCode::assign
+      ); 
+  }
   ;
 
 
@@ -150,7 +157,6 @@ literals
   //| COLON STR { $$ = std::make_unique<OperandExprAst>(Operand(Atom($2))); }
   | DQSTR { $$ = make_unique<Operand>($1); }
   ;
-
 caller
 //  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
   : DOTSTR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }

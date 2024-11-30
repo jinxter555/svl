@@ -63,6 +63,9 @@ Operand::Operand(AstExpr *ptr)
 , value_(unique_ptr<AstExpr>(ptr)) {
   //cout << "initialize Operand(AstExpr*)";
 }
+Operand::Operand(svlm_ast_ptr ptr) 
+: AstExpr(OperandType::svlm_ast_ptr_t)
+, value_(ptr) {}
 
 Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) { 
   if(vptr==nullptr) {
@@ -158,6 +161,12 @@ AstExpr *Operand::get_raw_ptr(const string &k) const {
   return ptr->get_raw_ptr(k);
 }
 
+svlm_ast_ptr Operand::get_svlm_ptr() {
+   if (holds_alternative<svlm_ast_ptr>(value_)) {
+    return get<svlm_ast_ptr>(value_);
+   }
+   return nullptr;
+}
 
 //-----------------------------------------------------------------------
 OperandVariant Operand::_get_value() const {

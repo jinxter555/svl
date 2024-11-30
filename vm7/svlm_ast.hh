@@ -29,7 +29,7 @@ public:
 //  vector<string> get_readline_cmds(const string& cmd);
 
   unique_ptr<Tree> clone() const override {return nullptr;};
-  Operand to_str() const override { return "";};
+  Operand to_str() const override;
   Operand get_type() const override { return OperandType::nil_t;};
   OperandType _get_type() const override { return OperandType::nil_t;};
   void print() const override {};
@@ -54,13 +54,6 @@ public:
 };
 
 
-class AstAssign : public AstMap{ 
-  OperandType type_;
-public:
-  AstAssign(OperandType t) : type_(t) { }
-  virtual std::string name() =0;
-  virtual void assign(astexpr_u_ptr& ctxt) = 0;
-};
 
 class AstFunc: public AstMap {
 private:
@@ -101,4 +94,29 @@ public:
   void print() const override;
   string get_current_module(astexpr_u_ptr& ctxt) ;
   astexpr_u_ptr& get_frames(astexpr_u_ptr& ctxt) ;
+};
+
+class AstAssign : public AstMap {
+protected:
+  OperandType type_;
+public:
+  AstAssign(OperandType t) : type_(t) {}
+  virtual string name() = 0;
+  virtual void assign(astexpr_u_ptr&, const Operand& ) = 0;
+  int get_index_i(astexpr_u_ptr&) {return 0;};
+  string get_index_s(astexpr_u_ptr&) {return "";};
+};
+
+class AstMvar : public AstAssign {
+private:
+  bool initiated=false;
+public:
+  AstMvar(const string&);
+  string name() override final;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
+  void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
+  void print() const override;
 };

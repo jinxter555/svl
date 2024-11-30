@@ -18,8 +18,8 @@ astexpr_u_ptr AstMap::clone() const {
 
 Operand AstMap::clone_val() const {
   cerr << "I should NOT be here in  AstMap::clone_val()\n";
-  auto a = clone();
-  return Operand(move(a));
+  auto v = clone();
+  return Operand(move(v));
 };
 
 Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
@@ -28,6 +28,8 @@ Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
 
 Operand& AstMap::getv()  {
   cerr << "I should NOT be here in  AstMap::getv()\n";
+  //myself.value_ = unique_ptr<AstMap>(this);
+  //myself.type_ = OperandType::uptr_t;
   return nil_operand;
 }
 

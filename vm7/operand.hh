@@ -39,6 +39,7 @@ public:
   Operand(astexpr_u_ptr &);
   Operand(astexpr_u_ptr &&);
   Operand(AstExpr *);
+  Operand(svlm_ast_ptr);
 
 
   //Operand operator=(const Operand &v);
@@ -67,6 +68,7 @@ public:
   Operand to_str() const override; 
   Operand whatami() const;  // introspection type + value
 
+
   void  print() const override; 
   //--------------------------------------------------------- 
   AstExpr *get_raw_ptr(const Operand &k) const override final;
@@ -80,6 +82,10 @@ public:
 
   const astexpr_u_ptr& get_u_ptr() const override;
   astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
+
+  svlm_ast_ptr get_svlm_ptr();
+
+
 
 
   //--------------------------------------------------------- 

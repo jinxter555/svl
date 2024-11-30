@@ -13,8 +13,8 @@ module Main do
     3+4
   end
   def func3() do
+    $myvar1 = 123
     print "hello func3"
-    30+40
   end
 end
 

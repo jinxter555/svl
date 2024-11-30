@@ -99,6 +99,7 @@ enum class OperandType {
 
   except_t,
   svlm_lang_t,
+  svlm_ast_ptr_t,
   svlm_ctxt_t,
 };
 
@@ -127,10 +128,12 @@ using operand_u_ptr=unique_ptr<Operand>;
 //--------------------------------------------------------- 
 class AstList;  class AstMap;
 class QueNode; class AstNode; class AstExpr;
+class SvlmAst;
 //--------------------------------------------------------- 
 using list_u_ptr = unique_ptr<AstList>;
 using map_u_ptr = unique_ptr<AstMap>;
 using astexpr_u_ptr = unique_ptr<AstExpr>;
+using svlm_ast_ptr = SvlmAst *;
 //--------------------------------------------------------- 
 using OperandVariant=std::variant
 < Nil
@@ -138,6 +141,7 @@ using OperandVariant=std::variant
 , ControlFlow
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
+, svlm_ast_ptr 
 , astexpr_u_ptr
 >;
 //--------------------------------------------------------- 
