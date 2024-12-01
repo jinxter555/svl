@@ -92,6 +92,7 @@ AstExpr *AstMap::get_raw_ptr(const Operand &k) const {
   return get_raw_ptr(k_str);
 }
 AstExpr *AstMap::get_raw_ptr(const string &k) const {
+  //cout << "AstMap::get_raw_ptr: k_str " << k << "\n";
   if(this == nullptr || !has_key(k)){
     //cerr << "raw pointer key: " << k << " does not exist!\n";
     return nullptr;
@@ -172,30 +173,35 @@ bool AstMap::add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool
 
 
 //------------------------------------- 
-Operand& AstMap::get_branch2(const vector<string> &keys) {
+Operand& AstMap::get_branch(const vector<string> &keys) {
   int i=0, s = keys.size();  
-  string k; AstMap *curr=this, *next;
+  string k; AstExpr *curr=this, *next;
 
-  if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
+  //if(curr==nullptr )  return nil_operand;
   for(int i=0; i<s-1; i++) {
     k = keys[i];  //cout << "keys[" << i<< "]: " << keys[i] << "\n";
-    //if(curr==nullptr) { cerr << "curr nullptr bomb!\n"; //return nil_operand;
-    //} else { //cout  << "curr type: " << curr->get_type() << "\n"; }
-    next = (AstMap*) curr->get_raw_ptr(k);
-    if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
+    if(curr==nullptr) { 
+      cerr << "curr nullptr bomb!\n";
+      return nil_operand;
+    } else { //cout  << "curr type: " << curr->get_type() << "\n"; 
+    }
+    next = (AstExpr*) curr->get_raw_ptr(k);
+    if(curr==nullptr)  return nil_operand;
     curr = next;
   }
 
   if(curr==nullptr) {
     //cerr << "curr is null!\n";
     return nil_operand;
-  } else
-    return curr->getv(keys.back());
+  } else {
+    return curr->getv(Operand(keys.back()));
+  }
+  return nil_operand;
 }
 
 
 
-Operand& AstMap::get_branch(const vector<string> &keys) {
+Operand& AstMap::get_branch2(const vector<string> &keys) {
   int i=0, s = keys.size();  
   string k; AstMap *curr=this, *next;
 

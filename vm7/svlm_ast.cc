@@ -215,7 +215,7 @@ void AstPrint::print() const {
 }
 Operand AstPrint::evaluate(astexpr_u_ptr& ctxt) {
   auto &exp = map_.at(string("exp"));
-  cout << exp.evaluate(ctxt) << "\n";
+  cout << exp.evaluate(ctxt);
   //return make_unique<Operand>("\n");
   return Operand();
 }
@@ -287,7 +287,7 @@ Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
   //cout << "keys: " ; for(auto k : keys) { cout << k << ", "; } cout << "\n";
   auto &code = ctxt->get_branch(keys);
   auto result  = code.evaluate(ctxt);
-  cout << "ast_caller result: " << result << "\n";
+  //cout << "ast_caller result: " << result << "\n";
 
   return Operand();
 }

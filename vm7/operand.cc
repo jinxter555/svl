@@ -228,6 +228,10 @@ Number Operand::_get_number() const {
     return rptr->_get_number();
   } else if(holds_alternative<Number>(value_)) {
     return get<Number>(value_); 
+  } else if(holds_alternative<string>(value_)) {
+    auto strnum = get<string>(value_);
+    if(strnum.find('.')!= string::npos) return Number(stod(strnum)); 
+    else return Number(stol(strnum)); 
   }
   return 0l;
 }

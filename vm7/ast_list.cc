@@ -52,7 +52,7 @@ Operand& AstList::getv(const Operand &k)  {
   return getv(k._get_int());
 }
 Operand& AstList::getv(const string &k)  {
-  //cout << "AstList::getv k(" << k << ")";
+  cout << "AstList::getv k(" << k << ")";
   return getv(stoi(k, nullptr, 10));
 }
 Operand& AstList::getv(int i)  {
@@ -97,9 +97,18 @@ AstExpr *AstList::get_raw_ptr() const {
 AstExpr *AstList::get_raw_ptr(const Operand &k) const {
   return get_raw_ptr(k._get_int());
 }
+AstExpr *AstList::get_raw_ptr(const string &k) const {
+  cout << "astlist:get_raw_ptr k_str to int\n";
+  return get_raw_ptr(stoi(k, nullptr, 10));
+}
+
 AstExpr *AstList::get_raw_ptr(int i) const {
-   if(i > list_.size() || i < 0) return nullptr;
+  //cout << "AstList::get_raw_ptr:i " << i << "\n";
+  if(i > list_.size() || i < 0) return nullptr;
   return list_[i].get_raw_ptr();
+  //auto ptr = list_[i].get_raw_ptr();
+  //cout << "*ptr: " << *ptr << "\n";
+  //return ptr;
 
 }
 //--------------------------------------
@@ -139,6 +148,20 @@ bool AstList::set(const Operand &key, astexpr_u_ptr &&vptr ) {
   return true;
 }
 //--------------------------------------
+
+Operand AstList::to_str() const {
+  int i, s = size();
+  Operand outstr("[\n");
+  if(s==0) {return Operand("[]");}
+
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + to_string(i) + string(": ") + list_[i].to_str() + ",\n";
+  }
+  outstr = outstr +  to_string(i)  + string(": ") + list_[i].to_str() + "\n]";
+  return outstr;
+}
+
+/*
 Operand AstList::to_str() const {
   int i, s = size();
   Operand outstr("[");
@@ -150,7 +173,7 @@ Operand AstList::to_str() const {
   outstr = outstr + list_[i].to_str() + "]";
   return outstr;
 }
-
+*/
 void AstList::print() const {
   //if(this==nullptr) return;
   cout << to_str();
