@@ -51,6 +51,10 @@ Operand& AstList::getv(const Operand &k)  {
   //cout << "AstList::getv k(" << k << ")";
   return getv(k._get_int());
 }
+Operand& AstList::getv(const string &k)  {
+  //cout << "AstList::getv k(" << k << ")";
+  return getv(stoi(k, nullptr, 10));
+}
 Operand& AstList::getv(int i)  {
   if(list_[i] == nil_ast_ptr) return nil_operand;
   //return list_[i].getv();

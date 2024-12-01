@@ -34,6 +34,7 @@ public:
 
   virtual Operand& getv() = 0;
   virtual Operand& getv(const Operand &k) = 0;
+  //virtual Operand& getv(const string &k) = 0;
   virtual vector<string> _get_keys() const =0;
 
   virtual Operand& back() = 0;

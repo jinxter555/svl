@@ -24,6 +24,9 @@ astexpr_u_ptr& SvlmAst::get_context() {
 }
 astexpr_u_ptr& SvlmAst::get_frames() {
   auto &c= root.get_branch({CONTEXT_UNIV, FRAMES});
+  if(c==nil_operand) {
+    cerr << "SvlmAst::get_frames is nil_operand!\n";
+  }
   return c.get_u_ptr_nc();
 }
 string SvlmAst::get_current_module() {
@@ -229,6 +232,35 @@ AstCaller::AstCaller(const Operand& callee) {
     add(string("callee_func"),Operand(modfunc[0]));
   }
 }
+
+Operand& AstCaller::add_frame(astexpr_u_ptr &ctxt) { 
+  // use current module if call
+  auto nm = make_unique<AstMap>();
+  auto &svlm_lang = ctxt->get_branch({"svlm_lang"});
+  auto ptr = svlm_lang.get_svlm_ptr();
+  auto &frames = ptr->get_frames();
+  nm->add(string("lvars"), make_unique<AstMap>());
+
+  //cout << "add frame current modfunc: " << map_.at(string("callee_mod")) << ":" <<  map_.at(string("callee_func")) << "\n";
+
+  nm->add(string("current_function"), map_.at(string("callee_func")));
+  nm->add(string("current_module"), map_.at(string("callee_mod")));
+  //nm->add(string("hello"), Operand(555l));
+
+  frames->add(move(nm));
+
+
+  return frames->back();
+}
+Operand& AstCaller::remove_frame(astexpr_u_ptr &ctxt) { 
+  auto &svlm_lang = ctxt->get_branch({"svlm_lang"});
+  auto ptr = svlm_lang.get_svlm_ptr();
+  auto &frames = ptr->get_frames();
+  auto &f = frames->back();
+  //frames->pop
+  return nil_operand;
+}
+
 Operand AstCaller::get_type() const { return OperandType::ast_caller_t;}
 OperandType AstCaller::_get_type() const { return OperandType::ast_caller_t;}
 Operand AstCaller::to_str() const {
@@ -236,7 +268,7 @@ Operand AstCaller::to_str() const {
   return Operand(" ") + exp.to_str();
 }
 void AstCaller::print() const {
-  cout << to_str();
+  cout << "AstCaller Print: " << to_str();
 }
 Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
   string module_str;
@@ -248,8 +280,10 @@ Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
   } else {
     module_str = callee_mod._to_str();
   }
-  vector<string> keys = {MOD, module_str,  "function", callee_func._to_str(), "code"};
+  AstMap::add(string("callee_mod"), Operand(module_str), true);
+  add_frame(ctxt);
 
+  vector<string> keys = {MOD, module_str,  "function", callee_func._to_str(), "code"};
   //cout << "keys: " ; for(auto k : keys) { cout << k << ", "; } cout << "\n";
   auto &code = ctxt->get_branch(keys);
   auto result  = code.evaluate(ctxt);
@@ -273,7 +307,7 @@ string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
 //-----------------------------------------------------------------------
 AstMvar::AstMvar(const string &name) : AstAssign(OperandType::ast_mvar_t) { 
   // store in module tree mvar get module
-  cout << "varname: " << name << "\n";
+  // cout << "varname: " << name << "\n";
   add(string("name"), Operand(name));
   
 

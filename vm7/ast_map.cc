@@ -172,6 +172,29 @@ bool AstMap::add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool
 
 
 //------------------------------------- 
+Operand& AstMap::get_branch2(const vector<string> &keys) {
+  int i=0, s = keys.size();  
+  string k; AstMap *curr=this, *next;
+
+  if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
+  for(int i=0; i<s-1; i++) {
+    k = keys[i];  //cout << "keys[" << i<< "]: " << keys[i] << "\n";
+    //if(curr==nullptr) { cerr << "curr nullptr bomb!\n"; //return nil_operand;
+    //} else { //cout  << "curr type: " << curr->get_type() << "\n"; }
+    next = (AstMap*) curr->get_raw_ptr(k);
+    if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
+    curr = next;
+  }
+
+  if(curr==nullptr) {
+    //cerr << "curr is null!\n";
+    return nil_operand;
+  } else
+    return curr->getv(keys.back());
+}
+
+
+
 Operand& AstMap::get_branch(const vector<string> &keys) {
   int i=0, s = keys.size();  
   string k; AstMap *curr=this, *next;
@@ -190,6 +213,8 @@ Operand& AstMap::get_branch(const vector<string> &keys) {
   } else
     return curr->getv(keys.back());
 }
+
+
 
 
 

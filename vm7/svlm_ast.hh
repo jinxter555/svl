@@ -94,6 +94,11 @@ public:
   void print() const override;
   string get_current_module(astexpr_u_ptr& ctxt) ;
   astexpr_u_ptr& get_frames(astexpr_u_ptr& ctxt) ;
+
+  Operand& add_frame(astexpr_u_ptr& ctxt);
+  Operand& remove_frame(astexpr_u_ptr& ctxt);
+
+
 };
 
 class AstAssign : public AstMap {

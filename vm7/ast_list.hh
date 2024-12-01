@@ -13,6 +13,7 @@ public:
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
+  Operand& getv(const string &k)  ;
   Operand& getv(int i)  ;
 
   Operand& back() override final;

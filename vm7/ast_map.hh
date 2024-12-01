@@ -56,6 +56,7 @@ public:
   bool add_branch(const vector<string> &keys, const Operand& operand, bool overwrite=false) override final;
   bool add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite=false) override final;
   Operand& get_branch(const vector<string> &keys) override final;
+  Operand& get_branch2(const vector<string> &keys) ;
   //-------------------------------------------
   bool has_key(const Operand &k) const;
   bool has_key(const string &k) const ;
