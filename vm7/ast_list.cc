@@ -56,6 +56,7 @@ Operand& AstList::getv(const string &k)  {
   return getv(stoi(k, nullptr, 10));
 }
 Operand& AstList::getv(int i)  {
+  if(i >= list_.size() || i < 0) return nil_operand;
   if(list_[i] == nil_ast_ptr) return nil_operand;
   //return list_[i].getv();
   return list_[i];
@@ -104,7 +105,7 @@ AstExpr *AstList::get_raw_ptr(const string &k) const {
 
 AstExpr *AstList::get_raw_ptr(int i) const {
   //cout << "AstList::get_raw_ptr:i " << i << "\n";
-  if(i > list_.size() || i < 0) return nullptr;
+  if(i >= list_.size() || i < 0) return nullptr;
   return list_[i].get_raw_ptr();
   //auto ptr = list_[i].get_raw_ptr();
   //cout << "*ptr: " << *ptr << "\n";
@@ -136,14 +137,14 @@ s_integer AstList::size() const { return list_.size(); }
 //--------------------------------------
 bool AstList::set(const Operand &key, const AstExpr &v ) {
   int i = key._get_int();
-  if(i > size() || i < 0) return false;
+  if(i >= size() || i < 0) return false;
   list_[i] = v.clone();
   return true;
 }
 
 bool AstList::set(const Operand &key, astexpr_u_ptr &&vptr ) {
   int i = key._get_int();
-  if(i > size() || i < 0) return false;
+  if(i >= size() || i < 0) return false;
   list_[i] = move(vptr);
   return true;
 }
