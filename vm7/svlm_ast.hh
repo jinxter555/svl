@@ -61,7 +61,7 @@ private:
   string name;
   OperandType type_;
 public:
-  AstFunc(const Operand&,  astexpr_u_ptr) ; 
+  AstFunc(const Operand&,  astexpr_u_ptr, astexpr_u_ptr) ; 
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
@@ -87,7 +87,7 @@ private:
   OperandType type_;
   bool evaluated=false;
 public:
-  AstCaller(const Operand&);
+  AstCaller(const Operand&, astexpr_u_ptr);
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;

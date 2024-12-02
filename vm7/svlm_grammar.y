@@ -49,10 +49,11 @@ namespace vslast {
 %token <s_float>     FLT
  
 %nterm EOS // end of statement
-%nterm <std::vector<std::string>> param_list 
-%nterm <std::string> param DOTSTR
-//%nterm <ast_op> comparison_ops
+%nterm <std::string> DOTSTR
 %nterm comments
+
+%nterm <astexpr_u_ptr> proto_list proto arg_list arg
+
 
 %nonassoc           ASSIGN
 %left               AND OR 
@@ -115,8 +116,9 @@ module
   ;
 
 function 
-  : DEF STR PAREN_L PAREN_R DO statement_list END {
-    $$ = make_unique<AstFunc>($2, move($6));
+  //: DEF STR PAREN_L PAREN_R DO statement_list END {
+  : DEF STR PAREN_L proto_list PAREN_R DO statement_list END {
+    $$ = make_unique<AstFunc>($2, move($4), move($7));
   }
   ;
 
@@ -167,7 +169,7 @@ literals
   ;
 caller
 //  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
-  : DOTSTR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
+  : DOTSTR PAREN_L arg_list PAREN_R { $$= std::make_unique<AstCaller>($1, move($3)); }
   ;
 
 
@@ -188,6 +190,47 @@ DOTSTR
   : STR
   | DOTSTR DOT STR { $$ = $1 + std::string(".")+ $3; }
   ;
+
+//--------------------------------------------------- 
+proto_list
+  : proto  { 
+    auto pl = make_unique<AstList>();
+    pl->add(move($1)); 
+    $$ = move(pl);
+  }
+  | proto_list COMMA proto { 
+    $1->add(move($3));
+    $$ = move($1);
+  }
+  | %empty { 
+    $$ = make_unique<AstList>();
+  } 
+  ;
+
+proto
+  : STR { //std::cout << "param: " << $1 << "\n"; 
+    $$=make_unique<Operand>($1);
+  }
+  ;
+//--------------------------------------------------- 
+arg_list
+  : arg_list COMMA arg {
+    $1->add(move($3));
+    $$ = move($1);
+  }
+  | arg {
+    auto al = std::make_unique<AstList>();
+    al->add(move($1));
+    $$ = move(al);
+  }
+  | %empty {$$ = std::make_unique<AstList>();}
+  ;
+
+arg
+  : exp_eval { $$ = move($1); }
+  ;
+
+
 
 //--------------------------------------------------- EOS end of statement
 EOS

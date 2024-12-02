@@ -395,6 +395,10 @@ namespace vslast {
       // caller
       // variable
       // print_exp
+      // proto_list
+      // proto
+      // arg_list
+      // arg
       char dummy1[sizeof (astexpr_u_ptr)];
 
       // statement_list
@@ -618,7 +622,11 @@ namespace vslast {
         S_variable = 75,                         // variable
         S_print_exp = 76,                        // print_exp
         S_DOTSTR = 77,                           // DOTSTR
-        S_EOS = 78                               // EOS
+        S_proto_list = 78,                       // proto_list
+        S_proto = 79,                            // proto
+        S_arg_list = 80,                         // arg_list
+        S_arg = 81,                              // arg
+        S_EOS = 82                               // EOS
       };
     };
 
@@ -664,6 +672,10 @@ namespace vslast {
       case symbol_kind::S_caller: // caller
       case symbol_kind::S_variable: // variable
       case symbol_kind::S_print_exp: // print_exp
+      case symbol_kind::S_proto_list: // proto_list
+      case symbol_kind::S_proto: // proto
+      case symbol_kind::S_arg_list: // arg_list
+      case symbol_kind::S_arg: // arg
         value.move< astexpr_u_ptr > (std::move (that.value));
         break;
 
@@ -812,6 +824,10 @@ switch (yykind)
       case symbol_kind::S_caller: // caller
       case symbol_kind::S_variable: // variable
       case symbol_kind::S_print_exp: // print_exp
+      case symbol_kind::S_proto_list: // proto_list
+      case symbol_kind::S_proto: // proto
+      case symbol_kind::S_arg_list: // arg_list
+      case symbol_kind::S_arg: // arg
         value.template destroy< astexpr_u_ptr > ();
         break;
 
@@ -2287,8 +2303,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 102,     ///< Last index in yytable_.
-      yynnts_ = 14,  ///< Number of nonterminal symbols.
+      yylast_ = 113,     ///< Last index in yytable_.
+      yynnts_ = 18,  ///< Number of nonterminal symbols.
       yyfinal_ = 31 ///< Termination state number.
     };
 
@@ -2302,7 +2318,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2306 "svlm_parser.hh"
+#line 2322 "svlm_parser.hh"
 
 
 

@@ -184,11 +184,12 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
 
 
 //-----------------------------------------------------------------------
-AstFunc::AstFunc(const Operand &n, astexpr_u_ptr code_ptr) {
+AstFunc::AstFunc(const Operand &n, astexpr_u_ptr pl,  astexpr_u_ptr code_ptr) {
   name = n._to_str();
   type_ = OperandType::ast_func_t;
   add(string("name"), n);
   add(string("code"), move(code_ptr));
+  add(string("proto_list"), move(pl));
 }
 
 Operand AstFunc::evaluate(astexpr_u_ptr& ctxt) {
@@ -230,7 +231,7 @@ Operand AstPrint::evaluate(astexpr_u_ptr& ctxt) {
   return Operand();
 }
 //-----------------------------------------------------------------------
-AstCaller::AstCaller(const Operand& callee) {
+AstCaller::AstCaller(const Operand& callee, astexpr_u_ptr arg_list) {
   type_= OperandType::ast_caller_t;
   auto modfunc = split_string(callee._to_str(), ".");
   //cout << "modfunc size" << modfunc.size() << "\n";
@@ -241,6 +242,7 @@ AstCaller::AstCaller(const Operand& callee) {
     add(string("callee_mod"), nil_operand);
     add(string("callee_func"),Operand(modfunc[0]));
   }
+  add(string("arg_list"), move(arg_list));
 }
 
 Operand& AstCaller::add_frame(astexpr_u_ptr &ctxt) { 
@@ -250,10 +252,27 @@ Operand& AstCaller::add_frame(astexpr_u_ptr &ctxt) {
   auto &frames = svlm_lang_ptr->get_frames();
 
   auto nm = make_unique<AstMap>();
-  nm->add(string("lvars"), make_unique<AstMap>());
+  auto lvars = make_unique<AstMap>();
   nm->add(string("current_function"), map_.at(string("callee_func")));
   nm->add(string("current_module"), map_.at(string("callee_mod")));
 
+  auto &arg_list = map_.at(string("arg_list"));
+  auto &proto_list = map_.at(string("proto_list"));
+  //cout << "arg_list: " <<  arg_list << "\n";
+  //cout << "proto_list: " <<  proto_list << "\n\n";
+  if(arg_list.size() > 0 ) {
+    if(arg_list.size() != proto_list.size()) {
+      cerr << "Arguments do not match prototype!\n";
+      return nil_operand;
+    }
+    auto arg_list_result = arg_list.evaluate(ctxt);
+    for(s_integer i =0; i< arg_list_result.size(); i++) {
+      lvars->add(proto_list[i], arg_list_result[i]);
+    }
+    // get from tree protolist and add to lvars
+  }
+
+  nm->add(string("lvars"), move(lvars));
   frames->add(move(nm));
 
 
@@ -282,17 +301,23 @@ Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
   auto &callee_func = map_.at(string("callee_func"));
   auto &callee_mod = map_.at(string("callee_mod"));
 
+
   if(callee_mod == nil_operand)  {
     module_str  = get_current_module(ctxt);
   } else {
     module_str = callee_mod._to_str();
   }
-  AstMap::add(string("callee_mod"), Operand(module_str), true);
-  add_frame(ctxt);
 
-  vector<string> keys = {MOD, module_str,  "function", callee_func._to_str(), "code"};
-  //cout << "keys: " ; for(auto k : keys) { cout << k << ", "; } cout << "\n";
-  auto &code = ctxt->get_branch(keys);
+  vector<string> keys_code = {MOD, module_str,  "function", callee_func._to_str(), "code"};
+  vector<string> keys_proto = {MOD, module_str,  "function", callee_func._to_str(), "proto_list"};
+  //cout << "keys_code: " ; for(auto k : keys_code) { cout << k << ", "; } cout << "\n";
+  auto &code = ctxt->get_branch(keys_code);
+  auto &proto_list = ctxt->get_branch(keys_proto);
+  //cout << "1 protolist: " << proto_list << "\n";
+  AstMap::add(string("callee_mod"), Operand(module_str), true);
+  AstMap::add(string("proto_list"), proto_list, true);
+
+  add_frame(ctxt);
   auto result  = code.evaluate(ctxt);
   //cout << "ast_caller result: " << result << "\n";
   return result;
