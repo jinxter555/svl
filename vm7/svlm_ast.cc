@@ -40,7 +40,8 @@ Operand& SvlmAst::get_current_frame() {
 
 string SvlmAst::get_current_module() {
   auto& f = get_frames()->back();
-  auto &m = f[string("current_module")];
+  //auto &m = f[string("current_module")];
+  auto &m = f["current_module"];
   return m._to_str();
 }
 
@@ -169,7 +170,7 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
   auto rv = r.evaluate(ctxt);
 
   if(opcode == AstOpCode::assign) {
-    AstMvar* variable =(AstMvar*) l.get_raw_ptr();
+    AstAssign* variable =(AstAssign*) l.get_raw_ptr();
     variable->assign(ctxt, rv);
     return rv;
   }
@@ -328,30 +329,32 @@ void AstMvar::print() const {
 // to get value from tree: module 'mname' mvar 'vname'
 Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   //cout << "AstMvar::evalaute\n";
-  auto &svlm_lang= ctxt->get_branch({"svlm_lang"});
-  auto ptr = svlm_lang.get_svlm_ptr();
-  if(ptr==nullptr) {
-    cerr << "In AstMvar::evaluate svlmlang is null!\n";
+
+  auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
+
+  if(svlm_lang_ptr==nullptr) {
+    cerr << "In AstMvar::Assign svlmlang is null!\n";
     return Operand();
   }
-  auto mod_name = ptr->get_current_module();
+  auto mod_name = svlm_lang_ptr->get_current_module();
   auto var_name = name();
 
-  auto &sub_node = ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
+  auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
   return sub_node.getv(var_name).clone_val();
 }
+
+
 // to assign value to tree: module 'mname' mvar 'vname'
 void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
-  auto &c= ctxt->get_branch({"svlm_lang"});
-  auto ptr = c.get_svlm_ptr();
-  if(ptr==nullptr) {
+  auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
+  if(svlm_lang_ptr==nullptr) {
     cerr << "In AstMvar::Assign svlmlang is null!\n";
     return;
   }
-  auto mod_name = ptr->get_current_module();
+  auto mod_name = svlm_lang_ptr->get_current_module();
   auto var_name = name();
 
-  auto &sub_node = ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
+  auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
   sub_node.add(var_name, v, true);
 }
 
@@ -360,10 +363,7 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
 AstLvar::AstLvar(const string &name) : AstAssign(OperandType::ast_lvar_t) { 
   add(string("name"), Operand(name));
 }
-
-string AstLvar::name() { 
-  return getv(string("name"))._to_str();
-}
+string AstLvar::name() { return getv(string("name"))._to_str(); }
 Operand AstLvar::get_type() const { return OperandType::ast_lvar_t;}
 OperandType AstLvar::_get_type() const { return OperandType::ast_lvar_t;}
 Operand AstLvar::to_str() const {
@@ -376,24 +376,22 @@ void AstLvar::print() const {
 
 
 Operand AstLvar::evaluate(astexpr_u_ptr& ctxt) {
-  //cout << "AstMvar::evalaute\n";
-  auto &c= ctxt->get_branch({"svlm_lang"});
-  auto ptr = c.get_svlm_ptr();
-  if(ptr==nullptr) {
-    cerr << "In AstMvar::evaluate svlmlang is null!\n";
+  //cout << "AstLvar::evalaute\n";
+  auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
+  if(svlm_lang_ptr==nullptr) {
+    cerr << "In AstMvar::Assign svlmlang is null!\n";
     return Operand();
   }
-  auto mod_name = ptr->get_current_module();
-  auto frame = ptr->get_current_module();
+  auto &frame = svlm_lang_ptr->get_current_frame();
+  auto &lvars =  frame["lvars"];
   auto var_name = name();
-
-  auto &sub_node = ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
-  return sub_node.getv(var_name).clone_val();
+  return lvars.getv(var_name).clone_val();
 }
 
 void AstLvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame();
-
+  auto &lvars =  frame["lvars"];
+  lvars.add(name(), v);
 }
 //-----------------------------------------------------------------------

@@ -146,6 +146,13 @@ exp_eval
         AstOpCode::assign
       ); 
   }
+  | STR ASSIGN exp_eval { 
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstLvar>($1),
+        move($3), 
+        AstOpCode::assign
+      ); 
+  }
   ;
 
 
@@ -166,6 +173,7 @@ caller
 
 variable
   : DOLLAR STR { $$ = make_unique<AstMvar>($2); }
+  | STR { $$ = make_unique<AstLvar>($1); }
   ;
 
 

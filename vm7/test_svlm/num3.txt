@@ -25,6 +25,8 @@ end
 
 module Helper do
   def me() do
+    localv1 = 8888
+    print localv1
     print "in Helper me 11!\n";
     print 5+6
     print "\n"
