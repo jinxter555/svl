@@ -23,6 +23,7 @@ public:
 
   astexpr_u_ptr& get_context() ;
   astexpr_u_ptr& get_frames() ;
+  Operand& get_current_frame() ;
 
   string get_current_module() ;
 //  void add_readline_cmds(const string& cmd);
@@ -93,7 +94,7 @@ public:
   Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
   string get_current_module(astexpr_u_ptr& ctxt) ;
-  astexpr_u_ptr& get_frames(astexpr_u_ptr& ctxt) ;
+  //astexpr_u_ptr& get_frames(astexpr_u_ptr& ctxt) ;
 
   Operand& add_frame(astexpr_u_ptr& ctxt);
   Operand& remove_frame(astexpr_u_ptr& ctxt);
@@ -117,6 +118,20 @@ private:
   bool initiated=false;
 public:
   AstMvar(const string&);
+  string name() override final;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
+  void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
+  void print() const override;
+};
+
+class AstLvar : public AstAssign {
+private:
+  bool initiated=false;
+public:
+  AstLvar(const string&);
   string name() override final;
   Operand to_str() const override;
   Operand get_type() const override ;

@@ -25,7 +25,8 @@ end
 
 module Helper do
   def me() do
-    print "in Helper me!\n";
-    5+6
+    print "in Helper me 11!\n";
+    print 5+6
+    print "\n"
   end
 end
