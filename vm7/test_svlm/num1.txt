@@ -6,7 +6,7 @@ module Main do
     func2()
     func3(456)
 
-    #Helper.me(999)
+    Helper.me(999)
     # Helper.me()
   end
 
@@ -16,7 +16,7 @@ module Main do
     print "var1: "
     print $var1
     print "\n\n"
-    func3(999)
+    func3(888)
   end
 
   def func3(arg1) do
@@ -29,5 +29,8 @@ end
 
 module Helper do
   def me(arg1) do
+    print "helper::me "
+    print arg1
+    print "\n\n"
   end
 end

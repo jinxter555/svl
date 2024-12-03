@@ -399,6 +399,7 @@ namespace vslast {
       // proto
       // arg_list
       // arg
+      // list
       char dummy1[sizeof (astexpr_u_ptr)];
 
       // statement_list
@@ -626,7 +627,8 @@ namespace vslast {
         S_proto = 79,                            // proto
         S_arg_list = 80,                         // arg_list
         S_arg = 81,                              // arg
-        S_EOS = 82                               // EOS
+        S_list = 82,                             // list
+        S_EOS = 83                               // EOS
       };
     };
 
@@ -676,6 +678,7 @@ namespace vslast {
       case symbol_kind::S_proto: // proto
       case symbol_kind::S_arg_list: // arg_list
       case symbol_kind::S_arg: // arg
+      case symbol_kind::S_list: // list
         value.move< astexpr_u_ptr > (std::move (that.value));
         break;
 
@@ -828,6 +831,7 @@ switch (yykind)
       case symbol_kind::S_proto: // proto
       case symbol_kind::S_arg_list: // arg_list
       case symbol_kind::S_arg: // arg
+      case symbol_kind::S_list: // list
         value.template destroy< astexpr_u_ptr > ();
         break;
 
@@ -2303,9 +2307,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 118,     ///< Last index in yytable_.
-      yynnts_ = 18,  ///< Number of nonterminal symbols.
-      yyfinal_ = 32 ///< Termination state number.
+      yylast_ = 138,     ///< Last index in yytable_.
+      yynnts_ = 19,  ///< Number of nonterminal symbols.
+      yyfinal_ = 37 ///< Termination state number.
     };
 
 
@@ -2318,7 +2322,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2322 "svlm_parser.hh"
+#line 2326 "svlm_parser.hh"
 
 
 

@@ -19,6 +19,7 @@ AstList::AstList(const AstList& l) {
 };
 
 astexpr_u_ptr AstList::clone() const {
+  //cout << "Alist:clone()\n";
   list_u_ptr new_list = make_unique<AstList>();
 
   for(auto &e : list_) 
@@ -62,8 +63,10 @@ Operand& AstList::getv(int i)  {
   return list_[i];
 }
 Operand& AstList::getv()  {
-  cerr << "calling AstList::getv()!\n";
-  return nil_operand;
+  cerr << "AstList::getv()\n";
+  myself.value_ = clone();
+  myself.type_ = type_;
+  return myself;
 }
 Operand& AstList::back() { return list_.back(); }
 Operand& AstList::front() { return list_.front(); }

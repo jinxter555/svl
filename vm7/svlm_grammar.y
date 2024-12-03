@@ -52,7 +52,7 @@ namespace vslast {
 %nterm <std::string> DOTSTR
 %nterm comments
 
-%nterm <astexpr_u_ptr> proto_list proto arg_list arg
+%nterm <astexpr_u_ptr> proto_list proto arg_list arg list
 
 
 %nonassoc           ASSIGN
@@ -64,7 +64,7 @@ namespace vslast {
 %precedence         NOT
 %right              EXPONENT
 
-%type <list_u_ptr> statement_list
+%type <list_u_ptr> statement_list 
 %type <astexpr_u_ptr> module function literals exp_eval variable statement print_exp caller comments
 
 %start program_start
@@ -127,6 +127,7 @@ function
 exp_eval
   : literals  { $$ = move($1); }
   | variable { $$ = move($1); }
+  | list { $$ = move($1); }
   | caller { $$ = move($1); }
   | exp_eval MULTIPLY exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::mul); }
   | exp_eval DIVIDE exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::div); }
@@ -176,6 +177,7 @@ caller
 variable
   : DOLLAR STR { $$ = make_unique<AstMvar>($2); }
   | DOLLAR DOTSTR { $$ = make_unique<AstMvar>($2); }
+  | DOLLAR STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
   | STR { $$ = make_unique<AstLvar>($1); }
   ;
 
@@ -231,6 +233,10 @@ arg
   : exp_eval { $$ = move($1); }
   ;
 
+//--------------------------------------------------- 
+list 
+  : SQBRK_L arg_list SQBRK_R { $$ = move($2); } 
+  ;
 
 
 //--------------------------------------------------- EOS end of statement

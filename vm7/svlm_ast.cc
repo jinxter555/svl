@@ -338,8 +338,19 @@ string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
 }
 */
 
+s_integer AstAssign::get_index_i(astexpr_u_ptr &ctxt) {
+  cout << "AstAssign::get_index_i\n";
+  auto &idx_key =  getv(string("idx_key"));
+  if(idx_key == nil_operand) {
+      return -1;
+  }
+  auto result = idx_key.evaluate(ctxt);
+  return result._get_int();
+}
+
 //----------------------------------------------------------------------- AstMvar
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
+  scale_ = OperandType::list_t;
   auto mod_var = split_string(v, ".");
   if(mod_var.size() > 1) {
     add(string("mod_name"), Operand(mod_var[0]));
@@ -348,6 +359,18 @@ AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) {
   }
   add(string("var_name"), Operand(v));
 }
+AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType::ast_mvar_t) { 
+  scale_ = OperandType::list_t;
+  auto mod_var = split_string(v, ".");
+  add(string("idx_key"), move(idx_key));
+  if(mod_var.size() > 1)  {
+    add(string("mod_name"), Operand(mod_var[0]));
+    add(string("var_name"), Operand(mod_var[1]));
+    return;
+  }
+  add(string("var_name"), Operand(v));
+}
+
 
 string AstMvar::name() { 
   return getv(string("var_name"))._to_str();
@@ -381,10 +404,11 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
     return Operand();
   }
 
-  //auto &mod_name = map_.at(string("mod_name"));
   auto &mod_name = (*this)["mod_name"];
+  auto &index_exp = (*this)["mod_name"];
   mod_name_operand = mod_name.to_str();
-  if(mod_name._get_type() == OperandType::nil_t)  {
+
+  if(mod_name == nil_operand)  {
     mod_name_operand  = svlm_lang_ptr->get_current_module();
     add(string("mod_name"), mod_name_operand);
   }
@@ -392,8 +416,17 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   auto var_name = name();
 
   auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
-  return sub_node.getv(var_name).clone_val();
-  //return Operand();
+  //auto result = sub_node.getv(var_name).clone_val();
+  auto &result = sub_node.getv(var_name);
+  if(scale_ == OperandType::list_t){
+     auto index_i = get_index_i(ctxt);
+    
+    if(index_i >= 0) {
+      cout << "index!\n";
+      return result[index_i].clone_val();
+    }
+  }
+  return result.clone_val();
 }
 
 

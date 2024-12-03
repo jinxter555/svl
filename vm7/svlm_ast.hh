@@ -106,11 +106,12 @@ public:
 class AstAssign : public AstMap {
 protected:
   OperandType type_;
+  OperandType scale_;
 public:
-  AstAssign(OperandType t) : type_(t) {}
+  AstAssign(OperandType t, OperandType s=OperandType::scalar_t) : type_(t), scale_(s) {}
   virtual string name() = 0;
   virtual void assign(astexpr_u_ptr&, const Operand& ) = 0;
-  int get_index_i(astexpr_u_ptr&) {return 0;};
+  s_integer get_index_i(astexpr_u_ptr&) ;
   string get_index_s(astexpr_u_ptr&) {return "";};
 };
 
@@ -119,6 +120,7 @@ private:
   bool initiated=false;
 public:
   AstMvar(const string&);
+  AstMvar(const string&, astexpr_u_ptr idx_key);
   string name() override final;
   string get_module() ; // if $module.var return module , if $var, return current_module
   Operand to_str() const override;
@@ -140,5 +142,18 @@ public:
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
   void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
+  void print() const override;
+};
+
+class AstFlow : public AstExpr {
+protected:
+  OperandType type_;
+public:
+  AstFlow(OperandType t) : type_(t) {}
+  virtual string name() = 0;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
 };
