@@ -110,7 +110,7 @@ comments
 module 
   : MODULE STR DO statement_list END 
   {
-    cout << "module : " << $2 << "\n";
+    //cout << "module : " << $2 << "\n";
     svlm_lang->add_module($2, move($4));
   }
   ;
@@ -175,6 +175,7 @@ caller
 
 variable
   : DOLLAR STR { $$ = make_unique<AstMvar>($2); }
+  | DOLLAR DOTSTR { $$ = make_unique<AstMvar>($2); }
   | STR { $$ = make_unique<AstLvar>($1); }
   ;
 

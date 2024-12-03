@@ -96,8 +96,8 @@ bool Operand::operator==(const Operand& other) const {
   case OperandType::str_t: 
     return get<std::string>(value_) == get<std::string>(other.value_);
   case OperandType::nil_t: 
-    if( holds_alternative<Nil>(value_) 
-    && holds_alternative<Nil>(other.value_)) return true;
+    //if( holds_alternative<Nil>(value_) && holds_alternative<Nil>(other.value_)) return true;
+    if(other.type_ == OperandType::nil_t) return true;
     return false;
   case OperandType::err_t: 
     return get<OperandErrorCode>(value_) == get<OperandErrorCode>(other.value_);

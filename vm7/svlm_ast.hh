@@ -93,7 +93,8 @@ public:
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
-  string get_current_module(astexpr_u_ptr& ctxt) ;
+  //string get_current_module(astexpr_u_ptr& ctxt) ; // get current module from frame only
+  string get_module() ; // if $module.var return module , if $var, return current_module
   //astexpr_u_ptr& get_frames(astexpr_u_ptr& ctxt) ;
 
   Operand& add_frame(astexpr_u_ptr& ctxt);
@@ -119,6 +120,7 @@ private:
 public:
   AstMvar(const string&);
   string name() override final;
+  string get_module() ; // if $module.var return module , if $var, return current_module
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;

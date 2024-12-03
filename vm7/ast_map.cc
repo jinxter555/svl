@@ -181,7 +181,7 @@ Operand& AstMap::get_branch(const vector<string> &keys) {
   for(int i=0; i<s-1; i++) {
     k = keys[i];  //cout << "keys[" << i<< "]: " << keys[i] << "\n";
     if(curr==nullptr) { 
-      cerr << "curr nullptr bomb!\n";
+      cerr << "AstMap::get_branch, curr nullptr bomb!\n";
       return nil_operand;
     } else { //cout  << "curr type: " << curr->get_type() << "\n"; 
     }

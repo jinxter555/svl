@@ -172,7 +172,7 @@ void SvlmInteractive::load(const std::string &cfn) {
 }
 
 void SvlmInteractive::run_program(const std::string &l) {
-  std::cout << "run program\n";
+  //std::cout << "run program\n";
   svlm_lang.run_evaluate();
 
 }

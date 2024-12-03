@@ -24,7 +24,8 @@ astexpr_u_ptr& SvlmAst::get_context() {
 }
 astexpr_u_ptr& SvlmAst::get_frames() {
   auto &c= root.get_branch({CONTEXT_UNIV, FRAMES});
-  if(c==nil_operand) {
+  //if(c==nil_operand) {
+  if(c._get_type()==OperandType::nil_t) {
     cerr << "SvlmAst::get_frames is nil_operand!\n";
     return root.AstMap::nil_ast_ptr;
   }
@@ -42,6 +43,7 @@ string SvlmAst::get_current_module() {
   auto& f = get_frames()->back();
   //auto &m = f[string("current_module")];
   auto &m = f["current_module"];
+  //cout << "in SvlmAst::get_current_module: " << m << "\n";
   return m._to_str();
 }
 
@@ -87,6 +89,7 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
     cerr << "unknown module subtype: " << Operand(t) << "! \n";
     return nil_operand;
   }
+
   auto &msub_node = root.get_branch(keys);
   if(msub_node==nil_operand) {
     root.add_branch(keys, make_unique<AstMap>(), true);
@@ -130,8 +133,6 @@ void SvlmAst::run_evaluate() {
   nm->add(string("current_module"), Operand("Main"));
   frames->add(move(nm));
 
-  //cout << "l is: " << l << "\n";
-  //cout << "size: " <<  l.size() << "\n";
   l.evaluate(ctxt);
 
 /*
@@ -227,8 +228,7 @@ void AstPrint::print() const {
 Operand AstPrint::evaluate(astexpr_u_ptr& ctxt) {
   auto &exp = map_.at(string("exp"));
   cout << exp.evaluate(ctxt);
-  //return make_unique<Operand>("\n");
-  return Operand();
+  return Operand("");
 }
 //-----------------------------------------------------------------------
 AstCaller::AstCaller(const Operand& callee, astexpr_u_ptr arg_list) {
@@ -248,6 +248,8 @@ AstCaller::AstCaller(const Operand& callee, astexpr_u_ptr arg_list) {
 Operand& AstCaller::add_frame(astexpr_u_ptr &ctxt) { 
   // use current module if call
 
+
+
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &frames = svlm_lang_ptr->get_frames();
 
@@ -256,15 +258,17 @@ Operand& AstCaller::add_frame(astexpr_u_ptr &ctxt) {
   nm->add(string("current_function"), map_.at(string("callee_func")));
   nm->add(string("current_module"), map_.at(string("callee_mod")));
 
+
   auto &arg_list = map_.at(string("arg_list"));
   auto &proto_list = map_.at(string("proto_list"));
   //cout << "arg_list: " <<  arg_list << "\n";
   //cout << "proto_list: " <<  proto_list << "\n\n";
+  if(arg_list.size() != proto_list.size()) {
+    cerr << "Arguments do not match prototype!\n";
+    return nil_operand;
+  }
+
   if(arg_list.size() > 0 ) {
-    if(arg_list.size() != proto_list.size()) {
-      cerr << "Arguments do not match prototype!\n";
-      return nil_operand;
-    }
     auto arg_list_result = arg_list.evaluate(ctxt);
     for(s_integer i =0; i< arg_list_result.size(); i++) {
       lvars->add(proto_list[i], arg_list_result[i]);
@@ -297,55 +301,69 @@ void AstCaller::print() const {
   cout << "AstCaller Print: " << to_str();
 }
 Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
-  string module_str;
-  auto &callee_func = map_.at(string("callee_func"));
+  string module_name;
+  auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &callee_mod = map_.at(string("callee_mod"));
+  auto &callee_func = map_.at(string("callee_func"));
 
 
-  if(callee_mod == nil_operand)  {
-    module_str  = get_current_module(ctxt);
+  if(callee_mod._get_type() == OperandType::nil_t)  {
+    module_name = svlm_lang_ptr->get_current_module();
   } else {
-    module_str = callee_mod._to_str();
+    module_name = callee_mod._to_str();
   }
+  //cout << "module_name: " << module_name << "\n";
 
-  vector<string> keys_code = {MOD, module_str,  "function", callee_func._to_str(), "code"};
-  vector<string> keys_proto = {MOD, module_str,  "function", callee_func._to_str(), "proto_list"};
+  vector<string> keys_code = {MOD, module_name,  "function", callee_func._to_str(), "code"};
+  vector<string> keys_proto = {MOD, module_name,  "function", callee_func._to_str(), "proto_list"};
   //cout << "keys_code: " ; for(auto k : keys_code) { cout << k << ", "; } cout << "\n";
   auto &code = ctxt->get_branch(keys_code);
   auto &proto_list = ctxt->get_branch(keys_proto);
-  //cout << "1 protolist: " << proto_list << "\n";
-  AstMap::add(string("callee_mod"), Operand(module_str), true);
+  AstMap::add(string("callee_mod"), Operand(module_name), true);
   AstMap::add(string("proto_list"), proto_list, true);
 
   add_frame(ctxt);
   auto result  = code.evaluate(ctxt);
-  //cout << "ast_caller result: " << result << "\n";
   return result;
-  //return Operand();
 }
 
+
+/*
 string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame();
-
   auto &m = frame[string("current_module")];
   //cout << "current module: " << m._to_str() << "\n";
   return m._to_str();
 }
+*/
 
-//-----------------------------------------------------------------------
-AstMvar::AstMvar(const string &name) : AstAssign(OperandType::ast_mvar_t) { 
-  add(string("name"), Operand(name));
+//----------------------------------------------------------------------- AstMvar
+AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
+  auto mod_var = split_string(v, ".");
+  if(mod_var.size() > 1) {
+    add(string("mod_name"), Operand(mod_var[0]));
+    add(string("var_name"), Operand(mod_var[1]));
+    return;
+  }
+  add(string("var_name"), Operand(v));
 }
 
 string AstMvar::name() { 
-  return getv(string("name"))._to_str();
+  return getv(string("var_name"))._to_str();
 }
+string AstMvar::get_module() { 
+
+  return getv(string("mod_name"))._to_str();
+}
+
+
 Operand AstMvar::get_type() const { return OperandType::ast_mvar_t;}
 OperandType AstMvar::_get_type() const { return OperandType::ast_mvar_t;}
 Operand AstMvar::to_str() const {
-  auto &name= map_.at(string("name"));
-  return name.to_str();
+  auto &var_name= map_.at(string("var_name"));
+  auto &mod_name= map_.at(string("mod_name"));
+  return mod_name.to_str() + string(".") + var_name.to_str();
 }
 void AstMvar::print() const {
   cout << to_str();
@@ -353,46 +371,71 @@ void AstMvar::print() const {
 
 // to get value from tree: module 'mname' mvar 'vname'
 Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
-  //cout << "AstMvar::evalaute\n";
+  //cout << "AstMvar::evalaute\n\n";
 
+  Operand mod_name_operand;
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
 
   if(svlm_lang_ptr==nullptr) {
     cerr << "In AstMvar::Assign svlmlang is null!\n";
     return Operand();
   }
-  auto mod_name = svlm_lang_ptr->get_current_module();
+
+  //auto &mod_name = map_.at(string("mod_name"));
+  auto &mod_name = (*this)["mod_name"];
+  mod_name_operand = mod_name.to_str();
+  if(mod_name._get_type() == OperandType::nil_t)  {
+    mod_name_operand  = svlm_lang_ptr->get_current_module();
+    add(string("mod_name"), mod_name_operand);
+  }
+
   auto var_name = name();
 
-  auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
+  auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
   return sub_node.getv(var_name).clone_val();
+  //return Operand();
 }
 
 
 // to assign value to tree: module 'mname' mvar 'vname'
 void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
+
+  Operand mod_name_operand;
+
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   if(svlm_lang_ptr==nullptr) {
     cerr << "In AstMvar::Assign svlmlang is null!\n";
     return;
   }
-  auto mod_name = svlm_lang_ptr->get_current_module();
+
+  //auto &mod_name = map_.at(string("mod_name"));
+  auto &mod_name = (*this)["mod_name"];
+  mod_name_operand = mod_name.to_str();
+
+
+  //if(mod_name == nil_operand)  {
+  if(mod_name._get_type() == OperandType::nil_t)  {
+     mod_name_operand = svlm_lang_ptr->get_current_module();
+    add(string("mod_name"), mod_name_operand);
+  }
+
   auto var_name = name();
 
-  auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name,  OperandType::ast_mvar_t);
+  auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
   sub_node.add(var_name, v, true);
+
 }
 
 
 //-----------------------------------------------------------------------
 AstLvar::AstLvar(const string &name) : AstAssign(OperandType::ast_lvar_t) { 
-  add(string("name"), Operand(name));
+  add(string("var_name"), Operand(name));
 }
-string AstLvar::name() { return getv(string("name"))._to_str(); }
+string AstLvar::name() { return getv(string("var_name"))._to_str(); }
 Operand AstLvar::get_type() const { return OperandType::ast_lvar_t;}
 OperandType AstLvar::_get_type() const { return OperandType::ast_lvar_t;}
 Operand AstLvar::to_str() const {
-  auto &name= map_.at(string("name"));
+  auto &name= map_.at(string("var_name"));
   return name.to_str();
 }
 void AstLvar::print() const {

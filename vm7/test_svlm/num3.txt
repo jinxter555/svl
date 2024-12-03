@@ -6,7 +6,8 @@ module Main do
     # print 1111+2222
     func2()
     func3(444,555)
-    Helper.me()
+    Helper.me(999)
+    # Helper.me()
   end
 
   def func2() do
@@ -32,7 +33,10 @@ module Helper do
     localv1 = 8888
     print localv1
     print "in Helper me 11!\n";
+
     print 5+6
+    print "arg1: "
+    print arg1
     print "\n"
   end
 end

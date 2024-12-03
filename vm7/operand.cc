@@ -128,6 +128,7 @@ Operand& Operand::operator[] (const Operand& k) {
 }
 const Operand& Operand::operator[] (const Operand &k) const {
   auto &ptr = get_u_ptr();
+  //if(ptr==nullptr) return nil_operand;
   if(ptr==nullptr) return nil_operand;
   return (*ptr)[k];
 }
