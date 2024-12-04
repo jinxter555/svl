@@ -424,9 +424,7 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   auto &result = sub_node.getv(var_name);
   if(scale_ == OperandType::list_t){
      auto index_i = get_index_i(ctxt);
-    
     if(index_i >= 0) {
-      cout << "index!\n";
       return result[index_i].clone_val();
     }
   }
@@ -445,7 +443,6 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
     return;
   }
 
-  //auto &mod_name = map_.at(string("mod_name"));
   auto &mod_name = (*this)["mod_name"];
   mod_name_operand = mod_name.to_str();
 
@@ -459,6 +456,15 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
   auto var_name = name();
 
   auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
+  if(scale_ == OperandType::list_t){
+     auto index_i = get_index_i(ctxt);
+    if(index_i >= 0) {
+      auto &result = sub_node.getv(var_name);
+      result.set(index_i, v);
+      return;
+    }
+  }
+
   sub_node.add(var_name, v, true);
 
 }

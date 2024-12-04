@@ -49,7 +49,7 @@ namespace vslast {
 %token <s_float>     FLT
  
 %nterm EOS // end of statement
-%nterm <std::string> DOTSTR
+%nterm <std::string> DOTSTR  mvar_str
 %nterm comments
 
 %nterm <astexpr_u_ptr> proto_list proto arg_list arg list
@@ -149,6 +149,24 @@ exp_eval
         AstOpCode::assign
       ); 
   }
+  | DOLLAR STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstMvar>($2, move($4)),
+        move($7), 
+        AstOpCode::assign
+      ); 
+  }
+  | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstMvar>($2, move($4)),
+        move($7), 
+        AstOpCode::assign
+      ); 
+  }
+
+
+
+
   | STR ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstLvar>($1),
@@ -157,7 +175,6 @@ exp_eval
       ); 
   }
   ;
-
 
 
 literals
@@ -178,8 +195,10 @@ variable
   : DOLLAR STR { $$ = make_unique<AstMvar>($2); }
   | DOLLAR DOTSTR { $$ = make_unique<AstMvar>($2); }
   | DOLLAR STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
+  | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
   | STR { $$ = make_unique<AstLvar>($1); }
   ;
+
 
 
 
@@ -193,6 +212,7 @@ DOTSTR
   : STR
   | DOTSTR DOT STR { $$ = $1 + std::string(".")+ $3; }
   ;
+
 
 //--------------------------------------------------- 
 proto_list
