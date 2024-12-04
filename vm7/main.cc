@@ -1,6 +1,7 @@
 #include <string>
 #include <istream>
 #include <sstream>
+#include <fstream>
 #include <readline/readline.h>
 
 
@@ -15,6 +16,9 @@ SvlmInteractive svlm_it(".svlm_history", "svlm> ");
 
 PromptInteractive myprompt;
 LangPrompt *lang_it;
+
+fstream LogOutput;
+
 
 //extern char** AssemblerInteractive_command_completion(const char *text, int start, int end) ;
 
@@ -31,6 +35,8 @@ int main(int argc, char *argv[]) {
 
   Commandline cml(argc, argv);
   PromptSwitch ps = PromptSwitch::begin;
+  LogOutput.open("svlm_trace.log", std::ios::out);
+
 
 
   while(ps != PromptSwitch::exit) {

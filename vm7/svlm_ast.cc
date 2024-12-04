@@ -1,6 +1,7 @@
 #include "svlm_ast.hh"
 #include "svlm_interactive.hh"
 #include "my_helpers.hh"
+#include "scope_logger.hh"
 
 
 
@@ -350,6 +351,8 @@ s_integer AstAssign::get_index_i(astexpr_u_ptr &ctxt) {
 
 //----------------------------------------------------------------------- AstMvar
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
+  MYLOGGER(LogOutput, string("AstMvar::") + __func__ + string(" ") + v);
+
   scale_ = OperandType::list_t;
   auto mod_var = split_string(v, ".");
   if(mod_var.size() > 1) {
@@ -394,6 +397,7 @@ void AstMvar::print() const {
 
 // to get value from tree: module 'mname' mvar 'vname'
 Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
+  
   //cout << "AstMvar::evalaute\n\n";
 
   Operand mod_name_operand;

@@ -3,10 +3,10 @@
 module Main do
   def main() do
     print "In Main!\n\n"
-    $a = [1,2]
+    $a = [1,2,3]
     # $b = $a
     $b = 123
-    print $a[0]
+    print $a[1]
     print "\n"
   end
 end

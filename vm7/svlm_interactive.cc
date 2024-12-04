@@ -114,6 +114,7 @@ void SvlmInteractive::init_command_functions() {
     {"!!print_stack", std::bind(&SvlmInteractive::print_stack, this,  std::placeholders::_1)},
     {"!!print_goodbye", std::bind(&SvlmInteractive::printGoodbye, this,  std::placeholders::_1)},
     {"!!print_ast", std::bind(&SvlmInteractive::print_ast, this,  std::placeholders::_1)},
+    {"!!reload", std::bind(&SvlmInteractive::reload, this,  std::placeholders::_1)},
     {"!!run_program", std::bind(&SvlmInteractive::run_program, this,  std::placeholders::_1)},
   };
 }
@@ -169,6 +170,9 @@ void SvlmInteractive::load(const std::string &cfn) {
     }
     infile.close();
   }
+}
+void SvlmInteractive::reload(const std::string &cfn) {
+  load(cfn);
 }
 
 void SvlmInteractive::run_program(const std::string &l) {

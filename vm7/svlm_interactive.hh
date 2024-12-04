@@ -28,6 +28,7 @@ public:
   void parse_prompt(const std::string &line); // parse readline line
   void interact(const std::string &line) override; // parse readline line
   void load(const std::string &filename) override; // load files from command line
+  void reload(const string &filename); // reload file
   void run_program(const std::string &l="") override;
 
   void evaluate_line();       // evaluate ast_current_context pop back members
