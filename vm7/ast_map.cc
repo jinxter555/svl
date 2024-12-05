@@ -34,7 +34,7 @@ Operand& AstMap::getv()  {
   //myself.value_ = unique_ptr<AstMap>(this);
   //myself.type_ = OperandType::uptr_t;
   //return nil_operand;
-  cerr << "AstMap::getv()\n";
+  //cerr << "AstMap::getv()\n";
   myself.value_ = clone();
   myself.type_ = type_;
   return myself;

@@ -1366,71 +1366,56 @@ namespace vslast {
 
   case 62: // map: PERCENT CUR_L kv_pair_list CUR_R
 #line 274 "svlm_grammar.y"
-                                     {
-
-/*
-    auto mptr = make_unique<AstMap>();
-
-    mptr->add(
-      Operand(get<0>($3)) , move(get<1>($3))
-    );
-    $$ = move(mptr);
-*/
-    yylhs.value.as < astexpr_u_ptr > () = move(yystack_[1].value.as < astexpr_u_ptr > ());
-  }
-#line 1382 "svlm_parser.cc"
+                                     { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[1].value.as < astexpr_u_ptr > ()); }
+#line 1371 "svlm_parser.cc"
     break;
 
   case 63: // kv_pair_list: kv_pair_list COMMA kv_pair
-#line 289 "svlm_grammar.y"
+#line 277 "svlm_grammar.y"
                                {
     yystack_[2].value.as < astexpr_u_ptr > ()->add(Operand(std::get<0>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())), move(std::get<1>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())));
     yylhs.value.as < astexpr_u_ptr > () = move(yystack_[2].value.as < astexpr_u_ptr > ());
   }
-#line 1391 "svlm_parser.cc"
+#line 1380 "svlm_parser.cc"
     break;
 
   case 64: // kv_pair_list: kv_pair
-#line 293 "svlm_grammar.y"
+#line 281 "svlm_grammar.y"
             {
     auto map_vptr = std::make_unique<AstMap>();
-    map_vptr->add(
-      Operand(get<0>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())) , move(get<1>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ()))
-    );
+    map_vptr->add( Operand(get<0>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())) , move(get<1>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())));
     yylhs.value.as < astexpr_u_ptr > () = move(map_vptr);
   }
-#line 1403 "svlm_parser.cc"
+#line 1390 "svlm_parser.cc"
     break;
 
   case 65: // kv_pair_list: %empty
-#line 300 "svlm_grammar.y"
+#line 286 "svlm_grammar.y"
            {yylhs.value.as < astexpr_u_ptr > () = std::make_unique<AstMap>();
   }
-#line 1410 "svlm_parser.cc"
+#line 1397 "svlm_parser.cc"
     break;
 
   case 66: // kv_pair: map_key COLON exp_eval
-#line 306 "svlm_grammar.y"
-                           {
-    yylhs.value.as < std::tuple<string, astexpr_u_ptr> > () = {yystack_[2].value.as < string > (), move(yystack_[0].value.as < astexpr_u_ptr > ())};
-  }
-#line 1418 "svlm_parser.cc"
+#line 290 "svlm_grammar.y"
+                                 { yylhs.value.as < std::tuple<string, astexpr_u_ptr> > () = {yystack_[2].value.as < string > (), move(yystack_[0].value.as < astexpr_u_ptr > ())}; }
+#line 1403 "svlm_parser.cc"
     break;
 
   case 67: // map_key: DQSTR
-#line 312 "svlm_grammar.y"
-    { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
-#line 1424 "svlm_parser.cc"
+#line 291 "svlm_grammar.y"
+          { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
+#line 1409 "svlm_parser.cc"
     break;
 
   case 68: // map_key: STR
-#line 313 "svlm_grammar.y"
-    { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
-#line 1430 "svlm_parser.cc"
+#line 291 "svlm_grammar.y"
+                  { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
+#line 1415 "svlm_parser.cc"
     break;
 
 
-#line 1434 "svlm_parser.cc"
+#line 1419 "svlm_parser.cc"
 
             default:
               break;
@@ -1800,8 +1785,8 @@ namespace vslast {
      144,   145,   146,   147,   148,   155,   163,   170,   181,   192,
      193,   194,   195,   197,   201,   206,   207,   208,   209,   210,
      218,   223,   224,   230,   235,   239,   245,   251,   255,   260,
-     264,   269,   274,   289,   293,   300,   306,   312,   313,   318,
-     319,   320
+     264,   269,   274,   277,   281,   286,   290,   291,   291,   295,
+     296,   297
   };
 
   void
@@ -1886,9 +1871,9 @@ namespace vslast {
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 1890 "svlm_parser.cc"
+#line 1875 "svlm_parser.cc"
 
-#line 324 "svlm_grammar.y"
+#line 301 "svlm_grammar.y"
 
 
 //--------------------------------------------------- EOS end of statement

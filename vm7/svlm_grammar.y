@@ -271,19 +271,7 @@ list
 
 //--------------------------------------------------- 
 map
-  : PERCENT CUR_L kv_pair_list CUR_R {
-
-/*
-    auto mptr = make_unique<AstMap>();
-
-    mptr->add(
-      Operand(get<0>($3)) , move(get<1>($3))
-    );
-    $$ = move(mptr);
-*/
-    $$ = move($3);
-  }
-  ;
+  : PERCENT CUR_L kv_pair_list CUR_R { $$ = move($3); } ;
 
 kv_pair_list
   : kv_pair_list COMMA kv_pair {
@@ -292,26 +280,15 @@ kv_pair_list
   }
   | kv_pair {
     auto map_vptr = std::make_unique<AstMap>();
-    map_vptr->add(
-      Operand(get<0>($1)) , move(get<1>($1))
-    );
+    map_vptr->add( Operand(get<0>($1)) , move(get<1>($1)));
     $$ = move(map_vptr);
   }
   | %empty {$$ = std::make_unique<AstMap>();
   }
   ;
 
-
-kv_pair
-  : map_key COLON exp_eval {
-    $$ = {$1, move($3)};
-  }
-  ;
-
-map_key
-  : DQSTR
-  | STR
-  ;
+kv_pair : map_key COLON exp_eval { $$ = {$1, move($3)}; } ;
+map_key : DQSTR | STR ;
 
 //--------------------------------------------------- EOS end of statement
 EOS

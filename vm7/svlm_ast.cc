@@ -347,14 +347,31 @@ string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
 */
 
 s_integer AstAssign::get_index_i(astexpr_u_ptr &ctxt) {
-  cout << "AstAssign::get_index_i\n";
   auto &idx_key =  getv(string("idx_key"));
   if(idx_key == nil_operand) {
       return -1;
   }
   auto result = idx_key.evaluate(ctxt);
+
+  if(result._get_type()==OperandType::str_t) {
+    return -1;
+  }
+
   return result._get_int();
 }
+string AstAssign::get_index_s(astexpr_u_ptr &ctxt) {
+  auto &idx_key =  getv(string("idx_key"));
+  if(idx_key == nil_operand) {
+    return "";
+  }
+  auto result = idx_key.evaluate(ctxt);
+  if(result._get_type()==OperandType::num_t) {
+    return "";
+  }
+  return result._to_str();
+}
+
+//----------------------------------------------------------------------- AstMvar
 
 //----------------------------------------------------------------------- AstMvar
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
@@ -388,6 +405,7 @@ AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType
 }
 
 Operand& AstMvar::getv() {
+  cout << "AstMvar::getv()\n";
   return AstMap::getv(string("var_name"));
 }
 string AstMvar::name() { 
@@ -416,6 +434,11 @@ void AstMvar::print() const {
 
 // to get value from tree: module 'mname' mvar 'vname'
 Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
+  MYLOGGER(trace_function
+  , "AstMvar::evaluate(astexpr_u_ptr& ctxt)"
+  , __func__
+  )
+  MYLOGGER_MSG(trace_function, string("var_name: ") + name())
   
   //cout << "AstMvar::evalaute\n\n";
 
@@ -428,7 +451,6 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   }
 
   auto &mod_name = (*this)["mod_name"];
-  auto &index_exp = (*this)["mod_name"];
   mod_name_operand = mod_name.to_str();
 
   if(mod_name == nil_operand)  {
@@ -439,15 +461,24 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   auto var_name = name();
 
   auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
-  //auto result = sub_node.getv(var_name).clone_val();
-  auto &result = sub_node.getv(var_name);
+  auto &result_var = sub_node.getv(var_name);
+
+
   if(scale_ == OperandType::array_t){
-     auto index_i = get_index_i(ctxt);
+    auto index_i = get_index_i(ctxt);
+    //cout << "index_i: " << index_i << "\n";
     if(index_i >= 0) {
-      return result[index_i].clone_val();
+      return result_var[index_i].clone_val();
     }
+
+    auto index_s = get_index_s(ctxt);
+    //cout << "index_s: " << index_s << "\n";
+    if(index_s != "" ) {
+      return result_var[index_s].clone_val();
+    }
+    return Operand();
   }
-  return result.clone_val();
+  return result_var.clone_val();
 }
 
 

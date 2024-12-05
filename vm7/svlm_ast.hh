@@ -112,7 +112,7 @@ public:
   virtual string name() = 0;
   virtual void assign(astexpr_u_ptr&, const Operand& ) = 0;
   s_integer get_index_i(astexpr_u_ptr&) ;
-  string get_index_s(astexpr_u_ptr&) {return "";};
+  string get_index_s(astexpr_u_ptr&) ;
 };
 
 class AstMvar : public AstAssign {
@@ -125,6 +125,7 @@ public:
   string get_module() ; // if $module.var return module , if $var, return current_module
   Operand to_str() const override;
   Operand get_type() const override ;
+  Operand get_scale() {return scale_; };
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
   Operand& getv() override;

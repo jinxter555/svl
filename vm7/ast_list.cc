@@ -35,7 +35,7 @@ Operand& AstList::operator[] (const Operand& k) {
 }
 const Operand& AstList::operator[] (const Operand &k) const {
   int index = k._get_int();
-  if(index > list_.size() || index < 0) return nil_operand;
+  if(index >= list_.size() || index < 0) return nil_operand;
   return list_[index]; 
 }
 
@@ -43,7 +43,7 @@ Operand& AstList::operator[] (int index) {
   return const_cast<Operand&>(as_const(*this)[index]); 
 }
 const Operand& AstList::operator[] (int index) const { 
-  if(index > list_.size() || index < 0) return nil_operand;
+  if(index >= list_.size() || index < 0) return nil_operand;
   return list_[index]; 
 }
 
