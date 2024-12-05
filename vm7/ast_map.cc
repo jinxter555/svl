@@ -2,6 +2,9 @@
 #include "ast_map.hh"
 #include "operand.hh"
 
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 AstMap::AstMap() 
 : AstExpr(OperandType::map_t)
 //, myself(this) 
@@ -23,14 +26,18 @@ Operand AstMap::clone_val() const {
 };
 
 Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
-  return Operand();
+  return clone();
 }
 
 Operand& AstMap::getv()  {
-  cerr << "I should NOT be here in  AstMap::getv()\n";
+  //cerr << "I should NOT be here in  AstMap::getv()\n";
   //myself.value_ = unique_ptr<AstMap>(this);
   //myself.type_ = OperandType::uptr_t;
-  return nil_operand;
+  //return nil_operand;
+  cerr << "AstMap::getv()\n";
+  myself.value_ = clone();
+  myself.type_ = type_;
+  return myself;
 }
 
 Operand& AstMap::back() { return nil_operand;}
@@ -108,6 +115,11 @@ bool AstMap::add(const AstExpr& v)  { return false; }
 bool AstMap::add(astexpr_u_ptr &&vptr) { return false; }
 //--------------------------------------
 bool AstMap::add(const Operand &k, const AstExpr& v, bool overwrite) {
+  MYLOGGER(trace_function
+  , "AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): "
+  ,__func__);
+  MYLOGGER_MSG(trace_function, k._to_str()  + string(": ")  + v.to_str()._to_str());
+
   return add(k._get_str(), v, overwrite);
 }
 bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
@@ -122,6 +134,11 @@ bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
 }
 
 bool AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) {
+  MYLOGGER( trace_function
+    , "AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)"
+  ,__func__)
+  MYLOGGER_MSG(trace_function, k._to_str() + string(": ") + vptr->to_str()._to_str());
+
   return add(k._get_str(), move(vptr), overwrite);
 }
 bool AstMap::add(const string &k, astexpr_u_ptr&& vptr, bool overwrite) {

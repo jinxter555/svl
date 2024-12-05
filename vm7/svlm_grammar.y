@@ -44,15 +44,19 @@ namespace vslast {
 %token SQBRK_L SQBRK_R
 %token DOT AT DOLLAR COLON COMMA SEMICOLON
 %token TRUE FALSE NIL
-%token <std::string> IDENT_STR STR DQSTR
+%token <string> IDENT_STR STR DQSTR
 %token <s_integer>  INT
 %token <s_float>     FLT
  
 %nterm EOS // end of statement
-%nterm <std::string> DOTSTR  mvar_str
+%nterm <string> DOTSTR 
 %nterm comments
 
-%nterm <astexpr_u_ptr> proto_list proto arg_list arg list
+%nterm <astexpr_u_ptr> proto_list proto arg_list arg list map
+%nterm <astexpr_u_ptr>  kv_pair_list
+%nterm <string> map_key
+%type <std::tuple<string, astexpr_u_ptr>> kv_pair 
+
 
 
 %nonassoc           ASSIGN
@@ -122,12 +126,11 @@ function
   }
   ;
 
-
-
 exp_eval
   : literals  { $$ = move($1); }
   | variable { $$ = move($1); }
   | list { $$ = move($1); }
+  | map { $$ = move($1); }
   | caller { $$ = move($1); }
   | exp_eval MULTIPLY exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::mul); }
   | exp_eval DIVIDE exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::div); }
@@ -149,6 +152,14 @@ exp_eval
         AstOpCode::assign
       ); 
   }
+  | DOLLAR DOTSTR ASSIGN exp_eval { 
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstMvar>($2),
+        move($4), 
+        AstOpCode::assign
+      ); 
+  }
+
   | DOLLAR STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
       $$ = make_unique<AstBinOp>(
         make_unique<AstMvar>($2, move($4)),
@@ -258,6 +269,49 @@ list
   : SQBRK_L arg_list SQBRK_R { $$ = move($2); } 
   ;
 
+//--------------------------------------------------- 
+map
+  : PERCENT CUR_L kv_pair_list CUR_R {
+
+/*
+    auto mptr = make_unique<AstMap>();
+
+    mptr->add(
+      Operand(get<0>($3)) , move(get<1>($3))
+    );
+    $$ = move(mptr);
+*/
+    $$ = move($3);
+  }
+  ;
+
+kv_pair_list
+  : kv_pair_list COMMA kv_pair {
+    $1->add(Operand(std::get<0>($3)), move(std::get<1>($3)));
+    $$ = move($1);
+  }
+  | kv_pair {
+    auto map_vptr = std::make_unique<AstMap>();
+    map_vptr->add(
+      Operand(get<0>($1)) , move(get<1>($1))
+    );
+    $$ = move(map_vptr);
+  }
+  | %empty {$$ = std::make_unique<AstMap>();
+  }
+  ;
+
+
+kv_pair
+  : map_key COLON exp_eval {
+    $$ = {$1, move($3)};
+  }
+  ;
+
+map_key
+  : DQSTR
+  | STR
+  ;
 
 //--------------------------------------------------- EOS end of statement
 EOS

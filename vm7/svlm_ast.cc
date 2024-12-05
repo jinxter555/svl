@@ -1,6 +1,8 @@
 #include "svlm_ast.hh"
 #include "svlm_interactive.hh"
 #include "my_helpers.hh"
+
+#define DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
 
@@ -164,12 +166,17 @@ Operand AstBinOp::to_str() const {
   return  l.to_str() + o.to_str() +  r.to_str();
 }
 Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
-  //cout << "in astbinop eval!\n";
+  MYLOGGER(trace_function
+  , "AstBinOp::evaluate(astexpr_u_ptr& ctxt)"
+  , __func__);
+
   auto &l = (*this)["left"];
   auto &r = (*this)["right"];
+  auto opcode_str = (*this)["op"]._to_str();
   auto opcode = (*this)["op"]._get_opcode();
 
   auto rv = r.evaluate(ctxt);
+
 
   if(opcode == AstOpCode::assign) {
     AstAssign* variable =(AstAssign*) l.get_raw_ptr();
@@ -351,9 +358,13 @@ s_integer AstAssign::get_index_i(astexpr_u_ptr &ctxt) {
 
 //----------------------------------------------------------------------- AstMvar
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
-  MYLOGGER(LogOutput, string("AstMvar::") + __func__ + string(" ") + v);
+  MYLOGGER(trace_function
+  , "AstMvar::AstMvar(const string &v)"
+  , __func__
+  )
+  MYLOGGER_MSG(trace_function, string("var_name: ") + v)
 
-  scale_ = OperandType::list_t;
+  scale_ = OperandType::scalar_t;
   auto mod_var = split_string(v, ".");
   if(mod_var.size() > 1) {
     add(string("mod_name"), Operand(mod_var[0]));
@@ -362,8 +373,10 @@ AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) {
   }
   add(string("var_name"), Operand(v));
 }
+
+
 AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType::ast_mvar_t) { 
-  scale_ = OperandType::list_t;
+  scale_ = OperandType::array_t;
   auto mod_var = split_string(v, ".");
   add(string("idx_key"), move(idx_key));
   if(mod_var.size() > 1)  {
@@ -374,21 +387,27 @@ AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType
   add(string("var_name"), Operand(v));
 }
 
-
+Operand& AstMvar::getv() {
+  return AstMap::getv(string("var_name"));
+}
 string AstMvar::name() { 
-  return getv(string("var_name"))._to_str();
+  return AstMap::getv(string("var_name"))._to_str();
 }
 string AstMvar::get_module() { 
-
-  return getv(string("mod_name"))._to_str();
+  return AstMap::getv(string("mod_name"))._to_str();
 }
 
 
 Operand AstMvar::get_type() const { return OperandType::ast_mvar_t;}
 OperandType AstMvar::_get_type() const { return OperandType::ast_mvar_t;}
 Operand AstMvar::to_str() const {
-  auto &var_name= map_.at(string("var_name"));
-  auto &mod_name= map_.at(string("mod_name"));
+  //auto &var_name= map_.at(string("var_name"));
+  //auto &mod_name= map_.at(string("mod_name"));
+
+  auto &var_name= (*this)["var_name"];
+  auto &mod_name= (*this)["mod_name"];
+
+
   return mod_name.to_str() + string(".") + var_name.to_str();
 }
 void AstMvar::print() const {
@@ -422,7 +441,7 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
   //auto result = sub_node.getv(var_name).clone_val();
   auto &result = sub_node.getv(var_name);
-  if(scale_ == OperandType::list_t){
+  if(scale_ == OperandType::array_t){
      auto index_i = get_index_i(ctxt);
     if(index_i >= 0) {
       return result[index_i].clone_val();
@@ -434,6 +453,10 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
 
 // to assign value to tree: module 'mname' mvar 'vname'
 void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
+  MYLOGGER(trace_function
+  , "AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)" 
+  , __func__);
+  MYLOGGER_MSG(trace_function, name() + string(" = ") + v._to_str());
 
   Operand mod_name_operand;
 
@@ -456,14 +479,16 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
   auto var_name = name();
 
   auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
-  if(scale_ == OperandType::list_t){
-     auto index_i = get_index_i(ctxt);
+  if(scale_ == OperandType::array_t){
+    auto index_i = get_index_i(ctxt);
     if(index_i >= 0) {
       auto &result = sub_node.getv(var_name);
       result.set(index_i, v);
       return;
     }
+
   }
+
 
   sub_node.add(var_name, v, true);
 
@@ -506,3 +531,18 @@ void AstLvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
   lvars.add(name(), v);
 }
 //-----------------------------------------------------------------------
+#include <tuple>
+int a() {
+  tuple<string, int> v1;
+  tuple<string, astexpr_u_ptr> v2={"hello", make_unique<AstMap>()};
+  auto mptr1 = make_unique<AstMap>();
+  //auto o3=Operand(mptr1);
+  Operand o3(mptr1->clone());
+  //Operand o3(mptr1->clone());
+
+  //tuple<string, Operand> v3={"hello", Operand(make_unique<Operand>(nil))};
+
+
+  return 0;
+
+}

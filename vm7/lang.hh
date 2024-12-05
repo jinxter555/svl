@@ -73,6 +73,7 @@ enum class OperandType {
   atom_t,
   tuple_t,
   scalar_t,     // operand  entity
+  array_t,     // operand  entity
   list_t,
   map_t,
   quenode_t,

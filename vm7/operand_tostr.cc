@@ -31,6 +31,9 @@ Operand OperandToStringVisitor::operator()(OperandType t) const {
   case OperandType::num_t:  outstr ="num_t"; break;
   case OperandType::str_t:  outstr ="str_t"; break;
   case OperandType::atom_t: outstr ="atom_t"; break;
+  case OperandType::tuple_t: outstr ="tuple_t"; break;
+  case OperandType::scalar_t: outstr ="scalar_t"; break;
+  case OperandType::array_t: outstr ="array_t"; break;
   case OperandType::list_t: outstr ="list_t"; break;
   case OperandType::map_t:  outstr ="map_t"; break;
   case OperandType::ptr_t:  outstr ="ptr_t"; break;

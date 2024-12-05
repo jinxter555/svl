@@ -1,0 +1,36 @@
+00000 Enter: int main
+00001 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00001 www1: server1
+00001 Exit: add
+00002 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00002 www2: server2
+00002 Exit: add
+00003 Enter: AstMvar::AstMvar(const string &v)
+00003 var_name: m
+00003 Exit: AstMvar
+00004 Enter: AstMvar::AstMvar(const string &v)
+00004 var_name: m
+00004 Exit: AstMvar
+00005 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00005 main: func: main
+00005 Exit: add
+00006 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00006 last: {"code": []}
+00006 Exit: add
+00007 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+00008 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
+00008 m = {"www1": server1, "www2": server2}
+00009 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
+00009 m: {"www1": server1, "www2": server2}
+00009 Exit: add
+00008 Exit: assign
+00007 Exit: evaluate
+00010 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+00011 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
+00011 m = {"www1": server1, "www2": server2}
+00012 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
+00012 m: {"www1": server1, "www2": server2}
+00012 Exit: add
+00011 Exit: assign
+00010 Exit: evaluate
+00000 Exit: main

@@ -127,6 +127,7 @@ public:
   Operand get_type() const override ;
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
+  Operand& getv() override;
   void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
   void print() const override;
 };

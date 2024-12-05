@@ -400,6 +400,8 @@ namespace vslast {
       // arg_list
       // arg
       // list
+      // map
+      // kv_pair_list
       char dummy1[sizeof (astexpr_u_ptr)];
 
       // statement_list
@@ -411,11 +413,15 @@ namespace vslast {
       // INT
       char dummy4[sizeof (s_integer)];
 
+      // kv_pair
+      char dummy5[sizeof (std::tuple<string, astexpr_u_ptr>)];
+
       // IDENT_STR
       // STR
       // DQSTR
       // DOTSTR
-      char dummy5[sizeof (std::string)];
+      // map_key
+      char dummy6[sizeof (string)];
     };
 
     /// The size of the largest semantic type.
@@ -628,7 +634,11 @@ namespace vslast {
         S_arg_list = 80,                         // arg_list
         S_arg = 81,                              // arg
         S_list = 82,                             // list
-        S_EOS = 83                               // EOS
+        S_map = 83,                              // map
+        S_kv_pair_list = 84,                     // kv_pair_list
+        S_kv_pair = 85,                          // kv_pair
+        S_map_key = 86,                          // map_key
+        S_EOS = 87                               // EOS
       };
     };
 
@@ -679,6 +689,8 @@ namespace vslast {
       case symbol_kind::S_arg_list: // arg_list
       case symbol_kind::S_arg: // arg
       case symbol_kind::S_list: // list
+      case symbol_kind::S_map: // map
+      case symbol_kind::S_kv_pair_list: // kv_pair_list
         value.move< astexpr_u_ptr > (std::move (that.value));
         break;
 
@@ -694,11 +706,16 @@ namespace vslast {
         value.move< s_integer > (std::move (that.value));
         break;
 
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.move< std::tuple<string, astexpr_u_ptr> > (std::move (that.value));
+        break;
+
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
-        value.move< std::string > (std::move (that.value));
+      case symbol_kind::S_map_key: // map_key
+        value.move< string > (std::move (that.value));
         break;
 
       default:
@@ -781,13 +798,27 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, std::tuple<string, astexpr_u_ptr>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::tuple<string, astexpr_u_ptr>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, string&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const string& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -832,6 +863,8 @@ switch (yykind)
       case symbol_kind::S_arg_list: // arg_list
       case symbol_kind::S_arg: // arg
       case symbol_kind::S_list: // list
+      case symbol_kind::S_map: // map
+      case symbol_kind::S_kv_pair_list: // kv_pair_list
         value.template destroy< astexpr_u_ptr > ();
         break;
 
@@ -847,11 +880,16 @@ switch (yykind)
         value.template destroy< s_integer > ();
         break;
 
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.template destroy< std::tuple<string, astexpr_u_ptr> > ();
+        break;
+
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
-        value.template destroy< std::string > ();
+      case symbol_kind::S_map_key: // map_key
+        value.template destroy< string > ();
         break;
 
       default:
@@ -970,10 +1008,10 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, std::string v, location_type l)
+      symbol_type (int tok, string v, location_type l)
         : super_type (token_kind_type (tok), std::move (v), std::move (l))
 #else
-      symbol_type (int tok, const std::string& v, const location_type& l)
+      symbol_type (int tok, const string& v, const location_type& l)
         : super_type (token_kind_type (tok), v, l)
 #endif
       {}
@@ -1676,14 +1714,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_IDENT_STR (std::string v, location_type l)
+      make_IDENT_STR (string v, location_type l)
       {
         return symbol_type (token::IDENT_STR, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_IDENT_STR (const std::string& v, const location_type& l)
+      make_IDENT_STR (const string& v, const location_type& l)
       {
         return symbol_type (token::IDENT_STR, v, l);
       }
@@ -1691,14 +1729,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_STR (std::string v, location_type l)
+      make_STR (string v, location_type l)
       {
         return symbol_type (token::STR, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_STR (const std::string& v, const location_type& l)
+      make_STR (const string& v, const location_type& l)
       {
         return symbol_type (token::STR, v, l);
       }
@@ -1706,14 +1744,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_DQSTR (std::string v, location_type l)
+      make_DQSTR (string v, location_type l)
       {
         return symbol_type (token::DQSTR, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_DQSTR (const std::string& v, const location_type& l)
+      make_DQSTR (const string& v, const location_type& l)
       {
         return symbol_type (token::DQSTR, v, l);
       }
@@ -2307,9 +2345,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 153,     ///< Last index in yytable_.
-      yynnts_ = 19,  ///< Number of nonterminal symbols.
-      yyfinal_ = 37 ///< Termination state number.
+      yylast_ = 171,     ///< Last index in yytable_.
+      yynnts_ = 23,  ///< Number of nonterminal symbols.
+      yyfinal_ = 40 ///< Termination state number.
     };
 
 
@@ -2322,7 +2360,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2326 "svlm_parser.hh"
+#line 2364 "svlm_parser.hh"
 
 
 

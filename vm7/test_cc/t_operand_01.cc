@@ -1,5 +1,6 @@
 #include <cassert>
 #include "../operand.hh"
+#include "../scope_logger.hh"
 
 int main() {
   Operand i1(11l);

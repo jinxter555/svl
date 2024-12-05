@@ -11,13 +11,16 @@
 #include "svlm_interactive.hh"
 
 
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
+
 
 SvlmInteractive svlm_it(".svlm_history", "svlm> ");
 
 PromptInteractive myprompt;
 LangPrompt *lang_it;
 
-fstream LogOutput;
 
 
 //extern char** AssemblerInteractive_command_completion(const char *text, int start, int end) ;
@@ -35,7 +38,10 @@ int main(int argc, char *argv[]) {
 
   Commandline cml(argc, argv);
   PromptSwitch ps = PromptSwitch::begin;
-  LogOutput.open("svlm_trace.log", std::ios::out);
+  log_output.open("svlm.log", std::ios::out);
+  trace_function.open("svlm_trace.log", std::ios::out);
+
+  MYLOGGER(trace_function, "int main", __func__);
 
 
 
