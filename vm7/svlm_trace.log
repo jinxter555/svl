@@ -55,26 +55,61 @@
 00016 Exit: evaluate
 00017 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
 00017 last: {"code": [
-0: nil.l
+0: nil.m=what
 ]}
 00017 Exit: add
-00018 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00018 var_name: l
+00018 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+00019 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
+00019 m = what
+00020 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
+00020 www1: what
+00020 Exit: add
+00019 Exit: assign
 00018 Exit: evaluate
-00019 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00019 last: {"code": [
-0: nil.l
+00021 Enter: AstMvar::AstMvar(const string &v)
+00021 var_name: m
+00021 Exit: AstMvar
+00022 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00022 last: {"code": [
+0: nil.m
 ]}
-00019 Exit: add
-00020 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00020 var_name: l
-00020 Exit: evaluate
-00021 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00021 last: {"code": [
-0: nil.l
+00022 Exit: add
+00023 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+00023 var_name: m
+00023 Exit: evaluate
+00024 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00024 last: {"code": [
+0: nil.m=server1
 ]}
-00021 Exit: add
-00022 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00022 var_name: l
-00022 Exit: evaluate
+00024 Exit: add
+00025 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+00026 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
+00026 m = server1
+00027 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
+00027 www1: server1
+00027 Exit: add
+00026 Exit: assign
+00025 Exit: evaluate
+00028 Enter: AstMvar::AstMvar(const string &v)
+00028 var_name: m
+00028 Exit: AstMvar
+00029 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00029 last: {"code": [
+0: nil.m
+]}
+00029 Exit: add
+00030 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+00030 var_name: m
+00030 Exit: evaluate
+00031 Enter: AstMvar::AstMvar(const string &v)
+00031 var_name: m
+00031 Exit: AstMvar
+00032 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+00032 last: {"code": [
+0: nil.m
+]}
+00032 Exit: add
+00033 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+00033 var_name: m
+00033 Exit: evaluate
 00000 Exit: main

@@ -501,8 +501,7 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
   mod_name_operand = mod_name.to_str();
 
 
-  //if(mod_name == nil_operand)  {
-  if(mod_name._get_type() == OperandType::nil_t)  {
+  if(mod_name == nil_operand)  {
      mod_name_operand = svlm_lang_ptr->get_current_module();
     add(string("mod_name"), mod_name_operand);
   }
@@ -511,16 +510,19 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
 
   auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
   if(scale_ == OperandType::array_t){
+    auto &result = sub_node.getv(var_name);
+
     auto index_i = get_index_i(ctxt);
     if(index_i >= 0) {
-      auto &result = sub_node.getv(var_name);
       result.set(index_i, v);
       return;
     }
-
+    auto index_s = get_index_s(ctxt);
+    if(index_s != "" ) {
+      result.add(index_s, v, true);
+      return;
+    }
   }
-
-
   sub_node.add(var_name, v, true);
 
 }
