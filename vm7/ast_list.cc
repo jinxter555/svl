@@ -2,6 +2,8 @@
 #include "ast_list.hh"
 
 
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
 
 
 
@@ -19,15 +21,25 @@ AstList::AstList(const AstList& l) {
 };
 
 astexpr_u_ptr AstList::clone() const {
-  //cout << "Alist:clone()\n";
+  MYLOGGER(trace_function
+  , "AstList::clone()"
+  ,__func__);
+
   list_u_ptr new_list = make_unique<AstList>();
 
-  for(auto &e : list_) 
+  for(auto &e : list_)  {
+    //cout << "clone e: " << e << "\n";
     new_list->list_.push_back(e.clone()); 
-  return new_list;
+  }
+  //cout << "\n";
+  return move(new_list);
 }
 Operand AstList::clone_val() const {
-  return Operand();
+  cerr << "AstList::clone_val(), I shouldn't be here!\n";
+  MYLOGGER(trace_function
+  , "AstList::clone_val()"
+  ,__func__);
+  return clone();
 }
 //--------------------------------------
 Operand& AstList::operator[] (const Operand& k) {
@@ -53,7 +65,7 @@ Operand& AstList::getv(const Operand &k)  {
   return getv(k._get_int());
 }
 Operand& AstList::getv(const string &k)  {
-  cout << "AstList::getv k(" << k << ")";
+  //cout << "AstList::getv k(" << k << ")";
   return getv(stoi(k, nullptr, 10));
 }
 Operand& AstList::getv(int i)  {
@@ -64,7 +76,8 @@ Operand& AstList::getv(int i)  {
 }
 Operand& AstList::getv()  {
   cerr << "AstList::getv()\n";
-  myself.value_ = clone();
+  //myself.value_ = clone();
+  myself.value_ = unique_ptr<AstExpr>(get_raw_ptr());
   myself.type_ = type_;
   return myself;
 }
@@ -199,5 +212,5 @@ Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
   for(i=0; i<s; i++) {
     result_list->add(list_[i].evaluate(ctxt));
   }
-  return result_list;
+  return move(result_list);
 }

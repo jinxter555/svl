@@ -146,10 +146,10 @@ void SvlmAst::run_evaluate() {
 */
 
 }
-//-----------------------------------------------------------------------
+//----------------------------------------------------------------------- AstBinOp
 
-AstBinOp::AstBinOp(std::unique_ptr<AstExpr> l, std::unique_ptr<AstExpr> r, AstOpCode op) 
- // : AstExpr(OperandType::ast_binop_t) 
+AstBinOp::AstBinOp(astexpr_u_ptr l, astexpr_u_ptr r, AstOpCode op) 
+ : type_(OperandType::ast_binop_t) 
   {
   add(string("left"), move(l));
   add(string("right"), move(r));
@@ -192,7 +192,7 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
 }
 
 
-//-----------------------------------------------------------------------
+//----------------------------------------------------------------------- AstFunc
 AstFunc::AstFunc(const Operand &n, astexpr_u_ptr pl,  astexpr_u_ptr code_ptr) {
   name = n._to_str();
   type_ = OperandType::ast_func_t;
@@ -219,7 +219,7 @@ void AstFunc::print() const {
   }
 }
 
-//-----------------------------------------------------------------------
+//----------------------------------------------------------------------- AstPrint
 AstPrint::AstPrint(astexpr_u_ptr ptr) {
   type_= OperandType::ast_print_t;
   add(string("exp"), move(ptr));
@@ -238,7 +238,7 @@ Operand AstPrint::evaluate(astexpr_u_ptr& ctxt) {
   cout << exp.evaluate(ctxt);
   return Operand("");
 }
-//-----------------------------------------------------------------------
+//----------------------------------------------------------------------- AstCaller
 AstCaller::AstCaller(const Operand& callee, astexpr_u_ptr arg_list) {
   type_= OperandType::ast_caller_t;
   auto modfunc = split_string(callee._to_str(), ".");
@@ -370,8 +370,6 @@ string AstAssign::get_index_s(astexpr_u_ptr &ctxt) {
   }
   return result._to_str();
 }
-
-//----------------------------------------------------------------------- AstMvar
 
 //----------------------------------------------------------------------- AstMvar
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
@@ -528,7 +526,7 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
 }
 
 
-//-----------------------------------------------------------------------
+//----------------------------------------------------------------------- AstLvar
 AstLvar::AstLvar(const string &name) : AstAssign(OperandType::ast_lvar_t) { 
   add(string("var_name"), Operand(name));
 }
@@ -563,19 +561,38 @@ void AstLvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
   auto &lvars =  frame["lvars"];
   lvars.add(name(), v);
 }
-//-----------------------------------------------------------------------
-#include <tuple>
-int a() {
-  tuple<string, int> v1;
-  tuple<string, astexpr_u_ptr> v2={"hello", make_unique<AstMap>()};
-  auto mptr1 = make_unique<AstMap>();
-  //auto o3=Operand(mptr1);
-  Operand o3(mptr1->clone());
-  //Operand o3(mptr1->clone());
+//----------------------------------------------------------------------- Tuple
+AstTuple::AstTuple(astexpr_u_ptr ulist) : AstAssign(OperandType::tuple_t){ 
+  add(string("ulist"), move(ulist));
+}
+string AstTuple::name() {return "";}
 
-  //tuple<string, Operand> v3={"hello", Operand(make_unique<Operand>(nil))};
-
-
-  return 0;
+Operand AstTuple::to_str() const {
+  return "tuple";
+};
+Operand AstTuple::get_type() const {
+  return OperandType::tuple_t;
+}
+OperandType AstTuple::_get_type() const {
+  return OperandType::tuple_t;
 
 }
+Operand AstTuple::evaluate(astexpr_u_ptr& ctxt) {
+  auto &ul = (*this)["ulist"];
+
+  if(!evaluated){
+    auto l  = ul.evaluate(ctxt);
+    add(string("ulist"), l.clone());
+    evaluated = true;
+    return  l;
+  }
+
+  return Operand();
+}
+void AstTuple::assign(astexpr_u_ptr& ctxt, const Operand&) {
+
+}
+void AstTuple::print() const {
+  cout << to_str();
+}
+

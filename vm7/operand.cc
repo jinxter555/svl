@@ -7,6 +7,9 @@
 #include "operand_tostr.hh"
 #include "ast_map.hh"
 
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 
 Nil nil;
 Operand nil_operand=Operand();
@@ -61,7 +64,8 @@ Operand::Operand(const OperandVariant& v )
 Operand::Operand(AstExpr *ptr) 
 : AstExpr(OperandType::uptr_t)
 , value_(unique_ptr<AstExpr>(ptr)) {
-  //cout << "initialize Operand(AstExpr*)";
+  cout << "initialize Operand(AstExpr*): type" << get_type();
+
 }
 Operand::Operand(svlm_ast_ptr ptr) 
 : AstExpr(OperandType::svlm_ast_ptr_t)
@@ -101,10 +105,17 @@ Operand::Operand(const OperandType t, const OperandVariant& v) : AstExpr(t){
 
 //-----------------------------------------------------------------------
 Operand Operand::clone_val() const {
+  /*
+  cout << "Operand::clone_val()\n";
   Operand nv;
   nv.type_= type_;
   nv.value_  = visit(GetOperandValue(), value_);
   return nv;
+  */
+  MYLOGGER(trace_function
+  , "Operand::clone_val()"
+  ,__func__);
+  return visit(GetOperandValue(), value_);
 }
 
 unique_ptr<AstExpr> Operand::clone() const {
@@ -268,7 +279,11 @@ void Operand::print() const {
 //-----------------------------------------------------------------------
 template <typename T>
 OperandVariant GetOperandValue::operator()(T value) const { return value; }
-OperandVariant GetOperandValue::operator()(const astexpr_u_ptr& v) const { return v->clone(); }
+OperandVariant GetOperandValue::operator()(const astexpr_u_ptr& v) const { 
+  if(v==nullptr) return nil;
+  if(v.get()==nullptr) return nil;
+  return v->clone(); 
+}
 //-----------------------------------------------------------------------
 template <typename T>
 AstOpCode GetOperandAstOpCode::operator()(T v) const { return AstOpCode::noop; }

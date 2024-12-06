@@ -42,3 +42,6 @@ public:
   static PromptSwitch ready(Prompt&); // ready for user readline input
 
 };
+
+extern PromptInteractive myprompt;
+extern LangPrompt *lang_it;

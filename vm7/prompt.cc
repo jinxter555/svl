@@ -1,6 +1,9 @@
 #include "prompt.hh"
 #include <cstring>
 
+PromptInteractive myprompt;
+LangPrompt *lang_it;
+
 void PromptInteractive::save_history(Prompt& p) {
   std::ofstream outfile(p.history_filename);
  if(outfile.is_open()) {

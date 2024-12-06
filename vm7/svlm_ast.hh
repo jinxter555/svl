@@ -41,6 +41,8 @@ public:
 
 //class AstBinOp : public AstExpr {
 class AstBinOp : public AstMap {
+private:
+  OperandType type_;
 public:
   AstBinOp (unique_ptr<AstExpr> l, unique_ptr<AstExpr> r, AstOpCode op);
   Operand to_str() const override;
@@ -138,6 +140,19 @@ private:
   bool initiated=false;
 public:
   AstLvar(const string&);
+  string name() override final;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
+  void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
+  void print() const override;
+};
+class AstTuple : public AstAssign {
+private:
+  bool evaluated = false;
+public:
+  AstTuple(astexpr_u_ptr);
   string name() override final;
   Operand to_str() const override;
   Operand get_type() const override ;

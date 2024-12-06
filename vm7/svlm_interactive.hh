@@ -60,3 +60,4 @@ public:
 
 
 };
+extern SvlmInteractive svlm_it;

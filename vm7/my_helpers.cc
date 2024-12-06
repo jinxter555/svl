@@ -116,3 +116,13 @@ std::string raw_to_escaped_string(const std::string& s) {
 
     return result;
 }
+
+string add_vector_string(const vector<string> &vs, const string& delimiter) {
+  string result="[";
+  int i, s=vs.size();
+  for(i=0; i<s-1; i++) {
+    result = result  + vs[i] + delimiter ;
+  }
+  result = result + vs[i]+ "]";
+  return result;
+}

@@ -4,6 +4,7 @@
 
 #define DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
+#include "my_helpers.hh"
 
 AstMap::AstMap() 
 : AstExpr(OperandType::map_t)
@@ -20,9 +21,9 @@ astexpr_u_ptr AstMap::clone() const {
 }
 
 Operand AstMap::clone_val() const {
-  cerr << "I should NOT be here in  AstMap::clone_val()\n";
-  auto v = clone();
-  return Operand(move(v));
+  cerr << "AstMap::clone_val(), I shouldn't be here!\n";
+  //return Operand(clone());
+  return clone();
 };
 
 Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
@@ -191,6 +192,11 @@ bool AstMap::add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool
 
 //------------------------------------- 
 Operand& AstMap::get_branch(const vector<string> &keys) {
+  // MYLOGGER( trace_function, __func__, __func__)
+  MYLOGGER( trace_function
+    , "AstMap::get_branch(const vector<string> &keys)"
+    ,__func__)
+  MYLOGGER_MSG( trace_function, string("keys: ")+add_vector_string(keys, ", "));
   int i=0, s = keys.size();  
   string k; AstExpr *curr=this, *next;
 

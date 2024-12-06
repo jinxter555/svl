@@ -5,8 +5,7 @@
 #include "lang.hh"
 
 
-
-extern SvlmInteractive svlm_it;
+SvlmInteractive svlm_it(".svlm_history", "svlm> ");
 astexpr_u_ptr nil_ast_ptr=nullptr;
 
 SvlmInteractive::SvlmInteractive
@@ -151,8 +150,9 @@ void SvlmInteractive::evaluate_line() {
   if(result.size()>0 ) {
     auto &v = result[0l].getv();
     if(v==nil_operand) { // Operand_math != is notworking 
-    } else 
+    } else  {
       cout << v << "\n";
+    }
 
   }
 }

@@ -16,10 +16,7 @@
 
 
 
-SvlmInteractive svlm_it(".svlm_history", "svlm> ");
 
-PromptInteractive myprompt;
-LangPrompt *lang_it;
 
 
 
@@ -34,12 +31,16 @@ PromptSwitch p_run_init(LangPrompt *lp, const Commandline& cml) ;
 
 
 int main(int argc, char *argv[]) {
+
   bool init_flag = true;
+
+  log_output.open("svlm.log", std::ios::out);
+  trace_function.open("svlm_trace.log", std::ios::out);
 
   Commandline cml(argc, argv);
   PromptSwitch ps = PromptSwitch::begin;
-  log_output.open("svlm.log", std::ios::out);
-  trace_function.open("svlm_trace.log", std::ios::out);
+
+
 
   MYLOGGER(trace_function, "int main", __func__);
 
