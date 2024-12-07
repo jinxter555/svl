@@ -59,6 +59,21 @@ int main() {
   cout << "m2: " << m2 << "\n\n";
   cout << "mr: " << mr << "\n\n";
 
+  auto& r_m1 =  m1.getv();
+  cout << "reference r_m1: " << r_m1 << "\n";
+  //r_m1["five"] = 66666l;
+  r_m1.set(Operand("five"),  Operand(66666l));
+  cout << "reference r_m1: " << r_m1 << "\n";
+  cout << "m1: " << m1 << "\n";
+  m1.set(Operand("five"),  Operand(66666l));
+  cout << "reference r_m1: " << r_m1 << "\n";
+  cout << "m1: " << m1 << "\n";
+
+
+
+
+
+
 
 
   return 0;

@@ -38,6 +38,7 @@ public:
   //Operand(const Operand&);
   Operand(astexpr_u_ptr &);
   Operand(astexpr_u_ptr &&);
+  Operand(astexpr_s_ptr &);
   Operand(AstExpr *);
   Operand(svlm_ast_ptr);
 
@@ -156,7 +157,20 @@ astexpr_u_ptr &ctxt;
 OperandEvaluate(astexpr_u_ptr&c);
 template <typename T> 
 Operand operator()(T v) ;
+Operand operator()(astexpr_ptr v) ;
 Operand operator()(astexpr_u_ptr& v) ;
+Operand operator()(astexpr_s_ptr& v) ;
+};
+
+// get value
+struct OperandGetv {
+Operand &value_;
+OperandGetv(Operand&v);
+template <typename T> 
+Operand& operator()(T v) ;
+Operand& operator()(astexpr_ptr v) ;
+Operand& operator()(astexpr_u_ptr& v) ;
+Operand& operator()(astexpr_s_ptr& v) ;
 };
 
 /*
@@ -182,6 +196,8 @@ OperandType operator()(const OperandType& v) const ;
 OperandType operator()(const ControlFlow& v) const ;
 OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
+OperandType operator()(const astexpr_ptr v) const  ;
+OperandType operator()(const astexpr_s_ptr& v) const  ;
 OperandType operator()(const astexpr_u_ptr& v) const  ;
 };
 

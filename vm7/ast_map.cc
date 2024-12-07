@@ -31,13 +31,8 @@ Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
 }
 
 Operand& AstMap::getv()  {
-  //cerr << "I should NOT be here in  AstMap::getv()\n";
-  //myself.value_ = unique_ptr<AstMap>(this);
-  //myself.type_ = OperandType::uptr_t;
-  //return nil_operand;
-  //cerr << "AstMap::getv()\n";
-  myself.value_ = clone();
-  myself.type_ = type_;
+  cerr << "AstMap::getv() I shouldn't be here\n";
+  myself = this;
   return myself;
 }
 
@@ -147,6 +142,7 @@ bool AstMap::add(const string &k, astexpr_u_ptr&& vptr, bool overwrite) {
 
   if(has_key(k) && !overwrite) return false;
   map_[k] = move(vptr);
+  //map_[k] = vptr;
   return true;
 }
 //------------------------------------- 

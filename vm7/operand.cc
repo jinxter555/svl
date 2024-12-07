@@ -61,15 +61,23 @@ Operand::Operand(const OperandVariant& v )
   value_ = visit(GetOperandValue(), v); 
 } 
 
-Operand::Operand(AstExpr *ptr) 
-: AstExpr(OperandType::uptr_t)
-, value_(unique_ptr<AstExpr>(ptr)) {
-  cout << "initialize Operand(AstExpr*): type" << get_type();
-
+Operand::Operand(astexpr_ptr ptr) 
+: AstExpr(OperandType::ptr_t)
+, value_(ptr) {
+  cout << "initialize Operand(AstExpr*): get_type(): " << get_type() << "\n";;
+  cout << "*ptr: " << *ptr << "\n";;
+  cout << "getv(): " << getv() << "\n";;
 }
+
+
+
 Operand::Operand(svlm_ast_ptr ptr) 
 : AstExpr(OperandType::svlm_ast_ptr_t)
 , value_(ptr) {}
+
+
+Operand::Operand(astexpr_s_ptr& vptr) : value_(vptr), AstExpr(OperandType::sptr_t) { 
+}
 
 Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) { 
   if(vptr==nullptr) {
@@ -276,35 +284,6 @@ void Operand::print() const {
   cout << *this;
 }
 
-//-----------------------------------------------------------------------
-template <typename T>
-OperandVariant GetOperandValue::operator()(T value) const { return value; }
-OperandVariant GetOperandValue::operator()(const astexpr_u_ptr& v) const { 
-  if(v==nullptr) return nil;
-  if(v.get()==nullptr) return nil;
-  return v->clone(); 
-}
-//-----------------------------------------------------------------------
-template <typename T>
-AstOpCode GetOperandAstOpCode::operator()(T v) const { return AstOpCode::noop; }
-AstOpCode GetOperandAstOpCode::operator()(const AstOpCode& v) const { 
-  return v;
-}
-
-
-//-----------------------------------------------------------------------
-template <typename T>
-operand_u_ptr GetOperandClone::operator()(T value) const { 
-  return make_unique<Operand>(value); 
-}
-operand_u_ptr GetOperandClone::operator()(const astexpr_u_ptr& v) const { 
-  return make_unique<Operand>(v->clone()); 
-}
-
-template <typename T> 
-Operand OperandEvaluate::operator()(T v) { return v; }
-Operand OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
-OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
 
 //-------------------------------------------
 bool Operand::add(const AstExpr &v) {
@@ -363,13 +342,25 @@ bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
 Operand& Operand::getv() {
   //cout << "Operand::getv(): type " << get_type() << "\n";
 
+  return visit(OperandGetv(*this), value_);
+
+/*
   if(type_==OperandType::uptr_t) {
     auto &ptr = get_u_ptr();
     if(ptr==nil_ast_ptr) return nil_operand;
     return ptr->getv();
-  } else
+  } else if(type_==OperandType::ptr_t) {
+    auto ptr = get_raw_ptr();
+    if(ptr==nullptr) return nil_operand;
+    return ptr->getv();
+  } else{
     return *this;
+  }
+*/
 }
+
+
+
 //-----------------------------------------------------------------------
 Operand& Operand::front() {
   if(type_==OperandType::uptr_t) {
@@ -419,3 +410,45 @@ const astexpr_u_ptr& Operand::get_u_ptr() const {
 astexpr_u_ptr& Operand::get_u_ptr_nc() { 
   return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
 }
+
+//-----------------------------------------------------------------------
+template <typename T>
+OperandVariant GetOperandValue::operator()(T value) const { return value; }
+OperandVariant GetOperandValue::operator()(const astexpr_u_ptr& v) const { 
+  if(v==nullptr) return nil;
+  if(v.get()==nullptr) return nil;
+  if(v==nullptr) {
+    cerr << "GetOperandValue::operator()(const astexpr_u_ptr& v) v is nullptr!\n";
+    return nil;
+  }
+  return v->clone(); 
+}
+//-----------------------------------------------------------------------
+template <typename T>
+AstOpCode GetOperandAstOpCode::operator()(T v) const { return AstOpCode::noop; }
+AstOpCode GetOperandAstOpCode::operator()(const AstOpCode& v) const { return v; }
+
+//-----------------------------------------------------------------------
+template <typename T>
+operand_u_ptr GetOperandClone::operator()(T value) const { 
+  return make_unique<Operand>(value); 
+}
+operand_u_ptr GetOperandClone::operator()(const astexpr_u_ptr& v) const { 
+  return make_unique<Operand>(v->clone()); 
+}
+
+template <typename T> 
+Operand OperandEvaluate::operator()(T v) { return v; }
+Operand OperandEvaluate::operator()(astexpr_ptr vptr) { return vptr->evaluate(ctxt); }
+Operand OperandEvaluate::operator()(astexpr_s_ptr& vptr) { return vptr->evaluate(ctxt); }
+Operand OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
+OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
+
+
+//-----------------------------------------------------------------------
+template <typename T> 
+Operand& OperandGetv::operator()(T v) { return value_; }
+Operand& OperandGetv::operator()(astexpr_ptr vptr) { return vptr->getv(); }
+Operand& OperandGetv::operator()(astexpr_u_ptr& vptr) { return vptr->getv(); }
+Operand& OperandGetv::operator()(astexpr_s_ptr& vptr) { return vptr->getv(); }
+OperandGetv::OperandGetv(Operand& v) : value_(v) { }

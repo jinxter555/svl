@@ -112,7 +112,7 @@ protected:
 public:
   AstAssign(OperandType t, OperandType s=OperandType::scalar_t) : type_(t), scale_(s) {}
   virtual string name() = 0;
-  virtual void assign(astexpr_u_ptr&, const Operand& ) = 0;
+  virtual void assign(astexpr_u_ptr&, Operand& ) = 0;
   s_integer get_index_i(astexpr_u_ptr&) ;
   string get_index_s(astexpr_u_ptr&) ;
 };
@@ -120,6 +120,7 @@ public:
 class AstMvar : public AstAssign {
 private:
   bool initiated=false;
+  //Operand &variable;
 public:
   AstMvar(const string&);
   AstMvar(const string&, astexpr_u_ptr idx_key);
@@ -131,7 +132,7 @@ public:
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
   Operand& getv() override;
-  void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
+  void assign(astexpr_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
 
@@ -145,7 +146,7 @@ public:
   Operand get_type() const override ;
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
-  void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
+  void assign(astexpr_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
 class AstTuple : public AstAssign {
@@ -158,7 +159,7 @@ public:
   Operand get_type() const override ;
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
-  void assign(astexpr_u_ptr& ctxt, const Operand&) override final;
+  void assign(astexpr_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
 

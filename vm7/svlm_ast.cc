@@ -464,24 +464,31 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
 
   if(scale_ == OperandType::array_t){
     auto index_i = get_index_i(ctxt);
-    //cout << "index_i: " << index_i << "\n";
     if(index_i >= 0) {
       return result_var[index_i].clone_val();
     }
 
     auto index_s = get_index_s(ctxt);
-    //cout << "index_s: " << index_s << "\n";
     if(index_s != "" ) {
       return result_var[index_s].clone_val();
     }
     return Operand();
+  }
+  /*
+  cout << "var gettype: " << get_type() << "\n";
+  cout << "eval result_var: " << result_var << "\n";
+  cout << "eval result_var gettype: " << result_var.get_type() << "\n";
+  */
+  if(result_var._get_type() == OperandType::uptr_t) {
+    cout << "mvar eval return u_ptr\n";
+    return result_var.get_u_ptr_nc();
   }
   return result_var.clone_val();
 }
 
 
 // to assign value to tree: module 'mname' mvar 'vname'
-void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
+void AstMvar::assign(astexpr_u_ptr& ctxt, Operand& v) {
   MYLOGGER(trace_function
   , "AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)" 
   , __func__);
@@ -521,7 +528,19 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
       return;
     }
   }
-  sub_node.add(var_name, v, true);
+  MYLOGGER_MSG(trace_function, "sub_node.add() before");
+  cout << "mvar assign\n";
+  cout << "v.get_type() " << v.get_type() << "\n";
+  //cout << "v " << v << "\n";
+  if(v._get_type() == OperandType::list_t || v._get_type() == OperandType::map_t) {
+    cout << "mvar assign type==list or map\n";
+    auto vptr = unique_ptr<AstExpr>( v.get_raw_ptr() );
+    sub_node.add(var_name, move(vptr), true);
+    //sub_node.add(var_name, v, true);
+  } else {
+    sub_node.add(var_name, v, true);
+  }
+  MYLOGGER_MSG(trace_function, "sub_node.add() after");
 
 }
 
@@ -555,7 +574,7 @@ Operand AstLvar::evaluate(astexpr_u_ptr& ctxt) {
   return lvars.getv(var_name).clone_val();
 }
 
-void AstLvar::assign(astexpr_u_ptr& ctxt, const Operand& v) {
+void AstLvar::assign(astexpr_u_ptr& ctxt, Operand& v) {
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame();
   auto &lvars =  frame["lvars"];
@@ -589,7 +608,7 @@ Operand AstTuple::evaluate(astexpr_u_ptr& ctxt) {
 
   return Operand();
 }
-void AstTuple::assign(astexpr_u_ptr& ctxt, const Operand&) {
+void AstTuple::assign(astexpr_u_ptr& ctxt, Operand&) {
 
 }
 void AstTuple::print() const {

@@ -18,9 +18,13 @@ Operand OperandToStringVisitor::operator()(const std::string& s) const {
   return s;
 }
 Operand OperandToStringVisitor::operator()(svlm_ast_ptr v) const {
-  //return string("SvlmAst ptr");
   return v->to_str();
 }
+Operand OperandToStringVisitor::operator()(astexpr_ptr v) const {
+  //cout << " Operand OperandToStringVisitor::operator()(astexpr_ptr v) const \n";
+  return v->to_str();
+}
+
 Operand OperandToStringVisitor::operator()(OperandType t) const {
   string outstr;
   switch(t) {
@@ -133,6 +137,9 @@ Operand OperandToStringVisitor::operator()(AstOpCode t_op) const {
   default: oc="not ast operator"; break;
   } 
   return Operand(oc);
+}
+Operand OperandToStringVisitor::operator()(const astexpr_s_ptr &vptr) const { 
+  return vptr->to_str();
 }
 
 Operand OperandToStringVisitor::operator()(const astexpr_u_ptr &vptr) const { 

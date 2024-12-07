@@ -17,12 +17,35 @@ int main() {
   Operand s2(string("str2"));
   Operand s3("str3");
   Operand s4("str4");
+  Operand sh_i1(
+    make_shared<Operand>(123456789l)
+  );
   Operand nil;
 
-  const Operand &oref= i1.getv();
-  auto oref1 = oref.clone_val();
-  auto oref1b = oref.clone();
+  Operand v1 = 111l;
 
+  Operand v2 = "hello";
+
+  Operand &r_v1 = v1.getv();
+  cout << "v1: " << v1 << "\n";
+  cout << "reference r_v1: " << r_v1 << "\n";
+  cout << "v1 + 2: " << v1 + 2l<< "\n";
+  cout << "reference r_v1: " << r_v1 + 2l << "\n";
+  cout << "r_v1=555 \n"; r_v1 = 555l;
+  cout << "v1: " << v1 << "\n";
+  cout << "reference r_v1: " << r_v1 << "\n";
+  cout << "v1 + 2: " << v1 + 2l<< "\n";
+  cout << "reference r_v1: " << r_v1 + 2l << "\n\n";
+
+  auto u_p1 = make_unique<Operand>(111l);
+  cout << "u_p1: " << *u_p1 << "\n";
+  cout << "before getv() u_p1: " << *u_p1 << "\n";
+  {
+    auto &r_p1  = u_p1->getv();
+    r_p1 = 222l;
+  }
+  cout << "after getv() u_p1: " << *u_p1 << "\n";
+  cout << "\n";
 
   cout << i1 + i2 << "\n";
   cout << s1 + s2 << "\n";
@@ -30,18 +53,16 @@ int main() {
   cout << nil << "\n";
   cout << i1 + s4 << "\n";
 
-  oref1 = oref1 + 12345l;
   cout << "i1: " << i1 << "\n";
   cout << "i1.getv(): " << i1.getv() << "\n";
-  cout << "oref1: " << oref1<< "\n";
-  cout << "oref1 type: " << oref1.get_type()<< "\n";
-  cout << "oref1b : " << oref1b<< "\n";
-  cout << "oref1b type : " << oref1b->get_type() << "\n";
 
   Operand oc1(AstOpCode::mul);
   cout << "oc1: " <<  oc1  << "\n";
   cout << "oc1: " <<  oc1.get_opcode()  << "\n";
-  //Operand oc2() = oc1._get_opcode();
+
+  cout << "shared sh_i1: " <<  sh_i1 << "\n";
+  cout << "shared sh_i1 + i1: " <<  sh_i1 + i1 << "\n";
+  cout << "shared sh_i1.getv() + i1: " <<  sh_i1.getv() + i1 << "\n";
 
 
   return 0;

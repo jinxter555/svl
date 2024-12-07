@@ -21,24 +21,18 @@ AstList::AstList(const AstList& l) {
 };
 
 astexpr_u_ptr AstList::clone() const {
-  MYLOGGER(trace_function
-  , "AstList::clone()"
-  ,__func__);
+  MYLOGGER(trace_function , "AstList::clone()" ,__func__);
 
   list_u_ptr new_list = make_unique<AstList>();
-
   for(auto &e : list_)  {
-    //cout << "clone e: " << e << "\n";
     new_list->list_.push_back(e.clone()); 
   }
-  //cout << "\n";
   return move(new_list);
 }
 Operand AstList::clone_val() const {
   cerr << "AstList::clone_val(), I shouldn't be here!\n";
-  MYLOGGER(trace_function
-  , "AstList::clone_val()"
-  ,__func__);
+  MYLOGGER(trace_function , "AstList::clone_val()" ,__func__);
+
   return clone();
 }
 //--------------------------------------
@@ -75,10 +69,8 @@ Operand& AstList::getv(int i)  {
   return list_[i];
 }
 Operand& AstList::getv()  {
-  cerr << "AstList::getv()\n";
-  //myself.value_ = clone();
-  myself.value_ = unique_ptr<AstExpr>(get_raw_ptr());
-  myself.type_ = type_;
+  cerr << "AstList::getv() I shouldn't be here\n";
+  myself = this;
   return myself;
 }
 Operand& AstList::back() { return list_.back(); }
@@ -166,6 +158,7 @@ bool AstList::set(const Operand &key, astexpr_u_ptr &&vptr ) {
 }
 //--------------------------------------
 
+/*
 Operand AstList::to_str() const {
   int i, s = size();
   Operand outstr("[\n");
@@ -177,8 +170,8 @@ Operand AstList::to_str() const {
   outstr = outstr +  to_string(i)  + string(": ") + list_[i].to_str() + "\n]";
   return outstr;
 }
+*/
 
-/*
 Operand AstList::to_str() const {
   int i, s = size();
   Operand outstr("[");
@@ -190,7 +183,6 @@ Operand AstList::to_str() const {
   outstr = outstr + list_[i].to_str() + "]";
   return outstr;
 }
-*/
 void AstList::print() const {
   //if(this==nullptr) return;
   cout << to_str();

@@ -80,6 +80,7 @@ enum class OperandType {
 
   ptr_t,
   uptr_t,
+  sptr_t,
 
   control_t,
 
@@ -134,6 +135,8 @@ class SvlmAst;
 using list_u_ptr = unique_ptr<AstList>;
 using map_u_ptr = unique_ptr<AstMap>;
 using astexpr_u_ptr = unique_ptr<AstExpr>;
+using astexpr_s_ptr = shared_ptr<AstExpr>;
+using astexpr_ptr = AstExpr *;
 using svlm_ast_ptr = SvlmAst *;
 //--------------------------------------------------------- 
 using OperandVariant=std::variant
@@ -142,7 +145,9 @@ using OperandVariant=std::variant
 , ControlFlow
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType
-, svlm_ast_ptr 
+, svlm_ast_ptr
+, astexpr_ptr
+, astexpr_s_ptr
 , astexpr_u_ptr
 >;
 //--------------------------------------------------------- 
