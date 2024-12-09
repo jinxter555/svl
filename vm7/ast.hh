@@ -45,6 +45,8 @@ public:
 
   virtual const astexpr_u_ptr& get_u_ptr() const = 0;
   virtual astexpr_u_ptr& get_u_ptr_nc() =0 ; // non constant
+  virtual astexpr_s_ptr get_s_ptr() = 0;
+  //virtual astexpr_s_ptr get_s_ptr_nc() = 0;
 
   virtual AstExpr *get_raw_ptr(const Operand &k) const=0;
   virtual AstExpr *get_raw_ptr() const=0;

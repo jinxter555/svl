@@ -32,7 +32,7 @@ Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
 
 Operand& AstMap::getv()  {
   cerr << "AstMap::getv() I shouldn't be here\n";
-  myself = this;
+  myself = clone();
   return myself;
 }
 
@@ -83,6 +83,9 @@ const astexpr_u_ptr& AstMap::get_u_ptr() const {
 astexpr_u_ptr& AstMap::get_u_ptr_nc() { 
   return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
 }
+
+astexpr_s_ptr AstMap::get_s_ptr() { return nullptr; };
+//astexpr_s_ptr  AstMap::get_s_ptr_nc() { return nullptr; };
 
 //--------------------------------------
 AstExpr *AstMap::get_raw_ptr() const {

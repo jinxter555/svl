@@ -530,16 +530,22 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, Operand& v) {
   }
   MYLOGGER_MSG(trace_function, "sub_node.add() before");
   cout << "mvar assign\n";
+  cout << "v " << v << "\n";
   cout << "v.get_type() " << v.get_type() << "\n";
   //cout << "v " << v << "\n";
+  //sub_node.add(var_name, v.clone(), true);
+  sub_node.add(var_name, v, true);
+  /*
   if(v._get_type() == OperandType::list_t || v._get_type() == OperandType::map_t) {
     cout << "mvar assign type==list or map\n";
     auto vptr = unique_ptr<AstExpr>( v.get_raw_ptr() );
     sub_node.add(var_name, move(vptr), true);
     //sub_node.add(var_name, v, true);
   } else {
-    sub_node.add(var_name, v, true);
+    //sub_node.add(var_name, v, true);
+    sub_node.add(var_name, v.clone(), true);
   }
+  */
   MYLOGGER_MSG(trace_function, "sub_node.add() after");
 
 }

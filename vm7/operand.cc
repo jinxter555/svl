@@ -19,6 +19,7 @@ const string Operand::nil_str=string("nil");
 Operand::Operand() 
   : AstExpr(OperandType::nil_t)
   , value_(nil) {}
+
 Operand::Operand(const Nil& n) 
   : AstExpr(OperandType::nil_t)
   , value_(nil) {}
@@ -411,6 +412,11 @@ astexpr_u_ptr& Operand::get_u_ptr_nc() {
   return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
 }
 
+//-------------------
+astexpr_s_ptr Operand::get_s_ptr() {
+  return visit(OperandSPtr(), value_);
+}
+
 //-----------------------------------------------------------------------
 template <typename T>
 OperandVariant GetOperandValue::operator()(T value) const { return value; }
@@ -436,6 +442,9 @@ operand_u_ptr GetOperandClone::operator()(T value) const {
 operand_u_ptr GetOperandClone::operator()(const astexpr_u_ptr& v) const { 
   return make_unique<Operand>(v->clone()); 
 }
+operand_u_ptr GetOperandClone::operator()(const astexpr_s_ptr& v) const { 
+  return make_unique<Operand>(v); 
+}
 
 template <typename T> 
 Operand OperandEvaluate::operator()(T v) { return v; }
@@ -452,3 +461,26 @@ Operand& OperandGetv::operator()(astexpr_ptr vptr) { return vptr->getv(); }
 Operand& OperandGetv::operator()(astexpr_u_ptr& vptr) { return vptr->getv(); }
 Operand& OperandGetv::operator()(astexpr_s_ptr& vptr) { return vptr->getv(); }
 OperandGetv::OperandGetv(Operand& v) : value_(v) { }
+
+template <typename T> 
+astexpr_s_ptr OperandSPtr::operator()(T v) {
+  return make_shared<Operand>(v);
+}
+astexpr_s_ptr OperandSPtr::operator()(astexpr_ptr& v) {
+  return v->get_s_ptr();
+}
+astexpr_s_ptr OperandSPtr::operator()(astexpr_u_ptr& v) {
+  return v->clone();
+}
+astexpr_s_ptr OperandSPtr::operator()(astexpr_s_ptr& v) {
+  return v;
+}
+
+
+/*
+template <typename T> 
+astexpr_s_ptr OperandSPtr::operator()(T v) { return make_shared<Operand>(v); }
+astexpr_s_ptr OperandSPtr::operator()(astexpr_s_ptr& vptr) {return vptr;};
+astexpr_s_ptr OperandSPtr::operator()(astexpr_ptr& vptr) { return vptr; }
+astexpr_s_ptr OperandSPtr::operator()(astexpr_u_ptr& vptr) { return vptr->(); }
+*/

@@ -32,6 +32,8 @@ public:
 
   const astexpr_u_ptr& get_u_ptr() const override final;
   astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
+  astexpr_s_ptr get_s_ptr() override final;
+  //astexpr_s_ptr get_s_ptr_nc() override final;
 
   AstExpr *get_raw_ptr(const Operand &k) const override final;
   AstExpr *get_raw_ptr(const string &k) const ;

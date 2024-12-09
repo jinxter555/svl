@@ -23,7 +23,6 @@ public:
   Operand(bool) ;
   Operand(s_integer);
   Operand(s_float);
-
   Operand(OperandType);
   Operand(AstOpCode);
   Operand(OperandErrorCode);
@@ -71,6 +70,9 @@ public:
 
 
   void  print() const override; 
+  //--------------------------------------------------------- 
+  astexpr_s_ptr get_s_ptr() override final;
+  //astexpr_s_ptr get_s_ptr_nc() override final;
   //--------------------------------------------------------- 
   AstExpr *get_raw_ptr(const Operand &k) const override final;
   AstExpr *get_raw_ptr() const override final;
@@ -150,6 +152,7 @@ struct GetOperandClone{
 template <typename T> 
 operand_u_ptr operator()(T value) const;
 operand_u_ptr operator()(const astexpr_u_ptr& v) const  ;
+operand_u_ptr operator()(const astexpr_s_ptr& v) const  ;
 };
 
 struct OperandEvaluate {
@@ -162,29 +165,6 @@ Operand operator()(astexpr_u_ptr& v) ;
 Operand operator()(astexpr_s_ptr& v) ;
 };
 
-// get value
-struct OperandGetv {
-Operand &value_;
-OperandGetv(Operand&v);
-template <typename T> 
-Operand& operator()(T v) ;
-Operand& operator()(astexpr_ptr v) ;
-Operand& operator()(astexpr_u_ptr& v) ;
-Operand& operator()(astexpr_s_ptr& v) ;
-};
-
-/*
-struct GetOperand_astexpr_ptr {
-template <typename T>
-AstExpr* operator()(T value) const;
-AstExpr* operator()(const astexpr_u_ptr& v) const  ;
-};
-struct GetOperand_u_ptr {
-template <typename T>
-const astexpr_u_ptr& operator()(T value) const;
-const astexpr_u_ptr& operator()(const astexpr_u_ptr& v) const  ;
-};
-*/
 
 struct GetOperandType{
 OperandType operator()(const bool v) const ;
@@ -205,6 +185,34 @@ struct GetOperandAstOpCode{
 template <typename T>
 AstOpCode operator()(T value) const;
 AstOpCode operator()(const AstOpCode &v) const  ;
+};
+
+// get value
+struct OperandGetv {
+Operand &value_;
+OperandGetv(Operand&v);
+template <typename T> 
+Operand& operator()(T v) ;
+Operand& operator()(astexpr_ptr v) ;
+Operand& operator()(astexpr_u_ptr& v) ;
+Operand& operator()(astexpr_s_ptr& v) ;
+};
+
+struct OperandSPtr {
+template <typename T> 
+astexpr_s_ptr operator()(T v);
+astexpr_s_ptr operator()(astexpr_ptr& v);
+astexpr_s_ptr operator()(astexpr_u_ptr& v);
+astexpr_s_ptr operator()(astexpr_s_ptr& v);
+};
+
+
+struct OperandUPtr {
+template <typename T> 
+Operand& operator()(T v) ;
+Operand& operator()(astexpr_ptr v) ;
+Operand& operator()(astexpr_u_ptr& v) ;
+Operand& operator()(astexpr_s_ptr& v) ;
 };
 
 

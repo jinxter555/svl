@@ -27,6 +27,7 @@ int main() {
   Operand v2 = "hello";
 
   Operand &r_v1 = v1.getv();
+  Operand v1_b = v1.clone();
   cout << "v1: " << v1 << "\n";
   cout << "reference r_v1: " << r_v1 << "\n";
   cout << "v1 + 2: " << v1 + 2l<< "\n";

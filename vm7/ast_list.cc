@@ -70,7 +70,7 @@ Operand& AstList::getv(int i)  {
 }
 Operand& AstList::getv()  {
   cerr << "AstList::getv() I shouldn't be here\n";
-  myself = this;
+  myself = clone();
   return myself;
 }
 Operand& AstList::back() { return list_.back(); }
@@ -85,6 +85,9 @@ const astexpr_u_ptr& AstList::get_u_ptr() const {
   cerr << "I should NOT be here in  AstList::get_u_ptr()\n";
   return nil_ast_ptr;
 }
+astexpr_s_ptr AstList::get_s_ptr() { return nullptr; };
+//astexpr_s_ptr  AstList::get_s_ptr_nc() { return nullptr; };
+//--------------------------------------
 
 astexpr_u_ptr& AstList::get_u_ptr_nc(const Operand&k) { 
   return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr(k))); 
