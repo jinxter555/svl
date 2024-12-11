@@ -207,5 +207,5 @@ Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
   for(i=0; i<s; i++) {
     result_list->add(list_[i].evaluate(ctxt));
   }
-  return move(result_list);
+  return result_list;
 }

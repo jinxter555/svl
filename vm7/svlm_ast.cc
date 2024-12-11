@@ -483,7 +483,8 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
     cout << "mvar eval return u_ptr\n";
     return result_var.get_u_ptr_nc();
   }
-  return result_var.clone_val();
+  //return result_var.clone_val();
+  return result_var.clone();
 }
 
 
@@ -511,41 +512,56 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, Operand& v) {
     add(string("mod_name"), mod_name_operand);
   }
 
+
   auto var_name = name();
 
   auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
+
+  astexpr_u_ptr uptr = nullptr;
+
+  cout << "mvar assign\n";
+  cout << "v get_type():" << v.get_type() << "\n";
+  //cout << "v.getv().get_type():" << v.getv().get_type() << "\n";
+
+  if(v._get_type() == OperandType::list_t) { 
+    cout << "v is list_t!\n"; 
+    //sub_node.add(var_name, make_unique<Operand>( make_shared<Operand>(v.clone())), true);
+    //uptr  = move(make_unique<Operand>( make_shared<Operand>(v.clone())));
+    uptr  = v.get_usu();
+    //return;
+  }
+
   if(scale_ == OperandType::array_t){
     auto &result = sub_node.getv(var_name);
 
     auto index_i = get_index_i(ctxt);
     if(index_i >= 0) {
-      result.set(index_i, v);
+      cout << "assign enter settting value!\n";
+      if(uptr == nullptr)
+        result.set(index_i, v);
+      else
+        result.set(index_i, move(uptr));
+
+      cout << "assign exit settting value!\n";
       return;
     }
     auto index_s = get_index_s(ctxt);
     if(index_s != "" ) {
-      result.add(index_s, v, true);
+      if(uptr == nullptr)
+        result.add(index_s, v, true);
+      else
+        result.add(index_s, move(uptr), true);
       return;
     }
   }
   MYLOGGER_MSG(trace_function, "sub_node.add() before");
-  cout << "mvar assign\n";
-  cout << "v " << v << "\n";
-  cout << "v.get_type() " << v.get_type() << "\n";
-  //cout << "v " << v << "\n";
+
   //sub_node.add(var_name, v.clone(), true);
-  sub_node.add(var_name, v, true);
-  /*
-  if(v._get_type() == OperandType::list_t || v._get_type() == OperandType::map_t) {
-    cout << "mvar assign type==list or map\n";
-    auto vptr = unique_ptr<AstExpr>( v.get_raw_ptr() );
-    sub_node.add(var_name, move(vptr), true);
-    //sub_node.add(var_name, v, true);
-  } else {
-    //sub_node.add(var_name, v, true);
-    sub_node.add(var_name, v.clone(), true);
-  }
-  */
+  if(uptr == nullptr)
+    sub_node.add(var_name, v, true);
+  else
+    sub_node.add(var_name, move(uptr), true);
+
   MYLOGGER_MSG(trace_function, "sub_node.add() after");
 
 }

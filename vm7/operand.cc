@@ -59,7 +59,7 @@ Operand::Operand(const char* v)
 
 Operand::Operand(const OperandVariant& v ) 
   : AstExpr(visit(GetOperandType(), v)) {
-  value_ = visit(GetOperandValue(), v); 
+  value_ = visit(OperandValue(), v); 
 } 
 
 Operand::Operand(astexpr_ptr ptr) 
@@ -105,12 +105,12 @@ Operand::Operand(astexpr_u_ptr &&vptr)
 }
 
 Operand::Operand(const OperandType t, const OperandVariant& v) : AstExpr(t){
-  value_  = visit(GetOperandValue(), v);
+  value_  = visit(OperandValue(), v);
 }
 
 
-//Operand::Operand(const Operand &v) : AstExpr(v.type_), value_(visit(GetOperandValue(), v.value_)){}
-//Operand::Operand(const AstExpr &v) : AstExpr(v.type_) { value_ = visit(GetOperandValue(), v); }
+//Operand::Operand(const Operand &v) : AstExpr(v.type_), value_(visit(OperandValue(), v.value_)){}
+//Operand::Operand(const AstExpr &v) : AstExpr(v.type_) { value_ = visit(OperandValue(), v); }
 
 //-----------------------------------------------------------------------
 Operand Operand::clone_val() const {
@@ -118,17 +118,17 @@ Operand Operand::clone_val() const {
   cout << "Operand::clone_val()\n";
   Operand nv;
   nv.type_= type_;
-  nv.value_  = visit(GetOperandValue(), value_);
+  nv.value_  = visit(OperandValue(), value_);
   return nv;
   */
   MYLOGGER(trace_function
   , "Operand::clone_val()"
   ,__func__);
-  return visit(GetOperandValue(), value_);
+  return visit(OperandValue(), value_);
 }
 
 unique_ptr<AstExpr> Operand::clone() const {
-  return visit(GetOperandClone(), value_);
+  return visit(OperandClone(), value_);
 }
 
 Operand Operand::evaluate(astexpr_u_ptr& ctxt) {
@@ -191,7 +191,7 @@ svlm_ast_ptr Operand::get_svlm_ptr() {
 
 //-----------------------------------------------------------------------
 OperandVariant Operand::_get_value() const {
-  return visit(GetOperandValue(), value_);
+  return visit(OperandValue(), value_);
 };
 OperandType Operand::_get_type() const { 
   //cout << "i am in _get_type(): " << Operand(type_) << "\n";
@@ -288,9 +288,12 @@ void Operand::print() const {
 
 //-------------------------------------------
 bool Operand::add(const AstExpr &v) {
+  /*
   auto &vptr = get_u_ptr();
   if(vptr==nil_ast_ptr) return false;
   return vptr->add(v);
+  */
+ return visit(OperandAdd(v), value_);
 }  
 bool Operand::add(astexpr_u_ptr &&vvptr) {
   auto &vptr = get_u_ptr();
@@ -330,10 +333,10 @@ Operand& Operand::get_branch(const vector<string> &keys) {
 }
 //-------------------------------------------
 bool Operand::set(const Operand &k, const AstExpr& v) {
-  auto &vptr = get_u_ptr();
-  if(vptr==nil_ast_ptr) return false;
-  return vptr->set(k, v);
+  //cout << "in operand::set &v!\n";
+  return visit(OperandSet(k, v), value_);
 }
+
 bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
   auto &vptr = get_u_ptr();
   if(vptr==nil_ast_ptr) return false;
@@ -416,36 +419,34 @@ astexpr_u_ptr& Operand::get_u_ptr_nc() {
 astexpr_s_ptr Operand::get_s_ptr() {
   return visit(OperandSPtr(), value_);
 }
+astexpr_u_ptr Operand::get_usu() {
+  //return visit(OperandUsu(), value_);
+  return nullptr;
+}
 
 //-----------------------------------------------------------------------
 template <typename T>
-OperandVariant GetOperandValue::operator()(T value) const { return value; }
-OperandVariant GetOperandValue::operator()(const astexpr_u_ptr& v) const { 
-  if(v==nullptr) return nil;
-  if(v.get()==nullptr) return nil;
-  if(v==nullptr) {
-    cerr << "GetOperandValue::operator()(const astexpr_u_ptr& v) v is nullptr!\n";
-    return nil;
-  }
-  return v->clone(); 
+OperandVariant OperandValue::operator()(T v) const { return v; }
+OperandVariant OperandValue::operator()(const astexpr_u_ptr& vptr) const { 
+  if(vptr==nullptr) return nil;
+  return vptr->clone(); 
+}
+OperandVariant OperandValue::operator()(const astexpr_s_ptr& vptr) const { 
+  if(vptr==nullptr) return nil;
+  return vptr;
 }
 //-----------------------------------------------------------------------
 template <typename T>
-AstOpCode GetOperandAstOpCode::operator()(T v) const { return AstOpCode::noop; }
-AstOpCode GetOperandAstOpCode::operator()(const AstOpCode& v) const { return v; }
+AstOpCode GetOperandAstOpCode::operator()(T vptr) const { return AstOpCode::noop; }
+AstOpCode GetOperandAstOpCode::operator()(const AstOpCode& vptr) const { return vptr; }
 
-//-----------------------------------------------------------------------
+//------------------------------------------ Operand Clone
 template <typename T>
-operand_u_ptr GetOperandClone::operator()(T value) const { 
-  return make_unique<Operand>(value); 
-}
-operand_u_ptr GetOperandClone::operator()(const astexpr_u_ptr& v) const { 
-  return make_unique<Operand>(v->clone()); 
-}
-operand_u_ptr GetOperandClone::operator()(const astexpr_s_ptr& v) const { 
-  return make_unique<Operand>(v); 
-}
+operand_u_ptr OperandClone::operator()(T v) const { return make_unique<Operand>(v); }
+operand_u_ptr OperandClone::operator()(const astexpr_u_ptr& vptr) const { return make_unique<Operand>(vptr->clone()); }
+operand_u_ptr OperandClone::operator()(const astexpr_s_ptr& vptr) const { return make_unique<Operand>(vptr); }
 
+//------------------------------------------ Operand Evaluate
 template <typename T> 
 Operand OperandEvaluate::operator()(T v) { return v; }
 Operand OperandEvaluate::operator()(astexpr_ptr vptr) { return vptr->evaluate(ctxt); }
@@ -454,33 +455,75 @@ Operand OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate
 OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
 
 
-//-----------------------------------------------------------------------
+//------------------------------------------ Operand Getv
 template <typename T> 
-Operand& OperandGetv::operator()(T v) { return value_; }
-Operand& OperandGetv::operator()(astexpr_ptr vptr) { return vptr->getv(); }
+Operand& OperandGetv::operator()(T &v) { return value_; }
+Operand& OperandGetv::operator()(astexpr_ptr& vptr) { return vptr->getv(); }
 Operand& OperandGetv::operator()(astexpr_u_ptr& vptr) { return vptr->getv(); }
 Operand& OperandGetv::operator()(astexpr_s_ptr& vptr) { return vptr->getv(); }
 OperandGetv::OperandGetv(Operand& v) : value_(v) { }
 
+//------------------------------------------ Operand Shared Ptr
 template <typename T> 
-astexpr_s_ptr OperandSPtr::operator()(T v) {
-  return make_shared<Operand>(v);
-}
-astexpr_s_ptr OperandSPtr::operator()(astexpr_ptr& v) {
-  return v->get_s_ptr();
-}
-astexpr_s_ptr OperandSPtr::operator()(astexpr_u_ptr& v) {
-  return v->clone();
-}
-astexpr_s_ptr OperandSPtr::operator()(astexpr_s_ptr& v) {
-  return v;
-}
+astexpr_s_ptr OperandSPtr::operator()(T& v) { return nullptr; }
+astexpr_s_ptr OperandSPtr::operator()(astexpr_ptr& v) { return v->get_s_ptr(); }
+astexpr_s_ptr OperandSPtr::operator()(astexpr_u_ptr& v) { return v->get_s_ptr(); }
+astexpr_s_ptr OperandSPtr::operator()(astexpr_s_ptr& v) { return v; }
 
-
-/*
+//------------------------------------------ Operand List Add
 template <typename T> 
-astexpr_s_ptr OperandSPtr::operator()(T v) { return make_shared<Operand>(v); }
-astexpr_s_ptr OperandSPtr::operator()(astexpr_s_ptr& vptr) {return vptr;};
-astexpr_s_ptr OperandSPtr::operator()(astexpr_ptr& vptr) { return vptr; }
-astexpr_s_ptr OperandSPtr::operator()(astexpr_u_ptr& vptr) { return vptr->(); }
-*/
+bool OperandAdd::operator()(T& v) { return false; }
+bool OperandAdd::operator()(astexpr_ptr& v) { return v->add(value_);}
+bool OperandAdd::operator()(astexpr_s_ptr& v) { return v->add(value_);}
+bool OperandAdd::operator()(astexpr_u_ptr& v) { return v->add(value_); }
+OperandAdd::OperandAdd(const AstExpr&v) : value_(v) {}
+
+//------------------------------------------ Operand Map Add
+template <typename T> 
+bool OperandAddK::operator()(T& v) { return false; }
+bool OperandAddK::operator()(astexpr_ptr& v) { return v->add(key_, value_, overwrite);}
+bool OperandAddK::operator()(astexpr_s_ptr& v) { return v->add(key_, value_, overwrite);}
+bool OperandAddK::operator()(astexpr_u_ptr& v) { return v->add(key_, value_); }
+OperandAddK::OperandAddK(const Operand &k, const AstExpr&v, bool ovw) : key_(k), value_(v), overwrite(ovw) {}
+
+//------------------------------------------ Operand Usu unique shared unique
+template <typename T> 
+operand_u_ptr OperandUsu::operator()(T v) {
+  return
+  make_unique<Operand>(
+    make_shared<Operand>(
+      make_unique<Operand>(v)
+    )
+  );
+}
+operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
+  auto &v = vptr->getv();
+  if(v._get_type() == OperandType::sptr_t) {
+    return make_unique<Operand>(v.get_s_ptr());
+  } else {
+    return make_unique<Operand>(
+      make_shared<Operand>(
+        make_unique<Operand>(vptr->clone())
+      )
+    );
+  }
+}
+operand_u_ptr OperandUsu::operator()(const astexpr_s_ptr& vptr) {
+  return make_unique<Operand>(vptr);
+}
+//------------------------------------------ Operand Map set
+template <typename T> 
+bool OperandSet::operator()(T& v) { return false; }
+bool OperandSet::operator()(astexpr_ptr& v) { 
+  cout << "in set ptr!\n";
+  return v->set(key_, value_ );
+}
+bool OperandSet::operator()(astexpr_s_ptr& v) { 
+  cout << "in set s_ptr!\n";
+  return v->set(key_, value_);
+}
+bool OperandSet::operator()(astexpr_u_ptr& v) { 
+  cout << "in set u_ptr!\n";
+  return v->set(key_, value_); 
+}
+OperandSet::OperandSet(const Operand &k, const AstExpr &v) :  key_(k), value_(v) {}

@@ -266,7 +266,10 @@ arg
 
 //--------------------------------------------------- 
 list 
-  : SQBRK_L arg_list SQBRK_R { $$ = move($2); } 
+  : SQBRK_L arg_list SQBRK_R { 
+    $$ =  make_unique<Operand>( make_shared<Operand>( move($2) )); 
+    //$$ =  move($2); 
+  } 
   ;
 
 //--------------------------------------------------- 

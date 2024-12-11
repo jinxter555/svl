@@ -72,6 +72,7 @@ public:
   void  print() const override; 
   //--------------------------------------------------------- 
   astexpr_s_ptr get_s_ptr() override final;
+  astexpr_u_ptr get_usu() ;
   //astexpr_s_ptr get_s_ptr_nc() override final;
   //--------------------------------------------------------- 
   AstExpr *get_raw_ptr(const Operand &k) const override final;
@@ -142,13 +143,14 @@ public:
 };
 
 //--------------------------------------------------------- 
-struct GetOperandValue{
+struct OperandValue{
 template <typename T> 
 OperandVariant operator()(T value) const;
 OperandVariant operator()(const astexpr_u_ptr& v) const  ;
+OperandVariant operator()(const astexpr_s_ptr& v) const  ;
 };
 
-struct GetOperandClone{
+struct OperandClone{
 template <typename T> 
 operand_u_ptr operator()(T value) const;
 operand_u_ptr operator()(const astexpr_u_ptr& v) const  ;
@@ -192,29 +194,63 @@ struct OperandGetv {
 Operand &value_;
 OperandGetv(Operand&v);
 template <typename T> 
-Operand& operator()(T v) ;
-Operand& operator()(astexpr_ptr v) ;
+Operand& operator()(T &v) ;
+Operand& operator()(astexpr_ptr& v) ;
 Operand& operator()(astexpr_u_ptr& v) ;
 Operand& operator()(astexpr_s_ptr& v) ;
 };
 
 struct OperandSPtr {
 template <typename T> 
-astexpr_s_ptr operator()(T v);
+astexpr_s_ptr operator()(T& v);
 astexpr_s_ptr operator()(astexpr_ptr& v);
 astexpr_s_ptr operator()(astexpr_u_ptr& v);
 astexpr_s_ptr operator()(astexpr_s_ptr& v);
 };
 
 
-struct OperandUPtr {
+// for AstList
+struct OperandAdd{
+const AstExpr &value_;
+OperandAdd(const AstExpr&v);
 template <typename T> 
-Operand& operator()(T v) ;
-Operand& operator()(astexpr_ptr v) ;
-Operand& operator()(astexpr_u_ptr& v) ;
-Operand& operator()(astexpr_s_ptr& v) ;
+bool operator()(T& v) ;
+bool operator()(astexpr_ptr& v) ;
+bool operator()(astexpr_u_ptr& v) ;
+bool operator()(astexpr_s_ptr& v) ;
 };
 
+// for AstMap
+struct OperandAddK{
+const Operand &key_;
+const AstExpr &value_;
+bool overwrite;
+OperandAddK(const Operand& k, const AstExpr& v, bool overwrite=false);
+template <typename T> 
+bool operator()(T& v) ;
+bool operator()(astexpr_ptr& v) ;
+bool operator()(astexpr_u_ptr& v) ;
+bool operator()(astexpr_s_ptr& v) ;
+};
+
+// for AstMap
+struct OperandSet{
+const Operand &key_;
+const AstExpr &value_;
+OperandSet(const Operand& k, const AstExpr& v);
+template <typename T> 
+bool operator()(T& v) ;
+bool operator()(astexpr_ptr& v) ;
+bool operator()(astexpr_u_ptr& v) ;
+bool operator()(astexpr_s_ptr& v) ;
+};
+
+struct OperandUsu{
+template <typename T> 
+operand_u_ptr operator()(T value) ;
+operand_u_ptr operator()(const astexpr_u_ptr& v) ;
+operand_u_ptr operator()(const astexpr_s_ptr& v) ;
+};
 
 extern Operand nil_operand;
 
