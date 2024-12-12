@@ -10,6 +10,7 @@ AstMap::AstMap()
 : AstExpr(OperandType::map_t)
 //, myself(this) 
 {}
+//--------------------------------------
 
 astexpr_u_ptr AstMap::clone() const {
   map_u_ptr new_map = make_unique<AstMap>();
@@ -26,9 +27,17 @@ Operand AstMap::clone_val() const {
   return clone();
 };
 
-Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
+astexpr_u_ptr AstMap::clone_usu() {
+  return make_unique<Operand>(
+    make_shared<Operand>(clone())
+  );
+}
+//--------------------------------------
+
+astexpr_u_ptr AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
   return clone();
 }
+//--------------------------------------
 
 Operand& AstMap::getv()  {
   cerr << "AstMap::getv() I shouldn't be here\n";
@@ -327,4 +336,9 @@ vector<string> AstMap::_get_keys() const {
     key_list.push_back(key);
   }
   return key_list;
+}
+
+astexpr_u_ptr AstMap::opfunc(astexpr_u_ptr other, AstOpCode op) {
+  cerr << "AstList::opfunc, I shouldn't be here!\n";
+  return nullptr;
 }

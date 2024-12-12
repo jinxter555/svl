@@ -5,12 +5,20 @@
 class AstList: public AstExpr{
 protected:
   vector<Operand> list_;
-  Operand myself;
+  //Operand myself;
 public:
   AstList();
   AstList(const AstList& l);
+
+  //-------------------------------------------
   astexpr_u_ptr clone() const override; 
-  Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  astexpr_u_ptr clone_usu() override;
+  Operand clone_val() const override final;
+  //-------------------------------------------
+
+  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
+
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k)  ;
@@ -44,8 +52,6 @@ public:
   const Operand& operator[] (int index) const ;
 
   //-------------------------------------------
-  Operand clone_val() const override final;
-  //-------------------------------------------
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr)override final  ;  // for list
   //-------------------------------------------
@@ -60,6 +66,7 @@ public:
   Operand& get_branch(const vector<string> &keys) override final;
   //-------------------------------------------
   vector<string> _get_keys() const override final;
+   s_integer _get_int()   const override final {return 0l; };
 
   s_integer size() const override;
   Operand to_str() const override ;

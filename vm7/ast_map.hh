@@ -13,7 +13,12 @@ public:
   AstMap();
 
   astexpr_u_ptr clone() const override; 
-  Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  astexpr_u_ptr clone_usu() override;
+  Operand clone_val() const override final;
+
+  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
+
   Operand& getv()  override ;
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k) ;
@@ -21,7 +26,6 @@ public:
   Operand& back() override final;
   Operand& front() override final;
 
-  Operand clone_val() const override final;
   Operand& operator[] (const Operand& k) override final;
   const Operand& operator[] (const Operand &k) const override final;
 
@@ -70,6 +74,7 @@ public:
 
   //AstList get_keys() const;
   vector<string> _get_keys() const override final;
+   s_integer _get_int()   const override final {return 0l; };
 
   void print() const override;
 };

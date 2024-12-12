@@ -48,11 +48,11 @@ public:
   Operand clone_val() const;
   astexpr_u_ptr clone() const override; 
 
-  Operand evaluate(astexpr_u_ptr& ast_ctxt) override final;
+  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const;
   Number _get_number() const ;
-  s_integer _get_int() const ;
+  s_integer _get_int() const override final ;
   s_float _get_float() const ;
   string _get_str() const ;
   string _to_str() const ;
@@ -72,7 +72,7 @@ public:
   void  print() const override; 
   //--------------------------------------------------------- 
   astexpr_s_ptr get_s_ptr() override final;
-  astexpr_u_ptr get_usu() ;
+  astexpr_u_ptr clone_usu() ;
   //astexpr_s_ptr get_s_ptr_nc() override final;
   //--------------------------------------------------------- 
   AstExpr *get_raw_ptr(const Operand &k) const override final;
@@ -113,6 +113,7 @@ public:
   Operand operator!() const;
   //--------------------------------------------------------- 
   Operand opfunc(const Operand& other, AstOpCode op) ;
+  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
   //--------------------------------------------------------- 
 
   //-------------------------------------------
@@ -161,10 +162,10 @@ struct OperandEvaluate {
 astexpr_u_ptr &ctxt;
 OperandEvaluate(astexpr_u_ptr&c);
 template <typename T> 
-Operand operator()(T v) ;
-Operand operator()(astexpr_ptr v) ;
-Operand operator()(astexpr_u_ptr& v) ;
-Operand operator()(astexpr_s_ptr& v) ;
+astexpr_u_ptr operator()(T v) const ;
+astexpr_u_ptr operator()(astexpr_ptr v) ;
+astexpr_u_ptr operator()(astexpr_u_ptr& v) ;
+astexpr_u_ptr operator()(astexpr_s_ptr& v) ;
 };
 
 
@@ -236,8 +237,8 @@ bool operator()(astexpr_s_ptr& v) ;
 // for AstMap
 struct OperandSet{
 const Operand &key_;
-const AstExpr &value_;
-OperandSet(const Operand& k, const AstExpr& v);
+astexpr_u_ptr vptr;
+OperandSet(const Operand& k, astexpr_u_ptr vptr);
 template <typename T> 
 bool operator()(T& v) ;
 bool operator()(astexpr_ptr& v) ;

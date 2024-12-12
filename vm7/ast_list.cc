@@ -20,6 +20,7 @@ AstList::AstList(const AstList& l) {
   }
 };
 
+//--------------------------------------
 astexpr_u_ptr AstList::clone() const {
   MYLOGGER(trace_function , "AstList::clone()" ,__func__);
 
@@ -29,12 +30,19 @@ astexpr_u_ptr AstList::clone() const {
   }
   return move(new_list);
 }
+
 Operand AstList::clone_val() const {
   cerr << "AstList::clone_val(), I shouldn't be here!\n";
   MYLOGGER(trace_function , "AstList::clone_val()" ,__func__);
 
   return clone();
 }
+astexpr_u_ptr AstList::clone_usu() {
+  return make_unique<Operand>(
+    make_shared<Operand>(clone())
+  );
+}
+
 //--------------------------------------
 Operand& AstList::operator[] (const Operand& k) {
   return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
@@ -70,8 +78,7 @@ Operand& AstList::getv(int i)  {
 }
 Operand& AstList::getv()  {
   cerr << "AstList::getv() I shouldn't be here\n";
-  myself = clone();
-  return myself;
+  return nil_operand;
 }
 Operand& AstList::back() { return list_.back(); }
 Operand& AstList::front() { return list_.front(); }
@@ -147,10 +154,13 @@ s_integer AstList::size() const { return list_.size(); }
 
 //--------------------------------------
 bool AstList::set(const Operand &key, const AstExpr &v ) {
+  /*
   int i = key._get_int();
   if(i >= size() || i < 0) return false;
   list_[i] = v.clone();
   return true;
+  */
+  return set(key, v.clone());
 }
 
 bool AstList::set(const Operand &key, astexpr_u_ptr &&vptr ) {
@@ -199,7 +209,7 @@ OperandType AstList::_get_type() const {
   return OperandType::list_t;
 };
 
-Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
+astexpr_u_ptr AstList::evaluate(astexpr_u_ptr &ctxt) {
   int i, s = size();
   //list_u_ptr result_list = make_unique<AstList>();
   astexpr_u_ptr result_list = make_unique<AstList>();
@@ -208,4 +218,9 @@ Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
     result_list->add(list_[i].evaluate(ctxt));
   }
   return result_list;
+}
+
+astexpr_u_ptr AstList::opfunc(astexpr_u_ptr other, AstOpCode op) {
+  cerr << "AstList::opfunc, I shouldn't be here!\n";
+  return nullptr;
 }

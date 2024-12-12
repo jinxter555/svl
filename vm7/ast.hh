@@ -13,13 +13,16 @@ protected:
 public:
   AstExpr();
   AstExpr(const OperandType);
-  virtual Operand evaluate(astexpr_u_ptr& ast_ctxt) = 0;
+  //virtual Operand evaluate(astexpr_u_ptr& ast_ctxt) = 0;
+  virtual astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) = 0;
+  virtual astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) =0;
   
 
   virtual bool add(const AstExpr &v) =0;  // for list
   virtual bool add(astexpr_u_ptr &&vptr) =0;  // for list
 
   virtual Operand clone_val() const=0;
+  virtual astexpr_u_ptr clone_usu() =0;
   //-------------------------------------------
   virtual Operand& operator[] (const Operand& k) =0;
   virtual const Operand& operator[] (const Operand &k) const =0;
@@ -36,6 +39,7 @@ public:
   virtual Operand& getv(const Operand &k) = 0;
   //virtual Operand& getv(const string &k) = 0;
   virtual vector<string> _get_keys() const =0;
+  virtual s_integer _get_int() const =0;
 
   virtual Operand& back() = 0;
   virtual Operand& front() = 0;

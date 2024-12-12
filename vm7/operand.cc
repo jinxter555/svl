@@ -131,7 +131,8 @@ unique_ptr<AstExpr> Operand::clone() const {
   return visit(OperandClone(), value_);
 }
 
-Operand Operand::evaluate(astexpr_u_ptr& ctxt) {
+
+astexpr_u_ptr Operand::evaluate(astexpr_u_ptr& ctxt) {
   /*
   auto &ptr = get_u_ptr();
   if(ptr==nullptr) return clone();
@@ -310,7 +311,8 @@ bool Operand::add(const Operand &k, const AstExpr& v, bool overwrite) {
 
 bool Operand::add(const Operand &k, astexpr_u_ptr&& vvptr, bool overwrite) {
   auto &vptr = get_u_ptr();
-  if(vptr==nil_ast_ptr) return false;
+  if(vptr==nullptr) return false;
+  if(vvptr==nullptr) return false;
   return vptr->add(k, move(vvptr), overwrite);
 }
 bool Operand::add_branch(const vector<string> &keys, const Operand& operand, bool overwrite)  {
@@ -332,15 +334,13 @@ Operand& Operand::get_branch(const vector<string> &keys) {
   return ptr->get_branch(keys);
 }
 //-------------------------------------------
-bool Operand::set(const Operand &k, const AstExpr& v) {
+bool Operand::set(const Operand &k, const AstExpr& vptr) {
   //cout << "in operand::set &v!\n";
-  return visit(OperandSet(k, v), value_);
+  return visit(OperandSet(k, vptr.clone()), value_);
 }
 
 bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
-  auto &vptr = get_u_ptr();
-  if(vptr==nil_ast_ptr) return false;
-  return vptr->set(k, move(vvptr));
+  return visit(OperandSet(k, move(vvptr)), value_);
 }
 //-----------------------------------------------------------------------
 Operand& Operand::getv() {
@@ -419,9 +419,9 @@ astexpr_u_ptr& Operand::get_u_ptr_nc() {
 astexpr_s_ptr Operand::get_s_ptr() {
   return visit(OperandSPtr(), value_);
 }
-astexpr_u_ptr Operand::get_usu() {
-  //return visit(OperandUsu(), value_);
-  return nullptr;
+astexpr_u_ptr Operand::clone_usu() {
+  return visit(OperandUsu(), value_);
+  //return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -448,10 +448,10 @@ operand_u_ptr OperandClone::operator()(const astexpr_s_ptr& vptr) const { return
 
 //------------------------------------------ Operand Evaluate
 template <typename T> 
-Operand OperandEvaluate::operator()(T v) { return v; }
-Operand OperandEvaluate::operator()(astexpr_ptr vptr) { return vptr->evaluate(ctxt); }
-Operand OperandEvaluate::operator()(astexpr_s_ptr& vptr) { return vptr->evaluate(ctxt); }
-Operand OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
+astexpr_u_ptr OperandEvaluate::operator()(T v) const { return make_unique<Operand>(v); }
+astexpr_u_ptr OperandEvaluate::operator()(astexpr_ptr vptr) { return vptr->evaluate(ctxt); }
+astexpr_u_ptr OperandEvaluate::operator()(astexpr_s_ptr& vptr) { return vptr->evaluate(ctxt); }
+astexpr_u_ptr OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
 OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
 
 
@@ -497,7 +497,9 @@ operand_u_ptr OperandUsu::operator()(T v) {
   );
 }
 operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
+  cout << "OperandUsu:: astexpr_u_ptr!\n";
   auto &v = vptr->getv();
+
   if(v._get_type() == OperandType::sptr_t) {
     return make_unique<Operand>(v.get_s_ptr());
   } else {
@@ -509,6 +511,7 @@ operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
   }
 }
 operand_u_ptr OperandUsu::operator()(const astexpr_s_ptr& vptr) {
+  cout << "OperandUsu:: astexpr_s_ptr!\n";
   return make_unique<Operand>(vptr);
 }
 //------------------------------------------ Operand Map set
@@ -516,14 +519,19 @@ template <typename T>
 bool OperandSet::operator()(T& v) { return false; }
 bool OperandSet::operator()(astexpr_ptr& v) { 
   cout << "in set ptr!\n";
-  return v->set(key_, value_ );
+  return v->set(key_, move(vptr));
 }
 bool OperandSet::operator()(astexpr_s_ptr& v) { 
   cout << "in set s_ptr!\n";
-  return v->set(key_, value_);
+  return v->set(key_, move(vptr));
 }
 bool OperandSet::operator()(astexpr_u_ptr& v) { 
   cout << "in set u_ptr!\n";
-  return v->set(key_, value_); 
+  return v->set(key_, move(vptr)); 
 }
-OperandSet::OperandSet(const Operand &k, const AstExpr &v) :  key_(k), value_(v) {}
+OperandSet::OperandSet(const Operand &k, astexpr_u_ptr v) :  key_(k) , vptr(move(v)){ }
+
+//------------------------------------------ Operand opfunc
+astexpr_u_ptr Operand::opfunc(astexpr_u_ptr other, AstOpCode op) {
+  return make_unique<Operand>(opfunc(other->getv(), op));
+}
