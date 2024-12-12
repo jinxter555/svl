@@ -177,7 +177,14 @@ astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
 
   if(opcode == AstOpCode::assign) {
     AstAssign* variable =(AstAssign*) l.get_raw_ptr();
-    variable->assign(ctxt, r_vptr->clone());
+    cout << "r_vptr get_type: " <<  r_vptr->get_type() << "\n";
+    if(r_vptr->_get_type() == OperandType::list_t) {
+      variable->assign(ctxt, r_vptr->clone_usu()); 
+    } else {
+      variable->assign(ctxt, r_vptr->clone());
+
+    }
+
     return r_vptr;
   }
 
@@ -485,8 +492,10 @@ astexpr_u_ptr AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   }
   */
   //return result_var.clone_val();
-  if(result_var._get_type() == OperandType::uptr_t)
+  if(result_var._get_type() == OperandType::uptr_t) {
+    cout << "evalute returning clone_usu()\n";
     return result_var.clone_usu();
+  }
   return result_var.clone();
 }
 

@@ -42,6 +42,7 @@ Operand OperandToStringVisitor::operator()(OperandType t) const {
   case OperandType::map_t:  outstr ="map_t"; break;
   case OperandType::ptr_t:  outstr ="ptr_t"; break;
   case OperandType::uptr_t:  outstr ="uptr_t"; break;
+  case OperandType::sptr_t:  outstr ="sptr_t"; break;
   case OperandType::ast_op_t:  outstr ="ast_op_t"; break;
   case OperandType::ast_mod_t:  outstr ="ast_mod_t"; break;
   case OperandType::ast_binop_t:  outstr ="ast_binop_t"; break;

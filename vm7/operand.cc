@@ -345,7 +345,6 @@ bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
 //-----------------------------------------------------------------------
 Operand& Operand::getv() {
   //cout << "Operand::getv(): type " << get_type() << "\n";
-
   return visit(OperandGetv(*this), value_);
 
 /*
@@ -489,6 +488,7 @@ OperandAddK::OperandAddK(const Operand &k, const AstExpr&v, bool ovw) : key_(k),
 //------------------------------------------ Operand Usu unique shared unique
 template <typename T> 
 operand_u_ptr OperandUsu::operator()(T v) {
+  cout << "OperandUsu:: <T> v!\n";
   return
   make_unique<Operand>(
     make_shared<Operand>(
@@ -498,11 +498,14 @@ operand_u_ptr OperandUsu::operator()(T v) {
 }
 operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
   cout << "OperandUsu:: astexpr_u_ptr!\n";
-  auto &v = vptr->getv();
+  //auto &v = vptr->getv();
+  auto s_vptr = vptr->get_s_ptr();
 
-  if(v._get_type() == OperandType::sptr_t) {
-    return make_unique<Operand>(v.get_s_ptr());
+  if(s_vptr != nullptr) {
+    cout << "OperandUsu:: astexpr_u_ptr: get shared !\n";
+    return make_unique<Operand>(s_vptr);
   } else {
+    cout << "OperandUsu:: astexpr_u_ptr: NOT shared ptr!\n";
     return make_unique<Operand>(
       make_shared<Operand>(
         make_unique<Operand>(vptr->clone())

@@ -4,7 +4,7 @@ module Main do
   def main() do
     print "in main\n"
     $a = [1,2,3]
-    $b = $a
+    # $b = $a
 
     print  "\n"
   end
