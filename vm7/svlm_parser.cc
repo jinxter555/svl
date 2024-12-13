@@ -216,16 +216,16 @@ namespace vslast {
         value.copy< s_integer > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.copy< std::tuple<string, astexpr_u_ptr> > (YY_MOVE (that.value));
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.copy< string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.copy< tuple<string, astexpr_u_ptr> > (YY_MOVE (that.value));
         break;
 
       default:
@@ -290,16 +290,16 @@ namespace vslast {
         value.move< s_integer > (YY_MOVE (s.value));
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.move< std::tuple<string, astexpr_u_ptr> > (YY_MOVE (s.value));
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.move< string > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.move< tuple<string, astexpr_u_ptr> > (YY_MOVE (s.value));
         break;
 
       default:
@@ -434,16 +434,16 @@ namespace vslast {
         value.YY_MOVE_OR_COPY< s_integer > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.YY_MOVE_OR_COPY< std::tuple<string, astexpr_u_ptr> > (YY_MOVE (that.value));
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.YY_MOVE_OR_COPY< string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.YY_MOVE_OR_COPY< tuple<string, astexpr_u_ptr> > (YY_MOVE (that.value));
         break;
 
       default:
@@ -492,16 +492,16 @@ namespace vslast {
         value.move< s_integer > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.move< std::tuple<string, astexpr_u_ptr> > (YY_MOVE (that.value));
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.move< string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.move< tuple<string, astexpr_u_ptr> > (YY_MOVE (that.value));
         break;
 
       default:
@@ -550,16 +550,16 @@ namespace vslast {
         value.copy< s_integer > (that.value);
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.copy< std::tuple<string, astexpr_u_ptr> > (that.value);
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.copy< string > (that.value);
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.copy< tuple<string, astexpr_u_ptr> > (that.value);
         break;
 
       default:
@@ -607,16 +607,16 @@ namespace vslast {
         value.move< s_integer > (that.value);
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.move< std::tuple<string, astexpr_u_ptr> > (that.value);
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.move< string > (that.value);
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.move< tuple<string, astexpr_u_ptr> > (that.value);
         break;
 
       default:
@@ -908,16 +908,16 @@ namespace vslast {
         yylhs.value.emplace< s_integer > ();
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        yylhs.value.emplace< std::tuple<string, astexpr_u_ptr> > ();
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         yylhs.value.emplace< string > ();
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        yylhs.value.emplace< tuple<string, astexpr_u_ptr> > ();
         break;
 
       default:
@@ -962,7 +962,7 @@ namespace vslast {
   case 4: // statement_list: statement
 #line 90 "svlm_grammar.y"
                {
-    auto new_list = std::make_unique<AstList>();
+    auto new_list = make_unique<AstList>();
     new_list->add(move(yystack_[0].value.as < astexpr_u_ptr > ()));
     yylhs.value.as < list_u_ptr > () = move(new_list);
   }
@@ -977,7 +977,7 @@ namespace vslast {
 
   case 6: // statement_list: %empty
 #line 96 "svlm_grammar.y"
-           { yylhs.value.as < list_u_ptr > () = std::make_unique<AstList>(); }
+           { yylhs.value.as < list_u_ptr > () = make_unique<AstList>(); }
 #line 982 "svlm_parser.cc"
     break;
 
@@ -1240,7 +1240,7 @@ namespace vslast {
 
   case 44: // caller: DOTSTR PAREN_L arg_list PAREN_R
 #line 201 "svlm_grammar.y"
-                                    { yylhs.value.as < astexpr_u_ptr > ()= std::make_unique<AstCaller>(yystack_[3].value.as < string > (), move(yystack_[1].value.as < astexpr_u_ptr > ())); }
+                                    { yylhs.value.as < astexpr_u_ptr > ()= make_unique<AstCaller>(yystack_[3].value.as < string > (), move(yystack_[1].value.as < astexpr_u_ptr > ())); }
 #line 1245 "svlm_parser.cc"
     break;
 
@@ -1276,7 +1276,7 @@ namespace vslast {
 
   case 50: // print_exp: PRINT exp_eval
 #line 218 "svlm_grammar.y"
-                   { yylhs.value.as < astexpr_u_ptr > () = std::make_unique<AstPrint>(move(yystack_[0].value.as < astexpr_u_ptr > ())); }
+                   { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstPrint>(move(yystack_[0].value.as < astexpr_u_ptr > ())); }
 #line 1281 "svlm_parser.cc"
     break;
 
@@ -1288,7 +1288,7 @@ namespace vslast {
 
   case 52: // DOTSTR: DOTSTR DOT STR
 #line 224 "svlm_grammar.y"
-                   { yylhs.value.as < string > () = yystack_[2].value.as < string > () + std::string(".")+ yystack_[0].value.as < string > (); }
+                   { yylhs.value.as < string > () = yystack_[2].value.as < string > () + string(".")+ yystack_[0].value.as < string > (); }
 #line 1293 "svlm_parser.cc"
     break;
 
@@ -1339,7 +1339,7 @@ namespace vslast {
   case 58: // arg_list: arg
 #line 255 "svlm_grammar.y"
         {
-    auto al = std::make_unique<AstList>();
+    auto al = make_unique<AstList>();
     al->add(move(yystack_[0].value.as < astexpr_u_ptr > ()));
     yylhs.value.as < astexpr_u_ptr > () = move(al);
   }
@@ -1348,7 +1348,7 @@ namespace vslast {
 
   case 59: // arg_list: %empty
 #line 260 "svlm_grammar.y"
-           {yylhs.value.as < astexpr_u_ptr > () = std::make_unique<AstList>();}
+           {yylhs.value.as < astexpr_u_ptr > () = make_unique<AstList>();}
 #line 1353 "svlm_parser.cc"
     break;
 
@@ -1376,7 +1376,7 @@ namespace vslast {
   case 63: // kv_pair_list: kv_pair_list COMMA kv_pair
 #line 280 "svlm_grammar.y"
                                {
-    yystack_[2].value.as < astexpr_u_ptr > ()->add(Operand(std::get<0>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())), move(std::get<1>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())));
+    yystack_[2].value.as < astexpr_u_ptr > ()->add(Operand(get<0>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())), move(get<1>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())));
     yylhs.value.as < astexpr_u_ptr > () = move(yystack_[2].value.as < astexpr_u_ptr > ());
   }
 #line 1383 "svlm_parser.cc"
@@ -1385,8 +1385,8 @@ namespace vslast {
   case 64: // kv_pair_list: kv_pair
 #line 284 "svlm_grammar.y"
             {
-    auto map_vptr = std::make_unique<AstMap>();
-    map_vptr->add( Operand(get<0>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())) , move(get<1>(yystack_[0].value.as < std::tuple<string, astexpr_u_ptr> > ())));
+    auto map_vptr = make_unique<AstMap>();
+    map_vptr->add( Operand(get<0>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())) , move(get<1>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())));
     yylhs.value.as < astexpr_u_ptr > () = move(map_vptr);
   }
 #line 1393 "svlm_parser.cc"
@@ -1394,14 +1394,14 @@ namespace vslast {
 
   case 65: // kv_pair_list: %empty
 #line 289 "svlm_grammar.y"
-           {yylhs.value.as < astexpr_u_ptr > () = std::make_unique<AstMap>();
+           {yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMap>();
   }
 #line 1400 "svlm_parser.cc"
     break;
 
   case 66: // kv_pair: map_key COLON exp_eval
 #line 293 "svlm_grammar.y"
-                                 { yylhs.value.as < std::tuple<string, astexpr_u_ptr> > () = {yystack_[2].value.as < string > (), move(yystack_[0].value.as < astexpr_u_ptr > ())}; }
+                                 { yylhs.value.as < tuple<string, astexpr_u_ptr> > () = {yystack_[2].value.as < string > (), move(yystack_[0].value.as < astexpr_u_ptr > ())}; }
 #line 1406 "svlm_parser.cc"
     break;
 
@@ -1788,8 +1788,8 @@ namespace vslast {
      144,   145,   146,   147,   148,   155,   163,   170,   181,   192,
      193,   194,   195,   197,   201,   206,   207,   208,   209,   210,
      218,   223,   224,   230,   235,   239,   245,   251,   255,   260,
-     264,   269,   277,   280,   284,   289,   293,   294,   294,   298,
-     299,   300
+     264,   269,   277,   280,   284,   289,   293,   294,   294,   306,
+     307,   308
   };
 
   void
@@ -1876,10 +1876,10 @@ namespace vslast {
 } // vslast
 #line 1878 "svlm_parser.cc"
 
-#line 304 "svlm_grammar.y"
+#line 312 "svlm_grammar.y"
 
 
 //--------------------------------------------------- EOS end of statement
-void vslast::SvlmParser::error(const location_type& l, const std::string& msg) {
-    std::cerr << "line "  << l << ": " << msg << '\n';
+void vslast::SvlmParser::error(const location_type& l, const string& msg) {
+    cerr << "line "  << l << ": " << msg << '\n';
 }

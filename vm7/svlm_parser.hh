@@ -413,15 +413,15 @@ namespace vslast {
       // INT
       char dummy4[sizeof (s_integer)];
 
-      // kv_pair
-      char dummy5[sizeof (std::tuple<string, astexpr_u_ptr>)];
-
       // IDENT_STR
       // STR
       // DQSTR
       // DOTSTR
       // map_key
-      char dummy6[sizeof (string)];
+      char dummy5[sizeof (string)];
+
+      // kv_pair
+      char dummy6[sizeof (tuple<string, astexpr_u_ptr>)];
     };
 
     /// The size of the largest semantic type.
@@ -706,16 +706,16 @@ namespace vslast {
         value.move< s_integer > (std::move (that.value));
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.move< std::tuple<string, astexpr_u_ptr> > (std::move (that.value));
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.move< string > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.move< tuple<string, astexpr_u_ptr> > (std::move (that.value));
         break;
 
       default:
@@ -798,20 +798,6 @@ namespace vslast {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::tuple<string, astexpr_u_ptr>&& v, location_type&& l)
-        : Base (t)
-        , value (std::move (v))
-        , location (std::move (l))
-      {}
-#else
-      basic_symbol (typename Base::kind_type t, const std::tuple<string, astexpr_u_ptr>& v, const location_type& l)
-        : Base (t)
-        , value (v)
-        , location (l)
-      {}
-#endif
-
-#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, string&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -819,6 +805,20 @@ namespace vslast {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const string& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, tuple<string, astexpr_u_ptr>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const tuple<string, astexpr_u_ptr>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -880,16 +880,16 @@ switch (yykind)
         value.template destroy< s_integer > ();
         break;
 
-      case symbol_kind::S_kv_pair: // kv_pair
-        value.template destroy< std::tuple<string, astexpr_u_ptr> > ();
-        break;
-
       case symbol_kind::S_IDENT_STR: // IDENT_STR
       case symbol_kind::S_STR: // STR
       case symbol_kind::S_DQSTR: // DQSTR
       case symbol_kind::S_DOTSTR: // DOTSTR
       case symbol_kind::S_map_key: // map_key
         value.template destroy< string > ();
+        break;
+
+      case symbol_kind::S_kv_pair: // kv_pair
+        value.template destroy< tuple<string, astexpr_u_ptr> > ();
         break;
 
       default:

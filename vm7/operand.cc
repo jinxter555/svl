@@ -354,15 +354,7 @@ Operand& Operand::getv() {
 
 //-------------------------------------------
 Operand& Operand::getv(const Operand &k)  {
-  /*
-  //auto &ptr = _get_astexpr_u_ptr();
-  auto &ptr = get_u_ptr();
-  if(ptr == nil_ast_ptr) return nil_operand;
-  if(ptr == nullptr) return nil_operand;
-  //cout << "Operand::getv(" <<  k << ")\n";
-  return ptr->getv(k);
-  */
-  cout <<  "Operand::getv(" << k << ")\n";
+  //cout <<  "Operand::getv(" << k << ")\n";
   return visit(OperandGetv_k(k), value_);
 }
 
@@ -499,13 +491,10 @@ operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
   auto s_vptr = vptr->get_s_ptr();
 
   if(s_vptr != nullptr) {
-    cout << "OperandUsu:: astexpr_u_ptr: get shared !\n";
     return make_unique<Operand>(s_vptr);
   } else {
-    cout << "OperandUsu:: astexpr_u_ptr: NOT shared ptr!\n";
     return make_unique<Operand>(
       make_shared<Operand>(
-        //make_unique<Operand>(vptr->clone())
         make_unique<Operand>(vptr->clone())
       )
     );

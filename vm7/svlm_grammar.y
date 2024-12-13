@@ -52,10 +52,10 @@ namespace vslast {
 %nterm <string> DOTSTR 
 %nterm comments
 
-%nterm <astexpr_u_ptr> proto_list proto arg_list arg list map
+%nterm <astexpr_u_ptr> proto_list proto arg_list arg list map tuple
 %nterm <astexpr_u_ptr>  kv_pair_list
 %nterm <string> map_key
-%type <std::tuple<string, astexpr_u_ptr>> kv_pair 
+%type <tuple<string, astexpr_u_ptr>> kv_pair 
 
 
 
@@ -88,12 +88,12 @@ statement_list
     $$ = move($1);
   }
   | statement  {
-    auto new_list = std::make_unique<AstList>();
+    auto new_list = make_unique<AstList>();
     new_list->add(move($1));
     $$ = move(new_list);
   }
   | statement_list error EOS statement { yyerrok; }
-  | %empty { $$ = std::make_unique<AstList>(); }
+  | %empty { $$ = make_unique<AstList>(); }
   ;
 
 statement
@@ -198,7 +198,7 @@ literals
   ;
 caller
 //  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
-  : DOTSTR PAREN_L arg_list PAREN_R { $$= std::make_unique<AstCaller>($1, move($3)); }
+  : DOTSTR PAREN_L arg_list PAREN_R { $$= make_unique<AstCaller>($1, move($3)); }
   ;
 
 
@@ -215,13 +215,13 @@ variable
 
 
 print_exp
-  : PRINT exp_eval { $$ = std::make_unique<AstPrint>(move($2)); }
+  : PRINT exp_eval { $$ = make_unique<AstPrint>(move($2)); }
   //| PRINT DQSTR { $$ = std::make_unique<AstPrint> (std::make_unique<AstPrint>($2)); }
   ;
 
 DOTSTR
   : STR
-  | DOTSTR DOT STR { $$ = $1 + std::string(".")+ $3; }
+  | DOTSTR DOT STR { $$ = $1 + string(".")+ $3; }
   ;
 
 
@@ -253,11 +253,11 @@ arg_list
     $$ = move($1);
   }
   | arg {
-    auto al = std::make_unique<AstList>();
+    auto al = make_unique<AstList>();
     al->add(move($1));
     $$ = move(al);
   }
-  | %empty {$$ = std::make_unique<AstList>();}
+  | %empty {$$ = make_unique<AstList>();}
   ;
 
 arg
@@ -278,20 +278,28 @@ map
 
 kv_pair_list
   : kv_pair_list COMMA kv_pair {
-    $1->add(Operand(std::get<0>($3)), move(std::get<1>($3)));
+    $1->add(Operand(get<0>($3)), move(get<1>($3)));
     $$ = move($1);
   }
   | kv_pair {
-    auto map_vptr = std::make_unique<AstMap>();
+    auto map_vptr = make_unique<AstMap>();
     map_vptr->add( Operand(get<0>($1)) , move(get<1>($1)));
     $$ = move(map_vptr);
   }
-  | %empty {$$ = std::make_unique<AstMap>();
+  | %empty {$$ = make_unique<AstMap>();
   }
   ;
 
 kv_pair : map_key COLON exp_eval { $$ = {$1, move($3)}; } ;
 map_key : DQSTR | STR ;
+
+
+//--------------------------------------------------- 
+tuple
+  : CUR_L arg_list CUR_R {
+    $$ = make_unique<AstTuple>(move($2));
+  }
+  ;
 
 //--------------------------------------------------- EOS end of statement
 EOS
@@ -304,6 +312,6 @@ EOS
 %%
 
 //--------------------------------------------------- EOS end of statement
-void vslast::SvlmParser::error(const location_type& l, const std::string& msg) {
-    std::cerr << "line "  << l << ": " << msg << '\n';
+void vslast::SvlmParser::error(const location_type& l, const string& msg) {
+    cerr << "line "  << l << ": " << msg << '\n';
 }
