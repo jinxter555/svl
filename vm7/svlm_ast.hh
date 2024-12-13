@@ -163,6 +163,9 @@ public:
   astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
   void assign(astexpr_u_ptr& ctxt, astexpr_u_ptr) override final;
   void print() const override;
+
+  astexpr_u_ptr clone() const override; 
+  astexpr_u_ptr clone_usu() override;
 };
 
 class AstFlow : public AstExpr {

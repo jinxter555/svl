@@ -402,6 +402,7 @@ namespace vslast {
       // list
       // map
       // kv_pair_list
+      // tuple
       char dummy1[sizeof (astexpr_u_ptr)];
 
       // statement_list
@@ -638,7 +639,8 @@ namespace vslast {
         S_kv_pair_list = 84,                     // kv_pair_list
         S_kv_pair = 85,                          // kv_pair
         S_map_key = 86,                          // map_key
-        S_EOS = 87                               // EOS
+        S_tuple = 87,                            // tuple
+        S_EOS = 88                               // EOS
       };
     };
 
@@ -691,6 +693,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.move< astexpr_u_ptr > (std::move (that.value));
         break;
 
@@ -865,6 +868,7 @@ switch (yykind)
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.template destroy< astexpr_u_ptr > ();
         break;
 
@@ -2345,9 +2349,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 171,     ///< Last index in yytable_.
-      yynnts_ = 23,  ///< Number of nonterminal symbols.
-      yyfinal_ = 40 ///< Termination state number.
+      yylast_ = 175,     ///< Last index in yytable_.
+      yynnts_ = 24,  ///< Number of nonterminal symbols.
+      yyfinal_ = 43 ///< Termination state number.
     };
 
 
@@ -2360,7 +2364,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2364 "svlm_parser.hh"
+#line 2368 "svlm_parser.hh"
 
 
 

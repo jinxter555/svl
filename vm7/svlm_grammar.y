@@ -131,6 +131,7 @@ exp_eval
   | variable { $$ = move($1); }
   | list { $$ = move($1); }
   | map { $$ = move($1); }
+  | tuple { $$ = move($1); }
   | caller { $$ = move($1); }
   | exp_eval MULTIPLY exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::mul); }
   | exp_eval DIVIDE exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::div); }

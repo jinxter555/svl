@@ -201,6 +201,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.copy< astexpr_u_ptr > (YY_MOVE (that.value));
         break;
 
@@ -275,6 +276,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.move< astexpr_u_ptr > (YY_MOVE (s.value));
         break;
 
@@ -419,6 +421,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.YY_MOVE_OR_COPY< astexpr_u_ptr > (YY_MOVE (that.value));
         break;
 
@@ -477,6 +480,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.move< astexpr_u_ptr > (YY_MOVE (that.value));
         break;
 
@@ -535,6 +539,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.copy< astexpr_u_ptr > (that.value);
         break;
 
@@ -592,6 +597,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         value.move< astexpr_u_ptr > (that.value);
         break;
 
@@ -893,6 +899,7 @@ namespace vslast {
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
       case symbol_kind::S_kv_pair_list: // kv_pair_list
+      case symbol_kind::S_tuple: // tuple
         yylhs.value.emplace< astexpr_u_ptr > ();
         break;
 
@@ -946,7 +953,7 @@ namespace vslast {
     //cout << "program start:" << *$1 << "\n"; $1->print(); cout << "\n";
     svlm_lang->add_code(Operand("Prompt"), move(yystack_[0].value.as < list_u_ptr > ()));
     }
-#line 950 "svlm_parser.cc"
+#line 957 "svlm_parser.cc"
     break;
 
   case 3: // statement_list: statement_list EOS statement
@@ -956,7 +963,7 @@ namespace vslast {
     if(yystack_[2].value.as < list_u_ptr > ()!=nullptr && yystack_[0].value.as < astexpr_u_ptr > ()!=nullptr) { yystack_[2].value.as < list_u_ptr > ()->add(move(yystack_[0].value.as < astexpr_u_ptr > ())); }
     yylhs.value.as < list_u_ptr > () = move(yystack_[2].value.as < list_u_ptr > ());
   }
-#line 960 "svlm_parser.cc"
+#line 967 "svlm_parser.cc"
     break;
 
   case 4: // statement_list: statement
@@ -966,61 +973,61 @@ namespace vslast {
     new_list->add(move(yystack_[0].value.as < astexpr_u_ptr > ()));
     yylhs.value.as < list_u_ptr > () = move(new_list);
   }
-#line 970 "svlm_parser.cc"
+#line 977 "svlm_parser.cc"
     break;
 
   case 5: // statement_list: statement_list error EOS statement
 #line 95 "svlm_grammar.y"
                                        { yyerrok; }
-#line 976 "svlm_parser.cc"
+#line 983 "svlm_parser.cc"
     break;
 
   case 6: // statement_list: %empty
 #line 96 "svlm_grammar.y"
            { yylhs.value.as < list_u_ptr > () = make_unique<AstList>(); }
-#line 982 "svlm_parser.cc"
+#line 989 "svlm_parser.cc"
     break;
 
   case 7: // statement: %empty
 #line 100 "svlm_grammar.y"
            {yylhs.value.as < astexpr_u_ptr > ()=nullptr;}
-#line 988 "svlm_parser.cc"
+#line 995 "svlm_parser.cc"
     break;
 
   case 8: // statement: exp_eval
 #line 101 "svlm_grammar.y"
              { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 994 "svlm_parser.cc"
+#line 1001 "svlm_parser.cc"
     break;
 
   case 9: // statement: module
 #line 102 "svlm_grammar.y"
            { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1000 "svlm_parser.cc"
+#line 1007 "svlm_parser.cc"
     break;
 
   case 10: // statement: function
 #line 103 "svlm_grammar.y"
              { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1006 "svlm_parser.cc"
+#line 1013 "svlm_parser.cc"
     break;
 
   case 11: // statement: print_exp
 #line 104 "svlm_grammar.y"
               {yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1012 "svlm_parser.cc"
+#line 1019 "svlm_parser.cc"
     break;
 
   case 12: // statement: comments
 #line 105 "svlm_grammar.y"
              { yylhs.value.as < astexpr_u_ptr > () = nullptr; }
-#line 1018 "svlm_parser.cc"
+#line 1025 "svlm_parser.cc"
     break;
 
   case 13: // comments: COMMENT1
 #line 109 "svlm_grammar.y"
               { yylhs.value.as < astexpr_u_ptr > ()=nullptr; }
-#line 1024 "svlm_parser.cc"
+#line 1031 "svlm_parser.cc"
     break;
 
   case 14: // module: MODULE STR DO statement_list END
@@ -1029,7 +1036,7 @@ namespace vslast {
     //cout << "module : " << $2 << "\n";
     svlm_lang->add_module(yystack_[3].value.as < string > (), move(yystack_[1].value.as < list_u_ptr > ()));
   }
-#line 1033 "svlm_parser.cc"
+#line 1040 "svlm_parser.cc"
     break;
 
   case 15: // function: DEF STR PAREN_L proto_list PAREN_R DO statement_list END
@@ -1037,119 +1044,125 @@ namespace vslast {
                                                              {
     yylhs.value.as < astexpr_u_ptr > () = make_unique<AstFunc>(yystack_[6].value.as < string > (), move(yystack_[4].value.as < astexpr_u_ptr > ()), move(yystack_[1].value.as < list_u_ptr > ()));
   }
-#line 1041 "svlm_parser.cc"
+#line 1048 "svlm_parser.cc"
     break;
 
   case 16: // exp_eval: literals
 #line 130 "svlm_grammar.y"
               { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1047 "svlm_parser.cc"
+#line 1054 "svlm_parser.cc"
     break;
 
   case 17: // exp_eval: variable
 #line 131 "svlm_grammar.y"
              { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1053 "svlm_parser.cc"
+#line 1060 "svlm_parser.cc"
     break;
 
   case 18: // exp_eval: list
 #line 132 "svlm_grammar.y"
          { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1059 "svlm_parser.cc"
+#line 1066 "svlm_parser.cc"
     break;
 
   case 19: // exp_eval: map
 #line 133 "svlm_grammar.y"
         { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1065 "svlm_parser.cc"
+#line 1072 "svlm_parser.cc"
     break;
 
-  case 20: // exp_eval: caller
+  case 20: // exp_eval: tuple
 #line 134 "svlm_grammar.y"
-           { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1071 "svlm_parser.cc"
+          { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
+#line 1078 "svlm_parser.cc"
     break;
 
-  case 21: // exp_eval: exp_eval MULTIPLY exp_eval
+  case 21: // exp_eval: caller
 #line 135 "svlm_grammar.y"
-                               { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::mul); }
-#line 1077 "svlm_parser.cc"
+           { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
+#line 1084 "svlm_parser.cc"
     break;
 
-  case 22: // exp_eval: exp_eval DIVIDE exp_eval
+  case 22: // exp_eval: exp_eval MULTIPLY exp_eval
 #line 136 "svlm_grammar.y"
-                             { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::div); }
-#line 1083 "svlm_parser.cc"
+                               { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::mul); }
+#line 1090 "svlm_parser.cc"
     break;
 
-  case 23: // exp_eval: exp_eval PLUS exp_eval
+  case 23: // exp_eval: exp_eval DIVIDE exp_eval
 #line 137 "svlm_grammar.y"
-                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::plus); }
-#line 1089 "svlm_parser.cc"
+                             { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::div); }
+#line 1096 "svlm_parser.cc"
     break;
 
-  case 24: // exp_eval: exp_eval MINUS exp_eval
+  case 24: // exp_eval: exp_eval PLUS exp_eval
 #line 138 "svlm_grammar.y"
-                            { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::minus); }
-#line 1095 "svlm_parser.cc"
+                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::plus); }
+#line 1102 "svlm_parser.cc"
     break;
 
-  case 25: // exp_eval: exp_eval GT exp_eval
+  case 25: // exp_eval: exp_eval MINUS exp_eval
 #line 139 "svlm_grammar.y"
-                         { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::gt); }
-#line 1101 "svlm_parser.cc"
+                            { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::minus); }
+#line 1108 "svlm_parser.cc"
     break;
 
-  case 26: // exp_eval: exp_eval LT exp_eval
+  case 26: // exp_eval: exp_eval GT exp_eval
 #line 140 "svlm_grammar.y"
-                         { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::lt); }
-#line 1107 "svlm_parser.cc"
+                         { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::gt); }
+#line 1114 "svlm_parser.cc"
     break;
 
-  case 27: // exp_eval: exp_eval LTEQ exp_eval
+  case 27: // exp_eval: exp_eval LT exp_eval
 #line 141 "svlm_grammar.y"
-                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::lteq); }
-#line 1113 "svlm_parser.cc"
+                         { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::lt); }
+#line 1120 "svlm_parser.cc"
     break;
 
-  case 28: // exp_eval: exp_eval GTEQ exp_eval
+  case 28: // exp_eval: exp_eval LTEQ exp_eval
 #line 142 "svlm_grammar.y"
-                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::gteq); }
-#line 1119 "svlm_parser.cc"
+                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::lteq); }
+#line 1126 "svlm_parser.cc"
     break;
 
-  case 29: // exp_eval: exp_eval EQL exp_eval
+  case 29: // exp_eval: exp_eval GTEQ exp_eval
 #line 143 "svlm_grammar.y"
-                          { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::eql); }
-#line 1125 "svlm_parser.cc"
+                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::gteq); }
+#line 1132 "svlm_parser.cc"
     break;
 
-  case 30: // exp_eval: exp_eval NEQL exp_eval
+  case 30: // exp_eval: exp_eval EQL exp_eval
 #line 144 "svlm_grammar.y"
-                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::neql); }
-#line 1131 "svlm_parser.cc"
+                          { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::eql); }
+#line 1138 "svlm_parser.cc"
     break;
 
-  case 31: // exp_eval: exp_eval AND exp_eval
+  case 31: // exp_eval: exp_eval NEQL exp_eval
 #line 145 "svlm_grammar.y"
-                          { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::and_); }
-#line 1137 "svlm_parser.cc"
+                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::neql); }
+#line 1144 "svlm_parser.cc"
     break;
 
-  case 32: // exp_eval: exp_eval OR exp_eval
+  case 32: // exp_eval: exp_eval AND exp_eval
 #line 146 "svlm_grammar.y"
-                         { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::or_); }
-#line 1143 "svlm_parser.cc"
+                          { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::and_); }
+#line 1150 "svlm_parser.cc"
     break;
 
-  case 33: // exp_eval: NOT exp_eval
+  case 33: // exp_eval: exp_eval OR exp_eval
 #line 147 "svlm_grammar.y"
-                 { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[0].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::not_); }
-#line 1149 "svlm_parser.cc"
+                         { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[2].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::or_); }
+#line 1156 "svlm_parser.cc"
     break;
 
-  case 34: // exp_eval: DOLLAR STR ASSIGN exp_eval
+  case 34: // exp_eval: NOT exp_eval
 #line 148 "svlm_grammar.y"
+                 { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(move(yystack_[0].value.as < astexpr_u_ptr > ()), move(yystack_[0].value.as < astexpr_u_ptr > ()), AstOpCode::not_); }
+#line 1162 "svlm_parser.cc"
+    break;
+
+  case 35: // exp_eval: DOLLAR STR ASSIGN exp_eval
+#line 149 "svlm_grammar.y"
                                { 
       yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(
         make_unique<AstMvar>(yystack_[2].value.as < string > ()),
@@ -1157,11 +1170,11 @@ namespace vslast {
         AstOpCode::assign
       ); 
   }
-#line 1161 "svlm_parser.cc"
+#line 1174 "svlm_parser.cc"
     break;
 
-  case 35: // exp_eval: DOLLAR DOTSTR ASSIGN exp_eval
-#line 155 "svlm_grammar.y"
+  case 36: // exp_eval: DOLLAR DOTSTR ASSIGN exp_eval
+#line 156 "svlm_grammar.y"
                                   { 
       yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(
         make_unique<AstMvar>(yystack_[2].value.as < string > ()),
@@ -1169,11 +1182,11 @@ namespace vslast {
         AstOpCode::assign
       ); 
   }
-#line 1173 "svlm_parser.cc"
+#line 1186 "svlm_parser.cc"
     break;
 
-  case 36: // exp_eval: DOLLAR STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval
-#line 163 "svlm_grammar.y"
+  case 37: // exp_eval: DOLLAR STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval
+#line 164 "svlm_grammar.y"
                                                         {
       yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(
         make_unique<AstMvar>(yystack_[5].value.as < string > (), move(yystack_[3].value.as < astexpr_u_ptr > ())),
@@ -1181,11 +1194,11 @@ namespace vslast {
         AstOpCode::assign
       ); 
   }
-#line 1185 "svlm_parser.cc"
+#line 1198 "svlm_parser.cc"
     break;
 
-  case 37: // exp_eval: DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval
-#line 170 "svlm_grammar.y"
+  case 38: // exp_eval: DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval
+#line 171 "svlm_grammar.y"
                                                            {
       yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(
         make_unique<AstMvar>(yystack_[5].value.as < string > (), move(yystack_[3].value.as < astexpr_u_ptr > ())),
@@ -1193,11 +1206,11 @@ namespace vslast {
         AstOpCode::assign
       ); 
   }
-#line 1197 "svlm_parser.cc"
+#line 1210 "svlm_parser.cc"
     break;
 
-  case 38: // exp_eval: STR ASSIGN exp_eval
-#line 181 "svlm_grammar.y"
+  case 39: // exp_eval: STR ASSIGN exp_eval
+#line 182 "svlm_grammar.y"
                         { 
       yylhs.value.as < astexpr_u_ptr > () = make_unique<AstBinOp>(
         make_unique<AstLvar>(yystack_[2].value.as < string > ()),
@@ -1205,220 +1218,228 @@ namespace vslast {
         AstOpCode::assign
       ); 
   }
-#line 1209 "svlm_parser.cc"
+#line 1222 "svlm_parser.cc"
     break;
 
-  case 39: // literals: INT
-#line 192 "svlm_grammar.y"
-        { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(yystack_[0].value.as < s_integer > ()); }
-#line 1215 "svlm_parser.cc"
-    break;
-
-  case 40: // literals: FLT
+  case 40: // literals: INT
 #line 193 "svlm_grammar.y"
-        { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(yystack_[0].value.as < s_float > ()); }
-#line 1221 "svlm_parser.cc"
+        { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(yystack_[0].value.as < s_integer > ()); }
+#line 1228 "svlm_parser.cc"
     break;
 
-  case 41: // literals: TRUE
+  case 41: // literals: FLT
 #line 194 "svlm_grammar.y"
-         { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(true); }
-#line 1227 "svlm_parser.cc"
+        { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(yystack_[0].value.as < s_float > ()); }
+#line 1234 "svlm_parser.cc"
     break;
 
-  case 42: // literals: FALSE
+  case 42: // literals: TRUE
 #line 195 "svlm_grammar.y"
+         { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(true); }
+#line 1240 "svlm_parser.cc"
+    break;
+
+  case 43: // literals: FALSE
+#line 196 "svlm_grammar.y"
           { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(false); }
-#line 1233 "svlm_parser.cc"
+#line 1246 "svlm_parser.cc"
     break;
 
-  case 43: // literals: DQSTR
-#line 197 "svlm_grammar.y"
+  case 44: // literals: DQSTR
+#line 198 "svlm_grammar.y"
           { yylhs.value.as < astexpr_u_ptr > () = make_unique<Operand>(yystack_[0].value.as < string > ()); }
-#line 1239 "svlm_parser.cc"
+#line 1252 "svlm_parser.cc"
     break;
 
-  case 44: // caller: DOTSTR PAREN_L arg_list PAREN_R
-#line 201 "svlm_grammar.y"
+  case 45: // caller: DOTSTR PAREN_L arg_list PAREN_R
+#line 202 "svlm_grammar.y"
                                     { yylhs.value.as < astexpr_u_ptr > ()= make_unique<AstCaller>(yystack_[3].value.as < string > (), move(yystack_[1].value.as < astexpr_u_ptr > ())); }
-#line 1245 "svlm_parser.cc"
+#line 1258 "svlm_parser.cc"
     break;
 
-  case 45: // variable: DOLLAR STR
-#line 206 "svlm_grammar.y"
-               { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[0].value.as < string > ()); }
-#line 1251 "svlm_parser.cc"
-    break;
-
-  case 46: // variable: DOLLAR DOTSTR
+  case 46: // variable: DOLLAR STR
 #line 207 "svlm_grammar.y"
-                  { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[0].value.as < string > ()); }
-#line 1257 "svlm_parser.cc"
+               { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[0].value.as < string > ()); }
+#line 1264 "svlm_parser.cc"
     break;
 
-  case 47: // variable: DOLLAR STR SQBRK_L exp_eval SQBRK_R
+  case 47: // variable: DOLLAR DOTSTR
 #line 208 "svlm_grammar.y"
-                                        { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[3].value.as < string > (), move(yystack_[1].value.as < astexpr_u_ptr > ())); }
-#line 1263 "svlm_parser.cc"
+                  { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[0].value.as < string > ()); }
+#line 1270 "svlm_parser.cc"
     break;
 
-  case 48: // variable: DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R
+  case 48: // variable: DOLLAR STR SQBRK_L exp_eval SQBRK_R
 #line 209 "svlm_grammar.y"
-                                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[3].value.as < string > (), move(yystack_[1].value.as < astexpr_u_ptr > ())); }
-#line 1269 "svlm_parser.cc"
+                                        { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[3].value.as < string > (), move(yystack_[1].value.as < astexpr_u_ptr > ())); }
+#line 1276 "svlm_parser.cc"
     break;
 
-  case 49: // variable: STR
+  case 49: // variable: DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R
 #line 210 "svlm_grammar.y"
+                                           { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMvar>(yystack_[3].value.as < string > (), move(yystack_[1].value.as < astexpr_u_ptr > ())); }
+#line 1282 "svlm_parser.cc"
+    break;
+
+  case 50: // variable: STR
+#line 211 "svlm_grammar.y"
         { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstLvar>(yystack_[0].value.as < string > ()); }
-#line 1275 "svlm_parser.cc"
+#line 1288 "svlm_parser.cc"
     break;
 
-  case 50: // print_exp: PRINT exp_eval
-#line 218 "svlm_grammar.y"
+  case 51: // print_exp: PRINT exp_eval
+#line 219 "svlm_grammar.y"
                    { yylhs.value.as < astexpr_u_ptr > () = make_unique<AstPrint>(move(yystack_[0].value.as < astexpr_u_ptr > ())); }
-#line 1281 "svlm_parser.cc"
+#line 1294 "svlm_parser.cc"
     break;
 
-  case 51: // DOTSTR: STR
-#line 223 "svlm_grammar.y"
-    { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
-#line 1287 "svlm_parser.cc"
-    break;
-
-  case 52: // DOTSTR: DOTSTR DOT STR
+  case 52: // DOTSTR: STR
 #line 224 "svlm_grammar.y"
-                   { yylhs.value.as < string > () = yystack_[2].value.as < string > () + string(".")+ yystack_[0].value.as < string > (); }
-#line 1293 "svlm_parser.cc"
+    { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
+#line 1300 "svlm_parser.cc"
     break;
 
-  case 53: // proto_list: proto
-#line 230 "svlm_grammar.y"
+  case 53: // DOTSTR: DOTSTR DOT STR
+#line 225 "svlm_grammar.y"
+                   { yylhs.value.as < string > () = yystack_[2].value.as < string > () + string(".")+ yystack_[0].value.as < string > (); }
+#line 1306 "svlm_parser.cc"
+    break;
+
+  case 54: // proto_list: proto
+#line 231 "svlm_grammar.y"
            { 
     auto pl = make_unique<AstList>();
     pl->add(move(yystack_[0].value.as < astexpr_u_ptr > ())); 
     yylhs.value.as < astexpr_u_ptr > () = move(pl);
   }
-#line 1303 "svlm_parser.cc"
+#line 1316 "svlm_parser.cc"
     break;
 
-  case 54: // proto_list: proto_list COMMA proto
-#line 235 "svlm_grammar.y"
+  case 55: // proto_list: proto_list COMMA proto
+#line 236 "svlm_grammar.y"
                            { 
     yystack_[2].value.as < astexpr_u_ptr > ()->add(move(yystack_[0].value.as < astexpr_u_ptr > ()));
     yylhs.value.as < astexpr_u_ptr > () = move(yystack_[2].value.as < astexpr_u_ptr > ());
   }
-#line 1312 "svlm_parser.cc"
+#line 1325 "svlm_parser.cc"
     break;
 
-  case 55: // proto_list: %empty
-#line 239 "svlm_grammar.y"
+  case 56: // proto_list: %empty
+#line 240 "svlm_grammar.y"
            { 
     yylhs.value.as < astexpr_u_ptr > () = make_unique<AstList>();
   }
-#line 1320 "svlm_parser.cc"
+#line 1333 "svlm_parser.cc"
     break;
 
-  case 56: // proto: STR
-#line 245 "svlm_grammar.y"
+  case 57: // proto: STR
+#line 246 "svlm_grammar.y"
         { //std::cout << "param: " << $1 << "\n"; 
     yylhs.value.as < astexpr_u_ptr > ()=make_unique<Operand>(yystack_[0].value.as < string > ());
   }
-#line 1328 "svlm_parser.cc"
+#line 1341 "svlm_parser.cc"
     break;
 
-  case 57: // arg_list: arg_list COMMA arg
-#line 251 "svlm_grammar.y"
+  case 58: // arg_list: arg_list COMMA arg
+#line 252 "svlm_grammar.y"
                        {
     yystack_[2].value.as < astexpr_u_ptr > ()->add(move(yystack_[0].value.as < astexpr_u_ptr > ()));
     yylhs.value.as < astexpr_u_ptr > () = move(yystack_[2].value.as < astexpr_u_ptr > ());
   }
-#line 1337 "svlm_parser.cc"
+#line 1350 "svlm_parser.cc"
     break;
 
-  case 58: // arg_list: arg
-#line 255 "svlm_grammar.y"
+  case 59: // arg_list: arg
+#line 256 "svlm_grammar.y"
         {
     auto al = make_unique<AstList>();
     al->add(move(yystack_[0].value.as < astexpr_u_ptr > ()));
     yylhs.value.as < astexpr_u_ptr > () = move(al);
   }
-#line 1347 "svlm_parser.cc"
+#line 1360 "svlm_parser.cc"
     break;
 
-  case 59: // arg_list: %empty
-#line 260 "svlm_grammar.y"
+  case 60: // arg_list: %empty
+#line 261 "svlm_grammar.y"
            {yylhs.value.as < astexpr_u_ptr > () = make_unique<AstList>();}
-#line 1353 "svlm_parser.cc"
+#line 1366 "svlm_parser.cc"
     break;
 
-  case 60: // arg: exp_eval
-#line 264 "svlm_grammar.y"
+  case 61: // arg: exp_eval
+#line 265 "svlm_grammar.y"
              { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[0].value.as < astexpr_u_ptr > ()); }
-#line 1359 "svlm_parser.cc"
+#line 1372 "svlm_parser.cc"
     break;
 
-  case 61: // list: SQBRK_L arg_list SQBRK_R
-#line 269 "svlm_grammar.y"
+  case 62: // list: SQBRK_L arg_list SQBRK_R
+#line 270 "svlm_grammar.y"
                              { 
     yylhs.value.as < astexpr_u_ptr > () =  make_unique<Operand>( make_shared<Operand>( move(yystack_[1].value.as < astexpr_u_ptr > ()) )); 
     //$$ =  move($2); 
   }
-#line 1368 "svlm_parser.cc"
+#line 1381 "svlm_parser.cc"
     break;
 
-  case 62: // map: PERCENT CUR_L kv_pair_list CUR_R
-#line 277 "svlm_grammar.y"
+  case 63: // map: PERCENT CUR_L kv_pair_list CUR_R
+#line 278 "svlm_grammar.y"
                                      { yylhs.value.as < astexpr_u_ptr > () = move(yystack_[1].value.as < astexpr_u_ptr > ()); }
-#line 1374 "svlm_parser.cc"
+#line 1387 "svlm_parser.cc"
     break;
 
-  case 63: // kv_pair_list: kv_pair_list COMMA kv_pair
-#line 280 "svlm_grammar.y"
+  case 64: // kv_pair_list: kv_pair_list COMMA kv_pair
+#line 281 "svlm_grammar.y"
                                {
     yystack_[2].value.as < astexpr_u_ptr > ()->add(Operand(get<0>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())), move(get<1>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())));
     yylhs.value.as < astexpr_u_ptr > () = move(yystack_[2].value.as < astexpr_u_ptr > ());
   }
-#line 1383 "svlm_parser.cc"
+#line 1396 "svlm_parser.cc"
     break;
 
-  case 64: // kv_pair_list: kv_pair
-#line 284 "svlm_grammar.y"
+  case 65: // kv_pair_list: kv_pair
+#line 285 "svlm_grammar.y"
             {
     auto map_vptr = make_unique<AstMap>();
     map_vptr->add( Operand(get<0>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())) , move(get<1>(yystack_[0].value.as < tuple<string, astexpr_u_ptr> > ())));
     yylhs.value.as < astexpr_u_ptr > () = move(map_vptr);
   }
-#line 1393 "svlm_parser.cc"
-    break;
-
-  case 65: // kv_pair_list: %empty
-#line 289 "svlm_grammar.y"
-           {yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMap>();
-  }
-#line 1400 "svlm_parser.cc"
-    break;
-
-  case 66: // kv_pair: map_key COLON exp_eval
-#line 293 "svlm_grammar.y"
-                                 { yylhs.value.as < tuple<string, astexpr_u_ptr> > () = {yystack_[2].value.as < string > (), move(yystack_[0].value.as < astexpr_u_ptr > ())}; }
 #line 1406 "svlm_parser.cc"
     break;
 
-  case 67: // map_key: DQSTR
+  case 66: // kv_pair_list: %empty
+#line 290 "svlm_grammar.y"
+           {yylhs.value.as < astexpr_u_ptr > () = make_unique<AstMap>();
+  }
+#line 1413 "svlm_parser.cc"
+    break;
+
+  case 67: // kv_pair: map_key COLON exp_eval
 #line 294 "svlm_grammar.y"
+                                 { yylhs.value.as < tuple<string, astexpr_u_ptr> > () = {yystack_[2].value.as < string > (), move(yystack_[0].value.as < astexpr_u_ptr > ())}; }
+#line 1419 "svlm_parser.cc"
+    break;
+
+  case 68: // map_key: DQSTR
+#line 295 "svlm_grammar.y"
           { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
-#line 1412 "svlm_parser.cc"
+#line 1425 "svlm_parser.cc"
     break;
 
-  case 68: // map_key: STR
-#line 294 "svlm_grammar.y"
+  case 69: // map_key: STR
+#line 295 "svlm_grammar.y"
                   { yylhs.value.as < string > () = yystack_[0].value.as < string > (); }
-#line 1418 "svlm_parser.cc"
+#line 1431 "svlm_parser.cc"
+    break;
+
+  case 70: // tuple: CUR_L arg_list CUR_R
+#line 300 "svlm_grammar.y"
+                         {
+    yylhs.value.as < astexpr_u_ptr > () = make_unique<AstTuple>(move(yystack_[1].value.as < astexpr_u_ptr > ()));
+  }
+#line 1439 "svlm_parser.cc"
     break;
 
 
-#line 1422 "svlm_parser.cc"
+#line 1443 "svlm_parser.cc"
 
             default:
               break;
@@ -1613,119 +1634,122 @@ namespace vslast {
 
   const signed char SvlmParser::yypact_ninf_ = -57;
 
-  const signed char SvlmParser::yytable_ninf_ = -52;
+  const signed char SvlmParser::yytable_ninf_ = -53;
 
   const signed char
   SvlmParser::yypact_[] =
   {
-      60,   -57,   -29,   -27,    84,    84,    -6,   -57,   -57,   -18,
-     -57,   -57,   -57,    44,    84,    87,     2,   -57,   -57,   -57,
-     -57,   111,   -57,   -57,   -57,   -57,     6,   -57,   -57,    83,
-      67,   111,   111,     1,   -57,   -23,   -20,    84,    -8,   -57,
-     -57,    26,   -57,   -57,   -57,    60,    84,    84,    84,    84,
-      84,    84,    84,    84,    84,    84,    84,    84,    84,    50,
-      60,    54,   -57,    84,    84,    84,    84,    84,   111,   -57,
-     -57,    57,   -57,    65,    60,   -57,    82,    82,    11,    11,
-      11,    11,    11,    11,    30,    30,   -57,   -57,   -14,   -57,
-      17,   -57,    61,   -57,   -57,    25,   111,    99,   111,   -57,
-      -8,    84,   -57,   -57,   -57,    95,    54,    63,    64,   -57,
-     111,    60,   -57,    84,    84,    18,   111,   111,   -57
+      64,   -57,   -27,   -25,    88,    88,    88,    -1,   -57,   -57,
+      -6,   -57,   -57,   -57,    13,    88,    91,     5,   -57,   -57,
+     -57,   -57,    29,   -57,   -57,   -57,   -57,    81,   -57,   -57,
+     -57,    85,    71,    29,    29,   -17,   -57,   -24,   -19,   -16,
+      88,    28,   -57,   -57,    30,   -57,   -57,   -57,    64,    88,
+      88,    88,    88,    88,    88,    88,    88,    88,    88,    88,
+      88,    88,    50,    64,    54,   -57,    88,   -57,    88,    88,
+      88,    88,    29,   -57,   -57,    61,   -57,    65,    64,   -57,
+      86,    86,   -20,   -20,   -20,   -20,   -20,   -20,    16,    16,
+     -57,   -57,    36,   -57,    21,   -57,    68,   -57,   -57,   103,
+      29,   115,    29,   -57,    28,    88,   -57,   -57,   -57,    95,
+      54,    69,    70,   -57,    29,    64,   -57,    88,    88,    22,
+      29,    29,   -57
   };
 
   const signed char
   SvlmParser::yydefact_[] =
   {
-       6,    13,     0,     0,     0,    59,     0,    41,    42,    49,
-      43,    39,    40,     0,     0,     0,     0,     4,    12,     9,
-      10,     8,    16,    20,    17,    11,     0,    18,    19,     0,
-       0,    50,    60,     0,    58,    45,    46,     0,    65,    33,
-       1,     0,    70,    71,    69,     7,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    59,     0,
-       6,    55,    61,     0,     0,     0,     0,     0,    38,    68,
-      67,     0,    64,     0,     7,     3,    31,    32,    29,    30,
-      25,    26,    28,    27,    23,    24,    21,    22,     0,    52,
-       0,    56,     0,    53,    57,     0,    34,     0,    35,    62,
-       0,     0,     5,    44,    14,     0,     0,    47,    48,    63,
-      66,     6,    54,     0,     0,     0,    36,    37,    15
+       6,    13,     0,     0,     0,    60,    60,     0,    42,    43,
+      50,    44,    40,    41,     0,     0,     0,     0,     4,    12,
+       9,    10,     8,    16,    21,    17,    11,     0,    18,    19,
+      20,     0,     0,    51,    61,     0,    59,     0,    46,    47,
+       0,    66,    34,     1,     0,    72,    73,    71,     7,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    60,     0,     6,    56,    70,     0,    62,     0,     0,
+       0,     0,    39,    69,    68,     0,    65,     0,     7,     3,
+      32,    33,    30,    31,    26,    27,    29,    28,    24,    25,
+      22,    23,     0,    53,     0,    57,     0,    54,    58,     0,
+      35,     0,    36,    63,     0,     0,     5,    45,    14,     0,
+       0,    48,    49,    64,    67,     6,    55,     0,     0,     0,
+      37,    38,    15
   };
 
   const signed char
   SvlmParser::yypgoto_[] =
   {
-     -57,   -57,   -56,   -39,   -57,   -57,   -57,    -4,   -57,   -57,
-     -57,   -57,   102,   -57,     7,    56,    52,   -57,   -57,   -57,
-      19,   -57,    76
+     -57,   -57,   -56,   -44,   -57,   -57,   -57,    -4,   -57,   -57,
+     -57,   -57,   105,   -57,     9,    -3,    55,   -57,   -57,   -57,
+      18,   -57,   -57,    79
   };
 
   const signed char
   SvlmParser::yydefgoto_[] =
   {
-       0,    15,    16,    17,    18,    19,    20,    21,    22,    23,
-      24,    25,    26,    92,    93,    33,    34,    27,    28,    71,
-      72,    73,    45
+       0,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    96,    97,    35,    36,    28,    29,    75,
+      76,    77,    30,    48
   };
 
   const signed char
   SvlmParser::yytable_[] =
   {
-      31,    32,    -2,    41,    90,    42,    75,    43,   -51,    64,
-      39,   -51,    66,   103,    59,    29,   -51,    30,    41,    41,
-      42,    42,    43,    43,    63,    65,   104,   118,    67,    42,
-      37,    43,    58,    68,    62,   102,    69,    70,    35,    63,
-      59,    44,    76,    77,    78,    79,    80,    81,    82,    83,
-      84,    85,    86,    87,    32,   115,    44,    44,   107,    32,
-      95,    96,    97,    98,     1,    44,     2,     3,    54,    55,
-      56,    57,    38,     4,    46,    47,    48,    49,    50,    51,
-      52,    53,    54,    55,    56,    57,    99,    40,   105,    56,
-      57,    60,     5,    61,    89,   100,     6,   110,    91,   106,
-       7,     8,   101,   111,     9,    10,    11,    12,    36,   116,
-     117,   113,   114,   112,    88,    94,     5,    74,     0,   109,
-       6,    13,     0,    14,     7,     8,     0,     0,     9,    10,
-      11,    12,   108,    48,    49,    50,    51,    52,    53,    54,
-      55,    56,    57,     0,     0,    13,     0,    14,    46,    47,
-      48,    49,    50,    51,    52,    53,    54,    55,    56,    57,
-      46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    57
+      33,    34,    34,    37,    79,    -2,    44,    94,    45,    67,
+      46,    42,    65,    68,    66,   -52,    70,    31,    62,    32,
+     -52,    66,    44,    44,    45,    45,    46,    46,   -52,    69,
+     108,   122,    71,    45,   106,    46,    72,    57,    58,    59,
+      60,    41,    40,    38,    47,    80,    81,    82,    83,    84,
+      85,    86,    87,    88,    89,    90,    91,    34,    92,   119,
+      47,    47,    34,   107,    99,   100,   101,   102,     1,    47,
+       2,     3,    73,    74,    66,    59,    60,     4,    49,    50,
+      51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
+     103,    43,     5,    63,    93,   109,     6,    64,    95,   104,
+       7,   114,   105,   115,     8,     9,   110,    61,    10,    11,
+      12,    13,    39,   120,   121,    62,     5,   117,   118,   116,
+       6,    98,   113,    78,     7,    14,     0,    15,     8,     9,
+       0,     0,    10,    11,    12,    13,   111,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,     0,   112,    14,
+       0,    15,    49,    50,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    49,    50,    51,    52,    53,    54,
+      55,    56,    57,    58,    59,    60
   };
 
   const signed char
   SvlmParser::yycheck_[] =
   {
-       4,     5,     0,     1,    60,     3,    45,     5,    26,    32,
-      14,    34,    32,    27,    34,    44,    34,    44,     1,     1,
-       3,     3,     5,     5,    38,    48,     9,     9,    48,     3,
-      48,     5,    26,    37,    33,    74,    44,    45,    44,    38,
-      34,    39,    46,    47,    48,    49,    50,    51,    52,    53,
-      54,    55,    56,    57,    58,   111,    39,    39,    33,    63,
-      64,    65,    66,    67,     4,    39,     6,     7,    57,    58,
-      59,    60,    28,    13,    49,    50,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    29,     0,    27,    59,
-      60,     8,    32,    26,    44,    38,    36,   101,    44,    38,
-      40,    41,    37,     8,    44,    45,    46,    47,     6,   113,
-     114,    48,    48,   106,    58,    63,    32,    41,    -1,   100,
-      36,    61,    -1,    63,    40,    41,    -1,    -1,    44,    45,
-      46,    47,    33,    51,    52,    53,    54,    55,    56,    57,
-      58,    59,    60,    -1,    -1,    61,    -1,    63,    49,    50,
+       4,     5,     6,     6,    48,     0,     1,    63,     3,    33,
+       5,    15,    29,    32,    38,    34,    32,    44,    34,    44,
+      26,    38,     1,     1,     3,     3,     5,     5,    34,    48,
+       9,     9,    48,     3,    78,     5,    40,    57,    58,    59,
+      60,    28,    48,    44,    39,    49,    50,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    61,   115,
+      39,    39,    66,    27,    68,    69,    70,    71,     4,    39,
+       6,     7,    44,    45,    38,    59,    60,    13,    49,    50,
       51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
-      49,    50,    51,    52,    53,    54,    55,    56,    57,    58,
-      59,    60
+      29,     0,    28,     8,    44,    27,    32,    26,    44,    38,
+      36,   105,    37,     8,    40,    41,    38,    26,    44,    45,
+      46,    47,     7,   117,   118,    34,    28,    48,    48,   110,
+      32,    66,   104,    44,    36,    61,    -1,    63,    40,    41,
+      -1,    -1,    44,    45,    46,    47,    33,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    -1,    33,    61,
+      -1,    63,    49,    50,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    49,    50,    51,    52,    53,    54,
+      55,    56,    57,    58,    59,    60
   };
 
   const signed char
   SvlmParser::yystos_[] =
   {
-       0,     4,     6,     7,    13,    32,    36,    40,    41,    44,
-      45,    46,    47,    61,    63,    66,    67,    68,    69,    70,
-      71,    72,    73,    74,    75,    76,    77,    82,    83,    44,
-      44,    72,    72,    80,    81,    44,    77,    48,    28,    72,
-       0,     1,     3,     5,    39,    87,    49,    50,    51,    52,
-      53,    54,    55,    56,    57,    58,    59,    60,    26,    34,
-       8,    26,    33,    38,    32,    48,    32,    48,    72,    44,
-      45,    84,    85,    86,    87,    68,    72,    72,    72,    72,
-      72,    72,    72,    72,    72,    72,    72,    72,    80,    44,
-      67,    44,    78,    79,    81,    72,    72,    72,    72,    29,
-      38,    37,    68,    27,     9,    27,    38,    33,    33,    85,
-      72,     8,    79,    48,    48,    67,    72,    72,     9
+       0,     4,     6,     7,    13,    28,    32,    36,    40,    41,
+      44,    45,    46,    47,    61,    63,    66,    67,    68,    69,
+      70,    71,    72,    73,    74,    75,    76,    77,    82,    83,
+      87,    44,    44,    72,    72,    80,    81,    80,    44,    77,
+      48,    28,    72,     0,     1,     3,     5,    39,    88,    49,
+      50,    51,    52,    53,    54,    55,    56,    57,    58,    59,
+      60,    26,    34,     8,    26,    29,    38,    33,    32,    48,
+      32,    48,    72,    44,    45,    84,    85,    86,    88,    68,
+      72,    72,    72,    72,    72,    72,    72,    72,    72,    72,
+      72,    72,    80,    44,    67,    44,    78,    79,    81,    72,
+      72,    72,    72,    29,    38,    37,    68,    27,     9,    27,
+      38,    33,    33,    85,    72,     8,    79,    48,    48,    67,
+      72,    72,     9
   };
 
   const signed char
@@ -1734,11 +1758,11 @@ namespace vslast {
        0,    65,    66,    67,    67,    67,    67,    68,    68,    68,
       68,    68,    68,    69,    70,    71,    72,    72,    72,    72,
       72,    72,    72,    72,    72,    72,    72,    72,    72,    72,
-      72,    72,    72,    72,    72,    72,    72,    72,    72,    73,
-      73,    73,    73,    73,    74,    75,    75,    75,    75,    75,
-      76,    77,    77,    78,    78,    78,    79,    80,    80,    80,
-      81,    82,    83,    84,    84,    84,    85,    86,    86,    87,
-      87,    87
+      72,    72,    72,    72,    72,    72,    72,    72,    72,    72,
+      73,    73,    73,    73,    73,    74,    75,    75,    75,    75,
+      75,    76,    77,    77,    78,    78,    78,    79,    80,    80,
+      80,    81,    82,    83,    84,    84,    84,    85,    86,    86,
+      87,    88,    88,    88
   };
 
   const signed char
@@ -1746,12 +1770,12 @@ namespace vslast {
   {
        0,     2,     1,     3,     1,     4,     0,     0,     1,     1,
        1,     1,     1,     1,     5,     8,     1,     1,     1,     1,
-       1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     2,     4,     4,     7,     7,     3,     1,
-       1,     1,     1,     1,     4,     2,     2,     5,     5,     1,
-       2,     1,     3,     1,     3,     0,     1,     3,     1,     0,
-       1,     3,     4,     3,     1,     0,     3,     1,     1,     1,
-       1,     1
+       1,     1,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     2,     4,     4,     7,     7,     3,
+       1,     1,     1,     1,     1,     4,     2,     2,     5,     5,
+       1,     2,     1,     3,     1,     3,     0,     1,     3,     1,
+       0,     1,     3,     4,     3,     1,     0,     3,     1,     1,
+       3,     1,     1,     1
   };
 
 
@@ -1773,7 +1797,7 @@ namespace vslast {
   "program_start", "statement_list", "statement", "comments", "module",
   "function", "exp_eval", "literals", "caller", "variable", "print_exp",
   "DOTSTR", "proto_list", "proto", "arg_list", "arg", "list", "map",
-  "kv_pair_list", "kv_pair", "map_key", "EOS", YY_NULLPTR
+  "kv_pair_list", "kv_pair", "map_key", "tuple", "EOS", YY_NULLPTR
   };
 #endif
 
@@ -1785,11 +1809,11 @@ namespace vslast {
        0,    78,    78,    85,    90,    95,    96,   100,   101,   102,
      103,   104,   105,   109,   115,   124,   130,   131,   132,   133,
      134,   135,   136,   137,   138,   139,   140,   141,   142,   143,
-     144,   145,   146,   147,   148,   155,   163,   170,   181,   192,
-     193,   194,   195,   197,   201,   206,   207,   208,   209,   210,
-     218,   223,   224,   230,   235,   239,   245,   251,   255,   260,
-     264,   269,   277,   280,   284,   289,   293,   294,   294,   306,
-     307,   308
+     144,   145,   146,   147,   148,   149,   156,   164,   171,   182,
+     193,   194,   195,   196,   198,   202,   207,   208,   209,   210,
+     211,   219,   224,   225,   231,   236,   240,   246,   252,   256,
+     261,   265,   270,   278,   281,   285,   290,   294,   295,   295,
+     300,   307,   308,   309
   };
 
   void
@@ -1874,9 +1898,9 @@ namespace vslast {
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 1878 "svlm_parser.cc"
+#line 1902 "svlm_parser.cc"
 
-#line 312 "svlm_grammar.y"
+#line 313 "svlm_grammar.y"
 
 
 //--------------------------------------------------- EOS end of statement

@@ -1,18 +1,23 @@
-module mhello
-$a = {1,2}
-$b = {3,4}
-$c = {$a, $b}
-print $c
-#if {$x, $y} = $c then
-if $a == $b then
-  print "hello"
-else
-  print "world"
-end
-return
-print "\n"
-print $b
-print "\n"
-print $c
-return 
+# what is up
 
+module Main do
+  def main() do
+    print "in main\n"
+    $a = {1,2,3, "hello"}
+    # $b = $a2
+
+    print  "\n"
+  end
+
+  def func2() do
+  end
+
+  def func3(arg1) do
+  end
+
+end
+
+module Helper do
+  def me(arg1) do
+  end
+end
