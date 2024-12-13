@@ -3,7 +3,7 @@
 module Main do
   def main() do
     print "in main\n"
-    $a = {1,2,3, "hello"}
+    $a = {1,2,3+7*3, "hello"}
     # $b = $a2
 
     print  "\n"

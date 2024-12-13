@@ -612,7 +612,15 @@ AstTuple::AstTuple(astexpr_u_ptr ulist) : AstAssign(OperandType::tuple_t){
 string AstTuple::name() {return "";}
 
 Operand AstTuple::to_str() const {
-  auto list_ = (*this)["ulist"].clone();
+  astexpr_u_ptr list_;
+ //auto list_ = (*this)["ulist"].clone();
+  auto &elist = (*this)["elist"];
+  if(elist != nil_operand)
+    list_ = elist.clone();
+  else
+    list_ = (*this)["ulist"].clone();
+  //if(list_ == nullptr) list_ = (*this)["ulist"].clone();
+
   s_integer i, s = list_->size();
   Operand outstr("{");
   if(s==0) {return Operand("{}");}
