@@ -33,6 +33,8 @@ enum class AstOpCode {
   not_,
   or_,
   assign,
+  assign_clone,
+
 };
 
 enum class OperandStatusCode {

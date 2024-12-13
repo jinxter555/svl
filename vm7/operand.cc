@@ -148,9 +148,13 @@ Operand& Operand::operator[] (const Operand& k) {
   return const_cast<Operand&>(as_const(*this)[k]); 
 }
 const Operand& Operand::operator[] (const Operand &k) const {
+  //cout <<  "Operand::[" << k << "] const\n";
   auto &ptr = get_u_ptr();
   //if(ptr==nullptr) return nil_operand;
-  if(ptr==nullptr) return nil_operand;
+  if(ptr==nullptr) {
+    cout << "ptr is null!\n";
+    return nil_operand;
+  }
   return (*ptr)[k];
 }
 
@@ -346,23 +350,48 @@ bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
 Operand& Operand::getv() {
   //cout << "Operand::getv(): type " << get_type() << "\n";
   return visit(OperandGetv(*this), value_);
-
-/*
-  if(type_==OperandType::uptr_t) {
-    auto &ptr = get_u_ptr();
-    if(ptr==nil_ast_ptr) return nil_operand;
-    return ptr->getv();
-  } else if(type_==OperandType::ptr_t) {
-    auto ptr = get_raw_ptr();
-    if(ptr==nullptr) return nil_operand;
-    return ptr->getv();
-  } else{
-    return *this;
-  }
-*/
 }
 
+//-------------------------------------------
+Operand& Operand::getv(const Operand &k)  {
+  /*
+  //auto &ptr = _get_astexpr_u_ptr();
+  auto &ptr = get_u_ptr();
+  if(ptr == nil_ast_ptr) return nil_operand;
+  if(ptr == nullptr) return nil_operand;
+  //cout << "Operand::getv(" <<  k << ")\n";
+  return ptr->getv(k);
+  */
+  cout <<  "Operand::getv(" << k << ")\n";
+  return visit(OperandGetv_k(k), value_);
+}
 
+astexpr_u_ptr& Operand::get_u_ptr_nc(const Operand&k) { 
+  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr(k))); 
+}
+const astexpr_u_ptr& Operand::get_u_ptr(const Operand &k) const {
+  //auto &ptr = _get_astexpr_u_ptr();
+  auto &ptr = get_u_ptr();
+  if(ptr==nil_ast_ptr) return nil_ast_ptr;
+  return ptr->get_u_ptr(k);
+}
+
+const astexpr_u_ptr& Operand::get_u_ptr() const {
+ return visit(OperandUPtr(), value_);
+}
+
+astexpr_u_ptr& Operand::get_u_ptr_nc() { 
+  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
+}
+
+//-------------------
+astexpr_s_ptr Operand::get_s_ptr() {
+  return visit(OperandSPtr(), value_);
+}
+astexpr_u_ptr Operand::clone_usu() {
+  return visit(OperandUsu(), value_);
+  //return nullptr;
+}
 
 //-----------------------------------------------------------------------
 Operand& Operand::front() {
@@ -382,46 +411,6 @@ Operand& Operand::back() {
     return nil_operand;
 }
 
-
-//-------------------------------------------
-
-Operand& Operand::getv(const Operand &k)  {
-  //auto &ptr = _get_astexpr_u_ptr();
-  auto &ptr = get_u_ptr();
-  if(ptr == nil_ast_ptr) return nil_operand;
-  if(ptr == nullptr) return nil_operand;
-  //cout << "Operand::getv(" <<  k << ")\n";
-  return ptr->getv(k);
-}
-
-astexpr_u_ptr& Operand::get_u_ptr_nc(const Operand&k) { 
-  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr(k))); 
-}
-const astexpr_u_ptr& Operand::get_u_ptr(const Operand &k) const {
-  //auto &ptr = _get_astexpr_u_ptr();
-  auto &ptr = get_u_ptr();
-  if(ptr==nil_ast_ptr) return nil_ast_ptr;
-  return ptr->get_u_ptr(k);
-}
-
-const astexpr_u_ptr& Operand::get_u_ptr() const {
-  if (holds_alternative<astexpr_u_ptr>(value_)) 
-    return get<astexpr_u_ptr>(value_); 
-  return nil_ast_ptr;
-}
-
-astexpr_u_ptr& Operand::get_u_ptr_nc() { 
-  return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
-}
-
-//-------------------
-astexpr_s_ptr Operand::get_s_ptr() {
-  return visit(OperandSPtr(), value_);
-}
-astexpr_u_ptr Operand::clone_usu() {
-  return visit(OperandUsu(), value_);
-  //return nullptr;
-}
 
 //-----------------------------------------------------------------------
 template <typename T>
@@ -465,9 +454,17 @@ OperandGetv::OperandGetv(Operand& v) : value_(v) { }
 //------------------------------------------ Operand Shared Ptr
 template <typename T> 
 astexpr_s_ptr OperandSPtr::operator()(T& v) { return nullptr; }
-astexpr_s_ptr OperandSPtr::operator()(astexpr_ptr& v) { return v->get_s_ptr(); }
-astexpr_s_ptr OperandSPtr::operator()(astexpr_u_ptr& v) { return v->get_s_ptr(); }
 astexpr_s_ptr OperandSPtr::operator()(astexpr_s_ptr& v) { return v; }
+astexpr_s_ptr OperandSPtr::operator()(astexpr_u_ptr& v) { return v->get_s_ptr(); }
+astexpr_s_ptr OperandSPtr::operator()(astexpr_ptr& v) { return v->get_s_ptr(); }
+
+//------------------------------------------ Operand Unique Ptr
+template <typename T> 
+const astexpr_u_ptr& OperandUPtr::operator()(const T& v) const { return nil_ast_ptr; }
+const astexpr_u_ptr& OperandUPtr::operator()(const astexpr_u_ptr& v) const { return v; }
+const astexpr_u_ptr& OperandUPtr::operator()(const astexpr_s_ptr& v) const{ return v->get_u_ptr(); }
+const astexpr_u_ptr& OperandUPtr::operator()(const astexpr_ptr& v) const{ return v->get_u_ptr(); }
+
 
 //------------------------------------------ Operand List Add
 template <typename T> 
@@ -508,6 +505,7 @@ operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
     cout << "OperandUsu:: astexpr_u_ptr: NOT shared ptr!\n";
     return make_unique<Operand>(
       make_shared<Operand>(
+        //make_unique<Operand>(vptr->clone())
         make_unique<Operand>(vptr->clone())
       )
     );
@@ -533,6 +531,14 @@ bool OperandSet::operator()(astexpr_u_ptr& v) {
   return v->set(key_, move(vptr)); 
 }
 OperandSet::OperandSet(const Operand &k, astexpr_u_ptr v) :  key_(k) , vptr(move(v)){ }
+
+//------------------------------------------ Ast Get
+template <typename T> 
+Operand& OperandGetv_k::operator()(T& v) { return nil_operand; }
+Operand& OperandGetv_k::operator()(astexpr_ptr& v) { return v->getv(key_); }
+Operand& OperandGetv_k::operator()(astexpr_s_ptr& v) { return v->getv(key_); }
+Operand& OperandGetv_k::operator()(astexpr_u_ptr& v) { return v->getv(key_); }
+OperandGetv_k::OperandGetv_k(const Operand &k) : key_(k) {}
 
 //------------------------------------------ Operand opfunc
 astexpr_u_ptr Operand::opfunc(astexpr_u_ptr other, AstOpCode op) {

@@ -190,16 +190,6 @@ AstOpCode operator()(T value) const;
 AstOpCode operator()(const AstOpCode &v) const  ;
 };
 
-// get value
-struct OperandGetv {
-Operand &value_;
-OperandGetv(Operand&v);
-template <typename T> 
-Operand& operator()(T &v) ;
-Operand& operator()(astexpr_ptr& v) ;
-Operand& operator()(astexpr_u_ptr& v) ;
-Operand& operator()(astexpr_s_ptr& v) ;
-};
 
 struct OperandSPtr {
 template <typename T> 
@@ -208,6 +198,17 @@ astexpr_s_ptr operator()(astexpr_ptr& v);
 astexpr_s_ptr operator()(astexpr_u_ptr& v);
 astexpr_s_ptr operator()(astexpr_s_ptr& v);
 };
+
+struct OperandUPtr {
+const astexpr_u_ptr nil_ast_ptr=nullptr;
+template <typename T> 
+const astexpr_u_ptr& operator()(const T& v) const;
+const astexpr_u_ptr& operator()(const astexpr_ptr& v) const;
+const astexpr_u_ptr& operator()(const astexpr_u_ptr& v) const;
+const astexpr_u_ptr& operator()(const astexpr_s_ptr& v) const;
+};
+
+
 
 
 // for AstList
@@ -244,6 +245,29 @@ bool operator()(T& v) ;
 bool operator()(astexpr_ptr& v) ;
 bool operator()(astexpr_u_ptr& v) ;
 bool operator()(astexpr_s_ptr& v) ;
+};
+
+
+// get value
+struct OperandGetv {
+Operand &value_;
+OperandGetv(Operand&v);
+template <typename T> 
+Operand& operator()(T &v) ;
+Operand& operator()(astexpr_ptr& v) ;
+Operand& operator()(astexpr_u_ptr& v) ;
+Operand& operator()(astexpr_s_ptr& v) ;
+};
+
+// for AstMap
+struct OperandGetv_k{
+const Operand &key_;
+OperandGetv_k(const Operand& k);
+template <typename T> 
+Operand& operator()(T& v) ;
+Operand& operator()(astexpr_ptr& v) ;
+Operand& operator()(astexpr_u_ptr& v) ;
+Operand& operator()(astexpr_s_ptr& v) ;
 };
 
 struct OperandUsu{

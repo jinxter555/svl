@@ -122,6 +122,7 @@ Operand OperandToStringVisitor::operator()(AstOpCode t_op) const {
   case AstOpCode::ast_default:  oc="default"; break;
   case AstOpCode::ast_else:  oc="else"; break;
   case AstOpCode::assign:  oc="="; break;
+  case AstOpCode::assign_clone:  oc=":="; break;
   case AstOpCode::plus:  oc="+"; break;
   case AstOpCode::minus: oc="-"; break;
   case AstOpCode::mul:   oc="*"; break;

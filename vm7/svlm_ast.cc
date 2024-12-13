@@ -178,11 +178,13 @@ astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
   if(opcode == AstOpCode::assign) {
     AstAssign* variable =(AstAssign*) l.get_raw_ptr();
     cout << "r_vptr get_type: " <<  r_vptr->get_type() << "\n";
-    if(r_vptr->_get_type() == OperandType::list_t) {
+
+    // to use shared pointer for list and map and maybe others
+    if(r_vptr->_get_type() == OperandType::list_t ||
+      r_vptr->_get_type() == OperandType::map_t) {
       variable->assign(ctxt, r_vptr->clone_usu()); 
     } else {
       variable->assign(ctxt, r_vptr->clone());
-
     }
 
     return r_vptr;
@@ -472,6 +474,8 @@ astexpr_u_ptr AstMvar::evaluate(astexpr_u_ptr& ctxt) {
     auto index_i = get_index_i(ctxt);
     if(index_i >= 0) {
       //return result_var[index_i].clone_val();
+      cout << "index i: " << index_i << "\n";
+      cout <<  result_var[index_i] << "\n";
       return result_var[index_i].clone();
     }
 
@@ -496,6 +500,7 @@ astexpr_u_ptr AstMvar::evaluate(astexpr_u_ptr& ctxt) {
     cout << "evalute returning clone_usu()\n";
     return result_var.clone_usu();
   }
+  cout << "evalute returning just clone()\n";
   return result_var.clone();
 }
 
