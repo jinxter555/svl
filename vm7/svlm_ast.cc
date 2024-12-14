@@ -182,10 +182,12 @@ astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
     // to use shared pointer for list and map and maybe others
     if(r_vptr->_get_type() == OperandType::list_t ||
       r_vptr->_get_type() == OperandType::map_t) {
-      //cout << "assigning list_t || map_t!\n ";
+      cout << "assigning list_t || map_t!\n ";
       variable->assign(ctxt, r_vptr->clone_usu()); 
     } else {
-      //cout << "assigning regular var!\n ";
+      cout << "assigning regular var!\n";
+      cout << "var:" << r_vptr << "\n";
+      cout << "type:" << r_vptr->get_type() << "\n\n";
       variable->assign(ctxt, r_vptr->clone());
     }
 
@@ -609,7 +611,7 @@ void AstLvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr v) {
 AstTuple::AstTuple(astexpr_u_ptr ulist) : AstAssign(OperandType::tuple_t){ 
   AstMap::add(string("ulist"), move(ulist));
 }
-string AstTuple::name() {return "";}
+string AstTuple::name() {return "tuple name";}
 
 Operand AstTuple::to_str() const {
 //  astexpr_u_ptr list_;
@@ -652,12 +654,16 @@ astexpr_u_ptr AstTuple::evaluate(astexpr_u_ptr& ctxt) {
     add(string("elist"), make_unique<AstTuple>(l->clone()));
     evaluated = true;
     auto rv = make_unique<AstTuple>(move(l));
-    //cout << "tuplerv: " << rv->get_type() << "\n";
-    //cout << "tuplerv: " << rv->to_str() << "\n";
+    cout << "tuplerv: " << rv->get_type() << "\n";
+    cout << "tuplerv: " << rv->to_str() << "\n\n";
     return rv;
   }
   auto list_ = (*this)["elist"].get_raw_ptr();
-  return list_->clone();
+  return make_unique<AstTuple>(
+  //return list_->clone();
+  list_->clone()
+  )
+  ;
 }
 astexpr_u_ptr AstTuple::clone() const {
   cout << "AstTuple::clone()\n";
