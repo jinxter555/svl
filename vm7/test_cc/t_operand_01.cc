@@ -1,14 +1,7 @@
 #include <cassert>
 #include "../operand.hh"
-#include "../scope_logger.hh"
-
-#include "../commandline.hh"
-
-#include "../svlm_ast.hh"
-#include "../svlm_interactive.hh"
 
 
-int yyFlexLexer::yylex() { throw std::runtime_error("Bad call to yyFlexLexer::yylex()"); }
 
 int main() {
   Operand i1(11l);

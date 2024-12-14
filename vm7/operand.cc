@@ -215,8 +215,9 @@ AstOpCode Operand::_get_opcode() const {
   return get<AstOpCode>(value_);
 }
 vector<string> Operand::_get_keys() const {
-  auto &node = get_u_ptr();
-  if(node == nullptr) return {};
+  auto &node = visit(OperandUPtr(), value_);
+  if(node.get() == nullptr) return {};
+  if(node==nil_ast_ptr) return {};
   return node->_get_keys(); 
 }
 
