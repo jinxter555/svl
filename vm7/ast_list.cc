@@ -258,15 +258,13 @@ void Tuple::print() const {
   cout <<  to_str();
 }
 astexpr_u_ptr Tuple::evaluate(astexpr_u_ptr &ctxt) {
-  cout << "Tuple::evaluate()\n";
+  MYLOGGER(trace_function , "Tuple::evalaute()" ,__func__);
 
   int i, s = size();
   astexpr_u_ptr result_tuple = make_unique<Tuple>();
   for(i=0; i<s; i++) {
     result_tuple->add(list_[i].evaluate(ctxt));
   }
-  //cout << "result_tupel: " << result_tuple<< "\n";
-  //cout << "result_tuple gettype: " << result_tuple->get_type() << "\n";
   return result_tuple;
 
 }

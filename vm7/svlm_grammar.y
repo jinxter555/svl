@@ -175,16 +175,19 @@ exp_eval
         AstOpCode::assign
       ); 
   }
-
-
-
-
   | STR ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstLvar>($1),
         move($3), 
         AstOpCode::assign
       ); 
+  }
+  | tuple ASSIGN tuple {
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstTuple>(move($1)),
+        move($3),
+        AstOpCode::assign
+      );
   }
   ;
 
