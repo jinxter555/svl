@@ -1433,13 +1433,14 @@ namespace vslast {
   case 70: // tuple: CUR_L arg_list CUR_R
 #line 300 "svlm_grammar.y"
                          {
-    yylhs.value.as < astexpr_u_ptr > () = make_unique<AstTuple>(move(yystack_[1].value.as < astexpr_u_ptr > ()));
+    //$$ = make_unique<AstTuple>(move($2));
+    yylhs.value.as < astexpr_u_ptr > () = make_unique<Tuple>(move(yystack_[1].value.as < astexpr_u_ptr > ()));
   }
-#line 1439 "svlm_parser.cc"
+#line 1440 "svlm_parser.cc"
     break;
 
 
-#line 1443 "svlm_parser.cc"
+#line 1444 "svlm_parser.cc"
 
             default:
               break;
@@ -1813,7 +1814,7 @@ namespace vslast {
      193,   194,   195,   196,   198,   202,   207,   208,   209,   210,
      211,   219,   224,   225,   231,   236,   240,   246,   252,   256,
      261,   265,   270,   278,   281,   285,   290,   294,   295,   295,
-     300,   307,   308,   309
+     300,   308,   309,   310
   };
 
   void
@@ -1898,9 +1899,9 @@ namespace vslast {
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 1902 "svlm_parser.cc"
+#line 1903 "svlm_parser.cc"
 
-#line 313 "svlm_grammar.y"
+#line 314 "svlm_grammar.y"
 
 
 //--------------------------------------------------- EOS end of statement

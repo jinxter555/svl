@@ -226,3 +226,45 @@ astexpr_u_ptr AstList::opfunc(astexpr_u_ptr other, AstOpCode op) {
   cerr << "AstList::opfunc, I shouldn't be here!\n";
   return nullptr;
 }
+
+//-----------------------------------------------------------------------------------------------------------
+Tuple::Tuple(astexpr_u_ptr l) : type_(OperandType::tuple_t) {
+  s_integer i, s= l->size();
+  for(i=0; i<s; i++) {
+    list_.push_back(move(l->getv(i))); 
+  }
+}
+
+Operand Tuple::to_str() const {
+  s_integer i, s = list_.size();
+  Operand outstr("{");
+  if(s==0) {return Operand("{}");}
+
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + list_[i].to_str() + ",";
+  }
+  outstr = outstr + list_[i].to_str() + "}";
+  return outstr;
+}
+
+Operand Tuple::get_type() const {
+  return type_;
+  return Operand(OperandType::tuple_t);
+};
+OperandType Tuple::_get_type() const {
+  return OperandType::tuple_t;
+};
+
+void Tuple::print() const {
+  cout <<  to_str();
+}
+astexpr_u_ptr Tuple::evaluate(astexpr_u_ptr &ctxt) {
+  cout << "Tuple::evaluate()\n";
+
+  int i, s = size();
+  astexpr_u_ptr result_list = make_unique<Tuple>();
+  for(i=0; i<s; i++) {
+    result_list->add(list_[i].evaluate(ctxt));
+  }
+  return result_list;
+}

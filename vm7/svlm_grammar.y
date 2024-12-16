@@ -298,7 +298,8 @@ map_key : DQSTR | STR ;
 //--------------------------------------------------- 
 tuple
   : CUR_L arg_list CUR_R {
-    $$ = make_unique<AstTuple>(move($2));
+    //$$ = make_unique<AstTuple>(move($2));
+    $$ = make_unique<Tuple>(move($2));
   }
   ;
 

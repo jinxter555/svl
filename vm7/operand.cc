@@ -478,7 +478,7 @@ OperandAddK::OperandAddK(const Operand &k, const AstExpr&v, bool ovw) : key_(k),
 //------------------------------------------ Operand Usu unique shared unique
 template <typename T> 
 operand_u_ptr OperandUsu::operator()(T v) {
-  cout << "OperandUsu:: <T> v!\n";
+  //cout << "OperandUsu:: <T> v!\n";
   return
   make_unique<Operand>(
     make_shared<Operand>(
@@ -487,7 +487,7 @@ operand_u_ptr OperandUsu::operator()(T v) {
   );
 }
 operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
-  cout << "OperandUsu:: astexpr_u_ptr!\n";
+  //cout << "OperandUsu:: astexpr_u_ptr!\n";
   //auto &v = vptr->getv();
   auto s_vptr = vptr->get_s_ptr();
 
@@ -502,7 +502,7 @@ operand_u_ptr OperandUsu::operator()(const astexpr_u_ptr& vptr) {
   }
 }
 operand_u_ptr OperandUsu::operator()(const astexpr_s_ptr& vptr) {
-  cout << "OperandUsu:: astexpr_s_ptr!\n";
+  //cout << "OperandUsu:: astexpr_s_ptr!\n";
   return make_unique<Operand>(vptr);
 }
 //------------------------------------------ Operand Map set

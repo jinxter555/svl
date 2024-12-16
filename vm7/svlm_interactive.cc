@@ -55,7 +55,6 @@ void SvlmInteractive::print_tree(const std::string& line) {
   if(children.empty()) {
     //cout << "Node not found!\n";
     auto &value= svlm_lang.root.get_branch(vstr);
-    cout << "v type: " <<  value.get_type() << "\n";
     cout << value << "\n";
     return;
   }

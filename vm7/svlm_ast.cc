@@ -510,7 +510,7 @@ astexpr_u_ptr AstMvar::evaluate(astexpr_u_ptr& ctxt) {
 
 
 // to assign value to tree: module 'mname' mvar 'vname'
-void AstMvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr vptr) {
+bool AstMvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr vptr) {
   MYLOGGER(trace_function
   , "AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)" 
   , __func__);
@@ -521,7 +521,7 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr vptr) {
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   if(svlm_lang_ptr==nullptr) {
     cerr << "In AstMvar::Assign svlmlang is null!\n";
-    return;
+    return false;
   }
 
   auto &mod_name = (*this)["mod_name"];
@@ -554,13 +554,13 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr vptr) {
       result.set(index_i, move(vptr));
       cout << "result: " << result << "\n";
       cout << "result gettype: " << result.get_type() << "\n";
-      return;
+      return true;
     }
     auto index_s = get_index_s(ctxt);
     if(index_s != "" ) {
       cout << "assign mvar[s] settting value!\n";
         result.add(index_s, move(vptr), true);
-      return;
+      return true;
     }
   }
   MYLOGGER_MSG(trace_function, "sub_node.add() before");
@@ -568,6 +568,7 @@ void AstMvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr vptr) {
   sub_node.add(var_name, move(vptr), true);
 
   MYLOGGER_MSG(trace_function, "sub_node.add() after");
+  return true;
 
 }
 
@@ -601,11 +602,13 @@ astexpr_u_ptr AstLvar::evaluate(astexpr_u_ptr& ctxt) {
   return lvars.getv(var_name).clone();
 }
 
-void AstLvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr v) {
+bool AstLvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr v) {
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame();
   auto &lvars =  frame["lvars"];
   lvars.add(name(), move(v));
+
+  return true;
 }
 //----------------------------------------------------------------------- Tuple
 AstTuple::AstTuple(astexpr_u_ptr ulist) : AstAssign(OperandType::tuple_t){ 
@@ -639,10 +642,10 @@ Operand AstTuple::to_str() const {
 
 
 Operand AstTuple::get_type() const {
-  return OperandType::tuple_t;
+  return OperandType::ast_tuple_t;
 }
 OperandType AstTuple::_get_type() const {
-  return OperandType::tuple_t;
+  return OperandType::ast_tuple_t;
 
 }
 astexpr_u_ptr AstTuple::evaluate(astexpr_u_ptr& ctxt) {
@@ -679,7 +682,8 @@ astexpr_u_ptr AstTuple::clone_usu() {
 }
 
 
-void AstTuple::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr v) {
+bool AstTuple::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr v) {
+  return true;
 }
 void AstTuple::print() const {
   cout << "tuple: " << to_str();

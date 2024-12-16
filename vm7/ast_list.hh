@@ -3,6 +3,7 @@
 #include <utility>
 
 class AstList: public AstExpr{
+  friend class Tuple;
 protected:
   vector<Operand> list_;
   //Operand myself;
@@ -72,6 +73,28 @@ public:
   Operand to_str() const override ;
   Operand get_type() const override;
   OperandType _get_type() const override;
+
+  void print() const override;
+};
+
+class Tuple : public AstList{
+private:
+  OperandType type_;
+public:
+  Tuple() {};
+  Tuple(astexpr_u_ptr) ;
+  bool operator==(const Tuple& other) const;
+  bool operator!=(const Tuple& other) const;
+  bool opfunc(const Tuple& other, AstOpCode op) const;
+
+  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
+
+  Operand to_str() const override ;
+  Operand get_type() const override;
+  OperandType _get_type() const override;
+
+  //using AstList::evaluate;
+  using AstList::size;
 
   void print() const override;
 };
