@@ -152,6 +152,8 @@ void SvlmInteractive::evaluate_line() {
     auto &v = result->getv(0l);
     if(v==nil_operand) { // Operand_math != is notworking 
     } else  {
+      //cout << "get_type: " << v.get_type() << "\n";
+      //cout << "getv().get_type: " << v.getv().get_type() << "\n";
       cout << v << "\n";
     }
 

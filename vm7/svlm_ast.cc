@@ -188,7 +188,8 @@ astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
       cout << "assigning regular var!\n";
       cout << "var:" << r_vptr << "\n";
       cout << "type:" << r_vptr->get_type() << "\n\n";
-      variable->assign(ctxt, r_vptr->clone());
+      //variable->assign(ctxt, r_vptr->clone());
+      variable->assign(ctxt, move(r_vptr));
     }
 
     return r_vptr;

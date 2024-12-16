@@ -89,6 +89,9 @@ public:
 
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
 
+  astexpr_u_ptr clone() const override; 
+  astexpr_u_ptr clone_usu() override;
+
   Operand to_str() const override ;
   Operand get_type() const override;
   OperandType _get_type() const override;

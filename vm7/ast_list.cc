@@ -248,8 +248,7 @@ Operand Tuple::to_str() const {
 }
 
 Operand Tuple::get_type() const {
-  return type_;
-  return Operand(OperandType::tuple_t);
+  return OperandType::tuple_t;
 };
 OperandType Tuple::_get_type() const {
   return OperandType::tuple_t;
@@ -262,9 +261,29 @@ astexpr_u_ptr Tuple::evaluate(astexpr_u_ptr &ctxt) {
   cout << "Tuple::evaluate()\n";
 
   int i, s = size();
-  astexpr_u_ptr result_list = make_unique<Tuple>();
+  astexpr_u_ptr result_tuple = make_unique<Tuple>();
   for(i=0; i<s; i++) {
-    result_list->add(list_[i].evaluate(ctxt));
+    result_tuple->add(list_[i].evaluate(ctxt));
   }
-  return result_list;
+  //cout << "result_tupel: " << result_tuple<< "\n";
+  //cout << "result_tuple gettype: " << result_tuple->get_type() << "\n";
+  return result_tuple;
+
+}
+
+//--------------------------------------
+astexpr_u_ptr Tuple::clone() const {
+  MYLOGGER(trace_function , "Tuple::clone()" ,__func__);
+
+  list_u_ptr new_list = make_unique<Tuple>();
+  for(auto &e : list_)  {
+    new_list->list_.push_back(e.clone()); 
+  }
+  return move(new_list);
+}
+
+astexpr_u_ptr Tuple::clone_usu() {
+  return make_unique<Operand>(
+    make_shared<Operand>(clone())
+  );
 }
