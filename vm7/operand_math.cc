@@ -112,6 +112,7 @@ bool Operand::operator!=(const Operand& other) const {
     //throw std::runtime_error("Unsupported operation != for unequal types"); 
     return false;
   }
+  //cout << "gettype():" << get_type() << "\n"; cout << "other.gettype():" << other.get_type() << "\n";
 
   switch(type_) {
   case OperandType::bool_t: 

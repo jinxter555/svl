@@ -181,8 +181,8 @@ astexpr_u_ptr AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
 
     // to use shared pointer for list and map and maybe others
     if(r_vptr->_get_type() == OperandType::list_t ||
-      r_vptr->_get_type() == OperandType::map_t ||
-      r_vptr->_get_type() == OperandType::tuple_t
+      //r_vptr->_get_type() == OperandType::tuple_t ||
+      r_vptr->_get_type() == OperandType::map_t 
       ) {
       //cout << "assigning list_t || map_t || tuple_t !\n ";
       variable->assign(ctxt, r_vptr->clone_usu()); 
@@ -404,6 +404,12 @@ AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) {
   add(string("var_name"), Operand(v));
 }
 
+astexpr_u_ptr AstMvar::clone() const {
+  auto &var_name= (*this)["var_name"];
+  auto &mod_name= (*this)["mod_name"];
+  //return make_unique<AstMvar>(mod_name + var_name);
+  return nullptr;
+}
 
 AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType::ast_mvar_t) { 
   scale_ = OperandType::array_t;
@@ -419,7 +425,8 @@ AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType
 
 Operand& AstMvar::getv() {
   cout << "AstMvar::getv()\n";
-  return AstMap::getv(string("var_name"));
+  //return clone();
+  return nil_operand;
 }
 string AstMvar::name() { 
   return AstMap::getv(string("var_name"))._to_str();
@@ -429,7 +436,10 @@ string AstMvar::get_module() {
 }
 
 
-Operand AstMvar::get_type() const { return OperandType::ast_mvar_t;}
+Operand AstMvar::get_type() const { 
+  cout << "AstMvar::get_type()\n";
+  return OperandType::ast_mvar_t;
+}
 OperandType AstMvar::_get_type() const { return OperandType::ast_mvar_t;}
 Operand AstMvar::to_str() const {
   //auto &var_name= map_.at(string("var_name"));
@@ -617,34 +627,23 @@ bool AstLvar::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr v) {
   return true;
 }
 //----------------------------------------------------------------------- Tuple
-AstTuple::AstTuple(astexpr_u_ptr ulist) : AstAssign(OperandType::ast_tuple_t){ 
-  cout << "AstTuple::AstTuple()\n";
-//  cout << "ulist: " << ulist << "\n\n";
-  AstMap::add(string("ulist"), move(ulist));
+AstTuple::AstTuple(astexpr_u_ptr u_tuple) : AstAssign(OperandType::ast_tuple_t){ 
+  //cout << "AstTuple::AstTuple()\n";
+  AstMap::add(string("u_tuple"), move(u_tuple));
 }
 string AstTuple::name() {return "tuple name";}
 
 Operand AstTuple::to_str() const {
-//  astexpr_u_ptr list_;
-  //auto list_ = (*this)["ulist"].clone();
-  auto list_ = (*this)["ulist"].get_raw_ptr();
+  auto tuple_ = (*this)["u_tuple"].get_raw_ptr();
 
-  //if(list_ == nullptr) list_ = (*this)["ulist"].clone();
-/*
-  auto &elist = (*this)["elist"];
-  if(elist != nil_operand)
-    list_ = elist.clone();
-  else
-    list_ = (*this)["ulist"].clone();
-*/
-  s_integer i, s = list_->size();
+  s_integer i, s = tuple_->size();
   Operand outstr("{");
   if(s==0) {return Operand("{}");}
 
   for(i=0; i<s-1; i++) {
-    outstr = outstr + list_->getv(i).to_str() + ",";
+    outstr = outstr + tuple_->getv(i).to_str() + ",";
   }
-  outstr = outstr + list_->getv(i).to_str() + "}";
+  outstr = outstr + tuple_->getv(i).to_str() + "}";
   return outstr;
 }
 
@@ -657,45 +656,68 @@ OperandType AstTuple::_get_type() const {
 
 }
 astexpr_u_ptr AstTuple::evaluate(astexpr_u_ptr& ctxt) {
-  auto &ul = (*this)["ulist"];
   cout << "AstTuple::eval\n";
-  cout << "ul " << ul << "\n";
 
+  auto &u_tuple = (*this)["u_tuple"];
+  //cout << "u_tuple " << u_tuple << "\n";
 
-  if(!evaluated){
-    auto l  = ul.evaluate(ctxt);
-    add(string("elist"), make_unique<AstTuple>(l->clone()));
-    evaluated = true;
-    auto rv = make_unique<AstTuple>(move(l));
-    cout << "tuplerv: " << rv->get_type() << "\n";
-    cout << "tuplerv: " << rv->to_str() << "\n\n";
-    return rv;
-  }
-  auto list_ = (*this)["elist"].get_raw_ptr();
-  return make_unique<AstTuple>(
-  //return list_->clone();
-  list_->clone()
-  )
-  ;
+  auto e_tuple  = u_tuple.evaluate(ctxt);
+  add(string("e_tuple"), make_unique<AstTuple>(e_tuple->clone()));
+  //cout << "e_tuple " << e_tuple << "\n\n";
+
+  return e_tuple;
 }
 astexpr_u_ptr AstTuple::clone() const {
   cout << "AstTuple::clone()\n";
-  auto &ulist = (*this)["ulist"];
-//  cout << "ulist: "  << ulist << "\n";
-  return  make_unique<AstTuple>(ulist.clone());
+  auto &u_tuple= (*this)["u_tuple"];
+  return  make_unique<AstTuple>(u_tuple.clone());
 }
 astexpr_u_ptr AstTuple::clone_usu() {
   cout << "AstTuple::clone_usu()\n";
-  auto &ulist = (*this)["ulist"];
-  cout << "elist: "  << ulist << "\n";
-  return  make_unique<AstTuple>(ulist.clone_usu());
+  auto &u_tuple= (*this)["u_tuple"];
+  cout << "elist: "  << u_tuple<< "\n";
+  return  make_unique<AstTuple>(u_tuple.clone_usu());
 }
 
 
-bool AstTuple::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr v) {
+astexpr_u_ptr AstTuple::elemptr(const Operand& v) {
+
+  return nullptr;
+
+}
+
+
+bool AstTuple::assign(astexpr_u_ptr& ctxt, astexpr_u_ptr vptr) {
   cout << "AstTuple::assign()\n";
-  auto &ul = (*this)["ulist"];
-//  cout << "ul " << ul << "\n";
+  auto &u_tuple = (*this)["u_tuple"];
+  auto e_tuple = evaluate(ctxt);
+
+  astexpr_ptr l_rptr, r_rptr;
+
+  if(u_tuple.size() != vptr->size()) return false;
+
+  for(s_integer i=0; i < u_tuple.size(); i++) {
+
+    if( u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_lvar_t || 
+        u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_mvar_t)  {
+        cout << "found var!\n";
+        continue;
+    }
+
+    if(e_tuple->getv(i).getv() != vptr->getv(i).getv()) {
+      cout << e_tuple << " != " << vptr << "\n";
+      return false;
+    }
+  }
+  cout << "\n\n";
+  for(s_integer i=0; i < u_tuple.size(); i++) {
+    if( u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_lvar_t || 
+        u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_mvar_t)  {
+      auto r_var =(AstAssign*) u_tuple[i].get_raw_ptr();
+      r_var->assign(ctxt, vptr->getv(i).clone());
+    }
+  }
+  //cout << e_tuple << "= " << vptr << "\n";
   return true;
 }
 void AstTuple::print() const {

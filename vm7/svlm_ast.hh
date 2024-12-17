@@ -135,6 +135,7 @@ public:
   Operand& getv() override;
   bool assign(astexpr_u_ptr& ctxt, astexpr_u_ptr) override final;
   void print() const override;
+  astexpr_u_ptr clone() const override; 
 };
 
 class AstLvar : public AstAssign {
@@ -153,7 +154,7 @@ public:
 };
 class AstTuple : public AstAssign {
 private:
-  bool evaluated = false;
+  astexpr_u_ptr elemptr(const Operand&);
 public:
   AstTuple(astexpr_u_ptr);
   string name() override final;

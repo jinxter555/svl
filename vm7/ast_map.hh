@@ -34,7 +34,7 @@ public:
   const astexpr_u_ptr& get_u_ptr(const string&) const ;
   astexpr_u_ptr& get_u_ptr_nc(const Operand &k) override final;
 
-  const astexpr_u_ptr& get_u_ptr() const override final;
+  const astexpr_u_ptr& get_u_ptr() const override ;
   astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
   astexpr_s_ptr get_s_ptr() override final;
   //astexpr_s_ptr get_s_ptr_nc() override final;
