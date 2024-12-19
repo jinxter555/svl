@@ -248,7 +248,6 @@ bool AstList::cmp_eql(const astexpr_u_ptr &other_vptr) const {
   //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
 
-
   if(other_vptr->_get_type()!= OperandType::list_t) return false;
   s_integer s=size();
   if(s != other_vptr->size()) return false;
@@ -326,4 +325,43 @@ astexpr_u_ptr Tuple::clone_usu() {
   return make_unique<Operand>(
     make_shared<Operand>(clone())
   );
+}
+//--------------------------------------
+bool Tuple::operator==(const Tuple&other) const { 
+  MYLOGGER(trace_function , "Tuple::==()" , __func__);
+  cout << "Tuple::==()\n";
+  return cmp_eql(other.get_u_ptr());
+}
+
+bool Tuple::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
+  MYLOGGER(trace_function , "Tuple::cmp_eql()" ,__func__);
+  cout << "Tuple::cmp_eql(astexpr_u_ptr)\n";
+
+  //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
+
+  if(other_vptr->_get_type()!= OperandType::tuple_t) return false;
+  s_integer s=size();
+  if(s != other_vptr->size()) return false;
+
+  for(s_integer i=0; i < s; i++ ) {
+    //cout << list_[i] << "!=" << (*other_vptr)[i] << "\n";
+    if(list_[i] == (*other_vptr)[i]) continue;
+    else return false;
+  }
+  return true;
+}
+
+astexpr_u_ptr Tuple::opfunc(astexpr_u_ptr other, AstOpCode op) {
+  MYLOGGER(trace_function , "Tuple::opfunc()" ,__func__);
+
+  cout << "Tuple::opfunc()!\n";
+  print(); cout << " " << Operand(op) << " " <<  other <<"\n";
+  switch(op) {
+  case AstOpCode::eql:    return make_unique<Operand>( cmp_eql(other));
+  case AstOpCode::neql:   return make_unique<Operand>( !cmp_eql(other));
+  default:
+    cerr << "AstList::opfunc, default error!\n";
+    return nullptr;
+  }
 }

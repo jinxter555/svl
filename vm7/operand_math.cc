@@ -110,6 +110,7 @@ bool Operand::operator==(const Operand& other) const {
 
     if(rv->_get_type() == OperandType::uptr_t
     || rv->_get_type() == OperandType::list_t 
+    || rv->_get_type() == OperandType::tuple_t
     || rv->_get_type() == OperandType::map_t)  {
 //      lv->print();
 //      rv->print();
@@ -285,13 +286,14 @@ struct OperandCmpEql {
 bool Operand::operator==(const astexpr_u_ptr &other_vptr) const { 
   //visit(OperandCmpEql(), value_, other_vptr->value_);
   cout << "Operand::==(astexpr_u_ptr)\n";
-  return true;
+  return cmp_eql(other_vptr);
 }
 bool Operand::operator!=(const astexpr_u_ptr &other_vptr) const { 
   cout << "Operand::!=(astexpr_u_ptr)\n";
-  return false; 
+  return !cmp_eql(other_vptr);
 }
 bool Operand::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
   cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
-  return true; 
+  if(type_ != OperandType::uptr_t)  return false;
+  return get_u_ptr() == other_vptr;
 }

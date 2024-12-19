@@ -18,7 +18,7 @@ public:
   //-------------------------------------------
 
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
-  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
+  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override ;
 
   Operand& getv()  override final ;
   Operand& getv(const Operand &k)  override final ;
@@ -91,12 +91,13 @@ public:
   Tuple(astexpr_u_ptr) ;
   bool operator==(const Tuple& other) const;
   bool operator!=(const Tuple& other) const;
-  bool opfunc(const Tuple& other, AstOpCode op) const;
+  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
 
   astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
 
   astexpr_u_ptr clone() const override; 
   astexpr_u_ptr clone_usu() override;
+  bool cmp_eql(const astexpr_u_ptr &) const override;
 
   Operand to_str() const override ;
   Operand get_type() const override;
