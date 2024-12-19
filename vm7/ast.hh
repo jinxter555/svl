@@ -56,6 +56,10 @@ public:
   virtual AstExpr *get_raw_ptr() const=0;
 
   //-------------------------------------------
+  virtual bool operator==(const astexpr_u_ptr&) const=0;
+  virtual bool operator!=(const astexpr_u_ptr&) const=0;
+  virtual bool cmp_eql(const astexpr_u_ptr&) const=0;
+  //-------------------------------------------
   //virtual Operand& get_branch(const Operand&k) =0 ;
   //virtual bool add_branch(const Operand&k, const AstExpr& e, bool overwrite=false)=0;
   virtual bool add_branch(const vector<string> &keys, const Operand& operand, bool overwrite=false) =0;

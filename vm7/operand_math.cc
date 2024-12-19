@@ -78,14 +78,16 @@ Operand Operand::operator/(const Operand& other) const {
 }
 
 bool Operand::operator==(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-  if(type_ != other_type_) {
+  std::cout << "operand==(operand&)\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other << " other type: " << other.get_type() << "\n";
+
+  //auto type_ = _get_type(); auto other_type_ = other._get_type();
+  if(type_ != other._get_type()) {
     //throw std::runtime_error("Unsupported operation == for unequal types"); 
     return false;
   }
   
-  //std::cout << "operand cmp==\n";
   switch(type_) {
   case OperandType::bool_t: 
     return get<bool>(value_) == get<bool>(other.value_);
@@ -99,6 +101,26 @@ bool Operand::operator==(const Operand& other) const {
     //if( holds_alternative<Nil>(value_) && holds_alternative<Nil>(other.value_)) return true;
     if(other.type_ == OperandType::nil_t) return true;
     return false;
+  case OperandType::uptr_t:  {
+    cout << "\ntype_ :uptr_t, ==\n";
+    auto &lv = get_u_ptr();
+    auto &rv = other.get_u_ptr();
+    cout << "lv->gettype: " << lv->get_type() << " rv->gettype: " << rv->get_type() << "\n";
+    cout << lv << "==" << rv << "\n";
+
+    if(rv->_get_type() == OperandType::uptr_t
+    || rv->_get_type() == OperandType::list_t 
+    || rv->_get_type() == OperandType::map_t)  {
+//      lv->print();
+//      rv->print();
+      cout << "lv==rv\n";
+      return lv->cmp_eql(rv);
+    }
+    return lv->getv() ==  rv->getv();
+  }
+  case OperandType::list_t: {
+    cout << "OperandType::list ==\n";
+  }
   case OperandType::err_t: 
     return get<OperandErrorCode>(value_) == get<OperandErrorCode>(other.value_);
   default: 
@@ -106,30 +128,8 @@ bool Operand::operator==(const Operand& other) const {
   }
 }
 bool Operand::operator!=(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-  if(type_ != other_type_) {
-    //throw std::runtime_error("Unsupported operation != for unequal types"); 
-    return false;
-  }
-  //cout << "gettype():" << get_type() << "\n"; cout << "other.gettype():" << other.get_type() << "\n";
-
-  switch(type_) {
-  case OperandType::bool_t: 
-    return get<bool>(value_) != get<bool>(other.value_);
-  case OperandType::num_t: 
-    return get<Number>(value_) != get<Number>(other.value_);
-  case OperandType::str_t: 
-    return get<std::string>(value_) != get<std::string>(other.value_);
-  case OperandType::type_t: 
-    return get<OperandType>(value_) != get<OperandType>(other.value_); 
-  case OperandType::nil_t:  // something is wrong here
-    if( holds_alternative<Nil>(value_) 
-    && holds_alternative<Nil>(other.value_)) return false;
-    return true;
-  default: 
-    throw std::runtime_error("Unsupported operation"); 
-  }
+  cout << "Operand::!=(Operand&)\n";
+  return !(*this==other);
 }
 
 bool Operand::operator>=(const Operand& other) const {
@@ -269,4 +269,29 @@ Operand Operand::opfunc(const Operand& other, AstOpCode op) {
   default:                return false;
   }
   return false;
+}
+
+
+
+struct OperandCmpEql {
+   template <typename T, typename U> bool operator()(const T a, T b) const { return a == b; };
+  template <typename T, typename U> bool operator()(const T a, U b) const { return false; }
+  bool operator()(const astexpr_u_ptr &a, astexpr_u_ptr &b) { 
+    return true;
+
+  };
+};
+
+bool Operand::operator==(const astexpr_u_ptr &other_vptr) const { 
+  //visit(OperandCmpEql(), value_, other_vptr->value_);
+  cout << "Operand::==(astexpr_u_ptr)\n";
+  return true;
+}
+bool Operand::operator!=(const astexpr_u_ptr &other_vptr) const { 
+  cout << "Operand::!=(astexpr_u_ptr)\n";
+  return false; 
+}
+bool Operand::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
+  cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
+  return true; 
 }

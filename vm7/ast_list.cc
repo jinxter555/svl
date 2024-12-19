@@ -74,7 +74,7 @@ Operand& AstList::getv(const string &k)  {
 }
 Operand& AstList::getv(int i)  {
   if(i >= list_.size() || i < 0) return nil_operand;
-  if(list_[i] == nil_ast_ptr) return nil_operand;
+  //if(list_[i] == nil_ast_ptr) return nil_operand;
   //return list_[i].getv();
   return list_[i];
 }
@@ -201,6 +201,7 @@ Operand AstList::to_str() const {
 void AstList::print() const {
   //if(this==nullptr) return;
   cout << to_str();
+  cout << "I am a list!";
 }
 
 Operand AstList::get_type() const {
@@ -223,9 +224,68 @@ astexpr_u_ptr AstList::evaluate(astexpr_u_ptr &ctxt) {
 }
 
 astexpr_u_ptr AstList::opfunc(astexpr_u_ptr other, AstOpCode op) {
-  cerr << "AstList::opfunc, I shouldn't be here!\n";
-  return nullptr;
+  cout << "AstList::opfunc()!\n";
+  print(); cout << " " << Operand(op) << " " <<  other <<"\n";
+  //return make_unique<Operand>( eql_cmp(move(other)));
+  switch(op) {
+  //case AstOpCode::eql:    return make_unique<Operand>( *this == move(other));
+  case AstOpCode::eql:    return make_unique<Operand>( cmp_eql(other));
+  case AstOpCode::neql:   return make_unique<Operand>( *this != move(other));
+  default:
+    cerr << "AstList::opfunc, default error!\n";
+    return nullptr;
+  }
 }
+
+
+//--------------------------------------
+bool AstList::operator==(const astexpr_u_ptr &other_vptr ) const { 
+  cout << "AstList::==()\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
+
+  if(other_vptr->_get_type()!= OperandType::list_t) return false;
+  s_integer s=size();
+  if(s != other_vptr->size()) return false;
+
+  for(s_integer i=0; i < s; i++ ) {
+    if(list_[i] != (*other_vptr)[i]) return false;
+  }
+  return true;
+}
+bool AstList::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
+  cout << "AstList::cmp_eql(astexpr_u_ptr)\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
+
+
+  if(other_vptr->_get_type()!= OperandType::list_t) return false;
+  s_integer s=size();
+  if(s != other_vptr->size()) return false;
+
+  for(s_integer i=0; i < s; i++ ) {
+    //cout << list_[i] << "!=" << (*other_vptr)[i] << "\n";
+    if(list_[i] == (*other_vptr)[i]) continue;
+    else return false;
+  }
+  return true;
+}
+
+bool AstList::operator!=(const astexpr_u_ptr &other_vptr) const { 
+  cout << "AstList::!=()\n";
+
+  if(other_vptr->_get_type()!= OperandType::list_t) return true;
+  s_integer s=size();
+  if(s != other_vptr->size()) return true;
+
+  for(s_integer i=0; i < s; i++ ) {
+    if(list_[i] != (*other_vptr)[i]) return true;
+  }
+  return false;
+
+}
+
+
 
 //-----------------------------------------------------------------------------------------------------------
 Tuple::Tuple(astexpr_u_ptr l) : type_(OperandType::tuple_t) {

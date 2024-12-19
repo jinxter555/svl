@@ -109,6 +109,10 @@ public:
 
   Operand operator&&(const Operand& other) const;
   Operand operator||(const Operand& other) const;
+
+  bool operator==(const astexpr_u_ptr&) const override;
+  bool operator!=(const astexpr_u_ptr&) const override;
+  bool cmp_eql(const astexpr_u_ptr&) const override;
   //--------------------------------------------------------- Overload math logic operator
   Operand operator!() const;
   //--------------------------------------------------------- 
@@ -276,6 +280,9 @@ operand_u_ptr operator()(T value) ;
 operand_u_ptr operator()(const astexpr_u_ptr& v) ;
 operand_u_ptr operator()(const astexpr_s_ptr& v) ;
 };
+
+
+
 
 extern Operand nil_operand;
 

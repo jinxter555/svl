@@ -66,6 +66,10 @@ public:
   bool add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite=false) override final;
   Operand& get_branch(const vector<string> &keys) override final;
   //-------------------------------------------
+  bool operator==(const astexpr_u_ptr &) const override;
+  bool cmp_eql(const astexpr_u_ptr &) const override;
+  bool operator!=(const astexpr_u_ptr &) const override;
+  //-------------------------------------------
   vector<string> _get_keys() const override final;
    s_integer _get_int()   const override final {return 0l; };
 
@@ -75,6 +79,8 @@ public:
   OperandType _get_type() const override;
 
   void print() const override;
+private:
+  //bool eql_cmp(const astexpr_u_ptr) const;
 };
 
 class Tuple : public AstList{

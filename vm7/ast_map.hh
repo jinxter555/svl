@@ -64,6 +64,10 @@ public:
   Operand& get_branch(const vector<string> &keys) override final;
   Operand& get_branch2(const vector<string> &keys) ;
   //-------------------------------------------
+  bool operator==(const astexpr_u_ptr&) const override;
+  bool operator!=(const astexpr_u_ptr&) const override;
+  bool cmp_eql(const astexpr_u_ptr&) const override;
+  //-------------------------------------------
   bool has_key(const Operand &k) const;
   bool has_key(const string &k) const ;
 
