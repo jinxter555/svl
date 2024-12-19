@@ -241,18 +241,9 @@ astexpr_u_ptr AstList::opfunc(astexpr_u_ptr other, AstOpCode op) {
 //--------------------------------------
 bool AstList::operator==(const astexpr_u_ptr &other_vptr ) const { 
   cout << "AstList::==()\n";
-  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
-  cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
-
-  if(other_vptr->_get_type()!= OperandType::list_t) return false;
-  s_integer s=size();
-  if(s != other_vptr->size()) return false;
-
-  for(s_integer i=0; i < s; i++ ) {
-    if(list_[i] != (*other_vptr)[i]) return false;
-  }
-  return true;
+  return cmp_eql(other_vptr);
 }
+
 bool AstList::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
   cout << "AstList::cmp_eql(astexpr_u_ptr)\n";
   cout << "*this: " << *this <<  " type: " << get_type() << "\n";
