@@ -201,7 +201,6 @@ Operand AstList::to_str() const {
 void AstList::print() const {
   //if(this==nullptr) return;
   cout << to_str();
-  cout << "I am a list!";
 }
 
 Operand AstList::get_type() const {
@@ -230,7 +229,7 @@ astexpr_u_ptr AstList::opfunc(astexpr_u_ptr other, AstOpCode op) {
   switch(op) {
   //case AstOpCode::eql:    return make_unique<Operand>( *this == move(other));
   case AstOpCode::eql:    return make_unique<Operand>( cmp_eql(other));
-  case AstOpCode::neql:   return make_unique<Operand>( *this != move(other));
+  case AstOpCode::neql:   return make_unique<Operand>( !cmp_eql(other));
   default:
     cerr << "AstList::opfunc, default error!\n";
     return nullptr;
@@ -246,8 +245,8 @@ bool AstList::operator==(const astexpr_u_ptr &other_vptr ) const {
 
 bool AstList::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
   cout << "AstList::cmp_eql(astexpr_u_ptr)\n";
-  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
-  cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
+  //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
 
 
   if(other_vptr->_get_type()!= OperandType::list_t) return false;
@@ -264,15 +263,7 @@ bool AstList::cmp_eql(const astexpr_u_ptr &other_vptr) const {
 
 bool AstList::operator!=(const astexpr_u_ptr &other_vptr) const { 
   cout << "AstList::!=()\n";
-
-  if(other_vptr->_get_type()!= OperandType::list_t) return true;
-  s_integer s=size();
-  if(s != other_vptr->size()) return true;
-
-  for(s_integer i=0; i < s; i++ ) {
-    if(list_[i] != (*other_vptr)[i]) return true;
-  }
-  return false;
+  return !cmp_eql(other_vptr);
 
 }
 
