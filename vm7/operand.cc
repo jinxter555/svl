@@ -539,6 +539,7 @@ Operand& OperandGetv_k::operator()(astexpr_u_ptr& v) { return v->getv(key_); }
 OperandGetv_k::OperandGetv_k(const Operand &k) : key_(k) {}
 
 //------------------------------------------ Operand opfunc
+/*
 astexpr_u_ptr Operand::opfunc(astexpr_u_ptr other, AstOpCode op) {
   MYLOGGER(trace_function
   , "Operand::opfunc()"
@@ -551,3 +552,4 @@ astexpr_u_ptr Operand::opfunc(astexpr_u_ptr other, AstOpCode op) {
 
   return make_unique<Operand>(opfunc(other->getv(), op));
 }
+*/

@@ -5,7 +5,6 @@
 #define DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-
 //-----------------------------------------------------------------------
 Operand Operand::operator+(const Operand& other) const {
   auto type_ = _get_type();
@@ -81,6 +80,7 @@ Operand Operand::operator/(const Operand& other) const {
 }
 
 bool Operand::operator==(const Operand& other) const {
+//bool Operand::operator==(const AstExpr& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
   std::cout << "operand==(operand&)\n";
   cout << "*this: " << *this <<  " type: " << get_type() << "\n";
@@ -109,22 +109,11 @@ bool Operand::operator==(const Operand& other) const {
     if(other.type_ == OperandType::nil_t) return true;
     return false;
   case OperandType::uptr_t:  {
-    //cout << "\ntype_ :uptr_t, ==\n";
-    auto &lv = get_u_ptr();
-    auto &rv = other.get_u_ptr();
-
-
-    //cout << "lv->gettype: " << lv->get_type() << " rv->gettype: " << rv->get_type() << "\n"; cout << lv << "==" << rv << "\n";
-
-    if(rv->_get_type() == OperandType::uptr_t || rv->_get_type() == OperandType::list_t 
-    || rv->_get_type() == OperandType::tuple_t || rv->_get_type() == OperandType::map_t)  {
-      return lv->cmp_eql(rv);
-    }
-    if(lv->_get_type() == rv->_get_type() ) {
-      return lv->getv() ==  rv->getv();
-      //return lv->cmp_eql(rv);
-    }
-    else return false;
+    cout << "==? uptr_t";
+    Operand &a = get_u_ptr()->getv();
+    Operand &b = other.get_u_ptr()->getv();
+    if(b==nil_operand) return a == other;
+    return a == b;
   }
   case OperandType::list_t: {
     cout << "OperandType::list ==\n";
@@ -256,7 +245,8 @@ Operand Operand::operator||(const Operand& other) const {
   }
 }
 
-Operand Operand::opfunc(const Operand& other, AstOpCode op) {
+Operand Operand::opfunc(const AstExpr& v, AstOpCode op) {
+  Operand other(v.clone_val());
   
   // if(type_ != other.type_) throw std::runtime_error("Unsupported operation > for unequal types"); 
 
@@ -281,37 +271,37 @@ Operand Operand::opfunc(const Operand& other, AstOpCode op) {
 
 
 
-/*
-struct OperandCmpEql {
-   template <typename T, typename U> bool operator()(const T a, T b) const { return a == b; };
-  template <typename T, typename U> bool operator()(const T a, U b) const { return false; }
-  bool operator()(const astexpr_u_ptr &a, astexpr_u_ptr &b) { 
-    return true;
 
-  };
-};
-*/
-
-bool Operand::operator==(const astexpr_u_ptr &other_vptr) const { 
+bool Operand::operator==(const AstExpr &other) const { 
   //visit(OperandCmpEql(), value_, other_vptr->value_);
   cout << "Operand::==(astexpr_u_ptr)\n";
-  return cmp_eql(other_vptr);
+  return cmp_eql(other);
 }
-bool Operand::operator!=(const astexpr_u_ptr &other_vptr) const { 
+bool Operand::operator!=(const AstExpr &other) const { 
   cout << "Operand::!=(astexpr_u_ptr)\n";
-  return !cmp_eql(other_vptr);
+  return !cmp_eql(other);
 }
-bool Operand::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
-  cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
-  if(
-    type_ == OperandType::uptr_t ||
-    type_ == OperandType::sptr_t
-  ) {
-    cout << to_str() << " == " << other_vptr << "," << "ptr == ptr?\n";
-    return get_u_ptr()->cmp_eql(other_vptr);
-  }
-  cout << "not [.]ptr_t: type: " << get_type() << "\n";
-  cout << "Operand(type_): " << Operand(type_) << "\n";
-    return false;
 
+
+
+bool Operand::cmp_eql(const AstExpr&other) const { 
+  cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
+  if(type_ == OperandType::uptr_t 
+  || type_ == OperandType::sptr_t
+  || type_ == OperandType::ptr_t) {
+    return get_u_ptr()->cmp_eql(other);
+  }
+  return *this == other;
+
+}
+//---
+template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {return false;};
+template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { return a==b;};
+template <typename T> bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const T& b){ 
+  //return a->cmp_eql(b);
+  return false;
+}
+bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b ){ 
+  cout << "uptr == uptr?\n";
+  return a->getv() == b->getv();
 }

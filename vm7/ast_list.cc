@@ -222,47 +222,47 @@ Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
   return result_list;
 }
 
-astexpr_u_ptr AstList::opfunc(astexpr_u_ptr other, AstOpCode op) {
+Operand AstList::opfunc(const AstExpr& other, AstOpCode op) {
   cout << "AstList::opfunc()!\n";
   print(); cout << " " << Operand(op) << " " <<  other <<"\n";
   //return make_unique<Operand>( eql_cmp(move(other)));
   switch(op) {
   //case AstOpCode::eql:    return make_unique<Operand>( *this == move(other));
-  case AstOpCode::eql:    return make_unique<Operand>( cmp_eql(other));
-  case AstOpCode::neql:   return make_unique<Operand>( !cmp_eql(other));
+  case AstOpCode::eql:    return  cmp_eql(other);
+  case AstOpCode::neql:   return  !cmp_eql(other);
   default:
     cerr << "AstList::opfunc, default error!\n";
-    return nullptr;
+    return Operand();
   }
 }
 
 
 //--------------------------------------
-bool AstList::operator==(const astexpr_u_ptr &other_vptr ) const { 
+bool AstList::operator==(const AstExpr &other) const { 
   cout << "AstList::==()\n";
-  return cmp_eql(other_vptr);
+  return cmp_eql(other);
 }
 
-bool AstList::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
+bool AstList::cmp_eql(const AstExpr &other) const { 
   cout << "AstList::cmp_eql(astexpr_u_ptr)\n";
   //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
 
-  if(other_vptr->_get_type()!= OperandType::list_t) return false;
+  if(other._get_type()!= OperandType::list_t) return false;
   s_integer s=size();
-  if(s != other_vptr->size()) return false;
+  if(s != other.size()) return false;
 
   for(s_integer i=0; i < s; i++ ) {
     //cout << list_[i] << "==" << (*other_vptr)[i] << "\n";
-    if(list_[i] == (*other_vptr)[i]) continue;
+    if(list_[i] == other[i]) continue;
     else return false;
   }
   return true;
 }
 
-bool AstList::operator!=(const astexpr_u_ptr &other_vptr) const { 
+bool AstList::operator!=(const AstExpr &other) const { 
   cout << "AstList::!=()\n";
-  return !cmp_eql(other_vptr);
+  return !cmp_eql(other);
 
 }
 
@@ -328,41 +328,44 @@ astexpr_u_ptr Tuple::clone_usu() {
 }
 //--------------------------------------
 bool Tuple::operator==(const Tuple&other) const { 
-  MYLOGGER(trace_function , "Tuple::==()" , __func__);
+  MYLOGGER(trace_function , "Tuple::==(Tuple&)" , __func__);
   cout << "Tuple::==()\n";
-  return cmp_eql(other.get_u_ptr());
+  Operand other_tuple = other.clone();
+  return cmp_eql(other_tuple);
 }
 
-bool Tuple::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
-  MYLOGGER(trace_function , "Tuple::cmp_eql()" ,__func__);
+bool Tuple::cmp_eql(const AstExpr &v) const {
+  MYLOGGER(trace_function , "Tuple::cmp_eql(Operand&)" ,__func__);
   cout << "Tuple::cmp_eql(astexpr_u_ptr)\n";
 
-  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
-  cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
+  Operand other = v.clone();
 
-  if(other_vptr->_get_type()!= OperandType::tuple_t) return false;
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other<< " other type: " << other.get_type() << "\n\n";
+
+  if(other._get_type()!= OperandType::tuple_t) return false;
   s_integer s=size();
-  if(s != other_vptr->size()) return false;
+  if(s != other.size()) return false;
 
   for(s_integer i=0; i < s; i++ ) {
-    cout << list_[i] << "==" << (*other_vptr)[i] << "\n";
-    cout << list_[i].get_type() << "==" << (*other_vptr)[i].get_type() << "\n";
-    if(list_[i] == (*other_vptr)[i]) continue;
+    cout << list_[i] << "==" << other[i] << "\n";
+    cout << list_[i].get_type() << "==" << other[i].get_type() << "\n";
+    if(list_[i] == other[i]) continue;
     else return false;
   }
   return true;
 }
 
-astexpr_u_ptr Tuple::opfunc(astexpr_u_ptr other, AstOpCode op) {
+Operand Tuple::opfunc(const AstExpr& other, AstOpCode op) {
   MYLOGGER(trace_function , "Tuple::opfunc()" ,__func__);
 
   cout << "Tuple::opfunc()!\n";
   print(); cout << " " << Operand(op) << " " <<  other <<"\n";
   switch(op) {
-  case AstOpCode::eql:    return make_unique<Operand>( cmp_eql(other));
-  case AstOpCode::neql:   return make_unique<Operand>( !cmp_eql(other));
+  case AstOpCode::eql:    return cmp_eql(other);
+  case AstOpCode::neql:   return !cmp_eql(other);
   default:
     cerr << "AstList::opfunc, default error!\n";
-    return nullptr;
+    return Operand();
   }
 }

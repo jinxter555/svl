@@ -4,6 +4,8 @@ module Main do
   def main() do
     print "in main\n"
     $a = [1,2,3]
+    $x = 1
+    $y = 1
     # $b = $a
 
     print  "\n"

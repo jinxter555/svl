@@ -15,7 +15,7 @@ public:
   AstExpr(const OperandType);
   //virtual Operand evaluate(astexpr_u_ptr& ast_ctxt) = 0;
   virtual Operand evaluate(astexpr_u_ptr& ast_ctxt) = 0;
-  virtual astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) =0;
+  virtual Operand opfunc(const AstExpr&, AstOpCode op) =0;
   
 
   virtual bool add(const AstExpr &v) =0;  // for list
@@ -56,9 +56,9 @@ public:
   virtual AstExpr *get_raw_ptr() const=0;
 
   //-------------------------------------------
-  virtual bool operator==(const astexpr_u_ptr&) const=0;
-  virtual bool operator!=(const astexpr_u_ptr&) const=0;
-  virtual bool cmp_eql(const astexpr_u_ptr&) const=0;
+  virtual bool operator==(const AstExpr&) const=0;
+  virtual bool operator!=(const AstExpr&) const=0;
+  virtual bool cmp_eql(const AstExpr&) const=0;
   //-------------------------------------------
   //virtual Operand& get_branch(const Operand&k) =0 ;
   //virtual bool add_branch(const Operand&k, const AstExpr& e, bool overwrite=false)=0;

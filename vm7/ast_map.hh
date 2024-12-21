@@ -17,7 +17,7 @@ public:
   Operand clone_val() const override final;
 
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
-  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
+  Operand opfunc(const AstExpr&, AstOpCode op) override final;
 
   Operand& getv()  override ;
   Operand& getv(const Operand &k)  override final ;
@@ -64,9 +64,9 @@ public:
   Operand& get_branch(const vector<string> &keys) override final;
   Operand& get_branch2(const vector<string> &keys) ;
   //-------------------------------------------
-  bool operator==(const astexpr_u_ptr&) const override;
-  bool operator!=(const astexpr_u_ptr&) const override;
-  bool cmp_eql(const astexpr_u_ptr&) const override;
+  bool operator==(const AstExpr&) const override;
+  bool operator!=(const AstExpr&) const override;
+  bool cmp_eql(const AstExpr &) const override;
   //-------------------------------------------
   bool has_key(const Operand &k) const;
   bool has_key(const string &k) const ;

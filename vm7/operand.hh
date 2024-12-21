@@ -111,14 +111,13 @@ public:
   Operand operator&&(const Operand& other) const;
   Operand operator||(const Operand& other) const;
 
-  bool operator==(const astexpr_u_ptr&) const override;
-  bool operator!=(const astexpr_u_ptr&) const override;
-  bool cmp_eql(const astexpr_u_ptr&) const override;
+  bool operator==(const AstExpr&) const override;
+  bool operator!=(const AstExpr&) const override;
+  bool cmp_eql(const AstExpr&) const override;
   //--------------------------------------------------------- Overload math logic operator
   Operand operator!() const;
   //--------------------------------------------------------- 
-  Operand opfunc(const Operand& other, AstOpCode op) ;
-  astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
+  Operand opfunc(const AstExpr&, AstOpCode op) override final;
   //--------------------------------------------------------- 
 
   //-------------------------------------------
@@ -283,13 +282,16 @@ operand_u_ptr operator()(const astexpr_s_ptr& v) ;
 };
 
 struct OperandCmpEql{
-template <typename T, typename U> 
-bool operator()(const T &a, const U &b) { return false; };
-template <typename T> 
-bool operator()(const T &a, const T &b) { return a==b; };
-bool operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b) { return a->get_u_ptr()->cmp_eql(b); } ;
-bool operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b) { return a->get_u_ptr()->cmp_eql(b->get_u_ptr()); };
+template <typename T, typename U> bool operator()(const T &a, const U &b) ;
+template <typename T> bool operator()(const T &a, const T &b) ;
 
+template <typename T> bool operator()(const astexpr_u_ptr& a, const T& b);
+
+//bool operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b);
+bool operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b);
+/*
+bool operator()(const astexpr_ptr& a, const astexpr_s_ptr& b) { return a->get_u_ptr()->cmp_eql(b->get_u_ptr()); };
+*/
 };
 
 

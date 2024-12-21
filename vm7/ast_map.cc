@@ -232,26 +232,6 @@ Operand& AstMap::get_branch(const vector<string> &keys) {
 
 
 
-Operand& AstMap::get_branch2(const vector<string> &keys) {
-  int i=0, s = keys.size();  
-  string k; AstMap *curr=this, *next;
-
-  if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
-  for(int i=0; i<s-1; i++) {
-    k = keys[i];  //cout << "keys[" << i<< "]: " << keys[i] << "\n";
-    next = (AstMap*) curr->get_raw_ptr(k);
-    if(curr==nullptr || curr->type_ != OperandType::map_t)  return nil_operand;
-    curr = next;
-  }
-
-  if(curr==nullptr) {
-    //cerr << "curr is null!\n";
-    return nil_operand;
-  } else
-    return curr->getv(keys.back());
-}
-
-
 
 
 
@@ -338,19 +318,19 @@ vector<string> AstMap::_get_keys() const {
   return key_list;
 }
 
-astexpr_u_ptr AstMap::opfunc(astexpr_u_ptr other, AstOpCode op) {
+Operand AstMap::opfunc(const AstExpr &other, AstOpCode op) {
   cerr << "AstList::opfunc, I shouldn't be here!\n";
-  return nullptr;
+  return Operand();
 }
-bool AstMap::operator==(const astexpr_u_ptr &other_vptr) const { 
+bool AstMap::operator==(const AstExpr &other) const { 
   cout << "AstMap::==(astexpr_u_ptr)\n";
   return true; 
 }
-bool AstMap::operator!=(const astexpr_u_ptr &other_vptr) const { 
+bool AstMap::operator!=(const AstExpr &other) const { 
   cout << "AstMap::==(astexpr_u_ptr)\n";
   return false; }
 
-bool AstMap::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
+bool AstMap::cmp_eql(const AstExpr &other) const { 
   cout << "AstMap::cmp_eql(astexpr_u_ptr)\n";
   return true; 
 }
