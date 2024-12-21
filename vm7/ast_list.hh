@@ -17,7 +17,7 @@ public:
   Operand clone_val() const override final;
   //-------------------------------------------
 
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
   astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override ;
 
   Operand& getv()  override final ;
@@ -93,7 +93,7 @@ public:
   bool operator!=(const Tuple& other) const;
   astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
 
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
 
   astexpr_u_ptr clone() const override; 
   astexpr_u_ptr clone_usu() override;

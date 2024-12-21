@@ -143,8 +143,8 @@ using astexpr_ptr = AstExpr *;
 using svlm_ast_ptr = SvlmAst *;
 //--------------------------------------------------------- 
 using OperandVariant=std::variant
-< Nil
-, bool, string, Number
+< //Nil,
+ bool, string, Number
 , ControlFlow
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType

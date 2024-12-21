@@ -48,7 +48,7 @@ public:
   Operand clone_val() const;
   astexpr_u_ptr clone() const override; 
 
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override final;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const;
   Number _get_number() const ;
@@ -86,6 +86,7 @@ public:
 
   const astexpr_u_ptr& get_u_ptr() const override;
   astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
+  const astexpr_u_ptr& get_u_ptr_node() const ; // get  last uptr node 
 
   svlm_ast_ptr get_svlm_ptr();
 
@@ -166,10 +167,10 @@ struct OperandEvaluate {
 astexpr_u_ptr &ctxt;
 OperandEvaluate(astexpr_u_ptr&c);
 template <typename T> 
-astexpr_u_ptr operator()(T v) const ;
-astexpr_u_ptr operator()(astexpr_ptr v) ;
-astexpr_u_ptr operator()(astexpr_u_ptr& v) ;
-astexpr_u_ptr operator()(astexpr_s_ptr& v) ;
+Operand operator()(T v) const ;
+Operand operator()(astexpr_ptr v) ;
+Operand operator()(astexpr_u_ptr& v) ;
+Operand operator()(astexpr_s_ptr& v) ;
 };
 
 
@@ -280,6 +281,17 @@ operand_u_ptr operator()(T value) ;
 operand_u_ptr operator()(const astexpr_u_ptr& v) ;
 operand_u_ptr operator()(const astexpr_s_ptr& v) ;
 };
+
+struct OperandCmpEql{
+template <typename T, typename U> 
+bool operator()(const T &a, const U &b) { return false; };
+template <typename T> 
+bool operator()(const T &a, const T &b) { return a==b; };
+bool operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b) { return a->get_u_ptr()->cmp_eql(b); } ;
+bool operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b) { return a->get_u_ptr()->cmp_eql(b->get_u_ptr()); };
+
+};
+
 
 
 

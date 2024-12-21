@@ -34,7 +34,7 @@ astexpr_u_ptr AstMap::clone_usu() {
 }
 //--------------------------------------
 
-astexpr_u_ptr AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
+Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
   return clone();
 }
 //--------------------------------------

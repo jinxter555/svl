@@ -16,7 +16,7 @@ public:
   astexpr_u_ptr clone_usu() override;
   Operand clone_val() const override final;
 
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) override ;
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
   astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) override final;
 
   Operand& getv()  override ;

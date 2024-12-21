@@ -14,7 +14,7 @@ public:
   AstExpr();
   AstExpr(const OperandType);
   //virtual Operand evaluate(astexpr_u_ptr& ast_ctxt) = 0;
-  virtual astexpr_u_ptr evaluate(astexpr_u_ptr& ast_ctxt) = 0;
+  virtual Operand evaluate(astexpr_u_ptr& ast_ctxt) = 0;
   virtual astexpr_u_ptr opfunc(astexpr_u_ptr other, AstOpCode op) =0;
   
 

@@ -6,8 +6,7 @@ core_o := $(wildcard ../ast_list.o ../ast_map.o ../ast.o ../my_helpers.o ../numb
 #core_o := $(wildcard ../ast_list.o ../ast_map.o ../ast.o ../commandline.o ../my_helpers.o ../number.o ../operand_math.o ../operand.o ../operand_tostr.o ../operand_visitors.o ../prompt.o ../que_node.o ../scope_logger.o ../svlm_ast.o ../svlm_interactive.o ../svlm_parser.o ../svlm_scanner.o)
 
 
-# all: t_operand_01.out t_list_01.out  t_list_02.out  t_map_01.out t_map_02.out t_map_03.out  t_map_04.out t_quenode_01.out t_quenode_02.out
-all: # t_nil_01.out  t_operand_01.out   t_operand_usu_01.out t_list_01.out   # t_list_02.out  t_list_03.out   t_map_01.out t_map_02.out t_map_03.out  t_map_04.out t_quenode_01.out t_quenode_02.out
+all:  t_nil_01.out  t_operand_01.out   # t_operand_usu_01.out t_list_01.out   # t_list_02.out  t_list_03.out   t_map_01.out t_map_02.out t_map_03.out  t_map_04.out t_quenode_01.out t_quenode_02.out
 #all: $(objects)
 CCFLAG = -lreadline
 

@@ -35,7 +35,7 @@ public:
   OperandType _get_type() const override { return OperandType::nil_t;};
   void print() const override {};
   void run_evaluate();
-  astexpr_u_ptr evaluate_last_line();
+  Operand evaluate_last_line();
 };  
 
 
@@ -47,7 +47,7 @@ public:
   AstBinOp (unique_ptr<AstExpr> l, unique_ptr<AstExpr> r, AstOpCode op);
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   Operand& getv()  override { 
     cout << "bin op getv()!\n"; 
     return AstMap::getv();
@@ -67,7 +67,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
 };
 
@@ -80,7 +80,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
 };
 
@@ -93,7 +93,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
   //string get_current_module(astexpr_u_ptr& ctxt) ; // get current module from frame only
   string get_module() ; // if $module.var return module , if $var, return current_module
@@ -113,7 +113,7 @@ public:
   AstAssign(OperandType t, OperandType s=OperandType::scalar_t) : type_(t), scale_(s) {}
   virtual string name() = 0;
   //virtual void assign(astexpr_u_ptr&, Operand& ) = 0;
-  virtual bool assign(astexpr_u_ptr&, astexpr_u_ptr ) = 0;
+  virtual bool assign(astexpr_u_ptr&, Operand& ) = 0;
   s_integer get_index_i(astexpr_u_ptr&) ;
   string get_index_s(astexpr_u_ptr&) ;
 };
@@ -131,9 +131,9 @@ public:
   Operand get_type() const override ;
   Operand get_scale() {return scale_; };
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   Operand& getv() override;
-  bool assign(astexpr_u_ptr& ctxt, astexpr_u_ptr) override final;
+  bool assign(astexpr_u_ptr& ctxt, Operand& ) override final;
   void print() const override;
   astexpr_u_ptr clone() const override; 
 };
@@ -148,8 +148,8 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
-  bool assign(astexpr_u_ptr& ctxt, astexpr_u_ptr) override final;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
+  bool assign(astexpr_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
 class AstTuple : public AstAssign {
@@ -161,8 +161,8 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
-  bool assign(astexpr_u_ptr& ctxt, astexpr_u_ptr) override final;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
+  bool assign(astexpr_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 
   astexpr_u_ptr clone() const override; 
@@ -178,6 +178,6 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  astexpr_u_ptr evaluate(astexpr_u_ptr& ctxt) override;
+  Operand evaluate(astexpr_u_ptr& ctxt) override;
   void print() const override;
 };

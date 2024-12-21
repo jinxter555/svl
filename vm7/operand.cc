@@ -18,11 +18,11 @@ const string Operand::nil_str=string("nil");
   
 Operand::Operand() 
   : AstExpr(OperandType::nil_t)
-  , value_(nil) {}
+  , value_(OperandType::nil_t) {}
 
 Operand::Operand(const Nil& n) 
   : AstExpr(OperandType::nil_t)
-  , value_(nil) {}
+  , value_(OperandType::nil_t) {}
 Operand::Operand(bool v)
   : AstExpr(OperandType::bool_t)
   , value_(v) {}
@@ -83,7 +83,7 @@ Operand::Operand(astexpr_s_ptr& vptr) : value_(vptr), AstExpr(OperandType::sptr_
 Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) { 
   if(vptr==nullptr) {
     type_ = OperandType::nil_t;
-    value_ = nil;
+    value_ = OperandType::nil_t;
   } else {
     type_ = vptr->type_;
     value_= vptr->clone(); 
@@ -93,7 +93,7 @@ Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) {
 Operand::Operand(astexpr_u_ptr &&vptr) { 
   if(vptr==nullptr) {
     type_ = OperandType::nil_t;
-    value_ = nil;
+    value_ = OperandType::nil_t;
   } else {
     //type_ = vptr->type_;
     //cout << "memory clone addr!" << *vptr << "\n";
@@ -130,7 +130,7 @@ unique_ptr<AstExpr> Operand::clone() const {
 }
 
 
-astexpr_u_ptr Operand::evaluate(astexpr_u_ptr& ctxt) {
+Operand Operand::evaluate(astexpr_u_ptr& ctxt) {
   /*
   auto &ptr = get_u_ptr();
   if(ptr==nullptr) return clone();
@@ -375,6 +375,14 @@ astexpr_u_ptr& Operand::get_u_ptr_nc() {
   return const_cast<astexpr_u_ptr&>(as_const(this->get_u_ptr())); 
 }
 
+//--- get last uptr node ------------------
+const astexpr_u_ptr& Operand::get_u_ptr_node() const {
+  auto &vptr =  get_u_ptr();
+  //while(vptr>)
+  return nil_ast_ptr;
+
+} 
+
 //-------------------
 astexpr_s_ptr Operand::get_s_ptr() {
   return visit(OperandSPtr(), value_);
@@ -383,6 +391,8 @@ astexpr_u_ptr Operand::clone_usu() {
   return visit(OperandUsu(), value_);
   //return nullptr;
 }
+
+
 
 //-----------------------------------------------------------------------
 Operand& Operand::front() {
@@ -407,11 +417,11 @@ Operand& Operand::back() {
 template <typename T>
 OperandVariant OperandValue::operator()(T v) const { return v; }
 OperandVariant OperandValue::operator()(const astexpr_u_ptr& vptr) const { 
-  if(vptr==nullptr) return nil;
+  if(vptr==nullptr) return OperandType::nil_t;
   return vptr->clone(); 
 }
 OperandVariant OperandValue::operator()(const astexpr_s_ptr& vptr) const { 
-  if(vptr==nullptr) return nil;
+  if(vptr==nullptr) return OperandType::nil_t;
   return vptr;
 }
 //-----------------------------------------------------------------------
@@ -427,10 +437,10 @@ operand_u_ptr OperandClone::operator()(const astexpr_s_ptr& vptr) const { return
 
 //------------------------------------------ Operand Evaluate
 template <typename T> 
-astexpr_u_ptr OperandEvaluate::operator()(T v) const { return make_unique<Operand>(v); }
-astexpr_u_ptr OperandEvaluate::operator()(astexpr_ptr vptr) { return vptr->evaluate(ctxt); }
-astexpr_u_ptr OperandEvaluate::operator()(astexpr_s_ptr& vptr) { return vptr->evaluate(ctxt); }
-astexpr_u_ptr OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
+Operand OperandEvaluate::operator()(T v) const { return v; }
+Operand OperandEvaluate::operator()(astexpr_ptr vptr) { return vptr->evaluate(ctxt); }
+Operand OperandEvaluate::operator()(astexpr_s_ptr& vptr) { return vptr->evaluate(ctxt); }
+Operand OperandEvaluate::operator()(astexpr_u_ptr& vptr) { return vptr->evaluate(ctxt); }
 OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
 
 

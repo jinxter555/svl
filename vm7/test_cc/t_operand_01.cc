@@ -18,6 +18,8 @@ int main() {
   Operand v1 = 111l;
 
   Operand v2 = "hello";
+  Operand v3;
+
 
   Operand &r_v1 = v1.getv();
   Operand v1_b = v1.clone();

@@ -2,6 +2,9 @@
 //#include "entity.hh"
 #include "ast.hh"
 
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 
 //-----------------------------------------------------------------------
 Operand Operand::operator+(const Operand& other) const {
@@ -78,9 +81,13 @@ Operand Operand::operator/(const Operand& other) const {
 }
 
 bool Operand::operator==(const Operand& other) const {
-  //std::cout << "operand==(operand&)\n";
-  //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
-  //cout << "other: " << other << " other type: " << other.get_type() << "\n";
+  MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
+  std::cout << "operand==(operand&)\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other << " other type: " << other.get_type() << "\n";
+
+
+  return visit(OperandCmpEql{}, value_, other.value_);
 
   //auto type_ = _get_type(); auto other_type_ = other._get_type();
   if(type_ != other._get_type()) {
@@ -105,19 +112,19 @@ bool Operand::operator==(const Operand& other) const {
     //cout << "\ntype_ :uptr_t, ==\n";
     auto &lv = get_u_ptr();
     auto &rv = other.get_u_ptr();
-    //cout << "lv->gettype: " << lv->get_type() << " rv->gettype: " << rv->get_type() << "\n";
-    //cout << lv << "==" << rv << "\n";
 
-    if(rv->_get_type() == OperandType::uptr_t
-    || rv->_get_type() == OperandType::list_t 
-    || rv->_get_type() == OperandType::tuple_t
-    || rv->_get_type() == OperandType::map_t)  {
-//      lv->print();
-//      rv->print();
-      //cout << "lv==rv\n";
+
+    //cout << "lv->gettype: " << lv->get_type() << " rv->gettype: " << rv->get_type() << "\n"; cout << lv << "==" << rv << "\n";
+
+    if(rv->_get_type() == OperandType::uptr_t || rv->_get_type() == OperandType::list_t 
+    || rv->_get_type() == OperandType::tuple_t || rv->_get_type() == OperandType::map_t)  {
       return lv->cmp_eql(rv);
     }
-    return lv->getv() ==  rv->getv();
+    if(lv->_get_type() == rv->_get_type() ) {
+      return lv->getv() ==  rv->getv();
+      //return lv->cmp_eql(rv);
+    }
+    else return false;
   }
   case OperandType::list_t: {
     cout << "OperandType::list ==\n";
@@ -274,6 +281,7 @@ Operand Operand::opfunc(const Operand& other, AstOpCode op) {
 
 
 
+/*
 struct OperandCmpEql {
    template <typename T, typename U> bool operator()(const T a, T b) const { return a == b; };
   template <typename T, typename U> bool operator()(const T a, U b) const { return false; }
@@ -282,6 +290,7 @@ struct OperandCmpEql {
 
   };
 };
+*/
 
 bool Operand::operator==(const astexpr_u_ptr &other_vptr) const { 
   //visit(OperandCmpEql(), value_, other_vptr->value_);
@@ -294,6 +303,15 @@ bool Operand::operator!=(const astexpr_u_ptr &other_vptr) const {
 }
 bool Operand::cmp_eql(const astexpr_u_ptr &other_vptr) const { 
   cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
-  if(type_ != OperandType::uptr_t)  return false;
-  return get_u_ptr() == other_vptr;
+  if(
+    type_ == OperandType::uptr_t ||
+    type_ == OperandType::sptr_t
+  ) {
+    cout << to_str() << " == " << other_vptr << "," << "ptr == ptr?\n";
+    return get_u_ptr()->cmp_eql(other_vptr);
+  }
+  cout << "not [.]ptr_t: type: " << get_type() << "\n";
+  cout << "Operand(type_): " << Operand(type_) << "\n";
+    return false;
+
 }

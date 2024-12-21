@@ -5,6 +5,15 @@ module Main do
     print "in main\n"
     $n = 555
     $a = {1,2,3+7*3, $n, "hello"}
+    $t1 = {1,{2,3}}
+    {1, $d} = {1,{2,3,4}}
+    $t = $d
+    print {1,$d} == $t1
+
+
+
+
+
     # $b = $a2
 
     print  "\n"

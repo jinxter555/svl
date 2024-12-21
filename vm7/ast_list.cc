@@ -211,9 +211,9 @@ OperandType AstList::_get_type() const {
   return OperandType::list_t;
 };
 
-astexpr_u_ptr AstList::evaluate(astexpr_u_ptr &ctxt) {
+Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
+  MYLOGGER(trace_function , "AstList::evaluate()" ,__func__);
   int i, s = size();
-  //list_u_ptr result_list = make_unique<AstList>();
   astexpr_u_ptr result_list = make_unique<AstList>();
   //cout << "in list eval!\n";
   for(i=0; i<s; i++) {
@@ -253,7 +253,7 @@ bool AstList::cmp_eql(const astexpr_u_ptr &other_vptr) const {
   if(s != other_vptr->size()) return false;
 
   for(s_integer i=0; i < s; i++ ) {
-    //cout << list_[i] << "!=" << (*other_vptr)[i] << "\n";
+    //cout << list_[i] << "==" << (*other_vptr)[i] << "\n";
     if(list_[i] == (*other_vptr)[i]) continue;
     else return false;
   }
@@ -298,7 +298,7 @@ OperandType Tuple::_get_type() const {
 void Tuple::print() const {
   cout <<  to_str();
 }
-astexpr_u_ptr Tuple::evaluate(astexpr_u_ptr &ctxt) {
+Operand Tuple::evaluate(astexpr_u_ptr &ctxt) {
   MYLOGGER(trace_function , "Tuple::evalaute()" ,__func__);
 
   int i, s = size();
@@ -337,15 +337,16 @@ bool Tuple::cmp_eql(const astexpr_u_ptr &other_vptr) const {
   MYLOGGER(trace_function , "Tuple::cmp_eql()" ,__func__);
   cout << "Tuple::cmp_eql(astexpr_u_ptr)\n";
 
-  //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
-  //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
 
   if(other_vptr->_get_type()!= OperandType::tuple_t) return false;
   s_integer s=size();
   if(s != other_vptr->size()) return false;
 
   for(s_integer i=0; i < s; i++ ) {
-    //cout << list_[i] << "!=" << (*other_vptr)[i] << "\n";
+    cout << list_[i] << "==" << (*other_vptr)[i] << "\n";
+    cout << list_[i].get_type() << "==" << (*other_vptr)[i].get_type() << "\n";
     if(list_[i] == (*other_vptr)[i]) continue;
     else return false;
   }
