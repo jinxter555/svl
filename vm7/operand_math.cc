@@ -1,3 +1,4 @@
+#include "lang.hh"
 #include "operand.hh"
 //#include "entity.hh"
 #include "ast.hh"
@@ -80,19 +81,20 @@ Operand Operand::operator/(const Operand& other) const {
 }
 
 bool Operand::operator==(const Operand& other) const {
-//bool Operand::operator==(const AstExpr& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
+
+/*
   std::cout << "operand==(operand&)\n";
   cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   cout << "other: " << other << " other type: " << other.get_type() << "\n";
+  cout << "getv(): " << getv() << "\n";
+  cout << "other.getv(): " << other.getv() << "\n";
+*/
 
-
-  return visit(OperandCmpEql{}, value_, other.value_);
-
-  //auto type_ = _get_type(); auto other_type_ = other._get_type();
   if(type_ != other._get_type()) {
-    //throw std::runtime_error("Unsupported operation == for unequal types"); 
-    return false;
+    if(other._get_type()==OperandType::nil_t) return false;
+    if(_get_type()==OperandType::nil_t) return false;
+    return Operand(_get_value()) == Operand(other._get_value());
   }
   
   switch(type_) {
@@ -104,16 +106,9 @@ bool Operand::operator==(const Operand& other) const {
     return get<OperandType>(value_) == get<OperandType>(other.value_);
   case OperandType::str_t: 
     return get<std::string>(value_) == get<std::string>(other.value_);
-  case OperandType::nil_t: 
-    //if( holds_alternative<Nil>(value_) && holds_alternative<Nil>(other.value_)) return true;
+  case OperandType::nil_t: {
     if(other.type_ == OperandType::nil_t) return true;
     return false;
-  case OperandType::uptr_t:  {
-    cout << "==? uptr_t";
-    Operand &a = get_u_ptr()->getv();
-    Operand &b = other.get_u_ptr()->getv();
-    if(b==nil_operand) return a == other;
-    return a == b;
   }
   case OperandType::list_t: {
     cout << "OperandType::list ==\n";
@@ -283,9 +278,16 @@ bool Operand::operator!=(const AstExpr &other) const {
 }
 
 
+//bool Operand::cmp_eql(const OperandVariant&ov) const { return value_ == ov; }
+
 
 bool Operand::cmp_eql(const AstExpr&other) const { 
   cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other << " other type: " << other.get_type() << "\n";
+  if(_get_type() == OperandType::nil_t && other._get_type() == OperandType::nil_t) 
+    return true;
+
   if(type_ == OperandType::uptr_t 
   || type_ == OperandType::sptr_t
   || type_ == OperandType::ptr_t) {
@@ -294,14 +296,40 @@ bool Operand::cmp_eql(const AstExpr&other) const {
   return *this == other;
 
 }
-//---
-template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {return false;};
-template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { return a==b;};
-template <typename T> bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const T& b){ 
-  //return a->cmp_eql(b);
+//--------------
+template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {
+  cout << "T == U?\n";
   return false;
+};
+template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { 
+  cout << "T == T?\n";
+  return a==b;
+};
+//bool OperandCmpEql::operator()(const Nil& a, const Nil& b){ cout << "nil== nil\n"; return true; }
+bool OperandCmpEql::operator()(const Nil a, const Nil b){ cout << "nil== nil\n"; return true; }
+
+
+template <typename T> bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const T& b){ 
+  cout << "uptr == Operand(T)?\n";
+  //return visit(OperandCmpEql{}, a->_get_value() , b);
+  //return visit(OperandCmpEql{}, a->_get_value() , b);
+  return a->cmp_eql(Operand(b));
+  //return false;
 }
+bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const Number& b){
+  cout << "uptr == Number?\n";
+  return a->cmp_eql(Operand(b));
+}
+
 bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b ){ 
   cout << "uptr == uptr?\n";
   return a->getv() == b->getv();
+}
+bool OperandCmpEql::operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b ){ 
+  cout << "sptr == sptr?\n";
+  return false;
+}
+bool OperandCmpEql::operator()(const astexpr_ptr& a, const astexpr_ptr& b){
+  cout << "ptr == ptr?\n";
+  return false;
 }

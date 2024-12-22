@@ -1,6 +1,7 @@
 #ifndef _OPERAND_HH_
 #define _OPERAND_HH_
 #pragma once
+#include "lang.hh"
 #include "ast.hh"
 #include "number.hh"
 
@@ -50,7 +51,7 @@ public:
 
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
-  OperandVariant _get_value() const;
+  OperandVariant _get_value() const override;
   Number _get_number() const ;
   s_integer _get_int() const override final ;
   s_float _get_float() const ;
@@ -102,6 +103,7 @@ public:
   Operand operator/(const Operand& other) const;
   //--------------------------------------------------------- Overload math equality operator
   bool operator==(const Operand& other) const;
+  //bool operator==(const Nil& other) const;
   bool operator!=(const Operand& other) const;
   bool operator>=(const Operand& other) const;
   bool operator<=(const Operand& other) const;
@@ -114,6 +116,7 @@ public:
   bool operator==(const AstExpr&) const override;
   bool operator!=(const AstExpr&) const override;
   bool cmp_eql(const AstExpr&) const override;
+  //bool cmp_eql(const OperandVariant&) const override;
   //--------------------------------------------------------- Overload math logic operator
   Operand operator!() const;
   //--------------------------------------------------------- 
@@ -134,7 +137,8 @@ public:
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
-  Operand& getv()  override final ;
+  const Operand& getv() const override final ;
+  //Operand& getv_nc() override final ;
   Operand& getv(const Operand &k)  override final ;
 
   Operand& back()  override final ;
@@ -254,13 +258,13 @@ bool operator()(astexpr_s_ptr& v) ;
 
 // get value
 struct OperandGetv {
-Operand &value_;
-OperandGetv(Operand&v);
+const Operand &value_;
+OperandGetv(const Operand&v);
 template <typename T> 
-Operand& operator()(T &v) ;
-Operand& operator()(astexpr_ptr& v) ;
-Operand& operator()(astexpr_u_ptr& v) ;
-Operand& operator()(astexpr_s_ptr& v) ;
+const Operand& operator()(T &v) const ;
+const Operand& operator()(astexpr_ptr& v) const ;
+const Operand& operator()(astexpr_u_ptr& v) const ;
+const Operand& operator()(astexpr_s_ptr& v) const ;
 };
 
 // for AstMap
@@ -284,14 +288,14 @@ operand_u_ptr operator()(const astexpr_s_ptr& v) ;
 struct OperandCmpEql{
 template <typename T, typename U> bool operator()(const T &a, const U &b) ;
 template <typename T> bool operator()(const T &a, const T &b) ;
+bool operator()(const Nil, const Nil b);
+bool operator()(const astexpr_ptr& a, const astexpr_ptr& b);
 
 template <typename T> bool operator()(const astexpr_u_ptr& a, const T& b);
-
-//bool operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b);
+bool operator()(const astexpr_u_ptr& a, const Number& b);
 bool operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b);
-/*
-bool operator()(const astexpr_ptr& a, const astexpr_s_ptr& b) { return a->get_u_ptr()->cmp_eql(b->get_u_ptr()); };
-*/
+bool operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b);
+
 };
 
 

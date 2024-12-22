@@ -39,10 +39,11 @@ Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
 }
 //--------------------------------------
 
-Operand& AstMap::getv()  {
+const Operand& AstMap::getv() const {
   cerr << "AstMap::getv() I shouldn't be here\n";
-  myself = clone();
-  return myself;
+  //myself = clone();
+  //myself = (Operand*)this;
+  return nil_operand;
 }
 
 Operand& AstMap::back() { return nil_operand;}
@@ -334,3 +335,5 @@ bool AstMap::cmp_eql(const AstExpr &other) const {
   cout << "AstMap::cmp_eql(astexpr_u_ptr)\n";
   return true; 
 }
+//bool AstMap::cmp_eql(const OperandVariant&ov) const { return false; }
+OperandVariant AstMap::_get_value() const { return nil; }

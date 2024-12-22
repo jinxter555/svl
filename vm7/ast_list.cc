@@ -78,7 +78,7 @@ Operand& AstList::getv(int i)  {
   //return list_[i].getv();
   return list_[i];
 }
-Operand& AstList::getv()  {
+const Operand& AstList::getv()  const {
   cerr << "AstList::getv() I shouldn't be here\n";
   return nil_operand;
 }
@@ -265,6 +265,8 @@ bool AstList::operator!=(const AstExpr &other) const {
   return !cmp_eql(other);
 
 }
+//bool AstList::cmp_eql(const OperandVariant&ov) const { return false; }
+OperandVariant AstList::_get_value() const { return nil; }
 
 
 

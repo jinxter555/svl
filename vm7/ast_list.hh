@@ -20,7 +20,7 @@ public:
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
   Operand opfunc(const AstExpr& other, AstOpCode op) override ;
 
-  Operand& getv() override final ;
+  const Operand& getv() const override final ;
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k)  ;
   Operand& getv(int i)  ;
@@ -68,6 +68,8 @@ public:
   //-------------------------------------------
   bool operator==(const AstExpr &) const override;
   bool cmp_eql(const AstExpr &) const override;
+  //bool cmp_eql(const OperandVariant&) const override;
+  OperandVariant _get_value() const override;
   bool operator!=(const AstExpr &) const override;
   //-------------------------------------------
   vector<string> _get_keys() const override final;

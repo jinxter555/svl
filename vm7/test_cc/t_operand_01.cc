@@ -21,13 +21,13 @@ int main() {
   Operand v3;
 
 
-  Operand &r_v1 = v1.getv();
+  const Operand &r_v1 = v1.getv();
   Operand v1_b = v1.clone();
   cout << "v1: " << v1 << "\n";
   cout << "reference r_v1: " << r_v1 << "\n";
   cout << "v1 + 2: " << v1 + 2l<< "\n";
   cout << "reference r_v1: " << r_v1 + 2l << "\n";
-  cout << "r_v1=555 \n"; r_v1 = 555l;
+  cout << "r_v1=555 \n"; //r_v1 = 555l;
   cout << "v1: " << v1 << "\n";
   cout << "reference r_v1: " << r_v1 << "\n";
   cout << "v1 + 2: " << v1 + 2l<< "\n";
@@ -38,7 +38,7 @@ int main() {
   cout << "before getv() u_p1: " << *u_p1 << "\n";
   {
     auto &r_p1  = u_p1->getv();
-    r_p1 = 222l;
+    //r_p1 = 222l;
   }
   cout << "after getv() u_p1: " << *u_p1 << "\n";
   cout << "\n";

@@ -423,7 +423,7 @@ AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType
   add(string("var_name"), Operand(v));
 }
 
-Operand& AstMvar::getv() {
+const Operand& AstMvar::getv() const {
   cout << "AstMvar::getv()\n";
   //return clone();
   return nil_operand;

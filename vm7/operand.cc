@@ -17,12 +17,11 @@ Operand nil_operand=Operand();
 const string Operand::nil_str=string("nil");
   
 Operand::Operand() 
-  : AstExpr(OperandType::nil_t)
-  , value_(OperandType::nil_t) {}
-
+  : AstExpr()
+  , value_(nil) {}
 Operand::Operand(const Nil& n) 
-  : AstExpr(OperandType::nil_t)
-  , value_(OperandType::nil_t) {}
+  : AstExpr()
+  , value_(nil) {}
 Operand::Operand(bool v)
   : AstExpr(OperandType::bool_t)
   , value_(v) {}
@@ -83,7 +82,7 @@ Operand::Operand(astexpr_s_ptr& vptr) : value_(vptr), AstExpr(OperandType::sptr_
 Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) { 
   if(vptr==nullptr) {
     type_ = OperandType::nil_t;
-    value_ = OperandType::nil_t;
+    value_ = nil;
   } else {
     type_ = vptr->type_;
     value_= vptr->clone(); 
@@ -93,7 +92,7 @@ Operand::Operand(astexpr_u_ptr &vptr) : AstExpr(OperandType::uptr_t) {
 Operand::Operand(astexpr_u_ptr &&vptr) { 
   if(vptr==nullptr) {
     type_ = OperandType::nil_t;
-    value_ = OperandType::nil_t;
+    value_ = nil;
   } else {
     //type_ = vptr->type_;
     //cout << "memory clone addr!" << *vptr << "\n";
@@ -346,7 +345,7 @@ bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
   return visit(OperandSet(k, move(vvptr)), value_);
 }
 //-----------------------------------------------------------------------
-Operand& Operand::getv() {
+const Operand& Operand::getv() const {
   //cout << "Operand::getv(): type " << get_type() << "\n";
   return visit(OperandGetv(*this), value_);
 }
@@ -417,12 +416,12 @@ Operand& Operand::back() {
 template <typename T>
 OperandVariant OperandValue::operator()(T v) const { return v; }
 OperandVariant OperandValue::operator()(const astexpr_u_ptr& vptr) const { 
-  if(vptr==nullptr) return OperandType::nil_t;
-  return vptr->clone(); 
+  if(vptr==nullptr) return nil; 
+  return vptr->_get_value(); 
 }
 OperandVariant OperandValue::operator()(const astexpr_s_ptr& vptr) const { 
-  if(vptr==nullptr) return OperandType::nil_t;
-  return vptr;
+  if(vptr==nullptr) return nil; 
+  return vptr->_get_value(); 
 }
 //-----------------------------------------------------------------------
 template <typename T>
@@ -445,12 +444,12 @@ OperandEvaluate::OperandEvaluate(astexpr_u_ptr&c) : ctxt(c) {}
 
 
 //------------------------------------------ Operand Getv
+OperandGetv::OperandGetv(const Operand& v) : value_(v) { }
 template <typename T> 
-Operand& OperandGetv::operator()(T &v) { return value_; }
-Operand& OperandGetv::operator()(astexpr_ptr& vptr) { return vptr->getv(); }
-Operand& OperandGetv::operator()(astexpr_u_ptr& vptr) { return vptr->getv(); }
-Operand& OperandGetv::operator()(astexpr_s_ptr& vptr) { return vptr->getv(); }
-OperandGetv::OperandGetv(Operand& v) : value_(v) { }
+const Operand& OperandGetv::operator()(T &v) const { return value_; }
+const Operand& OperandGetv::operator()(astexpr_ptr& vptr) const { return vptr->getv(); }
+const Operand& OperandGetv::operator()(astexpr_u_ptr& vptr) const { return vptr->getv(); }
+const Operand& OperandGetv::operator()(astexpr_s_ptr& vptr) const { return vptr->getv(); }
 
 //------------------------------------------ Operand Shared Ptr
 template <typename T> 
