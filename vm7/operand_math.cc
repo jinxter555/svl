@@ -82,7 +82,6 @@ Operand Operand::operator/(const Operand& other) const {
 
 bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
-
 /*
   std::cout << "operand==(operand&)\n";
   cout << "*this: " << *this <<  " type: " << get_type() << "\n";
@@ -91,12 +90,16 @@ bool Operand::operator==(const Operand& other) const {
   cout << "other.getv(): " << other.getv() << "\n";
 */
 
-  if(type_ != other._get_type()) {
-    if(other._get_type()==OperandType::nil_t) return false;
-    if(_get_type()==OperandType::nil_t) return false;
+  auto other_type = other._get_type();
+
+  if(type_ != other_type) {
+    if(other_type ==OperandType::nil_t) return false;
+    if(type_ == OperandType::nil_t) return false;
     return Operand(_get_value()) == Operand(other._get_value());
   }
+  return visit(OperandCmpEql{}, value_, other.value_);
   
+  /*
   switch(type_) {
   case OperandType::bool_t: 
     return get<bool>(value_) == get<bool>(other.value_);
@@ -118,6 +121,8 @@ bool Operand::operator==(const Operand& other) const {
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }
+  */
+
 }
 bool Operand::operator!=(const Operand& other) const {
   cout << "Operand::!=(Operand&)\n";
@@ -278,35 +283,32 @@ bool Operand::operator!=(const AstExpr &other) const {
 }
 
 
-//bool Operand::cmp_eql(const OperandVariant&ov) const { return value_ == ov; }
-
-
 bool Operand::cmp_eql(const AstExpr&other) const { 
+  MYLOGGER(trace_function , "Operand::cmp_eql(astexpr_u_ptr)", __func__);
   cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
-  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
-  cout << "other: " << other << " other type: " << other.get_type() << "\n";
-  if(_get_type() == OperandType::nil_t && other._get_type() == OperandType::nil_t) 
-    return true;
-
-  if(type_ == OperandType::uptr_t 
-  || type_ == OperandType::sptr_t
-  || type_ == OperandType::ptr_t) {
-    return get_u_ptr()->cmp_eql(other);
-  }
-  return *this == other;
-
+  return this->getv() == other.getv();
 }
+
+
 //--------------
 template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {
-  cout << "T == U?\n";
-  return false;
+  MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" ,__func__);
+  //cout << "T == U?\n";
+  return false; 
 };
 template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { 
-  cout << "T == T?\n";
-  return a==b;
+  MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__);
+  //cout << "T == T?\n";
+  return a==b; 
 };
+bool OperandCmpEql::operator()(const Nil a, const Nil b){ 
+  MYLOGGER(trace_function , "OperandCmpEql::()(Nil, Nil)" ,__func__);
+  //cout << "nil== nil\n"; 
+  return true; 
+}
+
+/*
 //bool OperandCmpEql::operator()(const Nil& a, const Nil& b){ cout << "nil== nil\n"; return true; }
-bool OperandCmpEql::operator()(const Nil a, const Nil b){ cout << "nil== nil\n"; return true; }
 
 
 template <typename T> bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const T& b){ 
@@ -333,3 +335,4 @@ bool OperandCmpEql::operator()(const astexpr_ptr& a, const astexpr_ptr& b){
   cout << "ptr == ptr?\n";
   return false;
 }
+*/

@@ -289,13 +289,14 @@ struct OperandCmpEql{
 template <typename T, typename U> bool operator()(const T &a, const U &b) ;
 template <typename T> bool operator()(const T &a, const T &b) ;
 bool operator()(const Nil, const Nil b);
+/*
 bool operator()(const astexpr_ptr& a, const astexpr_ptr& b);
 
 template <typename T> bool operator()(const astexpr_u_ptr& a, const T& b);
 bool operator()(const astexpr_u_ptr& a, const Number& b);
 bool operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b);
 bool operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b);
-
+*/
 };
 
 
