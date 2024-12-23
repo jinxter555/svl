@@ -140,12 +140,15 @@ bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
   case OperandType::uptr_t:
     map_[k] = move(v.clone());
     break;
+/*
   case OperandType::sptr_t:
     //map_[k] = move(v.clone());
     map_[k] = move(v.clone());
     break;
+*/
   default: {
-    map_[k] = v.clone_val();
+    //map_[k] = v.clone_val();
+    map_[k] = v._get_variant();
     break;
   }}
   return true;
