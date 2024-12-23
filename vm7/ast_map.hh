@@ -20,6 +20,9 @@ public:
   Operand opfunc(const AstExpr&, AstOpCode op) override final;
 
   const Operand& getv() const override ;
+  OperandVariant _get_variant() const override;
+  OperandVariant _get_value() const override;
+
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k) ;
 
@@ -69,7 +72,6 @@ public:
   bool cmp_eql(const AstExpr &) const override;
   bool is_nil() const override;
   bool is_current_nil() const override;
-  OperandVariant _get_value() const override;
   //bool cmp_eql(const OperandVariant&) const override;
   //-------------------------------------------
   bool has_key(const Operand &k) const;

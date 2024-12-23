@@ -53,8 +53,8 @@ ScopeLogger::~ScopeLogger() {
   //auto color = string("\033[") + to_string(color_code) + "m" + to_string(color_code) + " ";
 
   out << color << s << " Exit: " << msg_out << endl; 
-  //const std::string reset("\033[0m");
-  //cout << reset;
+  const std::string reset("\033[0m");
+  cout << reset;
 
 
 }

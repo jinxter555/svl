@@ -134,13 +134,23 @@ bool AstMap::add(const Operand &k, const AstExpr& v, bool overwrite) {
 bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
   //if(this==nullptr) {return false;}
   if(!overwrite && has_key(k)) return false;
-  if(v.type_ == OperandType::map_t || v.type_ == OperandType::list_t)
+  switch(v.type_){
+  case OperandType::map_t:
+  case OperandType::list_t:
+  case OperandType::uptr_t:
     map_[k] = move(v.clone());
-  else {
+    break;
+  case OperandType::sptr_t:
+    //map_[k] = move(v.clone());
+    map_[k] = move(v.clone());
+    break;
+  default: {
     map_[k] = v.clone_val();
-  }
+    break;
+  }}
   return true;
 }
+
 
 bool AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite) {
   MYLOGGER( trace_function
@@ -347,7 +357,14 @@ bool AstMap::cmp_eql(const AstExpr &other) const {
   return true; 
 }
 //bool AstMap::cmp_eql(const OperandVariant&ov) const { return false; }
-OperandVariant AstMap::_get_value() const { return nil; }
+OperandVariant AstMap::_get_value() const { 
+  cout << "AstMap::_get_value() I shouldn't be here\n";
+  return nil; 
+}
+OperandVariant AstMap::_get_variant() const { 
+  cout << "AstList::_get_variant() I shouldn't be here\n";
+  return nil; 
+}
 
 bool AstMap::is_current_nil() const {
   if(size()==0) return true;

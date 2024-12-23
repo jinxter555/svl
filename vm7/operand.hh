@@ -52,6 +52,7 @@ public:
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
   OperandVariant _get_value() const override;
+  OperandVariant _get_variant() const override;
   Number _get_number() const ;
   s_integer _get_int() const override final ;
   s_float _get_float() const ;
@@ -69,6 +70,7 @@ public:
   Operand to_str() const override; 
   Operand whatami() const;  // introspection type + value
 
+  bool to_shared();
 
   void  print() const override; 
   //--------------------------------------------------------- 
@@ -161,6 +163,13 @@ OperandVariant operator()(const astexpr_u_ptr& v) const  ;
 OperandVariant operator()(const astexpr_s_ptr& v) const  ;
 OperandVariant operator()(const astexpr_ptr& v) const  ;
 };
+struct GetOperandVariant{
+template <typename T> OperandVariant operator()(const T& value) const;
+OperandVariant operator()(const astexpr_ptr& v) const  ;
+OperandVariant operator()(const astexpr_s_ptr& v) const  ;
+OperandVariant operator()(const astexpr_u_ptr& v) const  ;
+OperandVariant operator()(const Nil) const;
+};
 
 struct OperandClone{
 template <typename T> 
@@ -244,6 +253,18 @@ bool operator()(T& v) ;
 bool operator()(astexpr_ptr& v) ;
 bool operator()(astexpr_u_ptr& v) ;
 bool operator()(astexpr_s_ptr& v) ;
+};
+
+// for AstMap
+struct OperandGetK{
+const Operand &key_;
+bool overwrite;
+OperandGetK(const Operand& k);
+template <typename T> 
+Operand& operator()(const T& v) ;
+Operand& operator()(const astexpr_ptr& v) ;
+Operand& operator()(const astexpr_u_ptr& v) ;
+Operand& operator()(const astexpr_s_ptr& v) ;
 };
 
 // for AstMap

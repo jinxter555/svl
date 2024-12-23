@@ -21,6 +21,9 @@ public:
   Operand opfunc(const AstExpr& other, AstOpCode op) override ;
 
   const Operand& getv() const override final ;
+  OperandVariant _get_value() const override;
+  OperandVariant _get_variant() const override;
+
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k)  ;
   Operand& getv(int i)  ;
@@ -71,7 +74,6 @@ public:
   //bool cmp_eql(const OperandVariant&) const override;
   bool is_nil() const override;
   bool is_current_nil() const override;
-  OperandVariant _get_value() const override;
   bool operator!=(const AstExpr &) const override;
   //-------------------------------------------
   vector<string> _get_keys() const override final;

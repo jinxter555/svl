@@ -295,16 +295,16 @@ bool Operand::cmp_eql(const AstExpr&other) const {
 //--------------
 template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {
   MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" , __func__);
-  cout << "T == U?\n";
+//  cout << "T == U?\n";
   return false; 
 };
 template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { 
   MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__);
-  cout << "T == T?\n";
+//  cout << "T == T?\n";
   return a==b; 
 };
 bool OperandCmpEql::operator()(const Nil a, const Nil b){ 
   MYLOGGER(trace_function , "OperandCmpEql::()(Nil, Nil)" ,__func__);
-  cout << "nil == nil\n"; 
+//  cout << "nil == nil\n"; 
   return true; 
 }

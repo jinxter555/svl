@@ -39,6 +39,8 @@ public:
   virtual bool set(const Operand &k, astexpr_u_ptr&& vptr) = 0;
 
   virtual const Operand& getv() const = 0;
+  virtual OperandVariant _get_value() const=0;
+  virtual OperandVariant _get_variant() const=0 ;
   //virtual Operand& getv_nc() = 0;
 
   virtual Operand& getv(const Operand &k) = 0;
@@ -64,7 +66,6 @@ public:
   virtual bool operator==(const AstExpr&) const=0;
   virtual bool operator!=(const AstExpr&) const=0;
   virtual bool cmp_eql(const AstExpr&) const=0;
-  virtual OperandVariant _get_value() const=0;
   //virtual bool cmp_eql(const OperandVariant&) const=0;
   //-------------------------------------------
   //virtual Operand& get_branch(const Operand&k) =0 ;

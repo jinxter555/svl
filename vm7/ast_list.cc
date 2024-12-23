@@ -212,11 +212,14 @@ OperandType AstList::_get_type() const {
 };
 
 Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
-  MYLOGGER(trace_function , "AstList::evaluate()" ,__func__);
+  MYLOGGER(trace_function , "AstList::evaluate()" , string("AstList::") + string(__func__));
+  //cout << "AstList::evaluate()\n";
   int i, s = size();
   astexpr_u_ptr result_list = make_unique<AstList>();
   //cout << "in list eval!\n";
+  //cout << "size: " << size() << "\n";
   for(i=0; i<s; i++) {
+    //cout  << "list[" << i << "]" << list_[i] << "\n";
     result_list->add(list_[i].evaluate(ctxt));
   }
   return result_list;
@@ -266,7 +269,14 @@ bool AstList::operator!=(const AstExpr &other) const {
 
 }
 //bool AstList::cmp_eql(const OperandVariant&ov) const { return false; }
-OperandVariant AstList::_get_value() const { return nil; }
+OperandVariant AstList::_get_value() const { 
+  cout << "AstList::_get_value() I shouldn't be here\n";
+  return nil; 
+}
+OperandVariant AstList::_get_variant() const { 
+  cout << "AstList::_get_variant() I shouldn't be here\n";
+  return nil; 
+}
 
 
 bool AstList::is_current_nil() const {

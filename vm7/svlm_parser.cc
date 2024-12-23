@@ -1392,8 +1392,8 @@ namespace vslast {
   case 64: // list: SQBRK_L arg_list SQBRK_R
 #line 274 "svlm_grammar.y"
                              { 
-    yylhs.value.as < astexpr_u_ptr > () =  make_unique<Operand>( make_shared<Operand>( move(yystack_[1].value.as < astexpr_u_ptr > ()) )); 
-    //$$ =  move($2); 
+    //$$ =  make_unique<Operand>( make_shared<Operand>( move($2) )); 
+    yylhs.value.as < astexpr_u_ptr > () =  move(yystack_[1].value.as < astexpr_u_ptr > ()); 
   }
 #line 1399 "svlm_parser.cc"
     break;

@@ -51,7 +51,7 @@ string SvlmAst::get_current_module() {
 }
 
 void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
-  MYLOGGER(trace_function , string("SvlmAst::add_module(") + mod_name._to_str() + string(")") ,__func__)
+  MYLOGGER(trace_function , string("SvlmAst::add_module('") + mod_name._to_str() + string("')") ,__func__)
   cout << "SvlmAst::add_module()\n";
 
   s_integer i, s=clist->size();
@@ -516,7 +516,9 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
     if(index_i >= 0) {
       //return result_var[index_i].clone_val();
       cout << "index i: " << index_i << "\n";
-      cout <<  result_var[index_i] << "\n";
+      //cout <<  "result_var: " <<  result_var << "\n";
+      //cout <<  "result_var.gettype(): " <<  result_var.get_type() << "\n";
+      //cout <<  result_var[index_i] << "\n";
       return result_var[index_i].clone();
     }
 
@@ -603,6 +605,9 @@ bool AstMvar::assign(astexpr_u_ptr& ctxt, Operand &v) {
   }
   MYLOGGER_MSG(trace_function, "sub_node.add() before");
 
+  cout << "v.type(): " << v.get_type() << "\n";
+  if(v._get_type() == OperandType::uptr_t) v.to_shared();
+  cout << "v.type(): " << v.get_type() << "\n";
   sub_node.add(var_name, v, true);
 
   MYLOGGER_MSG(trace_function, "sub_node.add() after");
