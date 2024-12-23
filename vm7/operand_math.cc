@@ -79,27 +79,31 @@ Operand Operand::operator/(const Operand& other) const {
     throw std::runtime_error("Unsupported operation"); 
   }
 }
-
 bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
+  return visit(OperandCmpEql{}, value_, other.value_);
+}
+
 /*
+bool Operand::operator==(const Operand& other) const {
+  MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
   std::cout << "operand==(operand&)\n";
   cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   cout << "other: " << other << " other type: " << other.get_type() << "\n";
   cout << "getv(): " << getv() << "\n";
   cout << "other.getv(): " << other.getv() << "\n";
-*/
 
   auto other_type = other._get_type();
 
   if(type_ != other_type) {
-    if(other_type ==OperandType::nil_t) return false;
-    if(type_ == OperandType::nil_t) return false;
-    return Operand(_get_value()) == Operand(other._get_value());
+    if(other_type == OperandType::nil_t) return visit(OperandCmpEql{}, _get_value(), other.value_);
+    if(type_ == OperandType::nil_t) return visit(OperandCmpEql{}, value_,  other._get_value() );
+    //if(other_type == OperandType::nil_t) return false;
+    //if(type_ == OperandType::nil_t) return false;
+    return visit(OperandCmpEql{}, _get_value(), other._get_value());
   }
   return visit(OperandCmpEql{}, value_, other.value_);
   
-  /*
   switch(type_) {
   case OperandType::bool_t: 
     return get<bool>(value_) == get<bool>(other.value_);
@@ -121,9 +125,10 @@ bool Operand::operator==(const Operand& other) const {
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }
-  */
 
 }
+*/
+
 bool Operand::operator!=(const Operand& other) const {
   cout << "Operand::!=(Operand&)\n";
   return !(*this==other);
@@ -271,7 +276,6 @@ Operand Operand::opfunc(const AstExpr& v, AstOpCode op) {
 
 
 
-
 bool Operand::operator==(const AstExpr &other) const { 
   //visit(OperandCmpEql(), value_, other_vptr->value_);
   cout << "Operand::==(astexpr_u_ptr)\n";
@@ -282,57 +286,25 @@ bool Operand::operator!=(const AstExpr &other) const {
   return !cmp_eql(other);
 }
 
-
 bool Operand::cmp_eql(const AstExpr&other) const { 
   MYLOGGER(trace_function , "Operand::cmp_eql(astexpr_u_ptr)", __func__);
   cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
   return this->getv() == other.getv();
 }
 
-
 //--------------
 template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {
-  MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" ,__func__);
-  //cout << "T == U?\n";
+  MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" , __func__);
+  cout << "T == U?\n";
   return false; 
 };
 template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { 
   MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__);
-  //cout << "T == T?\n";
+  cout << "T == T?\n";
   return a==b; 
 };
 bool OperandCmpEql::operator()(const Nil a, const Nil b){ 
   MYLOGGER(trace_function , "OperandCmpEql::()(Nil, Nil)" ,__func__);
-  //cout << "nil== nil\n"; 
+  cout << "nil == nil\n"; 
   return true; 
 }
-
-/*
-//bool OperandCmpEql::operator()(const Nil& a, const Nil& b){ cout << "nil== nil\n"; return true; }
-
-
-template <typename T> bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const T& b){ 
-  cout << "uptr == Operand(T)?\n";
-  //return visit(OperandCmpEql{}, a->_get_value() , b);
-  //return visit(OperandCmpEql{}, a->_get_value() , b);
-  return a->cmp_eql(Operand(b));
-  //return false;
-}
-bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const Number& b){
-  cout << "uptr == Number?\n";
-  return a->cmp_eql(Operand(b));
-}
-
-bool OperandCmpEql::operator()(const astexpr_u_ptr& a, const astexpr_u_ptr& b ){ 
-  cout << "uptr == uptr?\n";
-  return a->getv() == b->getv();
-}
-bool OperandCmpEql::operator()(const astexpr_s_ptr& a, const astexpr_s_ptr& b ){ 
-  cout << "sptr == sptr?\n";
-  return false;
-}
-bool OperandCmpEql::operator()(const astexpr_ptr& a, const astexpr_ptr& b){
-  cout << "ptr == ptr?\n";
-  return false;
-}
-*/

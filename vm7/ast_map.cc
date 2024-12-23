@@ -160,6 +160,12 @@ bool AstMap::add(const string &k, astexpr_u_ptr&& vptr, bool overwrite) {
 }
 //------------------------------------- 
 bool AstMap::add_branch(const vector<string> &keys, const Operand& operand, bool overwrite)  {
+  MYLOGGER( trace_function
+    , "AstMap::add_branch(const vector<string> &keys, op)"
+    ,__func__)
+  MYLOGGER_MSG( trace_function, string("keys: ")+add_vector_string(keys, ", ") + string(":") +  operand._to_str());
+
+  //return add_branch(keys, operand.clone(), overwrite);
   int i=0, s = keys.size();  
   string k;
   AstMap *curr=this, *next;
@@ -178,6 +184,11 @@ bool AstMap::add_branch(const vector<string> &keys, const Operand& operand, bool
 }
 
 bool AstMap::add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite) {
+  MYLOGGER( trace_function
+    , "AstMap::add_branch(const vector<string> &keys, vvptr)"
+    ,__func__)
+  MYLOGGER_MSG( trace_function, string("keys: ")+add_vector_string(keys, ", ") + string(":") +  vvptr->to_str()._to_str());
+
   int i=0, s = keys.size();  
   string k;
   AstMap *curr=this, *next;
@@ -337,3 +348,12 @@ bool AstMap::cmp_eql(const AstExpr &other) const {
 }
 //bool AstMap::cmp_eql(const OperandVariant&ov) const { return false; }
 OperandVariant AstMap::_get_value() const { return nil; }
+
+bool AstMap::is_current_nil() const {
+  if(size()==0) return true;
+  return false;
+};
+bool  AstMap::is_nil() const {
+  if(size()==0) return true;
+  return false;
+}

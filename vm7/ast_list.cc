@@ -269,6 +269,14 @@ bool AstList::operator!=(const AstExpr &other) const {
 OperandVariant AstList::_get_value() const { return nil; }
 
 
+bool AstList::is_current_nil() const {
+  if(size()==0) return true;
+  return false;
+};
+bool  AstList::is_nil() const {
+  if(size()==0) return true;
+  return false;
+}
 
 //-----------------------------------------------------------------------------------------------------------
 Tuple::Tuple(astexpr_u_ptr l) : type_(OperandType::tuple_t) {

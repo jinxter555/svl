@@ -197,6 +197,7 @@ literals
   | FLT { $$ = make_unique<Operand>($1); }
   | TRUE { $$ = make_unique<Operand>(true); }
   | FALSE { $$ = make_unique<Operand>(false); }
+  | NIL { $$ = make_unique<Operand>(nil); }
   //| COLON STR { $$ = std::make_unique<OperandExprAst>(Operand(Atom($2))); }
   | DQSTR { $$ = make_unique<Operand>($1); }
   ;

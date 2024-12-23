@@ -345,6 +345,14 @@ bool Operand::set(const Operand &k, astexpr_u_ptr&& vvptr){
   return visit(OperandSet(k, move(vvptr)), value_);
 }
 //-----------------------------------------------------------------------
+
+bool Operand::is_nil()const {
+  return visit(OperandCurrentNil(), value_);
+}
+bool Operand::is_current_nil()const {
+  return visit(OperandCurrentNil(), value_);
+}
+//-----------------------------------------------------------------------
 const Operand& Operand::getv() const {
   //cout << "Operand::getv(): type " << get_type() << "\n";
   return visit(OperandGetv(*this), value_);
@@ -420,6 +428,10 @@ OperandVariant OperandValue::operator()(const astexpr_u_ptr& vptr) const {
   return vptr->_get_value(); 
 }
 OperandVariant OperandValue::operator()(const astexpr_s_ptr& vptr) const { 
+  if(vptr==nullptr) return nil; 
+  return vptr->_get_value(); 
+}
+OperandVariant OperandValue::operator()(const astexpr_ptr& vptr) const { 
   if(vptr==nullptr) return nil; 
   return vptr->_get_value(); 
 }
@@ -552,3 +564,9 @@ astexpr_u_ptr Operand::opfunc(astexpr_u_ptr other, AstOpCode op) {
   return make_unique<Operand>(opfunc(other->getv(), op));
 }
 */
+
+template <typename T> 
+bool OperandCurrentNil::operator()(const T& v) const { return false; }
+bool OperandCurrentNil::operator()(const astexpr_ptr& vptr) const { if(vptr==nullptr) return true; return false;}
+bool OperandCurrentNil::operator()(const astexpr_u_ptr& vptr) const { if(vptr==nullptr) return true; return false;}
+bool OperandCurrentNil::operator()(const astexpr_s_ptr& vptr) const { if(vptr==nullptr) return true; return false; }

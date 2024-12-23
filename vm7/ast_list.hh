@@ -69,6 +69,8 @@ public:
   bool operator==(const AstExpr &) const override;
   bool cmp_eql(const AstExpr &) const override;
   //bool cmp_eql(const OperandVariant&) const override;
+  bool is_nil() const override;
+  bool is_current_nil() const override;
   OperandVariant _get_value() const override;
   bool operator!=(const AstExpr &) const override;
   //-------------------------------------------

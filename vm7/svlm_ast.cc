@@ -51,19 +51,29 @@ string SvlmAst::get_current_module() {
 }
 
 void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
+  MYLOGGER(trace_function , string("SvlmAst::add_module(") + mod_name._to_str() + string(")") ,__func__)
+  cout << "SvlmAst::add_module()\n";
+
   s_integer i, s=clist->size();
 
   get_module_subnode(mod_name, OperandType::ast_mod_t);
 
   for(i=0; i < s; i++) {
     auto &nan = clist->getv(i); 
+  //  cout << "\nnan: " << nan << "\n";
+  //  cout << "nan.get_type: " << nan.get_type() << "\n";
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
     auto &nan_vptr = nan.get_u_ptr_nc();
 
+  //  cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
+
     // sub_node could be FUNC, CLASS, VAR
     auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
-    if(sub_node==nil_operand) { continue; }
+    if(sub_node==nil_operand) { 
+  //    cout << "sub_node == nil_operand\n";
+      continue; 
+    }
 
     auto sub_node_name = nan.getv("name")._to_str();
     sub_node.add(sub_node_name, move(nan_vptr), true);
@@ -72,6 +82,11 @@ void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
 
 
 Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType t) {
+  MYLOGGER(trace_function , string("SvlmAst::get_module_subnode(") + mod_name._to_str() + string("): ") + Operand(t)._to_str()
+   ,__func__)
+
+  //cout << "SvlmAst::get_module_subnode\n";
+
   vector<string> keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
   switch(t) {
   case OperandType::ast_mod_t:
@@ -93,10 +108,16 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
     return nil_operand;
   }
 
+
+  //cout << "msub_node=root.get_branch(keys): "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
   auto &msub_node = root.get_branch(keys);
+  //cout << "msub_node: " << msub_node << "\n";
+
   if(msub_node==nil_operand) {
+  //  cout << "msub_node is nil_operand: " << msub_node << "--add\n";
     root.add_branch(keys, make_unique<AstMap>(), true);
     auto &nd= root.get_branch(keys);
+  //  cout << "new node : " << nd << "--added\n";
     return nd;
   }
   return msub_node;
@@ -521,7 +542,8 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
     return result_var.clone_usu();
   }
   //cout << "evalute returning just clone()\n";
-  return result_var.clone();
+  //return result_var.clone();
+  return result_var._get_value();
 }
 
 

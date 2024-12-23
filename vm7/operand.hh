@@ -116,6 +116,8 @@ public:
   bool operator==(const AstExpr&) const override;
   bool operator!=(const AstExpr&) const override;
   bool cmp_eql(const AstExpr&) const override;
+  bool is_nil() const override;
+  bool is_current_nil() const override;
   //bool cmp_eql(const OperandVariant&) const override;
   //--------------------------------------------------------- Overload math logic operator
   Operand operator!() const;
@@ -157,6 +159,7 @@ template <typename T>
 OperandVariant operator()(T value) const;
 OperandVariant operator()(const astexpr_u_ptr& v) const  ;
 OperandVariant operator()(const astexpr_s_ptr& v) const  ;
+OperandVariant operator()(const astexpr_ptr& v) const  ;
 };
 
 struct OperandClone{
@@ -283,6 +286,14 @@ template <typename T>
 operand_u_ptr operator()(T value) ;
 operand_u_ptr operator()(const astexpr_u_ptr& v) ;
 operand_u_ptr operator()(const astexpr_s_ptr& v) ;
+};
+
+struct OperandCurrentNil{
+template <typename T> 
+bool operator()(const T &value) const ;
+bool operator()(const astexpr_ptr& v)const  ;
+bool operator()(const astexpr_u_ptr& v) const ;
+bool operator()(const astexpr_s_ptr& v) const ;
 };
 
 struct OperandCmpEql{

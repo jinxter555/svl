@@ -28,6 +28,9 @@ public:
   virtual const Operand& operator[] (const Operand &k) const =0;
 
   //-------------------------------------------
+  virtual bool is_current_nil() const=0;
+  virtual bool is_nil() const=0;
+
   virtual bool add(const Operand &k, const AstExpr& v, bool overwrite=false)=0;
 
   virtual bool add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite=false)=0;

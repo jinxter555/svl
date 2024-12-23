@@ -1,858 +1,1091 @@
-00000 Enter: int main
-00001 Enter: Operand::clone_val()
-00001 Exit: clone_val
-00002 Enter: Operand::clone_val()
-00002 Exit: clone_val
-00003 Enter: Operand::clone_val()
-00003 Exit: clone_val
-00004 Enter: Operand::clone_val()
-00004 Exit: clone_val
-00005 Enter: Operand::clone_val()
-00005 Exit: clone_val
-00006 Enter: AstMvar::AstMvar(const string &v)
-00006 var_name: a
-00007 Enter: Operand::clone_val()
-00007 Exit: clone_val
-00006 Exit: AstMvar
-00008 Enter: Operand::clone_val()
-00008 Exit: clone_val
-00009 Enter: AstMvar::AstMvar(const string &v)
-00009 var_name: x
-00010 Enter: Operand::clone_val()
-00010 Exit: clone_val
-00009 Exit: AstMvar
-00011 Enter: Operand::clone_val()
-00011 Exit: clone_val
-00012 Enter: AstMvar::AstMvar(const string &v)
-00012 var_name: y
-00013 Enter: Operand::clone_val()
-00013 Exit: clone_val
-00012 Exit: AstMvar
-00014 Enter: Operand::clone_val()
-00014 Exit: clone_val
-00015 Enter: Operand::clone_val()
-00015 Exit: clone_val
-00016 Enter: Operand::clone_val()
-00016 Exit: clone_val
-00017 Enter: Operand::clone_val()
-00017 Exit: clone_val
-00018 Enter: AstMap::get_branch(const vector<string> &keys)
-00018 keys: [svlvm, module, Main]
-00018 Exit: get_branch
-00019 Enter: Operand::==(operand&)
-00020 Enter: OperandCmpEql::()(Nil, Nil)
-00020 Exit: operator()
-00019 Exit: operator==
-00021 Enter: AstMap::get_branch(const vector<string> &keys)
-00021 keys: [svlvm, module, Main]
-00021 Exit: get_branch
-00022 Enter: AstMap::get_branch(const vector<string> &keys)
-00022 keys: [svlvm, module, Main, function]
-00022 Exit: get_branch
-00023 Enter: Operand::==(operand&)
-00024 Enter: OperandCmpEql::()(Nil, Nil)
-00024 Exit: operator()
-00023 Exit: operator==
-00025 Enter: AstMap::get_branch(const vector<string> &keys)
-00025 keys: [svlvm, module, Main, function]
-00025 Exit: get_branch
-00026 Enter: Operand::==(operand&)
-00026 Exit: operator==
-00027 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00027 main: func: main
-00027 Exit: add
-00028 Enter: AstMap::get_branch(const vector<string> &keys)
-00028 keys: [svlvm, module, Main, function]
-00028 Exit: get_branch
-00029 Enter: Operand::==(operand&)
-00029 Exit: operator==
-00030 Enter: Operand::==(operand&)
-00030 Exit: operator==
-00031 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00031 func2: func: func2
-00031 Exit: add
-00032 Enter: AstMap::get_branch(const vector<string> &keys)
-00032 keys: [svlvm, module, Main, function]
-00032 Exit: get_branch
-00033 Enter: Operand::==(operand&)
-00033 Exit: operator==
-00034 Enter: Operand::==(operand&)
-00034 Exit: operator==
-00035 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00035 func3: func: func3
-00035 Exit: add
-00036 Enter: Operand::clone_val()
-00036 Exit: clone_val
-00037 Enter: AstMap::get_branch(const vector<string> &keys)
-00037 keys: [svlvm, module, Helper]
-00037 Exit: get_branch
-00038 Enter: Operand::==(operand&)
-00039 Enter: OperandCmpEql::()(Nil, Nil)
-00039 Exit: operator()
-00038 Exit: operator==
-00040 Enter: AstMap::get_branch(const vector<string> &keys)
-00040 keys: [svlvm, module, Helper]
-00040 Exit: get_branch
-00041 Enter: AstMap::get_branch(const vector<string> &keys)
-00041 keys: [svlvm, module, Helper, function]
-00041 Exit: get_branch
-00042 Enter: Operand::==(operand&)
-00043 Enter: OperandCmpEql::()(Nil, Nil)
-00043 Exit: operator()
-00042 Exit: operator==
-00044 Enter: AstMap::get_branch(const vector<string> &keys)
-00044 keys: [svlvm, module, Helper, function]
-00044 Exit: get_branch
-00045 Enter: Operand::==(operand&)
-00045 Exit: operator==
-00046 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00046 me: func: me
-00046 Exit: add
-00047 Enter: AstMap::get_branch(const vector<string> &keys)
-00047 keys: [svlvm, module, Prompt]
-00047 Exit: get_branch
-00048 Enter: Operand::==(operand&)
-00049 Enter: OperandCmpEql::()(Nil, Nil)
-00049 Exit: operator()
-00048 Exit: operator==
-00050 Enter: AstMap::get_branch(const vector<string> &keys)
-00050 keys: [svlvm, module, Prompt]
-00050 Exit: get_branch
-00051 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00051 last: {"code": []}
-00051 Exit: add
-00052 Enter: AstMap::get_branch(const vector<string> &keys)
-00052 keys: [svlvm, module, Prompt]
-00052 Exit: get_branch
-00053 Enter: AstMap::get_branch(const vector<string> &keys)
-00053 keys: [svlvm, module, Main, function, main, code]
-00053 Exit: get_branch
-00054 Enter: Operand::clone_val()
-00054 Exit: clone_val
-00055 Enter: AstMap::get_branch(const vector<string> &keys)
-00055 keys: [svlvm]
-00055 Exit: get_branch
-00056 Enter: AstMap::get_branch(const vector<string> &keys)
-00056 keys: [svlvm, frames]
-00056 Exit: get_branch
-00057 Enter: Operand::clone_val()
-00057 Exit: clone_val
-00058 Enter: AstList::evaluate()
-00059 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00060 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
-00060 a = nil
-00061 Enter: AstMap::get_branch(const vector<string> &keys)
-00061 keys: [svlm_lang]
-00061 Exit: get_branch
-00062 Enter: Operand::==(operand&)
-00063 Enter: OperandCmpEql::()(Nil, Nil)
-00063 Exit: operator()
-00062 Exit: operator==
-00064 Enter: AstMap::get_branch(const vector<string> &keys)
-00064 keys: [svlvm, frames]
-00064 Exit: get_branch
-00065 Enter: Operand::clone_val()
-00065 Exit: clone_val
-00066 Enter: AstMap::get_branch(const vector<string> &keys)
-00066 keys: [svlvm, module, Main, mvar]
-00066 Exit: get_branch
-00067 Enter: Operand::==(operand&)
-00068 Enter: OperandCmpEql::()(Nil, Nil)
-00068 Exit: operator()
-00067 Exit: operator==
-00069 Enter: AstMap::get_branch(const vector<string> &keys)
-00069 keys: [svlvm, module, Main, mvar]
-00069 Exit: get_branch
-00060 sub_node.add() before
-00070 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
-00070 a: nil
-00071 Enter: Operand::clone_val()
-00071 Exit: clone_val
-00070 Exit: add
-00060 sub_node.add() after
-00060 Exit: assign
-00059 Exit: evaluate
-00072 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00073 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
-00073 x = 1
-00074 Enter: AstMap::get_branch(const vector<string> &keys)
-00074 keys: [svlm_lang]
-00074 Exit: get_branch
-00075 Enter: Operand::==(operand&)
-00076 Enter: OperandCmpEql::()(Nil, Nil)
-00076 Exit: operator()
-00075 Exit: operator==
-00077 Enter: AstMap::get_branch(const vector<string> &keys)
-00077 keys: [svlvm, frames]
-00077 Exit: get_branch
-00078 Enter: Operand::clone_val()
-00078 Exit: clone_val
-00079 Enter: AstMap::get_branch(const vector<string> &keys)
-00079 keys: [svlvm, module, Main, mvar]
-00079 Exit: get_branch
-00080 Enter: Operand::==(operand&)
-00080 Exit: operator==
-00073 sub_node.add() before
-00081 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
-00081 x: 1
-00082 Enter: Operand::clone_val()
-00082 Exit: clone_val
-00081 Exit: add
-00073 sub_node.add() after
-00073 Exit: assign
-00072 Exit: evaluate
-00083 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00084 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
-00084 y = 1
-00085 Enter: AstMap::get_branch(const vector<string> &keys)
-00085 keys: [svlm_lang]
-00085 Exit: get_branch
-00086 Enter: Operand::==(operand&)
-00087 Enter: OperandCmpEql::()(Nil, Nil)
-00087 Exit: operator()
-00086 Exit: operator==
-00088 Enter: AstMap::get_branch(const vector<string> &keys)
-00088 keys: [svlvm, frames]
-00088 Exit: get_branch
-00089 Enter: Operand::clone_val()
-00089 Exit: clone_val
-00090 Enter: AstMap::get_branch(const vector<string> &keys)
-00090 keys: [svlvm, module, Main, mvar]
-00090 Exit: get_branch
-00091 Enter: Operand::==(operand&)
-00091 Exit: operator==
-00084 sub_node.add() before
-00092 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
-00092 y: 1
-00093 Enter: Operand::clone_val()
-00093 Exit: clone_val
-00092 Exit: add
-00084 sub_node.add() after
-00084 Exit: assign
-00083 Exit: evaluate
-00058 Exit: evaluate
-00094 Enter: AstMvar::AstMvar(const string &v)
-00094 var_name: y
-00095 Enter: Operand::clone_val()
-00095 Exit: clone_val
-00094 Exit: AstMvar
-00096 Enter: Operand::clone_val()
-00096 Exit: clone_val
-00097 Enter: AstMap::get_branch(const vector<string> &keys)
-00097 keys: [svlvm, module, Prompt]
-00097 Exit: get_branch
-00098 Enter: Operand::==(operand&)
-00098 Exit: operator==
-00099 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00100 Enter: Operand::==(operand&)
-00101 Enter: OperandCmpEql::()(Nil, Nil)
-00101 Exit: operator()
-00100 Exit: operator==
-00099 last: {"code": [2==$y]}
-00099 Exit: add
-00102 Enter: AstMap::get_branch(const vector<string> &keys)
-00102 keys: [svlvm, module, Prompt]
-00102 Exit: get_branch
-00103 Enter: AstMap::get_branch(const vector<string> &keys)
-00103 keys: [svlvm, module, Prompt, last, code]
-00103 Exit: get_branch
-00104 Enter: AstMap::get_branch(const vector<string> &keys)
-00104 keys: [svlvm]
-00104 Exit: get_branch
-00105 Enter: AstList::evaluate()
-00106 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00107 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00107 var_name: y
-00108 Enter: AstMap::get_branch(const vector<string> &keys)
-00108 keys: [svlm_lang]
-00108 Exit: get_branch
-00109 Enter: Operand::==(operand&)
-00110 Enter: OperandCmpEql::()(Nil, Nil)
-00110 Exit: operator()
-00109 Exit: operator==
-00111 Enter: AstMap::get_branch(const vector<string> &keys)
-00111 keys: [svlvm, frames]
-00111 Exit: get_branch
-00112 Enter: Operand::clone_val()
-00112 Exit: clone_val
-00113 Enter: AstMap::get_branch(const vector<string> &keys)
-00113 keys: [svlvm, module, Main, mvar]
-00113 Exit: get_branch
-00114 Enter: Operand::==(operand&)
-00114 Exit: operator==
-00107 Exit: evaluate
-00115 Enter: Operand::clone_val()
-00115 Exit: clone_val
-00116 Enter: Operand::==(operand&)
-00117 Enter: OperandCmpEql::()(T, T)
-00117 Exit: operator()
-00116 Exit: operator==
-00106 Exit: evaluate
-00105 Exit: evaluate
-00118 Enter: Operand::==(operand&)
-00118 Exit: operator==
-00119 Enter: AstMvar::AstMvar(const string &v)
-00119 var_name: y
-00120 Enter: Operand::clone_val()
-00120 Exit: clone_val
-00119 Exit: AstMvar
-00121 Enter: Operand::clone_val()
-00121 Exit: clone_val
-00122 Enter: AstMap::get_branch(const vector<string> &keys)
-00122 keys: [svlvm, module, Prompt]
-00122 Exit: get_branch
-00123 Enter: Operand::==(operand&)
-00123 Exit: operator==
-00124 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00125 Enter: Operand::==(operand&)
-00126 Enter: OperandCmpEql::()(Nil, Nil)
-00126 Exit: operator()
-00125 Exit: operator==
-00124 last: {"code": [1==$y]}
-00124 Exit: add
-00127 Enter: AstMap::get_branch(const vector<string> &keys)
-00127 keys: [svlvm, module, Prompt]
-00127 Exit: get_branch
-00128 Enter: AstMap::get_branch(const vector<string> &keys)
-00128 keys: [svlvm, module, Prompt, last, code]
-00128 Exit: get_branch
-00129 Enter: AstMap::get_branch(const vector<string> &keys)
-00129 keys: [svlvm]
-00129 Exit: get_branch
-00130 Enter: AstList::evaluate()
-00131 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00132 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00132 var_name: y
-00133 Enter: AstMap::get_branch(const vector<string> &keys)
-00133 keys: [svlm_lang]
-00133 Exit: get_branch
-00134 Enter: Operand::==(operand&)
-00135 Enter: OperandCmpEql::()(Nil, Nil)
-00135 Exit: operator()
-00134 Exit: operator==
-00136 Enter: AstMap::get_branch(const vector<string> &keys)
-00136 keys: [svlvm, frames]
-00136 Exit: get_branch
-00137 Enter: Operand::clone_val()
-00137 Exit: clone_val
-00138 Enter: AstMap::get_branch(const vector<string> &keys)
-00138 keys: [svlvm, module, Main, mvar]
-00138 Exit: get_branch
-00139 Enter: Operand::==(operand&)
-00139 Exit: operator==
-00132 Exit: evaluate
-00140 Enter: Operand::clone_val()
-00140 Exit: clone_val
-00141 Enter: Operand::==(operand&)
-00142 Enter: OperandCmpEql::()(T, T)
-00142 Exit: operator()
-00141 Exit: operator==
-00131 Exit: evaluate
-00130 Exit: evaluate
-00143 Enter: Operand::==(operand&)
-00143 Exit: operator==
-00144 Enter: AstMvar::AstMvar(const string &v)
-00144 var_name: x
-00145 Enter: Operand::clone_val()
-00145 Exit: clone_val
-00144 Exit: AstMvar
-00146 Enter: AstMvar::AstMvar(const string &v)
-00146 var_name: y
-00147 Enter: Operand::clone_val()
-00147 Exit: clone_val
-00146 Exit: AstMvar
-00148 Enter: Operand::clone_val()
-00148 Exit: clone_val
-00149 Enter: AstMap::get_branch(const vector<string> &keys)
-00149 keys: [svlvm, module, Prompt]
-00149 Exit: get_branch
-00150 Enter: Operand::==(operand&)
-00150 Exit: operator==
-00151 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00152 Enter: Operand::==(operand&)
-00153 Enter: OperandCmpEql::()(Nil, Nil)
-00153 Exit: operator()
-00152 Exit: operator==
-00154 Enter: Operand::==(operand&)
-00155 Enter: OperandCmpEql::()(Nil, Nil)
-00155 Exit: operator()
-00154 Exit: operator==
-00151 last: {"code": [$x==$y]}
-00151 Exit: add
-00156 Enter: AstMap::get_branch(const vector<string> &keys)
-00156 keys: [svlvm, module, Prompt]
-00156 Exit: get_branch
-00157 Enter: AstMap::get_branch(const vector<string> &keys)
-00157 keys: [svlvm, module, Prompt, last, code]
-00157 Exit: get_branch
-00158 Enter: AstMap::get_branch(const vector<string> &keys)
-00158 keys: [svlvm]
-00158 Exit: get_branch
-00159 Enter: AstList::evaluate()
-00160 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00161 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00161 var_name: y
-00162 Enter: AstMap::get_branch(const vector<string> &keys)
-00162 keys: [svlm_lang]
-00162 Exit: get_branch
-00163 Enter: Operand::==(operand&)
-00164 Enter: OperandCmpEql::()(Nil, Nil)
-00164 Exit: operator()
-00163 Exit: operator==
-00165 Enter: AstMap::get_branch(const vector<string> &keys)
-00165 keys: [svlvm, frames]
-00165 Exit: get_branch
-00166 Enter: Operand::clone_val()
-00166 Exit: clone_val
-00167 Enter: AstMap::get_branch(const vector<string> &keys)
-00167 keys: [svlvm, module, Main, mvar]
-00167 Exit: get_branch
-00168 Enter: Operand::==(operand&)
-00168 Exit: operator==
-00161 Exit: evaluate
-00169 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00169 var_name: x
-00170 Enter: AstMap::get_branch(const vector<string> &keys)
-00170 keys: [svlm_lang]
-00170 Exit: get_branch
-00171 Enter: Operand::==(operand&)
-00172 Enter: OperandCmpEql::()(Nil, Nil)
-00172 Exit: operator()
-00171 Exit: operator==
-00173 Enter: AstMap::get_branch(const vector<string> &keys)
-00173 keys: [svlvm, frames]
-00173 Exit: get_branch
-00174 Enter: Operand::clone_val()
-00174 Exit: clone_val
-00175 Enter: AstMap::get_branch(const vector<string> &keys)
-00175 keys: [svlvm, module, Main, mvar]
-00175 Exit: get_branch
-00176 Enter: Operand::==(operand&)
-00176 Exit: operator==
-00169 Exit: evaluate
-00177 Enter: Operand::clone_val()
-00177 Exit: clone_val
-00178 Enter: Operand::==(operand&)
-00179 Enter: Operand::==(operand&)
-00180 Enter: OperandCmpEql::()(T, T)
-00180 Exit: operator()
-00179 Exit: operator==
-00178 Exit: operator==
-00160 Exit: evaluate
-00159 Exit: evaluate
-00181 Enter: Operand::==(operand&)
-00181 Exit: operator==
-00182 Enter: Operand::clone_val()
-00182 Exit: clone_val
-00183 Enter: Operand::clone_val()
-00183 Exit: clone_val
-00184 Enter: AstMap::get_branch(const vector<string> &keys)
-00184 keys: [svlvm, module, Prompt]
-00184 Exit: get_branch
-00185 Enter: Operand::==(operand&)
-00185 Exit: operator==
-00186 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00186 last: {"code": [z=1]}
-00186 Exit: add
-00187 Enter: AstMap::get_branch(const vector<string> &keys)
-00187 keys: [svlvm, module, Prompt]
-00187 Exit: get_branch
-00188 Enter: AstMap::get_branch(const vector<string> &keys)
-00188 keys: [svlvm, module, Prompt, last, code]
-00188 Exit: get_branch
-00189 Enter: AstMap::get_branch(const vector<string> &keys)
-00189 keys: [svlvm]
-00189 Exit: get_branch
-00190 Enter: AstList::evaluate()
-00191 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00192 Enter: AstMap::get_branch(const vector<string> &keys)
-00192 keys: [svlm_lang]
-00192 Exit: get_branch
-00193 Enter: AstMap::get_branch(const vector<string> &keys)
-00193 keys: [svlvm, frames]
-00193 Exit: get_branch
-00194 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
-00194 z: 1
-00195 Enter: Operand::clone_val()
-00195 Exit: clone_val
-00194 Exit: add
-00191 Exit: evaluate
-00190 Exit: evaluate
-00196 Enter: Operand::==(operand&)
-00196 Exit: operator==
-00197 Enter: Operand::clone_val()
-00197 Exit: clone_val
-00198 Enter: AstMvar::AstMvar(const string &v)
-00198 var_name: y
-00199 Enter: Operand::clone_val()
-00199 Exit: clone_val
-00198 Exit: AstMvar
-00200 Enter: Operand::clone_val()
-00200 Exit: clone_val
-00201 Enter: AstMap::get_branch(const vector<string> &keys)
-00201 keys: [svlvm, module, Prompt]
-00201 Exit: get_branch
-00202 Enter: Operand::==(operand&)
-00202 Exit: operator==
-00203 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00204 Enter: Operand::==(operand&)
-00205 Enter: OperandCmpEql::()(Nil, Nil)
-00205 Exit: operator()
-00204 Exit: operator==
-00203 last: {"code": [z==$y]}
-00203 Exit: add
-00206 Enter: AstMap::get_branch(const vector<string> &keys)
-00206 keys: [svlvm, module, Prompt]
-00206 Exit: get_branch
-00207 Enter: AstMap::get_branch(const vector<string> &keys)
-00207 keys: [svlvm, module, Prompt, last, code]
-00207 Exit: get_branch
-00208 Enter: AstMap::get_branch(const vector<string> &keys)
-00208 keys: [svlvm]
-00208 Exit: get_branch
-00209 Enter: AstList::evaluate()
-00210 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00211 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00211 var_name: y
-00212 Enter: AstMap::get_branch(const vector<string> &keys)
-00212 keys: [svlm_lang]
-00212 Exit: get_branch
-00213 Enter: Operand::==(operand&)
-00214 Enter: OperandCmpEql::()(Nil, Nil)
-00214 Exit: operator()
-00213 Exit: operator==
-00215 Enter: AstMap::get_branch(const vector<string> &keys)
-00215 keys: [svlvm, frames]
-00215 Exit: get_branch
-00216 Enter: Operand::clone_val()
-00216 Exit: clone_val
-00217 Enter: AstMap::get_branch(const vector<string> &keys)
-00217 keys: [svlvm, module, Main, mvar]
-00217 Exit: get_branch
-00218 Enter: Operand::==(operand&)
-00218 Exit: operator==
-00211 Exit: evaluate
-00219 Enter: AstMap::get_branch(const vector<string> &keys)
-00219 keys: [svlm_lang]
-00219 Exit: get_branch
-00220 Enter: AstMap::get_branch(const vector<string> &keys)
-00220 keys: [svlvm, frames]
-00220 Exit: get_branch
-00221 Enter: Operand::clone_val()
-00221 Exit: clone_val
-00222 Enter: Operand::==(operand&)
-00223 Enter: Operand::==(operand&)
-00224 Enter: OperandCmpEql::()(T, T)
-00224 Exit: operator()
-00223 Exit: operator==
-00222 Exit: operator==
-00210 Exit: evaluate
-00209 Exit: evaluate
-00225 Enter: Operand::==(operand&)
-00225 Exit: operator==
-00226 Enter: Operand::clone_val()
-00226 Exit: clone_val
-00227 Enter: Operand::clone_val()
-00227 Exit: clone_val
-00228 Enter: AstMap::get_branch(const vector<string> &keys)
-00228 keys: [svlvm, module, Prompt]
-00228 Exit: get_branch
-00229 Enter: Operand::==(operand&)
-00229 Exit: operator==
-00230 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00230 last: {"code": [z=2]}
-00230 Exit: add
-00231 Enter: AstMap::get_branch(const vector<string> &keys)
-00231 keys: [svlvm, module, Prompt]
-00231 Exit: get_branch
-00232 Enter: AstMap::get_branch(const vector<string> &keys)
-00232 keys: [svlvm, module, Prompt, last, code]
-00232 Exit: get_branch
-00233 Enter: AstMap::get_branch(const vector<string> &keys)
-00233 keys: [svlvm]
-00233 Exit: get_branch
-00234 Enter: AstList::evaluate()
-00235 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00236 Enter: AstMap::get_branch(const vector<string> &keys)
-00236 keys: [svlm_lang]
-00236 Exit: get_branch
-00237 Enter: AstMap::get_branch(const vector<string> &keys)
-00237 keys: [svlvm, frames]
-00237 Exit: get_branch
-00238 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
-00238 z: 2
-00238 Exit: add
-00235 Exit: evaluate
-00234 Exit: evaluate
-00239 Enter: Operand::==(operand&)
-00239 Exit: operator==
-00240 Enter: Operand::clone_val()
-00240 Exit: clone_val
-00241 Enter: AstMvar::AstMvar(const string &v)
-00241 var_name: y
-00242 Enter: Operand::clone_val()
-00242 Exit: clone_val
-00241 Exit: AstMvar
-00243 Enter: Operand::clone_val()
-00243 Exit: clone_val
-00244 Enter: AstMap::get_branch(const vector<string> &keys)
-00244 keys: [svlvm, module, Prompt]
-00244 Exit: get_branch
-00245 Enter: Operand::==(operand&)
-00245 Exit: operator==
-00246 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00247 Enter: Operand::==(operand&)
-00248 Enter: OperandCmpEql::()(Nil, Nil)
-00248 Exit: operator()
-00247 Exit: operator==
-00246 last: {"code": [z==$y]}
-00246 Exit: add
-00249 Enter: AstMap::get_branch(const vector<string> &keys)
-00249 keys: [svlvm, module, Prompt]
-00249 Exit: get_branch
-00250 Enter: AstMap::get_branch(const vector<string> &keys)
-00250 keys: [svlvm, module, Prompt, last, code]
-00250 Exit: get_branch
-00251 Enter: AstMap::get_branch(const vector<string> &keys)
-00251 keys: [svlvm]
-00251 Exit: get_branch
-00252 Enter: AstList::evaluate()
-00253 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00254 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00254 var_name: y
-00255 Enter: AstMap::get_branch(const vector<string> &keys)
-00255 keys: [svlm_lang]
-00255 Exit: get_branch
-00256 Enter: Operand::==(operand&)
-00257 Enter: OperandCmpEql::()(Nil, Nil)
-00257 Exit: operator()
-00256 Exit: operator==
-00258 Enter: AstMap::get_branch(const vector<string> &keys)
-00258 keys: [svlvm, frames]
-00258 Exit: get_branch
-00259 Enter: Operand::clone_val()
-00259 Exit: clone_val
-00260 Enter: AstMap::get_branch(const vector<string> &keys)
-00260 keys: [svlvm, module, Main, mvar]
-00260 Exit: get_branch
-00261 Enter: Operand::==(operand&)
-00261 Exit: operator==
-00254 Exit: evaluate
-00262 Enter: AstMap::get_branch(const vector<string> &keys)
-00262 keys: [svlm_lang]
-00262 Exit: get_branch
-00263 Enter: AstMap::get_branch(const vector<string> &keys)
-00263 keys: [svlvm, frames]
-00263 Exit: get_branch
-00264 Enter: Operand::clone_val()
-00264 Exit: clone_val
-00265 Enter: Operand::==(operand&)
-00266 Enter: Operand::==(operand&)
-00267 Enter: OperandCmpEql::()(T, T)
-00267 Exit: operator()
-00266 Exit: operator==
-00265 Exit: operator==
-00253 Exit: evaluate
-00252 Exit: evaluate
-00268 Enter: Operand::==(operand&)
-00268 Exit: operator==
-00269 Enter: Operand::clone_val()
-00269 Exit: clone_val
-00270 Enter: AstMap::get_branch(const vector<string> &keys)
-00270 keys: [svlvm, module, Prompt]
-00270 Exit: get_branch
-00271 Enter: Operand::==(operand&)
-00271 Exit: operator==
-00272 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00272 last: {"code": [z]}
-00272 Exit: add
-00273 Enter: AstMap::get_branch(const vector<string> &keys)
-00273 keys: [svlvm, module, Prompt]
-00273 Exit: get_branch
-00274 Enter: AstMap::get_branch(const vector<string> &keys)
-00274 keys: [svlvm, module, Prompt, last, code]
-00274 Exit: get_branch
-00275 Enter: AstMap::get_branch(const vector<string> &keys)
-00275 keys: [svlvm]
-00275 Exit: get_branch
-00276 Enter: AstList::evaluate()
-00277 Enter: AstMap::get_branch(const vector<string> &keys)
-00277 keys: [svlm_lang]
-00277 Exit: get_branch
-00278 Enter: AstMap::get_branch(const vector<string> &keys)
-00278 keys: [svlvm, frames]
-00278 Exit: get_branch
-00276 Exit: evaluate
-00279 Enter: Operand::==(operand&)
-00279 Exit: operator==
-00280 Enter: AstMvar::AstMvar(const string &v)
-00280 var_name: y
-00281 Enter: Operand::clone_val()
-00281 Exit: clone_val
-00280 Exit: AstMvar
-00282 Enter: AstMap::get_branch(const vector<string> &keys)
-00282 keys: [svlvm, module, Prompt]
-00282 Exit: get_branch
-00283 Enter: Operand::==(operand&)
-00283 Exit: operator==
-00284 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00285 Enter: Operand::==(operand&)
-00286 Enter: OperandCmpEql::()(Nil, Nil)
-00286 Exit: operator()
-00285 Exit: operator==
-00284 last: {"code": [$y]}
-00284 Exit: add
-00287 Enter: AstMap::get_branch(const vector<string> &keys)
-00287 keys: [svlvm, module, Prompt]
-00287 Exit: get_branch
-00288 Enter: AstMap::get_branch(const vector<string> &keys)
-00288 keys: [svlvm, module, Prompt, last, code]
-00288 Exit: get_branch
-00289 Enter: AstMap::get_branch(const vector<string> &keys)
-00289 keys: [svlvm]
-00289 Exit: get_branch
-00290 Enter: AstList::evaluate()
-00291 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00291 var_name: y
-00292 Enter: AstMap::get_branch(const vector<string> &keys)
-00292 keys: [svlm_lang]
-00292 Exit: get_branch
-00293 Enter: Operand::==(operand&)
-00294 Enter: OperandCmpEql::()(Nil, Nil)
-00294 Exit: operator()
-00293 Exit: operator==
-00295 Enter: AstMap::get_branch(const vector<string> &keys)
-00295 keys: [svlvm, frames]
-00295 Exit: get_branch
-00296 Enter: Operand::clone_val()
-00296 Exit: clone_val
-00297 Enter: AstMap::get_branch(const vector<string> &keys)
-00297 keys: [svlvm, module, Main, mvar]
-00297 Exit: get_branch
-00298 Enter: Operand::==(operand&)
-00298 Exit: operator==
-00291 Exit: evaluate
-00290 Exit: evaluate
-00299 Enter: Operand::==(operand&)
-00299 Exit: operator==
-00300 Enter: AstMvar::AstMvar(const string &v)
-00300 var_name: y
-00301 Enter: Operand::clone_val()
-00301 Exit: clone_val
-00300 Exit: AstMvar
-00302 Enter: Operand::clone_val()
-00302 Exit: clone_val
-00303 Enter: AstMap::get_branch(const vector<string> &keys)
-00303 keys: [svlvm, module, Prompt]
-00303 Exit: get_branch
-00304 Enter: Operand::==(operand&)
-00304 Exit: operator==
-00305 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00306 Enter: Operand::==(operand&)
-00307 Enter: OperandCmpEql::()(Nil, Nil)
-00307 Exit: operator()
-00306 Exit: operator==
-00305 last: {"code": [2==$y]}
-00305 Exit: add
-00308 Enter: AstMap::get_branch(const vector<string> &keys)
-00308 keys: [svlvm, module, Prompt]
-00308 Exit: get_branch
-00309 Enter: AstMap::get_branch(const vector<string> &keys)
-00309 keys: [svlvm, module, Prompt, last, code]
-00309 Exit: get_branch
-00310 Enter: AstMap::get_branch(const vector<string> &keys)
-00310 keys: [svlvm]
-00310 Exit: get_branch
-00311 Enter: AstList::evaluate()
-00312 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00313 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00313 var_name: y
-00314 Enter: AstMap::get_branch(const vector<string> &keys)
-00314 keys: [svlm_lang]
-00314 Exit: get_branch
-00315 Enter: Operand::==(operand&)
-00316 Enter: OperandCmpEql::()(Nil, Nil)
-00316 Exit: operator()
-00315 Exit: operator==
-00317 Enter: AstMap::get_branch(const vector<string> &keys)
-00317 keys: [svlvm, frames]
-00317 Exit: get_branch
-00318 Enter: Operand::clone_val()
-00318 Exit: clone_val
-00319 Enter: AstMap::get_branch(const vector<string> &keys)
-00319 keys: [svlvm, module, Main, mvar]
-00319 Exit: get_branch
-00320 Enter: Operand::==(operand&)
-00320 Exit: operator==
-00313 Exit: evaluate
-00321 Enter: Operand::clone_val()
-00321 Exit: clone_val
-00322 Enter: Operand::==(operand&)
-00323 Enter: OperandCmpEql::()(T, T)
-00323 Exit: operator()
-00322 Exit: operator==
-00312 Exit: evaluate
-00311 Exit: evaluate
-00324 Enter: Operand::==(operand&)
-00324 Exit: operator==
-00325 Enter: AstMvar::AstMvar(const string &v)
-00325 var_name: y
-00326 Enter: Operand::clone_val()
-00326 Exit: clone_val
-00325 Exit: AstMvar
-00327 Enter: Operand::clone_val()
-00327 Exit: clone_val
-00328 Enter: AstMap::get_branch(const vector<string> &keys)
-00328 keys: [svlvm, module, Prompt]
-00328 Exit: get_branch
-00329 Enter: Operand::==(operand&)
-00329 Exit: operator==
-00330 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
-00331 Enter: Operand::==(operand&)
-00332 Enter: OperandCmpEql::()(Nil, Nil)
-00332 Exit: operator()
-00331 Exit: operator==
-00330 last: {"code": [2==$y]}
-00330 Exit: add
-00333 Enter: AstMap::get_branch(const vector<string> &keys)
-00333 keys: [svlvm, module, Prompt]
-00333 Exit: get_branch
-00334 Enter: AstMap::get_branch(const vector<string> &keys)
-00334 keys: [svlvm, module, Prompt, last, code]
-00334 Exit: get_branch
-00335 Enter: AstMap::get_branch(const vector<string> &keys)
-00335 keys: [svlvm]
-00335 Exit: get_branch
-00336 Enter: AstList::evaluate()
-00337 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
-00338 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
-00338 var_name: y
-00339 Enter: AstMap::get_branch(const vector<string> &keys)
-00339 keys: [svlm_lang]
-00339 Exit: get_branch
-00340 Enter: Operand::==(operand&)
-00341 Enter: OperandCmpEql::()(Nil, Nil)
-00341 Exit: operator()
-00340 Exit: operator==
-00342 Enter: AstMap::get_branch(const vector<string> &keys)
-00342 keys: [svlvm, frames]
-00342 Exit: get_branch
-00343 Enter: Operand::clone_val()
-00343 Exit: clone_val
-00344 Enter: AstMap::get_branch(const vector<string> &keys)
-00344 keys: [svlvm, module, Main, mvar]
-00344 Exit: get_branch
-00345 Enter: Operand::==(operand&)
-00345 Exit: operator==
-00338 Exit: evaluate
-00346 Enter: Operand::clone_val()
-00346 Exit: clone_val
-00347 Enter: Operand::==(operand&)
-00348 Enter: OperandCmpEql::()(T, T)
-00348 Exit: operator()
-00347 Exit: operator==
-00337 Exit: evaluate
-00336 Exit: evaluate
-00349 Enter: Operand::==(operand&)
-00349 Exit: operator==
-00000 Exit: main
+[39m00000 Enter: int main
+[31m00001 Enter: AstMap::add_branch(const vector<string> &keys, op)
+[31m00001 keys: [svlvm, readline, commands, svlm, !!print_ast]:nil
+[32m00002 Enter: Operand::clone_val()
+[32m00002 Exit: clone_val
+[31m00001 Exit: add_branch
+[33m00003 Enter: AstMap::add_branch(const vector<string> &keys, op)
+[33m00003 keys: [svlvm, readline, commands, svlm, !!print_goodbye]:nil
+[34m00004 Enter: Operand::clone_val()
+[34m00004 Exit: clone_val
+[33m00003 Exit: add_branch
+[35m00005 Enter: AstMap::add_branch(const vector<string> &keys, op)
+[35m00005 keys: [svlvm, readline, commands, svlm, !!print_stack]:nil
+[36m00006 Enter: Operand::clone_val()
+[36m00006 Exit: clone_val
+[35m00005 Exit: add_branch
+[38m00007 Enter: AstMap::add_branch(const vector<string> &keys, vvptr)
+[38m00007 keys: [svlvm, readline, commands, svlm, !!print_tree, svlvm]:{"bigbang": 55555, "frames": [], "hello": {"one": {"two": {"three": {"four": {"Five": 456}}}}, "one-one": {"two": {"three": {"four": {"Five": somestrval}}}}}, "readline": {"commands": {"svlm": {"!!print_ast": nil, "!!print_goodbye": nil, "!!print_stack": nil}}}}
+[38m00007 Exit: add_branch
+[90m00008 Enter: AstMap::add_branch(const vector<string> &keys, op)
+[90m00008 keys: [svlvm, readline, commands, svlm, !!reload]:nil
+[91m00009 Enter: Operand::clone_val()
+[91m00009 Exit: clone_val
+[90m00008 Exit: add_branch
+[92m00010 Enter: AstMap::add_branch(const vector<string> &keys, op)
+[92m00010 keys: [svlvm, readline, commands, svlm, !!run_program]:nil
+[93m00011 Enter: Operand::clone_val()
+[93m00011 Exit: clone_val
+[92m00010 Exit: add_branch
+[94m00012 Enter: AstMvar::AstMvar(const string &v)
+[94m00012 var_name: x
+[95m00013 Enter: Operand::clone_val()
+[95m00013 Exit: clone_val
+[94m00012 Exit: AstMvar
+[96m00014 Enter: Operand::clone_val()
+[96m00014 Exit: clone_val
+[39m00015 Enter: AstMvar::AstMvar(const string &v)
+[39m00015 var_name: y
+[31m00016 Enter: Operand::clone_val()
+[31m00016 Exit: clone_val
+[39m00015 Exit: AstMvar
+[32m00017 Enter: Operand::clone_val()
+[32m00017 Exit: clone_val
+[33m00018 Enter: AstMvar::AstMvar(const string &v)
+[33m00018 var_name: n1
+[34m00019 Enter: Operand::clone_val()
+[34m00019 Exit: clone_val
+[33m00018 Exit: AstMvar
+[35m00020 Enter: Operand::clone_val()
+[35m00020 Exit: clone_val
+[36m00021 Enter: Operand::clone_val()
+[36m00021 Exit: clone_val
+[38m00022 Enter: SvlmAst::add_module(Main)
+[90m00023 Enter: SvlmAst::get_module_subnode(Main): ast_mod_t
+[91m00024 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00024 keys: [svlvm, module, Main]
+[91m00024 Exit: get_branch
+[92m00025 Enter: Operand::==(operand&)
+[93m00026 Enter: OperandCmpEql::()(Nil, Nil)
+[93m00026 Exit: operator()
+[92m00025 Exit: operator==
+[94m00027 Enter: AstMap::add_branch(const vector<string> &keys, vvptr)
+[94m00027 keys: [svlvm, module, Main]:nil
+[94m00027 Exit: add_branch
+[95m00028 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00028 keys: [svlvm, module, Main]
+[95m00028 Exit: get_branch
+[90m00023 Exit: get_module_subnode
+[96m00029 Enter: SvlmAst::get_module_subnode(Main): ast_func_t
+[39m00030 Enter: AstMap::get_branch(const vector<string> &keys)
+[39m00030 keys: [svlvm, module, Main, function]
+[39m00030 Exit: get_branch
+[31m00031 Enter: Operand::==(operand&)
+[32m00032 Enter: OperandCmpEql::()(Nil, Nil)
+[32m00032 Exit: operator()
+[31m00031 Exit: operator==
+[33m00033 Enter: AstMap::add_branch(const vector<string> &keys, vvptr)
+[33m00033 keys: [svlvm, module, Main, function]:nil
+[33m00033 Exit: add_branch
+[34m00034 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00034 keys: [svlvm, module, Main, function]
+[34m00034 Exit: get_branch
+[96m00029 Exit: get_module_subnode
+[35m00035 Enter: Operand::==(operand&)
+[36m00036 Enter: OperandCmpEql::()(T, U)
+[36m00036 Exit: operator()
+[35m00035 Exit: operator==
+[38m00037 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[38m00037 main: func: main
+[38m00037 Exit: add
+[38m00022 Exit: add_module
+[90m00038 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[91m00039 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00039 keys: [svlvm, module, Prompt]
+[91m00039 Exit: get_branch
+[92m00040 Enter: Operand::==(operand&)
+[93m00041 Enter: OperandCmpEql::()(Nil, Nil)
+[93m00041 Exit: operator()
+[92m00040 Exit: operator==
+[94m00042 Enter: AstMap::add_branch(const vector<string> &keys, vvptr)
+[94m00042 keys: [svlvm, module, Prompt]:nil
+[94m00042 Exit: add_branch
+[95m00043 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00043 keys: [svlvm, module, Prompt]
+[95m00043 Exit: get_branch
+[90m00038 Exit: get_module_subnode
+[96m00044 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[96m00044 last: {"code": []}
+[96m00044 Exit: add
+[39m00045 Enter: AstMap::get_branch(const vector<string> &keys)
+[39m00045 keys: [svlvm, module, Prompt]
+[39m00045 Exit: get_branch
+[31m00046 Enter: AstMap::get_branch(const vector<string> &keys)
+[31m00046 keys: [svlvm, module, Main, function, main, code]
+[31m00046 Exit: get_branch
+[32m00047 Enter: AstMap::add_branch(const vector<string> &keys, op)
+[32m00047 keys: [svlvm, svlm_lang]:SvlmAst PTR
+[33m00048 Enter: Operand::clone_val()
+[33m00048 Exit: clone_val
+[32m00047 Exit: add_branch
+[34m00049 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00049 keys: [svlvm]
+[34m00049 Exit: get_branch
+[35m00050 Enter: AstMap::get_branch(const vector<string> &keys)
+[35m00050 keys: [svlvm, frames]
+[35m00050 Exit: get_branch
+[36m00051 Enter: Operand::clone_val()
+[36m00051 Exit: clone_val
+[38m00052 Enter: AstList::evaluate()
+[90m00053 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[91m00054 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
+[91m00054 x = 1
+[92m00055 Enter: AstMap::get_branch(const vector<string> &keys)
+[92m00055 keys: [svlm_lang]
+[92m00055 Exit: get_branch
+[93m00056 Enter: Operand::==(operand&)
+[94m00057 Enter: OperandCmpEql::()(Nil, Nil)
+[94m00057 Exit: operator()
+[93m00056 Exit: operator==
+[95m00058 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00058 keys: [svlvm, frames]
+[95m00058 Exit: get_branch
+[96m00059 Enter: Operand::clone_val()
+[96m00059 Exit: clone_val
+[39m00060 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[31m00061 Enter: AstMap::get_branch(const vector<string> &keys)
+[31m00061 keys: [svlvm, module, Main, mvar]
+[31m00061 Exit: get_branch
+[32m00062 Enter: Operand::==(operand&)
+[33m00063 Enter: OperandCmpEql::()(Nil, Nil)
+[33m00063 Exit: operator()
+[32m00062 Exit: operator==
+[34m00064 Enter: AstMap::add_branch(const vector<string> &keys, vvptr)
+[34m00064 keys: [svlvm, module, Main, mvar]:nil
+[34m00064 Exit: add_branch
+[35m00065 Enter: AstMap::get_branch(const vector<string> &keys)
+[35m00065 keys: [svlvm, module, Main, mvar]
+[35m00065 Exit: get_branch
+[39m00060 Exit: get_module_subnode
+[91m00054 sub_node.add() before
+[36m00066 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
+[36m00066 x: 1
+[38m00067 Enter: Operand::clone_val()
+[38m00067 Exit: clone_val
+[36m00066 Exit: add
+[91m00054 sub_node.add() after
+[91m00054 Exit: assign
+[90m00053 Exit: evaluate
+[90m00068 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[91m00069 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
+[91m00069 y = 1
+[92m00070 Enter: AstMap::get_branch(const vector<string> &keys)
+[92m00070 keys: [svlm_lang]
+[92m00070 Exit: get_branch
+[93m00071 Enter: Operand::==(operand&)
+[94m00072 Enter: OperandCmpEql::()(Nil, Nil)
+[94m00072 Exit: operator()
+[93m00071 Exit: operator==
+[95m00073 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00073 keys: [svlvm, frames]
+[95m00073 Exit: get_branch
+[96m00074 Enter: Operand::clone_val()
+[96m00074 Exit: clone_val
+[39m00075 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[31m00076 Enter: AstMap::get_branch(const vector<string> &keys)
+[31m00076 keys: [svlvm, module, Main, mvar]
+[31m00076 Exit: get_branch
+[32m00077 Enter: Operand::==(operand&)
+[33m00078 Enter: OperandCmpEql::()(T, U)
+[33m00078 Exit: operator()
+[32m00077 Exit: operator==
+[39m00075 Exit: get_module_subnode
+[91m00069 sub_node.add() before
+[34m00079 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
+[34m00079 y: 1
+[35m00080 Enter: Operand::clone_val()
+[35m00080 Exit: clone_val
+[34m00079 Exit: add
+[91m00069 sub_node.add() after
+[91m00069 Exit: assign
+[90m00068 Exit: evaluate
+[36m00081 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[38m00082 Enter: AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)
+[38m00082 n1 = nil
+[90m00083 Enter: AstMap::get_branch(const vector<string> &keys)
+[90m00083 keys: [svlm_lang]
+[90m00083 Exit: get_branch
+[91m00084 Enter: Operand::==(operand&)
+[92m00085 Enter: OperandCmpEql::()(Nil, Nil)
+[92m00085 Exit: operator()
+[91m00084 Exit: operator==
+[93m00086 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00086 keys: [svlvm, frames]
+[93m00086 Exit: get_branch
+[94m00087 Enter: Operand::clone_val()
+[94m00087 Exit: clone_val
+[95m00088 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[96m00089 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00089 keys: [svlvm, module, Main, mvar]
+[96m00089 Exit: get_branch
+[39m00090 Enter: Operand::==(operand&)
+[31m00091 Enter: OperandCmpEql::()(T, U)
+[31m00091 Exit: operator()
+[39m00090 Exit: operator==
+[95m00088 Exit: get_module_subnode
+[38m00082 sub_node.add() before
+[32m00092 Enter: AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): 
+[32m00092 n1: nil
+[33m00093 Enter: Operand::clone_val()
+[33m00093 Exit: clone_val
+[32m00092 Exit: add
+[38m00082 sub_node.add() after
+[38m00082 Exit: assign
+[36m00081 Exit: evaluate
+[38m00052 Exit: evaluate
+[34m00094 Enter: AstMvar::AstMvar(const string &v)
+[34m00094 var_name: n1
+[35m00095 Enter: Operand::clone_val()
+[35m00095 Exit: clone_val
+[34m00094 Exit: AstMvar
+[36m00096 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[38m00097 Enter: AstMap::get_branch(const vector<string> &keys)
+[38m00097 keys: [svlvm, module, Prompt]
+[38m00097 Exit: get_branch
+[90m00098 Enter: Operand::==(operand&)
+[91m00099 Enter: OperandCmpEql::()(T, U)
+[91m00099 Exit: operator()
+[90m00098 Exit: operator==
+[36m00096 Exit: get_module_subnode
+[92m00100 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[93m00101 Enter: Operand::==(operand&)
+[94m00102 Enter: OperandCmpEql::()(Nil, Nil)
+[94m00102 Exit: operator()
+[93m00101 Exit: operator==
+[92m00100 last: {"code": [print $n1]}
+[92m00100 Exit: add
+[95m00103 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00103 keys: [svlvm, module, Prompt]
+[95m00103 Exit: get_branch
+[96m00104 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00104 keys: [svlvm, module, Prompt, last, code]
+[96m00104 Exit: get_branch
+[39m00105 Enter: AstMap::get_branch(const vector<string> &keys)
+[39m00105 keys: [svlvm]
+[39m00105 Exit: get_branch
+[31m00106 Enter: AstList::evaluate()
+[32m00107 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[32m00107 var_name: n1
+[33m00108 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00108 keys: [svlm_lang]
+[33m00108 Exit: get_branch
+[34m00109 Enter: Operand::==(operand&)
+[35m00110 Enter: OperandCmpEql::()(Nil, Nil)
+[35m00110 Exit: operator()
+[34m00109 Exit: operator==
+[36m00111 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00111 keys: [svlvm, frames]
+[36m00111 Exit: get_branch
+[38m00112 Enter: Operand::clone_val()
+[38m00112 Exit: clone_val
+[90m00113 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[91m00114 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00114 keys: [svlvm, module, Main, mvar]
+[91m00114 Exit: get_branch
+[92m00115 Enter: Operand::==(operand&)
+[93m00116 Enter: OperandCmpEql::()(T, U)
+[93m00116 Exit: operator()
+[92m00115 Exit: operator==
+[90m00113 Exit: get_module_subnode
+[32m00107 Exit: evaluate
+[31m00106 Exit: evaluate
+[94m00117 Enter: Operand::==(operand&)
+[95m00118 Enter: OperandCmpEql::()(T, U)
+[95m00118 Exit: operator()
+[94m00117 Exit: operator==
+[96m00119 Enter: Operand::clone_val()
+[96m00119 Exit: clone_val
+[39m00120 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[31m00121 Enter: AstMap::get_branch(const vector<string> &keys)
+[31m00121 keys: [svlvm, module, Prompt]
+[31m00121 Exit: get_branch
+[32m00122 Enter: Operand::==(operand&)
+[33m00123 Enter: OperandCmpEql::()(T, U)
+[33m00123 Exit: operator()
+[32m00122 Exit: operator==
+[39m00120 Exit: get_module_subnode
+[34m00124 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[34m00124 last: {"code": [n1]}
+[34m00124 Exit: add
+[35m00125 Enter: AstMap::get_branch(const vector<string> &keys)
+[35m00125 keys: [svlvm, module, Prompt]
+[35m00125 Exit: get_branch
+[36m00126 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00126 keys: [svlvm, module, Prompt, last, code]
+[36m00126 Exit: get_branch
+[38m00127 Enter: AstMap::get_branch(const vector<string> &keys)
+[38m00127 keys: [svlvm]
+[38m00127 Exit: get_branch
+[90m00128 Enter: AstList::evaluate()
+[91m00129 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00129 keys: [svlm_lang]
+[91m00129 Exit: get_branch
+[92m00130 Enter: AstMap::get_branch(const vector<string> &keys)
+[92m00130 keys: [svlvm, frames]
+[92m00130 Exit: get_branch
+[90m00128 Exit: evaluate
+[93m00131 Enter: Operand::==(operand&)
+[94m00132 Enter: OperandCmpEql::()(T, U)
+[94m00132 Exit: operator()
+[93m00131 Exit: operator==
+[95m00133 Enter: AstMvar::AstMvar(const string &v)
+[95m00133 var_name: n1
+[96m00134 Enter: Operand::clone_val()
+[96m00134 Exit: clone_val
+[95m00133 Exit: AstMvar
+[39m00135 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[31m00136 Enter: AstMap::get_branch(const vector<string> &keys)
+[31m00136 keys: [svlvm, module, Prompt]
+[31m00136 Exit: get_branch
+[32m00137 Enter: Operand::==(operand&)
+[33m00138 Enter: OperandCmpEql::()(T, U)
+[33m00138 Exit: operator()
+[32m00137 Exit: operator==
+[39m00135 Exit: get_module_subnode
+[34m00139 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[35m00140 Enter: Operand::==(operand&)
+[36m00141 Enter: OperandCmpEql::()(Nil, Nil)
+[36m00141 Exit: operator()
+[35m00140 Exit: operator==
+[34m00139 last: {"code": [$n1]}
+[34m00139 Exit: add
+[38m00142 Enter: AstMap::get_branch(const vector<string> &keys)
+[38m00142 keys: [svlvm, module, Prompt]
+[38m00142 Exit: get_branch
+[90m00143 Enter: AstMap::get_branch(const vector<string> &keys)
+[90m00143 keys: [svlvm, module, Prompt, last, code]
+[90m00143 Exit: get_branch
+[91m00144 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00144 keys: [svlvm]
+[91m00144 Exit: get_branch
+[92m00145 Enter: AstList::evaluate()
+[93m00146 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[93m00146 var_name: n1
+[94m00147 Enter: AstMap::get_branch(const vector<string> &keys)
+[94m00147 keys: [svlm_lang]
+[94m00147 Exit: get_branch
+[95m00148 Enter: Operand::==(operand&)
+[96m00149 Enter: OperandCmpEql::()(Nil, Nil)
+[96m00149 Exit: operator()
+[95m00148 Exit: operator==
+[39m00150 Enter: AstMap::get_branch(const vector<string> &keys)
+[39m00150 keys: [svlvm, frames]
+[39m00150 Exit: get_branch
+[31m00151 Enter: Operand::clone_val()
+[31m00151 Exit: clone_val
+[32m00152 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[33m00153 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00153 keys: [svlvm, module, Main, mvar]
+[33m00153 Exit: get_branch
+[34m00154 Enter: Operand::==(operand&)
+[35m00155 Enter: OperandCmpEql::()(T, U)
+[35m00155 Exit: operator()
+[34m00154 Exit: operator==
+[32m00152 Exit: get_module_subnode
+[93m00146 Exit: evaluate
+[92m00145 Exit: evaluate
+[36m00156 Enter: Operand::==(operand&)
+[38m00157 Enter: OperandCmpEql::()(T, U)
+[38m00157 Exit: operator()
+[36m00156 Exit: operator==
+[90m00158 Enter: AstMvar::AstMvar(const string &v)
+[90m00158 var_name: n1
+[91m00159 Enter: Operand::clone_val()
+[91m00159 Exit: clone_val
+[90m00158 Exit: AstMvar
+[92m00160 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[93m00161 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00161 keys: [svlvm, module, Prompt]
+[93m00161 Exit: get_branch
+[94m00162 Enter: Operand::==(operand&)
+[95m00163 Enter: OperandCmpEql::()(T, U)
+[95m00163 Exit: operator()
+[94m00162 Exit: operator==
+[92m00160 Exit: get_module_subnode
+[96m00164 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[39m00165 Enter: Operand::==(operand&)
+[31m00166 Enter: OperandCmpEql::()(Nil, Nil)
+[31m00166 Exit: operator()
+[39m00165 Exit: operator==
+[96m00164 last: {"code": [print $n1]}
+[96m00164 Exit: add
+[32m00167 Enter: AstMap::get_branch(const vector<string> &keys)
+[32m00167 keys: [svlvm, module, Prompt]
+[32m00167 Exit: get_branch
+[33m00168 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00168 keys: [svlvm, module, Prompt, last, code]
+[33m00168 Exit: get_branch
+[34m00169 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00169 keys: [svlvm]
+[34m00169 Exit: get_branch
+[35m00170 Enter: AstList::evaluate()
+[36m00171 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[36m00171 var_name: n1
+[38m00172 Enter: AstMap::get_branch(const vector<string> &keys)
+[38m00172 keys: [svlm_lang]
+[38m00172 Exit: get_branch
+[90m00173 Enter: Operand::==(operand&)
+[91m00174 Enter: OperandCmpEql::()(Nil, Nil)
+[91m00174 Exit: operator()
+[90m00173 Exit: operator==
+[92m00175 Enter: AstMap::get_branch(const vector<string> &keys)
+[92m00175 keys: [svlvm, frames]
+[92m00175 Exit: get_branch
+[93m00176 Enter: Operand::clone_val()
+[93m00176 Exit: clone_val
+[94m00177 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[95m00178 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00178 keys: [svlvm, module, Main, mvar]
+[95m00178 Exit: get_branch
+[96m00179 Enter: Operand::==(operand&)
+[39m00180 Enter: OperandCmpEql::()(T, U)
+[39m00180 Exit: operator()
+[96m00179 Exit: operator==
+[94m00177 Exit: get_module_subnode
+[36m00171 Exit: evaluate
+[35m00170 Exit: evaluate
+[31m00181 Enter: Operand::==(operand&)
+[32m00182 Enter: OperandCmpEql::()(T, U)
+[32m00182 Exit: operator()
+[31m00181 Exit: operator==
+[33m00183 Enter: AstMvar::AstMvar(const string &v)
+[33m00183 var_name: n1
+[34m00184 Enter: Operand::clone_val()
+[34m00184 Exit: clone_val
+[33m00183 Exit: AstMvar
+[35m00185 Enter: AstMvar::AstMvar(const string &v)
+[35m00185 var_name: n1
+[36m00186 Enter: Operand::clone_val()
+[36m00186 Exit: clone_val
+[35m00185 Exit: AstMvar
+[38m00187 Enter: Operand::clone_val()
+[38m00187 Exit: clone_val
+[90m00188 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[91m00189 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00189 keys: [svlvm, module, Prompt]
+[91m00189 Exit: get_branch
+[92m00190 Enter: Operand::==(operand&)
+[93m00191 Enter: OperandCmpEql::()(T, U)
+[93m00191 Exit: operator()
+[92m00190 Exit: operator==
+[90m00188 Exit: get_module_subnode
+[94m00192 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[95m00193 Enter: Operand::==(operand&)
+[96m00194 Enter: OperandCmpEql::()(Nil, Nil)
+[96m00194 Exit: operator()
+[95m00193 Exit: operator==
+[39m00195 Enter: Operand::==(operand&)
+[31m00196 Enter: OperandCmpEql::()(Nil, Nil)
+[31m00196 Exit: operator()
+[39m00195 Exit: operator==
+[94m00192 last: {"code": [$n1==$n1]}
+[94m00192 Exit: add
+[32m00197 Enter: AstMap::get_branch(const vector<string> &keys)
+[32m00197 keys: [svlvm, module, Prompt]
+[32m00197 Exit: get_branch
+[33m00198 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00198 keys: [svlvm, module, Prompt, last, code]
+[33m00198 Exit: get_branch
+[34m00199 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00199 keys: [svlvm]
+[34m00199 Exit: get_branch
+[35m00200 Enter: AstList::evaluate()
+[36m00201 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[38m00202 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[38m00202 var_name: n1
+[90m00203 Enter: AstMap::get_branch(const vector<string> &keys)
+[90m00203 keys: [svlm_lang]
+[90m00203 Exit: get_branch
+[91m00204 Enter: Operand::==(operand&)
+[92m00205 Enter: OperandCmpEql::()(Nil, Nil)
+[92m00205 Exit: operator()
+[91m00204 Exit: operator==
+[93m00206 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00206 keys: [svlvm, frames]
+[93m00206 Exit: get_branch
+[94m00207 Enter: Operand::clone_val()
+[94m00207 Exit: clone_val
+[95m00208 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[96m00209 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00209 keys: [svlvm, module, Main, mvar]
+[96m00209 Exit: get_branch
+[39m00210 Enter: Operand::==(operand&)
+[31m00211 Enter: OperandCmpEql::()(T, U)
+[31m00211 Exit: operator()
+[39m00210 Exit: operator==
+[95m00208 Exit: get_module_subnode
+[38m00202 Exit: evaluate
+[32m00212 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[32m00212 var_name: n1
+[33m00213 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00213 keys: [svlm_lang]
+[33m00213 Exit: get_branch
+[34m00214 Enter: Operand::==(operand&)
+[35m00215 Enter: OperandCmpEql::()(Nil, Nil)
+[35m00215 Exit: operator()
+[34m00214 Exit: operator==
+[36m00216 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00216 keys: [svlvm, frames]
+[36m00216 Exit: get_branch
+[38m00217 Enter: Operand::clone_val()
+[38m00217 Exit: clone_val
+[90m00218 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[91m00219 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00219 keys: [svlvm, module, Main, mvar]
+[91m00219 Exit: get_branch
+[92m00220 Enter: Operand::==(operand&)
+[93m00221 Enter: OperandCmpEql::()(T, U)
+[93m00221 Exit: operator()
+[92m00220 Exit: operator==
+[90m00218 Exit: get_module_subnode
+[32m00212 Exit: evaluate
+[94m00222 Enter: Operand::clone_val()
+[94m00222 Exit: clone_val
+[95m00223 Enter: Operand::==(operand&)
+[96m00224 Enter: OperandCmpEql::()(Nil, Nil)
+[96m00224 Exit: operator()
+[95m00223 Exit: operator==
+[36m00201 Exit: evaluate
+[35m00200 Exit: evaluate
+[39m00225 Enter: Operand::==(operand&)
+[31m00226 Enter: OperandCmpEql::()(T, U)
+[31m00226 Exit: operator()
+[39m00225 Exit: operator==
+[32m00227 Enter: AstMvar::AstMvar(const string &v)
+[32m00227 var_name: n1
+[33m00228 Enter: Operand::clone_val()
+[33m00228 Exit: clone_val
+[32m00227 Exit: AstMvar
+[34m00229 Enter: Operand::clone_val()
+[34m00229 Exit: clone_val
+[35m00230 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[36m00231 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00231 keys: [svlvm, module, Prompt]
+[36m00231 Exit: get_branch
+[38m00232 Enter: Operand::==(operand&)
+[90m00233 Enter: OperandCmpEql::()(T, U)
+[90m00233 Exit: operator()
+[38m00232 Exit: operator==
+[35m00230 Exit: get_module_subnode
+[91m00234 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[92m00235 Enter: Operand::==(operand&)
+[93m00236 Enter: OperandCmpEql::()(Nil, Nil)
+[93m00236 Exit: operator()
+[92m00235 Exit: operator==
+[91m00234 last: {"code": [$n1==nil]}
+[91m00234 Exit: add
+[94m00237 Enter: AstMap::get_branch(const vector<string> &keys)
+[94m00237 keys: [svlvm, module, Prompt]
+[94m00237 Exit: get_branch
+[95m00238 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00238 keys: [svlvm, module, Prompt, last, code]
+[95m00238 Exit: get_branch
+[96m00239 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00239 keys: [svlvm]
+[96m00239 Exit: get_branch
+[39m00240 Enter: AstList::evaluate()
+[31m00241 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[32m00242 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[32m00242 var_name: n1
+[33m00243 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00243 keys: [svlm_lang]
+[33m00243 Exit: get_branch
+[34m00244 Enter: Operand::==(operand&)
+[35m00245 Enter: OperandCmpEql::()(Nil, Nil)
+[35m00245 Exit: operator()
+[34m00244 Exit: operator==
+[36m00246 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00246 keys: [svlvm, frames]
+[36m00246 Exit: get_branch
+[38m00247 Enter: Operand::clone_val()
+[38m00247 Exit: clone_val
+[90m00248 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[91m00249 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00249 keys: [svlvm, module, Main, mvar]
+[91m00249 Exit: get_branch
+[92m00250 Enter: Operand::==(operand&)
+[93m00251 Enter: OperandCmpEql::()(T, U)
+[93m00251 Exit: operator()
+[92m00250 Exit: operator==
+[90m00248 Exit: get_module_subnode
+[32m00242 Exit: evaluate
+[94m00252 Enter: Operand::clone_val()
+[94m00252 Exit: clone_val
+[95m00253 Enter: Operand::==(operand&)
+[96m00254 Enter: OperandCmpEql::()(Nil, Nil)
+[96m00254 Exit: operator()
+[95m00253 Exit: operator==
+[31m00241 Exit: evaluate
+[39m00240 Exit: evaluate
+[39m00255 Enter: Operand::==(operand&)
+[31m00256 Enter: OperandCmpEql::()(T, U)
+[31m00256 Exit: operator()
+[39m00255 Exit: operator==
+[32m00257 Enter: AstMvar::AstMvar(const string &v)
+[32m00257 var_name: n1
+[33m00258 Enter: Operand::clone_val()
+[33m00258 Exit: clone_val
+[32m00257 Exit: AstMvar
+[34m00259 Enter: Operand::clone_val()
+[34m00259 Exit: clone_val
+[35m00260 Enter: Operand::clone_val()
+[35m00260 Exit: clone_val
+[36m00261 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[38m00262 Enter: AstMap::get_branch(const vector<string> &keys)
+[38m00262 keys: [svlvm, module, Prompt]
+[38m00262 Exit: get_branch
+[90m00263 Enter: Operand::==(operand&)
+[91m00264 Enter: OperandCmpEql::()(T, U)
+[91m00264 Exit: operator()
+[90m00263 Exit: operator==
+[36m00261 Exit: get_module_subnode
+[92m00265 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[93m00266 Enter: Operand::==(operand&)
+[94m00267 Enter: OperandCmpEql::()(Nil, Nil)
+[94m00267 Exit: operator()
+[93m00266 Exit: operator==
+[92m00265 last: {"code": [$n1==adfasdfadsf]}
+[92m00265 Exit: add
+[95m00268 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00268 keys: [svlvm, module, Prompt]
+[95m00268 Exit: get_branch
+[96m00269 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00269 keys: [svlvm, module, Prompt, last, code]
+[96m00269 Exit: get_branch
+[39m00270 Enter: AstMap::get_branch(const vector<string> &keys)
+[39m00270 keys: [svlvm]
+[39m00270 Exit: get_branch
+[31m00271 Enter: AstList::evaluate()
+[32m00272 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[33m00273 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00273 keys: [svlm_lang]
+[33m00273 Exit: get_branch
+[34m00274 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00274 keys: [svlvm, frames]
+[34m00274 Exit: get_branch
+[35m00275 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[35m00275 var_name: n1
+[36m00276 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00276 keys: [svlm_lang]
+[36m00276 Exit: get_branch
+[38m00277 Enter: Operand::==(operand&)
+[90m00278 Enter: OperandCmpEql::()(Nil, Nil)
+[90m00278 Exit: operator()
+[38m00277 Exit: operator==
+[91m00279 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00279 keys: [svlvm, frames]
+[91m00279 Exit: get_branch
+[92m00280 Enter: Operand::clone_val()
+[92m00280 Exit: clone_val
+[93m00281 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[94m00282 Enter: AstMap::get_branch(const vector<string> &keys)
+[94m00282 keys: [svlvm, module, Main, mvar]
+[94m00282 Exit: get_branch
+[95m00283 Enter: Operand::==(operand&)
+[96m00284 Enter: OperandCmpEql::()(T, U)
+[96m00284 Exit: operator()
+[95m00283 Exit: operator==
+[93m00281 Exit: get_module_subnode
+[35m00275 Exit: evaluate
+[39m00285 Enter: Operand::clone_val()
+[39m00285 Exit: clone_val
+[31m00286 Enter: Operand::==(operand&)
+[32m00287 Enter: OperandCmpEql::()(Nil, Nil)
+[32m00287 Exit: operator()
+[31m00286 Exit: operator==
+[32m00272 Exit: evaluate
+[31m00271 Exit: evaluate
+[33m00288 Enter: Operand::==(operand&)
+[34m00289 Enter: OperandCmpEql::()(T, U)
+[34m00289 Exit: operator()
+[33m00288 Exit: operator==
+[35m00290 Enter: AstMvar::AstMvar(const string &v)
+[35m00290 var_name: n1
+[36m00291 Enter: Operand::clone_val()
+[36m00291 Exit: clone_val
+[35m00290 Exit: AstMvar
+[38m00292 Enter: AstMvar::AstMvar(const string &v)
+[38m00292 var_name: x
+[90m00293 Enter: Operand::clone_val()
+[90m00293 Exit: clone_val
+[38m00292 Exit: AstMvar
+[91m00294 Enter: Operand::clone_val()
+[91m00294 Exit: clone_val
+[92m00295 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[93m00296 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00296 keys: [svlvm, module, Prompt]
+[93m00296 Exit: get_branch
+[94m00297 Enter: Operand::==(operand&)
+[95m00298 Enter: OperandCmpEql::()(T, U)
+[95m00298 Exit: operator()
+[94m00297 Exit: operator==
+[92m00295 Exit: get_module_subnode
+[96m00299 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[39m00300 Enter: Operand::==(operand&)
+[31m00301 Enter: OperandCmpEql::()(Nil, Nil)
+[31m00301 Exit: operator()
+[39m00300 Exit: operator==
+[32m00302 Enter: Operand::==(operand&)
+[33m00303 Enter: OperandCmpEql::()(Nil, Nil)
+[33m00303 Exit: operator()
+[32m00302 Exit: operator==
+[96m00299 last: {"code": [$n1==$x]}
+[96m00299 Exit: add
+[34m00304 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00304 keys: [svlvm, module, Prompt]
+[34m00304 Exit: get_branch
+[35m00305 Enter: AstMap::get_branch(const vector<string> &keys)
+[35m00305 keys: [svlvm, module, Prompt, last, code]
+[35m00305 Exit: get_branch
+[36m00306 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00306 keys: [svlvm]
+[36m00306 Exit: get_branch
+[38m00307 Enter: AstList::evaluate()
+[90m00308 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[91m00309 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[91m00309 var_name: x
+[92m00310 Enter: AstMap::get_branch(const vector<string> &keys)
+[92m00310 keys: [svlm_lang]
+[92m00310 Exit: get_branch
+[93m00311 Enter: Operand::==(operand&)
+[94m00312 Enter: OperandCmpEql::()(Nil, Nil)
+[94m00312 Exit: operator()
+[93m00311 Exit: operator==
+[95m00313 Enter: AstMap::get_branch(const vector<string> &keys)
+[95m00313 keys: [svlvm, frames]
+[95m00313 Exit: get_branch
+[96m00314 Enter: Operand::clone_val()
+[96m00314 Exit: clone_val
+[39m00315 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[31m00316 Enter: AstMap::get_branch(const vector<string> &keys)
+[31m00316 keys: [svlvm, module, Main, mvar]
+[31m00316 Exit: get_branch
+[32m00317 Enter: Operand::==(operand&)
+[33m00318 Enter: OperandCmpEql::()(T, U)
+[33m00318 Exit: operator()
+[32m00317 Exit: operator==
+[39m00315 Exit: get_module_subnode
+[91m00309 Exit: evaluate
+[34m00319 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[34m00319 var_name: n1
+[35m00320 Enter: AstMap::get_branch(const vector<string> &keys)
+[35m00320 keys: [svlm_lang]
+[35m00320 Exit: get_branch
+[36m00321 Enter: Operand::==(operand&)
+[38m00322 Enter: OperandCmpEql::()(Nil, Nil)
+[38m00322 Exit: operator()
+[36m00321 Exit: operator==
+[90m00323 Enter: AstMap::get_branch(const vector<string> &keys)
+[90m00323 keys: [svlvm, frames]
+[90m00323 Exit: get_branch
+[91m00324 Enter: Operand::clone_val()
+[91m00324 Exit: clone_val
+[92m00325 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[93m00326 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00326 keys: [svlvm, module, Main, mvar]
+[93m00326 Exit: get_branch
+[94m00327 Enter: Operand::==(operand&)
+[95m00328 Enter: OperandCmpEql::()(T, U)
+[95m00328 Exit: operator()
+[94m00327 Exit: operator==
+[92m00325 Exit: get_module_subnode
+[34m00319 Exit: evaluate
+[96m00329 Enter: Operand::clone_val()
+[96m00329 Exit: clone_val
+[39m00330 Enter: Operand::==(operand&)
+[31m00331 Enter: OperandCmpEql::()(T, U)
+[31m00331 Exit: operator()
+[39m00330 Exit: operator==
+[90m00308 Exit: evaluate
+[38m00307 Exit: evaluate
+[32m00332 Enter: Operand::==(operand&)
+[33m00333 Enter: OperandCmpEql::()(T, U)
+[33m00333 Exit: operator()
+[32m00332 Exit: operator==
+[34m00334 Enter: Operand::clone_val()
+[34m00334 Exit: clone_val
+[35m00335 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[36m00336 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00336 keys: [svlvm, module, Prompt]
+[36m00336 Exit: get_branch
+[38m00337 Enter: Operand::==(operand&)
+[90m00338 Enter: OperandCmpEql::()(T, U)
+[90m00338 Exit: operator()
+[38m00337 Exit: operator==
+[35m00335 Exit: get_module_subnode
+[91m00339 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[91m00339 last: {"code": [nil==nil]}
+[91m00339 Exit: add
+[92m00340 Enter: AstMap::get_branch(const vector<string> &keys)
+[92m00340 keys: [svlvm, module, Prompt]
+[92m00340 Exit: get_branch
+[93m00341 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00341 keys: [svlvm, module, Prompt, last, code]
+[93m00341 Exit: get_branch
+[94m00342 Enter: AstMap::get_branch(const vector<string> &keys)
+[94m00342 keys: [svlvm]
+[94m00342 Exit: get_branch
+[95m00343 Enter: AstList::evaluate()
+[96m00344 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[39m00345 Enter: Operand::clone_val()
+[39m00345 Exit: clone_val
+[31m00346 Enter: Operand::==(operand&)
+[32m00347 Enter: OperandCmpEql::()(Nil, Nil)
+[32m00347 Exit: operator()
+[31m00346 Exit: operator==
+[96m00344 Exit: evaluate
+[95m00343 Exit: evaluate
+[33m00348 Enter: Operand::==(operand&)
+[34m00349 Enter: OperandCmpEql::()(T, U)
+[34m00349 Exit: operator()
+[33m00348 Exit: operator==
+[35m00350 Enter: AstMvar::AstMvar(const string &v)
+[35m00350 var_name: n1
+[36m00351 Enter: Operand::clone_val()
+[36m00351 Exit: clone_val
+[35m00350 Exit: AstMvar
+[38m00352 Enter: Operand::clone_val()
+[38m00352 Exit: clone_val
+[90m00353 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[91m00354 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00354 keys: [svlvm, module, Prompt]
+[91m00354 Exit: get_branch
+[92m00355 Enter: Operand::==(operand&)
+[93m00356 Enter: OperandCmpEql::()(T, U)
+[93m00356 Exit: operator()
+[92m00355 Exit: operator==
+[90m00353 Exit: get_module_subnode
+[94m00357 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[95m00358 Enter: Operand::==(operand&)
+[96m00359 Enter: OperandCmpEql::()(Nil, Nil)
+[96m00359 Exit: operator()
+[95m00358 Exit: operator==
+[94m00357 last: {"code": [nil==$n1]}
+[94m00357 Exit: add
+[39m00360 Enter: AstMap::get_branch(const vector<string> &keys)
+[39m00360 keys: [svlvm, module, Prompt]
+[39m00360 Exit: get_branch
+[31m00361 Enter: AstMap::get_branch(const vector<string> &keys)
+[31m00361 keys: [svlvm, module, Prompt, last, code]
+[31m00361 Exit: get_branch
+[32m00362 Enter: AstMap::get_branch(const vector<string> &keys)
+[32m00362 keys: [svlvm]
+[32m00362 Exit: get_branch
+[33m00363 Enter: AstList::evaluate()
+[34m00364 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[35m00365 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[35m00365 var_name: n1
+[36m00366 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00366 keys: [svlm_lang]
+[36m00366 Exit: get_branch
+[38m00367 Enter: Operand::==(operand&)
+[90m00368 Enter: OperandCmpEql::()(Nil, Nil)
+[90m00368 Exit: operator()
+[38m00367 Exit: operator==
+[91m00369 Enter: AstMap::get_branch(const vector<string> &keys)
+[91m00369 keys: [svlvm, frames]
+[91m00369 Exit: get_branch
+[92m00370 Enter: Operand::clone_val()
+[92m00370 Exit: clone_val
+[93m00371 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[94m00372 Enter: AstMap::get_branch(const vector<string> &keys)
+[94m00372 keys: [svlvm, module, Main, mvar]
+[94m00372 Exit: get_branch
+[95m00373 Enter: Operand::==(operand&)
+[96m00374 Enter: OperandCmpEql::()(T, U)
+[96m00374 Exit: operator()
+[95m00373 Exit: operator==
+[93m00371 Exit: get_module_subnode
+[35m00365 Exit: evaluate
+[39m00375 Enter: Operand::clone_val()
+[39m00375 Exit: clone_val
+[31m00376 Enter: Operand::==(operand&)
+[32m00377 Enter: OperandCmpEql::()(Nil, Nil)
+[32m00377 Exit: operator()
+[31m00376 Exit: operator==
+[34m00364 Exit: evaluate
+[33m00363 Exit: evaluate
+[33m00378 Enter: Operand::==(operand&)
+[34m00379 Enter: OperandCmpEql::()(T, U)
+[34m00379 Exit: operator()
+[33m00378 Exit: operator==
+[35m00380 Enter: AstMap::get_branch(const vector<string> &keys)
+[35m00380 keys: [svlvm, module, Prompt, last, code]
+[35m00380 Exit: get_branch
+[36m00381 Enter: AstMap::get_branch(const vector<string> &keys)
+[36m00381 keys: [svlvm]
+[36m00381 Exit: get_branch
+[38m00382 Enter: AstList::evaluate()
+[90m00383 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[91m00384 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[91m00384 var_name: n1
+[92m00385 Enter: AstMap::get_branch(const vector<string> &keys)
+[92m00385 keys: [svlm_lang]
+[92m00385 Exit: get_branch
+[93m00386 Enter: Operand::==(operand&)
+[94m00387 Enter: OperandCmpEql::()(T, U)
+[94m00387 Exit: operator()
+[93m00386 Exit: operator==
+[95m00388 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[96m00389 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00389 keys: [svlvm, module, Main, mvar]
+[96m00389 Exit: get_branch
+[39m00390 Enter: Operand::==(operand&)
+[31m00391 Enter: OperandCmpEql::()(T, U)
+[31m00391 Exit: operator()
+[39m00390 Exit: operator==
+[95m00388 Exit: get_module_subnode
+[91m00384 Exit: evaluate
+[32m00392 Enter: Operand::clone_val()
+[32m00392 Exit: clone_val
+[33m00393 Enter: Operand::==(operand&)
+[34m00394 Enter: OperandCmpEql::()(Nil, Nil)
+[34m00394 Exit: operator()
+[33m00393 Exit: operator==
+[90m00383 Exit: evaluate
+[38m00382 Exit: evaluate
+[35m00395 Enter: Operand::==(operand&)
+[36m00396 Enter: OperandCmpEql::()(T, U)
+[36m00396 Exit: operator()
+[35m00395 Exit: operator==
+[38m00397 Enter: AstMvar::AstMvar(const string &v)
+[38m00397 var_name: x
+[90m00398 Enter: Operand::clone_val()
+[90m00398 Exit: clone_val
+[38m00397 Exit: AstMvar
+[91m00399 Enter: Operand::clone_val()
+[91m00399 Exit: clone_val
+[92m00400 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[93m00401 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00401 keys: [svlvm, module, Prompt]
+[93m00401 Exit: get_branch
+[94m00402 Enter: Operand::==(operand&)
+[95m00403 Enter: OperandCmpEql::()(T, U)
+[95m00403 Exit: operator()
+[94m00402 Exit: operator==
+[92m00400 Exit: get_module_subnode
+[96m00404 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[39m00405 Enter: Operand::==(operand&)
+[31m00406 Enter: OperandCmpEql::()(Nil, Nil)
+[31m00406 Exit: operator()
+[39m00405 Exit: operator==
+[96m00404 last: {"code": [$x==nil]}
+[96m00404 Exit: add
+[32m00407 Enter: AstMap::get_branch(const vector<string> &keys)
+[32m00407 keys: [svlvm, module, Prompt]
+[32m00407 Exit: get_branch
+[33m00408 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00408 keys: [svlvm, module, Prompt, last, code]
+[33m00408 Exit: get_branch
+[34m00409 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00409 keys: [svlvm]
+[34m00409 Exit: get_branch
+[35m00410 Enter: AstList::evaluate()
+[36m00411 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[38m00412 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[38m00412 var_name: x
+[90m00413 Enter: AstMap::get_branch(const vector<string> &keys)
+[90m00413 keys: [svlm_lang]
+[90m00413 Exit: get_branch
+[91m00414 Enter: Operand::==(operand&)
+[92m00415 Enter: OperandCmpEql::()(Nil, Nil)
+[92m00415 Exit: operator()
+[91m00414 Exit: operator==
+[93m00416 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00416 keys: [svlvm, frames]
+[93m00416 Exit: get_branch
+[94m00417 Enter: Operand::clone_val()
+[94m00417 Exit: clone_val
+[95m00418 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[96m00419 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00419 keys: [svlvm, module, Main, mvar]
+[96m00419 Exit: get_branch
+[39m00420 Enter: Operand::==(operand&)
+[31m00421 Enter: OperandCmpEql::()(T, U)
+[31m00421 Exit: operator()
+[39m00420 Exit: operator==
+[95m00418 Exit: get_module_subnode
+[38m00412 Exit: evaluate
+[32m00422 Enter: Operand::clone_val()
+[32m00422 Exit: clone_val
+[33m00423 Enter: Operand::==(operand&)
+[34m00424 Enter: OperandCmpEql::()(T, U)
+[34m00424 Exit: operator()
+[33m00423 Exit: operator==
+[36m00411 Exit: evaluate
+[35m00410 Exit: evaluate
+[35m00425 Enter: Operand::==(operand&)
+[36m00426 Enter: OperandCmpEql::()(T, U)
+[36m00426 Exit: operator()
+[35m00425 Exit: operator==
+[38m00427 Enter: AstMvar::AstMvar(const string &v)
+[38m00427 var_name: x
+[90m00428 Enter: Operand::clone_val()
+[90m00428 Exit: clone_val
+[38m00427 Exit: AstMvar
+[91m00429 Enter: Operand::clone_val()
+[91m00429 Exit: clone_val
+[92m00430 Enter: SvlmAst::get_module_subnode(Prompt): ast_mod_t
+[93m00431 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00431 keys: [svlvm, module, Prompt]
+[93m00431 Exit: get_branch
+[94m00432 Enter: Operand::==(operand&)
+[95m00433 Enter: OperandCmpEql::()(T, U)
+[95m00433 Exit: operator()
+[94m00432 Exit: operator==
+[92m00430 Exit: get_module_subnode
+[96m00434 Enter: AstMap::add(const Operand &k, astexpr_u_ptr&& vptr, bool overwrite)
+[39m00435 Enter: Operand::==(operand&)
+[31m00436 Enter: OperandCmpEql::()(Nil, Nil)
+[31m00436 Exit: operator()
+[39m00435 Exit: operator==
+[96m00434 last: {"code": [$x==1]}
+[96m00434 Exit: add
+[32m00437 Enter: AstMap::get_branch(const vector<string> &keys)
+[32m00437 keys: [svlvm, module, Prompt]
+[32m00437 Exit: get_branch
+[33m00438 Enter: AstMap::get_branch(const vector<string> &keys)
+[33m00438 keys: [svlvm, module, Prompt, last, code]
+[33m00438 Exit: get_branch
+[34m00439 Enter: AstMap::get_branch(const vector<string> &keys)
+[34m00439 keys: [svlvm]
+[34m00439 Exit: get_branch
+[35m00440 Enter: AstList::evaluate()
+[36m00441 Enter: AstBinOp::evaluate(astexpr_u_ptr& ctxt)
+[38m00442 Enter: AstMvar::evaluate(astexpr_u_ptr& ctxt)
+[38m00442 var_name: x
+[90m00443 Enter: AstMap::get_branch(const vector<string> &keys)
+[90m00443 keys: [svlm_lang]
+[90m00443 Exit: get_branch
+[91m00444 Enter: Operand::==(operand&)
+[92m00445 Enter: OperandCmpEql::()(Nil, Nil)
+[92m00445 Exit: operator()
+[91m00444 Exit: operator==
+[93m00446 Enter: AstMap::get_branch(const vector<string> &keys)
+[93m00446 keys: [svlvm, frames]
+[93m00446 Exit: get_branch
+[94m00447 Enter: Operand::clone_val()
+[94m00447 Exit: clone_val
+[95m00448 Enter: SvlmAst::get_module_subnode(Main): ast_mvar_t
+[96m00449 Enter: AstMap::get_branch(const vector<string> &keys)
+[96m00449 keys: [svlvm, module, Main, mvar]
+[96m00449 Exit: get_branch
+[39m00450 Enter: Operand::==(operand&)
+[31m00451 Enter: OperandCmpEql::()(T, U)
+[31m00451 Exit: operator()
+[39m00450 Exit: operator==
+[95m00448 Exit: get_module_subnode
+[38m00442 Exit: evaluate
+[32m00452 Enter: Operand::clone_val()
+[32m00452 Exit: clone_val
+[33m00453 Enter: Operand::==(operand&)
+[34m00454 Enter: OperandCmpEql::()(T, T)
+[34m00454 Exit: operator()
+[33m00453 Exit: operator==
+[36m00441 Exit: evaluate
+[35m00440 Exit: evaluate
+[35m00455 Enter: Operand::==(operand&)
+[36m00456 Enter: OperandCmpEql::()(T, U)
+[36m00456 Exit: operator()
+[35m00455 Exit: operator==
+[39m00000 Exit: main
