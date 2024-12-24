@@ -42,6 +42,10 @@ public:
   astexpr_s_ptr get_s_ptr() override final;
   //astexpr_s_ptr get_s_ptr_nc() override final;
 
+  const Operand* _get_operand_ptr() const override;
+  const AstList* _get_list_ptr() const override;
+  const AstMap*_get_map_ptr() const override;
+
   AstExpr *get_raw_ptr(const Operand &k) const override final;
   AstExpr *get_raw_ptr(const string &k) const;
   AstExpr *get_raw_ptr(int i) const;
@@ -71,6 +75,7 @@ public:
   //-------------------------------------------
   bool operator==(const AstExpr &) const override;
   bool cmp_eql(const AstExpr &) const override;
+  bool cmp_eql(const AstList *) const ;
   //bool cmp_eql(const OperandVariant&) const override;
   bool is_nil() const override;
   bool is_current_nil() const override;

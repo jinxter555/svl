@@ -377,3 +377,18 @@ bool  AstMap::is_nil() const {
   if(size()==0) return true;
   return false;
 }
+
+const Operand* AstMap::_get_operand_ptr() const {
+  //cout << "AstMap::_get_operand_ptr() I shouldn't be here\n";
+  cout << "AstMap::_get_operand_ptr()\n";
+  return nullptr;
+}
+const AstList* AstMap::_get_list_ptr() const {
+  cout << "AstMap::_get_list_ptr()\n";
+  return nullptr;
+}
+const AstMap* AstMap::_get_map_ptr() const {
+  //cout << "AstMap::_get_map_ptr() I shouldn't be here\n";
+  cout << "AstMap::_get_map_ptr()\n";
+  return this;
+}

@@ -45,6 +45,10 @@ public:
   AstExpr *get_raw_ptr(const Operand &k) const override final;
   AstExpr *get_raw_ptr(const string &k) const ;
   AstExpr *get_raw_ptr() const override final;
+
+  const Operand* _get_operand_ptr() const override;
+  const AstList*_get_list_ptr() const override;
+  const AstMap* _get_map_ptr() const override;
   //-------------------------------------------
   bool add(const AstExpr &v) override final ;  // for list
   bool add(astexpr_u_ptr &&vptr)override final  ;  // for list

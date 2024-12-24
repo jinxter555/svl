@@ -188,10 +188,15 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
   , "AstBinOp::evaluate(astexpr_u_ptr& ctxt)"
   , __func__);
 
+
+
+
   auto &l = (*this)["left"];
   auto &r = (*this)["right"];
   auto opcode_str = (*this)["op"]._to_str();
   auto opcode = (*this)["op"]._get_opcode();
+
+  MYLOGGER_MSG(trace_function, string("AstBinOp::") + string(__func__) + string(" ") +  l._to_str()  + opcode_str + r._to_str());
 
   auto r_v = r.evaluate(ctxt);
 
@@ -219,6 +224,8 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
   }
 
   auto l_v = l.evaluate(ctxt);
+
+  //l_v.to_shared(); r_v.to_shared();
 
   auto result = l_v.opfunc(r_v, opcode);
   return result;
@@ -541,7 +548,8 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   //return result_var.clone_val();
   if(result_var._get_type() == OperandType::uptr_t) {
     //cout << "evalute returning clone_usu()\n";
-    return result_var.clone_usu();
+    //return result_var.clone_usu();
+    return result_var.clone();
   }
   //cout << "evalute returning just clone()\n";
   //return result_var.clone();

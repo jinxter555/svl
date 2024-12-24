@@ -41,6 +41,13 @@ public:
   virtual const Operand& getv() const = 0;
   virtual OperandVariant _get_value() const=0;
   virtual OperandVariant _get_variant() const=0 ;
+  //-------------------------------------------
+  virtual const Operand* _get_operand_ptr() const = 0;
+  virtual const AstList* _get_list_ptr() const = 0;
+  virtual const AstMap* _get_map_ptr() const = 0;
+
+  //-------------------------------------------
+
   //virtual Operand& getv_nc() = 0;
 
   virtual Operand& getv(const Operand &k) = 0;

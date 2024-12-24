@@ -247,21 +247,27 @@ bool AstList::operator==(const AstExpr &other) const {
 }
 
 bool AstList::cmp_eql(const AstExpr &other) const { 
+  return cmp_eql(other._get_list_ptr());
+
+}
+bool AstList::cmp_eql(const AstList* other_ptr) const { 
   cout << "AstList::cmp_eql(astexpr_u_ptr)\n";
   //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
 
-  if(other._get_type()!= OperandType::list_t) return false;
+  if(other_ptr->_get_type()!= OperandType::list_t) return false;
   s_integer s=size();
-  if(s != other.size()) return false;
+  if(s != other_ptr->size()) return false;
 
   for(s_integer i=0; i < s; i++ ) {
     //cout << list_[i] << "==" << (*other_vptr)[i] << "\n";
-    if(list_[i] == other[i]) continue;
+    if(list_[i] == (*other_ptr)[i]) continue;
     else return false;
   }
   return true;
 }
+
+
 
 bool AstList::operator!=(const AstExpr &other) const { 
   cout << "AstList::!=()\n";
@@ -270,6 +276,7 @@ bool AstList::operator!=(const AstExpr &other) const {
 }
 //bool AstList::cmp_eql(const OperandVariant&ov) const { return false; }
 OperandVariant AstList::_get_value() const { 
+  MYLOGGER(trace_function , "AstList::_get_value()" ,__func__);
   cout << "AstList::_get_value() I shouldn't be here\n";
   return nil; 
 }
@@ -388,4 +395,19 @@ Operand Tuple::opfunc(const AstExpr& other, AstOpCode op) {
     cerr << "AstList::opfunc, default error!\n";
     return Operand();
   }
+}
+
+const Operand* AstList::_get_operand_ptr() const {
+  //cout << "AstList::_get_operand_ptr() I shouldn't be here\n";
+  cout << "AstList::_get_operand_ptr()\n";
+  return nullptr;
+}
+const AstList* AstList::_get_list_ptr() const {
+  cout << "AstList::_get_list_ptr()\n";
+  return this;
+}
+const AstMap* AstList::_get_map_ptr() const {
+  //cout << "AstList::_get_map_ptr() I shouldn't be here\n";
+  cout << "AstList::_get_map_ptr()\n";
+  return nullptr;
 }

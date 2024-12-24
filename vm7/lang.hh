@@ -140,6 +140,9 @@ using map_u_ptr = unique_ptr<AstMap>;
 using astexpr_u_ptr = unique_ptr<AstExpr>;
 using astexpr_s_ptr = shared_ptr<AstExpr>;
 using astexpr_ptr = AstExpr *;
+using operand_ptr = Operand *;
+using map_ptr = AstMap *;
+using list_ptr = AstList *;
 using svlm_ast_ptr = SvlmAst *;
 //--------------------------------------------------------- 
 using OperandVariant=std::variant

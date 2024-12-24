@@ -81,7 +81,16 @@ Operand Operand::operator/(const Operand& other) const {
 }
 bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
-  return visit(OperandCmpEql{}, value_, other.value_);
+  MYLOGGER_MSG(trace_function, string("type v type: ") + get_type()._to_str()  + string(": ")  + other.get_type()._to_str());
+  cout << "Operand::==(operand&)\n" ;
+  cout << "value: " << *this << ", other: " << other << "\n";
+  cout << "type: " << get_type() << ", other_type: " << other.get_type() << "\n";
+
+  auto rb = visit(OperandCmpEql{}, value_, other.value_);
+  if(rb == true) return true;
+  //auto rb = visit(OperandCmpEql{}, *_get_list_ptr(), *other._get_list_ptr());
+
+  return visit(OperandCmpEql{}, _get_value(), other._get_value());
 }
 
 /*
@@ -295,16 +304,16 @@ bool Operand::cmp_eql(const AstExpr&other) const {
 //--------------
 template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {
   MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" , __func__);
-//  cout << "T == U?\n";
+  cout << "T == U?\n";
   return false; 
 };
 template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { 
   MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__);
-//  cout << "T == T?\n";
+  cout << "T == T?\n";
   return a==b; 
 };
 bool OperandCmpEql::operator()(const Nil a, const Nil b){ 
   MYLOGGER(trace_function , "OperandCmpEql::()(Nil, Nil)" ,__func__);
-//  cout << "nil == nil\n"; 
+  cout << "nil == nil\n"; 
   return true; 
 }

@@ -91,6 +91,10 @@ public:
   astexpr_u_ptr& get_u_ptr_nc() override final; // non constant
   const astexpr_u_ptr& get_u_ptr_node() const ; // get  last uptr node 
 
+  const Operand* _get_operand_ptr() const override;
+  const AstList* _get_list_ptr() const override;
+  const AstMap* _get_map_ptr() const override;
+
   svlm_ast_ptr get_svlm_ptr();
 
 
@@ -226,6 +230,14 @@ const astexpr_u_ptr& operator()(const T& v) const;
 const astexpr_u_ptr& operator()(const astexpr_ptr& v) const;
 const astexpr_u_ptr& operator()(const astexpr_u_ptr& v) const;
 const astexpr_u_ptr& operator()(const astexpr_s_ptr& v) const;
+};
+
+struct OperandRPtr {
+template <typename T> 
+const astexpr_ptr operator()(const T& v) const;
+const astexpr_ptr operator()(const astexpr_ptr) const;
+const astexpr_ptr operator()(const astexpr_u_ptr& v) const;
+const astexpr_ptr operator()(const astexpr_s_ptr& v) const;
 };
 
 
