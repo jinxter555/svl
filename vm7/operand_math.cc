@@ -2,6 +2,8 @@
 #include "operand.hh"
 //#include "entity.hh"
 #include "ast.hh"
+#include "ast_list.hh"
+#include "ast_map.hh"
 
 #define DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -81,16 +83,87 @@ Operand Operand::operator/(const Operand& other) const {
 }
 bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
-  MYLOGGER_MSG(trace_function, string("type v type: ") + get_type()._to_str()  + string(": ")  + other.get_type()._to_str());
-  cout << "Operand::==(operand&)\n" ;
+  MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str());
+
+
+
+/*
+  cout << "\nOperand::==(operand&)\n" ;
   cout << "value: " << *this << ", other: " << other << "\n";
   cout << "type: " << get_type() << ", other_type: " << other.get_type() << "\n";
+*/
 
-  auto rb = visit(OperandCmpEql{}, value_, other.value_);
-  if(rb == true) return true;
+  bool result_b;
+
+  result_b = visit(OperandCmpEql{}, value_, other.value_);
+  if(result_b == true) { cout << "result_b is true!\n"; return true; }
+
+  //auto a_ptr = _get_operand_ptr();
+  //auto b_ptr = other._get_operand_ptr();
+  auto a_ptr = get_raw_ptr();
+  auto b_ptr = other.get_raw_ptr();
+
+
+
+/*
+
+  cout << "*a_ptr: " << *a_ptr << "\n";
+  cout << "*b_ptr: " << *b_ptr << "\n";
+  cout << "a_ptr->gettype(): " << a_ptr->get_type() << "\n";
+  cout << "b_ptr->gettype(): " << b_ptr->get_type() << "\n";
+*/
+//  cout << "a_ptr->value(): " << a_ptr->getv() << "\n";
+  // cout << "b_ptr->value(): " << b_ptr->getv() << "\n";
+  switch(type_) {
+  case OperandType::ptr_t:
+  case OperandType::uptr_t:
+  case OperandType::sptr_t:{
+    switch(other.type_) {
+    case OperandType::ptr_t:
+    case OperandType::uptr_t:
+    case OperandType::sptr_t:
+      cout << "*a_ptr == *b_ptr?\n";
+      result_b = *a_ptr == *b_ptr;
+      if(result_b == true) { cout << "result_b is true!\n"; return true; }
+      cout << "false!\n";
+      return false;
+
+      //return visit(OperandCmpEql{}, a_ptr->value_, b_ptr->value_);
+    case OperandType::nil_t:
+      if(a_ptr->is_nil()) return true;
+    default:
+      cout << "*a_ptr == other?\n";
+      result_b = *a_ptr == other;
+      if(result_b == true) { cout << "result_b is true!\n"; return true; }
+      cout << "false!\n";
+      return false;
+
+      //return visit(OperandCmpEql{}, a_ptr->value_, other.value_ );
+    }}
+  case OperandType::nil_t:
+    if(b_ptr->is_nil()) return true;
+  default:
+    //cout << "this->value= = b_ptr->variant() ?\n";
+    cout << "revisit a  == b\n";
+    result_b = visit(OperandCmpEql{}, value_, other.value_);
+    if(result_b == true) { cout << "result_b is true!\n"; return true; }
+    cout << "false!\n";
+    return false;
+    //return visit(OperandCmpEql{}, this->value_, other.value_);
+  }
+
+  if(a_ptr == nullptr || b_ptr==nullptr) return false;
+  if(a_ptr->is_nil() || b_ptr->is_nil()) return false;
+
+  result_b = *a_ptr == *b_ptr;
+  if(result_b == true) { cout << "result_b is true!\n"; return true; }
+  cout << "false!\n";
+  return false;
+
+
+//  return false;
   //auto rb = visit(OperandCmpEql{}, *_get_list_ptr(), *other._get_list_ptr());
-
-  return visit(OperandCmpEql{}, _get_value(), other._get_value());
+  //return visit(OperandCmpEql{}, _get_value(), other._get_value());
 }
 
 /*
@@ -260,6 +333,7 @@ Operand Operand::operator||(const Operand& other) const {
 }
 
 Operand Operand::opfunc(const AstExpr& v, AstOpCode op) {
+  cout << "Operand::opfunc()\n";
   Operand other(v.clone_val());
   
   // if(type_ != other.type_) throw std::runtime_error("Unsupported operation > for unequal types"); 
@@ -286,9 +360,16 @@ Operand Operand::opfunc(const AstExpr& v, AstOpCode op) {
 
 
 bool Operand::operator==(const AstExpr &other) const { 
-  //visit(OperandCmpEql(), value_, other_vptr->value_);
-  cout << "Operand::==(astexpr_u_ptr)\n";
-  return cmp_eql(other);
+  cout << "Operand::==(AstExpr&)\n";
+  //return cmp_eql(other);
+  auto a_ptr = _get_operand_ptr();
+  auto b_ptr = other._get_operand_ptr();
+  if(a_ptr==nullptr){
+    if(b_ptr==nullptr) return true;
+    return false;
+  }
+  //return *_get_operand_ptr() == *other._get_operand_ptr();
+  return *a_ptr == *b_ptr;
 }
 bool Operand::operator!=(const AstExpr &other) const { 
   cout << "Operand::!=(astexpr_u_ptr)\n";
@@ -304,16 +385,16 @@ bool Operand::cmp_eql(const AstExpr&other) const {
 //--------------
 template <typename T, typename U> bool OperandCmpEql::operator()(const T &a, const U &b) {
   MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" , __func__);
-  cout << "T == U?\n";
+//  cout << "T == U?\n";
   return false; 
 };
 template <typename T> bool OperandCmpEql::operator()(const T &a, const T &b) { 
   MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__);
-  cout << "T == T?\n";
+//  cout << "T == T?\n";
   return a==b; 
 };
 bool OperandCmpEql::operator()(const Nil a, const Nil b){ 
   MYLOGGER(trace_function , "OperandCmpEql::()(Nil, Nil)" ,__func__);
-  cout << "nil == nil\n"; 
+//  cout << "nil == nil\n"; 
   return true; 
 }

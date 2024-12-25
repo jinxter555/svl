@@ -126,14 +126,16 @@ bool AstMap::add(astexpr_u_ptr &&vptr) { return false; }
 bool AstMap::add(const Operand &k, const AstExpr& v, bool overwrite) {
   MYLOGGER(trace_function
   , "AstMap::add(const Operand &k, const AstExpr& v, bool overwrite): "
-  ,__func__);
+  ,string("AstMap::") + string(__func__));
   MYLOGGER_MSG(trace_function, k._to_str()  + string(": ")  + v.to_str()._to_str());
 
   return add(k._get_str(), v, overwrite);
 }
 bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
+  MYLOGGER(trace_function, "AstMap::add(string)", __func__);
   //if(this==nullptr) {return false;}
   if(!overwrite && has_key(k)) return false;
+
   switch(v.type_){
   case OperandType::map_t:
   case OperandType::list_t:
@@ -148,7 +150,9 @@ bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
 */
   default: {
     //map_[k] = v.clone_val();
-    map_[k] = v._get_variant();
+    MYLOGGER_MSG(trace_function, string("before: ") + v.clone_val()._to_str());
+    map_[k] = v.clone_val();
+    MYLOGGER_MSG(trace_function, string("after: ") + v.clone_val()._to_str());
     break;
   }}
   return true;
@@ -344,20 +348,24 @@ vector<string> AstMap::_get_keys() const {
 }
 
 Operand AstMap::opfunc(const AstExpr &other, AstOpCode op) {
-  cerr << "AstList::opfunc, I shouldn't be here!\n";
+  cerr << "AstMap::opfunc, I shouldn't be here!\n";
+  cout << "value: " << *this << ", other: " << other << "\n";
+  cout << "type: " << get_type() << ", other_type: " << other.get_type() << " op: " << Operand(op) << "\n\n";
+
   return Operand();
 }
 bool AstMap::operator==(const AstExpr &other) const { 
   cout << "AstMap::==(astexpr_u_ptr)\n";
-  return true; 
+  return false; 
 }
 bool AstMap::operator!=(const AstExpr &other) const { 
   cout << "AstMap::==(astexpr_u_ptr)\n";
-  return false; }
+  return false; 
+}
 
 bool AstMap::cmp_eql(const AstExpr &other) const { 
   cout << "AstMap::cmp_eql(astexpr_u_ptr)\n";
-  return true; 
+  return false; 
 }
 //bool AstMap::cmp_eql(const OperandVariant&ov) const { return false; }
 OperandVariant AstMap::_get_value() const { 
@@ -365,7 +373,7 @@ OperandVariant AstMap::_get_value() const {
   return nil; 
 }
 OperandVariant AstMap::_get_variant() const { 
-  cout << "AstList::_get_variant() I shouldn't be here\n";
+  cout << "AstMap::_get_variant() I shouldn't be here\n";
   return nil; 
 }
 

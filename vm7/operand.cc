@@ -640,9 +640,22 @@ astexpr_u_ptr Operand::opfunc(astexpr_u_ptr other, AstOpCode op) {
 
 template <typename T> 
 bool OperandCurrentNil::operator()(const T& v) const { return false; }
-bool OperandCurrentNil::operator()(const astexpr_ptr& vptr) const { if(vptr==nullptr) return true; return false;}
-bool OperandCurrentNil::operator()(const astexpr_u_ptr& vptr) const { if(vptr==nullptr) return true; return false;}
-bool OperandCurrentNil::operator()(const astexpr_s_ptr& vptr) const { if(vptr==nullptr) return true; return false; }
+bool OperandCurrentNil::operator()(const Nil v) const { return true; }
+bool OperandCurrentNil::operator()(const astexpr_ptr& vptr) const { 
+  if(vptr==nullptr) return true; 
+  return vptr->is_current_nil();
+  //return false;
+}
+bool OperandCurrentNil::operator()(const astexpr_u_ptr& vptr) const { 
+  if(vptr==nullptr) return true; 
+  return vptr->is_current_nil();
+  return false;
+}
+bool OperandCurrentNil::operator()(const astexpr_s_ptr& vptr) const { 
+  if(vptr==nullptr) return true; 
+  return vptr->is_current_nil();
+  return false; 
+}
 
 // for AstMap, AstList
 OperandGetK::OperandGetK(const Operand& k) : key_(k){};
@@ -664,15 +677,19 @@ Operand& OperandGetK::operator()(const astexpr_s_ptr& vptr) {
 }
 
 const Operand* Operand::_get_operand_ptr() const {
-  return this;
+  auto rptr = visit(OperandRPtr(), value_);
+  if(rptr==nullptr) return this;
+  return (Operand *) rptr;
 }
 const AstList* Operand::_get_list_ptr()const  {
   auto ptr = get_raw_ptr();
   if(ptr==nullptr) return nullptr;
+  if(ptr->_get_type()!=OperandType::list_t ) return nullptr;
   return ptr->_get_list_ptr();
 }
 const AstMap* Operand::_get_map_ptr() const {
   auto ptr = get_raw_ptr();
   if(ptr==nullptr) return nullptr;
+  if(ptr->_get_type()!=OperandType::map_t) return nullptr;
   return ptr->_get_map_ptr();
 }

@@ -19,7 +19,7 @@ svlm_parser.cc: svlm_grammar.y
 	bison -d svlm_grammar.y
 
 main.out: $(objects) 
-	$(CC) $^ -o /dev/shm/main.out -lreadline
+	$(CC) $^ -o /dev/shm/main.out -lreadline 
 
 $(objects): %.o: %.cc
 	$(CC) -g -c $^ -o $@

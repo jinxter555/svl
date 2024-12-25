@@ -226,7 +226,11 @@ Operand AstList::evaluate(astexpr_u_ptr &ctxt) {
 }
 
 Operand AstList::opfunc(const AstExpr& other, AstOpCode op) {
+  MYLOGGER(trace_function , "AstList::opfunc()" ,__func__);
   cout << "AstList::opfunc()!\n";
+  cout << "op: " << Operand(op) << "\n";
+  
+
   print(); cout << " " << Operand(op) << " " <<  other <<"\n";
   //return make_unique<Operand>( eql_cmp(move(other)));
   switch(op) {
@@ -242,7 +246,7 @@ Operand AstList::opfunc(const AstExpr& other, AstOpCode op) {
 
 //--------------------------------------
 bool AstList::operator==(const AstExpr &other) const { 
-  cout << "AstList::==()\n";
+  cout << "AstList::==(const AstExpr&)\n";
   return cmp_eql(other);
 }
 
@@ -255,9 +259,14 @@ bool AstList::cmp_eql(const AstList* other_ptr) const {
   //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
 
-  if(other_ptr->_get_type()!= OperandType::list_t) return false;
   s_integer s=size();
+  if(other_ptr==nullptr ){
+    if(s==0) return true;
+    return false;
+  }
+  if(other_ptr->_get_type()!= OperandType::list_t) return false;
   if(s != other_ptr->size()) return false;
+
 
   for(s_integer i=0; i < s; i++ ) {
     //cout << list_[i] << "==" << (*other_vptr)[i] << "\n";

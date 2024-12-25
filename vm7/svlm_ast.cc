@@ -56,28 +56,29 @@ void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
 
   s_integer i, s=clist->size();
 
-  get_module_subnode(mod_name, OperandType::ast_mod_t);
+  get_module_subnode(mod_name, OperandType::ast_mod_t); // create|get module name first by calling this function
 
   for(i=0; i < s; i++) {
     auto &nan = clist->getv(i); 
-  //  cout << "\nnan: " << nan << "\n";
-  //  cout << "nan.get_type: " << nan.get_type() << "\n";
+    cout << "\nnan: " << nan << "\n";
+    cout << "nan.get_type: " << nan.get_type() << "\n";
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
     auto &nan_vptr = nan.get_u_ptr_nc();
 
-  //  cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
+    cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
 
     // sub_node could be FUNC, CLASS, VAR
     auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
-    if(sub_node==nil_operand) { 
-  //    cout << "sub_node == nil_operand\n";
+    if(sub_node!=nil_operand) { 
+      cout << "sub_node != nil_operand, skip and continue\n";
       continue; 
     }
 
     auto sub_node_name = nan.getv("name")._to_str();
     sub_node.add(sub_node_name, move(nan_vptr), true);
   }
+  cout << "\n\n";
 }
 
 
@@ -85,7 +86,7 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   MYLOGGER(trace_function , string("SvlmAst::get_module_subnode(") + mod_name._to_str() + string("): ") + Operand(t)._to_str()
    ,__func__)
 
-  //cout << "SvlmAst::get_module_subnode\n";
+  cout << "SvlmAst::get_module_subnode, type" <<  Operand(t) <<"\n";
 
   vector<string> keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
   switch(t) {
@@ -109,15 +110,15 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   }
 
 
-  //cout << "msub_node=root.get_branch(keys): "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+  cout << "msub_node=root.get_branch(keys): "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
   auto &msub_node = root.get_branch(keys);
-  //cout << "msub_node: " << msub_node << "\n";
+  cout << "msub_node: " << msub_node << "\n";
 
   if(msub_node==nil_operand) {
-  //  cout << "msub_node is nil_operand: " << msub_node << "--add\n";
+    cout << "msub_node is nil_operand: " << msub_node << "--add\n";
     root.add_branch(keys, make_unique<AstMap>(), true);
     auto &nd= root.get_branch(keys);
-  //  cout << "new node : " << nd << "--added\n";
+    cout << "new node : " << nd << "--added\n\n";
     return nd;
   }
   return msub_node;
@@ -135,6 +136,7 @@ void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
 }
 
 Operand SvlmAst::evaluate_last_line() {
+  MYLOGGER(trace_function , "SvlmAst::evaluate_last_line()" , string("SvlmAst::")  + string(__func__));
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Prompt", "last", "code"});
   //l.print(); cout << "\n";
   auto &ctxt = get_context();
@@ -142,6 +144,7 @@ Operand SvlmAst::evaluate_last_line() {
 }
 
 void SvlmAst::run_evaluate() {
+  MYLOGGER(trace_function , "SvlmAst::run_evaluate()" , string("SvlmAst::")  + string(__func__));
   //cout << "Run eval Main::main \n";
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Main", "function", "main", "code"});
   root.add_branch({CONTEXT_UNIV, "svlm_lang"}, Operand(this));
@@ -235,8 +238,11 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
 
 //----------------------------------------------------------------------- AstFunc
 AstFunc::AstFunc(const Operand &n, astexpr_u_ptr pl,  astexpr_u_ptr code_ptr) {
+  cout << "AstFunc::AstFunc(" << n <<")\n";
   name = n._to_str();
   type_ = OperandType::ast_func_t;
+
+  cout << "code_ptr: "<< code_ptr<< "\n";
   add(string("name"), n);
   add(string("code"), move(code_ptr));
   add(string("proto_list"), move(pl));
@@ -561,7 +567,7 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
 bool AstMvar::assign(astexpr_u_ptr& ctxt, Operand &v) {
   MYLOGGER(trace_function
   , "AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)" 
-  , __func__);
+  , string("AstMvar::") + string(__func__));
   MYLOGGER_MSG(trace_function, name() + string(" = ") + v.to_str()._to_str());
 
   Operand mod_name_operand;
@@ -613,6 +619,7 @@ bool AstMvar::assign(astexpr_u_ptr& ctxt, Operand &v) {
   }
   MYLOGGER_MSG(trace_function, "sub_node.add() before");
 
+  cout << "sub_node: " << sub_node << "\n";
   cout << "v.type(): " << v.get_type() << "\n";
   if(v._get_type() == OperandType::uptr_t) v.to_shared();
   cout << "v.type(): " << v.get_type() << "\n";

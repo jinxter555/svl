@@ -34,8 +34,8 @@ int main(int argc, char *argv[]) {
 
   bool init_flag = true;
 
-  log_output.open("svlm.log", std::ios::out);
-  trace_function.open("svlm_trace.log", std::ios::out);
+  //log_output.open("svlm.log", std::ios::out);
+  trace_function.open("trace_svlm.log", std::ios::out);
 
   Commandline cml(argc, argv);
   PromptSwitch ps = PromptSwitch::begin;

@@ -1,9 +1,10 @@
 #include <map>
 #include <vector>
 #include "scope_logger.hh"
-fstream log_output;
+//fstream log_output;
 fstream trace_function;
 
+#define spacing string( ((current_level%color_size)%8) *4 , ' ') 
 typedef struct {
   string name;
   int code;
@@ -41,7 +42,7 @@ ScopeLogger::ScopeLogger( fstream &o,  string const & mi, string const& mo )
 
   char s[25]; sprintf(s, "%05d", current_level);
 
-  out << color  << s << " Enter: " << msg_in << endl; 
+  out << color << s << " Enter:" << spacing  << msg_in << endl; 
 }
 
 ScopeLogger::~ScopeLogger() {   
@@ -52,7 +53,7 @@ ScopeLogger::~ScopeLogger() {
   auto color = string("\033[") + to_string(color_code) + "m";
   //auto color = string("\033[") + to_string(color_code) + "m" + to_string(color_code) + " ";
 
-  out << color << s << " Exit: " << msg_out << endl; 
+  out << color << s << " Exit: " << spacing << msg_out << endl; 
   const std::string reset("\033[0m");
   cout << reset;
 
@@ -66,7 +67,7 @@ void ScopeLogger::msg(const string& msg) {
   auto color = string("\033[") + to_string(color_code) + "m";
   //auto color = string("\033[") + to_string(color_code) + "m" + to_string(color_code) + " ";
 
-  out << color << s << " " << msg << "\n";
+  out << color << s << "        " << spacing << " " << msg << "\n";
 
   const std::string reset("\033[0m");
   cout << reset;

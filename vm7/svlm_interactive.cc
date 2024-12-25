@@ -4,6 +4,8 @@
 
 #include "lang.hh"
 
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
 
 SvlmInteractive svlm_it(".svlm_history", "svlm> ");
 astexpr_u_ptr nil_ast_ptr=nullptr;
@@ -143,6 +145,7 @@ void SvlmInteractive::parse(const std::string &line) {
   // evaluate ast_current_context pop back members
 }
 void SvlmInteractive::evaluate_line() {
+  MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__));
   auto result = svlm_lang.evaluate_last_line();
   // std::cout << "evaluate line" << "\n";
 

@@ -114,7 +114,9 @@ comments
 module 
   : MODULE STR DO statement_list END 
   {
-    //cout << "module : " << $2 << "\n";
+    cout << "Grammar!";
+    cout << "module : " << $2 << "\n";
+    cout << "statement list: " ; $4->print(); cout << "\n";
     svlm_lang->add_module($2, move($4));
   }
   ;

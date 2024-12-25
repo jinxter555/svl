@@ -1,3 +1,4 @@
+#pragma once
 #include "ast.hh"
 #include "operand.hh"
 #include <utility>

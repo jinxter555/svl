@@ -324,6 +324,7 @@ operand_u_ptr operator()(const astexpr_s_ptr& v) ;
 struct OperandCurrentNil{
 template <typename T> 
 bool operator()(const T &value) const ;
+bool operator()(const Nil) const ;
 bool operator()(const astexpr_ptr& v)const  ;
 bool operator()(const astexpr_u_ptr& v) const ;
 bool operator()(const astexpr_s_ptr& v) const ;
