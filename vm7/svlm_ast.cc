@@ -622,7 +622,9 @@ bool AstMvar::assign(astexpr_u_ptr& ctxt, Operand &v) {
     auto index_s = get_index_s(ctxt);
     if(index_s != "" ) {
       cout << "assign mvar[s] settting value!\n";
-        result.add(index_s, v, true);
+      cout << "index_s: " <<  index_s << "\n";
+      cout << "v: " << v << "\n";
+      result.add(index_s, v, true);
       return true;
     }
   }

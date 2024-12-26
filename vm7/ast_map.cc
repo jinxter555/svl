@@ -84,6 +84,7 @@ const astexpr_u_ptr& AstMap::get_u_ptr(const string &k) const {
   return map_.at(k).get_u_ptr();
 }
 const astexpr_u_ptr& AstMap::get_u_ptr() const {
+  MYLOGGER(trace_function, "AstMap::get_u_ptr()", __func__);
   cerr << "I should NOT be here in  AstMap::get_u_ptr()\n";
   return nil_ast_ptr;
 }

@@ -16,7 +16,6 @@ private:
 
   fstream &out;
   string msg_in, msg_out;
-  int num_spaces=0;
   inline static vector <int> levels;
 public:
   ScopeLogger( fstream &,  const string & , const string & );

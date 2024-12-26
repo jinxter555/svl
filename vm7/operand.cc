@@ -307,6 +307,7 @@ void Operand::print() const {
 
 //-------------------------------------------
 bool Operand::add(const AstExpr &v) {
+  //cout << "Operand::add(const AstExpr &v)\n";
   /*
   auto &vptr = get_u_ptr();
   if(vptr==nil_ast_ptr) return false;
@@ -322,34 +323,32 @@ bool Operand::add(astexpr_u_ptr &&vvptr) {
 
 //-------------------------------------------
 bool Operand::add(const Operand &k, const AstExpr& v, bool overwrite) {
-  auto &vptr = get_u_ptr();
-  if(vptr==nil_ast_ptr) return false;
+  //cout << "Operand::add(const Operand &k, const AstExpr& v, bool overwrite)\n";
+  auto vptr = get_raw_ptr();
+  if(vptr==nullptr) return false;
   return vptr->add(k, v, overwrite);
 }
 
 bool Operand::add(const Operand &k, astexpr_u_ptr&& vvptr, bool overwrite) {
-  auto &vptr = get_u_ptr();
+  auto vptr = get_raw_ptr();
   if(vptr==nullptr) return false;
   if(vvptr==nullptr) return false;
   return vptr->add(k, move(vvptr), overwrite);
 }
 bool Operand::add_branch(const vector<string> &keys, const Operand& operand, bool overwrite)  {
-  auto &vptr = get_u_ptr();
-  if(vptr==nil_ast_ptr) return false;
-  auto ptr =(AstMap*) vptr.get();
-  return ptr->add_branch(keys, operand, overwrite);
+  auto vptr = get_raw_ptr();
+  if(vptr==nullptr) return false;
+  return vptr->add_branch(keys, operand, overwrite);
 }
 bool Operand::add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite) {
-  auto &vptr = get_u_ptr();
-  if(vptr==nil_ast_ptr) return false;
-  auto ptr =(AstMap*) vptr.get();
-  return ptr->add_branch(keys, move(vvptr), overwrite);
+  auto vptr = get_raw_ptr();
+  if(vptr==nullptr) return false;
+  return vptr->add_branch(keys, move(vvptr), overwrite);
 }
 Operand& Operand::get_branch(const vector<string> &keys) {
-  auto &vptr = get_u_ptr();
-  if(vptr==nil_ast_ptr) return nil_operand;
-  auto ptr =(AstMap*) vptr.get();
-  return ptr->get_branch(keys);
+  auto vptr = get_raw_ptr();
+  if(vptr==nullptr) return nil_operand;
+  return vptr->get_branch(keys);
 }
 //-------------------------------------------
 bool Operand::set(const Operand &k, const AstExpr& vptr) {

@@ -41,7 +41,6 @@ ScopeLogger::ScopeLogger( fstream &o,  string const & mi, string const& mo )
   auto color_code = colors[id_ % color_size].code;
   auto color = string("\033[") + to_string(color_code) + "m";
 
-  num_spaces = id_ % color_size % 8 * 4 ;
 
   char s[25]; sprintf(s, "%05d", id_);
 
@@ -57,7 +56,6 @@ ScopeLogger::~ScopeLogger() {
   auto color = string("\033[") + to_string(color_code) + "m";
   //auto color = string("\033[") + to_string(color_code) + "m" + to_string(color_code) + " ";
 
-  num_spaces = id_ % color_size % 8 * 4 ;
 
   out << color << s << " Exit:  " << spacing() << msg_out << endl; 
   const std::string reset("\033[0m");
@@ -73,9 +71,8 @@ void ScopeLogger::msg(const string& msg) {
   auto color = string("\033[") + to_string(color_code) + "m";
   //auto color = string("\033[") + to_string(color_code) + "m" + to_string(color_code) + " ";
 
-  num_spaces = id_ % color_size % 8 * 4 ;
 
-  out << color << s << "         " << spacing() << " " << msg << "\n";
+  out << color << s << " -msg-  " << spacing() << " " << msg << "\n";
 
   const std::string reset("\033[0m");
   cout << reset;
@@ -86,16 +83,12 @@ void ScopeLogger::set_current_level() {
 
   if(levels.size() == 0 )  {
     current_level = 0;
-    levels.push_back(current_level+1);
+    levels.push_back(1);
   } else {
     current_level = levels.back();
     levels.push_back(current_level+1);
   }
 }
 string  ScopeLogger::spacing() {
-  //return string(id_ %color_size % 8  *4 , ' ');
-  //return string(current_level % 2 % color_size  *4 , ' ');
-  //return string((current_level % 2) * 4 , ' ');
   return string(current_level % color_size * 4 , ' ');
-  //return string(current_level * 4 , ' ');
 }
