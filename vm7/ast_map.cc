@@ -39,11 +39,8 @@ Operand AstMap::evaluate(astexpr_u_ptr& ast_ctxt) {
 }
 //--------------------------------------
 
-const Operand& AstMap::getv() const {
-  cerr << "AstMap::getv() I shouldn't be here\n";
-  //myself = clone();
-  //myself = (Operand*)this;
-  return nil_operand;
+const Operand& AstMap::_get_value() const {
+  return *(Operand*)this;
 }
 
 Operand& AstMap::back() { return nil_operand;}
@@ -151,7 +148,7 @@ bool AstMap::add(const string &k, const AstExpr& v, bool overwrite) {
   default: {
     //map_[k] = v.clone_val();
     MYLOGGER_MSG(trace_function, string("before: ") + v.clone_val()._to_str());
-    map_[k] = v.clone_val();
+    map_[k] = v._get_variant();
     MYLOGGER_MSG(trace_function, string("after: ") + v.clone_val()._to_str());
     break;
   }}
@@ -354,12 +351,22 @@ Operand AstMap::opfunc(const AstExpr &other, AstOpCode op) {
 
   return Operand();
 }
+bool AstMap::operator==(const astexpr_ptr) const { 
+  MYLOGGER(trace_function, "AstMap::==(const astexpr_ptr)", __func__);
+  cout << "AstMap::==(const astexpr_ptr*)\n";
+  cout << "what am i doing here!\n";
+  return false;
+}
+
 bool AstMap::operator==(const AstExpr &other) const { 
-  cout << "AstMap::==(astexpr_u_ptr)\n";
+  MYLOGGER(trace_function, "AstMap::==(const AstExpr&)", __func__);
+  cout << "AstMap::==(const AstExpr&)\n";
+  cout << "this: " <<  to_str() << ", other: " <<  other << "\n";
+
   return false; 
 }
 bool AstMap::operator!=(const AstExpr &other) const { 
-  cout << "AstMap::==(astexpr_u_ptr)\n";
+  cout << "AstMap::!=(const AstExpr&)\n";
   return false; 
 }
 
@@ -367,13 +374,9 @@ bool AstMap::cmp_eql(const AstExpr &other) const {
   cout << "AstMap::cmp_eql(astexpr_u_ptr)\n";
   return false; 
 }
-//bool AstMap::cmp_eql(const OperandVariant&ov) const { return false; }
-OperandVariant AstMap::_get_value() const { 
-  cout << "AstMap::_get_value() I shouldn't be here\n";
-  return nil; 
-}
-OperandVariant AstMap::_get_variant() const { 
-  cout << "AstMap::_get_variant() I shouldn't be here\n";
+
+operand_variant_t AstMap::_get_variant() const { 
+  //cout << "AstMap::_get_variant() I shouldn't be here\n";
   return nil; 
 }
 

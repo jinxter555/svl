@@ -48,9 +48,9 @@ public:
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
   Operand evaluate(astexpr_u_ptr& ctxt) override;
-  const Operand& getv()  const override { 
-    cout << "bin op getv()!\n"; 
-    return AstMap::getv();
+  const Operand& _get_value()  const override { 
+    cout << "bin op _get_value()!\n"; 
+    return AstMap::_get_value();
   };
   void print() ;
 };
@@ -131,7 +131,7 @@ public:
   Operand get_scale() {return scale_; };
   OperandType _get_type() const override;
   Operand evaluate(astexpr_u_ptr& ctxt) override;
-  const Operand& getv() const override;
+  const Operand& _get_value() const override;
   bool assign(astexpr_u_ptr& ctxt, Operand& ) override final;
   void print() const override;
   astexpr_u_ptr clone() const override; 

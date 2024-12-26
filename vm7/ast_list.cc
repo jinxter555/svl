@@ -78,10 +78,8 @@ Operand& AstList::getv(int i)  {
   //return list_[i].getv();
   return list_[i];
 }
-const Operand& AstList::getv()  const {
-  cerr << "AstList::getv() I shouldn't be here\n";
-  return nil_operand;
-}
+
+
 Operand& AstList::back() { return list_.back(); }
 Operand& AstList::front() { return list_.front(); }
 
@@ -249,6 +247,10 @@ bool AstList::operator==(const AstExpr &other) const {
   cout << "AstList::==(const AstExpr&)\n";
   return cmp_eql(other);
 }
+bool AstList::operator==(const astexpr_ptr) const { 
+  cout << "AstList::==(const astexpr_ptr&)\n";
+  return false;
+}
 
 bool AstList::cmp_eql(const AstExpr &other) const { 
   return cmp_eql(other._get_list_ptr());
@@ -256,27 +258,32 @@ bool AstList::cmp_eql(const AstExpr &other) const {
 }
 bool AstList::cmp_eql(const AstList* other_ptr) const { 
   cout << "AstList::cmp_eql(astexpr_u_ptr)\n";
-  //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
-  //cout << "other: " << other_vptr << " other type: " << other_vptr->get_type() << "\n\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
 
   s_integer s=size();
   if(other_ptr==nullptr ){
     if(s==0) return true;
+    cout << "other_ptr is null!\n";
     return false;
   }
+  cout << "*other: " << *other_ptr << " other type: " << other_ptr->get_type() << "\n\n";
+
+
   if(other_ptr->_get_type()!= OperandType::list_t) return false;
   if(s != other_ptr->size()) return false;
 
 
   for(s_integer i=0; i < s; i++ ) {
-    //cout << list_[i] << "==" << (*other_vptr)[i] << "\n";
+    cout << list_[i] << "==" << (*other_ptr)[i] << "\n";
     if(list_[i] == (*other_ptr)[i]) continue;
-    else return false;
+    else {
+      cout << "AstList != AstList false\n";
+      return false;
+    }
   }
+  cout << "AstList == AstList true\n";
   return true;
 }
-
-
 
 bool AstList::operator!=(const AstExpr &other) const { 
   cout << "AstList::!=()\n";
@@ -284,13 +291,15 @@ bool AstList::operator!=(const AstExpr &other) const {
 
 }
 //bool AstList::cmp_eql(const OperandVariant&ov) const { return false; }
-OperandVariant AstList::_get_value() const { 
+
+const Operand& AstList::_get_value()  const { 
   MYLOGGER(trace_function , "AstList::_get_value()" ,__func__);
-  cout << "AstList::_get_value() I shouldn't be here\n";
-  return nil; 
+  cout << "AstList::_get_value()\n";
+  return *(Operand*)this; 
 }
-OperandVariant AstList::_get_variant() const { 
-  cout << "AstList::_get_variant() I shouldn't be here\n";
+
+operand_variant_t AstList::_get_variant() const { 
+  //cout << "AstList::_get_variant() I shouldn't be here\n";
   return nil; 
 }
 

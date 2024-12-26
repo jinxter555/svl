@@ -52,7 +52,7 @@ string SvlmAst::get_current_module() {
 
 void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
   MYLOGGER(trace_function , string("SvlmAst::add_module('") + mod_name._to_str() + string("')") ,__func__)
-  cout << "SvlmAst::add_module()\n";
+//  cout << "SvlmAst::add_module()\n";
 
   s_integer i, s=clist->size();
 
@@ -60,18 +60,19 @@ void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
 
   for(i=0; i < s; i++) {
     auto &nan = clist->getv(i); 
-    cout << "\nnan: " << nan << "\n";
-    cout << "nan.get_type: " << nan.get_type() << "\n";
+  //  cout << "\nnan: " << nan << "\n";
+  //  cout << "nan.get_type: " << nan.get_type() << "\n";
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
     auto &nan_vptr = nan.get_u_ptr_nc();
 
-    cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
+  //  cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
 
     // sub_node could be FUNC, CLASS, VAR
     auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
-    if(sub_node!=nil_operand) { 
-      cout << "sub_node != nil_operand, skip and continue\n";
+    //if(sub_node==nil_operand) { 
+    if(sub_node==nil) { 
+      cout << "sub_node == nil_operand, skip and continue\n";
       continue; 
     }
 
@@ -86,7 +87,7 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   MYLOGGER(trace_function , string("SvlmAst::get_module_subnode(") + mod_name._to_str() + string("): ") + Operand(t)._to_str()
    ,__func__)
 
-  cout << "SvlmAst::get_module_subnode, type" <<  Operand(t) <<"\n";
+ // cout << "SvlmAst::get_module_subnode, type" <<  Operand(t) <<"\n";
 
   vector<string> keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
   switch(t) {
@@ -110,15 +111,15 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   }
 
 
-  cout << "msub_node=root.get_branch(keys): "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+//  cout << "msub_node=root.get_branch(keys): "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
   auto &msub_node = root.get_branch(keys);
-  cout << "msub_node: " << msub_node << "\n";
+//  cout << "msub_node: " << msub_node << "\n";
 
   if(msub_node==nil_operand) {
-    cout << "msub_node is nil_operand: " << msub_node << "--add\n";
+//    cout << "msub_node is nil_operand: " << msub_node << "--add\n";
     root.add_branch(keys, make_unique<AstMap>(), true);
     auto &nd= root.get_branch(keys);
-    cout << "new node : " << nd << "--added\n\n";
+//    cout << "new node : " << nd << "--added\n\n";
     return nd;
   }
   return msub_node;
@@ -192,14 +193,20 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
   , __func__);
 
 
-
-
   auto &l = (*this)["left"];
   auto &r = (*this)["right"];
   auto opcode_str = (*this)["op"]._to_str();
+  auto &op = (*this)["op"];
   auto opcode = (*this)["op"]._get_opcode();
 
   MYLOGGER_MSG(trace_function, string("AstBinOp::") + string(__func__) + string(" ") +  l._to_str()  + opcode_str + r._to_str());
+
+/*
+  cout << "l: " << l << "\n";
+  cout << "op.gettype(): " << op.get_type()<< "\n";
+  cout << "opcode_str: " << opcode_str << "\n";
+  cout << "r: " << r << "\n\n";
+*/
 
   auto r_v = r.evaluate(ctxt);
 
@@ -238,11 +245,11 @@ Operand AstBinOp::evaluate(astexpr_u_ptr& ctxt) {
 
 //----------------------------------------------------------------------- AstFunc
 AstFunc::AstFunc(const Operand &n, astexpr_u_ptr pl,  astexpr_u_ptr code_ptr) {
-  cout << "AstFunc::AstFunc(" << n <<")\n";
+  //cout << "AstFunc::AstFunc(" << n <<")\n";
   name = n._to_str();
   type_ = OperandType::ast_func_t;
 
-  cout << "code_ptr: "<< code_ptr<< "\n";
+  //  cout << "code_ptr: "<< code_ptr<< "\n";
   add(string("name"), n);
   add(string("code"), move(code_ptr));
   add(string("proto_list"), move(pl));
@@ -457,10 +464,9 @@ AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType
   add(string("var_name"), Operand(v));
 }
 
-const Operand& AstMvar::getv() const {
-  cout << "AstMvar::getv()\n";
-  //return clone();
-  return nil_operand;
+const Operand& AstMvar::_get_value() const {
+  cout << "AstMvar::_get_value()\n";
+  return *(Operand*)this;
 }
 string AstMvar::name() { 
   return AstMap::getv(string("var_name"))._to_str();
@@ -559,7 +565,8 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
   }
   //cout << "evalute returning just clone()\n";
   //return result_var.clone();
-  return result_var._get_value();
+  return result_var._get_variant();
+  //return result_var.evaluate(ctxt);
 }
 
 
@@ -619,10 +626,13 @@ bool AstMvar::assign(astexpr_u_ptr& ctxt, Operand &v) {
   }
   MYLOGGER_MSG(trace_function, "sub_node.add() before");
 
-  cout << "sub_node: " << sub_node << "\n";
-  cout << "v.type(): " << v.get_type() << "\n";
+  //cout << "sub_node: " << sub_node << "\n";
+  //cout << "v.type(): " << v.get_type() << "\n";
+
   if(v._get_type() == OperandType::uptr_t) v.to_shared();
-  cout << "v.type(): " << v.get_type() << "\n";
+
+  //cout << "v.type(): " << v.get_type() << "\n";
+
   sub_node.add(var_name, v, true);
 
   MYLOGGER_MSG(trace_function, "sub_node.add() after");
@@ -744,7 +754,7 @@ bool AstTuple::assign(astexpr_u_ptr& ctxt, Operand& v) {
         continue;
     }
 
-    if(e_tuple.getv(i).getv() != v.getv(i).getv()) {
+    if(e_tuple.getv(i)._get_value() != v.getv(i)._get_value()) {
       cout << e_tuple << " != " << v << "\n";
       return false;
     }

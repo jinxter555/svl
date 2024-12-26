@@ -147,19 +147,19 @@ void SvlmInteractive::parse(const std::string &line) {
 void SvlmInteractive::evaluate_line() {
   MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__));
   auto result = svlm_lang.evaluate_last_line();
-  // std::cout << "evaluate line" << "\n";
-
+  //std::cout << "evaluate line" << "\n";
 
   if(result.size()>0 ) {
-    //auto &v = (*result[0l]).getv();
-    auto &v = result.getv(0l);
-    if(v==nil_operand) { // Operand_math != is notworking 
+    auto &v = result.back();
+    if(v==nil) { // Operand_math != is notworking 
+      cout << "v==nil" << result << "\n";
     } else  {
       //cout << "get_type: " << v.get_type() << "\n";
       //cout << "getv().get_type: " << v.getv().get_type() << "\n";
       cout << v << "\n";
     }
-
+  } else {
+    cout << "result: " << result << "\n";
   }
 }
 

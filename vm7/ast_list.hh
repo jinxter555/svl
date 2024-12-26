@@ -21,9 +21,8 @@ public:
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override ;
   Operand opfunc(const AstExpr& other, AstOpCode op) override ;
 
-  const Operand& getv() const override final ;
-  OperandVariant _get_value() const override;
-  OperandVariant _get_variant() const override;
+  const Operand& _get_value() const override final ;
+  operand_variant_t _get_variant() const override;
 
   Operand& getv(const Operand &k)  override final ;
   Operand& getv(const string &k)  ;
@@ -75,6 +74,7 @@ public:
   Operand& get_branch(const vector<string> &keys) override final;
   //-------------------------------------------
   bool operator==(const AstExpr &) const override;
+  bool operator==(const astexpr_ptr) const override;
   bool cmp_eql(const AstExpr &) const override;
   bool cmp_eql(const AstList *) const ;
   //bool cmp_eql(const OperandVariant&) const override;

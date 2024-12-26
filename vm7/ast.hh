@@ -38,9 +38,8 @@ public:
   virtual bool set(const Operand &k, const AstExpr& v) = 0;
   virtual bool set(const Operand &k, astexpr_u_ptr&& vptr) = 0;
 
-  virtual const Operand& getv() const = 0;
-  virtual OperandVariant _get_value() const=0;
-  virtual OperandVariant _get_variant() const=0 ;
+  virtual const Operand& _get_value() const = 0;
+  virtual operand_variant_t _get_variant() const=0 ;
   //-------------------------------------------
   virtual const Operand* _get_operand_ptr() const = 0;
   virtual const AstList* _get_list_ptr() const = 0;
@@ -66,11 +65,13 @@ public:
   virtual astexpr_s_ptr get_s_ptr() = 0;
   //virtual astexpr_s_ptr get_s_ptr_nc() = 0;
 
-  virtual AstExpr *get_raw_ptr(const Operand &k) const=0;
-  virtual AstExpr *get_raw_ptr() const=0;
+  virtual astexpr_ptr get_raw_ptr(const Operand &k) const=0;
+  virtual astexpr_ptr get_raw_ptr() const=0;
 
   //-------------------------------------------
   virtual bool operator==(const AstExpr&) const=0;
+  virtual bool operator==(const astexpr_ptr) const=0;
+
   virtual bool operator!=(const AstExpr&) const=0;
   virtual bool cmp_eql(const AstExpr&) const=0;
   //virtual bool cmp_eql(const OperandVariant&) const=0;

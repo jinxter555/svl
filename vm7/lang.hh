@@ -145,9 +145,9 @@ using map_ptr = AstMap *;
 using list_ptr = AstList *;
 using svlm_ast_ptr = SvlmAst *;
 //--------------------------------------------------------- 
-using OperandVariant=std::variant
-< Nil,
- bool, string, Number
+using operand_variant_t = std::variant
+< Nil
+, bool, string, Number
 , ControlFlow
 , AstOpCode, OperandErrorCode
 , OperandStatusCode, OperandType

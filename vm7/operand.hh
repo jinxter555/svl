@@ -13,7 +13,7 @@ class Operand : public AstExpr {
 friend class AstMap;
 friend class AstList;
 protected:
-  OperandVariant value_;
+  operand_variant_t value_;
 public:
   const static string nil_str;
   // Constructors for each supported type
@@ -33,8 +33,8 @@ public:
   Operand(const Number&) ;
   Operand(const string&);
   Operand(const char* );
-  Operand(const OperandVariant&);
-  Operand(const OperandType, const OperandVariant&);
+  Operand(const operand_variant_t&);
+  Operand(const OperandType, const operand_variant_t&);
   //Operand(const Operand&);
   Operand(astexpr_u_ptr &);
   Operand(astexpr_u_ptr &&);
@@ -51,8 +51,8 @@ public:
 
   Operand evaluate(astexpr_u_ptr& ast_ctxt) override final;
   //--------------------------------------------------------- Overload primative operator
-  OperandVariant _get_value() const override;
-  OperandVariant _get_variant() const override;
+  operand_variant_t _get_variant() const override;
+  const Operand& _get_value() const override;
   Number _get_number() const ;
   s_integer _get_int() const override final ;
   s_float _get_float() const ;
@@ -78,8 +78,8 @@ public:
   astexpr_u_ptr clone_usu() ;
   //astexpr_s_ptr get_s_ptr_nc() override final;
   //--------------------------------------------------------- 
-  AstExpr *get_raw_ptr(const Operand &k) const override final;
-  AstExpr *get_raw_ptr() const override final;
+  astexpr_ptr get_raw_ptr(const Operand &k) const override final;
+  astexpr_ptr get_raw_ptr() const override final;
 
   AstExpr *get_raw_ptr(const string &k) const ;
   AstExpr *get_raw_ptr(const s_integer i) const ;
@@ -108,7 +108,6 @@ public:
   Operand operator*(const Operand& other) const;
   Operand operator/(const Operand& other) const;
   //--------------------------------------------------------- Overload math equality operator
-  bool operator==(const Operand& other) const;
   //bool operator==(const Nil& other) const;
   bool operator!=(const Operand& other) const;
   bool operator>=(const Operand& other) const;
@@ -119,7 +118,9 @@ public:
   Operand operator&&(const Operand& other) const;
   Operand operator||(const Operand& other) const;
 
+  bool operator==(const Operand& other) const;
   bool operator==(const AstExpr&) const override;
+  bool operator==(const astexpr_ptr) const override;
   bool operator!=(const AstExpr&) const override;
   bool cmp_eql(const AstExpr&) const override;
   bool is_nil() const override;
@@ -145,7 +146,6 @@ public:
   bool set(const Operand &k, const AstExpr& v) override final ;
   bool set(const Operand &k, astexpr_u_ptr&& vptr) override final ;
 
-  const Operand& getv() const override final ;
   //Operand& getv_nc() override final ;
   Operand& getv(const Operand &k)  override final ;
 
@@ -156,31 +156,39 @@ public:
   const Operand& operator[] (const Operand &k) const override final;
 
 
-
-};
-
-//--------------------------------------------------------- 
-struct OperandValue{
+struct Value { 
 template <typename T> 
-OperandVariant operator()(T value) const;
-OperandVariant operator()(const astexpr_u_ptr& v) const  ;
-OperandVariant operator()(const astexpr_s_ptr& v) const  ;
-OperandVariant operator()(const astexpr_ptr& v) const  ;
-};
-struct GetOperandVariant{
-template <typename T> OperandVariant operator()(const T& value) const;
-OperandVariant operator()(const astexpr_ptr& v) const  ;
-OperandVariant operator()(const astexpr_s_ptr& v) const  ;
-OperandVariant operator()(const astexpr_u_ptr& v) const  ;
-OperandVariant operator()(const Nil) const;
+const Operand& operator()(T &v) const ;
+const Operand& operator()(astexpr_ptr& v) const ;
+const Operand& operator()(astexpr_u_ptr& v) const ;
+const Operand& operator()(astexpr_s_ptr& v) const ;
 };
 
-struct OperandClone{
-template <typename T> 
-operand_u_ptr operator()(T value) const;
-operand_u_ptr operator()(const astexpr_u_ptr& v) const  ;
-operand_u_ptr operator()(const astexpr_s_ptr& v) const  ;
+struct Variant{
+template <typename T> operand_variant_t operator()(const T& value) const;
+operand_variant_t operator()(const astexpr_ptr& v) const  ;
+operand_variant_t operator()(const astexpr_s_ptr& v) const  ;
+operand_variant_t operator()(const astexpr_u_ptr& v) const  ;
+operand_variant_t operator()(const Nil) const;
 };
+
+struct Clone{
+template <typename T> 
+astexpr_u_ptr operator()(T value) const;
+astexpr_u_ptr operator()(const astexpr_ptr& v) const  ;
+astexpr_u_ptr operator()(const astexpr_u_ptr& v) const  ;
+astexpr_u_ptr operator()(const astexpr_s_ptr& v) const  ;
+};
+
+struct OpCode{
+template <typename T> 
+AstOpCode operator()(T& v) const ;
+AstOpCode operator()(const AstOpCode v) const ;
+AstOpCode operator()(const Nil) const ;
+};
+
+};
+
 
 struct OperandEvaluate {
 astexpr_u_ptr &ctxt;
@@ -294,14 +302,14 @@ bool operator()(astexpr_s_ptr& v) ;
 
 // get value
 struct OperandGetv {
-const Operand &value_;
-OperandGetv(const Operand&v);
+//const Operand &value_; OperandGetv(const Operand&v);
 template <typename T> 
 const Operand& operator()(T &v) const ;
 const Operand& operator()(astexpr_ptr& v) const ;
 const Operand& operator()(astexpr_u_ptr& v) const ;
 const Operand& operator()(astexpr_s_ptr& v) const ;
 };
+
 
 // for AstMap
 struct OperandGetv_k{
@@ -333,6 +341,7 @@ bool operator()(const astexpr_s_ptr& v) const ;
 struct OperandCmpEql{
 template <typename T, typename U> bool operator()(const T &a, const U &b) ;
 template <typename T> bool operator()(const T &a, const T &b) ;
+bool operator()(const AstExpr*, const AstExpr*) ;
 bool operator()(const Nil, const Nil b);
 /*
 bool operator()(const astexpr_ptr& a, const astexpr_ptr& b);
