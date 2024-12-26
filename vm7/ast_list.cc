@@ -247,9 +247,9 @@ bool AstList::operator==(const AstExpr &other) const {
   cout << "AstList::==(const AstExpr&)\n";
   return cmp_eql(other);
 }
-bool AstList::operator==(const astexpr_ptr) const { 
+bool AstList::operator==(const astexpr_ptr vptr) const { 
   cout << "AstList::==(const astexpr_ptr&)\n";
-  return false;
+  return cmp_eql(*vptr);
 }
 
 bool AstList::cmp_eql(const AstExpr &other) const { 

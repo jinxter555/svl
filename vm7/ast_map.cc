@@ -345,34 +345,68 @@ vector<string> AstMap::_get_keys() const {
 }
 
 Operand AstMap::opfunc(const AstExpr &other, AstOpCode op) {
-  cerr << "AstMap::opfunc, I shouldn't be here!\n";
-  cout << "value: " << *this << ", other: " << other << "\n";
-  cout << "type: " << get_type() << ", other_type: " << other.get_type() << " op: " << Operand(op) << "\n\n";
+  MYLOGGER(trace_function , "AstMap::opfunc()" ,__func__);
+  cout << "AstMap::opfunc()!\n";
 
-  return Operand();
+  print(); cout << " " << Operand(op) << " " <<  other <<"\n";
+  //return make_unique<Operand>( eql_cmp(move(other)));
+  switch(op) {
+  //case AstOpCode::eql:    return make_unique<Operand>( *this == move(other));
+  case AstOpCode::eql:    return  cmp_eql(other);
+  case AstOpCode::neql:   return  !cmp_eql(other);
+  default:
+    cerr << "AstList::opfunc, default error!\n";
+    return Operand();
+  }
+  return nil;
 }
-bool AstMap::operator==(const astexpr_ptr) const { 
+
+bool AstMap::operator==(const astexpr_ptr vptr) const { 
   MYLOGGER(trace_function, "AstMap::==(const astexpr_ptr)", __func__);
   cout << "AstMap::==(const astexpr_ptr*)\n";
   cout << "what am i doing here!\n";
-  return false;
+  return cmp_eql(vptr->_get_map_ptr());
 }
 
 bool AstMap::operator==(const AstExpr &other) const { 
   MYLOGGER(trace_function, "AstMap::==(const AstExpr&)", __func__);
   cout << "AstMap::==(const AstExpr&)\n";
   cout << "this: " <<  to_str() << ", other: " <<  other << "\n";
-
-  return false; 
+  return cmp_eql(other._get_map_ptr());
 }
+
 bool AstMap::operator!=(const AstExpr &other) const { 
+  MYLOGGER(trace_function, "AstMap::!=(const AstExpr&)", __func__);
   cout << "AstMap::!=(const AstExpr&)\n";
-  return false; 
+  return !cmp_eql(other);
 }
 
 bool AstMap::cmp_eql(const AstExpr &other) const { 
-  cout << "AstMap::cmp_eql(astexpr_u_ptr)\n";
-  return false; 
+  return cmp_eql(other._get_map_ptr());
+}
+bool AstMap::cmp_eql(const AstMap *other_ptr) const { 
+  MYLOGGER(trace_function, "AstMap::cmp_eql(const AstExpr&)", __func__);
+  cout << "AstMap::cmp_eql(const AstExpr&)\n";
+
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  s_integer s=size();
+
+  if(other_ptr==nullptr ){
+    if(s==0) return true;
+    cout << "other_ptr is null!\n";
+    return false;
+  }
+  cout << "*other: " << *other_ptr << " other type: " << other_ptr->get_type() << "\n\n";
+
+  if(other_ptr->_get_type()!= OperandType::map_t) return false;
+  if(s != other_ptr->size()) return false;
+
+  for (auto const& [key, val] : map_) {
+    auto& other_val = (*other_ptr)[key];
+    if(val != other_val) return false;
+  }
+
+  return true; 
 }
 
 operand_variant_t AstMap::_get_variant() const { 

@@ -146,7 +146,7 @@ void SvlmInteractive::parse(const std::string &line) {
 }
 void SvlmInteractive::evaluate_line() {
   MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__));
-  auto result = svlm_lang.evaluate_last_line();
+  auto result = svlm_lang.evaluate_prompt_line();
   //std::cout << "evaluate line" << "\n";
 
   if(result.size()>0 ) {

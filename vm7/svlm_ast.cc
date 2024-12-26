@@ -71,8 +71,8 @@ void SvlmAst::add_module(const Operand& mod_name, astexpr_u_ptr clist) {
     // sub_node could be FUNC, CLASS, VAR
     auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
     //if(sub_node==nil_operand) { 
-    if(sub_node==nil) { 
-      cout << "sub_node == nil_operand, skip and continue\n";
+    if(sub_node!=nil) { 
+      cout << "sub_node != nil_operand, skip and continue\n";
       continue; 
     }
 
@@ -136,8 +136,8 @@ void SvlmAst::add_code(const Operand&n, unique_ptr<AstExpr> c ) {
   //l.print(); cout << "\n";
 }
 
-Operand SvlmAst::evaluate_last_line() {
-  MYLOGGER(trace_function , "SvlmAst::evaluate_last_line()" , string("SvlmAst::")  + string(__func__));
+Operand SvlmAst::evaluate_prompt_line() {
+  MYLOGGER(trace_function , "SvlmAst::evaluate_prompt_line()" , string("SvlmAst::")  + string(__func__));
   auto& l = root.get_branch({CONTEXT_UNIV, MOD, "Prompt", "last", "code"});
   //l.print(); cout << "\n";
   auto &ctxt = get_context();

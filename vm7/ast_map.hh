@@ -68,12 +68,12 @@ public:
   bool add_branch(const vector<string> &keys, const Operand& operand, bool overwrite=false) override final;
   bool add_branch(const vector<string> &keys, astexpr_u_ptr&& vvptr , bool overwrite=false) override final;
   Operand& get_branch(const vector<string> &keys) override final;
-  Operand& get_branch2(const vector<string> &keys) ;
   //-------------------------------------------
   bool operator==(const AstExpr&) const override;
   bool operator==(const astexpr_ptr) const override;
   bool operator!=(const AstExpr&) const override;
   bool cmp_eql(const AstExpr &) const override;
+  bool cmp_eql(const AstMap *) const ;
   bool is_nil() const override;
   bool is_current_nil() const override;
   //bool cmp_eql(const OperandVariant&) const override;

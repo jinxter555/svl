@@ -35,7 +35,7 @@ public:
   OperandType _get_type() const override { return OperandType::nil_t;};
   void print() const override {};
   void run_evaluate();
-  Operand evaluate_last_line();
+  Operand evaluate_prompt_line();
 };  
 
 
