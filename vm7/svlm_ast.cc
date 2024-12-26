@@ -115,6 +115,8 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   auto &msub_node = root.get_branch(keys);
 //  cout << "msub_node: " << msub_node << "\n";
 
+  // ex, if key mvar, create it if it's not found==nil else return already
+  // found. so that we won't overwrite the existing mvar varaibles in it.
   if(msub_node==nil_operand) {
 //    cout << "msub_node is nil_operand: " << msub_node << "--add\n";
     root.add_branch(keys, make_unique<AstMap>(), true);

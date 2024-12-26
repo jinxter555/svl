@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #define DEBUG
 
@@ -11,14 +12,19 @@ extern std::fstream trace_function;
 
 class ScopeLogger {
 private:
-  int current_level;
+  int id_, current_level;
+
   fstream &out;
   string msg_in, msg_out;
+  int num_spaces=0;
+  inline static vector <int> levels;
 public:
   ScopeLogger( fstream &,  const string & , const string & );
   ~ScopeLogger() ;
   void msg(const string&);
-  inline static int level = 0 ;
+  inline static int id_log = 0 ;
+  void set_current_level();
+  string spacing();
 };
 
 

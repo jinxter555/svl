@@ -403,7 +403,10 @@ bool AstMap::cmp_eql(const AstMap *other_ptr) const {
 
   for (auto const& [key, val] : map_) {
     auto& other_val = (*other_ptr)[key];
-    if(val != other_val) return false;
+    if(val != other_val) {
+      cout << key << ":" << val << " != " << key << ":" << other_val << "\n";
+      return false;
+    }
   }
 
   return true; 

@@ -3,10 +3,11 @@
 module Main do
   def main() do
     # $m = %{"hello": "world"}
-    $m = %{ "www1": "server1", "www2": "server2" }
+    $m1 = %{ "www1": "server1", "www2": [1,2,3]}
+    $m2 = %{ "www1": "server1", "www2": "server2" }
     $l = [1,2,3]
-    print $m
     print $l
+    print $m1
     print "\n"
   end
 end
