@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsvlm-node.a CMakeFiles/svlm-node.dir/ast.cc.o CMakeFiles/svlm-node.dir/number.cc.o CMakeFiles/svlm-node.dir/operand.cc.o CMakeFiles/svlm-node.dir/ast_map.cc.o CMakeFiles/svlm-node.dir/ast_list.cc.o CMakeFiles/svlm-node.dir/operand_tostr.cc.o CMakeFiles/svlm-node.dir/operand_math.cc.o CMakeFiles/svlm-node.dir/operand_visitors.cc.o CMakeFiles/svlm-node.dir/que_node.cc.o CMakeFiles/svlm-node.dir/my_helpers.cc.o
-/usr/bin/ranlib libsvlm-node.a

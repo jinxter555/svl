@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsvlm-logger.a CMakeFiles/svlm-logger.dir/scope_logger.cc.o
-/usr/bin/ranlib libsvlm-logger.a
