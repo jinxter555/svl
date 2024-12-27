@@ -75,8 +75,11 @@ Operand Operand::operator/(const Operand& other) const {
     throw std::runtime_error("Unsupported operation / for unequal types"); 
 
   switch(type_) {
-  case OperandType::num_t: 
-    return _get_number() / other._get_number();
+  case OperandType::num_t:  {
+    Number other_num = other._get_number();
+    if(other_num==0l) return nil;
+    return _get_number() / other_num;
+  }
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }
