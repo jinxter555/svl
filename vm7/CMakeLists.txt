@@ -15,10 +15,10 @@ find_package(Readline REQUIRED)
 project(svlm)
 
 
-bison_target(MyParser svlm_grammar.y ${CMAKE_CURRENT_SOURCE_DIR}/svlm_parser.cc
-  DEFINES_FILE ${CMAKE_CURRENT_SOURCE_DIR}/svlm_parser.hh)
+bison_target(MyParser svlm_grammar.y ${CMAKE_CURRENT_BINARY_DIR}/svlm_parser.cc
+  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/svlm_parser.hh)
 
-flex_target(MyScanner svlm_lexer.l ${CMAKE_CURRENT_SOURCE_DIR}/svlm_scanner.cc)
+flex_target(MyScanner svlm_lexer.l ${CMAKE_CURRENT_BINARY_DIR}/svlm_scanner.cc)
 
 
 
@@ -37,6 +37,6 @@ target_link_libraries(${PROJECT_NAME} svlm-node svlm-logger ${Readline_LIBRARY})
 
 
 include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR} #, ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}  ${CMAKE_CURRENT_SOURCE_DIR}
   )
 

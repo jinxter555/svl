@@ -34,6 +34,10 @@ int main(int argc, char *argv[]) {
 
   bool init_flag = true;
 
+  for(int i=0; i<argc; i++) {
+    cout << "argv[" << i << "]" << argv[i] <<" \n";
+  }
+
   //log_output.open("svlm.log", std::ios::out);
   trace_function.open("trace_svlm.log", std::ios::out);
 
