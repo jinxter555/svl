@@ -1,0 +1,14 @@
+In file included from /usr/include/c++/11/vector:66,
+                 from lang.hh:7,
+                 from number.hh:6,
+                 from ast_node.hh:1,
+                 from ast_node.cc:1:
+/usr/include/c++/11/bits/stl_uninitialized.h: In instantiation of ‘_ForwardIterator std::uninitialized_copy(_InputIterator, _InputIterator, _ForwardIterator) [with _InputIterator = const AstNode*; _ForwardIterator = AstNode*]’:
+/usr/include/c++/11/bits/stl_uninitialized.h:333:37:   required from ‘_ForwardIterator std::__uninitialized_copy_a(_InputIterator, _InputIterator, _ForwardIterator, std::allocator<_Tp>&) [with _InputIterator = const AstNode*; _ForwardIterator = AstNode*; _Tp = AstNode]’
+/usr/include/c++/11/bits/stl_vector.h:1585:33:   required from ‘void std::vector<_Tp, _Alloc>::_M_range_initialize(_ForwardIterator, _ForwardIterator, std::forward_iterator_tag) [with _ForwardIterator = const AstNode*; _Tp = AstNode; _Alloc = std::allocator<AstNode>]’
+/usr/include/c++/11/bits/stl_vector.h:629:21:   required from ‘std::vector<_Tp, _Alloc>::vector(std::initializer_list<_Tp>, const allocator_type&) [with _Tp = AstNode; _Alloc = std::allocator<AstNode>; std::vector<_Tp, _Alloc>::allocator_type = std::allocator<AstNode>]’
+ast_node.cc:61:60:   required from here
+/usr/include/c++/11/bits/stl_uninitialized.h:138:72: error: static assertion failed: result type must be constructible from value type of input range
+  138 |       static_assert(is_constructible<_ValueType2, decltype(*__first)>::value,
+      |                                                                        ^~~~~
+/usr/include/c++/11/bits/stl_uninitialized.h:138:72: note: ‘std::integral_constant<bool, false>::value’ evaluates to false
