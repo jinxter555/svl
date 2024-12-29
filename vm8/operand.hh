@@ -29,6 +29,7 @@ using ast_variant_t = std::variant
 
 class Operand {
 private:
+  OperandType type_;
   ast_variant_t value_;
 public:
   Operand();
@@ -45,22 +46,45 @@ public:
   Operand(const OperandStatusCode&);
   Operand(const ControlFlow&);
   Operand(operand_u_ptr &&);
-  Operand(operand_u_ptr &);
-  Operand(operand_ptr);
-  Operand(operand_s_ptr);
+  Operand(const operand_u_ptr &);
+  Operand(const operand_ptr);
+  Operand(const operand_s_ptr& );
   Operand(const list_t &);
   Operand(const map_t &);
   Operand(const initializer_list<Operand> &v);
   
 //------------------------------------
   const Operand& get_value() const;
-  Operand to_str() const;
+  Operand get_type() const ;
+  OperandType _get_type() const ;
+  Number _get_number() const ;
+
+  Operand to_str() const ;
   string _to_str() const;
+//------------------------------------
+  operand_u_ptr clone() const ;
+  s_integer size() const ;
+  void print() const ;
 
 //------------------------------------
-  operand_u_ptr clone() const;
+  Operand operator+(const Operand& other) const ;
+  Operand operator-(const Operand& other) const ;
+  Operand operator*(const Operand& other) const;
+  Operand operator/(const Operand& other) const;
 
-  void print() const;
+  bool operator==(const Operand& other) const;
+  bool operator!=(const Operand& other) const;
+  bool operator>=(const Operand& other) const;
+  bool operator<=(const Operand& other) const;
+  bool operator<(const Operand& other) const;
+  bool operator>(const Operand& other) const;
+
+  Operand operator&&(const Operand& other) const;
+  Operand operator||(const Operand& other) const;
+
+  Operand operator!() const;
+
+  Operand opfunc(const Operand&, AstOpCode op) ;
 
 //------------------------------------
 struct Clone{
@@ -92,7 +116,7 @@ struct ToString {
   Operand operator()(OperandStatusCode status) const;
   Operand operator()(ControlFlow cf) const;
   Operand operator()(AstOpCode t_op) const;
-  Operand operator()(const svlm_ast_ptr&) const ;
+//  Operand operator()(const svlm_ast_ptr&) const ;
   Operand operator()(const operand_s_ptr&) const;
   Operand operator()(const operand_u_ptr&) const;
   Operand operator()(const operand_ptr&) const;
