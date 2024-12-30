@@ -78,6 +78,8 @@ enum class OperandType {
   array_t,     // operand  entity
   list_t,
   map_t,
+  list_uptr_t,
+  map_uptr_t,
   quenode_t,
 
   ptr_t,

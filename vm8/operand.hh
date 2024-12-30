@@ -25,7 +25,7 @@ using operand_variant_t = variant
 , OperandStatusCode
 , OperandType
 , list_t
-, map_t
+//, map_t
 , operand_ptr
 , operand_s_ptr
 , operand_u_ptr
@@ -54,7 +54,8 @@ public:
   Operand(const operand_ptr);
   Operand(const operand_s_ptr& );
   Operand(const list_t &);
-  Operand(const map_t &);
+  Operand(list_t &&);
+  //Operand(const map_t &);
   //Operand(const initializer_list<Operand> &v);
   
 //------------------------------------
@@ -70,6 +71,7 @@ public:
   operand_variant_t _deref() const;
 //------------------------------------
   operand_u_ptr clone() const ;
+  static list_t clone_list(const list_t&);
 //------------------------------------
 
   s_integer size() const ;
@@ -103,6 +105,7 @@ operand_u_ptr operator()(const Nil) const;
 operand_u_ptr operator()(const operand_ptr& v) const  ;
 operand_u_ptr operator()(const operand_u_ptr& v) const  ;
 operand_u_ptr operator()(const operand_s_ptr& v) const  ;
+operand_u_ptr operator()(const list_t& v) const  ;
 };
 
 struct Value{
@@ -151,7 +154,9 @@ struct ToString {
   Operand operator()(const operand_u_ptr&) const;
   Operand operator()(const operand_ptr&) const;
   Operand operator()(const list_t &) const;
-  Operand operator()(const map_t &) const;
+
+
+  //Operand operator()(const map_t &) const;
   //Operand operator()(s_integer i) const;
   //Operand operator()(s_float f) const ;
 };
@@ -162,10 +167,11 @@ struct ToString {
 
 //------------------------------------
 ostream& operator<<(ostream& os, const Operand& v);
+/*
 ostream& operator<<(ostream& os, const operand_u_ptr& ptr);
 ostream& operator<<(ostream& os, const operand_s_ptr& ptr);
 ostream& operator<<(ostream& os, const operand_ptr& ptr);
-
+*/
 
 
 extern Nil nil;

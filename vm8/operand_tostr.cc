@@ -149,11 +149,12 @@ Operand Operand::ToString::operator()(const operand_ptr &vptr) const {
   return vptr->to_str();
 }
 
-Operand Operand::ToString::operator()(const list_t &vptr) const { 
-  return nil;
-}
-Operand Operand::ToString::operator()(const map_t &vptr) const { 
-  return nil;
+Operand Operand::ToString::operator()(const list_t &l) const { 
+  string outstr;
+  for(auto &e : l)  {
+    outstr = outstr + e._to_str() + ",";
+  }
+  return outstr;
 }
 
 

@@ -22,11 +22,23 @@ Operand::Operand(const operand_u_ptr&v )      : type_(OperandType::uptr_t), valu
 Operand::Operand(operand_u_ptr&&v )           : type_(OperandType::uptr_t), value_(move(v)) {};
 Operand::Operand(const operand_s_ptr& v)      : type_(OperandType::sptr_t), value_(move(v->clone())) {};
 Operand::Operand(const operand_ptr v)         : type_(OperandType::ptr_t),  value_(move(v->clone())) {};
-Operand::Operand(const list_t &v ) : type_(OperandType::list_t) { value_ = make_unique<Operand>() ; };
-Operand::Operand(const map_t &v ) : type_(OperandType::map_t) { value_ = make_unique<Operand>() ; };
+Operand::Operand(const list_t &l )            : type_(OperandType::list_t) { value_ = move(clone_list(l));
+}
+Operand::Operand(list_t &&vptr ) : type_(OperandType::list_t) { value_ = move(vptr); };
+
+
+//Operand::Operand(const map_t &v ) : type_(OperandType::map_t) { value_ = make_unique<Operand>() ; };
 
 //------------------------------------
 operand_u_ptr Operand::clone() const { return visit(Clone{}, value_); }
+
+list_t Operand::clone_list(const list_t&l) {
+  list_t new_list;
+  for(auto &e : l) {
+    new_list.push_back(  e.clone() );
+  }
+  return new_list;
+}
 //------------------------------------
 Operand Operand::to_str() const { return visit(ToString{}, value_); }
 
@@ -50,7 +62,7 @@ Number Operand::_get_number() const {
     if(strnum.find('.')!= string::npos) return Number(stod(strnum)); 
     else return Number(stol(strnum)); 
   }
-  return get_value()._get_number();
+  return get<Number>(_deref());
 
 }
 
@@ -62,8 +74,7 @@ operand_variant_t Operand::_get_variant() const {
   return nil;
 }
 operand_variant_t Operand::_deref() const {
-  //return visit(DeRef{}, value_);
-  return nil;
+  return visit(DeRef{}, value_);
 }
 
 //------------------------------------
@@ -75,6 +86,9 @@ operand_u_ptr Operand::Clone::operator()(const Nil v) const { return nullptr; }
 operand_u_ptr Operand::Clone::operator()(const operand_ptr& v) const { return v->clone(); }
 operand_u_ptr Operand::Clone::operator()(const operand_u_ptr& v) const {return v->clone(); } 
 operand_u_ptr Operand::Clone::operator()(const operand_s_ptr& v) const { return v->clone(); } 
+operand_u_ptr Operand::Clone::operator()(const list_t& l) const { 
+  return make_unique<Operand>(clone_list(l));
+} 
 //------------------------------------ Value
 template <typename T> 
 const Operand& Operand::Value::operator()(T &v) const  { return *(Operand*)this;}
@@ -96,28 +110,18 @@ operand_variant_t Operand::Variant::operator()(const map_t& v) const { return ni
 template <typename T> 
 operand_variant_t Operand::DeRef::operator()(const T& value) const { return value;}
 operand_variant_t Operand::DeRef::operator()(const Nil) const { return nil; }
-operand_variant_t Operand::DeRef::operator()(const operand_ptr& v) const  { 
-  if(v==nullptr) return nil; 
-  return  v->_deref();
-}
-operand_variant_t Operand::DeRef::operator()(const operand_s_ptr& v) const  {
-  if(v==nullptr) return nil; 
-  return  v->_deref();
-}
-operand_variant_t Operand::DeRef::operator()(const operand_u_ptr& v) const  {
-  if(v==nullptr) return nil; 
-  return  v->_deref();
-}
-// need to be clone 
+operand_variant_t Operand::DeRef::operator()(const operand_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
+operand_variant_t Operand::DeRef::operator()(const operand_s_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
+operand_variant_t Operand::DeRef::operator()(const operand_u_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
 operand_variant_t Operand::DeRef::operator()(const list_t& v) const { return nil; }
-operand_variant_t Operand::DeRef::operator()(const map_t& v) const { return nil; }
-//--------------------------------------------------------- 
+
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const Operand& v) {
   cout << v._to_str();
   return os;
 }
 
+/*
 ostream& operator<<(ostream& os, const operand_u_ptr& ptr) {
   if(ptr==nullptr) { cout << "operand_u_ptr is null\n"; } 
   else ptr->print();
@@ -133,4 +137,4 @@ ostream& operator<<(ostream& os, const operand_ptr& ptr) {
   else ptr->print();
   return os;
 }
-
+*/
