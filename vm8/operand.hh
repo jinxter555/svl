@@ -1,17 +1,22 @@
+#pragma once
 #include <iostream>
+#include <variant>
 #include "number.hh"
 
+using namespace std;
+
+class Operand;
 using operand_ptr = Operand *;
 using operand_u_ptr = unique_ptr<Operand>;
 using operand_s_ptr = shared_ptr<Operand>;
 
 
-//using map_t = map<string, ast_u_ptr>;
-using map_t = map<string, Operand>;
-//using list_t = vector<ast_u_ptr>;
-using list_t = vector<Operand>;
+//using map_t = map<string, operand_u_ptr>;
+using map_t = map<string, Operand>; 
+//using list_t = vector<operand_u_ptr>;
+using list_t = vector<Operand>; 
 
-using ast_variant_t = std::variant
+using operand_variant_t = variant
 < Nil
 , bool, string, Number
 , ControlFlow
@@ -26,11 +31,10 @@ using ast_variant_t = std::variant
 , operand_u_ptr
 >;
 
-
 class Operand {
 private:
   OperandType type_;
-  ast_variant_t value_;
+  operand_variant_t value_;
 public:
   Operand();
   Operand(const Nil&);
@@ -51,10 +55,9 @@ public:
   Operand(const operand_s_ptr& );
   Operand(const list_t &);
   Operand(const map_t &);
-  Operand(const initializer_list<Operand> &v);
+  //Operand(const initializer_list<Operand> &v);
   
 //------------------------------------
-  const Operand& get_value() const;
   Operand get_type() const ;
   OperandType _get_type() const ;
   Number _get_number() const ;
@@ -62,7 +65,13 @@ public:
   Operand to_str() const ;
   string _to_str() const;
 //------------------------------------
+  const Operand& get_value() const;
+  operand_variant_t _get_variant() const;
+  operand_variant_t _deref() const;
+//------------------------------------
   operand_u_ptr clone() const ;
+//------------------------------------
+
   s_integer size() const ;
   void print() const ;
 
@@ -105,6 +114,27 @@ const Operand& operator()(operand_u_ptr& v) const ;
 const Operand& operator()(operand_s_ptr& v) const ;
 };
 
+struct Variant{
+template <typename T> 
+operand_variant_t operator()(const T& value) const;
+operand_variant_t operator()(const Nil) const;
+operand_variant_t operator()(const operand_ptr& v) const  ;
+operand_variant_t operator()(const operand_s_ptr& v) const  ;
+operand_variant_t operator()(const operand_u_ptr& v) const  ;
+operand_variant_t operator()(const list_t& v) const  ;
+operand_variant_t operator()(const map_t& v) const  ;
+};
+
+struct DeRef{
+template <typename T> 
+operand_variant_t operator()(const T& value) const;
+operand_variant_t operator()(const Nil) const;
+operand_variant_t operator()(const operand_ptr& v) const  ;
+operand_variant_t operator()(const operand_s_ptr& v) const  ;
+operand_variant_t operator()(const operand_u_ptr& v) const  ;
+operand_variant_t operator()(const list_t& v) const  ;
+operand_variant_t operator()(const map_t& v) const  ;
+};
 
 struct ToString {
   Operand operator()(const Nil) const;
@@ -125,6 +155,8 @@ struct ToString {
   //Operand operator()(s_integer i) const;
   //Operand operator()(s_float f) const ;
 };
+
+
 
 };
 

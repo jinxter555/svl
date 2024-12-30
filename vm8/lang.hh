@@ -129,33 +129,6 @@ class Nil{};
 extern Nil nil;
 
 class Operand; class Number;
-using operand_u_ptr=unique_ptr<Operand>;
-//--------------------------------------------------------- 
-class AstList;  class AstMap;
-class QueNode; class AstNode; class AstExpr;
-class SvlmAst;
-//--------------------------------------------------------- 
-using list_u_ptr = unique_ptr<AstList>;
-using map_u_ptr = unique_ptr<AstMap>;
-using astexpr_u_ptr = unique_ptr<AstExpr>;
-using astexpr_s_ptr = shared_ptr<AstExpr>;
-using astexpr_ptr = AstExpr *;
-using operand_ptr = Operand *;
-using map_ptr = AstMap *;
-using list_ptr = AstList *;
-using svlm_ast_ptr = SvlmAst *;
-//--------------------------------------------------------- 
-using operand_variant_t = std::variant
-< Nil
-, bool, string, Number
-, ControlFlow
-, AstOpCode, OperandErrorCode
-, OperandStatusCode, OperandType
-, svlm_ast_ptr
-, astexpr_ptr
-, astexpr_s_ptr
-, astexpr_u_ptr
->;
 //--------------------------------------------------------- 
 template <typename T>
 class Primordial {

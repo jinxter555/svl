@@ -55,24 +55,63 @@ Number Operand::_get_number() const {
 }
 
 const Operand& Operand::get_value() const { return visit(Value{}, value_); }
+
+operand_variant_t Operand::_get_variant() const {
+  return visit(Variant(), value_);
+//  return visit(Clone(), value_);
+  return nil;
+}
+operand_variant_t Operand::_deref() const {
+  //return visit(DeRef{}, value_);
+  return nil;
+}
+
 //------------------------------------
 void Operand::print() const { cout << *this; }
-//------------------------------------
+//------------------------------------ Clone
 template <typename T> 
 operand_u_ptr Operand::Clone::operator()(const T& v) const { return make_unique<Operand>(v); }
+operand_u_ptr Operand::Clone::operator()(const Nil v) const { return nullptr; }
 operand_u_ptr Operand::Clone::operator()(const operand_ptr& v) const { return v->clone(); }
 operand_u_ptr Operand::Clone::operator()(const operand_u_ptr& v) const {return v->clone(); } 
 operand_u_ptr Operand::Clone::operator()(const operand_s_ptr& v) const { return v->clone(); } 
-operand_u_ptr Operand::Clone::operator()(const Nil v) const { return nullptr; }
-//------------------------------------
+//------------------------------------ Value
 template <typename T> 
 const Operand& Operand::Value::operator()(T &v) const  { return *(Operand*)this;}
 const Operand& Operand::Value::operator()(const Nil) const {return nil_operand; }
 const Operand& Operand::Value::operator()(operand_ptr& v) const  {return v->get_value(); }
 const Operand& Operand::Value::operator()(operand_u_ptr& v) const {return v->get_value();}
 const Operand& Operand::Value::operator()(operand_s_ptr& v) const {return v->get_value();}
-//------------------------------------
-
+//------------------------------------ Variant
+template <typename T> 
+operand_variant_t Operand::Variant::operator()(const T &v) const { return v; }
+operand_variant_t Operand::Variant::operator()(const Nil v) const { return nil; }
+operand_variant_t Operand::Variant::operator()(const operand_ptr& vptr) const { return vptr; }
+operand_variant_t Operand::Variant::operator()(const operand_s_ptr& vptr) const { return vptr; }
+operand_variant_t Operand::Variant::operator()(const operand_u_ptr& vptr) const { return vptr->clone(); }
+// need to be clone 
+operand_variant_t Operand::Variant::operator()(const list_t& v) const { return nil; }
+operand_variant_t Operand::Variant::operator()(const map_t& v) const { return nil; }
+//------------------------------------ DeRef
+template <typename T> 
+operand_variant_t Operand::DeRef::operator()(const T& value) const { return value;}
+operand_variant_t Operand::DeRef::operator()(const Nil) const { return nil; }
+operand_variant_t Operand::DeRef::operator()(const operand_ptr& v) const  { 
+  if(v==nullptr) return nil; 
+  return  v->_deref();
+}
+operand_variant_t Operand::DeRef::operator()(const operand_s_ptr& v) const  {
+  if(v==nullptr) return nil; 
+  return  v->_deref();
+}
+operand_variant_t Operand::DeRef::operator()(const operand_u_ptr& v) const  {
+  if(v==nullptr) return nil; 
+  return  v->_deref();
+}
+// need to be clone 
+operand_variant_t Operand::DeRef::operator()(const list_t& v) const { return nil; }
+operand_variant_t Operand::DeRef::operator()(const map_t& v) const { return nil; }
+//--------------------------------------------------------- 
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const Operand& v) {
   cout << v._to_str();
