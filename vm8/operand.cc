@@ -42,6 +42,18 @@ Operand Operand::get_type() const { return _get_type(); }
 OperandType Operand::_get_type() const { return type_; };
 //AstOpCode   Operand::_get_opcode()    const { return visit(OpCode{}, value_); }
 //------------------------------------
+Number Operand::_get_number() const { 
+  if(holds_alternative<Number>(value_)) {
+    return get<Number>(value_); 
+  } else if(holds_alternative<string>(value_)) {
+    auto strnum = get<string>(value_);
+    if(strnum.find('.')!= string::npos) return Number(stod(strnum)); 
+    else return Number(stol(strnum)); 
+  }
+  return get_value()._get_number();
+
+}
+
 const Operand& Operand::get_value() const { return visit(Value{}, value_); }
 //------------------------------------
 void Operand::print() const { cout << *this; }
