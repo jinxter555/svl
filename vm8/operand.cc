@@ -103,7 +103,9 @@ Number Operand::_get_number() const {
 
 }
 
-const Operand& Operand::get_value() const { return visit(Value{}, value_); }
+const Operand& Operand::get_value() const { 
+  return visit(Value{*this}, value_); 
+}
 
 operand_variant_t Operand::_get_variant() const {
   return visit(Variant(), value_);
@@ -132,9 +134,10 @@ operand_u_ptr Operand::Clone::operator()(const list_t& l) const {
   return make_unique<Operand>(move(clone_list(l)));
 } 
 //------------------------------------ Value
-template <typename T> 
-const Operand& Operand::Value::operator()(T &v) const  { return *(Operand*)this;}
-const Operand& Operand::Value::operator()(const Nil) const {return nil_operand; }
+Operand::Value::Value(const Operand&v) : parent_v(v) {}
+template <typename T>  
+const Operand& Operand::Value::operator()(T &v) const  { return parent_v; } 
+const Operand& Operand::Value::operator()(const Nil) const { return nil_operand; }
 const Operand& Operand::Value::operator()(operand_ptr& v) const  {return v->get_value(); }
 const Operand& Operand::Value::operator()(operand_u_ptr& v) const {return v->get_value();}
 const Operand& Operand::Value::operator()(operand_s_ptr& v) const {return v->get_value();}
@@ -160,9 +163,21 @@ const Operand& Operand::GetK::operator()(const list_t& l, const Number&n) {
   auto i = n.get_int();
   return l[i];
 }
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_ptr& v)  {return nil_operand;}
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& v) {return nil_operand;}
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& v)  {return nil_operand;}
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_ptr& k)  {
+  auto &kv = k->get_value();
+  if(kv.is_nil()) return nil_operand;
+  return l[kv._get_number().get_int()];
+}
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& k) {
+  auto &kv = k->get_value();
+  if(kv.is_nil()) return nil_operand;
+  return l[kv._get_number().get_int()];
+}
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& k)  {
+  auto &kv = k->get_value();
+  if(kv.is_nil()) return nil_operand;
+  return l[kv._get_number().get_int()];
+}
 const Operand& Operand::GetK::operator()(const list_t& l, const list_t& v)  {return nil_operand;} // maybe for with get_branch
 
 

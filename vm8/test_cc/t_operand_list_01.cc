@@ -20,13 +20,15 @@ TEST_CASE("check operand list 1") {
   //vector<Operand> l1 = {i1.clone(), f1.clone()};
   vector<Operand> l1 ;
   l1.push_back(Operand(1l));
-  l1.push_back(Operand(2l));
+  l1.push_back(Operand(22l));
+  l1.push_back(Operand(333l));
 
   Operand ol1(l1);
   cout << "ol1: " << ol1 << "\n";
   cout << "ol1[0]: " << ol1[0l] << "\n";
   cout << "ol1[1]: " << ol1[1l] << "\n";
   cout << "ol1[2]: " << ol1[2l] << "\n";
+  cout << "ol1[2]: " << ol1[make_unique<Operand>(2l)] << "\n";
 
   l1.push_back(Operand(3l));
   Operand ol2(l1);

@@ -116,6 +116,8 @@ operand_u_ptr operator()(const list_t& v) const  ;
 };
 
 struct Value{
+const Operand &parent_v;
+Value(const Operand&);
 template <typename T> 
 const Operand& operator()(T &v) const ;
 const Operand& operator()(const Nil) const;
