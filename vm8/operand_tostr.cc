@@ -162,6 +162,10 @@ Operand Operand::ToString::operator()(const list_t &l) const {
   return outstr;
 }
 
+Operand Operand::ToString::operator()(const map_t &l) const { 
+  string outstr="{}";
+  return outstr;
+}
 
 
 //Operand Operand::ToString::operator()(const svlm_ast_ptr& v) const { return v->to_str(); }

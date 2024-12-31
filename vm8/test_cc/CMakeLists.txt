@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(ENABLE_COLOR_OUTPUT "Enable colored compiler output" on)
 
 project(svlm)
 

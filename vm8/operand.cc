@@ -22,16 +22,18 @@ Operand::Operand(const operand_u_ptr&v )      : type_(OperandType::uptr_t), valu
 Operand::Operand(operand_u_ptr&&v )           : type_(OperandType::uptr_t), value_(move(v)) {};
 Operand::Operand(const operand_s_ptr& v)      : type_(OperandType::sptr_t), value_(move(v->clone())) {};
 Operand::Operand(const operand_ptr v)         : type_(OperandType::ptr_t),  value_(move(v->clone())) {};
-Operand::Operand(const list_t &l )            : type_(OperandType::list_t) { value_ = move(clone_list(l));
-}
+Operand::Operand(const list_t &l )            : type_(OperandType::list_t) { value_ = move(clone_list(l));}
+Operand::Operand(const map_t &m )            : type_(OperandType::map_t) { value_ = nil;}
+
 Operand::Operand(list_t &&vptr ) : type_(OperandType::list_t) { value_ = move(vptr); };
 
 
 //Operand::Operand(const map_t &v ) : type_(OperandType::map_t) { value_ = make_unique<Operand>() ; };
 
-//------------------------------------
+//------------------------------------ Clone() s
 operand_u_ptr Operand::clone() const { return visit(Clone{}, value_); }
 
+//------------------------------------
 list_t Operand::clone_list(const list_t&l) {
   list_t new_list;
   for(auto &e : l) {
@@ -39,6 +41,7 @@ list_t Operand::clone_list(const list_t&l) {
   }
   return new_list;
 }
+
 list_t Operand::clone_list() {
   auto v = _get_variant();
   if(holds_alternative<list_t>(v)){
@@ -46,6 +49,27 @@ list_t Operand::clone_list() {
   }
   return {};
 }
+
+//------------------------------------
+
+map_t Operand::clone_map(const map_t&m) {
+  map_t new_map;
+  for (auto const& [key, val] : m) {
+    new_map[key] = val.clone();
+  }
+  return new_map;
+}
+
+map_t Operand::clone_map() {
+  auto v = _get_variant();
+  if(holds_alternative<map_t>(v)){
+    return move(get<map_t>(v));
+  }
+  return {};
+}
+
+//------------------------------------
+
 bool Operand::add(const Operand&v) {
   if(holds_alternative<list_t>(value_)){
     auto &l = get<list_t>(value_);
@@ -61,7 +85,6 @@ bool Operand::add(const Operand&v) {
   return false;
 
 }
-//------------------------------------
 //--------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
   return const_cast<Operand&>(as_const(*this)[k]); 
@@ -73,8 +96,6 @@ const Operand& Operand::operator[] (const Operand &k) const {
   }
   return nil_operand;
 }
-
-
 
 //------------------------------------
 Operand Operand::to_str() const { return visit(ToString{}, value_); }
@@ -122,6 +143,7 @@ bool Operand::is_nil() const {
 }
 
 //------------------------------------
+
 void Operand::print() const { cout << *this; }
 //------------------------------------ Clone
 template <typename T> 
@@ -130,9 +152,9 @@ operand_u_ptr Operand::Clone::operator()(const Nil v) const { return nullptr; }
 operand_u_ptr Operand::Clone::operator()(const operand_ptr& v) const { return v->clone(); }
 operand_u_ptr Operand::Clone::operator()(const operand_u_ptr& v) const {return v->clone(); } 
 operand_u_ptr Operand::Clone::operator()(const operand_s_ptr& v) const { return v->clone(); } 
-operand_u_ptr Operand::Clone::operator()(const list_t& l) const { 
-  return make_unique<Operand>(move(clone_list(l)));
-} 
+operand_u_ptr Operand::Clone::operator()(const list_t& l) const { return make_unique<Operand>(move(clone_list(l))); } 
+operand_u_ptr Operand::Clone::operator()(const map_t& m) const { return make_unique<Operand>(move(clone_map(m))); } 
+
 //------------------------------------ Value
 Operand::Value::Value(const Operand&v) : parent_v(v) {}
 template <typename T>  
@@ -141,6 +163,7 @@ const Operand& Operand::Value::operator()(const Nil) const { return nil_operand;
 const Operand& Operand::Value::operator()(operand_ptr& v) const  {return v->get_value(); }
 const Operand& Operand::Value::operator()(operand_u_ptr& v) const {return v->get_value();}
 const Operand& Operand::Value::operator()(operand_s_ptr& v) const {return v->get_value();}
+
 //------------------------------------ Add
 Operand::Add::Add(list_t &l) : l_(l) {}
 template <typename T> 
@@ -151,6 +174,10 @@ bool Operand::Add::operator()(const operand_s_ptr& v) { l_.push_back(v); return 
 bool Operand::Add::operator()(const operand_u_ptr& v) { l_.push_back(v->clone()); return true; }
 bool Operand::Add::operator()(const list_t& l) { 
   l_.push_back(move(Operand::clone_list(l))); 
+  return true;
+}
+bool Operand::Add::operator()(const map_t& l) { 
+  l_.push_back(move(Operand::clone_map(l))); 
   return true;
 }
 //------------------------------------ GetK
@@ -168,18 +195,9 @@ const Operand& Operand::GetK::operator()(const list_t& l, const operand_ptr& k) 
   if(kv.is_nil()) return nil_operand;
   return l[kv._get_number().get_int()];
 }
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& k) {
-  auto &kv = k->get_value();
-  if(kv.is_nil()) return nil_operand;
-  return l[kv._get_number().get_int()];
-}
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& k)  {
-  auto &kv = k->get_value();
-  if(kv.is_nil()) return nil_operand;
-  return l[kv._get_number().get_int()];
-}
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& k) { return Operand::GetK::operator()(l, k.get()); }
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& k)  { return Operand::GetK::operator()(l, k.get()); }
 const Operand& Operand::GetK::operator()(const list_t& l, const list_t& v)  {return nil_operand;} // maybe for with get_branch
-
 
 //------------------------------------ Variant
 template <typename T> 
@@ -190,7 +208,7 @@ operand_variant_t Operand::Variant::operator()(const operand_s_ptr& vptr) const 
 operand_variant_t Operand::Variant::operator()(const operand_u_ptr& vptr) const { return vptr->clone(); }
 // need to be clone 
 operand_variant_t Operand::Variant::operator()(const list_t& l) const { return clone_list(l)  ; }
-operand_variant_t Operand::Variant::operator()(const map_t& v) const { return nil; }
+operand_variant_t Operand::Variant::operator()(const map_t& m) const { return clone_map(m); }
 //------------------------------------ DeRef
 template <typename T> 
 operand_variant_t Operand::DeRef::operator()(const T& value) const { return value;}
@@ -199,6 +217,7 @@ operand_variant_t Operand::DeRef::operator()(const operand_ptr& v) const  { if(v
 operand_variant_t Operand::DeRef::operator()(const operand_s_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
 operand_variant_t Operand::DeRef::operator()(const operand_u_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
 operand_variant_t Operand::DeRef::operator()(const list_t& l) const { return clone_list(l); }
+operand_variant_t Operand::DeRef::operator()(const map_t& m) const { return clone_map(m); }
 
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const Operand& v) {

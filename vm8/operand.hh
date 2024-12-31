@@ -25,7 +25,7 @@ using operand_variant_t = variant
 , OperandStatusCode
 , OperandType
 , list_t
-//, map_t
+, map_t
 , operand_ptr
 , operand_s_ptr
 , operand_u_ptr
@@ -55,7 +55,7 @@ public:
   Operand(const operand_s_ptr& );
   Operand(const list_t &);
   Operand(list_t &&);
-  //Operand(const map_t &);
+  Operand(const map_t &);
   //Operand(const initializer_list<Operand> &v);
   
 //------------------------------------
@@ -72,7 +72,9 @@ public:
 //------------------------------------
   operand_u_ptr clone() const ;
   list_t clone_list();
+  map_t clone_map();
   static list_t clone_list(const list_t&);
+  static map_t clone_map(const map_t&);
 //------------------------------------
   bool is_nil() const;
   s_integer size() const ;
@@ -113,6 +115,7 @@ operand_u_ptr operator()(const operand_ptr& v) const  ;
 operand_u_ptr operator()(const operand_u_ptr& v) const  ;
 operand_u_ptr operator()(const operand_s_ptr& v) const  ;
 operand_u_ptr operator()(const list_t& v) const  ;
+operand_u_ptr operator()(const map_t& v) const  ;
 };
 
 struct Value{
@@ -158,6 +161,7 @@ bool operator()(const operand_ptr& v) ;
 bool operator()(const operand_s_ptr& v) ;
 bool operator()(const operand_u_ptr& v) ;
 bool operator()(const list_t& v) ;
+bool operator()(const map_t& v) ;
 };
 
 struct GetK{
@@ -189,6 +193,7 @@ struct ToString {
   Operand operator()(const operand_u_ptr&) const;
   Operand operator()(const operand_ptr&) const;
   Operand operator()(const list_t &) const;
+  Operand operator()(const map_t &) const;
 
 
   //Operand operator()(const map_t &) const;

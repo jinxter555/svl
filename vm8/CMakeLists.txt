@@ -17,7 +17,7 @@ find_package(Catch2 3 REQUIRED /usr/local/lib)
 
 project(svlm)
 
-
+option(ENABLE_COLOR_OUTPUT "Enable colored compiler output" on)
 # bison_target(MyParser svlm_grammar.y ${CMAKE_CURRENT_BINARY_DIR}/svlm_parser.cc DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/svlm_parser.hh)
 
 # flex_target(MyScanner svlm_lexer.l ${CMAKE_CURRENT_BINARY_DIR}/svlm_scanner.cc)
