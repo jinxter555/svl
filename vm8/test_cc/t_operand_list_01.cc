@@ -27,7 +27,11 @@ TEST_CASE("check operand list 1") {
   l1.push_back(Operand(3l));
   Operand ol2(l1);
   cout << "ol2: " << ol2 << "\n";
-  cout << "ol1: " << ol1 << "\n";
+  Operand ol3(ol1.clone_list());
+  cout << "ol3: " << ol3 << "\n";
+  Operand ol4(i1.clone_list());
+  cout << "ol4: " << ol4 << "\n";
+
 
   
 }

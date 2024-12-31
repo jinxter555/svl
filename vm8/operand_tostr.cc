@@ -150,10 +150,15 @@ Operand Operand::ToString::operator()(const operand_ptr &vptr) const {
 }
 
 Operand Operand::ToString::operator()(const list_t &l) const { 
-  string outstr;
-  for(auto &e : l)  {
-    outstr = outstr + e._to_str() + ",";
+  int i, s = l.size();
+  string outstr("[");
+  if(s==0) {return Operand("[]");}
+
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + l[i]._to_str() + ",";
   }
+  outstr = outstr + l[i]._to_str() + "]";
+
   return outstr;
 }
 

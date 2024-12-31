@@ -39,6 +39,16 @@ list_t Operand::clone_list(const list_t&l) {
   }
   return new_list;
 }
+list_t Operand::clone_list() {
+  auto v = _get_variant();
+
+  if(holds_alternative<list_t>(v)){
+    return move(get<list_t>(v));
+  }
+  return {};
+}
+
+
 //------------------------------------
 Operand Operand::to_str() const { return visit(ToString{}, value_); }
 
@@ -71,10 +81,15 @@ const Operand& Operand::get_value() const { return visit(Value{}, value_); }
 operand_variant_t Operand::_get_variant() const {
   return visit(Variant(), value_);
 //  return visit(Clone(), value_);
-  return nil;
 }
 operand_variant_t Operand::_deref() const {
   return visit(DeRef{}, value_);
+}
+
+//------------------------------------
+bool Operand::is_nil() const {
+  if(type_ == OperandType::nil_t) return true; 
+  return false; 
 }
 
 //------------------------------------
@@ -104,7 +119,7 @@ operand_variant_t Operand::Variant::operator()(const operand_ptr& vptr) const { 
 operand_variant_t Operand::Variant::operator()(const operand_s_ptr& vptr) const { return vptr; }
 operand_variant_t Operand::Variant::operator()(const operand_u_ptr& vptr) const { return vptr->clone(); }
 // need to be clone 
-operand_variant_t Operand::Variant::operator()(const list_t& v) const { return nil; }
+operand_variant_t Operand::Variant::operator()(const list_t& l) const { return clone_list(l)  ; }
 operand_variant_t Operand::Variant::operator()(const map_t& v) const { return nil; }
 //------------------------------------ DeRef
 template <typename T> 
@@ -113,7 +128,7 @@ operand_variant_t Operand::DeRef::operator()(const Nil) const { return nil; }
 operand_variant_t Operand::DeRef::operator()(const operand_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
 operand_variant_t Operand::DeRef::operator()(const operand_s_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
 operand_variant_t Operand::DeRef::operator()(const operand_u_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
-operand_variant_t Operand::DeRef::operator()(const list_t& v) const { return nil; }
+operand_variant_t Operand::DeRef::operator()(const list_t& l) const { return clone_list(l); }
 
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const Operand& v) {

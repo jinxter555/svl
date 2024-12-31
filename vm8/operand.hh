@@ -71,12 +71,14 @@ public:
   operand_variant_t _deref() const;
 //------------------------------------
   operand_u_ptr clone() const ;
+  list_t clone_list();
   static list_t clone_list(const list_t&);
 //------------------------------------
-
+  bool is_nil() const;
   s_integer size() const ;
   void print() const ;
-
+//------------------------------------
+  bool add(const Operand&);
 //------------------------------------
   Operand operator+(const Operand& other) const ;
   Operand operator-(const Operand& other) const ;
@@ -138,6 +140,15 @@ operand_variant_t operator()(const operand_u_ptr& v) const  ;
 operand_variant_t operator()(const list_t& v) const  ;
 operand_variant_t operator()(const map_t& v) const  ;
 };
+struct Add{
+const Operand &v_;
+Add(const Operand &v);
+template <typename T> 
+bool operator()(const T& ) const;
+bool operator()(const Nil) const;
+bool operator()(const list_t& v) const  ;
+
+};
 
 struct ToString {
   Operand operator()(const Nil) const;
@@ -162,16 +173,9 @@ struct ToString {
 };
 
 
-
 };
 
 //------------------------------------
 ostream& operator<<(ostream& os, const Operand& v);
-/*
-ostream& operator<<(ostream& os, const operand_u_ptr& ptr);
-ostream& operator<<(ostream& os, const operand_s_ptr& ptr);
-ostream& operator<<(ostream& os, const operand_ptr& ptr);
-*/
-
 
 extern Nil nil;
