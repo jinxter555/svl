@@ -159,16 +159,16 @@ bool operator()(const list_t& v) ;
 };
 
 struct GetK{
-const list_t &l_;
-GetK(const list_t &);
 template <typename T> 
-const Operand& operator()(const T& ) ;
-const Operand& operator()(const Number&) ;
-const Operand& operator()(const Nil) ;
-const Operand& operator()(const operand_ptr& v) ;
-const Operand& operator()(const operand_s_ptr& v) ;
-const Operand& operator()(const operand_u_ptr& v) ;
-const Operand& operator()(const list_t& v) ;
+const Operand& operator()(const list_t&, const T& ) ;
+template <typename T, typename U> 
+const Operand& operator()(const T&, const U& ) ;
+const Operand& operator()(const list_t&, const Number&) ;
+const Operand& operator()(const list_t&, const Nil) ;
+const Operand& operator()(const list_t&,const operand_ptr& ) ;
+const Operand& operator()(const list_t&,const operand_s_ptr& ) ;
+const Operand& operator()(const list_t&,const operand_u_ptr& ) ;
+const Operand& operator()(const list_t&,const list_t&) ;
 };
 
 

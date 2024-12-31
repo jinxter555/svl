@@ -69,7 +69,7 @@ Operand& Operand::operator[] (const Operand& k) {
 const Operand& Operand::operator[] (const Operand &k) const {
   if(holds_alternative<list_t>(value_)){
     auto &l = get<list_t>(value_);
-    return visit(GetK{l}, k.value_);
+    return visit(GetK(), value_, k.value_);
   }
   return nil_operand;
 }
@@ -151,18 +151,19 @@ bool Operand::Add::operator()(const list_t& l) {
   return true;
 }
 //------------------------------------ GetK
-Operand::GetK::GetK(const list_t &l) : l_(l){}
+template <typename T, typename U> 
+const Operand& Operand::GetK::operator()(const T& v, const U& k ) {return nil_operand; }
 template <typename T> 
-const Operand& Operand::GetK::operator()(const T& ) {return nil_operand; }
-const Operand& Operand::GetK::operator()(const Nil) {return nil_operand;}
-const Operand& Operand::GetK::operator()(const Number&n) {
+const Operand& Operand::GetK::operator()(const list_t& l, const T&k ) {return nil_operand; }
+const Operand& Operand::GetK::operator()(const list_t& l, const Nil) {return nil_operand;}
+const Operand& Operand::GetK::operator()(const list_t& l, const Number&n) {
   auto i = n.get_int();
-  return l_[i];
+  return l[i];
 }
-const Operand& Operand::GetK::operator()(const operand_ptr& v)  {return nil_operand;}
-const Operand& Operand::GetK::operator()(const operand_s_ptr& v) {return nil_operand;}
-const Operand& Operand::GetK::operator()(const operand_u_ptr& v)  {return nil_operand;}
-const Operand& Operand::GetK::operator()(const list_t& v)  {return nil_operand;} // maybe for with get_branch
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_ptr& v)  {return nil_operand;}
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& v) {return nil_operand;}
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& v)  {return nil_operand;}
+const Operand& Operand::GetK::operator()(const list_t& l, const list_t& v)  {return nil_operand;} // maybe for with get_branch
 
 
 //------------------------------------ Variant
