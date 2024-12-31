@@ -171,6 +171,21 @@ std::ostream& operator<<(std::ostream& os, const Number& number) {
 num_d_t Number::get_value() const {
    return value_;
 }
+s_integer Number::get_int() const {
+  if(holds_alternative<s_integer>(value_)) {
+   return get<s_integer>(value_);
+  } else {
+   return s_integer( get<s_float>(value_));
+  }
+}
+s_float Number::get_float() const {
+  if(holds_alternative<s_integer>(value_)) {
+   return s_float(get<s_integer>(value_));
+  } else {
+   return get<s_float>(value_);
+  }
+}
+
 OperandType Number::get_type() const { return type_; }
 
 std::string Number::getCurrentType() const {

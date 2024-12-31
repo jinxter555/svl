@@ -24,6 +24,10 @@ TEST_CASE("check operand list 1") {
 
   Operand ol1(l1);
   cout << "ol1: " << ol1 << "\n";
+  cout << "ol1[0]: " << ol1[0l] << "\n";
+  cout << "ol1[1]: " << ol1[1l] << "\n";
+  cout << "ol1[2]: " << ol1[2l] << "\n";
+
   l1.push_back(Operand(3l));
   Operand ol2(l1);
   cout << "ol2: " << ol2 << "\n";
@@ -38,6 +42,17 @@ TEST_CASE("check operand list 1") {
   ol5.add(12.345);
   cout << "ol5<-ol3: " << ol5 << "\n";
   cout << "ol3: " << ol3 << "\n";
+
+  Operand ol6;
+  ol6.add(i1);
+  ol6.add(ol1);
+  ol6.add(ol5);
+  cout << "ol6: " << ol6 << "\n";
+
+  Operand ol7(123l);
+  CHECK(ol7.add(ol5) == false);
+  cout << "ol7: " << ol7 << "\n";
+
 
 
 

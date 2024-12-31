@@ -79,6 +79,11 @@ public:
   void print() const ;
 //------------------------------------
   bool add(const Operand&);
+
+//------------------------------------
+  Operand& operator[] (const Operand& k) ;
+  const Operand& operator[] (const Operand &k) const ;
+
 //------------------------------------
   Operand operator+(const Operand& other) const ;
   Operand operator-(const Operand& other) const ;
@@ -140,15 +145,32 @@ operand_variant_t operator()(const operand_u_ptr& v) const  ;
 operand_variant_t operator()(const list_t& v) const  ;
 operand_variant_t operator()(const map_t& v) const  ;
 };
-struct Add{
-const Operand &v_;
-Add(const Operand &v);
-template <typename T> 
-bool operator()(const T& ) const;
-bool operator()(const Nil) const;
-bool operator()(const list_t& v) const  ;
 
+struct Add{
+list_t &l_;
+Add(list_t &);
+template <typename T> 
+bool operator()(const T& ) ;
+bool operator()(const Nil) ;
+bool operator()(const operand_ptr& v) ;
+bool operator()(const operand_s_ptr& v) ;
+bool operator()(const operand_u_ptr& v) ;
+bool operator()(const list_t& v) ;
 };
+
+struct GetK{
+const list_t &l_;
+GetK(const list_t &);
+template <typename T> 
+const Operand& operator()(const T& ) ;
+const Operand& operator()(const Number&) ;
+const Operand& operator()(const Nil) ;
+const Operand& operator()(const operand_ptr& v) ;
+const Operand& operator()(const operand_s_ptr& v) ;
+const Operand& operator()(const operand_u_ptr& v) ;
+const Operand& operator()(const list_t& v) ;
+};
+
 
 struct ToString {
   Operand operator()(const Nil) const;

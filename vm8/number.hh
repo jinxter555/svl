@@ -35,6 +35,8 @@ public:
     bool operator!() const;
 
     num_d_t get_value() const; // New method to get value_
+    s_integer get_int() const; // New method to get value_
+    s_float get_float() const; // New method to get value_
     std::string getCurrentType() const; // New method to get the current type
     friend std::ostream& operator<<(std::ostream& os, const Number& number);
 

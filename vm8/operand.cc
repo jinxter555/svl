@@ -49,13 +49,31 @@ list_t Operand::clone_list() {
 bool Operand::add(const Operand&v) {
   if(holds_alternative<list_t>(value_)){
     auto &l = get<list_t>(value_);
-    l.push_back(move(v.clone()));
-    return true;
+    return visit(Add{l}, v.value_);
 
+  } else if (holds_alternative<Nil>(value_)){
+    list_t l;
+    bool result = visit(Add{l}, v.value_);
+    value_ = move(l);
+    return result;
   }
+
   return false;
 
 }
+//------------------------------------
+//--------------------------------------
+Operand& Operand::operator[] (const Operand& k) {
+  return const_cast<Operand&>(as_const(*this)[k]); 
+}
+const Operand& Operand::operator[] (const Operand &k) const {
+  if(holds_alternative<list_t>(value_)){
+    auto &l = get<list_t>(value_);
+    return visit(GetK{l}, k.value_);
+  }
+  return nil_operand;
+}
+
 
 
 //------------------------------------
@@ -120,6 +138,33 @@ const Operand& Operand::Value::operator()(const Nil) const {return nil_operand; 
 const Operand& Operand::Value::operator()(operand_ptr& v) const  {return v->get_value(); }
 const Operand& Operand::Value::operator()(operand_u_ptr& v) const {return v->get_value();}
 const Operand& Operand::Value::operator()(operand_s_ptr& v) const {return v->get_value();}
+//------------------------------------ Add
+Operand::Add::Add(list_t &l) : l_(l) {}
+template <typename T> 
+bool Operand::Add::operator()(const T &v) { l_.push_back(v); return true; }
+bool Operand::Add::operator()(const Nil v) { l_.push_back(nil); return true; }
+bool Operand::Add::operator()(const operand_ptr& v) { l_.push_back(v); return true; }
+bool Operand::Add::operator()(const operand_s_ptr& v) { l_.push_back(v); return true; }
+bool Operand::Add::operator()(const operand_u_ptr& v) { l_.push_back(v->clone()); return true; }
+bool Operand::Add::operator()(const list_t& l) { 
+  l_.push_back(move(Operand::clone_list(l))); 
+  return true;
+}
+//------------------------------------ GetK
+Operand::GetK::GetK(const list_t &l) : l_(l){}
+template <typename T> 
+const Operand& Operand::GetK::operator()(const T& ) {return nil_operand; }
+const Operand& Operand::GetK::operator()(const Nil) {return nil_operand;}
+const Operand& Operand::GetK::operator()(const Number&n) {
+  auto i = n.get_int();
+  return l_[i];
+}
+const Operand& Operand::GetK::operator()(const operand_ptr& v)  {return nil_operand;}
+const Operand& Operand::GetK::operator()(const operand_s_ptr& v) {return nil_operand;}
+const Operand& Operand::GetK::operator()(const operand_u_ptr& v)  {return nil_operand;}
+const Operand& Operand::GetK::operator()(const list_t& v)  {return nil_operand;} // maybe for with get_branch
+
+
 //------------------------------------ Variant
 template <typename T> 
 operand_variant_t Operand::Variant::operator()(const T &v) const { return v; }
