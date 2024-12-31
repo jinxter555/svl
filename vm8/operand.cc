@@ -41,11 +41,20 @@ list_t Operand::clone_list(const list_t&l) {
 }
 list_t Operand::clone_list() {
   auto v = _get_variant();
-
   if(holds_alternative<list_t>(v)){
     return move(get<list_t>(v));
   }
   return {};
+}
+bool Operand::add(const Operand&v) {
+  if(holds_alternative<list_t>(value_)){
+    auto &l = get<list_t>(value_);
+    l.push_back(move(v.clone()));
+    return true;
+
+  }
+  return false;
+
 }
 
 
@@ -102,7 +111,7 @@ operand_u_ptr Operand::Clone::operator()(const operand_ptr& v) const { return v-
 operand_u_ptr Operand::Clone::operator()(const operand_u_ptr& v) const {return v->clone(); } 
 operand_u_ptr Operand::Clone::operator()(const operand_s_ptr& v) const { return v->clone(); } 
 operand_u_ptr Operand::Clone::operator()(const list_t& l) const { 
-  return make_unique<Operand>(clone_list(l));
+  return make_unique<Operand>(move(clone_list(l)));
 } 
 //------------------------------------ Value
 template <typename T> 
