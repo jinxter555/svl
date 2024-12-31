@@ -189,21 +189,3 @@ ostream& operator<<(ostream& os, const Operand& v) {
   cout << v._to_str();
   return os;
 }
-
-/*
-ostream& operator<<(ostream& os, const operand_u_ptr& ptr) {
-  if(ptr==nullptr) { cout << "operand_u_ptr is null\n"; } 
-  else ptr->print();
-  return os;
-}
-ostream& operator<<(ostream& os, const operand_s_ptr& ptr) {
-  if(ptr==nullptr) { cout << "operand_s_ptr is null\n"; } 
-  else ptr->print();
-  return os;
-}
-ostream& operator<<(ostream& os, const operand_ptr& ptr) {
-  if(ptr==nullptr) { cout << "operand_ptr is null\n"; } 
-  else ptr->print();
-  return os;
-}
-*/

@@ -53,6 +53,9 @@ TEST_CASE("check operand list 1") {
   CHECK(ol7.add(ol5) == false);
   cout << "ol7: " << ol7 << "\n";
 
+  ol1[1l] = 5555l;
+  cout << "ol1: " << ol1 << "\n";
+
 
 
 
