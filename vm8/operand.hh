@@ -177,6 +177,11 @@ bool operator()(const operand_u_ptr& v) ;
 bool operator()(const list_t& v) ;
 bool operator()(const map_t& v) ;
 };
+struct AddK{
+map_t &m_;
+AddK(map_t &);
+template <typename T, typename U> const Operand& operator()(const T&k, const U& v) ;
+};
 
 struct GetK{
 template <typename T, typename U> const Operand& operator()(const T&, const U& ) ;

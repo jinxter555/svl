@@ -1,10 +1,16 @@
 #include <cassert>
+#include <catch2/catch_all.hpp>
+
 #include "operand.hh"
 
-#include <catch2/catch_all.hpp>
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
 
 
 TEST_CASE("check operand list 1") {
+  trace_function.open("trace_svlm.log", std::ios::out);
+  MYLOGGER(trace_function, "TEST_CASE()", __func__);
+
   Operand i1(123l);
   Operand f1(12.3450);
 
@@ -27,6 +33,8 @@ TEST_CASE("check operand list 1") {
   m1.add("hello5", 7777l);
   m1.add("hello4", 888l, true);
   cout << "m1:" << m1 << "\n";
+  cout << "m1[hello4]:" << m1[make_unique<Operand>("hello4")] << "\n";
+  cout << "m1[123]:" << m1[make_unique<Operand>(123l)] << "\n";
 
 
   

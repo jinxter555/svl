@@ -1,5 +1,10 @@
-#include "operand.hh"
 #include <iostream>
+#include "operand.hh"
+
+#define DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
+#define TO_STR(m) ((Operand::ToString *) this)->Operand::ToString::operator()(m);
 
 Nil nil;
 const Operand nil_operand=Operand();
@@ -85,8 +90,11 @@ bool Operand::add(const Operand&v) {
   return false;
 }
 
-bool Operand::add(const Operand &k, const Operand&v ,bool overwrite) {
+bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
+  MYLOGGER(trace_function, "Operand::add(Operand&, OPerand&, b)", __func__);
   auto &map_ = get_value_nc()._get_map_nc();
+
+  if(map_.size() == 0) return false;
 
   auto k_str = k._to_str();
   if(overwrite == true) {
@@ -97,31 +105,17 @@ bool Operand::add(const Operand &k, const Operand&v ,bool overwrite) {
     map_[k_str] = v.clone();
     return true;
   }
-  /*
-  auto m = get<map_t>(value_);
-  m[k_str] = v.clone();
-  */
- return false;
+  return false;
 }
 
 //--------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
+  MYLOGGER(trace_function, "Operand::[](Operand &k)", __func__);
   return const_cast<Operand&>(as_const(*this)[k]); 
 }
 const Operand& Operand::operator[] (const Operand &k) const {
-  //cout << "Operand::operator[" << k << "]\n";
+  MYLOGGER(trace_function, "Operand::[](Operand &k) const", __func__);
   return visit(GetK(), value_, k.value_);
-  /*
-  if(holds_alternative<map_t>(value_)){
-    auto &m = get<map_t>(value_);
-    return visit(GetK(), value_, k.value_);
-  }
-  if(holds_alternative<list_t>(value_)){
-    auto &l = get<list_t>(value_);
-    return visit(GetK(), value_, k.value_);
-  }
-  return nil_operand;
-  */
 }
 
 //------------------------------------
@@ -270,9 +264,19 @@ const Operand& Operand::GetK::operator()(const list_t& l, const list_t& v)  {ret
 
 //------------------------- GetK - map_t
 template <typename T> 
-const Operand& Operand::GetK::operator()(const map_t& m, const T&k ) {return nil_operand; }
-const Operand& Operand::GetK::operator()(const map_t& m, const Nil) {return nil_operand;}
+const Operand& Operand::GetK::operator()(const map_t& m, const T&k ) {
+  MYLOGGER(trace_function, "Operand::()(map_t, <T>&k)", __func__);
+  auto ms = ((Operand::ToString *) this)->Operand::ToString::operator()(m);
+  cout << "m: <T>k)\n";
+  return nil_operand; 
+}
+const Operand& Operand::GetK::operator()(const map_t& m, const Nil) {
+  MYLOGGER(trace_function, "Operand::()(map_t, Nil)", __func__);
+  cout << "m. Nil\n";
+  return nil_operand;
+  }
 const Operand& Operand::GetK::operator()(const map_t& m, const string&s) {
+  MYLOGGER(trace_function, "Operand::()(map_t, string&)", __func__);
   cout << "m.at(s)\n";
   if (m.find(s) != m.end())  {
     return m.at(s);
@@ -280,14 +284,23 @@ const Operand& Operand::GetK::operator()(const map_t& m, const string&s) {
   return nil_operand;
 }
 const Operand& Operand::GetK::operator()(const map_t& m, const operand_ptr& k)  {
+  MYLOGGER(trace_function, "Operand::()(map_t, operand_ptr&)", __func__);
+  auto ms = TO_STR(m);
+  MYLOGGER_MSG(trace_function, string("map_t: ") + ms._to_str());
+
   cout << "m.at(ptr)\n";
   auto &kv = k->get_value();
+
   if(kv.is_nil()) return nil_operand;
-  return m.at(kv._to_str());
+  if(k->_get_type() == OperandType::str_t) return m.at(kv._to_str());
+  return operator()(m, kv.value_);
 }
 const Operand& Operand::GetK::operator()(const map_t& m, const operand_s_ptr& k) { return Operand::GetK::operator()(m, k.get()); }
 const Operand& Operand::GetK::operator()(const map_t& m, const operand_u_ptr& k)  { return Operand::GetK::operator()(m, k.get()); }
-const Operand& Operand::GetK::operator()(const map_t& m, const map_t& v)  {return nil_operand;} // maybe for with get_branch
+const Operand& Operand::GetK::operator()(const map_t& m, const map_t& v)  {
+  cout << "m.m\n";
+  return nil_operand;
+} // maybe for with get_branch
 
 
 //------------------------------------ Variant
