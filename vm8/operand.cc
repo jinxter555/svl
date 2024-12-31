@@ -86,7 +86,17 @@ bool Operand::add(const Operand&v) {
 }
 
 bool Operand::add(const Operand &k, const Operand&v ,bool overwrite) {
-  string k_str = k._to_str();
+  auto &map_ = get_value_nc()._get_map_nc();
+
+  auto k_str = k._to_str();
+  if(overwrite == true) {
+    map_[k_str] = v.clone();
+    return true;
+  } else {
+    if(has_key(k_str)) {return false;}
+    map_[k_str] = v.clone();
+    return true;
+  }
   /*
   auto m = get<map_t>(value_);
   m[k_str] = v.clone();
@@ -141,10 +151,17 @@ Number Operand::_get_number() const {
 
 }
 
+Operand& Operand::get_value_nc() { 
+  return const_cast<Operand&>(as_const(get_value())); 
+}
 const Operand& Operand::get_value() const { 
   return visit(Value{*this}, value_); 
 }
 
+//------------------------------------
+list_t& Operand::_get_list_nc() { 
+  return const_cast<list_t&>(as_const(_get_list())); 
+}
 const list_t& Operand::_get_list() const { 
   auto &v = get_value();
   if(holds_alternative<list_t>(v.value_)){
@@ -153,6 +170,12 @@ const list_t& Operand::_get_list() const {
   }
   return nil_list;
 }
+
+//------------------------------------
+map_t& Operand::_get_map_nc() { 
+  return const_cast<map_t&>(as_const(_get_map())); 
+}
+
 const map_t& Operand::_get_map() const { 
   auto &v = get_value();
   if(holds_alternative<map_t>(v.value_)){

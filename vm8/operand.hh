@@ -59,20 +59,6 @@ public:
   //Operand(const initializer_list<Operand> &v);
   
 //------------------------------------
-  Operand get_type() const ;
-  OperandType _get_type() const ;
-  Number _get_number() const ;
-
-  Operand to_str() const ;
-  string _to_str() const;
-//------------------------------------
-  const Operand& get_value() const;
-  const list_t& _get_list() const;
-  const map_t& _get_map() const;
-
-  operand_variant_t _get_variant() const;
-  operand_variant_t _deref() const;
-//------------------------------------
   operand_u_ptr clone() const ;
   list_t clone_list();
   map_t clone_map();
@@ -88,6 +74,25 @@ public:
 //------------------------------------
   bool add(const Operand&);
   bool add(const Operand&, const Operand&, bool overwrite=false);
+//------------------------------------
+  Operand get_type() const ;
+  OperandType _get_type() const ;
+  Number _get_number() const ;
+
+  Operand to_str() const ;
+  string _to_str() const;
+//------------------------------------
+  const Operand& get_value() const;
+  Operand& get_value_nc() ;
+
+  const list_t& _get_list() const;
+  list_t& _get_list_nc() ;
+
+  const map_t& _get_map() const;
+  map_t& _get_map_nc();
+
+  operand_variant_t _get_variant() const;
+  operand_variant_t _deref() const;
 
 //------------------------------------
   Operand& operator[] (const Operand& k) ;

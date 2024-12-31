@@ -23,6 +23,10 @@ TEST_CASE("check operand list 1") {
   m1["hello3"] = f1.clone();
   m1["hello4"] = 6666l;
   cout << "m1:" << m1 << "\n";
+  m1.add("hello4", 44l);
+  m1.add("hello5", 7777l);
+  m1.add("hello4", 888l, true);
+  cout << "m1:" << m1 << "\n";
 
 
   
