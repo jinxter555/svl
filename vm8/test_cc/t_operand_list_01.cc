@@ -57,6 +57,10 @@ TEST_CASE("check operand list 1") {
 
   ol1[1l] = 5555l;
   cout << "ol1: " << ol1 << "\n";
+  cout << "l1: " << l1 << "\n";
+  Operand ol8(move(l1));
+  cout << "l1: " << l1 << "\n";
+  cout << "ol8: " << ol8 << "\n";
 
 
 

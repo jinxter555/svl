@@ -67,6 +67,9 @@ public:
   string _to_str() const;
 //------------------------------------
   const Operand& get_value() const;
+  const list_t& _get_list() const;
+  const map_t& _get_map() const;
+
   operand_variant_t _get_variant() const;
   operand_variant_t _deref() const;
 //------------------------------------
@@ -77,10 +80,14 @@ public:
   static map_t clone_map(const map_t&);
 //------------------------------------
   bool is_nil() const;
+  bool has_key(const Operand &k)  const ;
+
+
   s_integer size() const ;
   void print() const ;
 //------------------------------------
   bool add(const Operand&);
+  bool add(const Operand&, const Operand&, bool overwrite=false);
 
 //------------------------------------
   Operand& operator[] (const Operand& k) ;
@@ -151,6 +158,8 @@ operand_variant_t operator()(const list_t& v) const  ;
 operand_variant_t operator()(const map_t& v) const  ;
 };
 
+
+
 struct Add{
 list_t &l_;
 Add(list_t &);
@@ -165,16 +174,23 @@ bool operator()(const map_t& v) ;
 };
 
 struct GetK{
-template <typename T> 
-const Operand& operator()(const list_t&, const T& ) ;
-template <typename T, typename U> 
-const Operand& operator()(const T&, const U& ) ;
+template <typename T, typename U> const Operand& operator()(const T&, const U& ) ;
+
+template <typename T> const Operand& operator()(const list_t&, const T& ) ;
 const Operand& operator()(const list_t&, const Number&) ;
 const Operand& operator()(const list_t&, const Nil) ;
 const Operand& operator()(const list_t&,const operand_ptr& ) ;
 const Operand& operator()(const list_t&,const operand_s_ptr& ) ;
 const Operand& operator()(const list_t&,const operand_u_ptr& ) ;
 const Operand& operator()(const list_t&,const list_t&) ;
+
+template <typename T> const Operand& operator()(const map_t&, const T& ) ;
+const Operand& operator()(const map_t&, const string&) ;
+const Operand& operator()(const map_t&, const Nil) ;
+const Operand& operator()(const map_t&,const operand_ptr& ) ;
+const Operand& operator()(const map_t&,const operand_s_ptr& ) ;
+const Operand& operator()(const map_t&,const operand_u_ptr& ) ;
+const Operand& operator()(const map_t&,const map_t&) ;
 };
 
 

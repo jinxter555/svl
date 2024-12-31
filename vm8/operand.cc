@@ -3,6 +3,8 @@
 
 Nil nil;
 const Operand nil_operand=Operand();
+const list_t nil_list = {};
+const map_t nil_map= {};
 ostream& operator<<(ostream& os, const Operand& v);
 
 Operand::Operand()                  : type_(OperandType::nil_t),  value_(nil) {}
@@ -23,7 +25,7 @@ Operand::Operand(operand_u_ptr&&v )           : type_(OperandType::uptr_t), valu
 Operand::Operand(const operand_s_ptr& v)      : type_(OperandType::sptr_t), value_(move(v->clone())) {};
 Operand::Operand(const operand_ptr v)         : type_(OperandType::ptr_t),  value_(move(v->clone())) {};
 Operand::Operand(const list_t &l )            : type_(OperandType::list_t) { value_ = move(clone_list(l));}
-Operand::Operand(const map_t &m )            : type_(OperandType::map_t) { value_ = nil;}
+Operand::Operand(const map_t &m )            : type_(OperandType::map_t) { value_ = move(clone_map(m));}
 
 Operand::Operand(list_t &&vptr ) : type_(OperandType::list_t) { value_ = move(vptr); };
 
@@ -69,7 +71,6 @@ map_t Operand::clone_map() {
 }
 
 //------------------------------------
-
 bool Operand::add(const Operand&v) {
   if(holds_alternative<list_t>(value_)){
     auto &l = get<list_t>(value_);
@@ -81,20 +82,36 @@ bool Operand::add(const Operand&v) {
     value_ = move(l);
     return result;
   }
-
   return false;
-
 }
+
+bool Operand::add(const Operand &k, const Operand&v ,bool overwrite) {
+  string k_str = k._to_str();
+  /*
+  auto m = get<map_t>(value_);
+  m[k_str] = v.clone();
+  */
+ return false;
+}
+
 //--------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
   return const_cast<Operand&>(as_const(*this)[k]); 
 }
 const Operand& Operand::operator[] (const Operand &k) const {
+  //cout << "Operand::operator[" << k << "]\n";
+  return visit(GetK(), value_, k.value_);
+  /*
+  if(holds_alternative<map_t>(value_)){
+    auto &m = get<map_t>(value_);
+    return visit(GetK(), value_, k.value_);
+  }
   if(holds_alternative<list_t>(value_)){
     auto &l = get<list_t>(value_);
     return visit(GetK(), value_, k.value_);
   }
   return nil_operand;
+  */
 }
 
 //------------------------------------
@@ -128,6 +145,23 @@ const Operand& Operand::get_value() const {
   return visit(Value{*this}, value_); 
 }
 
+const list_t& Operand::_get_list() const { 
+  auto &v = get_value();
+  if(holds_alternative<list_t>(v.value_)){
+    auto &l = get<list_t>(v.value_);
+    return l;
+  }
+  return nil_list;
+}
+const map_t& Operand::_get_map() const { 
+  auto &v = get_value();
+  if(holds_alternative<map_t>(v.value_)){
+    auto &m = get<map_t>(v.value_);
+    return m;
+  }
+  return nil_map;
+}
+
 operand_variant_t Operand::_get_variant() const {
   return visit(Variant(), value_);
 //  return visit(Clone(), value_);
@@ -141,6 +175,17 @@ bool Operand::is_nil() const {
   if(type_ == OperandType::nil_t) return true; 
   return false; 
 }
+bool Operand::has_key(const Operand &ko)  const {
+  auto k = ko._to_str();
+  auto &map_ = _get_map();
+  if(map_.size() == 0)  return false;
+  if (map_.find(k) != map_.end())  {
+    return true;
+  }
+  return false;
+}
+
+
 
 //------------------------------------
 
@@ -181,6 +226,7 @@ bool Operand::Add::operator()(const map_t& l) {
   return true;
 }
 //------------------------------------ GetK
+//------------------------- GetK - list_t
 template <typename T, typename U> 
 const Operand& Operand::GetK::operator()(const T& v, const U& k ) {return nil_operand; }
 template <typename T> 
@@ -198,6 +244,28 @@ const Operand& Operand::GetK::operator()(const list_t& l, const operand_ptr& k) 
 const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& k) { return Operand::GetK::operator()(l, k.get()); }
 const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& k)  { return Operand::GetK::operator()(l, k.get()); }
 const Operand& Operand::GetK::operator()(const list_t& l, const list_t& v)  {return nil_operand;} // maybe for with get_branch
+
+//------------------------- GetK - map_t
+template <typename T> 
+const Operand& Operand::GetK::operator()(const map_t& m, const T&k ) {return nil_operand; }
+const Operand& Operand::GetK::operator()(const map_t& m, const Nil) {return nil_operand;}
+const Operand& Operand::GetK::operator()(const map_t& m, const string&s) {
+  cout << "m.at(s)\n";
+  if (m.find(s) != m.end())  {
+    return m.at(s);
+  } 
+  return nil_operand;
+}
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_ptr& k)  {
+  cout << "m.at(ptr)\n";
+  auto &kv = k->get_value();
+  if(kv.is_nil()) return nil_operand;
+  return m.at(kv._to_str());
+}
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_s_ptr& k) { return Operand::GetK::operator()(m, k.get()); }
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_u_ptr& k)  { return Operand::GetK::operator()(m, k.get()); }
+const Operand& Operand::GetK::operator()(const map_t& m, const map_t& v)  {return nil_operand;} // maybe for with get_branch
+
 
 //------------------------------------ Variant
 template <typename T> 

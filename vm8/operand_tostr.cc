@@ -162,10 +162,28 @@ Operand Operand::ToString::operator()(const list_t &l) const {
   return outstr;
 }
 
-Operand Operand::ToString::operator()(const map_t &l) const { 
-  string outstr="{}";
-  return outstr;
+Operand Operand::ToString::operator()(const map_t &map_) const { 
+  if(map_.empty()) return "{}";
+
+  vector<string> kv_paires ;
+  string colon(":");
+  string q("\"");
+  string outstr;
+
+  for (auto const& [key, val] : map_) {
+    outstr = q + key + q  + colon + " " + val.to_str()._to_str();
+    kv_paires.push_back(outstr);
+  }
+
+  outstr="{";
+  int i, s = kv_paires.size();
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + kv_paires[i] + ", ";
+  }
+  outstr = outstr + kv_paires[i] + "}";
+  return (outstr);
 }
+
 
 
 //Operand Operand::ToString::operator()(const svlm_ast_ptr& v) const { return v->to_str(); }
