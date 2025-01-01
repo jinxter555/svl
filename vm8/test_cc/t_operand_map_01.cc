@@ -24,19 +24,25 @@ TEST_CASE("check operand list 1") {
   t1["hello1"] = 111l;
   t1["hello2"] = 555l;
   t1["hello3"] = i1.clone();
+  CHECK(t1["hello2"]._to_str() == "555");
 
 
   Operand m1(t1);
   cout << "t1:" << t1 << "\n";
   cout << "m1:" << m1 << "\n";
+
   m1["hello4"] = 6666l;
+  CHECK(m1["hello4"]._to_str() == "6666");
+
   cout << "m1:" << m1 << "\n";
   m1[123l] = 777l;
+
   cout << "m1[123]:" << m1[123l] << "\n\n";
   cout << "m1:" << m1 << "\n";
 
   i1["what"] = "up";
-  cout << "i1: " <<  i1<< "\n";
+  CHECK(i1._get_number() == 123l);
+  cout << "i1: " << i1 << "\n";
 
 
 

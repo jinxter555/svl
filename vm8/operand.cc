@@ -62,10 +62,10 @@ list_t Operand::clone_list() {
 
 //------------------------------------
 
-map_t Operand::clone_map(const map_t&m) {
+map_t Operand::clone_map(const map_t&map_) {
   MYLOGGER(trace_function, "Operand::clone_map(map_t&)", __func__, SLOG_FUNC_INFO);
   map_t new_map;
-  for (auto const& [key, val] : m) {
+  for (auto const& [key, val] : map_) {
     new_map[key] = val.clone();
   }
   return new_map;
@@ -100,7 +100,7 @@ bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
   MYLOGGER(trace_function, "Operand::add(Operand&, OPerand&, b)", __func__, SLOG_FUNC_INFO);
   auto &map_ = get_value_nc()._get_map_nc();
 
-  if(map_.size() == 0) return false;
+  if(_get_type() != OperandType::map_t) return false;
 
   auto k_str = k._to_str();
   if(overwrite == true) {
@@ -117,11 +117,10 @@ bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
 //--------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
   MYLOGGER(trace_function, "Operand::[](Operand &k)", __func__, SLOG_FUNC_INFO );
+
   auto &rv = const_cast<Operand&>(as_const(*this)[k]); 
-  if(rv.is_nil()) {
-    auto &m =  _get_map_nc();
-    return m[k._to_str()];
-  }
+
+  if(rv.is_nil()) { auto &map_ =  _get_map_nc(); return map_[k._to_str()]; }
   return rv;
 
 }
@@ -187,8 +186,8 @@ map_t& Operand::_get_map_nc() {
 const map_t& Operand::_get_map() const { 
   auto &v = get_value();
   if(holds_alternative<map_t>(v.value_)){
-    auto &m = get<map_t>(v.value_);
-    return m;
+    auto &map_ = get<map_t>(v.value_);
+    return map_;
   }
   return nil_map;
 }
