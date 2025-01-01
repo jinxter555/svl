@@ -31,12 +31,15 @@ const vector<color_t> colors {
 };
 const int color_size = colors.size();
 
-ScopeLogger::ScopeLogger( fstream &o,  string const & mi, string const& mo )
+ScopeLogger::ScopeLogger( fstream &o,  string const & mi, string const& mo, int verbose_level )
   : out(o), msg_in(mi), msg_out(mo) {   
   if(!out.is_open()) return;
+  verbosity_obj = verbose_level;
+  if(verbosity_obj > verbosity) return;
+
   id_ = id_log++;
 
-  set_current_level();
+  set_current_stack_level();
   
   auto color_code = colors[id_ % color_size].code;
   auto color = string("\033[") + to_string(color_code) + "m";
@@ -50,6 +53,8 @@ ScopeLogger::ScopeLogger( fstream &o,  string const & mi, string const& mo )
 
 ScopeLogger::~ScopeLogger() {   
   if(!out.is_open()) return;
+  if(verbosity_obj > verbosity) return;
+
   char s[25]; sprintf(s, "%05d", id_);
 
   auto color_code = colors[id_ % color_size].code;
@@ -63,8 +68,12 @@ ScopeLogger::~ScopeLogger() {
 
   levels.pop_back();
 }
-void ScopeLogger::msg(const string& msg) {   
+void ScopeLogger::msg(const string& msg, int verbose_level) {   
   if(!out.is_open()) return;
+
+  verbosity_obj = verbose_level;
+  if(verbosity_obj > verbosity) return;
+
   char s[25]; sprintf(s, "%05d", id_);
 
   auto color_code = colors[id_ % color_size].code;
@@ -79,8 +88,7 @@ void ScopeLogger::msg(const string& msg) {
 }
 
 
-void ScopeLogger::set_current_level() {
-
+void ScopeLogger::set_current_stack_level() {
   if(levels.size() == 0 )  {
     current_level = 0;
     levels.push_back(1);
@@ -89,6 +97,8 @@ void ScopeLogger::set_current_level() {
     levels.push_back(current_level+1);
   }
 }
+void ScopeLogger::set_current_verbose_level(int l) { verbosity = l; }
+
 string  ScopeLogger::spacing() {
   return string(current_level % color_size * 4 , ' ');
 }

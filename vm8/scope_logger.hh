@@ -12,25 +12,33 @@ extern std::fstream trace_function;
 
 class ScopeLogger {
 private:
+  fstream &out;
+
+  string msg_in, msg_out;
+
   int id_, current_level;
 
-  fstream &out;
-  string msg_in, msg_out;
   inline static vector <int> levels;
-public:
-  ScopeLogger( fstream &,  const string & , const string & );
-  ~ScopeLogger() ;
-  void msg(const string&);
   inline static int id_log = 0 ;
-  void set_current_level();
+  inline static int verbosity = 0;
+
+  int verbosity_obj = 0;
+public:
+  ScopeLogger( fstream &,  const string & , const string &, int verbose_level=0);
+  ~ScopeLogger() ;
+  void msg(const string&, int verbose_level=0);
+  void set_current_stack_level();
+  static void set_current_verbose_level(int);
   string spacing();
 };
 
 
-#ifdef DEBUG_TRACE_FUNC
-#define MYLOGGER(x, y, z) ScopeLogger l_##x##_scope(x, y, z);
-#define MYLOGGER_MSG(x, y) l_##x##_scope.msg(y);
+#ifdef SLOG_DEBUG_TRACE_FUNC
+#define MYLOGGER(x, y, z, v) ScopeLogger l_##x##_scope(x, y, z, v);
+#define MYLOGGER_MSG(x, y, v) l_##x##_scope.msg(y, v);
 #else
 #define MYLOGGER(x, y, z)
 #define MYLOGGER_MSG(x, y)
 #endif
+
+#define SLOG_FUNC_INFO   10

@@ -3,13 +3,15 @@
 
 #include "operand.hh"
 
-#define DEBUG_TRACE_FUNC
+#define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
 
 TEST_CASE("check operand list 1") {
   trace_function.open("trace_svlm.log", std::ios::out);
-  MYLOGGER(trace_function, "TEST_CASE()", __func__);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO);
+
+  MYLOGGER(trace_function, "TEST_CASE()", __func__, SLOG_FUNC_INFO);
 
   Operand i1(123l);
   Operand f1(12.3450);
