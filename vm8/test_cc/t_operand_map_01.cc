@@ -2,6 +2,7 @@
 #include <catch2/catch_all.hpp>
 
 #include "operand.hh"
+extern const Operand nil_operand=Operand();
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -28,15 +29,16 @@ TEST_CASE("check operand list 1") {
   Operand m1(t1);
   cout << "t1:" << t1 << "\n";
   cout << "m1:" << m1 << "\n";
-  m1["hello3"] = f1.clone();
   m1["hello4"] = 6666l;
   cout << "m1:" << m1 << "\n";
-  m1.add("hello4", 44l);
-  m1.add("hello5", 7777l);
-  m1.add("hello4", 888l, true);
+  m1[123l] = 777l;
+  cout << "m1[123]:" << m1[123l] << "\n\n";
   cout << "m1:" << m1 << "\n";
-  cout << "m1[hello4]:" << m1[make_unique<Operand>("hello4")] << "\n";
-  cout << "m1[123]:" << m1[make_unique<Operand>(123l)] << "\n";
+
+  i1["what"] = "up";
+  cout << "i1: " <<  i1<< "\n";
+
+
 
 
   

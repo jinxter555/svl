@@ -43,6 +43,7 @@ operand_u_ptr Operand::clone() const { return visit(Clone{}, value_); }
 
 //------------------------------------
 list_t Operand::clone_list(const list_t&l) {
+  MYLOGGER(trace_function, "Operand::clone_list(list_t&)", __func__, SLOG_FUNC_INFO);
   list_t new_list;
   for(auto &e : l) {
     new_list.push_back(  e.clone() );
@@ -51,6 +52,7 @@ list_t Operand::clone_list(const list_t&l) {
 }
 
 list_t Operand::clone_list() {
+  MYLOGGER(trace_function, "Operand::clone_list()", __func__, SLOG_FUNC_INFO);
   auto v = _get_variant();
   if(holds_alternative<list_t>(v)){
     return move(get<list_t>(v));
@@ -61,6 +63,7 @@ list_t Operand::clone_list() {
 //------------------------------------
 
 map_t Operand::clone_map(const map_t&m) {
+  MYLOGGER(trace_function, "Operand::clone_map(map_t&)", __func__, SLOG_FUNC_INFO);
   map_t new_map;
   for (auto const& [key, val] : m) {
     new_map[key] = val.clone();
@@ -69,6 +72,7 @@ map_t Operand::clone_map(const map_t&m) {
 }
 
 map_t Operand::clone_map() {
+  MYLOGGER(trace_function, "Operand::clone_map()", __func__, SLOG_FUNC_INFO);
   auto v = _get_variant();
   if(holds_alternative<map_t>(v)){
     return move(get<map_t>(v));
@@ -78,6 +82,7 @@ map_t Operand::clone_map() {
 
 //------------------------------------
 bool Operand::add(const Operand&v) {
+  MYLOGGER(trace_function, "Operand::add()", __func__, SLOG_FUNC_INFO);
   if(holds_alternative<list_t>(value_)){
     auto &l = get<list_t>(value_);
     return visit(Add{l}, v.value_);
@@ -112,12 +117,20 @@ bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
 //--------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
   MYLOGGER(trace_function, "Operand::[](Operand &k)", __func__, SLOG_FUNC_INFO );
-  return const_cast<Operand&>(as_const(*this)[k]); 
+  auto &rv = const_cast<Operand&>(as_const(*this)[k]); 
+  if(rv.is_nil()) {
+    auto &m =  _get_map_nc();
+    return m[k._to_str()];
+  }
+  return rv;
+
 }
 const Operand& Operand::operator[] (const Operand &k) const {
   MYLOGGER(trace_function, "Operand::[](Operand &k) const", __func__, 1);
-  return visit(GetK(), value_, k.value_);
+  //cout << "Operand::[]";
+  return  visit(GetK(), value_, k.value_);
 }
+
 
 //------------------------------------
 Operand Operand::to_str() const { return visit(ToString{}, value_); }
@@ -267,37 +280,50 @@ const Operand& Operand::GetK::operator()(const list_t& l, const list_t& v)  {ret
 template <typename T> 
 const Operand& Operand::GetK::operator()(const map_t& m, const T&k ) {
   MYLOGGER(trace_function, "Operand::()(map_t, <T>&k)", __func__, SLOG_FUNC_INFO);
-  auto ms = ((Operand::ToString *) this)->Operand::ToString::operator()(m);
-  cout << "m: <T>k)\n";
+  //cout << "Operand::()(map_t, <T>&k)\n";
+  //auto ms = TO_STR(m);
   return nil_operand; 
 }
+
 const Operand& Operand::GetK::operator()(const map_t& m, const Nil) {
   MYLOGGER(trace_function, "Operand::()(map_t, Nil)", __func__, SLOG_FUNC_INFO);
   cout << "m. Nil\n";
   return nil_operand;
-  }
+}
+
 const Operand& Operand::GetK::operator()(const map_t& m, const string&s) {
   MYLOGGER(trace_function, "Operand::()(map_t, string&)", __func__, SLOG_FUNC_INFO);
-  cout << "m.at(s)\n";
+  //cout << "m.at("<< s <<")\n";
   if (m.find(s) != m.end())  {
     return m.at(s);
   } 
+  //cout << "key " << s << " not found \n";
+  MYLOGGER_MSG(trace_function, s + string(", key not found!"), SLOG_FUNC_INFO);
   return nil_operand;
 }
+
 const Operand& Operand::GetK::operator()(const map_t& m, const operand_ptr& k)  {
   MYLOGGER(trace_function, "Operand::()(map_t, operand_ptr&)", __func__, SLOG_FUNC_INFO);
   auto ms = TO_STR(m);
   MYLOGGER_MSG(trace_function, string("map_t: ") + ms._to_str(), SLOG_FUNC_INFO);
+  //cout << "Operand::()(map_t, operand_u_ptr&)\n";
 
-  cout << "m.at(ptr)\n";
   auto &kv = k->get_value();
 
   if(kv.is_nil()) return nil_operand;
   if(k->_get_type() == OperandType::str_t) return m.at(kv._to_str());
   return operator()(m, kv.value_);
 }
-const Operand& Operand::GetK::operator()(const map_t& m, const operand_s_ptr& k) { return Operand::GetK::operator()(m, k.get()); }
-const Operand& Operand::GetK::operator()(const map_t& m, const operand_u_ptr& k)  { return Operand::GetK::operator()(m, k.get()); }
+
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_s_ptr& k) { 
+  MYLOGGER(trace_function, "Operand::()(map_t, operand_s_ptr&)", __func__, SLOG_FUNC_INFO);
+  return Operand::GetK::operator()(m, k.get()); 
+}
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_u_ptr& k)  { 
+  MYLOGGER(trace_function, "Operand::()(map_t, operand_u_ptr&)", __func__, SLOG_FUNC_INFO);
+  //cout << "Operand::()(map_t, operand_u_ptr&)\n";
+  return  Operand::GetK::operator()(m, k.get()); 
+}
 const Operand& Operand::GetK::operator()(const map_t& m, const map_t& v)  {
   cout << "m.m\n";
   return nil_operand;
