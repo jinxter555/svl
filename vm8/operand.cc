@@ -1,7 +1,7 @@
 #include <iostream>
 #include "operand.hh"
 
-#define TO_STR(m) ((Operand::ToString *) this)->Operand::ToString::operator()(m);
+//#define TO_STR(m) ((Operand::ToString *) this)->Operand::ToString::operator()(m);
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -172,8 +172,8 @@ Operand& Operand::get_value_nc() {
 }
 const Operand& Operand::get_value() const { 
   MYLOGGER(trace_function, "Operand::get_value()", __func__, SLOG_FUNC_INFO);
-  cout << "Operand::get_value()\n";
-  cout << "get_type: " << get_type() << "\n";
+  //cout << "Operand::get_value()\n";
+  //cout << "get_type: " << get_type() << "\n";
   //return visit(Value{*this}, value_); 
   return *_vrptr();
 }

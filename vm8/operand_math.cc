@@ -84,7 +84,7 @@ Operand Operand::operator/(const Operand& other) const {
 bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str(), SLOG_FUNC_INFO);
-  cout << "Operand::==(const Operand&)\n";
+  //cout << "Operand::==(const Operand&)\n";
 
   return visit(CmpEql{}, value_, other.value_);
 /*
@@ -248,32 +248,40 @@ Operand Operand::opfunc(const Operand& v, AstOpCode op) {
 }
 
 //--------------------------------------------------------- CmpEql
-/*
 bool Operand::CmpEql::operator()(const Nil a, const Nil b) const { return true; }
-bool Operand::CmpEql::operator()(const Nil&a, const Nil&b) const { return true; }
-template <typename T, typename U> 
-bool Operand::CmpEql::operator()(const T &a, const U &b) const { return false; }
-template <typename T> 
-bool Operand::CmpEql::operator()(const T &a, const T &b) const { return a==b;}
-template <typename T> 
-bool Operand::CmpEql::operator()(const T &a, const Nil b) const { return false; }
-template <typename T> 
-bool Operand::CmpEql::operator()(const Nil a, const T &b) const { return false; }
-*/
-bool Operand::CmpEql::operator()(const Nil a, const Nil b) const { return true; }
+
 template <typename T> 
 bool Operand::CmpEql::operator()(const T &a, const T &b) const { 
+  //------------------------
   MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__, SLOG_FUNC_INFO);
-  cout << "T == T?\n";
+  auto a_ov = TO_STR(a); auto b_ov = TO_STR(b);
+  MYLOGGER_MSG(trace_function , string("a: ") + a_ov._to_str()+ string("==? b: ") + b_ov._to_str(), SLOG_FUNC_INFO+9);
+  //------------------------
+  //cout << "T == T?\n"; cout << "a: " << a << ", b: " << b << "\n";
+  //------------------------
   return a==b;
 }
+
 bool Operand::CmpEql::operator()(const list_t&a, const list_t &b) const {
-  cout << "list_t == list_t ?\n";
-  return false;
+  MYLOGGER(trace_function , "OperandCmpEql::()(const list_t&, const list&)" ,__func__, SLOG_FUNC_INFO);
+  auto a_ov = TO_STR(a); auto b_ov = TO_STR(b);
+  MYLOGGER_MSG(trace_function , string("a: ") + a_ov._to_str()+ string(", b: ") + b_ov._to_str(), SLOG_FUNC_INFO+9);
+  //cout << "list_t == list_t ?\n";
+
+  s_integer s=a.size();
+
+  if(s!=b.size()) return false;
+  for(s_integer i=0; i<s; i++) {
+    //cout << "a[" << i << "]: " << a[i] << ", b[" << i << "]: " << b[i] << "\n";
+    if(a[i].get_value() == b[i].get_value()) continue;
+    return false;
+  }
+  return true;
 }
+
 template <typename T, typename U> 
 bool Operand::CmpEql::operator()(const T &a, const U &b) const { 
   MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" , __func__, SLOG_FUNC_INFO);
-  cout << "T == U?\n";
+  //cout << "T == U?\n";
   return false; 
 }

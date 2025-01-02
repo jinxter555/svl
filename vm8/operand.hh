@@ -5,6 +5,8 @@
 
 using namespace std;
 
+#define TO_STR(m) ((Operand::ToString *) this)->Operand::ToString::operator()(m);
+
 class Operand;
 using operand_ptr = Operand *;
 using operand_u_ptr = unique_ptr<Operand>;
@@ -132,6 +134,7 @@ operand_u_ptr operator()(const list_t& v) const  ;
 operand_u_ptr operator()(const map_t& v) const  ;
 };
 
+/*
 struct Value{
 const Operand &parent_v;
 Value(const Operand&);
@@ -143,6 +146,7 @@ const Operand& operator()(operand_s_ptr& v) const ;
 //const Operand& operator()(const list_t& v) const  ;
 //const Operand& operator()(const map_t& v) const  ;
 };
+*/
 
 struct Variant{
 template <typename T> 
