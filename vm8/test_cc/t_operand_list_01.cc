@@ -30,6 +30,17 @@ TEST_CASE("check operand list 1") {
   cout << "ol1[2]: " << ol1[2l] << "\n";
   cout << "ol1[2]: " << ol1[make_unique<Operand>(2l)] << "\n";
 
+  auto &lc = ol1._get_list();
+  auto ld = Operand(lc);
+  cout << "lc<-ol1: " << lc << "\n";
+  ol1[1l]= 3.14159;
+  ld[1l] = 555555l;
+  cout << " lc: " << lc << "\n";
+  cout << "ol1: " << ol1 << "\n";
+  cout << " l1: " << l1 << "\n";
+  cout << " ld<-clone(lc): " << ld << "\n";
+
+
   l1.push_back(Operand(3l));
   Operand ol2(l1);
   cout << "ol2: " << ol2 << "\n";
@@ -61,6 +72,7 @@ TEST_CASE("check operand list 1") {
   Operand ol8(move(l1));
   cout << "l1: " << l1 << "\n";
   cout << "ol8: " << ol8 << "\n";
+
 
 
 

@@ -164,12 +164,12 @@ const map_t& operator()(const operand_s_ptr& v) const ;
 };
 
 struct List {
-const map_t& operator()(const map_t& v) const ;
-template <typename T> const map_t& operator()(const T &v) const ;
-const map_t& operator()(const Nil) const;
-const map_t& operator()(const operand_ptr& v) const ;
-const map_t& operator()(const operand_u_ptr& v) const ;
-const map_t& operator()(const operand_s_ptr& v) const ;
+const list_t& operator()(const list_t& v) const ;
+template <typename T> const list_t& operator()(const T &v) const ;
+const list_t& operator()(const Nil) const;
+const list_t& operator()(const operand_ptr& v) const ;
+const list_t& operator()(const operand_u_ptr& v) const ;
+const list_t& operator()(const operand_s_ptr& v) const ;
 };
 
 struct DeRef{

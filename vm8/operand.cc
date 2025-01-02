@@ -182,12 +182,15 @@ list_t& Operand::_get_list_nc() {
   return const_cast<list_t&>(as_const(_get_list())); 
 }
 const list_t& Operand::_get_list() const { 
+  return visit(List(), value_);
+  /*
   auto dv = _deref();
   if(holds_alternative<list_t>(dv)){
     auto &l = get<list_t>(dv);
     return l;
   }
   return nil_list;
+  */
 }
 
 //------------------------------------
@@ -297,6 +300,32 @@ const map_t& Operand::Map::operator()(const operand_u_ptr& v) const {
 const map_t& Operand::Map::operator()(const operand_s_ptr& v) const {
   MYLOGGER(trace_function, "Operand::Map::()(operand_s_ptr&)", __func__, SLOG_FUNC_INFO+2);
   return v->_get_map(); }
+
+//------------------------------------ List
+const list_t& Operand::List::operator()(const list_t &m) const  { 
+  MYLOGGER(trace_function, "Operand::List::()(list_t)", __func__, SLOG_FUNC_INFO+2);
+  return m;} 
+
+template <typename T>  
+const list_t& Operand::List::operator()(const T &v) const  { 
+  MYLOGGER(trace_function, "Operand::List::()(<T>)", __func__, SLOG_FUNC_INFO+2);
+  return nil_list; } 
+
+const list_t& Operand::List::operator()(const Nil) const { 
+  MYLOGGER(trace_function, "Operand::List::()(Nil)", __func__, SLOG_FUNC_INFO+2);
+  return nil_list;}
+
+const list_t& Operand::List::operator()(const operand_ptr& v) const  {
+  MYLOGGER(trace_function, "Operand::List::()(operand_ptr&)", __func__, SLOG_FUNC_INFO+2);
+  return v->_get_list();}
+
+const list_t& Operand::List::operator()(const operand_u_ptr& v) const {
+  MYLOGGER(trace_function, "Operand::List::()(operand_u_ptr&)", __func__, SLOG_FUNC_INFO+2);
+  return v->_get_list();}
+
+const list_t& Operand::List::operator()(const operand_s_ptr& v) const {
+  MYLOGGER(trace_function, "Operand::List::()(operand_s_ptr&)", __func__, SLOG_FUNC_INFO+2);
+  return v->_get_list(); }
 
 
 
