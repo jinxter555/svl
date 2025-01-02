@@ -36,7 +36,11 @@ TEST_CASE("check operand value 1") {
   CHECK(i1_pv._get_number() == Number(123l));
   CHECK(i1_pv._get_number() == i1._get_number());
   CHECK(ptr1._get_number() == Number(123l));
-  //CHECK(ptr1.get_value() == i1.get_value());
+  CHECK(ptr1.get_value() == i1.get_value());
+
+  auto vptr = ptr1._vrptr();
+  cout << "*vptr: " << *vptr << "\n";
+  cout << "*vptr.getypte(): " << (*vptr).get_type() << "\n";
 
   
 }

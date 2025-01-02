@@ -174,7 +174,8 @@ const Operand& Operand::get_value() const {
   MYLOGGER(trace_function, "Operand::get_value()", __func__, SLOG_FUNC_INFO);
   cout << "Operand::get_value()\n";
   cout << "get_type: " << get_type() << "\n";
-  return visit(Value{*this}, value_); 
+  //return visit(Value{*this}, value_); 
+  return *_vrptr();
 }
 
 //------------------------------------
@@ -215,6 +216,17 @@ operand_variant_t Operand::_deref() const {
   MYLOGGER(trace_function, "Operand::_deref()", __func__, SLOG_FUNC_INFO);
   return visit(DeRef{}, value_);
 }
+operand_ptr Operand::_vrptr() const {
+  MYLOGGER(trace_function, "Operand::_vrptr()", __func__, SLOG_FUNC_INFO);
+  switch(_get_type()) {
+  case OperandType::ptr_t:
+  case OperandType::uptr_t:
+  case OperandType::sptr_t:
+    //return visit(Vrptr(this), value_);
+    return visit(Vrptr(), value_);
+  }
+  return (Operand*)this;
+}
 
 //------------------------------------
 bool Operand::is_nil() const {
@@ -254,7 +266,11 @@ const Operand& Operand::Value::operator()(T &v) const  {
   MYLOGGER(trace_function, "Operand::Value::()(<T>)", __func__, SLOG_FUNC_INFO+2);
   cout << "Operand::Value::()(<T>v)\n";
   //cout << "parent gettype: " << parent_v.get_type() << "\n";
+  //return Operand(v);
+
+
   return parent_v; 
+
   } 
 
 const Operand& Operand::Value::operator()(const Nil) const { 
@@ -274,6 +290,13 @@ const Operand& Operand::Value::operator()(operand_s_ptr& v) const {
 
   return v->get_value();}
 
+//------------------------------------ Vrptr ptr value
+template <typename T> 
+operand_ptr Operand::Vrptr::operator()(const T& value) const { return nullptr; }
+operand_ptr Operand::Vrptr::operator()(const Nil) const { return nullptr; }
+operand_ptr Operand::Vrptr::operator()(const operand_ptr& vptr) const  { return vptr->_vrptr(); }
+operand_ptr Operand::Vrptr::operator()(const operand_s_ptr& vptr) const { return vptr->_vrptr();}
+operand_ptr Operand::Vrptr::operator()(const operand_u_ptr& vptr) const  { return vptr->_vrptr(); }
 
 //------------------------------------ Map
 const map_t& Operand::Map::operator()(const map_t &m) const  { 

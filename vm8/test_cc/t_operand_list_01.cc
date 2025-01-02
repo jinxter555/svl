@@ -32,6 +32,9 @@ TEST_CASE("check operand list 1") {
 
   auto &lc = ol1._get_list();
   auto ld = Operand(lc);
+  if(ld == lc) { cout << "ld == lc\n"; }
+  else cout << "ld != lc\n";
+
   cout << "lc<-ol1: " << lc << "\n";
   ol1[1l]= 3.14159;
   ld[1l] = 555555l;

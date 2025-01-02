@@ -94,6 +94,8 @@ public:
   operand_variant_t _get_variant() const;
   operand_variant_t _deref() const;
 
+  operand_ptr _vrptr() const;
+
 //------------------------------------
   Operand& operator[] (const Operand& k) ;
   const Operand& operator[] (const Operand &k) const ;
@@ -105,7 +107,6 @@ public:
   Operand operator/(const Operand& other) const;
 
   bool operator==(const Operand& other) const;
-  bool operator==(const Nil& other) const;
   bool operator!=(const Operand& other) const;
   bool operator>=(const Operand& other) const;
   bool operator<=(const Operand& other) const;
@@ -183,6 +184,16 @@ operand_variant_t operator()(const list_t& v) const  ;
 operand_variant_t operator()(const map_t& v) const  ;
 };
 
+struct Vrptr {
+//const operand_ptr &parent_ptr;
+//Vrptr(const Operand&);
+template <typename T> 
+operand_ptr operator()(const T& value) const;
+operand_ptr operator()(const Nil) const;
+operand_ptr operator()(const operand_ptr& v) const  ;
+operand_ptr operator()(const operand_s_ptr& v) const  ;
+operand_ptr operator()(const operand_u_ptr& v) const  ;
+};
 
 
 struct Add{
@@ -259,6 +270,7 @@ template <typename T, typename U>
   bool operator()(const T &a, const U &b) const ;
 template <typename T> 
   bool operator()(const T &a, const T &b) const ;
+  bool operator()(const list_t&a, const list_t &b) const ;
   bool operator()(const Nil, const Nil b) const;
 };
 

@@ -81,9 +81,6 @@ Operand Operand::operator/(const Operand& other) const {
   }
 }
 
-bool Operand::operator==(const Nil& other) const {
-  return false;
-}
 bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str(), SLOG_FUNC_INFO);
@@ -269,6 +266,10 @@ bool Operand::CmpEql::operator()(const T &a, const T &b) const {
   MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__, SLOG_FUNC_INFO);
   cout << "T == T?\n";
   return a==b;
+}
+bool Operand::CmpEql::operator()(const list_t&a, const list_t &b) const {
+  cout << "list_t == list_t ?\n";
+  return false;
 }
 template <typename T, typename U> 
 bool Operand::CmpEql::operator()(const T &a, const U &b) const { 
