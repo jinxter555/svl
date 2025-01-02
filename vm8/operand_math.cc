@@ -1,7 +1,7 @@
 #include "lang.hh"
 #include "operand.hh"
 
-#define DEBUG_TRACE_FUNC
+#define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
 //-----------------------------------------------------------------------
@@ -81,10 +81,15 @@ Operand Operand::operator/(const Operand& other) const {
   }
 }
 
+bool Operand::operator==(const Nil& other) const {
+  return false;
+}
 bool Operand::operator==(const Operand& other) const {
-  MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
-  MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str());
+  MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str(), SLOG_FUNC_INFO);
+  cout << "Operand::==(const Operand&)\n";
 
+  return visit(CmpEql{}, value_, other.value_);
 /*
   cout << "Operand::==(const Operand&)\n";
   cout << "this: " << to_str()<<  ", other: " << other << "\n";
@@ -94,11 +99,8 @@ bool Operand::operator==(const Operand& other) const {
   if(result==true) return result;
   auto a = get_raw_ptr(); auto b =  other.get_raw_ptr();
   return *a == *b;
-
-
-
 */
-  return false;
+return false;
 }
 
 bool Operand::operator!=(const Operand& other) const {
@@ -248,3 +250,29 @@ Operand Operand::opfunc(const Operand& v, AstOpCode op) {
   return false;
 }
 
+//--------------------------------------------------------- CmpEql
+/*
+bool Operand::CmpEql::operator()(const Nil a, const Nil b) const { return true; }
+bool Operand::CmpEql::operator()(const Nil&a, const Nil&b) const { return true; }
+template <typename T, typename U> 
+bool Operand::CmpEql::operator()(const T &a, const U &b) const { return false; }
+template <typename T> 
+bool Operand::CmpEql::operator()(const T &a, const T &b) const { return a==b;}
+template <typename T> 
+bool Operand::CmpEql::operator()(const T &a, const Nil b) const { return false; }
+template <typename T> 
+bool Operand::CmpEql::operator()(const Nil a, const T &b) const { return false; }
+*/
+bool Operand::CmpEql::operator()(const Nil a, const Nil b) const { return true; }
+template <typename T> 
+bool Operand::CmpEql::operator()(const T &a, const T &b) const { 
+  MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__, SLOG_FUNC_INFO);
+  cout << "T == T?\n";
+  return a==b;
+}
+template <typename T, typename U> 
+bool Operand::CmpEql::operator()(const T &a, const U &b) const { 
+  MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" , __func__, SLOG_FUNC_INFO);
+  cout << "T == U?\n";
+  return false; 
+}

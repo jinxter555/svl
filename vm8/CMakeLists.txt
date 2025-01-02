@@ -32,7 +32,7 @@ option(ENABLE_COLOR_OUTPUT "Enable colored compiler output" on)
 #  ${BISON_MyParser_OUTPUTS}
 #)
 
-add_library(svlm-node  number.cc operand.cc operand_tostr.cc my_helpers.cc )
+add_library(svlm-node  number.cc operand.cc operand_tostr.cc operand_math.cc my_helpers.cc )
 add_library(svlm-logger  scope_logger.cc)
 
 #target_link_libraries(${PROJECT_NAME} svlm-node svlm-logger ${Readline_LIBRARY})

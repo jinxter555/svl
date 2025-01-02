@@ -105,6 +105,7 @@ public:
   Operand operator/(const Operand& other) const;
 
   bool operator==(const Operand& other) const;
+  bool operator==(const Nil& other) const;
   bool operator!=(const Operand& other) const;
   bool operator>=(const Operand& other) const;
   bool operator<=(const Operand& other) const;
@@ -133,12 +134,13 @@ operand_u_ptr operator()(const map_t& v) const  ;
 struct Value{
 const Operand &parent_v;
 Value(const Operand&);
-template <typename T> 
-const Operand& operator()(T &v) const ;
+template <typename T> const Operand& operator()(T &v) const ;
 const Operand& operator()(const Nil) const;
 const Operand& operator()(operand_ptr& v) const ;
 const Operand& operator()(operand_u_ptr& v) const ;
 const Operand& operator()(operand_s_ptr& v) const ;
+//const Operand& operator()(const list_t& v) const  ;
+//const Operand& operator()(const map_t& v) const  ;
 };
 
 struct Variant{
@@ -150,6 +152,24 @@ operand_variant_t operator()(const operand_s_ptr& v) const  ;
 operand_variant_t operator()(const operand_u_ptr& v) const  ;
 operand_variant_t operator()(const list_t& v) const  ;
 operand_variant_t operator()(const map_t& v) const  ;
+};
+
+struct Map {
+const map_t& operator()(const map_t& v) const ;
+template <typename T> const map_t& operator()(const T &v) const ;
+const map_t& operator()(const Nil) const;
+const map_t& operator()(const operand_ptr& v) const ;
+const map_t& operator()(const operand_u_ptr& v) const ;
+const map_t& operator()(const operand_s_ptr& v) const ;
+};
+
+struct List {
+const map_t& operator()(const map_t& v) const ;
+template <typename T> const map_t& operator()(const T &v) const ;
+const map_t& operator()(const Nil) const;
+const map_t& operator()(const operand_ptr& v) const ;
+const map_t& operator()(const operand_u_ptr& v) const ;
+const map_t& operator()(const operand_s_ptr& v) const ;
 };
 
 struct DeRef{
@@ -196,11 +216,16 @@ const Operand& operator()(const list_t&,const list_t&) ;
 
 template <typename T> const Operand& operator()(const map_t&, const T& ) ;
 const Operand& operator()(const map_t&, const string&) ;
+const Operand& operator()(const map_t&, const list_t&) ;
 const Operand& operator()(const map_t&, const Nil) ;
 const Operand& operator()(const map_t&,const operand_ptr& ) ;
 const Operand& operator()(const map_t&,const operand_s_ptr& ) ;
 const Operand& operator()(const map_t&,const operand_u_ptr& ) ;
 const Operand& operator()(const map_t&,const map_t&) ;
+
+template <typename T> const Operand& operator()(const operand_ptr& m, const T&k );
+template <typename T> const Operand& operator()(const operand_s_ptr& m, const T&k );
+template <typename T> const Operand& operator()(const operand_u_ptr& m, const T&k );
 };
 
 
@@ -226,6 +251,17 @@ struct ToString {
   //Operand operator()(s_integer i) const;
   //Operand operator()(s_float f) const ;
 };
+
+
+
+struct CmpEql{
+template <typename T, typename U> 
+  bool operator()(const T &a, const U &b) const ;
+template <typename T> 
+  bool operator()(const T &a, const T &b) const ;
+  bool operator()(const Nil, const Nil b) const;
+};
+
 
 
 };
