@@ -259,16 +259,13 @@ operand_u_ptr Operand::Clone::operator()(const list_t& l) const { return make_un
 operand_u_ptr Operand::Clone::operator()(const map_t& m) const { return make_unique<Operand>(move(clone_map(m))); } 
 
 //------------------------------------ Value
+/*
 Operand::Value::Value(const Operand&v) : parent_v(v) {}
 
 template <typename T>  
 const Operand& Operand::Value::operator()(T &v) const  { 
   MYLOGGER(trace_function, "Operand::Value::()(<T>)", __func__, SLOG_FUNC_INFO+2);
   cout << "Operand::Value::()(<T>v)\n";
-  //cout << "parent gettype: " << parent_v.get_type() << "\n";
-  //return Operand(v);
-
-
   return parent_v; 
 
   } 
@@ -289,6 +286,7 @@ const Operand& Operand::Value::operator()(operand_s_ptr& v) const {
   cout << "Operand::Value::()(sptr)\n";
 
   return v->get_value();}
+*/
 
 //------------------------------------ Vrptr ptr value
 template <typename T> 

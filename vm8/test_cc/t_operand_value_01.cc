@@ -30,7 +30,10 @@ TEST_CASE("check operand value 1") {
   Operand u_i1(make_unique<Operand>(555l));
   CHECK(u_i1._get_number() == 555l);
 
-  Operand ptr1(make_unique<Operand>(123l));
+  //Operand ptr1(make_unique<Operand>(123l));
+  Operand ptr1(make_unique<Operand>(
+    make_shared<Operand>( 123l)
+  ));
   auto &i1_pv =  ptr1.get_value();
   //cout << "i1_pv.gettype():" << i1_pv.get_type() << "\n";
   CHECK(i1_pv._get_number() == Number(123l));
@@ -38,9 +41,11 @@ TEST_CASE("check operand value 1") {
   CHECK(ptr1._get_number() == Number(123l));
   CHECK(ptr1.get_value() == i1.get_value());
 
-  auto vptr = ptr1._vrptr();
-  cout << "*vptr: " << *vptr << "\n";
-  cout << "*vptr.getypte(): " << (*vptr).get_type() << "\n";
+  auto vrptr = ptr1._vrptr();
+  cout << "ptr1: " << &ptr1 << "\n";
+  cout << "vrptr: " << vrptr << "\n";
+  cout << "*vptr: " << *vrptr << "\n";
+  cout << "*vptr.getypte(): " << (*vrptr).get_type() << "\n";
 
   
 }
