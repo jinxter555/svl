@@ -84,20 +84,20 @@ Operand Operand::operator/(const Operand& other) const {
 bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str(), SLOG_FUNC_INFO);
-  //cout << "Operand::==(const Operand&)\n";
-
-  return visit(CmpEql{}, value_, other.value_);
-/*
+  /*
   cout << "Operand::==(const Operand&)\n";
   cout << "this: " << to_str()<<  ", other: " << other << "\n";
   cout << "type: " << get_type() << "other_type: " << other.get_type() << "\n";
+  */
 
-
+  bool result  = visit(CmpEql{}, value_, other.value_);
   if(result==true) return result;
-  auto a = get_raw_ptr(); auto b =  other.get_raw_ptr();
-  return *a == *b;
-*/
-return false;
+
+  // get through the nested pointers using get_value and compare
+  auto &a_rv = get_value(); auto &b_rv = other.get_value();
+  result = visit(CmpEql{}, a_rv.value_,  b_rv.value_);
+  return result;
+
 }
 
 bool Operand::operator!=(const Operand& other) const {
@@ -266,7 +266,7 @@ bool Operand::CmpEql::operator()(const list_t&a, const list_t &b) const {
   MYLOGGER(trace_function , "OperandCmpEql::()(const list_t&, const list&)" ,__func__, SLOG_FUNC_INFO);
   auto a_ov = TO_STR(a); auto b_ov = TO_STR(b);
   MYLOGGER_MSG(trace_function , string("a: ") + a_ov._to_str()+ string(", b: ") + b_ov._to_str(), SLOG_FUNC_INFO+9);
-  //cout << "list_t == list_t ?\n";
+  cout << "list_t == list_t ?\n";
 
   s_integer s=a.size();
 

@@ -67,6 +67,10 @@ ScopeLogger::~ScopeLogger() {
   cout << reset;
 
   levels.pop_back();
+  if(id_log > SLOG_MAX_LEVEL) {
+    cerr << "Logger Error: Program has reach max level:" << SLOG_MAX_LEVEL << " !\n";
+    exit(1);
+  }
 }
 void ScopeLogger::msg(const string& msg, int verbose_level) {   
   if(!out.is_open()) return;

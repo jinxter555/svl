@@ -57,16 +57,5 @@ TEST_CASE("check operand list 1") {
   CHECK(le == ld);
   if(le == ld) { cout << "le == ld\n"; }
   else { cout << "le != ld\n"; }
-
-
-
-
-  return ;
-
-
-
-
-
-
   
 }
