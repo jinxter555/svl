@@ -28,9 +28,19 @@ TEST_CASE("check operand list 2") {
   ol1.add(l2);
   cout << "ol1: " << ol1 << "\n";
   Operand ol2(ol1.clone());
-  cout << "ol2: " << ol2 << "\n";
+  cout << "ol2: " << ol2 << "\n\n";
   CHECK(ol1 == ol2);
-  ol1[1l] = "twtwo";
-  CHECK(ol1 == ol2);
+
+  ol1[1l] = "twotwo";
+  cout << "ol1: " << ol1 << "\n";
+  cout << "ol2: " << ol2 << "\n\n";
+  CHECK(ol1 != ol2);
+
+
+  ol2[0l] = 111111l;
+  ol2[1l] = "twotwo";
+  cout << "ol1: " << ol1 << "\n";
+  cout << "ol2: " << ol2 << "\n\n";
+  //CHECK(ol1 == ol2);
   
 }

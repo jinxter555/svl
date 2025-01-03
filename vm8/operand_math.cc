@@ -266,13 +266,13 @@ bool Operand::CmpEql::operator()(const list_t&a, const list_t &b) const {
   MYLOGGER(trace_function , "OperandCmpEql::()(const list_t&, const list&)" ,__func__, SLOG_FUNC_INFO);
   auto a_ov = TO_STR(a); auto b_ov = TO_STR(b);
   MYLOGGER_MSG(trace_function , string("a: ") + a_ov._to_str()+ string(", b: ") + b_ov._to_str(), SLOG_FUNC_INFO+9);
-  cout << "list_t == list_t ?\n";
+  //cout << "list_t == list_t ?\n";
 
   s_integer s=a.size();
 
   if(s!=b.size()) return false;
   for(s_integer i=0; i<s; i++) {
-    //cout << "a[" << i << "]: " << a[i] << ", b[" << i << "]: " << b[i] << "\n";
+    cout << "a[" << i << "]: " << a[i] << ", b[" << i << "]: " << b[i] << "\n";
     if(a[i].get_value() == b[i].get_value()) continue;
     return false;
   }

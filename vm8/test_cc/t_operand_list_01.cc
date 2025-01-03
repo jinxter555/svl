@@ -57,5 +57,16 @@ TEST_CASE("check operand list 1") {
   CHECK(le == ld);
   if(le == ld) { cout << "le == ld\n"; }
   else { cout << "le != ld\n"; }
+
+  Operand ol2(ol1.clone());
+  cout << "ol1: " << ol1 << "\n";
+  cout << "ol2: " << ol2 << "\n";
+  cout << "ol2.getype(): " << ol2.get_type() << "\n";
+  ol2[1l] = 55555l;
+  cout << "ol2: " << ol2 << "\n";
+  CHECK(ol1!= ol2);
+
+
+
   
 }

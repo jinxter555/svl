@@ -136,7 +136,9 @@ const Operand& Operand::operator[] (const Operand &k) const {
   MYLOGGER(trace_function, "Operand::[](Operand &k) const", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function,  string("k: ") + k._to_str() , SLOG_FUNC_INFO+1);
   //cout << "Operand::[]";
-  return  visit(GetK(), value_, k.value_);
+  auto &rv = get_value();
+  //return  visit(GetK(), value_, k.value_);
+  return  visit(GetK(), rv.value_, k.value_);
 }
 
 
@@ -258,36 +260,6 @@ operand_u_ptr Operand::Clone::operator()(const operand_s_ptr& v) const { return 
 operand_u_ptr Operand::Clone::operator()(const list_t& l) const { return make_unique<Operand>(move(clone_list(l))); } 
 operand_u_ptr Operand::Clone::operator()(const map_t& m) const { return make_unique<Operand>(move(clone_map(m))); } 
 
-//------------------------------------ Value
-/*
-Operand::Value::Value(const Operand&v) : parent_v(v) {}
-
-template <typename T>  
-const Operand& Operand::Value::operator()(T &v) const  { 
-  MYLOGGER(trace_function, "Operand::Value::()(<T>)", __func__, SLOG_FUNC_INFO+2);
-  cout << "Operand::Value::()(<T>v)\n";
-  return parent_v; 
-
-  } 
-
-const Operand& Operand::Value::operator()(const Nil) const { 
-  MYLOGGER(trace_function, "Operand::Value::()(Nil)", __func__, SLOG_FUNC_INFO);
-  return nil_operand; }
-const Operand& Operand::Value::operator()(operand_ptr& v) const  {
-  MYLOGGER(trace_function, "Operand::Value::()(operand_ptr&)", __func__, SLOG_FUNC_INFO);
-  cout << "Operand::Value::()(ptr)\n";
-  return v->get_value(); }
-const Operand& Operand::Value::operator()(operand_u_ptr& v) const {
-  MYLOGGER(trace_function, "Operand::Value::()(operand_u_ptr&)", __func__, SLOG_FUNC_INFO);
-  cout << "Operand::Value::()(uptr)\n";
-  return v->get_value(); }
-const Operand& Operand::Value::operator()(operand_s_ptr& v) const {
-  MYLOGGER(trace_function, "Operand::Value::()(operand_s_ptr&)", __func__, SLOG_FUNC_INFO);
-  cout << "Operand::Value::()(sptr)\n";
-
-  return v->get_value();}
-*/
-
 //------------------------------------ Vrptr ptr value
 template <typename T> 
 operand_ptr Operand::Vrptr::operator()(const T& value) const { return nullptr; }
@@ -376,7 +348,8 @@ const Operand& Operand::GetK::operator()(const T& v, const U& k ) {
 template <typename T> 
 const Operand& Operand::GetK::operator()(const list_t& l, const T&k ) {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, <T>k)", __func__, SLOG_FUNC_INFO);
-  return nil_operand; }
+  return nil_operand; 
+}
 
 const Operand& Operand::GetK::operator()(const list_t& l, const Nil) {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, Nil)", __func__, SLOG_FUNC_INFO);
@@ -478,10 +451,18 @@ const Operand& Operand::GetK::operator()(const map_t& m, const map_t& v)  {
 template <typename T> 
 const Operand& Operand::GetK::operator()(const operand_ptr& vptr, const T&k ) {
   MYLOGGER(trace_function, "Operand::GetK::()(const operand_ptr&, <T>k)", __func__, SLOG_FUNC_INFO);
-  //cout << "Operand::()(const operand_ptr&, <T>k)\n";
-  //cout << "k: " << k<< ", <vptr>m: " << *vptr << "\n";
+/*
+  cout << "Operand::()(const operand_ptr&, <T>k)\n";
+  cout << "k: " << k<< ", <vptr>m: " << *vptr << "\n";
+  cout << "vptr->gettype() " << vptr->get_type() << "\n";
+*/
   if(vptr==nullptr) return nil_operand;
-  return operator()(vptr->_get_map(), k);
+  //return operator()(vptr->value_, k);
+  if(vptr->_get_type() == OperandType::list_t) return operator()(vptr->_get_list(), k);
+  if(vptr->_get_type() == OperandType::map_t) return operator()(vptr->_get_map(), k);
+  cerr  << "Can't find GetK key " << k << " for type: " << vptr->get_type() << "\n";
+  return nil_operand;
+  //return operator()(vptr->value_, k);
 }
 template <typename T> 
 const Operand& Operand::GetK::operator()(const operand_s_ptr& vptr, const T&k ) {
@@ -515,7 +496,7 @@ operand_variant_t Operand::DeRef::operator()(const map_t& m) const { return clon
 
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const Operand& v) {
-  MYLOGGER(trace_function, "OS<<(Operand&)", __func__, SLOG_FUNC_INFO+10);
+  MYLOGGER(trace_function, "OS<<(Operand&)", __func__, SLOG_FUNC_INFO+20);
   cout << v._to_str();
   return os;
 }

@@ -134,20 +134,6 @@ operand_u_ptr operator()(const list_t& v) const  ;
 operand_u_ptr operator()(const map_t& v) const  ;
 };
 
-/*
-struct Value{
-const Operand &parent_v;
-Value(const Operand&);
-template <typename T> const Operand& operator()(T &v) const ;
-const Operand& operator()(const Nil) const;
-const Operand& operator()(operand_ptr& v) const ;
-const Operand& operator()(operand_u_ptr& v) const ;
-const Operand& operator()(operand_s_ptr& v) const ;
-//const Operand& operator()(const list_t& v) const  ;
-//const Operand& operator()(const map_t& v) const  ;
-};
-*/
-
 struct Variant{
 template <typename T> 
 operand_variant_t operator()(const T& value) const;
