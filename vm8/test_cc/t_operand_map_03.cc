@@ -49,6 +49,16 @@ TEST_CASE("check operand map 3 with tree like structure ") {
   tm1.add("s2", m2 );
 
   cout << "tm1: " << tm1 << "\n";
+  Operand k1(list_t {});
+  k1.add("s1");
+  k1.add("hello2");
+  cout << "tm1[" << k1 <<"]: " << tm1[k1] << "\n";
+  Operand k2(list_t {});
+  k2.add("s2");
+  k2.add("e");
+  cout << "tm1[" << k2 <<"]: " << tm1[k2] << "\n";
+  CHECK(tm1[k2]._to_str() == "ebay");
+
   
 
   

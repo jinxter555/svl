@@ -9,7 +9,7 @@
 
 TEST_CASE("check operand list 2") {
   trace_function.open("trace_svlm.log", std::ios::out);
-  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 20);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 1);
 
 
   //vector<Operand> l1 = {i1.clone(), f1.clone()};

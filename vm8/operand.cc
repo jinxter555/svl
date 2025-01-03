@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include "operand.hh"
 
 //#define TO_STR(m) ((Operand::ToString *) this)->Operand::ToString::operator()(m);
@@ -142,8 +143,10 @@ const Operand& Operand::operator[] (const Operand &k) const {
   cout << "k.type:" <<  k.get_type() << "\n";
 */
   if(k._get_type()== OperandType::list_t) {}
-  auto &rv = get_value();
+  auto &rv = get_value(); 
+  //auto &rk = k.get_value();
   //return  visit(GetK(), value_, k.value_);
+  //return  visit(GetK(), value_, rk.value_);
   return  visit(GetK(), rv.value_, k.value_);
 }
 
@@ -407,7 +410,7 @@ const Operand& Operand::GetK::operator()(const list_t& l, const list_t& k)  {
   //cout <<  "Operand::GetK::()(list_t&, list_t&)\n";
   s_integer s=k.size();
 
-  if(k.size() <=0) {
+  if(s <=0) {
     cerr << "multi-dimensional array lookup error index " << k << " out of bound!";
     return nil_operand;
   }
@@ -446,14 +449,40 @@ const Operand& Operand::GetK::operator()(const map_t& m, const Nil) {
   cout << "m. Nil\n";
   return nil_operand;
 }
-const Operand& Operand::GetK::operator()(const map_t& m, const list_t&l) {
-  s_integer i=0,s = l.size();
+const Operand& Operand::GetK::operator()(const map_t& m, const list_t&k) {
+  cout <<  "Operand::GetK::()(map_t&, list_t&)\n";
+  s_integer i=0,s = k.size(); 
+  operand_ptr current_map_ptr;
 
-  for(auto &current_map=m; i < l.size(); i++) {
-    auto &ele = l[i];
-    auto &v = operator()(current_map, ele.value_);
-//    if(v._get_type() != OperandType::map_t) return nil_operand;
+  if(s <=0) {
+    cerr << "multi-dimensional map lookup error index " << k << " out of bound!";
+    return nil_operand;
   }
+  auto &first_i  = k[0];
+
+  try {
+    auto &first_v = m.at(first_i._to_str());
+    current_map_ptr = first_v.get_raw_ptr();
+  }catch(const out_of_range &e) {
+    cerr << "multi-dimensional map lookup error index '" << first_i << "' out of bound!";
+    return nil_operand;
+  }
+
+
+
+  for(s_integer i=1; i<s; i++) {
+    auto &index = k[i];
+
+    auto &value = (*current_map_ptr)[index];
+    if(value.is_nil()) return nil_operand;
+
+    cout << "index: " << index << "\n"; 
+    cout << "value: " << value << "\n";
+
+    current_map_ptr = value.get_raw_ptr();
+  }
+  return *current_map_ptr;
+
   return nil_operand;
 
 }
