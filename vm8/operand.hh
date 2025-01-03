@@ -76,6 +76,7 @@ public:
 //------------------------------------
   bool add(const Operand&);
   bool add(const Operand&, const Operand&, bool overwrite=false);
+  bool addk(const Operand&k, const Operand&v, bool overwrite=false);
 //------------------------------------
   Operand get_type() const ;
   OperandType _get_type() const ;
@@ -202,9 +203,6 @@ const operand_ptr operator()(const operand_s_ptr&) const;
 const operand_ptr operator()(const operand_u_ptr&) const;
 };
 
-
-
-
 struct Add{
 list_t &l_;
 Add(list_t &);
@@ -217,10 +215,18 @@ bool operator()(const operand_u_ptr& v) ;
 bool operator()(const list_t& v) ;
 bool operator()(const map_t& v) ;
 };
+
 struct AddK{
-map_t &m_;
-AddK(map_t &);
-template <typename T, typename U> const Operand& operator()(const T&k, const U& v) ;
+map_t &map_;
+bool overwrite;
+AddK(map_t &, bool);
+template <typename T, typename U> 
+  bool operator()(const T&k, const U& v ) ;
+template <typename T> 
+  bool operator()(const list_t& k, const T& v) ;
+template <typename T> 
+  bool operator()(const string& k, const T& v) ;
+  bool operator()(const Nil, const Nil) ;
 };
 
 struct GetK{

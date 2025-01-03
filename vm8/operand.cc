@@ -119,6 +119,11 @@ bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
   }
   return false;
 }
+bool Operand::addk(const Operand &k, const Operand &v, bool overwrite) {
+  auto &m=_get_map_nc();
+  visit(AddK(m, overwrite), k.value_, v.value_);
+  return false;
+}
 
 //--------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
@@ -585,3 +590,63 @@ ostream& operator<<(ostream& os, const Operand& v) {
   cout << v._to_str();
   return os;
 }
+
+
+//------------------------------------ AddK
+Operand::AddK::AddK(map_t &m, bool ow) : map_(m), overwrite(ow) {}
+
+template <typename T, typename U> 
+bool Operand::AddK::operator()(const T&k, const U& v) {
+  return false;
+}
+
+template <typename T> 
+bool Operand::AddK::operator()(const list_t& k, const T& v) { 
+  cout <<  "Operand::AddK::operator()(list_t&, <T&>v, bool)\n";
+  s_integer i=0,s = k.size(); 
+  operand_ptr current_map_ptr;
+
+  if(s <=0) {
+    cerr << "multi-dimensional map lookup error index " << k << " out of bound!";
+    return false;
+  }
+  auto &first_i  = k[0];
+
+  try {
+    auto &first_v = map_.at(first_i._to_str());
+    current_map_ptr = first_v.get_raw_ptr();
+  }catch(const out_of_range &e) {
+    cerr << "multi-dimensional map lookup error index '" << first_i << "' out of bound!";
+    return false;
+  }
+
+
+  for(s_integer i=1; i<s; i++) {
+    auto &index = k[i];
+
+    auto &value = (*current_map_ptr)[index];
+    if(value.is_nil()) return false; // might make unique newmap
+
+    cout << "index: " << index << "\n"; 
+    cout << "value: " << value << "\n";
+
+    current_map_ptr = value.get_raw_ptr();
+  }
+  //*current_map_ptr = v.clone();
+  *current_map_ptr = v;
+  return true;
+
+}
+template <typename T> 
+bool Operand::AddK::operator()(const string& k_str, const T& v) { 
+  if(overwrite == true) {
+    map_[k_str] = v;
+    return true;
+  } else {
+    if(!map_[k_str].is_nil()) {return false;}
+    map_[k_str] = v;
+    return true;
+  }
+  return false;
+}
+bool Operand::AddK::operator()(const Nil, const Nil) { return false; }
