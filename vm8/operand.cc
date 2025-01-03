@@ -372,40 +372,40 @@ bool Operand::Add::operator()(const map_t& l) {
 }
 //------------------------------------ GetK
 template <typename T, typename U> 
-const Operand& Operand::GetK::operator()(const T& v, const U& k ) {
+const Operand& Operand::GetK::operator()(const T& v, const U& k ) const {
   MYLOGGER(trace_function, "Operand::GetK::()(<T>, <U>)", __func__, SLOG_FUNC_INFO);
   return nil_operand; }
 //------------------------- GetK - list_t
 template <typename T> 
-const Operand& Operand::GetK::operator()(const list_t& l, const T&k ) {
+const Operand& Operand::GetK::operator()(const list_t& l, const T&k ) const {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, <T>k)", __func__, SLOG_FUNC_INFO);
   return nil_operand; 
 }
 
-const Operand& Operand::GetK::operator()(const list_t& l, const Nil) {
+const Operand& Operand::GetK::operator()(const list_t& l, const Nil) const {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, Nil)", __func__, SLOG_FUNC_INFO);
   return nil_operand;}
 
-const Operand& Operand::GetK::operator()(const list_t& l, const Number&n) {
+const Operand& Operand::GetK::operator()(const list_t& l, const Number&n) const {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, Number)", __func__, SLOG_FUNC_INFO);
   auto i = n.get_int();
   return l[i]; }
 
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_ptr& k)  {
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_ptr& k) const  {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, ptr)", __func__, SLOG_FUNC_INFO);
   //auto &kv = k->get_value(); if(kv.is_nil()) return nil_operand; return l[kv._get_number().get_int()]; 
   return l[k->_get_number().get_int()]; 
   }
 
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& k) {
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_s_ptr& k) const {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, ptr)", __func__, SLOG_FUNC_INFO);
    return Operand::GetK::operator()(l, k.get()); }
 
-const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& k)  {
+const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& k)  const {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, uptr)", __func__, SLOG_FUNC_INFO);
    return Operand::GetK::operator()(l, k.get()); }
 
-const Operand& Operand::GetK::operator()(const list_t& l, const list_t& k)  {
+const Operand& Operand::GetK::operator()(const list_t& l, const list_t& k) const  {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, list_t&)", __func__, SLOG_FUNC_INFO);
   //cout <<  "Operand::GetK::()(list_t&, list_t&)\n";
   s_integer s=k.size();
@@ -439,17 +439,17 @@ const Operand& Operand::GetK::operator()(const list_t& l, const list_t& k)  {
 
 //------------------------- GetK - map_t
 template <typename T> 
-const Operand& Operand::GetK::operator()(const map_t& m, const T&k ) {
+const Operand& Operand::GetK::operator()(const map_t& m, const T&k )const  {
   MYLOGGER(trace_function, "Operand::GetK::()(map_t, <T>&k)", __func__, SLOG_FUNC_INFO);
   return nil_operand; 
 }
 
-const Operand& Operand::GetK::operator()(const map_t& m, const Nil) {
+const Operand& Operand::GetK::operator()(const map_t& m, const Nil)const  {
   MYLOGGER(trace_function, "Operand::GetK::()(map_t, Nil)", __func__, SLOG_FUNC_INFO);
   cout << "m. Nil\n";
   return nil_operand;
 }
-const Operand& Operand::GetK::operator()(const map_t& m, const list_t&k) {
+const Operand& Operand::GetK::operator()(const map_t& m, const list_t&k)const  {
   cout <<  "Operand::GetK::()(map_t&, list_t&)\n";
   s_integer i=0,s = k.size(); 
   operand_ptr current_map_ptr;
@@ -487,7 +487,7 @@ const Operand& Operand::GetK::operator()(const map_t& m, const list_t&k) {
 
 }
 
-const Operand& Operand::GetK::operator()(const map_t& m, const string&k) {
+const Operand& Operand::GetK::operator()(const map_t& m, const string&k)const  {
   MYLOGGER(trace_function, "Operand::GetK::()(map_t, string&)", __func__, SLOG_FUNC_INFO);
   //cout <<  "Operand::GetK::()(map_t, string&)\n";
   if (m.find(k) != m.end())  return m.at(k);  
@@ -498,7 +498,7 @@ const Operand& Operand::GetK::operator()(const map_t& m, const string&k) {
   return nil_operand;
 }
 
-const Operand& Operand::GetK::operator()(const map_t& m, const operand_ptr& k)  {
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_ptr& k) const  {
   MYLOGGER(trace_function, "Operand::GetK::()(map_t, operand_ptr&)", __func__, SLOG_FUNC_INFO);
   auto ms = TO_STR(m);
   MYLOGGER_MSG(trace_function, string("map_t: ") + ms._to_str(), SLOG_FUNC_INFO);
@@ -518,23 +518,23 @@ const Operand& Operand::GetK::operator()(const map_t& m, const operand_ptr& k)  
 
 }
 
-const Operand& Operand::GetK::operator()(const map_t& m, const operand_s_ptr& k) { 
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_s_ptr& k)const  { 
   MYLOGGER(trace_function, "Operand::GetK::()(map_t, operand_s_ptr&)", __func__, SLOG_FUNC_INFO);
   return Operand::GetK::operator()(m, k.get()); 
 }
-const Operand& Operand::GetK::operator()(const map_t& m, const operand_u_ptr& k)  { 
+const Operand& Operand::GetK::operator()(const map_t& m, const operand_u_ptr& k) const  { 
   MYLOGGER(trace_function, "Operand::GetK::()(map_t, operand_u_ptr&)", __func__, SLOG_FUNC_INFO);
   //cout << "Operand::()(map_t, operand_u_ptr&)\n";
   return  Operand::GetK::operator()(m, k.get()); 
 }
-const Operand& Operand::GetK::operator()(const map_t& m, const map_t& v)  {
+const Operand& Operand::GetK::operator()(const map_t& m, const map_t& v) const  {
   MYLOGGER(trace_function, "Operand::GetK::()(map_t, map_t&)", __func__, SLOG_FUNC_INFO);
   return nil_operand;
 } // maybe for with get_branch
 
 //------------------------- GetK - map_t ptr
 template <typename T> 
-const Operand& Operand::GetK::operator()(const operand_ptr& vptr, const T&k ) {
+const Operand& Operand::GetK::operator()(const operand_ptr& vptr, const T&k )const  {
   MYLOGGER(trace_function, "Operand::GetK::()(const operand_ptr&, <T>k)", __func__, SLOG_FUNC_INFO);
 /*
   cout << "Operand::()(const operand_ptr&, <T>k)\n";
@@ -550,12 +550,12 @@ const Operand& Operand::GetK::operator()(const operand_ptr& vptr, const T&k ) {
   //return operator()(vptr->value_, k);
 }
 template <typename T> 
-const Operand& Operand::GetK::operator()(const operand_s_ptr& vptr, const T&k ) {
+const Operand& Operand::GetK::operator()(const operand_s_ptr& vptr, const T&k )const  {
   MYLOGGER(trace_function, "Operand::GetK::()(const operand_s_ptr&, <T>k)", __func__, SLOG_FUNC_INFO);
   return operator()(vptr.get(), k);
 }
 template <typename T> 
-const Operand& Operand::GetK::operator()(const operand_u_ptr& vptr, const T&k ) {
+const Operand& Operand::GetK::operator()(const operand_u_ptr& vptr, const T&k )const  {
   MYLOGGER(trace_function, "Operand::GetK::()(const operand_u_ptr&, <T>k)", __func__, SLOG_FUNC_INFO);
   return operator()(vptr.get(), k);
 }

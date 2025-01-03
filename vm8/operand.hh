@@ -224,28 +224,28 @@ template <typename T, typename U> const Operand& operator()(const T&k, const U& 
 };
 
 struct GetK{
-template <typename T, typename U> const Operand& operator()(const T&, const U& ) ;
+template <typename T, typename U> const Operand& operator()(const T&, const U& ) const;
 
-template <typename T> const Operand& operator()(const list_t&, const T& ) ;
-const Operand& operator()(const list_t&, const Number&) ;
-const Operand& operator()(const list_t&, const Nil) ;
-const Operand& operator()(const list_t&,const operand_ptr& ) ;
-const Operand& operator()(const list_t&,const operand_s_ptr& ) ;
-const Operand& operator()(const list_t&,const operand_u_ptr& ) ;
-const Operand& operator()(const list_t&,const list_t&) ;
+template <typename T> const Operand& operator()(const list_t&, const T& ) const;
+const Operand& operator()(const list_t&, const Number&) const;
+const Operand& operator()(const list_t&, const Nil) const;
+const Operand& operator()(const list_t&,const operand_ptr& ) const;
+const Operand& operator()(const list_t&,const operand_s_ptr& ) const;
+const Operand& operator()(const list_t&,const operand_u_ptr& ) const;
+const Operand& operator()(const list_t&,const list_t&) const;
 
-template <typename T> const Operand& operator()(const map_t&, const T& ) ;
-const Operand& operator()(const map_t&, const string&) ;
-const Operand& operator()(const map_t&, const list_t&) ;
-const Operand& operator()(const map_t&, const Nil) ;
-const Operand& operator()(const map_t&,const operand_ptr& ) ;
-const Operand& operator()(const map_t&,const operand_s_ptr& ) ;
-const Operand& operator()(const map_t&,const operand_u_ptr& ) ;
-const Operand& operator()(const map_t&,const map_t&) ;
+template <typename T> const Operand& operator()(const map_t&, const T& ) const;
+const Operand& operator()(const map_t&, const string&) const;
+const Operand& operator()(const map_t&, const list_t&) const;
+const Operand& operator()(const map_t&, const Nil) const;
+const Operand& operator()(const map_t&,const operand_ptr& ) const;
+const Operand& operator()(const map_t&,const operand_s_ptr& ) const;
+const Operand& operator()(const map_t&,const operand_u_ptr& ) const ;
+const Operand& operator()(const map_t&,const map_t&) const ;
 
-template <typename T> const Operand& operator()(const operand_ptr& m, const T&k );
-template <typename T> const Operand& operator()(const operand_s_ptr& m, const T&k );
-template <typename T> const Operand& operator()(const operand_u_ptr& m, const T&k );
+template <typename T> const Operand& operator()(const operand_ptr& m, const T&k )const;
+template <typename T> const Operand& operator()(const operand_s_ptr& m, const T&k )const;
+template <typename T> const Operand& operator()(const operand_u_ptr& m, const T&k )const;
 };
 
 
