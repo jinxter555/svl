@@ -41,6 +41,17 @@ TEST_CASE("check operand list 2") {
   ol2[1l] = "twotwo";
   cout << "ol1: " << ol1 << "\n";
   cout << "ol2: " << ol2 << "\n\n";
-  //CHECK(ol1 == ol2);
+
+  //Operand k1(list_t{5l, 2l});
+  Operand k1(list_t{});
+  k1.add(1l);
+  cout << "ol1[" << k1<< "]" << ol1[k1] << "\n";;
+  CHECK(ol1[k1] == "twotwo");
+
+  Operand k2(list_t{});
+  k2.add(5l);
+  k2.add(2l);
+  cout << "ol1[" << k2<< "]" << ol1[k2] << "\n";;
+  CHECK(ol1[k2] == 3.4);
   
 }

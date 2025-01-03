@@ -135,7 +135,13 @@ Operand& Operand::operator[] (const Operand& k) {
 const Operand& Operand::operator[] (const Operand &k) const {
   MYLOGGER(trace_function, "Operand::[](Operand &k) const", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function,  string("k: ") + k._to_str() , SLOG_FUNC_INFO+1);
-  //cout << "Operand::[]";
+
+/*
+  cout << "Operand::[]";
+  cout << "k:" <<  k << "\n";
+  cout << "k.type:" <<  k.get_type() << "\n";
+*/
+  if(k._get_type()== OperandType::list_t) {}
   auto &rv = get_value();
   //return  visit(GetK(), value_, k.value_);
   return  visit(GetK(), rv.value_, k.value_);
@@ -166,7 +172,10 @@ Number Operand::_get_number() const {
     else return Number(stol(strnum)); 
   }
   return get<Number>(_deref());
+}
 
+inline s_integer Operand::_get_int() const {
+  return _get_number().get_int();
 }
 
 Operand& Operand::get_value_nc() { 
@@ -195,6 +204,9 @@ const list_t& Operand::_get_list() const {
   return nil_list;
   */
 }
+
+s_integer Operand::_get_list_size() const { return _get_list().size(); }
+s_integer Operand::_get_map_size() const { return _get_map().size(); }
 
 //------------------------------------
 map_t& Operand::_get_map_nc() { 
@@ -229,6 +241,14 @@ operand_ptr Operand::_vrptr() const {
   }
   return (Operand*)this;
 }
+
+operand_ptr Operand::get_raw_ptr() const {
+  auto rptr = visit(Rptr(), value_);
+  if(rptr==nullptr)
+    return (operand_ptr)this;
+  return rptr;
+}
+
 
 //------------------------------------
 bool Operand::is_nil() const {
@@ -267,6 +287,14 @@ operand_ptr Operand::Vrptr::operator()(const Nil) const { return nullptr; }
 operand_ptr Operand::Vrptr::operator()(const operand_ptr& vptr) const  { return vptr->_vrptr(); }
 operand_ptr Operand::Vrptr::operator()(const operand_s_ptr& vptr) const { return vptr->_vrptr();}
 operand_ptr Operand::Vrptr::operator()(const operand_u_ptr& vptr) const  { return vptr->_vrptr(); }
+
+//------------------------------------ Rptr raw ptr 
+template <typename T> 
+const operand_ptr Operand::Rptr::operator()(const T& v) const { return nullptr; }
+const operand_ptr Operand::Rptr::operator()(const Nil v) const { return nullptr; }
+const operand_ptr Operand::Rptr::operator()(const operand_ptr& vptr) const { return vptr; }
+const operand_ptr Operand::Rptr::operator()(const operand_s_ptr& vptr) const { return vptr.get(); }
+const operand_ptr Operand::Rptr::operator()(const operand_u_ptr& vptr) const { return vptr.get(); }
 
 //------------------------------------ Map
 const map_t& Operand::Map::operator()(const map_t &m) const  { 
@@ -374,9 +402,37 @@ const Operand& Operand::GetK::operator()(const list_t& l, const operand_u_ptr& k
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, uptr)", __func__, SLOG_FUNC_INFO);
    return Operand::GetK::operator()(l, k.get()); }
 
-const Operand& Operand::GetK::operator()(const list_t& l, const list_t& v)  {
+const Operand& Operand::GetK::operator()(const list_t& l, const list_t& k)  {
   MYLOGGER(trace_function, "Operand::GetK::()(list_t&, list_t&)", __func__, SLOG_FUNC_INFO);
-  return nil_operand;} // maybe for with get_branch
+  //cout <<  "Operand::GetK::()(list_t&, list_t&)\n";
+  s_integer s=k.size();
+
+  if(k.size() <=0) {
+    cerr << "multi-dimensional array lookup error index " << k << " out of bound!";
+    return nil_operand;
+  }
+
+  auto &first_i  = k[0];
+  auto &first_v = l[first_i._get_int()];
+  auto current_list_ptr = first_v.get_raw_ptr();
+
+  for(s_integer i=1; i<s; i++) {
+    auto &index = k[i];
+
+    if(index >= current_list_ptr->_get_list_size()) {
+      cerr << "multi-dimensional array lookup error index " << index << " out of bound!";
+      return nil_operand;
+    }
+
+    auto &value = (*current_list_ptr)[index];
+    if(value.is_nil()) return nil_operand;
+
+    //cout << "index: " << index << "\n"; cout << "value: " << value << "\n";
+
+    current_list_ptr = value.get_raw_ptr();
+  }
+  return *current_list_ptr;
+} // maybe for with get_branch
 
 //------------------------- GetK - map_t
 template <typename T> 

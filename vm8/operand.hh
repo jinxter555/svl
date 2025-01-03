@@ -80,6 +80,7 @@ public:
   Operand get_type() const ;
   OperandType _get_type() const ;
   Number _get_number() const ;
+  s_integer _get_int() const ;
 
   Operand to_str() const ;
   string _to_str() const;
@@ -88,15 +89,21 @@ public:
   Operand& get_value_nc() ;
 
   const list_t& _get_list() const;
+  s_integer _get_list_size() const;
   list_t& _get_list_nc() ;
 
+
+
   const map_t& _get_map() const;
+  s_integer _get_map_size() const;
   map_t& _get_map_nc();
 
   operand_variant_t _get_variant() const;
   operand_variant_t _deref() const;
 
-  operand_ptr _vrptr() const;
+  operand_ptr _vrptr() const; 
+  //operand_ptr get_raw_ptr() const;
+  Operand* get_raw_ptr() const;
 
 //------------------------------------
   Operand& operator[] (const Operand& k) ;
@@ -184,6 +191,18 @@ operand_ptr operator()(const operand_ptr& v) const  ;
 operand_ptr operator()(const operand_s_ptr& v) const  ;
 operand_ptr operator()(const operand_u_ptr& v) const  ;
 };
+
+
+struct Rptr {
+template <typename T> 
+const operand_ptr operator()(const T& v) const;
+const operand_ptr operator()(const Nil) const;
+const operand_ptr operator()(const operand_ptr&) const;
+const operand_ptr operator()(const operand_s_ptr&) const;
+const operand_ptr operator()(const operand_u_ptr&) const;
+};
+
+
 
 
 struct Add{
