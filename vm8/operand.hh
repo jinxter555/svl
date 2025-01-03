@@ -17,6 +17,8 @@ using operand_s_ptr = shared_ptr<Operand>;
 using map_t = map<string, Operand>; 
 //using list_t = vector<operand_u_ptr>;
 using list_t = vector<Operand>; 
+using vec_num_t = vector<Number>;
+using vec_str_t = vector<string>;
 
 using operand_variant_t = variant
 < Nil
@@ -58,6 +60,8 @@ public:
   Operand(const list_t &);
   Operand(list_t &&);
   Operand(const map_t &);
+  Operand(const vec_num_t&);
+  Operand(const vec_str_t&);
   //Operand(const initializer_list<Operand> &v);
   
 //------------------------------------
@@ -81,7 +85,8 @@ public:
   Operand get_type() const ;
   OperandType _get_type() const ;
   Number _get_number() const ;
-  s_integer _get_int() const ;
+  //inline s_integer _get_int() const ;
+  inline s_integer _get_int() const  { return _get_number().get_int(); };
 
   Operand to_str() const ;
   string _to_str() const;
@@ -227,6 +232,9 @@ template <typename T>
 template <typename T> 
   bool operator()(const string& k, const T& v) ;
   bool operator()(const Nil, const Nil) ;
+
+  bool has_key(const Operand &k)  const ;
+  bool has_key(const string &k)  const ;
 };
 
 struct GetK{
@@ -295,5 +303,3 @@ template <typename T>
 
 //------------------------------------
 ostream& operator<<(ostream& os, const Operand& v);
-
-extern Nil nil;

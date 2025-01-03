@@ -6,6 +6,8 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+#include "operand_vars.hh"
+
 
 TEST_CASE("check operand list 1") {
   trace_function.open("trace_svlm.log", std::ios::out);
@@ -21,12 +23,16 @@ TEST_CASE("check operand list 1") {
   Operand u_i1(make_unique<Operand>(555l));
   CHECK(u_i1._get_number() == 555l);
 
+  if(nil_operand == nil_operand) { cout << "nil operand=";}
+  Operand a(nil);
+
   //vector<Operand> l1 = {i1.clone(), f1.clone()};
   vector<Operand> l1 ;
   l1.push_back(Operand(1l));
   l1.push_back(Operand(22l));
   l1.push_back(Operand(333l));
 
+  if(i_var == 123) { cout << "ivar123\n"; }
   Operand ol1(l1);
   cout << "ol1: " << ol1 << "\n";
   cout << "ol1[0]: " << ol1[0l] << "\n";
@@ -67,6 +73,16 @@ TEST_CASE("check operand list 1") {
   CHECK(ol1!= ol2);
 
 
+  vec_num_t num_list_1 = {1l,2l,3l};
+  //vec_num_t num_list_2 = {1l, 2.2f, 3.1415f};
+  Operand num_list_ov1(num_list_1);
+  Operand num_list_ov2(vec_num_t{1l, 2.2f, 3.1415f});
+  cout << "num_list_ov1: " <<  num_list_ov1 << "\n";
+  cout << "num_list_ov2: " <<  num_list_ov2 << "\n";
 
-  
+  vec_str_t str_list_1 = {"str1", "hello1", "www1"};
+  Operand str_list_ov1(str_list_1);
+  Operand str_list_ov2(vec_str_t{"peppa", "pig", "language", "exchange"});
+  cout << "str_list_ov1: " <<  str_list_ov1 << "\n";
+  cout << "str_list_ov2: " <<  str_list_ov2 << "\n";
 }

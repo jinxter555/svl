@@ -62,9 +62,19 @@ TEST_CASE("check operand map 3 with tree like structure ") {
   cout << "tm1: "<< tm1 << "\n";
   cout << "tm1[" << k2 <<"]: " << tm1[k2].get_type() << "\n";
   CHECK(tm1[k2]._to_str() == "helloEEE");
-  
 
-  
+  Operand tm2(map_t {});
+  tm2.addk(k2, "this is the value", true );
+  cout << "tm2: " << tm2 << "\n";
+  tm2.addk(vec_str_t{"s2", "b"}, "bobooo", false);
+  cout << "tm2: " << tm2 << "\n";
+  CHECK(tm2[vec_str_t{"s2", "b"}]._to_str() == "bobooo");
 
+  tm2.addk(vec_str_t{"s2", "b"}, "bobaaa", false);
+  cout << "tm2: " << tm2 << "\n";
+  CHECK(tm2[vec_str_t{"s2", "b"}]._to_str() == "bobooo");
+  tm2.addk(vec_str_t{"s2", "b"}, "bobaaa", true);
+  cout << "tm2: " << tm2 << "\n";
+  CHECK(tm2[vec_str_t{"s2", "b"}]._to_str() == "bobaaa");
   
 }

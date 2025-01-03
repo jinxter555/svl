@@ -1,5 +1,6 @@
 #include "lang.hh"
 #include "operand.hh"
+#include "operand_vars.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"

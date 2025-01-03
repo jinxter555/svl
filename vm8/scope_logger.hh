@@ -1,3 +1,6 @@
+#ifndef SCOPE_LOGGER_HH
+#define SCOPE_LOGGER_HH
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -43,3 +46,5 @@ public:
 #endif
 
 #define SLOG_FUNC_INFO   10
+
+#endif

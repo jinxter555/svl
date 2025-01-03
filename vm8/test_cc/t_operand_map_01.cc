@@ -2,7 +2,6 @@
 #include <catch2/catch_all.hpp>
 
 #include "operand.hh"
-extern const Operand nil_operand=Operand();
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
