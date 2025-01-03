@@ -74,6 +74,8 @@ TEST_CASE("check operand map 3 with tree like structure ") {
   cout << "tm2: " << tm2 << "\n";
   CHECK(tm2[vec_str_t{"s2", "b"}]._to_str() == "bobooo");
   tm2.addk(vec_str_t{"s2", "b"}, "bobaaa", true);
+  tm2.addk("first", "blood", false);
+  CHECK(tm2["first"]._to_str() == "blood");
   cout << "tm2: " << tm2 << "\n";
   CHECK(tm2[vec_str_t{"s2", "b"}]._to_str() == "bobaaa");
   

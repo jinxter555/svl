@@ -119,10 +119,12 @@ bool Operand::add(const Operand&v) {
 bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
   MYLOGGER(trace_function, "Operand::add(Operand&, Operand&, bool)", __func__, SLOG_FUNC_INFO);
   //cout << "Operand::Add(Operand&, Operand&, bool)\n";
-  auto &map_ = _get_map_nc();
+  auto &m = _get_map_nc();
+  return visit(AddK(m, overwrite), k.value_, v.value_);
 
   //if(map_ == nil_map) return false;
 
+/*
   auto k_str = k._to_str();
   if(overwrite == true) {
     map_[k_str] = v.clone();
@@ -133,11 +135,15 @@ bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
     return true;
   }
   return false;
+*/
+
 }
+
+
 bool Operand::addk(const Operand &k, const Operand &v, bool overwrite) {
+  MYLOGGER(trace_function, "Operand::addK(Operand&, Operand&, bool)", __func__, SLOG_FUNC_INFO);
   auto &m=_get_map_nc();
-  visit(AddK(m, overwrite), k.value_, v.value_);
-  return false;
+  return visit(AddK(m, overwrite), k.value_, v.value_);
 }
 
 //--------------------------------------
