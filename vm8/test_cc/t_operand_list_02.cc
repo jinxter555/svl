@@ -12,7 +12,7 @@ TEST_CASE("check operand list 2") {
   ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 1);
 
 
-  //vector<Operand> l1 = {i1.clone(), f1.clone()};
+  //vector<Operand> l1 = {i1.clone_operand(), f1.clone_operand()};
   vector<Operand> l1, l2 ;
   l1.push_back(Operand(1l));
   l1.push_back(Operand(22l));
@@ -27,7 +27,7 @@ TEST_CASE("check operand list 2") {
   Operand ol1(l1);
   ol1.add(l2);
   cout << "ol1: " << ol1 << "\n";
-  Operand ol2(ol1.clone());
+  Operand ol2(ol1.clone_operand());
   cout << "ol2: " << ol2 << "\n\n";
   CHECK(ol1 == ol2);
 

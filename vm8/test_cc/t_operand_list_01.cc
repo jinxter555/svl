@@ -26,7 +26,7 @@ TEST_CASE("check operand list 1") {
   if(nil_operand == nil_operand) { cout << "nil operand=";}
   Operand a(nil);
 
-  //vector<Operand> l1 = {i1.clone(), f1.clone()};
+  //vector<Operand> l1 = {i1.clone_operand(), f1.clone()};
   vector<Operand> l1 ;
   l1.push_back(Operand(1l));
   l1.push_back(Operand(22l));
@@ -42,14 +42,14 @@ TEST_CASE("check operand list 1") {
 
   auto &lc = ol1._get_list();
   auto ld = Operand(lc);
-  cout << "ld<-clone()<-lc<-ol1: " << ld << "\n";
+  cout << "ld<-clone_operand()<-lc<-ol1: " << ld << "\n";
   CHECK(ld == ol1);
   if(ld == ol1) { cout << "ld == ol1\n"; }
   else cout << "ld != ol1\n\n";
 
 
   cout << "lc<-ol1: " << lc << "\n";
-  ol1[1l]= f1.clone();
+  ol1[1l]= f1.clone_operand();
   ld[1l] = 555555l;
   cout << " lc: " << lc << "\n";
   cout << "ol1: " << ol1 << "\n";
@@ -64,7 +64,7 @@ TEST_CASE("check operand list 1") {
   if(le == ld) { cout << "le == ld\n"; }
   else { cout << "le != ld\n"; }
 
-  Operand ol2(ol1.clone());
+  Operand ol2(ol1.clone_operand());
   cout << "ol1: " << ol1 << "\n";
   cout << "ol2: " << ol2 << "\n";
   cout << "ol2.getype(): " << ol2.get_type() << "\n";

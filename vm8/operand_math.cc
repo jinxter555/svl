@@ -225,7 +225,7 @@ Operand Operand::operator||(const Operand& other) const {
 Operand Operand::opfunc(const Operand& v, AstOpCode op) {
   cout << "Operand::opfunc()\n";
   cout << "Opcode: " << Operand(op)<< "\n";
-  Operand other(v.clone());
+  Operand other(v.clone_operand());
   
   // if(type_ != other.type_) throw std::runtime_error("Unsupported operation > for unequal types"); 
 

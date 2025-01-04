@@ -33,14 +33,16 @@ Operand::Operand(const AstOpCode& v)          : type_(OperandType::ast_op_t), va
 Operand::Operand(const OperandErrorCode &v)   : type_(OperandType::err_t),    value_(v) {}
 Operand::Operand(const OperandStatusCode &v)  : type_(OperandType::status_t), value_(v) {}
 Operand::Operand(const ControlFlow &v )       : type_(OperandType::control_t), value_(v) {}
-Operand::Operand(const operand_u_ptr&v )      : type_(OperandType::uptr_t), value_(move(v->clone())) {}
+Operand::Operand(const operand_u_ptr&v )      : type_(OperandType::uptr_t), value_(move(v->clone_operand())) {}
 Operand::Operand(operand_u_ptr&&v )           : type_(OperandType::uptr_t), value_(move(v)) {}
-Operand::Operand(const operand_s_ptr& v)      : type_(OperandType::sptr_t), value_(move(v->clone())) {}
-Operand::Operand(const operand_ptr v)         : type_(OperandType::ptr_t),  value_(move(v->clone())) {}
+Operand::Operand(const operand_s_ptr& v)      : type_(OperandType::sptr_t), value_(move(v->clone_operand())) {}
+Operand::Operand(const operand_ptr v)         : type_(OperandType::ptr_t),  value_(move(v->clone_operand())) {}
 Operand::Operand(const list_t &l )            : type_(OperandType::list_t) { value_ = move(clone_list(l));}
 Operand::Operand(const map_t &m )            : type_(OperandType::map_t) { value_ = move(clone_map(m));}
 
 Operand::Operand(list_t &&vptr ) : type_(OperandType::list_t) { value_ = move(vptr); }
+Operand::Operand(astexpr_u_ptr&&v )           : type_(OperandType::ast_uptr_t), value_(move(v)) {}
+Operand::Operand(const astexpr_u_ptr&v )           : type_(OperandType::ast_uptr_t), value_(move(v->clone())) {}
 
 //------------------------------------ vec 
 Operand::Operand(const vec_num_t& l) {
@@ -54,15 +56,21 @@ Operand::Operand(const vec_str_t& l) {
   value_ = move(new_list);
 }
 
+Operand::Operand(const operand_variant_t& v ) {
+  type_ = visit(Type(), v);
+  value_ = visit(Variant(), v); 
+} 
+
 //------------------------------------ Clone() s
-operand_u_ptr Operand::clone() const { return visit(Clone{}, value_); }
+astexpr_u_ptr Operand::clone() const { return clone_operand(); }
+operand_u_ptr Operand::clone_operand() const { return visit(Clone{}, value_); }
 
 //------------------------------------
 list_t Operand::clone_list(const list_t&l) {
   MYLOGGER(trace_function, "Operand::clone_list(list_t&)", __func__, SLOG_FUNC_INFO);
   list_t new_list;
   for(auto &e : l) {
-    new_list.push_back(  e.clone() );
+    new_list.push_back(  e.clone_operand() );
   }
   return new_list;
 }
@@ -77,6 +85,10 @@ list_t Operand::clone_list() {
 }
 
 //------------------------------------
+Operand Operand::evaluate(astexpr_u_ptr& ast_ctxt) {
+  return _get_variant_nc();
+}
+//------------------------------------
 
 map_t Operand::clone_map(const map_t&map_) {
   MYLOGGER(trace_function, "Operand::clone_map(map_t&)", __func__, SLOG_FUNC_INFO);
@@ -86,7 +98,7 @@ map_t Operand::clone_map(const map_t&map_) {
 
   map_t new_map;
   for (auto const& [key, val] : map_) {
-    new_map[key] = val.clone();
+    new_map[key] = val.clone_operand();
   }
   return new_map;
 }
@@ -123,11 +135,10 @@ bool Operand::add(const Operand &k, const Operand &v, bool overwrite) {
   return visit(AddK(m, overwrite), k.value_, v.value_);
 
   //if(map_ == nil_map) return false;
-
 /*
   auto k_str = k._to_str();
   if(overwrite == true) {
-    map_[k_str] = v.clone();
+    map_[k_str] = v.clone_operand();
     return true;
   } else {
     if(has_key(k_str)) {return false;}
@@ -234,6 +245,7 @@ const list_t& Operand::_get_list() const {
 
 s_integer Operand::_get_list_size() const { return _get_list().size(); }
 s_integer Operand::_get_map_size() const { return _get_map().size(); }
+s_integer Operand::size() const { return 0l; }
 
 //------------------------------------
 map_t& Operand::_get_map_nc() { 
@@ -247,6 +259,9 @@ const map_t& Operand::_get_map() const {
   //cout << "Operand::_get_map()\n";
   return visit(Map(), value_);
 
+}
+operand_variant_t Operand::_get_variant_nc() {
+  return visit(Variant(), value_);
 }
 
 operand_variant_t Operand::_get_variant() const {
@@ -301,9 +316,9 @@ void Operand::print() const { cout << *this; }
 template <typename T> 
 operand_u_ptr Operand::Clone::operator()(const T& v) const { return make_unique<Operand>(v); }
 operand_u_ptr Operand::Clone::operator()(const Nil v) const { return nullptr; }
-operand_u_ptr Operand::Clone::operator()(const operand_ptr& v) const { return v->clone(); }
-operand_u_ptr Operand::Clone::operator()(const operand_u_ptr& v) const {return v->clone(); } 
-operand_u_ptr Operand::Clone::operator()(const operand_s_ptr& v) const { return v->clone(); } 
+operand_u_ptr Operand::Clone::operator()(const operand_ptr& v) const { return v->clone_operand(); }
+operand_u_ptr Operand::Clone::operator()(const operand_u_ptr& v) const {return v->clone_operand(); } 
+operand_u_ptr Operand::Clone::operator()(const operand_s_ptr& v) const { return v->clone_operand(); } 
 operand_u_ptr Operand::Clone::operator()(const list_t& l) const { return make_unique<Operand>(move(clone_list(l))); } 
 operand_u_ptr Operand::Clone::operator()(const map_t& m) const { return make_unique<Operand>(move(clone_map(m))); } 
 
@@ -385,7 +400,7 @@ bool Operand::Add::operator()(const T &v) { l_.push_back(v); return true; }
 bool Operand::Add::operator()(const Nil v) { l_.push_back(nil); return true; }
 bool Operand::Add::operator()(const operand_ptr& v) { l_.push_back(v); return true; }
 bool Operand::Add::operator()(const operand_s_ptr& v) { l_.push_back(v); return true; }
-bool Operand::Add::operator()(const operand_u_ptr& v) { l_.push_back(v->clone()); return true; }
+bool Operand::Add::operator()(const operand_u_ptr& v) { l_.push_back(v->clone_operand()); return true; }
 bool Operand::Add::operator()(const list_t& l) { 
   l_.push_back(move(Operand::clone_list(l))); 
   return true;
@@ -400,7 +415,8 @@ operand_variant_t Operand::Variant::operator()(const T &v) const { return v; }
 operand_variant_t Operand::Variant::operator()(const Nil v) const { return nil; }
 operand_variant_t Operand::Variant::operator()(const operand_ptr& vptr) const { return vptr; }
 operand_variant_t Operand::Variant::operator()(const operand_s_ptr& vptr) const { return vptr; }
-operand_variant_t Operand::Variant::operator()(const operand_u_ptr& vptr) const { return vptr->clone(); }
+operand_variant_t Operand::Variant::operator()(const operand_u_ptr& vptr) const { return vptr->clone_operand(); }
+operand_variant_t Operand::Variant::operator()(const astexpr_u_ptr& vptr) const { return vptr->clone();}
 // need to be clone 
 operand_variant_t Operand::Variant::operator()(const list_t& l) const { return clone_list(l)  ; }
 operand_variant_t Operand::Variant::operator()(const map_t& m) const { return clone_map(m); }
@@ -411,6 +427,7 @@ operand_variant_t Operand::DeRef::operator()(const Nil) const { return nil; }
 operand_variant_t Operand::DeRef::operator()(const operand_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
 operand_variant_t Operand::DeRef::operator()(const operand_s_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
 operand_variant_t Operand::DeRef::operator()(const operand_u_ptr& v) const  { if(v==nullptr) return nil; return  v->_deref(); }
+operand_variant_t Operand::DeRef::operator()(const astexpr_u_ptr& vptr) const  { return vptr->clone(); }
 operand_variant_t Operand::DeRef::operator()(const list_t& l) const { return clone_list(l); }
 operand_variant_t Operand::DeRef::operator()(const map_t& m) const { return clone_map(m); }
 
@@ -463,7 +480,7 @@ bool Operand::AddK::operator()(const list_t& k, const T& v) {
       current_map_ptr = (*current_map_ptr)[index].get_raw_ptr();
     }
   }
-  //*current_map_ptr = v.clone();
+  //*current_map_ptr = v.clone_operand();
   *current_map_ptr = v;
   return true;
 

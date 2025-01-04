@@ -88,6 +88,7 @@ enum class OperandType {
 
   control_t,
 
+  ast_uptr_t,     // ast operator type
   ast_mod_t,     // ast operator type
   ast_op_t,     // ast operator type
   ast_operand_t, // ast operand type
@@ -121,6 +122,11 @@ enum class ControlFlow {
   ast_exit,
   error,
 };
+class AstExpr;
+using astexpr_u_ptr = unique_ptr<AstExpr>;
+using astexpr_s_ptr = shared_ptr<AstExpr>;
+using astexpr_ptr = AstExpr *;
+
 
 
 using s_integer = long;

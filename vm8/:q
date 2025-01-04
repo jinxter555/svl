@@ -1,0 +1,10 @@
+operand.cc: In member function ‘operand_variant_t Operand::_get_variant_nc()’:
+operand.cc:262:39: error: use of deleted function ‘void std::as_const(const _Tp&&) [with _Tp = std::variant<Nil, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, Number, ControlFlow, AstOpCode, OperandErrorCode, OperandStatusCode, OperandType, std::vector<Operand, std::allocator<Operand> >, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, Operand, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, Operand> > >, Operand*, std::shared_ptr<Operand>, std::unique_ptr<Operand, std::default_delete<Operand> > >]’
+  262 |   return const_cast<Operand&>(as_const(_get_variant()));
+      |                               ~~~~~~~~^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/11/variant:37,
+                 from operand.hh:3,
+                 from operand.cc:3:
+/usr/include/c++/11/utility:391:10: note: declared here
+  391 |     void as_const(const _Tp&&) = delete;
+      |          ^~~~~~~~

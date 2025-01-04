@@ -1,12 +1,14 @@
 #pragma once
 #include <iostream>
 #include <variant>
+#include "ast.hh"
 #include "number.hh"
 
 using namespace std;
 
 #define TO_STR(m) ((Operand::ToString *) this)->Operand::ToString::operator()(m);
 
+class AstExpr;
 class Operand;
 using operand_ptr = Operand *;
 using operand_u_ptr = unique_ptr<Operand>;
@@ -33,9 +35,10 @@ using operand_variant_t = variant
 , operand_ptr
 , operand_s_ptr
 , operand_u_ptr
+, astexpr_u_ptr
 >;
 
-class Operand {
+class Operand : public AstExpr {
 private:
   OperandType type_;
   operand_variant_t value_;
@@ -62,33 +65,39 @@ public:
   Operand(const map_t &);
   Operand(const vec_num_t&);
   Operand(const vec_str_t&);
+  Operand(const operand_variant_t& v) ;
+  Operand(const astexpr_u_ptr &);
+  Operand(astexpr_u_ptr &&);
+
   //Operand(const initializer_list<Operand> &v);
   
 //------------------------------------
-  operand_u_ptr clone() const ;
+  astexpr_u_ptr clone() const ;
+  operand_u_ptr clone_operand() const ;
   list_t clone_list();
   map_t clone_map();
   static list_t clone_list(const list_t&);
   static map_t clone_map(const map_t&);
 //------------------------------------
+  Operand evaluate(astexpr_u_ptr& ast_ctxt) override;
+//------------------------------------
   bool is_nil() const;
   bool has_key(const Operand &k)  const ;
 
-
-  s_integer size() const ;
-  void print() const ;
+  s_integer size() const override;
+  void print() const override;
 //------------------------------------
   bool add(const Operand&);
   bool add(const Operand&, const Operand&, bool overwrite=false);
   bool addk(const Operand&k, const Operand&v, bool overwrite=false);
 //------------------------------------
-  Operand get_type() const ;
-  OperandType _get_type() const ;
+  Operand get_type() const override;
+  OperandType _get_type() const override;
   Number _get_number() const ;
   //inline s_integer _get_int() const ;
   inline s_integer _get_int() const  { return _get_number().get_int(); };
 
-  Operand to_str() const ;
+  Operand to_str() const override;
   string _to_str() const;
 //------------------------------------
   const Operand& get_value() const;
@@ -104,6 +113,7 @@ public:
   s_integer _get_map_size() const;
   map_t& _get_map_nc();
 
+  operand_variant_t _get_variant_nc() ;
   operand_variant_t _get_variant() const;
   operand_variant_t _deref() const;
 
@@ -154,9 +164,30 @@ operand_variant_t operator()(const Nil) const;
 operand_variant_t operator()(const operand_ptr& v) const  ;
 operand_variant_t operator()(const operand_s_ptr& v) const  ;
 operand_variant_t operator()(const operand_u_ptr& v) const  ;
+operand_variant_t operator()(const astexpr_u_ptr& v) const  ;
 operand_variant_t operator()(const list_t& v) const  ;
 operand_variant_t operator()(const map_t& v) const  ;
 };
+
+struct Type{
+OperandType operator()(const bool v) const ;
+OperandType operator()(const Nil& v) const ;
+OperandType operator()(const Number& v) const ;
+OperandType operator()(const string& v) const ;
+OperandType operator()(const AstOpCode& v) const ;
+OperandType operator()(const OperandType& v) const ;
+OperandType operator()(const ControlFlow& v) const ;
+OperandType operator()(const OperandStatusCode& v) const ;
+OperandType operator()(const OperandErrorCode& v) const ;
+OperandType operator()(const astexpr_u_ptr& v) const  ;
+OperandType operator()(const operand_u_ptr& v) const  ;
+OperandType operator()(const operand_s_ptr& v) const  ;
+OperandType operator()(const operand_ptr& v) const  ;
+OperandType operator()(const list_t& v) const  ;
+OperandType operator()(const map_t& v) const  ;
+};
+
+
 
 struct Map {
 const map_t& operator()(const map_t& v) const ;
@@ -183,6 +214,7 @@ operand_variant_t operator()(const Nil) const;
 operand_variant_t operator()(const operand_ptr& v) const  ;
 operand_variant_t operator()(const operand_s_ptr& v) const  ;
 operand_variant_t operator()(const operand_u_ptr& v) const  ;
+operand_variant_t operator()(const astexpr_u_ptr& v) const  ;
 operand_variant_t operator()(const list_t& v) const  ;
 operand_variant_t operator()(const map_t& v) const  ;
 };
@@ -279,6 +311,7 @@ struct ToString {
   Operand operator()(const operand_ptr&) const;
   Operand operator()(const list_t &) const;
   Operand operator()(const map_t &) const;
+  Operand operator()(const astexpr_u_ptr&) const;
 
 
   //Operand operator()(const map_t &) const;

@@ -17,5 +17,8 @@ TEST_CASE("check operand 1") {
   Operand u_i1(make_unique<Operand>(555l));
   CHECK(u_i1._get_number() == 555l);
 
+  auto ctxt = i1.clone();
+  cout << "s1.evaluate: " << s1.evaluate(ctxt) << "\n";
+  CHECK(s1.evaluate(ctxt) == "str1");
   
 }

@@ -22,7 +22,7 @@ TEST_CASE("check operand map 3 with tree like structure ") {
   map_t t1;
   t1["hello1"] = 111l;
   t1["hello2"] = 555l;
-  t1["hello3"] = i1.clone();
+  t1["hello3"] = i1.clone_operand();
   CHECK(t1["hello2"]._to_str() == "555");
 
 

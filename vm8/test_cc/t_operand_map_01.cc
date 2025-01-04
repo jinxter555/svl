@@ -23,7 +23,7 @@ TEST_CASE("check operand map 1") {
 
   t1["hello1"] = 1l;
   t1["hello2"] = 22l;
-  t1["hello3"] = i1.clone();
+  t1["hello3"] = i1.clone_operand();
   t1["hello3"] = 333l;
   CHECK(t1["hello2"]._to_str() == "22");
   cout << "t1:" << t1 << "\n";

@@ -4,13 +4,14 @@
 //--------------------------------------------------------- 
 
 //--------------------------------------------------------- 
-
 AstExpr::AstExpr() : Primordial(OperandType::nil_t) {}
 AstExpr::AstExpr(const OperandType t) : Primordial(t) {}
+
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const AstExpr& e) {
-  if(e.is_nil() ) cerr << "AstExpr is nil\n"; 
-  else e.print();
+  //if(e.is_nil() ) cerr << "AstExpr is nil\n"; 
+  //else e.print();
+  e.print();
   return os;
 }
 

@@ -144,8 +144,12 @@ Operand Operand::ToString::operator()(const operand_s_ptr &vptr) const {
 Operand Operand::ToString::operator()(const operand_u_ptr &vptr) const { 
   return vptr->to_str();
 }
+
 Operand Operand::ToString::operator()(const operand_ptr &vptr) const { 
   //return Operand("operand ptr: ") + vptr->to_str();
+  return vptr->to_str();
+}
+Operand Operand::ToString::operator()(const astexpr_u_ptr &vptr) const { 
   return vptr->to_str();
 }
 
