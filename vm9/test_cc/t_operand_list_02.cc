@@ -38,6 +38,7 @@ TEST_CASE("check operand list 2") {
 
   AstList ol2(l2);
   ol2.add(ol1.clone());
+  ol2.add(3.14159);
 
   cout << "ol2: " << ol2 << "\n";
 }

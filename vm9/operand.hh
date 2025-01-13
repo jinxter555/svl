@@ -53,9 +53,13 @@ public:
   Operand(const map_t &);
   Operand(const vec_num_t&);
   Operand(const vec_str_t&);
-  Operand(const operand_variant_t& v) ;
+  Operand(const operand_variant_t& ) ;
 
-  bool add(astnode_u_ptr &&vptr) ;  // for list
+  bool add(astnode_u_ptr &&) ;  // for list
+  bool add(const operand_variant_t&) ;  // for list
+
+  bool add(const AstList &k, const operand_variant_t&, bool overwrite=false);
+  bool add(const AstList &k, astnode_u_ptr&&, bool overwrite=false);
 
 
 
@@ -190,11 +194,9 @@ OperandType operator()(const OperandType& v) const ;
 OperandType operator()(const ControlFlow& v) const ;
 OperandType operator()(const OperandStatusCode& v) const ;
 OperandType operator()(const OperandErrorCode& v) const ;
-OperandType operator()(const operand_u_ptr& v) const  ;
-OperandType operator()(const operand_s_ptr& v) const  ;
-OperandType operator()(const operand_ptr& v) const  ;
-OperandType operator()(const list_t& v) const  ;
-OperandType operator()(const map_t& v) const  ;
+OperandType operator()(const astnode_u_ptr& v) const  ;
+OperandType operator()(const astnode_s_ptr& v) const  ;
+OperandType operator()(const astnode_ptr& v) const  ;
 };
 
 //------------------------------------

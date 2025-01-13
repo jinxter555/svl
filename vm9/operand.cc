@@ -77,9 +77,10 @@ Operand::Operand(const map_t& m) {
   value_ = move(ptr);
 }
 
-Operand::Operand(const operand_variant_t& v ) {
-  //type_ = visit(Type(), v);
-  //value_ = visit(Variant(), v); 
+Operand::Operand(const operand_variant_t& v ) 
+{
+  type_ = visit(Type(), v);
+  value_ = visit(Variant(), v); 
 } 
 
 Operand Operand::evaluate(unique_ptr<AstNode>&ctxt) { 
@@ -88,6 +89,45 @@ Operand Operand::evaluate(unique_ptr<AstNode>&ctxt) {
 }
 //------------------------------------ add() s
 bool Operand::add(astnode_u_ptr &&vptr) {
+  MYLOGGER(trace_function , "Operand::add(astnode_u_ptr&&)" , __func__, SLOG_FUNC_INFO);
+  auto list = get_list_ptr_nc();
+  if(list==nullptr) return false;
+  list->add(move(vptr));
+  return true;
+}
+bool Operand::add(const operand_variant_t&ovv) {
+  MYLOGGER(trace_function , "Operand::add(operand_variant_t&)" , __func__, SLOG_FUNC_INFO);
+  auto list = get_list_ptr_nc();
+  if(list==nullptr) return false;
+  list->add(ovv);
+  return true;
+}
+bool Operand::add(const AstList &k, const operand_variant_t&ovv, bool overwrite) {
+  MYLOGGER(trace_function , "Operand::add(AstList&, operand_variant_t&, overwrite)" , __func__, SLOG_FUNC_INFO);
+  auto vptr =_vrptr();
+  switch (vptr->_get_type()) {
+  case OperandType::list_t:  {
+    auto lptr = vptr->get_list_ptr_nc();
+    //list->add(k, ovv, overwrite);
+    return false;}
+  case OperandType::map_t:  {
+    auto mptr= vptr->get_map_ptr_nc();
+    mptr->add(k, ovv, overwrite);
+  }}
+  return false;
+}
+bool Operand::add(const AstList &k, astnode_u_ptr&&vvptr, bool overwrite) {
+  MYLOGGER(trace_function , "Operand::add(AstList&, astnode_u_ptr&&, overwrite)" , __func__, SLOG_FUNC_INFO);
+  auto vptr =_vrptr();
+  switch (vptr->_get_type()) {
+  case OperandType::list_t:  {
+    auto lptr = vptr->get_list_ptr_nc();
+    //list->add(k, ovv, overwrite);
+    return false;}
+  case OperandType::map_t:  {
+    auto mptr= vptr->get_map_ptr_nc();
+    mptr->add(k, move(vvptr), overwrite);
+  }}
   return false;
 }
 
@@ -119,6 +159,7 @@ const Operand& Operand::get_value() const {
 }
 
 const Operand& Operand::get_operand() const {
+  MYLOGGER(trace_function, "Operand::get_operand()", __func__, SLOG_FUNC_INFO+10);
   switch(type_) {
   case OperandType::ptr_t:
   case OperandType::uptr_t:
@@ -131,12 +172,14 @@ const Operand& Operand::get_operand() const {
 
 const AstNode& Operand::get_node() const { return get_operand(); }
 const AstList& Operand::get_list() const {
+  MYLOGGER(trace_function, "Operand::get_list()", __func__, SLOG_FUNC_INFO+10);
   auto vptr = _vrptr();
   if(vptr->_get_type() != OperandType::list_t) return nil_list;
   return _vrptr()->get_list();
 };
 
 const AstMap& Operand::get_map() const {
+  MYLOGGER(trace_function, "Operand::get_map()", __func__, SLOG_FUNC_INFO+10);
   auto vptr = _vrptr();
   //if(vptr->_get_type() != OperandType::map_t) return nil_map;
   return _vrptr()->get_map();
@@ -146,6 +189,7 @@ const Operand* Operand::get_operand_ptr() const {
   return (Operand*)_vrptr();
 }
 const AstList* Operand::get_list_ptr() const {
+  MYLOGGER(trace_function, "Operand::get_list_ptr()", __func__, SLOG_FUNC_INFO);
   auto vptr = _vrptr();
   if(vptr->_get_type()== OperandType::list_t)
     return (AstList*)vptr;
@@ -153,6 +197,7 @@ const AstList* Operand::get_list_ptr() const {
 }
 
 const AstMap* Operand::get_map_ptr() const {
+  MYLOGGER(trace_function, "Operand::get_map_ptr()", __func__, SLOG_FUNC_INFO);
   auto vptr = _vrptr();
   if(vptr->_get_type()== OperandType::map_t)
     return (AstMap*)vptr;
@@ -160,11 +205,11 @@ const AstMap* Operand::get_map_ptr() const {
 }
 
 Operand* Operand::get_operand_ptr_nc() {
-  MYLOGGER(trace_function, "AstList::get_operand_ptr_nc()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Operand::get_operand_ptr_nc()", __func__, SLOG_FUNC_INFO);
   return (Operand*)this;
 }
 AstList* Operand::get_list_ptr_nc() {
-  MYLOGGER(trace_function, "AstList::get_list_ptr_nc()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Operand::get_list_ptr_nc()", __func__, SLOG_FUNC_INFO);
   auto vptr = _vrptr();
   if(vptr->_get_type()== OperandType::list_t)
     return (AstList*)vptr;
@@ -172,7 +217,7 @@ AstList* Operand::get_list_ptr_nc() {
 }
 
 AstMap* Operand::get_map_ptr_nc() {
-  MYLOGGER(trace_function, "AstList::get_map_ptr_nc()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Operand::get_map_ptr_nc()", __func__, SLOG_FUNC_INFO);
   auto vptr = _vrptr();
   if(vptr->_get_type()== OperandType::map_t)
     return (AstMap*)vptr;
@@ -237,7 +282,7 @@ s_integer Operand::size() const {return 0l;}
 
 //------------------------------------------------------------------------------------------------------------------ 
 ostream& operator<<(ostream& os, const Operand& v) {
-  MYLOGGER(trace_function, "OS<<(Operand&)", __func__, SLOG_FUNC_INFO+20);
+  //MYLOGGER(trace_function, "OS<<(Operand&)", __func__, SLOG_FUNC_INFO+20);
   cout << v._to_str();
   return os;
 }

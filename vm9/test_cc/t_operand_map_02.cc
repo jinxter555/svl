@@ -57,17 +57,17 @@ TEST_CASE("check operand map 2") {
   cout << "v2: " << v2 << "\n";
   CHECK(v2._to_str() == "pi!");
 
-
-
-/*
-  m2.add("e", "ebay", true);
-  CHECK(m2["e"]._to_str() == "2.718000");
+  m2.add("mundo2", 88888l, true);
+  m2.add(AstList(vec_str_t{"hola3", "mundo3"}), 456l, true);
   cout << "m2: " << m2 << "\n";
+  auto &v3 = m2[AstList(vec_str_t{"hola3", "mundo3"})];
+  CHECK(v3._get_number() == 456l);
+
+
 
   m2.add("e", "ebay", true);
   CHECK(m2["e"]._to_str() == "ebay");
   cout << "m2: " << m2 << "\n";
-*/
 
 
 

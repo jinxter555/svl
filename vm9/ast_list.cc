@@ -125,11 +125,21 @@ bool AstList::add(astnode_u_ptr &&vptr) {
   return true;
 }
 bool AstList::add(const list_t & l) {
+  MYLOGGER(trace_function , "AstList::add(list_t)" , __func__, SLOG_FUNC_INFO+9);
   auto new_list = make_unique<AstList>();
   for(auto &e: l) new_list->add( e.clone()); 
   add(move(new_list));
   return true;
 }
+
+/* bool AstList::add(const Operand& v) { list_.push_back(v.clone()); return true; }*/
+bool AstList::add(const operand_variant_t& ovv) {
+  MYLOGGER(trace_function , "AstList::add(operand_variant)" , __func__, SLOG_FUNC_INFO+9);
+  list_.push_back(ovv);
+  return true;
+}
+
+
 
 
 

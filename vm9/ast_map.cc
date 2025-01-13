@@ -90,11 +90,19 @@ bool AstMap::add(const Operand &k, astnode_u_ptr &&vptr, bool overwrite)  {
 
 }
 bool AstMap::add(const string &k, const AstNode &v, bool overwrite)  {
-  MYLOGGER(trace_function, "AstMap::add(string &k, operand_variant_t, bool) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstMap::add(string &k, const AstNode&, bool) ", __func__, SLOG_FUNC_INFO);
   if(has_key(k)) {
     if(!overwrite) return false;
   }
   map_[k] = v.clone();
+  return true;
+}
+bool AstMap::add(const string &k, const operand_variant_t&v, bool overwrite)  {
+  MYLOGGER(trace_function, "AstMap::add(string &k, const operand_variant_t, bool) ", __func__, SLOG_FUNC_INFO);
+  if(has_key(k)) {
+    if(!overwrite) return false;
+  }
+  map_[k] = v;
   return true;
 }
 
@@ -109,7 +117,7 @@ bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
 //------------------------------------- 
 bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(AstList&, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO);
-  cout << "AstList::operator[" <<  index_keys << "] \n" ;
+  //cout << "AstList::add[" <<  index_keys << "] \n" ;
 
   auto Mptr= _vrptr();
   s_integer i, s = index_keys.size();
@@ -140,6 +148,43 @@ bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite
   }
   return true;
 }
+
+//------------------------------------- 
+bool AstMap::add(const AstList &index_keys, const operand_variant_t& ovv, bool overwrite)  {
+  MYLOGGER(trace_function, "AstMap::add(AstList&, operand_variant&, bool) ", __func__, SLOG_FUNC_INFO);
+  //cout << "AstList::add[" <<  index_keys << "] \n" ;
+
+  auto Mptr= _vrptr();
+  s_integer i, s = index_keys.size();
+  for(i=0; i<s; i++) {
+    auto &k= index_keys[i];
+    auto &v = (*Mptr)[k];
+    if(!v.is_nil() && !overwrite) return false;
+    if(v.is_nil()) {
+      //if(!overwrite) return false;
+
+
+      if(i==s-1) { //cout << "v is nil, map add setting final:" << *vptr << "\n";
+        (*Mptr)[k] = ovv;
+        return true;
+      } else {
+        astnode_u_ptr new_map = make_unique<AstMap>();
+        (*Mptr)[k] = move(new_map);
+        Mptr = (*Mptr)[k]._vrptr();
+      }
+
+      continue;
+    }
+    if(i==s-1) { //cout << "v is not nil, map add setting final:" << *vptr << "\n";
+      (*Mptr)[k] = ovv;
+      return true;
+    }
+    Mptr = v._vrptr();
+  }
+  return true;
+}
+
+
 
 //------------------------------------- 
 astnode_ptr AstMap::_vrptr() const {
