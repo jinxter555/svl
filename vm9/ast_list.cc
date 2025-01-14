@@ -56,14 +56,17 @@ astnode_u_ptr AstList::clone() const {
 Operand& AstList::operator[] (const Operand& k) {
   MYLOGGER(trace_function, "AstList::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
   //return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
-  return list_[k._get_int()]; 
-}
+  auto vrptr = k._vrptr();
 
-const Operand& AstList::operator[] (const Operand &k) const {
-  MYLOGGER(trace_function, "AstList::operator[](Operand&) const", __func__, SLOG_FUNC_INFO);
-  s_integer index = k._get_int();
-  if(index >= list_.size() || index < 0) return nil_operand;
-  return list_[index]; 
+  switch (vrptr->_get_type()) {
+  case OperandType::num_t: {
+    auto i = k._get_int();
+    return list_[i]; } //return const_cast<Operand&>(as_const(*this)[kstr]); }
+  case OperandType::list_t: {
+    auto &l= vrptr->get_list();
+    return (*this)[l]; //return const_cast<Operand&>(as_const(*this)[l]); 
+  }}
+  return nil_operand_nc;
 }
 
 //--------------------------------------

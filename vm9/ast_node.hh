@@ -25,6 +25,7 @@ public:
   AstNode() : Primordial(OperandType::nil_t) {};
   AstNode(OperandType t) : Primordial(t) {};
 
+  virtual Operand evaluate(unique_ptr<AstNode>&) =0 ;
 
 
   virtual astnode_ptr _vrptr() const =0;
@@ -45,17 +46,16 @@ public:
 
   virtual bool is_nil() const=0;
 
-  Operand& operator[] (const AstNode& k) ;
-  const Operand& operator[] (const AstNode &k) const ;
 
-  //Operand& operator[] (const Operand& k) ;
   //const Operand& operator[] (const Operand &k) const ;
-  virtual Operand& operator[] (const Operand& k) = 0;
-  virtual const Operand& operator[] (const Operand&k) const =0;
 
-  virtual Operand& operator[] (const AstList& k) ;
+  virtual Operand& operator[] (const AstList& k) = 0;
+  virtual Operand& operator[] (const Operand& k) = 0;
   virtual bool add(astnode_u_ptr &&vptr) =0;  // for list
   
+
+
+
   /*
   virtual bool operator==(const AstNode& other) const=0;
   virtual bool operator!=(const AstNode& other) const=0;

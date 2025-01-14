@@ -140,3 +140,5 @@ Operand Operand::ToString::operator()(AstOpCode t_op) const {
 
 Operand Operand::ToString::operator()(const astnode_s_ptr &vptr) const { return vptr->to_str(); }
 Operand Operand::ToString::operator()(const astnode_u_ptr &vptr) const { return vptr->to_str(); }
+//Operand Operand::ToString::operator()(const svlm_ast_ptr &vptr) const { return vptr->to_str(); }
+Operand Operand::ToString::operator()(const svlm_ast_ptr &vptr) const { return "svlm_ast_ptr"; }

@@ -78,9 +78,6 @@ enum class OperandType {
   array_t,     // operand  entity
   list_t,
   map_t,
-  list_uptr_t,
-  map_uptr_t,
-  quenode_t,
 
   ptr_t,
   uptr_t,
@@ -149,7 +146,7 @@ public:
   Primordial(OperandType t) : type_(t) {};
 
   virtual unique_ptr<T> clone() const=0;
-  virtual Operand evaluate(unique_ptr<T>&)=0;
+//  virtual Operand evaluate(unique_ptr<T>&)=0;
   virtual Operand to_str() const =0;
   virtual Operand get_type() const=0;
   virtual OperandType _get_type() const=0;

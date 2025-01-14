@@ -36,12 +36,11 @@ public:
   AstMap* get_map_ptr_nc() override;
 
   Operand& operator[] (const Operand& k) override ;
-  const Operand& operator[] (const Operand &k) const override ;
+  Operand& operator[] (const AstList& k) override;
 
   Operand& operator[] (const s_integer ) ;
   const Operand& operator[] (const s_integer) const ;
 
-  Operand& operator[] (const AstList& k) ;
 //  const Operand& operator[] (const AstList &k) const ;
 
   bool add(astnode_u_ptr &&vptr) override;  // for list

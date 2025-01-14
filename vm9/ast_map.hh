@@ -46,9 +46,12 @@ public:
 
   bool is_nil() const override;
 
-  Operand& operator[] (const AstList& k) ;
+  //-------------------------
+  Operand& operator[] (list_t& k) ;
+  Operand& operator[] (const AstList& k) override ;
   Operand& operator[] (const Operand& k) override ;
-  const Operand& operator[] (const Operand &k) const override ;
+  //const Operand& operator[] (const string &k) const ;
+  //-------------------------
 
   bool add(const AstList &k, astnode_u_ptr &&v, bool overwrite=false);
   bool add(const Operand &k, astnode_u_ptr &&v, bool overwrite=false);
@@ -60,6 +63,7 @@ public:
   bool add(const AstList &k, const operand_variant_t&v, bool overwrite=false);
   bool add(astnode_u_ptr &&vptr) override {return false; };  // for list
 
+  //-------------------------
 
   bool has_key(const Operand &k) const;
   bool has_key(const string &k) const ;

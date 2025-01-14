@@ -8,11 +8,12 @@
 
 #define MOD "module"
 #define FRAMES "frames"
+
 SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
 
   Operand ov(list_t{});
 
-  if(! root.addk(vec_str_t{CONTEXT_UNIV, FRAMES}, ov, true)) {
+  if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, ov, true)) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
   }
@@ -26,6 +27,7 @@ operand_u_ptr& SvlmAst::get_context() {
   return c.get_u_ptr_nc();
 }
 operand_u_ptr& SvlmAst::get_frames() {
+  const auto  tt = vec_str_t{CONTEXT_UNIV, FRAMES};
   auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
   //if(c==nil_operand) {
   if(c._get_type()==OperandType::nil_t) {
@@ -50,7 +52,7 @@ string SvlmAst::get_current_module() {
   return m._to_str();
 }
 
-void SvlmAst::add_module(const Operand& mod_name, operand_u_ptr clist_ptr) {
+void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
   MYLOGGER(trace_function , string("SvlmAst::add_module('") + mod_name._to_str() + string("')") ,__func__)
 //  cout << "SvlmAst::add_module()\n";
 
@@ -133,7 +135,7 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   return msub_node;
 }
 
-void SvlmAst::add_code(const Operand&n, operand_u_ptr clist) {
+void SvlmAst::add_code(const Operand&n, list_u_ptr clist) {
   //cout << "add code:" << MOD << " " << n << "\n";
   auto &msub_node = get_module_subnode(n, OperandType::ast_mod_t);
   map_t new_map;
@@ -178,7 +180,7 @@ void SvlmAst::run_evaluate() {
 }
 //----------------------------------------------------------------------- AstBinOp
 
-AstBinOp::AstBinOp(astexpr_u_ptr l, astexpr_u_ptr r, AstOpCode op) 
+AstBinOp::AstBinOp(astnode_u_ptr l, astnode_u_ptr r, AstOpCode op) 
  : type_(OperandType::ast_binop_t) 
   {
   add(string("left"), move(l));
@@ -197,7 +199,7 @@ Operand AstBinOp::to_str() const {
 }
 Operand AstBinOp::evaluate(operand_u_ptr& ctxt) {
   MYLOGGER(trace_function
-  , "AstBinOp::evaluate(astexpr_u_ptr& ctxt)"
+  , "AstBinOp::evaluate(astnode_u_ptr& ctxt)"
   , __func__);
 
 
@@ -302,7 +304,7 @@ Operand AstPrint::evaluate(operand_u_ptr& ctxt) {
   return Operand("").evaluate(ctxt);
 }
 //----------------------------------------------------------------------- AstCaller
-AstCaller::AstCaller(const Operand& callee, astexpr_u_ptr arg_list) {
+AstCaller::AstCaller(const Operand& callee, astnode_u_ptr arg_list) {
   type_= OperandType::ast_caller_t;
   auto modfunc = split_string(callee._to_str(), ".");
   //cout << "modfunc size" << modfunc.size() << "\n";
@@ -316,7 +318,7 @@ AstCaller::AstCaller(const Operand& callee, astexpr_u_ptr arg_list) {
   add(string("arg_list"), move(arg_list));
 }
 
-Operand& AstCaller::add_frame(astexpr_u_ptr &ctxt) { 
+Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) { 
   // use current module if call
 
 
@@ -355,7 +357,7 @@ Operand& AstCaller::add_frame(astexpr_u_ptr &ctxt) {
 
   return frames->back();
 }
-Operand& AstCaller::remove_frame(astexpr_u_ptr &ctxt) { 
+Operand& AstCaller::remove_frame(astnode_u_ptr &ctxt) { 
   auto &svlm_lang = ctxt->get_branch({"svlm_lang"});
   auto ptr = svlm_lang.get_svlm_ptr();
   auto &frames = ptr->get_frames();
@@ -373,7 +375,7 @@ Operand AstCaller::to_str() const {
 void AstCaller::print() const {
   cout << "AstCaller Print: " << to_str();
 }
-Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
+Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   string module_name;
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &callee_mod = map_.at(string("callee_mod"));
@@ -402,7 +404,7 @@ Operand AstCaller::evaluate(astexpr_u_ptr& ctxt) {
 
 
 /*
-string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
+string AstCaller::get_current_module(astnode_u_ptr& ctxt) {
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame();
   auto &m = frame[string("current_module")];
@@ -411,7 +413,7 @@ string AstCaller::get_current_module(astexpr_u_ptr& ctxt) {
 }
 */
 
-s_integer AstAssign::get_index_i(astexpr_u_ptr &ctxt) {
+s_integer AstAssign::get_index_i(astnode_u_ptr &ctxt) {
   auto &idx_key =  getv(string("idx_key"));
   if(idx_key == nil_operand) {
       return -1;
@@ -424,7 +426,7 @@ s_integer AstAssign::get_index_i(astexpr_u_ptr &ctxt) {
 
   return result._get_int();
 }
-string AstAssign::get_index_s(astexpr_u_ptr &ctxt) {
+string AstAssign::get_index_s(astnode_u_ptr &ctxt) {
   auto &idx_key =  getv(string("idx_key"));
   if(idx_key == nil_operand) {
     return "";
@@ -454,14 +456,14 @@ AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) {
   add(string("var_name"), Operand(v));
 }
 
-astexpr_u_ptr AstMvar::clone() const {
+astnode_u_ptr AstMvar::clone() const {
   auto &var_name= (*this)["var_name"];
   auto &mod_name= (*this)["mod_name"];
   //return make_unique<AstMvar>(mod_name + var_name);
   return nullptr;
 }
 
-AstMvar::AstMvar(const string &v, astexpr_u_ptr idx_key) : AstAssign(OperandType::ast_mvar_t) { 
+AstMvar::AstMvar(const string &v, astnode_u_ptr idx_key) : AstAssign(OperandType::ast_mvar_t) { 
   scale_ = OperandType::array_t;
   auto mod_var = split_string(v, ".");
   add(string("idx_key"), move(idx_key));
@@ -508,9 +510,9 @@ void AstMvar::print() const {
 }
 
 // to get value from tree: module 'mname' mvar 'vname'
-Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
+Operand AstMvar::evaluate(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function
-  , "AstMvar::evaluate(astexpr_u_ptr& ctxt)"
+  , "AstMvar::evaluate(astnode_u_ptr& ctxt)"
   , __func__
   )
   MYLOGGER_MSG(trace_function, string("var_name: ") + name())
@@ -580,9 +582,9 @@ Operand AstMvar::evaluate(astexpr_u_ptr& ctxt) {
 
 
 // to assign value to tree: module 'mname' mvar 'vname'
-bool AstMvar::assign(astexpr_u_ptr& ctxt, Operand &v) {
+bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
   MYLOGGER(trace_function
-  , "AstMvar::assign(astexpr_u_ptr& ctxt, const Operand& v)" 
+  , "AstMvar::assign(astnode_u_ptr& ctxt, const Operand& v)" 
   , string("AstMvar::") + string(__func__));
   MYLOGGER_MSG(trace_function, name() + string(" = ") + v.to_str()._to_str());
 
@@ -668,7 +670,7 @@ void AstLvar::print() const {
 }
 
 
-Operand AstLvar::evaluate(astexpr_u_ptr& ctxt) {
+Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {
   //cout << "AstLvar::evalaute\n";
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   if(svlm_lang_ptr==nullptr) {
@@ -681,7 +683,7 @@ Operand AstLvar::evaluate(astexpr_u_ptr& ctxt) {
   return lvars.getv(var_name).clone();
 }
 
-bool AstLvar::assign(astexpr_u_ptr& ctxt, Operand& v) {
+bool AstLvar::assign(astnode_u_ptr& ctxt, Operand& v) {
   auto svlm_lang_ptr = ctxt->get_branch({"svlm_lang"}).get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame();
   auto &lvars =  frame["lvars"];
@@ -690,7 +692,7 @@ bool AstLvar::assign(astexpr_u_ptr& ctxt, Operand& v) {
   return true;
 }
 //----------------------------------------------------------------------- Tuple
-AstTuple::AstTuple(astexpr_u_ptr u_tuple) : AstAssign(OperandType::ast_tuple_t){ 
+AstTuple::AstTuple(astnode_u_ptr u_tuple) : AstAssign(OperandType::ast_tuple_t){ 
   //cout << "AstTuple::AstTuple()\n";
   AstMap::add(string("u_tuple"), move(u_tuple));
 }
@@ -718,7 +720,7 @@ OperandType AstTuple::_get_type() const {
   return OperandType::ast_tuple_t;
 
 }
-Operand AstTuple::evaluate(astexpr_u_ptr& ctxt) {
+Operand AstTuple::evaluate(astnode_u_ptr& ctxt) {
   cout << "AstTuple::eval\n";
 
   auto &u_tuple = (*this)["u_tuple"];
@@ -730,12 +732,12 @@ Operand AstTuple::evaluate(astexpr_u_ptr& ctxt) {
 
   return e_tuple;
 }
-astexpr_u_ptr AstTuple::clone() const {
+astnode_u_ptr AstTuple::clone() const {
   cout << "AstTuple::clone()\n";
   auto &u_tuple= (*this)["u_tuple"];
   return  make_unique<AstTuple>(u_tuple.clone());
 }
-astexpr_u_ptr AstTuple::clone_usu() {
+astnode_u_ptr AstTuple::clone_usu() {
   cout << "AstTuple::clone_usu()\n";
   auto &u_tuple= (*this)["u_tuple"];
   cout << "elist: "  << u_tuple<< "\n";
@@ -743,14 +745,14 @@ astexpr_u_ptr AstTuple::clone_usu() {
 }
 
 
-astexpr_u_ptr AstTuple::elemptr(const Operand& v) {
+astnode_u_ptr AstTuple::elemptr(const Operand& v) {
 
   return nullptr;
 
 }
 
 
-bool AstTuple::assign(astexpr_u_ptr& ctxt, Operand& v) {
+bool AstTuple::assign(astnode_u_ptr& ctxt, Operand& v) {
   cout << "AstTuple::assign()\n";
   auto &u_tuple = (*this)["u_tuple"];
   auto e_tuple = evaluate(ctxt);

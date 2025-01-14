@@ -11,6 +11,7 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+/*
 Operand& AstNode::operator[] (const AstList& index_keys) {
   MYLOGGER(trace_function, "AstNode::operator[](const AstList&) const", __func__, SLOG_FUNC_INFO);
   cout << "AstNode::operator[" <<  index_keys << "] \n" ;
@@ -30,6 +31,8 @@ Operand& AstNode::operator[] (const AstList& index_keys) {
   }
   return nil_operand_nc;
 }
+*/
+
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const AstNode& e) {
   if(e.is_nil() ) cerr << "AstExpr is nil\n"; 

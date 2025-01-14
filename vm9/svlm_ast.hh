@@ -1,22 +1,22 @@
 #pragma once
+#include "ast_node.hh"
 #include "operand.hh"
 #include "ast_map.hh"
 #include "ast_list.hh"
 
-class Tree : public AstMap{
+class Tree : public Primordial<Tree>{
 protected:
-  astnode_ptr root;
+  AstMap root;
 public:
-  Tree() {
-    root = AstMap::["root"];
-  }
+  Tree(const OperandType&t) : Primordial(t) {};
+  s_integer size() const override {return 0;};
 
-
-}
+};
 
 class SvlmAst : Tree {
   friend class SvlmInteractive;
 protected:
+
   //Operand control_flow = ControlFlow::run;
   bool interactive=false;
 
@@ -24,13 +24,13 @@ public:
   SvlmAst(const OperandType&t);
 
   void add_program(const Operand&);
-  void add_module(const Operand&, operand_u_ptr clist );
+  void add_module(const Operand&, list_u_ptr clist );
   void add_class();
   void add_function();
   void add_mvar();
   void add_ovar();
   void add_lvar();
-  void add_code(const Operand&, operand_u_ptr clist);
+  void add_code(const Operand&, list_u_ptr clist);
 
   Operand& get_module_subnode(const Operand&, const OperandType t);
 
@@ -52,20 +52,20 @@ public:
 };  
 
 
-class AstBinOp : public Operand {
+class AstBinOp : public SvlmAst {
 private:
   OperandType type_;
 public:
-  AstBinOp (unique_ptr<AstExpr> l, unique_ptr<AstExpr> r, AstOpCode op);
+  AstBinOp (unique_ptr<AstNode> l, unique_ptr<AstNode> r, AstOpCode op);
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() ;
 };
 
 
 
-class AstFunc: public Operand{
+class AstFunc: public SvlmAst{
 private:
   string name;
   OperandType type_;
@@ -74,12 +74,12 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() const override;
 };
 
 
-class AstPrint : public Operand { 
+class AstPrint : public AstMap { 
 private:
   OperandType type_;
 public:
@@ -87,11 +87,11 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() const override;
 };
 
-class AstCaller : public Operand {
+class AstCaller : public AstMap {
 private:
   OperandType type_;
   bool evaluated=false;
@@ -100,7 +100,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() const override;
   //string get_current_module(operand_u_ptr& ctxt) ; // get current module from frame only
   string get_module() ; // if $module.var return module , if $var, return current_module
@@ -112,7 +112,7 @@ public:
 
 };
 
-class AstAssign : public Operand {
+class AstAssign : public AstMap {
 protected:
   OperandType type_;
   OperandType scale_;
@@ -138,10 +138,10 @@ public:
   Operand get_type() const override ;
   Operand get_scale() {return scale_; };
   OperandType _get_type() const override;
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   bool assign(operand_u_ptr& ctxt, Operand& ) override final;
   void print() const override;
-  astexpr_u_ptr clone() const override; 
+  astnode_u_ptr clone() const override; 
 };
 
 class AstLvar : public AstAssign {
@@ -154,7 +154,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   bool assign(operand_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
@@ -167,14 +167,14 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   bool assign(operand_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 
-  astexpr_u_ptr clone() const override; 
+  astnode_u_ptr clone() const override; 
 };
 
-class AstFlow : public AstExpr {
+class AstFlow : public AstNode {
 protected:
   OperandType type_;
 public:
@@ -183,6 +183,6 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(operand_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() const override;
 };

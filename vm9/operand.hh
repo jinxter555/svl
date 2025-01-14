@@ -9,10 +9,16 @@
 
 
 
+class AstList;
+class AstMap;
+class SvlmAst;
 using map_t = map<string, Operand>; 
 using list_t = vector<Operand>; 
+using list_u_ptr = unique_ptr<AstList>;
+using map_u_ptr = unique_ptr<AstMap>;
 using vec_num_t = vector<Number>;
 using vec_str_t = vector<string>;
+using svlm_ast_ptr = SvlmAst *;
 
 using operand_variant_t = variant
 < Nil
@@ -25,6 +31,7 @@ using operand_variant_t = variant
 , astnode_u_ptr
 , astnode_s_ptr
 , astnode_ptr
+, svlm_ast_ptr
 //, operand_u_ptr , operand_s_ptr , operand_ptr
 >;
 
@@ -48,12 +55,13 @@ public:
   Operand(astnode_u_ptr &&);
   //Operand(const astnode_u_ptr &);
   //Operand(const astnode_s_ptr &);
-  Operand(const astnode_ptr);
   Operand(const list_t &);
   Operand(const map_t &);
   Operand(const vec_num_t&);
   Operand(const vec_str_t&);
   Operand(const operand_variant_t& ) ;
+  Operand(const astnode_ptr);
+  Operand(const svlm_ast_ptr) ;
 
   bool add(astnode_u_ptr &&) ;  // for list
   bool add(const operand_variant_t&) ;  // for list
@@ -120,7 +128,8 @@ public:
 
 
   Operand& operator[] (const Operand& k) override final;
-  const Operand& operator[] (const Operand &k) const override final;
+  Operand& operator[] (const AstList& k) override final;
+ // const Operand& operator[] (const Operand &k) const override final;
 /*
 //------------------------------------
   void accept_nc(Visitor &visitor) override;
@@ -197,6 +206,7 @@ OperandType operator()(const OperandErrorCode& v) const ;
 OperandType operator()(const astnode_u_ptr& v) const  ;
 OperandType operator()(const astnode_s_ptr& v) const  ;
 OperandType operator()(const astnode_ptr& v) const  ;
+OperandType operator()(const svlm_ast_ptr&) const;
 };
 
 //------------------------------------
@@ -225,6 +235,7 @@ struct ToString {
   //Operand operator()(const map_t &) const;
   Operand operator()(const astnode_u_ptr&) const;
   Operand operator()(const astnode_s_ptr&) const;
+  Operand operator()(const svlm_ast_ptr&) const;
 
 
   //Operand operator()(const map_t &) const;

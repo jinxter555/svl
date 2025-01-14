@@ -43,6 +43,8 @@ Operand::Operand(const ControlFlow &v )       : AstNode(OperandType::control_t),
 Operand::Operand(astnode_u_ptr&&v )           : AstNode(OperandType::uptr_t), value_(move(v)) {}
 //Operand::Operand(const astnode_s_ptr&v )      : AstNode(OperandType::sptr_t), value_(v) {}
 Operand::Operand(const astnode_ptr  v)      : AstNode(OperandType::ptr_t), value_(v) {}
+Operand::Operand(const svlm_ast_ptr ptr)          : AstNode(OperandType::svlm_ast_ptr_t) , value_(ptr) {}
+
 
 //Operand::Operand(const astnode_u_ptr&v )      : AstNode(OperandType::ast_uptr_t), value_(move(v->clone())) {}
 //------------------------------------ vec 
@@ -122,7 +124,7 @@ bool Operand::add(const AstList &k, astnode_u_ptr&&vvptr, bool overwrite) {
   switch (vptr->_get_type()) {
   case OperandType::list_t:  {
     auto lptr = vptr->get_list_ptr_nc();
-    //list->add(k, ovv, overwrite);
+    //list->add(k, move(vvptr), overwrite);
     return false;}
   case OperandType::map_t:  {
     auto mptr= vptr->get_map_ptr_nc();
@@ -233,12 +235,22 @@ Operand& Operand::operator[] (const Operand& k) {
   if(vptr==nullptr) return nil_operand_nc;
   return (*vptr)[k];
 };
-const Operand& Operand::operator[] (const Operand &k) const {
-  MYLOGGER(trace_function, "Operand::operator[](Operand&) const", __func__, SLOG_FUNC_INFO);
-  auto vptr =(AstList*) _vrptr();
-  if(vptr==nullptr) return nil_operand;
-  return (*vptr)[k];
+
+Operand& Operand::operator[] (const AstList& k) {
+  MYLOGGER(trace_function, "Operand::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
+  //return const_cast<Operand&>(as_const(*this)[k]); 
+  auto vptr =_vrptr();
+  switch (vptr->_get_type()) {
+  case OperandType::list_t:  {
+    auto lptr = vptr->get_list_ptr_nc();
+    return (*lptr)[k];}
+  case OperandType::map_t:  {
+    auto mptr= vptr->get_map_ptr_nc();
+    return (*mptr)[k];
+  }}
+  return nil_operand_nc;
 };
+
 
 //------------------------------------
 Number Operand::_get_number() const { 

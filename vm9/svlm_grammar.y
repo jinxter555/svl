@@ -52,10 +52,10 @@ namespace vslast {
 %nterm <string> DOTSTR 
 %nterm comments
 
-%nterm <astexpr_u_ptr> proto_list proto arg_list arg list map tuple
-%nterm <astexpr_u_ptr>  kv_pair_list
+%nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple
+%nterm <astnode_u_ptr>  kv_pair_list
 %nterm <string> map_key
-%type <tuple<string, astexpr_u_ptr>> kv_pair 
+%type <tuple<string, astnode_u_ptr>> kv_pair 
 
 
 
@@ -69,7 +69,7 @@ namespace vslast {
 %right              EXPONENT
 
 %type <list_u_ptr> statement_list 
-%type <astexpr_u_ptr> module function literals exp_eval variable statement print_exp caller comments
+%type <astnode_u_ptr> module function literals exp_eval variable statement print_exp caller comments
 
 %start program_start
 

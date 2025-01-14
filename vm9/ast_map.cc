@@ -28,20 +28,36 @@ Operand AstMap::evaluate(astnode_u_ptr& ctxt) {
   return clone(); }
 
 //------------------------------------------------------------------------------------------------------------------ 
+
 Operand& AstMap::operator[] (const Operand& k) {
   MYLOGGER(trace_function, "AstMap::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
-  //return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
-  return map_[k._to_str()]; 
+  auto vrptr = k._vrptr();
+
+  switch (vrptr->_get_type()) {
+  case OperandType::str_t: {
+    auto kstr = k.to_str()._to_str();
+    return map_[kstr]; } //return const_cast<Operand&>(as_const(*this)[kstr]); }
+  case OperandType::list_t: {
+    auto &l= vrptr->get_list();
+    return (*this)[l]; //return const_cast<Operand&>(as_const(*this)[l]); 
+  }}
+  return nil_operand_nc;
 }
 
-const Operand& AstMap::operator[] (const Operand &k) const {
+/*
+const Operand& AstMap::operator[] (const string &k) const {
   MYLOGGER(trace_function, "AstMap::operator[](Operand&) const", __func__, SLOG_FUNC_INFO);
-  const string k_str = k._to_str();
-  if(!has_key(k_str)) return nil_operand;
-  return map_.at(k_str); 
+  if(!has_key(k)) return nil_operand;
+  return map_.at(k); 
 }
+*/
 
 //--------------------------------------
+Operand& AstMap::operator[] (list_t& index_keys) {
+  MYLOGGER(trace_function, "AstMap::operator[](const list_t&) ", __func__, SLOG_FUNC_INFO);
+  return (*this)[AstList(index_keys)];
+}
+
 Operand& AstMap::operator[] (const AstList& index_keys) {
   MYLOGGER(trace_function, "AstMap::operator[](const AstList&) ", __func__, SLOG_FUNC_INFO);
   cout << "AstMap::operator[" <<  index_keys << "] \n" ;
