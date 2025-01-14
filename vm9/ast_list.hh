@@ -35,12 +35,17 @@ public:
   AstList* get_list_ptr_nc() override;
   AstMap* get_map_ptr_nc() override;
 
+  const astnode_u_ptr& get_u_ptr() const override;
+  astnode_u_ptr& get_u_ptr_nc() override;
+
   Operand& operator[] (const Operand& k) override ;
   Operand& operator[] (const AstList& k) override;
 
   Operand& operator[] (const s_integer ) ;
   const Operand& operator[] (const s_integer) const ;
 
+  const Operand& back() const override;
+  Operand& back_nc()  override;
 //  const Operand& operator[] (const AstList &k) const ;
 
   bool add(astnode_u_ptr &&vptr) override;  // for list

@@ -32,6 +32,8 @@ public:
   AstList* get_list_ptr_nc() override;
   AstMap* get_map_ptr_nc() override;
 
+  const astnode_u_ptr& get_u_ptr() const override ;
+  astnode_u_ptr& get_u_ptr_nc() override ;
 
   const list_t& _get_list() const;
 
@@ -47,20 +49,27 @@ public:
   bool is_nil() const override;
 
   //-------------------------
-  Operand& operator[] (list_t& k) ;
+  Operand& operator[] (const list_t& k) ;
+  Operand& operator[] (const vec_str_t& k) ;
   Operand& operator[] (const AstList& k) override ;
   Operand& operator[] (const Operand& k) override ;
   //const Operand& operator[] (const string &k) const ;
   //-------------------------
+  const Operand& back() const override;
+  Operand& back_nc()  override;
+
 
   bool add(const AstList &k, astnode_u_ptr &&v, bool overwrite=false);
   bool add(const Operand &k, astnode_u_ptr &&v, bool overwrite=false);
+  bool add(const vec_str_t &k, astnode_u_ptr &&v, bool overwrite=false);
 
   bool add(const string &k, astnode_u_ptr &&v, bool overwrite=false);
   bool add(const string &k, const AstNode& v, bool overwrite=false);
 
-  bool add(const string &k,  const operand_variant_t& v, bool overwrite=false);
   bool add(const AstList &k, const operand_variant_t&v, bool overwrite=false);
+  bool add(const vec_str_t &k, const operand_variant_t&v, bool overwrite=false);
+  bool add(const string &k,  const operand_variant_t& v, bool overwrite=false);
+
   bool add(astnode_u_ptr &&vptr) override {return false; };  // for list
 
   //-------------------------

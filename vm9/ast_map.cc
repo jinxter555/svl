@@ -53,8 +53,12 @@ const Operand& AstMap::operator[] (const string &k) const {
 */
 
 //--------------------------------------
-Operand& AstMap::operator[] (list_t& index_keys) {
+Operand& AstMap::operator[] (const list_t& index_keys) {
   MYLOGGER(trace_function, "AstMap::operator[](const list_t&) ", __func__, SLOG_FUNC_INFO);
+  return (*this)[AstList(index_keys)];
+}
+Operand& AstMap::operator[] (const vec_str_t& index_keys) {
+  MYLOGGER(trace_function, "AstMap::operator[](const vec_str_t&) ", __func__, SLOG_FUNC_INFO);
   return (*this)[AstList(index_keys)];
 }
 
@@ -86,10 +90,16 @@ Operand& AstMap::operator[] (const AstList& index_keys) {
   return nil_operand_nc;
 }
 
+const Operand& AstMap::back() const {return nil_operand;}
+Operand& AstMap::back_nc()  {return nil_operand_nc;}
+
 //------------------------------------------------------------------------------------------------------------------ 
 
 
 
+bool AstMap::add(const vec_str_t&k, astnode_u_ptr &&vptr, bool overwrite)  {
+  return add(AstList(k), move(vptr), overwrite );
+}
 
 bool AstMap::add(const Operand &k, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(Operand&k, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO)
@@ -120,6 +130,9 @@ bool AstMap::add(const string &k, const operand_variant_t&v, bool overwrite)  {
   }
   map_[k] = v;
   return true;
+}
+bool AstMap::add(const vec_str_t&k, const operand_variant_t&v, bool overwrite)  {
+  return add(AstList(k), v, overwrite );
 }
 
 bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
@@ -208,6 +221,8 @@ astnode_ptr AstMap::_vrptr() const {
   return (AstNode*) this; 
 }
 
+const astnode_u_ptr& AstMap::get_u_ptr() const { return nil_ast_ptr; }
+astnode_u_ptr& AstMap::get_u_ptr_nc() { return nil_ast_ptr_nc; }
 //------------------------------------- 
 bool AstMap::has_key(const Operand &k)  const {
   string k_str = k._to_str();

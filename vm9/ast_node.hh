@@ -44,6 +44,9 @@ public:
   virtual AstList* get_list_ptr_nc() =0;
   virtual AstMap* get_map_ptr_nc() =0;
 
+  virtual const astnode_u_ptr& get_u_ptr() const =0;
+  virtual astnode_u_ptr& get_u_ptr_nc() =0;
+
   virtual bool is_nil() const=0;
 
 
@@ -51,6 +54,8 @@ public:
 
   virtual Operand& operator[] (const AstList& k) = 0;
   virtual Operand& operator[] (const Operand& k) = 0;
+  virtual const Operand& back() const = 0;
+  virtual Operand& back_nc() = 0;
   virtual bool add(astnode_u_ptr &&vptr) =0;  // for list
   
 

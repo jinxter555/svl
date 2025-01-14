@@ -1,5 +1,6 @@
 #include "operand.hh"
 #include "operand_vars.hh"
+#include <utility>
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -65,6 +66,22 @@ const operand_u_ptr& operator()(const operand_u_ptr& v) const;
 const operand_u_ptr& operator()(const operand_s_ptr& v) const;
 };
 */
+const astnode_u_ptr& Operand::get_u_ptr() const {
+ return visit(Uptr(), value_);
+}
+astnode_u_ptr& Operand::get_u_ptr_nc() { 
+  return const_cast<astnode_u_ptr&>(as_const(this->get_u_ptr())); 
+}
+
+
+template <typename T> 
+const astnode_u_ptr& Operand::Uptr::operator()(const T& v) const { return nil_ast_ptr; }
+const astnode_u_ptr& Operand::Uptr::operator()(const Nil) const { return nil_ast_ptr; }
+const astnode_u_ptr& Operand::Uptr::operator()(const astnode_u_ptr& v) const { return v; }
+const astnode_u_ptr& Operand::Uptr::operator()(const astnode_s_ptr& v) const{ return v->get_u_ptr(); }
+const astnode_u_ptr& Operand::Uptr::operator()(const astnode_ptr& v) const{ return v->get_u_ptr(); }
+
+
 //----------------------------------------------------------------------- Rptr
 //------------------------------------ 
 astnode_ptr Operand::get_raw_ptr() const {

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 #include "operand.hh"
 #include "ast_list.hh"
 #include "ast_map.hh"
@@ -22,7 +23,7 @@ extern const astnode_u_ptr nil_ast_ptr=nullptr;
 extern const operand_u_ptr nil_operand_ptr=nullptr;
 operand_u_ptr nil_operand_ptr_nc=nullptr;
 Operand nil_operand_nc=Operand();
-
+astnode_u_ptr nil_ast_ptr_nc=nullptr;
 
 
 ostream& operator<<(ostream& os, const Operand& v);
@@ -145,6 +146,7 @@ astnode_u_ptr Operand::_uptr() {
   return nullptr;
 }
 
+
 //------------------------------------ Clone() s
 astnode_u_ptr Operand::clone() const { return visit(Clone{}, value_); }
 //unique_ptr<Operand> Operand::clone_operand() const { return visit(Clone{}, value_); }
@@ -230,11 +232,18 @@ AstMap* Operand::get_map_ptr_nc() {
 //------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
   MYLOGGER(trace_function, "Operand::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
-  //return const_cast<Operand&>(as_const(*this)[k]); 
+  return const_cast<Operand&>(as_const(*this)[k]); 
   auto vptr =(AstList*) _vrptr();
   if(vptr==nullptr) return nil_operand_nc;
   return (*vptr)[k];
-};
+}
+const Operand& Operand::operator[] (const Operand& k) const {
+  MYLOGGER(trace_function, "const Operand::operator[](const Operand&)", __func__, SLOG_FUNC_INFO);
+  //return const_cast<Operand&>(as_const(*this)[k]); 
+  auto vptr =(AstList*) _vrptr();
+  if(vptr==nullptr) return nil_operand;
+  return (*vptr)[k];
+}
 
 Operand& Operand::operator[] (const AstList& k) {
   MYLOGGER(trace_function, "Operand::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
@@ -249,8 +258,24 @@ Operand& Operand::operator[] (const AstList& k) {
     return (*mptr)[k];
   }}
   return nil_operand_nc;
-};
+}
 
+const Operand& Operand::back() const {
+  auto vptr =_vrptr();
+  switch (vptr->_get_type()) {
+  case OperandType::list_t:  {
+    auto lptr = vptr->get_list_ptr_nc();
+    if(lptr==nullptr) return nil_operand;
+    return lptr->back();}
+  case OperandType::map_t:  {
+    return nil_operand;
+  }}
+  return nil_operand;
+
+}
+Operand& Operand::back_nc()  {
+  return const_cast<Operand&>(as_const(back())); 
+}
 
 //------------------------------------
 Number Operand::_get_number() const { 

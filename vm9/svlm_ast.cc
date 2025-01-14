@@ -13,7 +13,7 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
 
   Operand ov(list_t{});
 
-  if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, ov, true)) {
+  if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, ov.clone(), true)) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
   }
@@ -22,17 +22,16 @@ Operand SvlmAst::to_str() const {
   return string("SvlmAst PTR");
 }
 
-operand_u_ptr& SvlmAst::get_context() {
+astnode_u_ptr& SvlmAst::get_context() {
   auto &c= root[vec_str_t{CONTEXT_UNIV}];
   return c.get_u_ptr_nc();
 }
-operand_u_ptr& SvlmAst::get_frames() {
-  const auto  tt = vec_str_t{CONTEXT_UNIV, FRAMES};
+astnode_u_ptr& SvlmAst::get_frames() {
   auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
   //if(c==nil_operand) {
   if(c._get_type()==OperandType::nil_t) {
     cerr << "SvlmAst::get_frames is nil_operand!\n";
-    return nil_operand_ptr_nc;
+    return nil_ast_ptr_nc;
   }
   return c.get_u_ptr_nc();
 }
@@ -197,7 +196,7 @@ Operand AstBinOp::to_str() const {
   auto &o = (*this)["op"];
   return  l.to_str() + o.to_str() +  r.to_str();
 }
-Operand AstBinOp::evaluate(operand_u_ptr& ctxt) {
+Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function
   , "AstBinOp::evaluate(astnode_u_ptr& ctxt)"
   , __func__);
@@ -254,18 +253,18 @@ Operand AstBinOp::evaluate(operand_u_ptr& ctxt) {
 
 
 //----------------------------------------------------------------------- AstFunc
-AstFunc::AstFunc(const Operand &n, operand_u_ptr pl,  operand_u_ptr code_ptr) {
+AstFunc::AstFunc(const Operand &n, astnode_u_ptr pl,  astnode_u_ptr code_ptr) {
   //cout << "AstFunc::AstFunc(" << n <<")\n";
   name = n._to_str();
   type_ = OperandType::ast_func_t;
 
   //  cout << "code_ptr: "<< code_ptr<< "\n";
-  (*this)["name"] = move(n.clone_operand());
+  (*this)["name"] = move(n.clone());
   (*this)["code"] = move(code_ptr);
   (*this)["proto_list"] = move(pl);
 }
 
-Operand AstFunc::evaluate(operand_u_ptr& ctxt) {
+Operand AstFunc::evaluate(astnode_u_ptr& ctxt) {
   cout << "AstFunc::evaluate()\n";
   auto &l = (*this)["code"];
   return l.evaluate(ctxt);
@@ -285,7 +284,7 @@ void AstFunc::print() const {
 }
 
 //----------------------------------------------------------------------- AstPrint
-AstPrint::AstPrint(operand_u_ptr ptr) {
+AstPrint::AstPrint(astnode_u_ptr ptr) {
   type_= OperandType::ast_print_t;
   add(string("exp"), move(ptr));
 }
@@ -298,7 +297,7 @@ Operand AstPrint::to_str() const {
 void AstPrint::print() const {
   cout << to_str();
 }
-Operand AstPrint::evaluate(operand_u_ptr& ctxt) {
+Operand AstPrint::evaluate(astnode_u_ptr& ctxt) {
   auto &exp = map_.at(string("exp"));
   cout << exp.evaluate(ctxt);
   return Operand("").evaluate(ctxt);

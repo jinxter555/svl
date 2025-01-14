@@ -10,6 +10,7 @@ protected:
 public:
   Tree(const OperandType&t) : Primordial(t) {};
   s_integer size() const override {return 0;};
+  virtual Operand evaluate(unique_ptr<AstNode>&) =0 ;
 
 };
 
@@ -23,6 +24,7 @@ protected:
 public:
   SvlmAst(const OperandType&t);
 
+
   void add_program(const Operand&);
   void add_module(const Operand&, list_u_ptr clist );
   void add_class();
@@ -34,8 +36,8 @@ public:
 
   Operand& get_module_subnode(const Operand&, const OperandType t);
 
-  operand_u_ptr& get_context() ;
-  operand_u_ptr& get_frames() ;
+  astnode_u_ptr& get_context() ;
+  astnode_u_ptr& get_frames() ;
   Operand& get_current_frame() ;
 
   string get_current_module() ;
@@ -49,6 +51,8 @@ public:
   void print() const override {};
   void run_evaluate();
   Operand evaluate_prompt_line();
+  Operand evaluate(unique_ptr<AstNode>&) override;
+
 };  
 
 
@@ -70,7 +74,7 @@ private:
   string name;
   OperandType type_;
 public:
-  AstFunc(const Operand&,  operand_u_ptr, operand_u_ptr) ; 
+  AstFunc(const Operand&,  astnode_u_ptr, astnode_u_ptr) ; 
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
@@ -83,7 +87,7 @@ class AstPrint : public AstMap {
 private:
   OperandType type_;
 public:
-  AstPrint(operand_u_ptr);
+  AstPrint(astnode_u_ptr);
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
@@ -96,18 +100,18 @@ private:
   OperandType type_;
   bool evaluated=false;
 public:
-  AstCaller(const Operand&, operand_u_ptr);
+  AstCaller(const Operand&, astnode_u_ptr);
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
   Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() const override;
-  //string get_current_module(operand_u_ptr& ctxt) ; // get current module from frame only
+  //string get_current_module(astnode_u_ptr& ctxt) ; // get current module from frame only
   string get_module() ; // if $module.var return module , if $var, return current_module
-  //operand_u_ptr& get_frames(operand_u_ptr& ctxt) ;
+  //astnode_u_ptr& get_frames(astnode_u_ptr& ctxt) ;
 
-  Operand& add_frame(operand_u_ptr& ctxt);
-  Operand& remove_frame(operand_u_ptr& ctxt);
+  Operand& add_frame(astnode_u_ptr& ctxt);
+  Operand& remove_frame(astnode_u_ptr& ctxt);
 
 
 };
@@ -119,10 +123,10 @@ protected:
 public:
   AstAssign(OperandType t, OperandType s=OperandType::scalar_t) : type_(t), scale_(s) {}
   virtual string name() = 0;
-  //virtual void assign(operand_u_ptr&, Operand& ) = 0;
-  virtual bool assign(operand_u_ptr&, Operand& ) = 0;
-  s_integer get_index_i(operand_u_ptr&) ;
-  string get_index_s(operand_u_ptr&) ;
+  //virtual void assign(astnode_u_ptr&, Operand& ) = 0;
+  virtual bool assign(astnode_u_ptr&, Operand& ) = 0;
+  s_integer get_index_i(astnode_u_ptr&) ;
+  string get_index_s(astnode_u_ptr&) ;
 };
 
 class AstMvar : public AstAssign {
@@ -131,7 +135,7 @@ private:
   //Operand &variable;
 public:
   AstMvar(const string&);
-  AstMvar(const string&, operand_u_ptr idx_key);
+  AstMvar(const string&, astnode_u_ptr idx_key);
   string name() override final;
   string get_module() ; // if $module.var return module , if $var, return current_module
   Operand to_str() const override;
@@ -139,7 +143,7 @@ public:
   Operand get_scale() {return scale_; };
   OperandType _get_type() const override;
   Operand evaluate(astnode_u_ptr& ctxt) override;
-  bool assign(operand_u_ptr& ctxt, Operand& ) override final;
+  bool assign(astnode_u_ptr& ctxt, Operand& ) override final;
   void print() const override;
   astnode_u_ptr clone() const override; 
 };
@@ -155,20 +159,20 @@ public:
   Operand get_type() const override ;
   OperandType _get_type() const override;
   Operand evaluate(astnode_u_ptr& ctxt) override;
-  bool assign(operand_u_ptr& ctxt, Operand&) override final;
+  bool assign(astnode_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
 class AstTuple : public AstAssign {
 private:
-  operand_u_ptr elemptr(const Operand&);
+  astnode_u_ptr elemptr(const Operand&);
 public:
-  AstTuple(operand_u_ptr);
+  AstTuple(astnode_u_ptr);
   string name() override final;
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
   Operand evaluate(astnode_u_ptr& ctxt) override;
-  bool assign(operand_u_ptr& ctxt, Operand&) override final;
+  bool assign(astnode_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 
   astnode_u_ptr clone() const override; 

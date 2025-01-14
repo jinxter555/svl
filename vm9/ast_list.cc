@@ -1,9 +1,11 @@
+#include <utility>
 #include "ast_list.hh"
 #include "operand_vars.hh"
 
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
+
 
 /*
 void AstList::accept_nc(Visitor& visitor) { visitor.visit(*this); }
@@ -73,9 +75,11 @@ Operand& AstList::operator[] (const Operand& k) {
 Operand& AstList::operator[] (s_integer index) { 
   MYLOGGER(trace_function, "AstList::operator[](int&)", __func__, SLOG_FUNC_INFO);
   //cout << "AstList::operator[" <<  index << "]\n" ;
-  //return const_cast<Operand&>(as_const(*this)[index]); 
+  return const_cast<Operand&>(as_const(*this)[index]); 
+  /*
   if(index >= list_.size() || index < 0) return nil_operand_nc;
   return list_[index]; 
+  */
 }
 
 const Operand& AstList::operator[] (s_integer index) const { 
@@ -105,6 +109,8 @@ Operand& AstList::operator[] (const AstList& index_keys) {
   return nil_operand_nc;
 }
 
+const Operand& AstList::back() const { return list_.back(); }
+Operand& AstList::back_nc()  { return list_.back(); }
 
 //------------------------------------------------------------------------------------------------------------------ 
 bool AstList::is_nil() const {
@@ -121,6 +127,9 @@ astnode_ptr AstList::_vrptr() const {
   MYLOGGER(trace_function, "AstList::_vptr()", __func__, SLOG_FUNC_INFO);
   return (AstNode*) this; 
 }
+
+const astnode_u_ptr& AstList::get_u_ptr() const { return nil_ast_ptr; }
+astnode_u_ptr& AstList::get_u_ptr_nc() { return nil_ast_ptr_nc; }
 
 bool AstList::add(astnode_u_ptr &&vptr) {
   if(vptr==nullptr) return false;

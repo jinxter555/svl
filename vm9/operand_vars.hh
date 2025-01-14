@@ -9,3 +9,5 @@ extern Operand nil_operand_nc;
 extern operand_u_ptr const nil_operand_ptr;
 extern Operand nil_operand_nc;
 extern operand_u_ptr nil_operand_ptr_nc;
+extern astnode_u_ptr const nil_ast_ptr;
+extern astnode_u_ptr nil_ast_ptr_nc;

@@ -98,6 +98,10 @@ public:
 
   astnode_ptr _vrptr() const override; 
   astnode_ptr get_raw_ptr() const ;
+
+  const astnode_u_ptr& get_u_ptr() const override;
+  astnode_u_ptr& get_u_ptr_nc() override;
+
   astnode_u_ptr _uptr() ; 
 
   bool has_key(const Operand &k)  const ;
@@ -127,8 +131,12 @@ public:
   Operand get_opcode() const;
 
 
+  const Operand& operator[] (const Operand& k)const  ;
   Operand& operator[] (const Operand& k) override final;
   Operand& operator[] (const AstList& k) override final;
+  
+  const Operand& back() const override;
+  Operand& back_nc()  override;
  // const Operand& operator[] (const Operand &k) const override final;
 /*
 //------------------------------------
@@ -181,7 +189,6 @@ const astnode_ptr operator()(const astnode_u_ptr&) const;
 };
 
 //------------------------------------
-/*
 struct Uptr {
 template <typename T> 
 const astnode_u_ptr& operator()(const T& v) const;
@@ -190,7 +197,6 @@ const astnode_u_ptr& operator()(const astnode_ptr& v) const;
 const astnode_u_ptr& operator()(const astnode_u_ptr& v) const;
 const astnode_u_ptr& operator()(const astnode_s_ptr& v) const;
 };
-*/
 
 //------------------------------------
 struct Type{
