@@ -137,6 +137,38 @@ using operand_u_ptr = unique_ptr<Operand>;
 using operand_s_ptr = shared_ptr<Operand>;
 
 class Number;
+
+class AstList;
+class AstMap;
+class SvlmAst;
+
+using map_t = map<string, Operand>; 
+using list_t = vector<Operand>; 
+using list_u_ptr = unique_ptr<AstList>;
+using map_u_ptr = unique_ptr<AstMap>;
+using vec_num_t = vector<Number>;
+using vec_str_t = vector<string>;
+using svlm_ast_ptr = SvlmAst *;
+
+class AstNode;
+using astnode_u_ptr = unique_ptr<AstNode>;
+using astnode_s_ptr = shared_ptr<AstNode>;
+using astnode_ptr = AstNode *;
+
+using operand_variant_t = variant
+< Nil
+, bool, string, Number
+, ControlFlow
+, AstOpCode
+, OperandErrorCode
+, OperandStatusCode
+, OperandType
+, astnode_u_ptr
+, astnode_s_ptr
+, astnode_ptr
+, svlm_ast_ptr
+//, operand_u_ptr , operand_s_ptr , operand_ptr
+>;
 //--------------------------------------------------------- 
 template <typename T>
 class Primordial {
@@ -153,5 +185,6 @@ public:
   virtual void print() const =0;
   virtual s_integer size() const=0;
 };
+
 
 #endif

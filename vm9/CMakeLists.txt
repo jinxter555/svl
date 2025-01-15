@@ -35,7 +35,7 @@ flex_target(MyScanner svlm_lexer.l ${CMAKE_CURRENT_BINARY_DIR}/svlm_scanner.cc)
 
 # add_library(svlm-node  number.cc operand.cc operand_math.cc operand_visitors.cc ast.cc ast_list.cc ast_map.cc my_helpers.cc )
 #add_library(svlm-node  number.cc operand.cc operand_visitors.cc operand_tostr.cc ast_node.cc ast_list.cc ast_map.cc my_helpers.cc svlm_ast.cc )
-add_library(svlm-node  number.cc operand.cc operand_visitors.cc operand_tostr.cc ast_node.cc ast_list.cc ast_map.cc my_helpers.cc )
+add_library(svlm-node  number.cc operand.cc operand_visitors.cc operand_tostr.cc operand_math.cc ast_node.cc ast_list.cc ast_map.cc my_helpers.cc )
 add_library(svlm-logger  scope_logger.cc)
 
 #target_link_libraries(${PROJECT_NAME} svlm-node svlm-logger ${Readline_LIBRARY})

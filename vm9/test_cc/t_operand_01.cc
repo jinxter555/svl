@@ -19,15 +19,22 @@ TEST_CASE("check operand 1") {
 
   astnode_u_ptr ptr = make_unique<Operand>(555l);
   Operand u_i1(move(ptr));
-  Operand u_i2(make_unique<Operand>(6666l));
+  Operand u_i2(make_unique<Operand>(555l));
   CHECK(u_i1._get_number() == 555l);
+  CHECK(u_i1 == u_i2);
 
   Operand v1=123l;
   Operand v2=v1.clone();
 
+  if(v1==v2 ) { cout << "v1==v2\n"; }
+  else { cout << "v1!=v2\n"; }
+  cout << "v1.gettype(): " <<  v1.get_type() << "\n";
+  cout << "v2.gettype(): " <<  v2.get_type() << "\n";
   operand_variant_t ov1 = 123l;
   cout << "ov1 " << ov1 << "\n";
-  cout << "ov1.getnu " << get<Number>(ov1) << "\n";
+  cout << "ov1.getnum " << get<Number>(ov1) << "\n";
+  CHECK(v1 == v2);
+  CHECK(v1._get_type() != v2._get_type());
 
 
   //Operand op1(AstOpCode::plus);

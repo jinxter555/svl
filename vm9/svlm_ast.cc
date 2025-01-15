@@ -27,6 +27,7 @@ astnode_u_ptr& SvlmAst::get_context() {
   return c.get_u_ptr_nc();
 }
 astnode_u_ptr& SvlmAst::get_frames() {
+  MYLOGGER(trace_function , string("SvlmAst::get_frames('") + mod_name._to_str() + string("')") ,__func__+9)
   auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
   //if(c==nil_operand) {
   if(c._get_type()==OperandType::nil_t) {
@@ -36,6 +37,7 @@ astnode_u_ptr& SvlmAst::get_frames() {
   return c.get_u_ptr_nc();
 }
 Operand& SvlmAst::get_current_frame() {
+  MYLOGGER(trace_function , string("SvlmAst::get_current_frame('") + mod_name._to_str() + string("')") ,__func__+9)
   auto &frames = get_frames();
   if(frames == nil_operand_ptr_nc) {
     return nil_operand_nc;
@@ -45,7 +47,6 @@ Operand& SvlmAst::get_current_frame() {
 
 string SvlmAst::get_current_module() {
   auto& f = get_frames()->back();
-  //auto &m = f[string("current_module")];
   auto &m = f["current_module"];
   //cout << "in SvlmAst::get_current_module: " << m << "\n";
   return m._to_str();

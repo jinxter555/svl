@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <utility>
+#include "lang.hh"
 #include "operand.hh"
 #include "ast_list.hh"
 #include "ast_map.hh"
@@ -233,9 +234,11 @@ AstMap* Operand::get_map_ptr_nc() {
 Operand& Operand::operator[] (const Operand& k) {
   MYLOGGER(trace_function, "Operand::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
   return const_cast<Operand&>(as_const(*this)[k]); 
+/*
   auto vptr =(AstList*) _vrptr();
   if(vptr==nullptr) return nil_operand_nc;
   return (*vptr)[k];
+*/
 }
 const Operand& Operand::operator[] (const Operand& k) const {
   MYLOGGER(trace_function, "const Operand::operator[](const Operand&)", __func__, SLOG_FUNC_INFO);
@@ -333,3 +336,5 @@ astnode_u_ptr Operand::Clone::operator()(const astnode_u_ptr& v) const {return v
 astnode_u_ptr Operand::Clone::operator()(const astnode_s_ptr& v) const { return v->clone(); }
 
 
+
+//------------------------------------------------------------------------------------------------------------------ 

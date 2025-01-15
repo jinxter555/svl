@@ -3,37 +3,13 @@
 #include <variant>
 #include <unordered_map>
 #include <vector>
+#include "lang.hh"
 #include "ast_node.hh"
 
 
 
 
 
-class AstList;
-class AstMap;
-class SvlmAst;
-using map_t = map<string, Operand>; 
-using list_t = vector<Operand>; 
-using list_u_ptr = unique_ptr<AstList>;
-using map_u_ptr = unique_ptr<AstMap>;
-using vec_num_t = vector<Number>;
-using vec_str_t = vector<string>;
-using svlm_ast_ptr = SvlmAst *;
-
-using operand_variant_t = variant
-< Nil
-, bool, string, Number
-, ControlFlow
-, AstOpCode
-, OperandErrorCode
-, OperandStatusCode
-, OperandType
-, astnode_u_ptr
-, astnode_s_ptr
-, astnode_ptr
-, svlm_ast_ptr
-//, operand_u_ptr , operand_s_ptr , operand_ptr
->;
 
 class Operand : public AstNode {
 private:
@@ -71,7 +47,7 @@ public:
 
 
 
-  operand_variant_t _get_variant() const ;
+  operand_variant_t _get_variant() const override;
 
 
 
@@ -248,6 +224,45 @@ struct ToString {
   //Operand operator()(s_integer i) const;
   //Operand operator()(s_float f) const ;
 };
+
+  //--------------------------------------------------------- Overload math operator
+  Operand operator+(const Operand& other) const ;
+  Operand operator-(const Operand& other) const ;
+  Operand operator*(const Operand& other) const;
+  Operand operator/(const Operand& other) const;
+  //--------------------------------------------------------- Overload math equality operator
+  //bool operator==(const Nil& other) const;
+
+  bool operator==(const Operand& other) const;
+  bool operator!=(const Operand& other) const;
+  bool operator>=(const Operand& other) const;
+  bool operator<=(const Operand& other) const;
+  bool operator<(const Operand& other) const;
+  bool operator>(const Operand& other) const;
+
+  Operand operator&&(const Operand& other) const;
+  Operand operator||(const Operand& other) const;
+
+  bool operator==(const AstNode& ) const override;
+  bool operator==(const astnode_ptr& ) const override;
+
+
+struct CmpEql{
+template <typename T, typename U> bool operator()(const T &a, const U &b) ;
+template <typename T> bool operator()(const T &a, const T &b) ;
+bool operator()(const AstNode*, const AstNode*) ;
+bool operator()(const Nil, const Nil b);
+};
+
+
+  //bool operator!=(const AstNode&) const override;
+  //bool cmp_eql(const AstExpr&) const override;
+  //bool cmp_eql(const OperandVariant&) const override;
+  //--------------------------------------------------------- Overload math logic operator
+  Operand operator!() const;
+  //--------------------------------------------------------- 
+  Operand opfunc(const AstNode&, AstOpCode op) override final;
+
 
 
 

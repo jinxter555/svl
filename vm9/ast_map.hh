@@ -34,6 +34,7 @@ public:
 
   const astnode_u_ptr& get_u_ptr() const override ;
   astnode_u_ptr& get_u_ptr_nc() override ;
+  operand_variant_t _get_variant() const override;
 
   const list_t& _get_list() const;
 
@@ -54,6 +55,10 @@ public:
   Operand& operator[] (const AstList& k) override ;
   Operand& operator[] (const Operand& k) override ;
   //const Operand& operator[] (const string &k) const ;
+  //-------------------------
+  bool operator==(const AstNode& ) const override;
+  bool operator==(const astnode_ptr& ) const override;
+  Operand opfunc(const AstNode&, AstOpCode op) override final{};
   //-------------------------
   const Operand& back() const override;
   Operand& back_nc()  override;

@@ -5,11 +5,7 @@
 class Operand;
 class AstList;
 class AstMap;
-class AstNode;
 
-using astnode_u_ptr = unique_ptr<AstNode>;
-using astnode_s_ptr = shared_ptr<AstNode>;
-using astnode_ptr = AstNode *;
 
 
 class Visitor {
@@ -26,6 +22,7 @@ public:
   AstNode(OperandType t) : Primordial(t) {};
 
   virtual Operand evaluate(unique_ptr<AstNode>&) =0 ;
+  virtual Operand opfunc(const AstNode&, AstOpCode op) =0;
 
 
   virtual astnode_ptr _vrptr() const =0;
@@ -46,6 +43,7 @@ public:
 
   virtual const astnode_u_ptr& get_u_ptr() const =0;
   virtual astnode_u_ptr& get_u_ptr_nc() =0;
+  virtual operand_variant_t _get_variant() const=0 ;
 
   virtual bool is_nil() const=0;
 
@@ -61,8 +59,9 @@ public:
 
 
 
+  virtual bool operator==(const AstNode& ) const=0;
+  virtual bool operator==(const astnode_ptr& ) const=0;
   /*
-  virtual bool operator==(const AstNode& other) const=0;
   virtual bool operator!=(const AstNode& other) const=0;
 
   virtual bool add(const AstNode& v) = 0;

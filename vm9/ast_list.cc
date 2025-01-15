@@ -212,3 +212,7 @@ AstMap* AstList::get_map_ptr_nc() {
   MYLOGGER(trace_function, "AstList::get_map_ptr_nc()", __func__, SLOG_FUNC_INFO);
   return nullptr;
 }
+operand_variant_t AstList::_get_variant() const { return nil; }
+
+bool AstList::operator==(const AstNode& ) const {};
+bool AstList::operator==(const astnode_ptr& ) const {};

@@ -274,6 +274,7 @@ vector<string> AstMap::_get_keys() const {
 Operand AstMap::get_type() const { return Operand(OperandType::map_t); }
 OperandType AstMap::_get_type() const { return OperandType::map_t; }
 
+operand_variant_t AstMap::_get_variant() const { return nil; }
 //------------------------------------- 
 s_integer  AstMap::size() const { return map_.size(); }
 void AstMap::print() const { cout << to_str(); }
@@ -339,3 +340,6 @@ bool AstMap::isEqual(const AstNode &other) const {
   return compare_visitor.isEqualResult();
 }
 */
+
+bool AstMap::operator==(const AstNode& ) const {};
+bool AstMap::operator==(const astnode_ptr& ) const {};
