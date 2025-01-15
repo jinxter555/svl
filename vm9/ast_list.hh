@@ -45,9 +45,12 @@ public:
   Operand& operator[] (const s_integer ) ;
   const Operand& operator[] (const s_integer) const ;
 
-  bool operator==(const AstNode& ) const override;
+  //bool operator==(const AstNode& ) const override;
+  bool operator==(const AstList& ) const ;
   bool operator==(const astnode_ptr& ) const override;
-  Operand opfunc(const AstNode&, AstOpCode op) override final{};
+  bool cmp_eql(const AstNode&) const override;
+  bool cmp_eql(const AstList *) const ;
+  Operand opfunc(const AstNode&, AstOpCode op) override final;
 
   const Operand& back() const override;
   Operand& back_nc()  override;

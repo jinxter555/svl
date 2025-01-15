@@ -341,5 +341,73 @@ bool AstMap::isEqual(const AstNode &other) const {
 }
 */
 
-bool AstMap::operator==(const AstNode& ) const {};
-bool AstMap::operator==(const astnode_ptr& ) const {};
+bool AstMap::operator==(const AstMap& other ) const {
+  MYLOGGER(trace_function, "AstMap::==(const AstExpr&)", __func__, SLOG_FUNC_INFO);
+  cout << "AstMap::==(const AstExpr&)\n";
+  //cout << "this: " <<  to_str() << ", other: " <<  other << "\n";
+  return cmp_eql(other.get_map_ptr());
+}
+
+bool AstMap::operator==(const astnode_ptr& vptr) const {
+  MYLOGGER(trace_function, "AstMap::==(const astexpr_ptr)", __func__, SLOG_FUNC_INFO);
+  cout << "AstMap::==(const astexpr_ptr*)\n";
+  return cmp_eql(vptr->get_map_ptr());
+}
+
+bool AstMap::operator!=(const AstNode &other) const { 
+  MYLOGGER(trace_function, "AstMap::!=(const AstExpr&)", __func__, SLOG_FUNC_INFO);
+  cout << "AstMap::!=(const AstExpr&)\n";
+  return !cmp_eql(other);
+}
+
+
+bool AstMap::cmp_eql(const AstNode &other) const { 
+  return cmp_eql(other.get_map_ptr());
+}
+bool AstMap::cmp_eql(const AstMap *other_ptr) const { 
+  MYLOGGER(trace_function, "AstMap::cmp_eql(const AstExpr&)", __func__, SLOG_FUNC_INFO+9);
+  cout << "AstMap::cmp_eql(const AstExpr&)\n";
+
+  //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  s_integer s=size();
+
+  if(other_ptr==nullptr ){
+    if(s==0) return true;
+    cout << "other_ptr is null!\n";
+    return false;
+  }
+  //cout << "*other: " << *other_ptr << " other type: " << other_ptr->get_type() << "\n\n";
+
+  if(other_ptr->_get_type()!= OperandType::map_t) return false;
+  if(s != other_ptr->size()) return false;
+
+  for (auto const& [key, val] : map_) {
+    //auto& other_val = (*other_ptr)[key];
+    auto &other_map_ = other_ptr->map_;
+    //auto &other_val = other_map_[key];
+    try {
+      auto& other_val = other_ptr->map_.at(key);
+      if(val != other_val) { //cout << key << ":" << val << " != " << key << ":" << other_val << "\n";
+        return false; }
+    } catch(const out_of_range &e) { return false; }
+  }
+  return true; 
+}
+Operand AstMap::opfunc(const AstNode& other, AstOpCode op) {
+  MYLOGGER(trace_function , "AstMap::opfunc()" ,__func__, SLOG_FUNC_INFO);
+  cout << "AstMap::opfunc()!\n";
+
+  print(); cout << " " << Operand(op) << " " <<  other <<"\n";
+  //return make_unique<Operand>( eql_cmp(move(other)));
+  switch(op) {
+  //case AstOpCode::eql:    return make_unique<Operand>( *this == move(other));
+  case AstOpCode::eql:    return  cmp_eql(other);
+  case AstOpCode::neql:   return  !cmp_eql(other);
+  default:
+    cerr << "AstList::opfunc, default error!\n";
+    return Operand();
+  }
+  return nil;
+
+
+};

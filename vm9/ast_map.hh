@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include <variant>
-//#include <unordered_map>
-#include <map>
+#include <unordered_map>
+//#include <map>
 #include <vector>
 #include "ast_node.hh"
 #include "operand.hh"
@@ -56,9 +56,14 @@ public:
   Operand& operator[] (const Operand& k) override ;
   //const Operand& operator[] (const string &k) const ;
   //-------------------------
-  bool operator==(const AstNode& ) const override;
+  //bool operator==(const AstNode& ) const override;
+  bool operator==(const AstMap& ) const ;
+  bool operator!=(const AstNode& ) const ;
   bool operator==(const astnode_ptr& ) const override;
-  Operand opfunc(const AstNode&, AstOpCode op) override final{};
+  bool cmp_eql(const AstNode&) const override;
+  bool cmp_eql(const AstMap *) const ;
+
+  Operand opfunc(const AstNode&, AstOpCode op) override final;
   //-------------------------
   const Operand& back() const override;
   Operand& back_nc()  override;

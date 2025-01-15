@@ -214,5 +214,66 @@ AstMap* AstList::get_map_ptr_nc() {
 }
 operand_variant_t AstList::_get_variant() const { return nil; }
 
-bool AstList::operator==(const AstNode& ) const {};
-bool AstList::operator==(const astnode_ptr& ) const {};
+bool AstList::operator==(const AstList& other) const {
+  MYLOGGER(trace_function, "AstList::==(AstNode&)", __func__, SLOG_FUNC_INFO+9);
+  cout << "AstList::==(const AstExpr&)\n";
+  return cmp_eql(other);
+}
+
+bool AstList::operator==(const astnode_ptr& vptr ) const {
+  MYLOGGER(trace_function, "AstList::==(astnode_ptr&)", __func__, SLOG_FUNC_INFO+9);
+  cout << "AstList::==(const astnode_ptr&)\n";
+  return cmp_eql(*vptr);
+}
+
+bool AstList::cmp_eql(const AstNode  &other) const { 
+  MYLOGGER(trace_function, "AstList::cmp_eql(AstNode&)", __func__, SLOG_FUNC_INFO+9);
+  cout << "AstList::cmp_eql(const AstNode&)\n";
+  return cmp_eql(other.get_list_ptr());
+}
+
+bool AstList::cmp_eql(const AstList* other_ptr) const { 
+  MYLOGGER(trace_function, "AstList::cmp_eql(AstList*)", __func__, SLOG_FUNC_INFO+9);
+  cout << "AstList::cmp_eql(AstList*)\n";
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+
+  s_integer s=size();
+  if(other_ptr==nullptr ){
+    if(s==0) return true;
+    cout << "other_ptr is null!\n";
+    return false;
+  }
+  cout << "*other: " << *other_ptr << " other type: " << other_ptr->get_type() << "\n\n";
+
+  if(other_ptr->_get_type()!= OperandType::list_t) return false;
+  if(s != other_ptr->size()) return false;
+
+
+  for(s_integer i=0; i < s; i++ ) {
+    cout << list_[i] << "==" << (*other_ptr)[i] << "\n";
+    if(list_[i] == (*other_ptr)[i]) continue;
+    else {
+      cout << "AstList != AstList false\n";
+      return false;
+    }
+  }
+  cout << "AstList == AstList true\n";
+  return true;
+}
+
+Operand AstList::opfunc(const AstNode& other, AstOpCode op) {
+  MYLOGGER(trace_function , "AstList::opfunc()" ,__func__, SLOG_FUNC_INFO+9);
+  cout << "AstList::opfunc()!\n";
+  cout << "op: " << Operand(op) << "\n";
+  
+  print(); cout << " " << Operand(op) << " " <<  other <<"\n";
+  //return make_unique<Operand>( eql_cmp(move(other)));
+  switch(op) {
+  //case AstOpCode::eql:    return make_unique<Operand>( *this == move(other));
+  case AstOpCode::eql:    return  cmp_eql(other);
+  case AstOpCode::neql:   return  !cmp_eql(other);
+  default:
+    cerr << "AstList::opfunc, default error!\n";
+    return nil;
+  }
+}

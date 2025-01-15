@@ -59,8 +59,10 @@ public:
 
 
 
-  virtual bool operator==(const AstNode& ) const=0;
+  //virtual bool operator==(const AstNode& ) const=0;
   virtual bool operator==(const astnode_ptr& ) const=0;
+  virtual bool cmp_eql(const AstNode&) const=0;
+
   /*
   virtual bool operator!=(const AstNode& other) const=0;
 

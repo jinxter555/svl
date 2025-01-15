@@ -243,8 +243,10 @@ struct ToString {
   Operand operator&&(const Operand& other) const;
   Operand operator||(const Operand& other) const;
 
-  bool operator==(const AstNode& ) const override;
+  //bool operator==(const AstNode& ) const override;
+  bool operator==(const AstNode& ) const ;
   bool operator==(const astnode_ptr& ) const override;
+  bool cmp_eql(const AstNode&) const override;
 
 
 struct CmpEql{

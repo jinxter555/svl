@@ -42,7 +42,12 @@ TEST_CASE("check operand list 1") {
   cout << "ol1[2]: " << ol1[2l] << "\n";
   auto &L1 = ol1.get_list();
   auto &l1b = L1._get_list();
-  cout << "ol1.get_list(): " << L1 << "\n";
+  cout << "ol1.get_list(): " << L1 << "\n\n";
+  auto rb = (L1==ol1);
+  auto rb2 = L1.cmp_eql(ol1);
+  if(rb) {cout << "rb, L1==ol1\n"; }
+  if(rb2) {cout << "rb2, L1==ol1\n"; }
+  //CHECK(L1== ol1);
 
   Operand ol2(ol1.clone());
   auto ol2_ptr = ol2.get_list_ptr();
