@@ -95,6 +95,13 @@ bool Operand::operator==(const AstNode& other) const {
   auto vrptr = _vrptr();
   auto other_vrptr = other._vrptr();
 
+  switch(vrptr->_get_type()) {
+  case OperandType::list_t: {
+    return vrptr->get_list() == other_vrptr->get_list();
+  }
+  case OperandType::map_t: {
+    return vrptr->get_map() == other_vrptr->get_map();
+  }}
 
   return visit(CmpEql(), vrptr->_get_variant(), other_vrptr->_get_variant());
 
@@ -113,11 +120,14 @@ bool Operand::operator==(const Operand& other) const {
   if(result==true) return result;
   //auto a = get_raw_ptr(); auto b =  other.get_raw_ptr();
   auto a = _vrptr(); auto b =  other._vrptr();
+  return visit(CmpEql(), a->_get_variant(), b->_get_variant());
+
+/*
   auto &av = a->get_operand(); 
   auto &bv =  b->get_operand();
-  //return *a == *b;
+ // return *a == *b;
   return av == bv;
-
+*/
 }
 
 bool Operand::operator==(const astnode_ptr& other) const { 

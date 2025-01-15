@@ -42,9 +42,14 @@ TEST_CASE("check operand map 1") {
 
   cout << "m1:" << m1 << "\n";
   m1[123l] = 777l;
+  Operand m2(m1.clone());
 
   cout << "m1[123]:" << m1[123l] << "\n\n";
-  cout << "m1:" << m1 << "\n";
+  cout << "m1: " << m1 << "\n";
+  cout << "m2: " << m2 << "\n";
+  CHECK(m1 == m2);
+  //m2["hello4"] = 6665l;
+  //CHECK(m1 != m2);
 
 
   
