@@ -31,6 +31,7 @@ Operand AstMap::evaluate(astnode_u_ptr& ctxt) {
 
 Operand& AstMap::operator[] (const Operand& k) {
   MYLOGGER(trace_function, "AstMap::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
   auto vrptr = k._vrptr();
 
   switch (vrptr->_get_type()) {
@@ -64,6 +65,8 @@ Operand& AstMap::operator[] (const vec_str_t& index_keys) {
 
 Operand& AstMap::operator[] (const AstList& index_keys) {
   MYLOGGER(trace_function, "AstMap::operator[](const AstList&) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
+
   cout << "AstMap::operator[" <<  index_keys << "] \n" ;
 
   auto Mptr= _vrptr();
@@ -217,7 +220,7 @@ bool AstMap::add(const AstList &index_keys, const operand_variant_t& ovv, bool o
 
 //------------------------------------- 
 astnode_ptr AstMap::_vrptr() const {
-  MYLOGGER(trace_function, "AstList::_vptr()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstMap::_vptr()", __func__, SLOG_FUNC_INFO);
   return (AstNode*) this; 
 }
 
@@ -342,8 +345,12 @@ bool AstMap::isEqual(const AstNode &other) const {
 */
 
 bool AstMap::operator==(const AstMap& other ) const {
-  MYLOGGER(trace_function, "AstMap::==(const AstList&)", __func__, SLOG_FUNC_INFO);
-  cout << "AstMap::==(const AstMap&)\n";
+  MYLOGGER(trace_function, "AstMap::==(const AstMap&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("this : ") + to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("other: ") + other.to_str()._to_str(), SLOG_FUNC_INFO);
+
+
+  //cout << "AstMap::==(const AstMap&)\n";
   //cout << "this: " <<  to_str() << ", other: " <<  other << "\n";
   return cmp_eql(other.get_map_ptr());
 }
@@ -356,7 +363,7 @@ bool AstMap::operator==(const astnode_ptr& vptr) const {
 
 bool AstMap::operator!=(const AstMap &other) const { 
   MYLOGGER(trace_function, "AstMap::!=(const AstMap&)", __func__, SLOG_FUNC_INFO);
-  cout << "AstMap::!=(const AstMap&)\n";
+  //cout << "AstMap::!=(const AstMap&)\n";
   return !cmp_eql(other);
 }
 
@@ -365,8 +372,8 @@ bool AstMap::cmp_eql(const AstNode &other) const {
   return cmp_eql(other.get_map_ptr());
 }
 bool AstMap::cmp_eql(const AstMap *other_ptr) const { 
-  MYLOGGER(trace_function, "AstMap::cmp_eql(const AstMap&)", __func__, SLOG_FUNC_INFO+9);
-  cout << "AstMap::cmp_eql(const AstMap&)\n";
+  MYLOGGER(trace_function, "AstMap::cmp_eql(const AstMap*)", __func__, SLOG_FUNC_INFO+9);
+  //cout << "AstMap::cmp_eql(const AstMap*)\n";
 
   //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   s_integer s=size();

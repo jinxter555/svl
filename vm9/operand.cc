@@ -232,7 +232,8 @@ AstMap* Operand::get_map_ptr_nc() {
 
 //------------------------------------
 Operand& Operand::operator[] (const Operand& k) {
-  MYLOGGER(trace_function, "Operand::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Operand::operator[](Operand& k)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
   return const_cast<Operand&>(as_const(*this)[k]); 
 /*
   auto vptr =(AstList*) _vrptr();
@@ -242,6 +243,7 @@ Operand& Operand::operator[] (const Operand& k) {
 }
 const Operand& Operand::operator[] (const Operand& k) const {
   MYLOGGER(trace_function, "const Operand::operator[](const Operand&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
   //return const_cast<Operand&>(as_const(*this)[k]); 
   auto vptr =(AstList*) _vrptr();
   if(vptr==nullptr) return nil_operand;
@@ -252,7 +254,7 @@ Operand& Operand::operator[] (const vec_str_t& k) {
 }
 
 Operand& Operand::operator[] (const AstList& k) {
-  MYLOGGER(trace_function, "Operand::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Operand::operator[](const AstList&)", __func__, SLOG_FUNC_INFO);
   //return const_cast<Operand&>(as_const(*this)[k]); 
   auto vptr =_vrptr();
   switch (vptr->_get_type()) {
@@ -267,6 +269,7 @@ Operand& Operand::operator[] (const AstList& k) {
 }
 
 const Operand& Operand::back() const {
+  MYLOGGER(trace_function, "Operand::back()", __func__, SLOG_FUNC_INFO);
   auto vptr =_vrptr();
   switch (vptr->_get_type()) {
   case OperandType::list_t:  {
@@ -285,6 +288,7 @@ Operand& Operand::back_nc()  {
 
 //------------------------------------
 Number Operand::_get_number() const { 
+  MYLOGGER(trace_function, "Operand::_get_number()", __func__, SLOG_FUNC_INFO);
   if(holds_alternative<Number>(value_)) {
     return get<Number>(value_); 
   } else if(holds_alternative<string>(value_)) {
@@ -304,6 +308,21 @@ bool Operand::is_nil() const {
   return false; 
 }
 //------------------------------------
+//---------------------------  to convert to share
+bool Operand::to_shared() {
+  if(holds_alternative<astnode_u_ptr>(value_)) {
+    astnode_s_ptr tmp_s_ptr = move(get<astnode_u_ptr>(value_));
+    value_ = move(tmp_s_ptr);
+    type_ = OperandType::sptr_t;
+    return true;
+  } else if(holds_alternative<astnode_s_ptr>(value_)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+//------------------------------------
+
 Operand Operand::to_str() const { 
   return visit(ToString{}, value_); 
 }

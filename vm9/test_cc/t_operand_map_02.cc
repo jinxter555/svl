@@ -11,7 +11,7 @@
 
 TEST_CASE("check operand map 2") {
   trace_function.open("trace_svlm.log", std::ios::out);
-  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 10);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 21);
 
   MYLOGGER(trace_function, "TEST_CASE()", __func__, SLOG_FUNC_INFO);
 

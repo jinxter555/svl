@@ -46,7 +46,7 @@ astnode_ptr Operand::_vrptr() const {
     return visit(Vrptr(), value_);
   }
   //auto vptr=   visit(Vrptr(), value_); if(vptr==nullptr)
-  return (Operand*)this;
+  return (astnode_ptr)this;
 }
 //---
 template <typename T> 

@@ -57,6 +57,8 @@ public:
 
   Operand evaluate(unique_ptr<AstNode>& ctxt) override;
 //------------------------------------
+  bool to_shared();
+
   Operand to_str() const override;
   string _to_str() const;
 

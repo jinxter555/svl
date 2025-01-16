@@ -56,7 +56,8 @@ astnode_u_ptr AstList::clone() const {
 
 //------------------------------------------------------------------------------------------------------------------ 
 Operand& AstList::operator[] (const Operand& k) {
-  MYLOGGER(trace_function, "AstList::operator[](Operand&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstList::operator[](Operand& k)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
   //return const_cast<Operand&>(as_const(*this)[k._get_int()]); 
   auto vrptr = k._vrptr();
 
@@ -84,7 +85,8 @@ Operand& AstList::operator[] (s_integer index) {
 
 const Operand& AstList::operator[] (s_integer index) const { 
   MYLOGGER(trace_function, "AstList::operator[](int&) const", __func__, SLOG_FUNC_INFO);
-  cout << "AstList::operator[" <<  index << "]const \n" ;
+  MYLOGGER_MSG(trace_function, string("k: ") + Number(index)._to_str(), SLOG_FUNC_INFO);
+//  cout << "AstList::operator[" <<  index << "]const \n" ;
   if(index >= list_.size() || index < 0) return nil_operand;
   return list_[index]; 
 }
@@ -96,6 +98,7 @@ Operand& AstList::operator[] (const vec_num_t& index_keys) {
 
 Operand& AstList::operator[] (const AstList& index_keys) {
   MYLOGGER(trace_function, "AstList::operator[](const AstList&) const", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
   cout << "AstList::operator[" <<  index_keys << "] \n" ;
 
   auto Lptr= _vrptr();

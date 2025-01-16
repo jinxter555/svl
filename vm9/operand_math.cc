@@ -6,7 +6,7 @@
 #include "ast_list.hh"
 #include "ast_map.hh"
 
-#define DEBUG_TRACE_FUNC
+#define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
 //-----------------------------------------------------------------------
@@ -86,12 +86,15 @@ Operand Operand::operator/(const Operand& other) const {
   }
 }
 bool Operand::operator==(const AstNode& other) const {
-  MYLOGGER(trace_function , "Operand::==(AstNode&)" ,__func__);
-  MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str());
+  MYLOGGER(trace_function , "Operand::==(AstNode&)" ,__func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("this : ") + _to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("other: ") + other.to_str()._to_str(), SLOG_FUNC_INFO);
 
   cout << "Operand::==(const AstNode&)\n";
-  cout << "this: " << to_str()<<  ", other: " << other << "\n";
-  cout << "type: " << get_type() << ", other_type: " << other.get_type() << "\n";
+  cout << "this: " << to_str()<<  "\nother: " << other << "\n";
+  cout << "type: " << get_type() << ", other_type: " << other.get_type() << "\n\n";
+
   auto vrptr = _vrptr();
   auto other_vrptr = other._vrptr();
 
@@ -108,13 +111,16 @@ bool Operand::operator==(const AstNode& other) const {
 }
 
 bool Operand::operator==(const Operand& other) const {
-  MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__);
-  MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str());
+  MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("this : ") + _to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("other: ") + other.to_str()._to_str(), SLOG_FUNC_INFO);
 
+/*
   cout << "Operand::==(const Operand&)\n";
   cout << "this: " << to_str()<<  ", other: " << other << "\n";
   cout << "type: " << get_type() << "other_type: " << other.get_type() << "\n";
-
+*/
   auto result = visit(CmpEql(), value_, other.value_);
 
   if(result==true) return result;
@@ -132,31 +138,25 @@ bool Operand::operator==(const Operand& other) const {
 
   return visit(CmpEql(), vrptr->_get_variant(), other_vrptr->_get_variant());
 
-/*
-  auto &av = a->get_operand(); 
-  auto &bv =  b->get_operand();
- // return *a == *b;
-  return av == bv;
-*/
 }
 
 bool Operand::operator==(const astnode_ptr& other) const { 
   cout << "Operand::==(const astnode_ptr)\n";
-  cout << "this: " << to_str()<<  " type: " << get_type() << "\n";
-  cout << "other: " << other << " other type: " << other->get_type() << "\n";
+//  cout << "this: " << to_str()<<  " type: " << get_type() << "\n";
+//  cout << "other: " << other << " other type: " << other->get_type() << "\n";
   return visit(CmpEql(), _get_variant(), other->_get_variant());
 }
 
 bool Operand::operator!=(const Operand& other) const {
-  cout << "Operand::!=(Operand&)\n";
-  cout << "this: " << to_str()<<  " type: " << get_type() << "\n";
-  cout << "other: " << other << " other type: " << other.get_type() << "\n";
+//  cout << "Operand::!=(Operand&)\n";
+//  cout << "this: " << to_str()<<  " type: " << get_type() << "\n";
+//  cout << "other: " << other << " other type: " << other.get_type() << "\n";
   return !(*this==other);
 }
 
 
 bool Operand::cmp_eql(const AstNode&other) const { 
-  MYLOGGER(trace_function , "Operand::cmp_eql(astexpr_u_ptr)", __func__);
+  MYLOGGER(trace_function , "Operand::cmp_eql(astexpr_u_ptr)", __func__, SLOG_FUNC_INFO);
   cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
   return this->get_operand() == other.get_operand();
 }
@@ -306,39 +306,23 @@ Operand Operand::opfunc(const AstNode& v, AstOpCode op) {
 }
 
 
-
-
-/*
-
-bool Operand::operator!=(const AstNode &other) const { 
-  cout << "Operand::!=(astnode_u_ptr)\n";
-  return !cmp_eql(other);
-}
-
-bool Operand::cmp_eql(const AstNode&other) const { 
-  MYLOGGER(trace_function , "Operand::cmp_eql(astnode_u_ptr)", __func__);
-  cout << "Operand::cmp_eql(astnode_u_ptr)\n";
-  return this->_get_value() == other._get_value();
-}
-*/
-
 //--------------
 template <typename T, typename U> bool Operand::CmpEql::operator()(const T &a, const U &b) {
-  MYLOGGER(trace_function , "OperandCmpEql::()(T, U)" , __func__);
-  cout << "T == U?\n";
+  MYLOGGER(trace_function , "Operand::CmpEql::()(T, U)" , __func__, SLOG_FUNC_INFO);
+//  cout << "T == U?\n";
   return false; 
 };
 template <typename T> bool Operand::CmpEql::operator()(const T &a, const T &b) { 
-  MYLOGGER(trace_function , "OperandCmpEql::()(T, T)" ,__func__);
-  cout << "T == T?\n";
+  MYLOGGER(trace_function , "Operand::CmpEql::()(T, T)" ,__func__, SLOG_FUNC_INFO);
+//  cout << "T == T?\n";
   return a==b; 
 };
 bool Operand::CmpEql::operator()(const Nil a, const Nil b){ 
-  MYLOGGER(trace_function , "OperandCmpEql::()(Nil, Nil)" ,__func__);
-  cout << "nil == nil\n"; 
+  MYLOGGER(trace_function , "Operand::CmpEql::()(Nil, Nil)" ,__func__, SLOG_FUNC_INFO);
+//  cout << "nil == nil\n"; 
   return true; 
 }
 bool Operand::CmpEql::operator()(const AstNode *a, const AstNode *b) {
-  cout << "OperandCmpEql::()(AstNode*, AstNode*)\n"; 
+  cout << "Operand::CmpEql::()(AstNode*, AstNode*)\n"; 
   return visit(CmpEql(), a->_get_variant(), b->_get_variant());
 }
