@@ -58,7 +58,7 @@ public:
   //-------------------------
   //bool operator==(const AstNode& ) const override;
   bool operator==(const AstMap& ) const ;
-  bool operator!=(const AstNode& ) const ;
+  bool operator!=(const AstMap& ) const ;
   bool operator==(const astnode_ptr& ) const override;
   bool cmp_eql(const AstNode&) const override;
   bool cmp_eql(const AstMap *) const ;

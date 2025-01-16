@@ -342,21 +342,21 @@ bool AstMap::isEqual(const AstNode &other) const {
 */
 
 bool AstMap::operator==(const AstMap& other ) const {
-  MYLOGGER(trace_function, "AstMap::==(const AstExpr&)", __func__, SLOG_FUNC_INFO);
-  cout << "AstMap::==(const AstExpr&)\n";
+  MYLOGGER(trace_function, "AstMap::==(const AstList&)", __func__, SLOG_FUNC_INFO);
+  cout << "AstMap::==(const AstMap&)\n";
   //cout << "this: " <<  to_str() << ", other: " <<  other << "\n";
   return cmp_eql(other.get_map_ptr());
 }
 
 bool AstMap::operator==(const astnode_ptr& vptr) const {
-  MYLOGGER(trace_function, "AstMap::==(const astexpr_ptr)", __func__, SLOG_FUNC_INFO);
-  cout << "AstMap::==(const astexpr_ptr*)\n";
+  MYLOGGER(trace_function, "AstMap::==(const astnode_ptr)", __func__, SLOG_FUNC_INFO);
+  cout << "AstMap::==(const astnode_ptr*)\n";
   return cmp_eql(vptr->get_map_ptr());
 }
 
-bool AstMap::operator!=(const AstNode &other) const { 
-  MYLOGGER(trace_function, "AstMap::!=(const AstExpr&)", __func__, SLOG_FUNC_INFO);
-  cout << "AstMap::!=(const AstExpr&)\n";
+bool AstMap::operator!=(const AstMap &other) const { 
+  MYLOGGER(trace_function, "AstMap::!=(const AstMap&)", __func__, SLOG_FUNC_INFO);
+  cout << "AstMap::!=(const AstMap&)\n";
   return !cmp_eql(other);
 }
 
@@ -365,8 +365,8 @@ bool AstMap::cmp_eql(const AstNode &other) const {
   return cmp_eql(other.get_map_ptr());
 }
 bool AstMap::cmp_eql(const AstMap *other_ptr) const { 
-  MYLOGGER(trace_function, "AstMap::cmp_eql(const AstExpr&)", __func__, SLOG_FUNC_INFO+9);
-  cout << "AstMap::cmp_eql(const AstExpr&)\n";
+  MYLOGGER(trace_function, "AstMap::cmp_eql(const AstMap&)", __func__, SLOG_FUNC_INFO+9);
+  cout << "AstMap::cmp_eql(const AstMap&)\n";
 
   //cout << "*this: " << *this <<  " type: " << get_type() << "\n";
   s_integer s=size();
@@ -404,7 +404,7 @@ Operand AstMap::opfunc(const AstNode& other, AstOpCode op) {
   case AstOpCode::eql:    return  cmp_eql(other);
   case AstOpCode::neql:   return  !cmp_eql(other);
   default:
-    cerr << "AstList::opfunc, default error!\n";
+    cerr << "AstMap::opfunc, default error!\n";
     return Operand();
   }
   return nil;

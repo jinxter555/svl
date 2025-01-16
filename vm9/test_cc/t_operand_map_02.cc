@@ -63,11 +63,19 @@ TEST_CASE("check operand map 2") {
   auto &v3 = m2[AstList(vec_str_t{"hola3", "mundo3"})];
   CHECK(v3._get_number() == 456l);
 
-
-
   m2.add("e", "ebay", true);
   CHECK(m2["e"]._to_str() == "ebay");
   cout << "m2: " << m2 << "\n";
+
+  Operand m3(m2.clone());
+  cout << "m3: " << m3 << "\n";
+  CHECK(m3 == m2);
+  //m3[AstList(vec_str_t{"hola3", "mundo3"})] = 5555l;
+  m3[vec_str_t{"hola3", "mundo3"}] = 5555l;
+  cout << "m2: " << m2 << "\n";
+  cout << "m3: " << m3 << "\n";
+  CHECK(m3 != m2);
+
 
 
 

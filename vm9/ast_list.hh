@@ -41,12 +41,14 @@ public:
 
   Operand& operator[] (const Operand& k) override ;
   Operand& operator[] (const AstList& k) override;
+  Operand& operator[] (const vec_num_t& k) ;
 
   Operand& operator[] (const s_integer ) ;
   const Operand& operator[] (const s_integer) const ;
 
   //bool operator==(const AstNode& ) const override;
   bool operator==(const AstList& ) const ;
+  bool operator!=(const AstList& ) const ;
   bool operator==(const astnode_ptr& ) const override;
   bool cmp_eql(const AstNode&) const override;
   bool cmp_eql(const AstList *) const ;

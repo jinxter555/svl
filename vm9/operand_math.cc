@@ -118,9 +118,19 @@ bool Operand::operator==(const Operand& other) const {
   auto result = visit(CmpEql(), value_, other.value_);
 
   if(result==true) return result;
+
   //auto a = get_raw_ptr(); auto b =  other.get_raw_ptr();
-  auto a = _vrptr(); auto b =  other._vrptr();
-  return visit(CmpEql(), a->_get_variant(), b->_get_variant());
+  auto vrptr  = _vrptr(); auto other_vrptr =  other._vrptr();
+
+  switch(vrptr->_get_type()) {
+  case OperandType::list_t: {
+    return vrptr->get_list() == other_vrptr->get_list();
+  }
+  case OperandType::map_t: {
+    return vrptr->get_map() == other_vrptr->get_map();
+  }}
+
+  return visit(CmpEql(), vrptr->_get_variant(), other_vrptr->_get_variant());
 
 /*
   auto &av = a->get_operand(); 
@@ -137,6 +147,14 @@ bool Operand::operator==(const astnode_ptr& other) const {
   return visit(CmpEql(), _get_variant(), other->_get_variant());
 }
 
+bool Operand::operator!=(const Operand& other) const {
+  cout << "Operand::!=(Operand&)\n";
+  cout << "this: " << to_str()<<  " type: " << get_type() << "\n";
+  cout << "other: " << other << " other type: " << other.get_type() << "\n";
+  return !(*this==other);
+}
+
+
 bool Operand::cmp_eql(const AstNode&other) const { 
   MYLOGGER(trace_function , "Operand::cmp_eql(astexpr_u_ptr)", __func__);
   cout << "Operand::cmp_eql(astexpr_u_ptr)\n";
@@ -144,10 +162,6 @@ bool Operand::cmp_eql(const AstNode&other) const {
 }
 
 
-bool Operand::operator!=(const Operand& other) const {
-  cout << "Operand::!=(Operand&)\n";
-  return !(*this==other);
-}
 
 bool Operand::operator>=(const Operand& other) const {
   auto type_ = _get_type();

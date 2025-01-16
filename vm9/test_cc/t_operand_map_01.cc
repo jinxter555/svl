@@ -48,8 +48,8 @@ TEST_CASE("check operand map 1") {
   cout << "m1: " << m1 << "\n";
   cout << "m2: " << m2 << "\n";
   CHECK(m1 == m2);
-  //m2["hello4"] = 6665l;
-  //CHECK(m1 != m2);
+  m2["hello4"] = 6665l;
+  CHECK(m1 != m2);
 
 
   

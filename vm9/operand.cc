@@ -247,6 +247,9 @@ const Operand& Operand::operator[] (const Operand& k) const {
   if(vptr==nullptr) return nil_operand;
   return (*vptr)[k];
 }
+Operand& Operand::operator[] (const vec_str_t& k) {
+  return (*this)[AstList(k)];
+}
 
 Operand& Operand::operator[] (const AstList& k) {
   MYLOGGER(trace_function, "Operand::operator[](Operand&)", __func__, SLOG_FUNC_INFO);

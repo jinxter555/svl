@@ -89,6 +89,11 @@ const Operand& AstList::operator[] (s_integer index) const {
   return list_[index]; 
 }
 //--------------------------------------
+Operand& AstList::operator[] (const vec_num_t& index_keys) {
+  MYLOGGER(trace_function, "AstList::operator[](const vec_num_t&) const", __func__, SLOG_FUNC_INFO+10);
+  return (*this)[AstList(index_keys)];
+}
+
 Operand& AstList::operator[] (const AstList& index_keys) {
   MYLOGGER(trace_function, "AstList::operator[](const AstList&) const", __func__, SLOG_FUNC_INFO);
   cout << "AstList::operator[" <<  index_keys << "] \n" ;
@@ -215,9 +220,14 @@ AstMap* AstList::get_map_ptr_nc() {
 operand_variant_t AstList::_get_variant() const { return nil; }
 
 bool AstList::operator==(const AstList& other) const {
-  MYLOGGER(trace_function, "AstList::==(AstNode&)", __func__, SLOG_FUNC_INFO+9);
-  cout << "AstList::==(const AstExpr&)\n";
+  MYLOGGER(trace_function, "AstList::==(AstList&)", __func__, SLOG_FUNC_INFO+9);
+  cout << "AstList::==(const AstList&)\n";
   return cmp_eql(other);
+}
+bool AstList::operator!=(const AstList &other) const { 
+  MYLOGGER(trace_function, "AstList::!=(const AstList&)", __func__, SLOG_FUNC_INFO);
+  cout << "AstList::!=(const AstList&)\n";
+  return !cmp_eql(other);
 }
 
 bool AstList::operator==(const astnode_ptr& vptr ) const {

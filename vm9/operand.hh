@@ -110,6 +110,7 @@ public:
   const Operand& operator[] (const Operand& k)const  ;
   Operand& operator[] (const Operand& k) override final;
   Operand& operator[] (const AstList& k) override final;
+  Operand& operator[] (const vec_str_t& k) ;
   
   const Operand& back() const override;
   Operand& back_nc()  override;
