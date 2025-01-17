@@ -31,7 +31,8 @@ TEST_CASE("check operand map 2") {
 
   //Operand m2(make_unique<Operand>(t1));
   //Operand m2(t1);
-  AstMap m2;
+  AstMap m1, m2;
+
   m2["pi"] = 3.14159;
   m2["www1"] = "server1";
   cout << "m2: " << m2 << "\n";
@@ -75,6 +76,17 @@ TEST_CASE("check operand map 2") {
   cout << "m2: " << m2 << "\n";
   cout << "m3: " << m3 << "\n";
   CHECK(m3 != m2);
+
+  list_t lt1;
+  lt1.push_back("hola4");
+  lt1.push_back("mundo4");
+  //m3[lt1] = 16668l;
+  m3.add(lt1, 168l, true);
+  cout << "m3: " << m3 << "\n";
+  cout << "m3[lt1]: " <<  m3[lt1] << "\n";
+  m3[lt1] = 16668l;
+  cout << "m3: " << m3 << "\n";
+  cout << "m3[lt1]: " <<  m3[lt1] << "\n";
 
 
 

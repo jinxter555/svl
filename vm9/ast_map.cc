@@ -40,11 +40,14 @@ const Operand& AstMap::operator[] (const s_integer& k) const {
 }
 
 Operand& AstMap::operator[] (const string &k) {
-  MYLOGGER(trace_function, "AstMap::operator[](string&) const", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstMap::operator[](string&) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
     return map_[k]; 
 }
 const Operand& AstMap::operator[] (const string &k) const {
-  MYLOGGER(trace_function, "AstMap::operator[](Operand&) const", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "const AstMap::operator[](Operand&) const", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+
   if(!has_key(k)) return nil_operand;
   return map_.at(k); 
 }
@@ -61,11 +64,13 @@ Operand& AstMap::operator[] (const vec_str_t& index_keys) {
 
 //--------------------------------------
 Operand& AstMap::operator[] (const AstList& index_keys) {
+  MYLOGGER(trace_function, "AstMap::operator[](const AstList&) ", __func__, SLOG_FUNC_INFO);
   return const_cast<Operand&>(as_const(*this)[index_keys]); 
+
 }
 
 const Operand& AstMap::operator[] (const AstList& index_keys) const {
-  MYLOGGER(trace_function, "AstMap::operator[](const AstList&) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "const AstMap::operator[](const AstList&) const", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
 
   //cout << "AstMap::operator[" <<  index_keys << "] \n" ;

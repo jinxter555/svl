@@ -205,10 +205,10 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
 
   //auto &l = (*this)["left"];
   auto &l = root["left"];
-  auto &r = (*this)["right"];
-  auto opcode_str = (*this)["op"]._to_str();
-  auto &op = (*this)["op"];
-  auto opcode = (*this)["op"]._get_opcode();
+  auto &r = root["right"];
+  auto opcode_str = root["op"]._to_str();
+  auto &op = root["op"];
+  auto opcode = root["op"]._get_opcode();
 
   MYLOGGER_MSG(trace_function, string("AstBinOp::") + string(__func__) + string(" ") +  l._to_str()  + opcode_str + r._to_str());
 
@@ -261,14 +261,15 @@ AstFunc::AstFunc(const Operand &n, astnode_u_ptr pl,  astnode_u_ptr code_ptr) {
   type_ = OperandType::ast_func_t;
 
   //  cout << "code_ptr: "<< code_ptr<< "\n";
-  (*this)["name"] = move(n.clone());
-  (*this)["code"] = move(code_ptr);
-  (*this)["proto_list"] = move(pl);
+  //root["name"] = move(n.clone());
+  root["name"] = n._to_str();
+  root["code"] = move(code_ptr);
+  root["proto_list"] = move(pl);
 }
 
 Operand AstFunc::evaluate(astnode_u_ptr& ctxt) {
   cout << "AstFunc::evaluate()\n";
-  auto &l = (*this)["code"];
+  auto &l = root["code"];
   return l.evaluate(ctxt);
 }
 
@@ -279,7 +280,7 @@ Operand AstFunc::get_type() const { return OperandType::ast_func_t;}
 OperandType AstFunc::_get_type() const { return OperandType::ast_func_t;}
 void AstFunc::print() const { 
   cout << to_str();
-  const Operand &l = (*this)["code"];
+  const Operand &l = root["code"];
   for(s_integer i=0; i<l.size(); i++) {
     cout << l[i] << "\n";
   }
@@ -288,10 +289,12 @@ void AstFunc::print() const {
 //----------------------------------------------------------------------- AstPrint
 AstPrint::AstPrint(astnode_u_ptr ptr) {
   type_= OperandType::ast_print_t;
-  add(string("exp"), move(ptr));
+  //add(string("exp"), move(ptr));
+  root["exp"]=move(ptr);
 }
 Operand AstPrint::get_type() const { return OperandType::ast_print_t;}
 OperandType AstPrint::_get_type() const { return OperandType::ast_print_t;}
+
 Operand AstPrint::to_str() const {
   auto &exp = map_.at(string("exp"));
   return Operand("print ") + exp.to_str();

@@ -10,7 +10,7 @@ protected:
 public:
   Tree(const OperandType&t) : Primordial(t) {};
   s_integer size() const override {return 0;};
-  virtual Operand evaluate(unique_ptr<AstNode>&) =0 ;
+  virtual Operand evaluate(unique_ptr<AstNode>&) =0;
 
 };
 
@@ -83,7 +83,7 @@ public:
 };
 
 
-class AstPrint : public AstMap { 
+class AstPrint : public SvlmAst { 
 private:
   OperandType type_;
 public:
@@ -95,7 +95,7 @@ public:
   void print() const override;
 };
 
-class AstCaller : public AstMap {
+class AstCaller : public SvlmAst {
 private:
   OperandType type_;
   bool evaluated=false;
@@ -116,7 +116,7 @@ public:
 
 };
 
-class AstAssign : public AstMap {
+class AstAssign : public SvlmAst {
 protected:
   OperandType type_;
   OperandType scale_;
@@ -162,6 +162,7 @@ public:
   bool assign(astnode_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
+
 class AstTuple : public AstAssign {
 private:
   astnode_u_ptr elemptr(const Operand&);
@@ -175,7 +176,7 @@ public:
   bool assign(astnode_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 
-  astnode_u_ptr clone() const override; 
+  //astnode_u_ptr clone() const override; 
 };
 
 class AstFlow : public AstNode {
