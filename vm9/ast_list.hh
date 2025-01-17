@@ -22,29 +22,40 @@ public:
   Operand evaluate(unique_ptr<AstNode>&) override;
 
 
+//-------------------------------------- 
   const AstNode& get_node() const override;
   const Operand& get_operand() const override;
   const AstList& get_list() const override;
   const AstMap& get_map() const override;
 
+//-------------------------------------- 
   const Operand* get_operand_ptr() const override;
   const AstList* get_list_ptr() const override;
   const AstMap* get_map_ptr() const override;
 
+//-------------------------------------- 
   Operand* get_operand_ptr_nc() override;
   AstList* get_list_ptr_nc() override;
   AstMap* get_map_ptr_nc() override;
 
+//-------------------------------------- 
   const astnode_u_ptr& get_u_ptr() const override;
   astnode_u_ptr& get_u_ptr_nc() override;
   operand_variant_t _get_variant() const override;
 
-  Operand& operator[] (const Operand& k) override ;
+//-------------------------------------- 
+  Operand& operator[] (const s_integer&k ) override final;
+  const Operand& operator[] (const s_integer&k) const override final;
+
+  const Operand& operator[] (const string& k) const override final ;
+  Operand& operator[] (const string& k) override ;
+
+  const Operand& operator[] (const AstList& k) const ;
   Operand& operator[] (const AstList& k) override;
+
   Operand& operator[] (const vec_num_t& k) ;
 
-  Operand& operator[] (const s_integer ) ;
-  const Operand& operator[] (const s_integer) const ;
+//-------------------------------------- 
 
   //bool operator==(const AstNode& ) const override;
   bool operator==(const AstList& ) const ;
@@ -64,6 +75,7 @@ public:
 
 
   const list_t& _get_list() const;
+  list_t& _get_list_nc() ;
 
   astnode_ptr _vrptr() const override;
   Operand to_str() const override;

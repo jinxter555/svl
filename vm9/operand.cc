@@ -91,6 +91,7 @@ Operand Operand::evaluate(unique_ptr<AstNode>&ctxt) {
   MYLOGGER(trace_function , "Operand::evaluate()" , __func__, SLOG_FUNC_INFO);
   return _get_variant();
 }
+//------------------------------------------------------------------------------------------------------------------ 
 //------------------------------------ add() s
 bool Operand::add(astnode_u_ptr &&vptr) {
   MYLOGGER(trace_function , "Operand::add(astnode_u_ptr&&)" , __func__, SLOG_FUNC_INFO);
@@ -106,6 +107,26 @@ bool Operand::add(const operand_variant_t&ovv) {
   list->add(ovv);
   return true;
 }
+//-------------------------------------------
+bool Operand::add(const Operand &k, const AstNode& v, bool overwrite) {
+  //cout << "Operand::add(const Operand &k, const AstExpr& v, bool overwrite)\n";
+  //auto vptr = get_raw_ptr();
+  auto vptr = get_map_ptr_nc();
+  if(vptr==nullptr) return false;
+  return vptr->add(k, v.clone(), overwrite);
+}
+
+bool Operand::add(const Operand &k, astnode_u_ptr&& vvptr, bool overwrite) {
+  //auto vptr = get_raw_ptr();
+  auto vptr = get_map_ptr_nc();
+  if(vptr==nullptr) return false;
+  if(vvptr==nullptr) return false;
+  return vptr->add(k, move(vvptr), overwrite);
+}
+
+
+//------------------------------------------------------------------------------------------------------------------ 
+
 bool Operand::add(const AstList &k, const operand_variant_t&ovv, bool overwrite) {
   MYLOGGER(trace_function , "Operand::add(AstList&, operand_variant_t&, overwrite)" , __func__, SLOG_FUNC_INFO);
   auto vptr =_vrptr();
@@ -134,6 +155,7 @@ bool Operand::add(const AstList &k, astnode_u_ptr&&vvptr, bool overwrite) {
   }}
   return false;
 }
+//------------------------------------------------------------------------------------------------------------------ 
 
 //------------------------------------ Clone() s
 astnode_u_ptr Operand::_uptr() { 
@@ -229,31 +251,48 @@ AstMap* Operand::get_map_ptr_nc() {
   return nullptr;
 }
 
+//------------------------------------
+Operand& Operand::operator[] (const string& k) {
+  MYLOGGER(trace_function, "Operand::operator[](string& k)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+  return const_cast<Operand&>(as_const(*this)[k]); 
+}
+const Operand& Operand::operator[] (const string& k) const {
+  MYLOGGER(trace_function, "const Operand::operator[](const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+
+  auto vptr =(AstMap*) _vrptr();
+  if(vptr==nullptr) return nil_operand;
+  return (*vptr)[k];
+}
 
 //------------------------------------
-Operand& Operand::operator[] (const Operand& k) {
-  MYLOGGER(trace_function, "Operand::operator[](Operand& k)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
+Operand& Operand::operator[] (const s_integer& k) {
+  MYLOGGER(trace_function, "Operand::operator[](s_integer&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + Number(k)._to_str(), SLOG_FUNC_INFO);
   return const_cast<Operand&>(as_const(*this)[k]); 
-/*
-  auto vptr =(AstList*) _vrptr();
-  if(vptr==nullptr) return nil_operand_nc;
-  return (*vptr)[k];
-*/
 }
-const Operand& Operand::operator[] (const Operand& k) const {
-  MYLOGGER(trace_function, "const Operand::operator[](const Operand&)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
-  //return const_cast<Operand&>(as_const(*this)[k]); 
+const Operand& Operand::operator[] (const s_integer& k) const {
+  MYLOGGER(trace_function, "const Operand::operator[](s_integer&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + Number(k)._to_str(), SLOG_FUNC_INFO);
+
   auto vptr =(AstList*) _vrptr();
   if(vptr==nullptr) return nil_operand;
   return (*vptr)[k];
 }
+
+
+//------------------------------------
+
+
 Operand& Operand::operator[] (const vec_str_t& k) {
   return (*this)[AstList(k)];
 }
 
 Operand& Operand::operator[] (const AstList& k) {
+  return const_cast<Operand&>(as_const(*this)[k]); 
+}
+const Operand& Operand::operator[] (const AstList& k) const {
   MYLOGGER(trace_function, "Operand::operator[](const AstList&)", __func__, SLOG_FUNC_INFO);
   //return const_cast<Operand&>(as_const(*this)[k]); 
   auto vptr =_vrptr();

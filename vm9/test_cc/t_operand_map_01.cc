@@ -10,7 +10,7 @@
 
 TEST_CASE("check operand map 1") {
   trace_function.open("trace_svlm.log", std::ios::out);
-  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+9);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+29);
 
   MYLOGGER(trace_function, "TEST_CASE()", __func__, SLOG_FUNC_INFO);
 
@@ -30,15 +30,27 @@ TEST_CASE("check operand map 1") {
   //cout << "t1:" << t1 << "\n";
 
 
-  MYLOGGER_MSG(trace_function,  string("step 1") ,  SLOG_FUNC_INFO);
   AstMap m1(t1);
-  MYLOGGER_MSG(trace_function,  string("step 2") ,  SLOG_FUNC_INFO);
   cout << "m1:" << m1 << "\n";
+  m1[static_cast<string>("hello4")] = 4444l;
+  m1["hello5"] = 5555l;
+  cout << "m1:" << m1 << "\n";
+  auto &v4 = m1["hello4"];
+  cout << "m1[hello4]:" << v4 << "\n";
+  auto &v5 = m1["hello5"];
+  const auto &v6 = m1["hello6"];
+  cout << "m1[hello5]:" << v5 << "\n";
+  cout << "m1[hello6]:" << v6 << "\n";
+  v5=51111l;
+  cout << "m1:" << m1 << "\n";
+  return ;
 
-  MYLOGGER_MSG(trace_function,  string("step 3") ,  SLOG_FUNC_INFO);
-  m1["hello4"] = 6666l;
+
 
   CHECK(m1["hello4"]._to_str() == "6666");
+
+  return ;
+
 
   cout << "m1:" << m1 << "\n";
   m1[123l] = 777l;

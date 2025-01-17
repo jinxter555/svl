@@ -14,7 +14,7 @@ public:
 
 };
 
-class SvlmAst : Tree {
+class SvlmAst : public Tree {
   friend class SvlmInteractive;
 protected:
 

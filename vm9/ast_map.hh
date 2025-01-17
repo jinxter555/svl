@@ -52,9 +52,16 @@ public:
   //-------------------------
   Operand& operator[] (const list_t& k) ;
   Operand& operator[] (const vec_str_t& k) ;
+
   Operand& operator[] (const AstList& k) override ;
-  Operand& operator[] (const Operand& k) override ;
-  //const Operand& operator[] (const string &k) const ;
+  const Operand& operator[] (const AstList& k) const override final ;
+
+  Operand& operator[] (const string& k) override ;
+  const Operand& operator[] (const string& k) const override ;
+
+  Operand& operator[] (const s_integer&k ) override final;
+  const Operand& operator[] (const s_integer&k) const override final;
+
   //-------------------------
   //bool operator==(const AstNode& ) const override;
   bool operator==(const AstMap& ) const ;

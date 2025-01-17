@@ -42,6 +42,11 @@ public:
   bool add(astnode_u_ptr &&) ;  // for list
   bool add(const operand_variant_t&) ;  // for list
 
+  //-------------------------------------------
+  bool add(const Operand &k, const AstNode& v, bool overwrite=false) ;
+  bool add(const Operand &k, astnode_u_ptr&& vptr, bool overwrite=false) ;
+
+
   bool add(const AstList &k, const operand_variant_t&, bool overwrite=false);
   bool add(const AstList &k, astnode_u_ptr&&, bool overwrite=false);
 
@@ -109,9 +114,15 @@ public:
   Operand get_opcode() const;
 
 
-  const Operand& operator[] (const Operand& k)const  ;
-  Operand& operator[] (const Operand& k) override final;
+  const Operand& operator[] (const string& k) const override final ;
+  Operand& operator[] (const string& k) override final;
+
+  const Operand& operator[] (const s_integer& k) const override final ;
+  Operand& operator[] (const s_integer& k) override final;
+
+  const Operand& operator[] (const AstList& k) const override final;
   Operand& operator[] (const AstList& k) override final;
+
   Operand& operator[] (const vec_str_t& k) ;
   
   const Operand& back() const override;

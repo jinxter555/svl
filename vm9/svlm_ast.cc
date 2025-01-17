@@ -56,7 +56,7 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
   MYLOGGER(trace_function , string("SvlmAst::add_module('") + mod_name._to_str() + string("')") ,__func__)
 //  cout << "SvlmAst::add_module()\n";
 
-  auto &clist = clist_ptr->_get_list();
+  auto &clist = clist_ptr->_get_list_nc();
 
   s_integer i, s=clist.size();
 
@@ -80,9 +80,9 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
       continue; 
     }
 
-    //auto sub_node_name = nan.getv("name")._to_str();
     auto sub_node_name = nan["name"]._to_str();
-    sub_node.add(sub_node_name, move(nan_vptr), true);
+    //sub_node.add(sub_node_name, move(nan_vptr), true);
+    sub_node.add(sub_node_name, nan_vptr->clone(), true);
   }
   //cout << "\n\n";
 }
@@ -135,14 +135,14 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   return msub_node;
 }
 
-void SvlmAst::add_code(const Operand&n, list_u_ptr clist) {
+void SvlmAst::add_code(const Operand& name, list_u_ptr clist) {
   //cout << "add code:" << MOD << " " << n << "\n";
-  auto &msub_node = get_module_subnode(n, OperandType::ast_mod_t);
-  map_t new_map;
-  new_map["code"] = move(clist);
+  auto &msub_node = get_module_subnode(name, OperandType::ast_mod_t);
+  auto new_map=make_unique<AstMap>();
+  new_map->add(string("code"), move(clist));
   msub_node.add(string("last"), move(new_map), true);
 
-  auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, n._to_str()}];
+  //auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, name._to_str()}];
   //l.print(); cout << "\n";
 }
 
@@ -163,11 +163,11 @@ void SvlmAst::run_evaluate() {
   auto &ctxt = get_context();
   auto &frames = get_frames();
 
-  map_t new_map ;
-  new_map["lvars"] = new map_t;
-  new_map["current_module"]=Operand("Main");
-  frames->add(move(new_map));
+  auto new_map=make_unique<AstMap>();
 
+  new_map->add(string("lvars"), make_unique<AstMap>());
+  new_map->add(string("current_module"), Operand("Main"));
+  frames->add(move(new_map));
   l.evaluate(ctxt);
 
 /*
@@ -181,20 +181,20 @@ void SvlmAst::run_evaluate() {
 //----------------------------------------------------------------------- AstBinOp
 
 AstBinOp::AstBinOp(astnode_u_ptr l, astnode_u_ptr r, AstOpCode op) 
- : type_(OperandType::ast_binop_t) 
-  {
-  add(string("left"), move(l));
-  add(string("right"), move(r));
-  add(string("op"), Operand(op));
+ : SvlmAst(OperandType::ast_binop_t) {
+  root["left"]= move(l);
+  root["right"]= move(r);
+  root["op"]= op;
 }
+
 void AstBinOp::print() {
   //cout << "AstBinOp:\n";
   cout << to_str();
 }
 Operand AstBinOp::to_str() const { 
-  auto &l = (*this)["left"];
-  auto &r = (*this)["right"];
-  auto &o = (*this)["op"];
+  auto &l = root["left"];
+  auto &r = root["right"];
+  auto &o = root["op"];
   return  l.to_str() + o.to_str() +  r.to_str();
 }
 Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
@@ -203,7 +203,8 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
   , __func__);
 
 
-  auto &l = (*this)["left"];
+  //auto &l = (*this)["left"];
+  auto &l = root["left"];
   auto &r = (*this)["right"];
   auto opcode_str = (*this)["op"]._to_str();
   auto &op = (*this)["op"];

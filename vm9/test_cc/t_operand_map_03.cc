@@ -2,6 +2,7 @@
 #include <catch2/catch_all.hpp>
 
 #include "operand.hh"
+#include "ast_map.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -27,8 +28,9 @@ TEST_CASE("check operand map 3 with tree like structure ") {
 
 
 
-  Operand m2(make_unique<Operand>(t1));
+  //Operand m2(make_unique<Operand>(t1));
   //Operand m2(t1);
+  AstMap m2;
   m2["pi"] = 3.14159;
   m2["www1"] = "server1";
 

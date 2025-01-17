@@ -48,10 +48,15 @@ public:
   virtual bool is_nil() const=0;
 
 
-  //const Operand& operator[] (const Operand &k) const ;
+  virtual const Operand& operator[] (const string &k) const =0 ;
+  virtual Operand& operator[] (const string& k) = 0;
 
+  virtual const Operand& operator[] (const s_integer &k) const =0 ;
+  virtual Operand& operator[] (const s_integer& k) = 0;
+
+  virtual const Operand& operator[] (const AstList& k) const = 0;
   virtual Operand& operator[] (const AstList& k) = 0;
-  virtual Operand& operator[] (const Operand& k) = 0;
+
   virtual const Operand& back() const = 0;
   virtual Operand& back_nc() = 0;
   virtual bool add(astnode_u_ptr &&vptr) =0;  // for list
