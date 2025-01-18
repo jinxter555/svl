@@ -82,6 +82,9 @@ public:
   astnode_ptr _vrptr() const override; 
   astnode_ptr get_raw_ptr() const ;
 
+  svlm_ast_ptr get_svlm_ptr();
+
+
   const astnode_u_ptr& get_u_ptr() const override;
   astnode_u_ptr& get_u_ptr_nc() override;
 

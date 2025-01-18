@@ -198,6 +198,7 @@ const Operand& Operand::get_operand() const {
 }
 
 const AstNode& Operand::get_node() const { return get_operand(); }
+
 const AstList& Operand::get_list() const {
   MYLOGGER(trace_function, "Operand::get_list()", __func__, SLOG_FUNC_INFO+10);
   auto vptr = _vrptr();
@@ -212,6 +213,7 @@ const AstMap& Operand::get_map() const {
   return _vrptr()->get_map();
 };
 
+//------------------------------------
 const Operand* Operand::get_operand_ptr() const {
   return (Operand*)_vrptr();
 }
@@ -231,10 +233,12 @@ const AstMap* Operand::get_map_ptr() const {
   return nullptr;
 }
 
+//------------------------------------
 Operand* Operand::get_operand_ptr_nc() {
   MYLOGGER(trace_function, "Operand::get_operand_ptr_nc()", __func__, SLOG_FUNC_INFO);
   return (Operand*)this;
 }
+
 AstList* Operand::get_list_ptr_nc() {
   MYLOGGER(trace_function, "Operand::get_list_ptr_nc()", __func__, SLOG_FUNC_INFO);
   auto vptr = _vrptr();
@@ -250,6 +254,15 @@ AstMap* Operand::get_map_ptr_nc() {
     return (AstMap*)vptr;
   return nullptr;
 }
+
+//------------------------------------
+svlm_ast_ptr Operand::get_svlm_ptr() {
+   if (holds_alternative<svlm_ast_ptr>(value_)) {
+    return get<svlm_ast_ptr>(value_);
+   }
+   return nullptr;
+}
+
 
 //------------------------------------
 Operand& Operand::operator[] (const string& k) {

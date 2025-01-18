@@ -8,7 +8,6 @@
 #include "scope_logger.hh"
 
 SvlmInteractive svlm_it(".svlm_history", "svlm> ");
-astexpr_u_ptr nil_ast_ptr=nullptr;
 
 SvlmInteractive::SvlmInteractive
 ( const std::string&hf

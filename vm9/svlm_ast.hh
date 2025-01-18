@@ -5,12 +5,13 @@
 #include "ast_list.hh"
 
 class Tree : public Primordial<Tree>{
+  friend class SvlmAst;
 protected:
   AstMap root;
 public:
   Tree(const OperandType&t) : Primordial(t) {};
   s_integer size() const override {return 0;};
-  virtual Operand evaluate(unique_ptr<AstNode>&) =0;
+  virtual Operand evaluate(unique_ptr<Tree>&) =0;
 
 };
 
@@ -23,7 +24,6 @@ protected:
 
 public:
   SvlmAst(const OperandType&t);
-
 
   void add_program(const Operand&);
   void add_module(const Operand&, list_u_ptr clist );
@@ -51,77 +51,72 @@ public:
   void print() const override {};
   void run_evaluate();
   Operand evaluate_prompt_line();
-  Operand evaluate(unique_ptr<AstNode>&) override;
+  Operand evaluate(unique_ptr<Tree>&) override;
 
 };  
 
 
-class AstBinOp : public SvlmAst {
+class AstBinOp : public AstExpr {
 private:
-  OperandType type_;
 public:
   AstBinOp (unique_ptr<AstNode> l, unique_ptr<AstNode> r, AstOpCode op);
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
-  Operand evaluate(astnode_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr &) override;
   void print() ;
 };
 
 
 
-class AstFunc: public SvlmAst{
+class AstFunc: public AstExpr{
 private:
   string name;
-  OperandType type_;
 public:
   AstFunc(const Operand&,  astnode_u_ptr, astnode_u_ptr) ; 
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astnode_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr &) override;
   void print() const override;
 };
 
 
-class AstPrint : public SvlmAst { 
+class AstPrint : public AstExpr { 
 private:
-  OperandType type_;
 public:
   AstPrint(astnode_u_ptr);
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astnode_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr &) override;
   void print() const override;
 };
 
-class AstCaller : public SvlmAst {
+class AstCaller : public AstExpr {
 private:
-  OperandType type_;
   bool evaluated=false;
 public:
   AstCaller(const Operand&, astnode_u_ptr);
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() const override;
   //string get_current_module(astnode_u_ptr& ctxt) ; // get current module from frame only
   string get_module() ; // if $module.var return module , if $var, return current_module
+  Operand evaluate(astnode_u_ptr &) override;
   //astnode_u_ptr& get_frames(astnode_u_ptr& ctxt) ;
 
-  Operand& add_frame(astnode_u_ptr& ctxt);
-  Operand& remove_frame(astnode_u_ptr& ctxt);
+  Operand& add_frame(unique_ptr<AstNode>& ctxt);
+  Operand& remove_frame(unique_ptr<AstNode>& ctxt);
 
 
 };
 
-class AstAssign : public SvlmAst {
+class AstAssign : public AstExpr {
 protected:
-  OperandType type_;
   OperandType scale_;
 public:
-  AstAssign(OperandType t, OperandType s=OperandType::scalar_t) : type_(t), scale_(s) {}
+  AstAssign(OperandType t, OperandType s=OperandType::scalar_t) : AstExpr(t), scale_(s) {}
   virtual string name() = 0;
   //virtual void assign(astnode_u_ptr&, Operand& ) = 0;
   virtual bool assign(astnode_u_ptr&, Operand& ) = 0;
@@ -142,10 +137,10 @@ public:
   Operand get_type() const override ;
   Operand get_scale() {return scale_; };
   OperandType _get_type() const override;
-  Operand evaluate(astnode_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr &) override;
   bool assign(astnode_u_ptr& ctxt, Operand& ) override final;
   void print() const override;
-  astnode_u_ptr clone() const override; 
+  //astnode_u_ptr clone() const override; 
 };
 
 class AstLvar : public AstAssign {
@@ -158,7 +153,7 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astnode_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr &) override;
   bool assign(astnode_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
@@ -172,22 +167,20 @@ public:
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astnode_u_ptr& ctxt) override;
+  Operand evaluate(astnode_u_ptr &) override;
   bool assign(astnode_u_ptr& ctxt, Operand&) override final;
+  astnode_u_ptr clone() const override;
   void print() const override;
 
-  //astnode_u_ptr clone() const override; 
 };
 
-class AstFlow : public AstNode {
-protected:
-  OperandType type_;
+class AstFlow : public AstExpr {
 public:
-  AstFlow(OperandType t) : type_(t) {}
+  AstFlow(OperandType t) ;
   virtual string name() = 0;
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
-  Operand evaluate(astnode_u_ptr& ctxt) override;
   void print() const override;
+  Operand evaluate(astnode_u_ptr &) override;
 };
