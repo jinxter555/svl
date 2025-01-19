@@ -3,13 +3,14 @@
 #include "my_helpers.hh"
 #include "operand_vars.hh"
 
-#define DEBUG_TRACE_FUNC
+#define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
 #define MOD "module"
 #define FRAMES "frames"
 
 SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
+  MYLOGGER(trace_function , string("SvlmAst::SvlmAst()") , __func__, SLOG_FUNC_INFO);
 
   Operand ov(list_t{});
 
@@ -28,7 +29,7 @@ astnode_u_ptr& SvlmAst::get_context() {
   return c.get_u_ptr_nc();
 }
 astnode_u_ptr& SvlmAst::get_frames() {
-  MYLOGGER(trace_function , string("SvlmAst::get_frames('") + mod_name._to_str() + string("')") ,__func__+9)
+  MYLOGGER(trace_function , string("SvlmAst::get_frames('") , __func__, SLOG_FUNC_INFO+9);
   auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
   //if(c==nil_operand) {
   if(c._get_type()==OperandType::nil_t) {
@@ -38,7 +39,7 @@ astnode_u_ptr& SvlmAst::get_frames() {
   return c.get_u_ptr_nc();
 }
 Operand& SvlmAst::get_current_frame() {
-  MYLOGGER(trace_function , string("SvlmAst::get_current_frame('") + mod_name._to_str() + string("')") ,__func__+9)
+  MYLOGGER(trace_function , string("SvlmAst::get_current_frame('")  ,__func__, SLOG_FUNC_INFO + 9)
   auto &frames = get_frames();
   if(frames == nil_operand_ptr_nc) {
     return nil_operand_nc;
@@ -54,7 +55,7 @@ string SvlmAst::get_current_module() {
 }
 
 void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
-  MYLOGGER(trace_function , string("SvlmAst::add_module('") + mod_name._to_str() + string("')") ,__func__)
+  MYLOGGER(trace_function , string("SvlmAst::add_module('") + mod_name._to_str() + string("')") ,__func__, SLOG_FUNC_INFO)
 //  cout << "SvlmAst::add_module()\n";
 
   auto &clist = clist_ptr->_get_list_nc();
@@ -90,8 +91,7 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
 
 
 Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType t) {
-  MYLOGGER(trace_function , string("SvlmAst::get_module_subnode(") + mod_name._to_str() + string("): ") + Operand(t)._to_str()
-   ,__func__)
+  MYLOGGER(trace_function , string("SvlmAst::get_module_subnode(") + mod_name._to_str() + string("): ") + Operand(t)._to_str() ,__func__, SLOG_FUNC_INFO);
 
  // cout << "SvlmAst::get_module_subnode, type" <<  Operand(t) <<"\n";
 
@@ -137,7 +137,7 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
 }
 
 void SvlmAst::add_code(const Operand& name, list_u_ptr clist) {
-  MYLOGGER(trace_function , string("SvlmAst::add_code('") + name._to_str() + string("')") ,__func__+9)
+  MYLOGGER(trace_function , string("SvlmAst::add_code('") + name._to_str() + string("')") ,__func__, SLOG_FUNC_INFO+9)
   //cout << "add code:" << MOD << " " << n << "\n";
   auto &msub_node = get_module_subnode(name, OperandType::ast_mod_t);
   auto new_map=make_unique<AstMap>();
@@ -149,7 +149,7 @@ void SvlmAst::add_code(const Operand& name, list_u_ptr clist) {
 }
 
 Operand SvlmAst::evaluate_prompt_line() {
-  MYLOGGER(trace_function , "SvlmAst::evaluate_prompt_line()" , string("SvlmAst::")  + string(__func__));
+  MYLOGGER(trace_function , "SvlmAst::evaluate_prompt_line()" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
   auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Prompt", "last", "code"}];
   //l.print(); cout << "\n";
   auto &ctxt = get_context();
@@ -157,7 +157,7 @@ Operand SvlmAst::evaluate_prompt_line() {
 }
 
 void SvlmAst::run_evaluate() {
-  MYLOGGER(trace_function , "SvlmAst::run_evaluate()" , string("SvlmAst::")  + string(__func__));
+  MYLOGGER(trace_function , "SvlmAst::run_evaluate()" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
   //cout << "Run eval Main::main \n";
   auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Main", "function", "main", "code"}];
   root[vec_str_t{CONTEXT_UNIV, "svlm_lang"}] = Operand(this);
@@ -201,9 +201,7 @@ Operand AstBinOp::to_str() const {
   return  l.to_str() + o.to_str() +  r.to_str();
 }
 Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
-  MYLOGGER(trace_function
-  , "AstBinOp::evaluate(astnode_u_ptr& ctxt)"
-  , __func__);
+  MYLOGGER(trace_function , "AstBinOp::evaluate(astnode_u_ptr& ctxt)" , __func__, SLOG_FUNC_INFO);
 
 
   //auto &l = (*this)["left"];
@@ -213,7 +211,7 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
   auto &op = node["op"];
   auto opcode = node["op"]._get_opcode();
 
-  MYLOGGER_MSG(trace_function, string("AstBinOp::") + string(__func__) + string(" ") +  l._to_str()  + opcode_str + r._to_str());
+  MYLOGGER_MSG(trace_function, string("AstBinOp::") + string(__func__) + string(" ") +  l._to_str()  + opcode_str + r._to_str(), SLOG_FUNC_INFO);
 
   cout << "l: " << l << "\n";
   cout << "l.type: " << l.get_type() << "\n";
@@ -452,11 +450,8 @@ string AstAssign::get_index_s(astnode_u_ptr &ctxt) {
 
 //----------------------------------------------------------------------- AstMvar
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
-  MYLOGGER(trace_function
-  , "AstMvar::AstMvar(const string &v)"
-  , __func__
-  )
-  MYLOGGER_MSG(trace_function, string("var_name: ") + v)
+  MYLOGGER(trace_function , "AstMvar::AstMvar(const string &v)" , __func__ , SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, string("var_name: ") + v, SLOG_FUNC_INFO)
 
   scale_ = OperandType::scalar_t;
   auto mod_var = split_string(v, ".");
@@ -512,11 +507,8 @@ void AstMvar::print() const {
 
 // to get value from tree: module 'mname' mvar 'vname'
 Operand AstMvar::evaluate(astnode_u_ptr& ctxt) {
-  MYLOGGER(trace_function
-  , "AstMvar::evaluate(astnode_u_ptr& ctxt)"
-  , __func__
-  )
-  MYLOGGER_MSG(trace_function, string("var_name: ") + name())
+  MYLOGGER(trace_function , "AstMvar::evaluate(astnode_u_ptr& ctxt)" , __func__,  SLOG_FUNC_INFO )
+  MYLOGGER_MSG(trace_function, string("var_name: ") + name(), SLOG_FUNC_INFO)
   
   //cout << "AstMvar::evalaute\n\n";
 
@@ -587,8 +579,8 @@ Operand AstMvar::evaluate(astnode_u_ptr& ctxt) {
 bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
   MYLOGGER(trace_function
   , "AstMvar::assign(astnode_u_ptr& ctxt, const Operand& v)" 
-  , string("AstMvar::") + string(__func__));
-  MYLOGGER_MSG(trace_function, name() + string(" = ") + v.to_str()._to_str());
+  , string("AstMvar::") + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, name() + string(" = ") + v.to_str()._to_str(), SLOG_FUNC_INFO);
 
   Operand mod_name_operand;
 
@@ -641,7 +633,7 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
       return true;
     }
   }
-  MYLOGGER_MSG(trace_function, "sub_node.add() before");
+  MYLOGGER_MSG(trace_function, "sub_node.add() before", SLOG_FUNC_INFO);
 
   //cout << "sub_node: " << sub_node << "\n";
   //cout << "v.type(): " << v.get_type() << "\n";
@@ -652,7 +644,7 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
 
   sub_node.add(var_name, v, true);
 
-  MYLOGGER_MSG(trace_function, "sub_node.add() after");
+  MYLOGGER_MSG(trace_function, "sub_node.add() after", SLOG_FUNC_INFO);
   return true;
 
 }

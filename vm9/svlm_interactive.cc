@@ -1,22 +1,20 @@
 #include <iostream>
 #include "svlm_interactive.hh"
 #include "my_helpers.hh"
+#include "operand_vars.hh"
 
 #include "lang.hh"
 
-#define DEBUG_TRACE_FUNC
+#define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-SvlmInteractive svlm_it(".svlm_history", "svlm> ");
+//SvlmInteractive svlm_it(".svlm_history", "svlm> ");
+SvlmInteractive *svlm_it_ptr;
 
-SvlmInteractive::SvlmInteractive
-( const std::string&hf
-, const std::string&ps
-) 
-: LangPrompt(hf, ps)
-, svlm_lang(OperandType::svlm_lang_t) 
-//, slc(OperandType::svlm_ctxt_t) 
+SvlmInteractive::SvlmInteractive(const std::string& hf , const std::string&ps) 
+: LangPrompt(hf, ps) , svlm_lang(OperandType::svlm_lang_t) 
 {
+  MYLOGGER(trace_function , string("SvlmInteractive::SvlmInteractive()") , __func__, SLOG_FUNC_INFO);
 
   init_command_functions();
 
@@ -33,13 +31,13 @@ SvlmInteractive::SvlmInteractive
   vector<string> keys3 = {CONTEXT_UNIV,"hello", "one-one", "two", "three", "four", "Five"};
   vector<string> keys3b  = {CONTEXT_UNIV,"hello", "one-one", "two"};
 
-  svlm_lang.root.add_branch(keys0, 55555l);
+  svlm_lang.root[keys0]= 55555l;
   //svlm_lang.root.print_m();
-  svlm_lang.root.add_branch(keys1, 123l);
-  auto &ov = svlm_lang.root.get_branch(keys1);
+  svlm_lang.root[keys1] = 123l;
+  //auto &ov = svlm_lang.root.get_branch(keys1);
   //cout << "ov keys1: " << ov << "\n";
-  svlm_lang.root.add_branch(keys2, 456l, true);
-  svlm_lang.root.add_branch(keys3, "somestrval");
+  svlm_lang.root[keys2] = 456l;
+  svlm_lang.root[keys3] = "somestrval";
   //node.print_m();
 
   
@@ -52,10 +50,10 @@ void SvlmInteractive::print_tree(const std::string& line) {
     vstr = {CONTEXT_UNIV}; 
   }
 
-  auto children = svlm_lang.root.get_branch(vstr)._get_keys();
+  auto children = svlm_lang.root[vstr]._get_keys();
   if(children.empty()) {
     //cout << "Node not found!\n";
-    auto &value= svlm_lang.root.get_branch(vstr);
+    auto &value= svlm_lang.root[vstr];
     cout << value << "\n";
     return;
   }
@@ -144,13 +142,13 @@ void SvlmInteractive::parse(const std::string &line) {
   // evaluate ast_current_context pop back members
 }
 void SvlmInteractive::evaluate_line() {
-  MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__));
+  MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
   auto result = svlm_lang.evaluate_prompt_line();
   //std::cout << "evaluate line" << "\n";
 
   if(result.size()>0 ) {
     auto &v = result.back();
-    if(v==nil) { // Operand_math != is notworking 
+    if(v.is_nil()) { // Operand_math != is notworking 
       cout << "v==nil" << result << "\n";
     } else  {
       //cout << "get_type: " << v.get_type() << "\n";
@@ -163,6 +161,7 @@ void SvlmInteractive::evaluate_line() {
 }
 
 void SvlmInteractive::load(const std::string &cfn) {
+  MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
   std::vector<std::string> filenames = split_string(cfn, " ");
 
   for(auto filename : filenames) {
@@ -181,12 +180,16 @@ void SvlmInteractive::reload(const std::string &cfn) {
 }
 
 void SvlmInteractive::run_program(const std::string &l) {
+  MYLOGGER(trace_function , "SvlmInteractive::run_program()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
   //std::cout << "run program\n";
   svlm_lang.run_evaluate();
 
 }
 
 void SvlmInteractive::interact(const std::string &cline) {
+  MYLOGGER(trace_function , "SvlmInteractive::interact(const string&)" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("line: ") + cline, SLOG_FUNC_INFO);
+
   std::string line = move(reduce(cline));
   std::vector<std::string> tokens= move(split_string(line, " "));
   std::string command = tokens.front();
@@ -209,7 +212,7 @@ std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std:
   
  // std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
 
-  children = svlm_lang.root.get_branch(keys)._get_keys();
+  children = svlm_lang.root[keys]._get_keys();
   children.push_back("");
 
   // std::cout << "children: "; for(auto k: children) { std::cout << k << ","; } std::cout << "\n";
@@ -260,11 +263,11 @@ void SvlmInteractive::add_readline(const string& cmd) {
 
   if(cmd == "!!print_tree") {
     //auto &univ = svlm_lang.root.get_branch({CONTEXT_UNIV});
-    auto univ_ptr = svlm_lang.root.AstMap::get_raw_ptr(string(CONTEXT_UNIV));
-    svlm_lang.root.add_branch({rlsvlm_loc, cmd, CONTEXT_UNIV}, unique_ptr<AstExpr>(univ_ptr));
+    //auto univ_ptr = svlm_lang.root.AstMap::get_raw_ptr(string(CONTEXT_UNIV));
+    auto univ_ptr = svlm_lang.root[CONTEXT_UNIV].get_raw_ptr();
+    svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd, CONTEXT_UNIV}, univ_ptr);
   } else
-    svlm_lang.root.add_branch({rlsvlm_loc, cmd}, nil_operand);
-
+    svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd}, nil);
 }
 
                                                                                                             
@@ -277,7 +280,7 @@ void SvlmInteractive::convert_buff_to_keys() {
 
 
 char* SvlmInteractive::command_generator(const char *text, int state) {
-  std::vector<std::string> commands = std::move(svlm_it.get_ui_commands(cui_keys));
+  std::vector<std::string> commands = std::move(svlm_it_ptr->get_ui_commands(cui_keys));
   std::string textstr(text), command;
   static int list_index, len; 
 

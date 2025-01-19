@@ -103,6 +103,7 @@ bool AstMap::add(const vec_str_t&k, astnode_u_ptr &&vptr, bool overwrite)  {
 
 bool AstMap::add(const Operand &k, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(Operand&k, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
   auto kptr = k._vrptr();
   switch (kptr->_get_type()) {
   case OperandType::list_t :
@@ -117,6 +118,9 @@ bool AstMap::add(const Operand &k, astnode_u_ptr &&vptr, bool overwrite)  {
 }
 bool AstMap::add(const string &k, const AstNode &v, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(string &k, const AstNode&, bool) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("v: ") + v.to_str()._to_str(), SLOG_FUNC_INFO);
+
   if(has_key(k)) {
     if(!overwrite) return false;
   }
@@ -125,6 +129,8 @@ bool AstMap::add(const string &k, const AstNode &v, bool overwrite)  {
 }
 bool AstMap::add(const string &k, const operand_variant_t&v, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(string &k, const operand_variant_t, bool) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("v: ") + Operand(v)._to_str(), SLOG_FUNC_INFO);
   if(has_key(k)) {
     if(!overwrite) return false;
   }
@@ -137,6 +143,9 @@ bool AstMap::add(const vec_str_t&k, const operand_variant_t&v, bool overwrite)  
 
 bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(string &k, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
+
   if(has_key(k)) {
     if(!overwrite) return false;
   }
@@ -146,6 +155,8 @@ bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
 //------------------------------------- 
 bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(AstList&, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
   //cout << "AstList::add[" <<  index_keys << "] \n" ;
 
   auto Mptr= _vrptr();
@@ -182,6 +193,8 @@ bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite
 //------------------------------------- 
 bool AstMap::add(const AstList &index_keys, const operand_variant_t& ovv, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(AstList&, operand_variant&, bool) ", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("v: ") + Operand(ovv).to_str()._to_str(), SLOG_FUNC_INFO);
   //cout << "AstList::add[" <<  index_keys << "] \n" ;
 
   auto Mptr= _vrptr();
@@ -290,6 +303,7 @@ bool AstMap::is_nil() const {
   if(size()<=0) return true;
   return false;
 }
+
 
 //------------------------------------------------------------------------------------------------------------------ 
 const Operand* AstMap::get_operand_ptr() const {

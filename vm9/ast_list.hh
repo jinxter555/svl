@@ -9,7 +9,8 @@
 
 
 class AstList : public AstNode {
-private:
+  friend class Tuple;
+protected:
   vector<Operand> list_;
 public:
   //QueList() : AstNode(OperandType::list_t) { list_ = {};}
@@ -27,6 +28,7 @@ public:
   const Operand& get_operand() const override;
   const AstList& get_list() const override;
   const AstMap& get_map() const override;
+  vector<string> _get_keys() const override;
 
 //-------------------------------------- 
   const Operand* get_operand_ptr() const override;
@@ -63,7 +65,7 @@ public:
   bool operator==(const astnode_ptr& ) const override;
   bool cmp_eql(const AstNode&) const override;
   bool cmp_eql(const AstList *) const ;
-  Operand opfunc(const AstNode&, AstOpCode op) override final;
+  Operand opfunc(const AstNode&, AstOpCode op) override ;
 
   const Operand& back() const override;
   Operand& back_nc()  override;
@@ -97,4 +99,30 @@ public:
 
   //bool operator==(const QueList& other) const ;
 
+};
+
+
+class Tuple : public AstList{
+private:
+  OperandType type_;
+public:
+  Tuple() {};
+  Tuple(astnode_u_ptr) ;
+  bool operator==(const Tuple& other) const;
+  bool operator!=(const Tuple& other) const;
+  Operand opfunc(const AstNode&, AstOpCode op) override final;
+
+  Operand evaluate(astnode_u_ptr& ast_ctxt) override ;
+
+  astnode_u_ptr clone() const override; 
+  bool cmp_eql(const AstNode &) const override;
+
+  Operand to_str() const override ;
+  Operand get_type() const override;
+  OperandType _get_type() const override;
+
+  //using AstList::evaluate;
+  using AstList::size;
+
+  void print() const override;
 };

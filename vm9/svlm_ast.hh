@@ -11,7 +11,7 @@ protected:
 public:
   Tree(const OperandType&t) : Primordial(t) {};
   s_integer size() const override {return 0;};
-  virtual Operand evaluate(unique_ptr<Tree>&) =0;
+  //virtual Operand evaluate(unique_ptr<Tree>&) =0;
 
 };
 
@@ -51,7 +51,7 @@ public:
   void print() const override {};
   void run_evaluate();
   Operand evaluate_prompt_line();
-  Operand evaluate(unique_ptr<Tree>&) override;
+  //Operand evaluate(unique_ptr<Tree>&) override;
 
 };  
 

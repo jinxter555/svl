@@ -33,6 +33,9 @@ public:
   virtual const AstList& get_list() const=0;
   virtual const AstMap& get_map() const=0;
 
+  virtual vector<string> _get_keys() const =0;
+
+
   virtual const Operand* get_operand_ptr() const=0;
   virtual const AstList* get_list_ptr() const=0;
   virtual const AstMap* get_map_ptr() const=0;

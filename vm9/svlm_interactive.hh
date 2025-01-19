@@ -60,4 +60,5 @@ public:
 
 
 };
-extern SvlmInteractive svlm_it;
+//extern SvlmInteractive svlm_it;
+extern SvlmInteractive *svlm_it_ptr;

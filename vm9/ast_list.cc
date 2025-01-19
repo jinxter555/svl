@@ -29,6 +29,8 @@ AstList::AstList(const vec_num_t& l) : AstNode(OperandType::list_t) {
 AstList::AstList(const vec_str_t& l) : AstNode(OperandType::list_t) {
   for(auto &e: l) list_.push_back(e); }
 
+
+
 //--------------------------------------
 Operand AstList::evaluate(unique_ptr<AstNode>&ctxt) { 
   MYLOGGER(trace_function , "AstList::evaluate()" , string("AstList::") + string(__func__), SLOG_FUNC_INFO);
@@ -46,6 +48,7 @@ Operand AstList::evaluate(unique_ptr<AstNode>&ctxt) {
 //--------------------------------------
 astnode_u_ptr AstList::clone() const {
   MYLOGGER(trace_function, "AstList::clone_list(list_t&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, to_str()._to_str(), SLOG_FUNC_INFO+9);
 
   auto new_list = make_unique<AstList>();
   for(auto &e : list_)  {
@@ -185,6 +188,7 @@ const AstList& AstList::get_list() const { return *this; }
 const Operand& AstList::get_operand() const { return nil_operand; }
 const AstMap& AstList::get_map() const { return nil_map; }
 
+vector<string> AstList::_get_keys() const { return {}; }
 
 const Operand* AstList::get_operand_ptr() const {
   MYLOGGER(trace_function, "AstList::get_operand_ptr()", __func__, SLOG_FUNC_INFO);
@@ -284,5 +288,106 @@ Operand AstList::opfunc(const AstNode& other, AstOpCode op) {
   default:
     cerr << "AstList::opfunc, default error!\n";
     return nil;
+  }
+}
+
+//------------------------------------------------------------------------------------------------------------------ 
+
+//------------------------------------------------------------------------------------------------------------------ 
+
+Tuple::Tuple(astnode_u_ptr l) : type_(OperandType::tuple_t) {
+  s_integer i, s= l->size();
+  for(i=0; i<s; i++) {
+    //list_.push_back(move(l->getv(i))); 
+    list_.push_back(move((*l)[i])); 
+  }
+}
+
+Operand Tuple::to_str() const {
+  s_integer i, s = list_.size();
+  Operand outstr("{");
+  if(s==0) {return Operand("{}");}
+
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + list_[i].to_str() + ",";
+  }
+  outstr = outstr + list_[i].to_str() + "}";
+  return outstr;
+}
+
+Operand Tuple::get_type() const {
+  return OperandType::tuple_t;
+};
+OperandType Tuple::_get_type() const {
+  return OperandType::tuple_t;
+};
+
+void Tuple::print() const {
+  cout <<  to_str();
+}
+Operand Tuple::evaluate(astnode_u_ptr &ctxt) {
+  MYLOGGER(trace_function , "Tuple::evalaute()" ,__func__, SLOG_FUNC_INFO);
+
+  int i, s = size();
+  astnode_u_ptr result_tuple = make_unique<Tuple>();
+  for(i=0; i<s; i++) {
+    result_tuple->add(list_[i].evaluate(ctxt).clone());
+  }
+  return result_tuple;
+
+}
+
+//--------------------------------------
+astnode_u_ptr Tuple::clone() const {
+  MYLOGGER(trace_function , "Tuple::clone()" ,__func__, SLOG_FUNC_INFO);
+
+  list_u_ptr new_list = make_unique<Tuple>();
+  for(auto &e : list_)  {
+    new_list->list_.push_back(e.clone()); 
+  }
+  return move(new_list);
+}
+
+//--------------------------------------
+bool Tuple::operator==(const Tuple&other) const { 
+  MYLOGGER(trace_function , "Tuple::==(Tuple&)" , __func__, SLOG_FUNC_INFO);
+  cout << "Tuple::==()\n";
+  Operand other_tuple = other.clone();
+  return cmp_eql(other_tuple);
+}
+
+bool Tuple::cmp_eql(const AstNode &v) const {
+  MYLOGGER(trace_function , "Tuple::cmp_eql(Operand&)" ,__func__, SLOG_FUNC_INFO);
+  cout << "Tuple::cmp_eql(astnode_u_ptr)\n";
+
+  Operand other = v.clone();
+
+  cout << "*this: " << *this <<  " type: " << get_type() << "\n";
+  cout << "other: " << other<< " other type: " << other.get_type() << "\n\n";
+
+  if(other._get_type()!= OperandType::tuple_t) return false;
+  s_integer s=size();
+  if(s != other.size()) return false;
+
+  for(s_integer i=0; i < s; i++ ) {
+    cout << list_[i] << "==" << other[i] << "\n";
+    cout << list_[i].get_type() << "==" << other[i].get_type() << "\n";
+    if(list_[i] == other[i]) continue;
+    else return false;
+  }
+  return true;
+}
+
+Operand Tuple::opfunc(const AstNode& other, AstOpCode op) {
+  MYLOGGER(trace_function , "Tuple::opfunc()" ,__func__, SLOG_FUNC_INFO);
+
+  cout << "Tuple::opfunc()!\n";
+  print(); cout << " " << Operand(op) << " " <<  other <<"\n";
+  switch(op) {
+  case AstOpCode::eql:    return cmp_eql(other);
+  case AstOpCode::neql:   return !cmp_eql(other);
+  default:
+    cerr << "AstList::opfunc, default error!\n";
+    return Operand();
   }
 }

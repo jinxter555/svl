@@ -1,0 +1,42 @@
+# what is up
+
+module Main do
+  def main() do
+    #print 2+3
+    # print 1111+2222
+    func2()
+    func3(444,555)
+    Helper.me(999)
+    # Helper.me()
+  end
+
+  def func2() do
+    print "in func2\n"
+    $myvar1 = 123*3+4
+    print $myvar1
+    print "\n\n"
+
+  end
+
+  def func3(arg1, arg2) do
+    print "in func3, arg1 "
+    print arg1
+    print "in func3, arg2 "
+    print arg2
+    print "\n"
+  end
+
+end
+
+module Helper do
+  def me(arg1) do
+    localv1 = 8888
+    print localv1
+    print "in Helper me 11!\n";
+
+    print 5+6
+    print "arg1: "
+    print arg1
+    print "\n"
+  end
+end

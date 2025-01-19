@@ -11,7 +11,7 @@
 #include "svlm_interactive.hh"
 
 
-#define DEBUG_TRACE_FUNC
+#define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
 
@@ -36,13 +36,18 @@ int main(int argc, char *argv[]) {
 
   //log_output.open("svlm.log", std::ios::out);
   trace_function.open("trace_svlm.log", std::ios::out);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 31);
+  MYLOGGER(trace_function, "int main(int, char*[])", __func__, SLOG_FUNC_INFO);
+
+  SvlmInteractive svlm_it(".svlm_history", "svlm> ");
+
+  svlm_it_ptr = &svlm_it;
 
   Commandline cml(argc, argv);
   PromptSwitch ps = PromptSwitch::begin;
 
 
 
-  MYLOGGER(trace_function, "int main", __func__);
 
 
 
@@ -100,8 +105,8 @@ void asm_setup_readline_autocomplete() {
   //rl_attempted_completion_function = ait.command_completion;
 }
 void svlm_setup_readline_autocomplete() {
-  svlm_it.set_ui_commands();
-  rl_attempted_completion_function = svlm_it.command_completion;
+  svlm_it_ptr->set_ui_commands();
+  rl_attempted_completion_function = svlm_it_ptr->command_completion;
 }
 
 

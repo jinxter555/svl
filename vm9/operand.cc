@@ -214,6 +214,17 @@ const AstMap& Operand::get_map() const {
 };
 
 //------------------------------------
+
+vector<string> Operand::_get_keys() const {
+  auto vptr = _vrptr();
+  if(vptr == nullptr) return {};
+  if(vptr->_get_type()==OperandType::map_t) return vptr->_get_keys(); 
+  return {};
+}
+
+
+//------------------------------------
+
 const Operand* Operand::get_operand_ptr() const {
   return (Operand*)_vrptr();
 }

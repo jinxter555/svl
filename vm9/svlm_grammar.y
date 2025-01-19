@@ -23,6 +23,7 @@
 
 %code requires { 
 #include "operand.hh"
+#include "operand_vars.hh"
 #include "svlm_ast.hh"
 
 namespace vslast {
@@ -283,8 +284,9 @@ map
 
 kv_pair_list
   : kv_pair_list COMMA kv_pair {
-    $1->add(Operand(get<0>($3)), move(get<1>($3)));
-    $$ = move($1);
+    // $1->add(Operand(get<0>($3))._to_str(), move(get<1>($3)));
+    //$$ = move($1);
+    $$ = nullptr;
   }
   | kv_pair {
     auto map_vptr = make_unique<AstMap>();
