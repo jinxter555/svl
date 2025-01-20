@@ -11,6 +11,7 @@
 
 SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
   MYLOGGER(trace_function , string("SvlmAst::SvlmAst()") , __func__, SLOG_FUNC_INFO);
+  cout << "SvlmAst::SvlmAst()\n";
 
   Operand ov(list_t{});
 
@@ -18,6 +19,7 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
   }
+  //cout << "&root " << &root << "\n"; cout << "root " << root << "\n";
 }
 Operand SvlmAst::to_str() const {
   return string("SvlmAst PTR");
@@ -29,17 +31,20 @@ astnode_u_ptr& SvlmAst::get_context() {
   return c.get_u_ptr_nc();
 }
 astnode_u_ptr& SvlmAst::get_frames() {
-  MYLOGGER(trace_function , string("SvlmAst::get_frames('") , __func__, SLOG_FUNC_INFO+9);
+  MYLOGGER(trace_function , string("SvlmAst::get_frames()") , __func__, SLOG_FUNC_INFO+9);
   auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
+  //cout << "&root " << &root << "\n"; cout << "root " << root << "\n";
   //if(c==nil_operand) {
-  if(c._get_type()==OperandType::nil_t) {
+  if(c.is_nil()) {
     cerr << "SvlmAst::get_frames is nil_operand!\n";
     return nil_ast_ptr_nc;
   }
+  cout << "frames c: " << c << "\n";
   return c.get_u_ptr_nc();
 }
+
 Operand& SvlmAst::get_current_frame() {
-  MYLOGGER(trace_function , string("SvlmAst::get_current_frame('")  ,__func__, SLOG_FUNC_INFO + 9)
+  MYLOGGER(trace_function , string("SvlmAst::get_current_frame()")  ,__func__, SLOG_FUNC_INFO + 9)
   auto &frames = get_frames();
   if(frames == nil_operand_ptr_nc) {
     return nil_operand_nc;
@@ -55,8 +60,8 @@ string SvlmAst::get_current_module() {
 }
 
 void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
-  MYLOGGER(trace_function , string("SvlmAst::add_module('") + mod_name._to_str() + string("')") ,__func__, SLOG_FUNC_INFO)
-//  cout << "SvlmAst::add_module()\n";
+  MYLOGGER(trace_function , string("SvlmAst::add_module()"),__func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, mod_name._to_str(), SLOG_FUNC_INFO);
 
   auto &clist = clist_ptr->_get_list_nc();
 
@@ -77,7 +82,7 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
     // sub_node could be FUNC, CLASS, VAR
     auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
     //if(sub_node==nil_operand) { 
-    if(sub_node!=nil) { 
+    if(!sub_node.is_nil()) { 
       cout << "sub_node != nil_operand, skip and continue\n";
       continue; 
     }
@@ -91,7 +96,7 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
 
 
 Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType t) {
-  MYLOGGER(trace_function , string("SvlmAst::get_module_subnode(") + mod_name._to_str() + string("): ") + Operand(t)._to_str() ,__func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , string("SvlmAst::get_module_subnode()") + mod_name._to_str() + string("): ") + Operand(t)._to_str() ,__func__, SLOG_FUNC_INFO);
 
  // cout << "SvlmAst::get_module_subnode, type" <<  Operand(t) <<"\n";
 
@@ -123,11 +128,12 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
 
   // ex, if key mvar, create it if it's not found==nil else return already
   // found. so that we won't overwrite the existing mvar varaibles in it.
-  if(msub_node==nil_operand) {
+  if(msub_node.is_nil()) {
 //    cout << "msub_node is nil_operand: " << msub_node << "--add\n";
     //map_t new_map; //root[keys] = new_map;
     //root[keys] = new map_t;
-    root[keys] = move(new map_t);
+    //root[keys] = move(new map_t);
+    root.add(keys, make_unique<AstMap>(), true);
 
     auto &new_msub_node= root[keys];
 //    cout << "new node : " << nd << "--added\n\n";
@@ -160,10 +166,15 @@ void SvlmAst::run_evaluate() {
   MYLOGGER(trace_function , "SvlmAst::run_evaluate()" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
   //cout << "Run eval Main::main \n";
   auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Main", "function", "main", "code"}];
-  root[vec_str_t{CONTEXT_UNIV, "svlm_lang"}] = Operand(this);
+  root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true);
   //auto &c = l.get_u_ptr_nc();
   auto &ctxt = get_context();
   auto &frames = get_frames();
+
+  if(frames == nullptr) {
+    cerr << "frames: ptr is nullptr!\n";
+    exit(1);
+  }
 
   auto new_map=make_unique<AstMap>();
 
@@ -325,6 +336,7 @@ AstCaller::AstCaller(const Operand& callee, astnode_u_ptr arg_list)
 }
 
 Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) { 
+  MYLOGGER(trace_function , "AstCaller::add_frame()" , __func__, SLOG_FUNC_INFO);
   // use current module if call
 
 
@@ -362,6 +374,7 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
 
   nm->add(string("lvars"), move(lvars));
   frames->add(move(nm));
+
 
 
   return frames->back_nc();

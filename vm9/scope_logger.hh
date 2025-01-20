@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#define SLOG_MAX_LEVEL 1000
+#define SLOG_MAX_LEVEL 3000
 #define DEBUG
 
 using namespace std;

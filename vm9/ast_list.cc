@@ -79,6 +79,7 @@ const Operand& AstList::operator[] (const s_integer& index) const {
   MYLOGGER_MSG(trace_function, string("k: ") + Number(index)._to_str(), SLOG_FUNC_INFO);
 //  cout << "AstList::operator[" <<  index << "]const \n" ;
   if(index >= list_.size() || index < 0) return nil_operand;
+  MYLOGGER_MSG(trace_function, string("return: ") + list_[index]._to_str(), SLOG_FUNC_INFO+9);
   return list_[index]; 
 }
 //-------------------------------------- [] vec_num_t

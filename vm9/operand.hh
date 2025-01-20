@@ -236,6 +236,7 @@ struct ToString {
   //Operand operator()(const map_t &) const;
   Operand operator()(const astnode_u_ptr&) const;
   Operand operator()(const astnode_s_ptr&) const;
+  Operand operator()(const astnode_ptr&) const;
   Operand operator()(const svlm_ast_ptr&) const;
 
 

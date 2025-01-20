@@ -158,36 +158,22 @@ bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite
   MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
   //cout << "AstList::add[" <<  index_keys << "] \n" ;
-
-  auto Mptr= _vrptr();
+  AstMap *curr=this, *next, *prev=this;
   s_integer i, s = index_keys.size();
   for(i=0; i<s; i++) {
-    auto &k= index_keys[i]; 
-    auto kstr= k._to_str();
-    auto &v = (*Mptr)[kstr];
-    if(!v.is_nil() && !overwrite) return false;
-    if(v.is_nil()) {
-      //if(!overwrite) return false;
-
-
-      if(i==s-1) { //cout << "v is nil, map add setting final:" << *vptr << "\n";
-        (*Mptr)[kstr] = move(vptr);
-        return true;
-      } else {
-        astnode_u_ptr new_map = make_unique<AstMap>();
-        (*Mptr)[kstr] = move(new_map);
-        Mptr = (*Mptr)[kstr]._vrptr();
-      }
-
-      continue;
+    auto k= index_keys[i]._to_str();
+    next = (AstMap*)(*curr)[k]._vrptr();
+    //cout << "k: " << k << "\n";
+    if(next==nullptr || next->type_ != OperandType::map_t) {                                                                                            
+      if(!curr->add(k, make_unique<AstMap>(), overwrite)) {                                                                                       
+        return false;                                                                                                                                   
+      }                                                                                                                                                 
     }
-    if(i==s-1) { //cout << "v is not nil, map add setting final:" << *vptr << "\n";
-      (*Mptr)[kstr] = move(vptr);
-      return true;
-    }
-    Mptr = v._vrptr();
-  }
-  return true;
+    prev=curr;
+    curr = (AstMap*)(*curr)[k]._vrptr();
+  }                                                                                                                                                     
+  prev->add(index_keys.back()._to_str(), move(vptr), overwrite);                                                                                                           
+  return true;                                    
 }
 
 //------------------------------------- 
@@ -195,37 +181,26 @@ bool AstMap::add(const AstList &index_keys, const operand_variant_t& ovv, bool o
   MYLOGGER(trace_function, "AstMap::add(AstList&, operand_variant&, bool) ", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("v: ") + Operand(ovv).to_str()._to_str(), SLOG_FUNC_INFO);
-  //cout << "AstList::add[" <<  index_keys << "] \n" ;
 
-  auto Mptr= _vrptr();
+  //cout << "AstList::add[" <<  index_keys << "] \n" ;
+  //cout << "1ovv: " << ovv << "\n";
+
+  AstMap *curr=this, *next, *prev=this;
   s_integer i, s = index_keys.size();
   for(i=0; i<s; i++) {
-    auto &k= index_keys[i];
-    auto kstr= k._to_str();
-    auto &v = (*Mptr)[kstr];
-    if(!v.is_nil() && !overwrite) return false;
-    if(v.is_nil()) {
-      //if(!overwrite) return false;
-
-
-      if(i==s-1) { //cout << "v is nil, map add setting final:" << *vptr << "\n";
-        (*Mptr)[kstr] = ovv;
-        return true;
-      } else {
-        astnode_u_ptr new_map = make_unique<AstMap>();
-        (*Mptr)[kstr] = move(new_map);
-        Mptr = (*Mptr)[kstr]._vrptr();
-      }
-
-      continue;
+    auto k= index_keys[i]._to_str();
+    next = (AstMap*)(*curr)[k]._vrptr();
+    //cout << "k: " << k << "\n";
+    if(next==nullptr || next->type_ != OperandType::map_t) {                                                                                            
+      if(!curr->add(k, make_unique<AstMap>(), overwrite)) {                                                                                       
+        return false;                                                                                                                                   
+      }                                                                                                                                                 
     }
-    if(i==s-1) { //cout << "v is not nil, map add setting final:" << *vptr << "\n";
-      (*Mptr)[kstr] = ovv;
-      return true;
-    }
-    Mptr = v._vrptr();
-  }
-  return true;
+    prev=curr;
+    curr = (AstMap*)(*curr)[k]._vrptr();
+  }                                                                                                                                                     
+  prev->add(index_keys.back()._to_str(), ovv, overwrite);                                                                                                           
+  return true;                                    
 }
 
 

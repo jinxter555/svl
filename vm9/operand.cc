@@ -203,14 +203,14 @@ const AstList& Operand::get_list() const {
   MYLOGGER(trace_function, "Operand::get_list()", __func__, SLOG_FUNC_INFO+10);
   auto vptr = _vrptr();
   if(vptr->_get_type() != OperandType::list_t) return nil_list;
-  return _vrptr()->get_list();
+  return vptr->get_list();
 };
 
 const AstMap& Operand::get_map() const {
   MYLOGGER(trace_function, "Operand::get_map()", __func__, SLOG_FUNC_INFO+10);
   auto vptr = _vrptr();
-  //if(vptr->_get_type() != OperandType::map_t) return nil_map;
-  return _vrptr()->get_map();
+  if(vptr->_get_type() != OperandType::map_t) return nil_map;
+  return vptr->get_map();
 };
 
 //------------------------------------
@@ -287,6 +287,9 @@ const Operand& Operand::operator[] (const string& k) const {
 
   auto vptr =(AstMap*) _vrptr();
   if(vptr==nullptr) return nil_operand;
+  if(vptr->_get_type()!=OperandType::map_t) return nil_operand;
+  //cout << "vptr: " << *vptr << "\n";
+  //cout << "vptr->gettype(): " << vptr->get_type() << "\n";
   return (*vptr)[k];
 }
 

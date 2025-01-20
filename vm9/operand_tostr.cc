@@ -1,5 +1,5 @@
 #include "operand.hh"
-//#include "svlm_ast.hh"
+#include "svlm_ast.hh"
 
 #define DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -138,7 +138,22 @@ Operand Operand::ToString::operator()(AstOpCode t_op) const {
   return Operand(oc);
 }
 
-Operand Operand::ToString::operator()(const astnode_s_ptr &vptr) const { return vptr->to_str(); }
-Operand Operand::ToString::operator()(const astnode_u_ptr &vptr) const { return vptr->to_str(); }
+Operand Operand::ToString::operator()(const astnode_s_ptr &vptr) const { 
+  if(vptr==nullptr) return "nil";
+  return vptr->to_str(); 
+}
+Operand Operand::ToString::operator()(const astnode_ptr &vptr) const { 
+  if(vptr==nullptr) return "nil";
+  return vptr->to_str(); 
+}
+
+Operand Operand::ToString::operator()(const astnode_u_ptr &vptr) const { 
+  if(vptr==nullptr) return "nil";
+  return vptr->to_str(); 
+}
 //Operand Operand::ToString::operator()(const svlm_ast_ptr &vptr) const { return vptr->to_str(); }
-Operand Operand::ToString::operator()(const svlm_ast_ptr &vptr) const { return "svlm_ast_ptr"; }
+Operand Operand::ToString::operator()(const svlm_ast_ptr &vptr) const { 
+  if(vptr==nullptr) return "nil";
+  return vptr->to_str(); 
+  //return "svlm_ast_ptr"; 
+}

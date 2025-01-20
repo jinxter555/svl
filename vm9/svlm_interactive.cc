@@ -23,23 +23,17 @@ SvlmInteractive::SvlmInteractive(const std::string& hf , const std::string&ps)
   //vector<string> keys1 = {"hello", "one", "two1", "three"};
   //vector<string> keys1b = {"hello", "one", "two1"};
 
-  //vector<string> keys1 = {"hello"};
   vector<string> keys1 = {CONTEXT_UNIV,"hello", "one", "two"};
   vector<string> keys2 = {CONTEXT_UNIV,"hello", "one", "two", "three", "four", "Five"};
 
-  vector<string> keys2b = {CONTEXT_UNIV,"hello", "one", "two"};
+  //vector<string> keys2b = {CONTEXT_UNIV,"hello", "one", "two"};
   vector<string> keys3 = {CONTEXT_UNIV,"hello", "one-one", "two", "three", "four", "Five"};
   vector<string> keys3b  = {CONTEXT_UNIV,"hello", "one-one", "two"};
 
-  svlm_lang.root[keys0]= 55555l;
-  //svlm_lang.root.print_m();
-  svlm_lang.root[keys1] = 123l;
-  //auto &ov = svlm_lang.root.get_branch(keys1);
-  //cout << "ov keys1: " << ov << "\n";
-  svlm_lang.root[keys2] = 456l;
-  svlm_lang.root[keys3] = "somestrval";
-  //node.print_m();
-
+  svlm_lang.root.add(keys0, 55555l, true);
+  if(svlm_lang.root.add(keys1,  123l, true)) { cout << "add keys1 123l success!\n"; }
+  if(svlm_lang.root.add(keys2,  456l, true)) { cout << "add keys2 456l success!\n"; }
+  svlm_lang.root.add(keys3,  "somestrval", true);
   
 };
 
@@ -256,6 +250,7 @@ void SvlmInteractive::set_ui_commands() {
 }
 
 void SvlmInteractive::add_readline(const string& cmd) {
+  MYLOGGER(trace_function , "SvlmInteractive::add_readline()" , string(__func__), SLOG_FUNC_INFO);
   std::vector<std::string> keys;
   keys = {rlsvlm_loc, cmd};
 
@@ -264,8 +259,12 @@ void SvlmInteractive::add_readline(const string& cmd) {
   if(cmd == "!!print_tree") {
     //auto &univ = svlm_lang.root.get_branch({CONTEXT_UNIV});
     //auto univ_ptr = svlm_lang.root.AstMap::get_raw_ptr(string(CONTEXT_UNIV));
-    auto univ_ptr = svlm_lang.root[CONTEXT_UNIV].get_raw_ptr();
-    svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd, CONTEXT_UNIV}, univ_ptr);
+    //auto univ_ptr = svlm_lang.root[CONTEXT_UNIV].get_raw_ptr();
+    auto univ_ptr = svlm_lang.root[CONTEXT_UNIV]._vrptr();
+    //cout << "univ_ptr: " << univ_ptr << "\n";
+    //cout << "*univ_ptr: " << *univ_ptr << "\n";
+    //cout << "Opernad(univ_ptr): " << Operand(univ_ptr) << "\n";
+    svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd, CONTEXT_UNIV}, univ_ptr, true);
   } else
     svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd}, nil);
 }
