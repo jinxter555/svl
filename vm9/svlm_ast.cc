@@ -523,6 +523,7 @@ string AstMvar::get_module() {
 }
 astnode_u_ptr AstMvar::clone() const {
   cout << "AstMvar::clone()\n";
+  return AstMap::clone();
 };
 
 

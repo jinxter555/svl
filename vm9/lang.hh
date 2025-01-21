@@ -173,8 +173,8 @@ using operand_variant_t = variant
 template <typename T>
 class Primordial {
 protected:
-  OperandType type_;
 public:
+  OperandType type_;
   Primordial(OperandType t) : type_(t) {};
 
   virtual unique_ptr<T> clone() const=0;

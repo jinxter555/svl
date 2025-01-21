@@ -14,12 +14,15 @@ Operand Operand::operator+(const Operand& other) const {
   auto type_ = _get_type();
   auto other_type_ = other._get_type();
 
-  if(type_ != other_type_) { 
+  auto vrptr = _vrptr();
+  auto other_vrptr = other._vrptr();
+
+  if(vrptr->type_ != other_vrptr->type_) { 
     cout << "error! " << *this << " + '" << other << "'\n";
     return Operand(OperandErrorCode::invalid_op_t);
   }
 
-  switch(type_) {
+  switch(vrptr->type_) {
   case OperandType::num_t:  {
     return  _get_number() + other._get_number();
     //cout << "operator: r" << r << "\n";
@@ -280,6 +283,9 @@ Operand Operand::operator||(const Operand& other) const {
 }
 
 Operand Operand::opfunc(const AstNode& v, AstOpCode op) {
+  MYLOGGER(trace_function, string("Operand::opfunc(") + 
+    v.to_str()._to_str()+ string(")") + Operand(op)._to_str() , __func__, SLOG_FUNC_INFO);
+
   cout << "Operand::opfunc()\n";
   cout << "Opcode: " << Operand(op)<< "\n";
   Operand other(v.clone());

@@ -50,29 +50,29 @@ Operand::Operand(const svlm_ast_ptr ptr)          : AstNode(OperandType::svlm_as
 
 //Operand::Operand(const astnode_u_ptr&v )      : AstNode(OperandType::ast_uptr_t), value_(move(v->clone())) {}
 //------------------------------------ vec 
-Operand::Operand(const vec_num_t& l) {
-  type_ = OperandType::uptr_t;
+Operand::Operand(const vec_num_t& l) : AstNode(OperandType::uptr_t) {
+  //type_ = OperandType::uptr_t;
   auto  new_list = make_unique<AstList>();
   for(auto e: l) new_list->add(make_unique<Operand>(e));
   astnode_u_ptr ptr = move(new_list);
   value_ = move(ptr);
 }
-Operand::Operand(const vec_str_t& l) {
-  type_ = OperandType::uptr_t;
+Operand::Operand(const vec_str_t& l) : AstNode(OperandType::uptr_t) {
+  //type_ = OperandType::uptr_t;
   auto  new_list = make_unique<AstList>();
   for(auto e: l) new_list->add( make_unique<Operand>(e));
   astnode_u_ptr ptr = move(new_list);
   value_ = move(ptr);
 }
-Operand::Operand(const list_t& l) {
-  type_ = OperandType::uptr_t;
+Operand::Operand(const list_t& l) : AstNode(OperandType::uptr_t) {
+  //type_ = OperandType::uptr_t;
   auto  new_list = make_unique<AstList>();
   for(auto &e: l) new_list->add( e.clone());
   astnode_u_ptr ptr = move(new_list);
   value_ = move(ptr);
 }
-Operand::Operand(const map_t& m) {
-  type_ = OperandType::uptr_t;
+Operand::Operand(const map_t& m) : AstNode(OperandType::uptr_t) {
+  //type_ = OperandType::uptr_t;
   auto  new_map= make_unique<AstMap>();
    for (auto const& [key, val] : m) {                                                                                                                                        
     (*new_map)[key] = val.clone();                                                                                                                                          
@@ -81,9 +81,9 @@ Operand::Operand(const map_t& m) {
   value_ = move(ptr);
 }
 
-Operand::Operand(const operand_variant_t& v ) 
+Operand::Operand(const operand_variant_t& v ) : AstNode(visit(Type(), v))
 {
-  type_ = visit(Type(), v);
+  //type_ = visit(Type(), v);
   value_ = visit(Variant(), v); 
 } 
 
