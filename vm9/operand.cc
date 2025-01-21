@@ -89,6 +89,13 @@ Operand::Operand(const operand_variant_t& v )
 
 Operand Operand::evaluate(unique_ptr<AstNode>&ctxt) { 
   MYLOGGER(trace_function , "Operand::evaluate()" , __func__, SLOG_FUNC_INFO);
+  auto vptr = _vrptr();
+  switch(vptr->_get_type()) {
+  case  OperandType::list_t:
+  case  OperandType::ast_binop_t:
+  case  OperandType::map_t:
+    return vptr->evaluate(ctxt);
+  }
   return _get_variant();
 }
 //------------------------------------------------------------------------------------------------------------------ 
@@ -410,7 +417,7 @@ s_integer Operand::size() const {return 0l;}
 
 //------------------------------------------------------------------------------------------------------------------ 
 ostream& operator<<(ostream& os, const Operand& v) {
-  //MYLOGGER(trace_function, "OS<<(Operand&)", __func__, SLOG_FUNC_INFO+20);
+  MYLOGGER(trace_function, "OS<<(Operand&)", __func__, SLOG_FUNC_INFO+30);
   cout << v._to_str();
   return os;
 }
@@ -419,9 +426,16 @@ ostream& operator<<(ostream& os, const Operand& v) {
 template <typename T> 
 astnode_u_ptr Operand::Clone::operator()(const T& v) const { return make_unique<Operand>(v); }
 astnode_u_ptr Operand::Clone::operator()(const Nil v) const { return nullptr; }
-astnode_u_ptr Operand::Clone::operator()(const astnode_ptr& v) const { return v->clone(); }
-astnode_u_ptr Operand::Clone::operator()(const astnode_u_ptr& v) const {return v->clone(); } 
-astnode_u_ptr Operand::Clone::operator()(const astnode_s_ptr& v) const { return v->clone(); }
+astnode_u_ptr Operand::Clone::operator()(const astnode_ptr& vptr) const { 
+  if(vptr==nullptr) {cerr << "clone vptr null!\n"; return nullptr;}
+  return vptr->clone(); }
+astnode_u_ptr Operand::Clone::operator()(const astnode_u_ptr& vptr) const {
+  if(vptr==nullptr) {cerr << "clone vptr null!\n"; return nullptr;}
+  return vptr->clone(); } 
+astnode_u_ptr Operand::Clone::operator()(const astnode_s_ptr& vptr) const { 
+  if(vptr==nullptr) {cerr << "clone vptr null!\n"; return nullptr;}
+  return vptr->clone(); 
+}
 
 
 

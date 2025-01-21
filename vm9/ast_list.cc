@@ -34,6 +34,7 @@ AstList::AstList(const vec_str_t& l) : AstNode(OperandType::list_t) {
 //--------------------------------------
 Operand AstList::evaluate(unique_ptr<AstNode>&ctxt) { 
   MYLOGGER(trace_function , "AstList::evaluate()" , string("AstList::") + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, to_str()._to_str(), SLOG_FUNC_INFO+9);
   //cout << "AstList::evaluate()\n";
   int i, s = size();
   astnode_u_ptr result_list = make_unique<AstList>();
@@ -69,17 +70,17 @@ const Operand& AstList::operator[] (const string& k) const {
 
 //--------------------------------------
 Operand& AstList::operator[] (const s_integer& index) { 
-  MYLOGGER(trace_function, "AstList::operator[](int&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstList::operator[](int&)", __func__, SLOG_FUNC_INFO+30);
   //cout << "AstList::operator[" <<  index << "]\n" ;
   return const_cast<Operand&>(as_const(*this)[index]); 
 }
 
 const Operand& AstList::operator[] (const s_integer& index) const { 
-  MYLOGGER(trace_function, "AstList::operator[](int&) const", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("k: ") + Number(index)._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstList::operator[](int&) const", __func__, SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("k: ") + Number(index)._to_str(), SLOG_FUNC_INFO+30);
 //  cout << "AstList::operator[" <<  index << "]const \n" ;
   if(index >= list_.size() || index < 0) return nil_operand;
-  MYLOGGER_MSG(trace_function, string("return: ") + list_[index]._to_str(), SLOG_FUNC_INFO+9);
+  MYLOGGER_MSG(trace_function, string("return: ") + list_[index]._to_str(), SLOG_FUNC_INFO+30);
   return list_[index]; 
 }
 //-------------------------------------- [] vec_num_t
@@ -129,7 +130,7 @@ list_t& AstList::_get_list_nc() { return list_; }
 //------------------------------------------------------------------------------------------------------------------ 
 
 astnode_ptr AstList::_vrptr() const {
-  MYLOGGER(trace_function, "AstList::_vptr()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstList::_vptr()", __func__, SLOG_FUNC_INFO+39);
   return (AstNode*) this; 
 }
 

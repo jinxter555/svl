@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
   //log_output.open("svlm.log", std::ios::out);
   trace_function.open("trace_svlm.log", std::ios::out);
-  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 31);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 11);
   MYLOGGER(trace_function, "int main(int, char*[])", __func__, SLOG_FUNC_INFO);
 
   SvlmInteractive svlm_it(".svlm_history", "svlm> ");

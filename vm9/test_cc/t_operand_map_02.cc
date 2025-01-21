@@ -39,17 +39,19 @@ TEST_CASE("check operand map 2") {
 
   m2.add(string("e"), Operand(2.718), true);
   //CHECK(m2["e"]._to_str() == "2.718000");
-  m2.add(AstList(vec_str_t{"hola", "mundo"}), Operand(3.14159).clone(), false);
+  m2.add(AstList(vec_str_t{"hola", "mundo"}), Operand(3.14159).clone(), true);
   cout << "m2: " << m2 << "\n";
   auto &v1 = m2[AstList(vec_str_t{"hola", "mundo"})];
 
   cout << "v1: " << v1 << "\n";
   CHECK(v1._get_number() == 3.14159);
 
-  m2.add(AstList(vec_str_t{"hola", "mundo"}), Operand("pi!").clone(), false);
+  //m2.add(AstList(vec_str_t{"hola", "mundo"}), Operand("pi!").clone(), false);
+  m2.add(AstList(vec_str_t{"hola", "mundo"}), string("pi!"), false);
   auto &v1b = m2[AstList(vec_str_t{"hola", "mundo"})];
   cout << "v1b: " << v1b << "\n";
   CHECK(v1._get_number() == 3.14159);
+
 
 
   m2.add(AstList(vec_str_t{"hola", "mundo"}), Operand("pi!").clone(), true);

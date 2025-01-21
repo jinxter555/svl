@@ -123,6 +123,7 @@ module
 function 
   //: DEF STR PAREN_L PAREN_R DO statement_list END {
   : DEF STR PAREN_L proto_list PAREN_R DO statement_list END {
+    //cout << "Grammar!"; cout << "func: " << $2 << "\n"; cout << "statement list: " ; $7->print(); cout << "\n";
     $$ = make_unique<AstFunc>($2, move($4), move($7));
   }
   ;

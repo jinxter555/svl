@@ -36,7 +36,7 @@ AstOpCode Operand::OpCode::operator()(const Nil) const {  return AstOpCode::noop
 //----------------------------------------------------------------------- Vrptr
 // recursive pointer until finds it
 astnode_ptr Operand::_vrptr() const {
-  MYLOGGER(trace_function, "Operand::_vrptr()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Operand::_vrptr()", __func__, SLOG_FUNC_INFO+39);
   //switch(_get_type()) {
 
   switch(type_) {
@@ -107,4 +107,7 @@ operand_variant_t Operand::Variant::operator()(const T &v) const { return v; }
 operand_variant_t Operand::Variant::operator()(const Nil v) const { return nil; }
 //operand_variant_t Operand::Variant::operator()(const astnode_ptr& vptr) const { return vptr; }
 //operand_variant_t Operand::Variant::operator()(const astnode_s_ptr& vptr) const { return vptr; }
-operand_variant_t Operand::Variant::operator()(const astnode_u_ptr& vptr) const { return vptr->clone(); }
+operand_variant_t Operand::Variant::operator()(const astnode_u_ptr& vptr) const { 
+  if(vptr==nullptr){cerr << "Operand::Variant::operator(astnode_u_ptr&) null!\n";}
+  return vptr->clone(); 
+}

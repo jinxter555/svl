@@ -40,13 +40,13 @@ const Operand& AstMap::operator[] (const s_integer& k) const {
 }
 
 Operand& AstMap::operator[] (const string &k) {
-  MYLOGGER(trace_function, "AstMap::operator[](string&) ", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstMap::operator[](string&) ", __func__, SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO+30);
     return map_[k]; 
 }
 const Operand& AstMap::operator[] (const string &k) const {
-  MYLOGGER(trace_function, "const AstMap::operator[](Operand&) const", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "const AstMap::operator[](Operand&) const", __func__, SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO+30);
 
   if(!has_key(k)) return nil_operand;
   return map_.at(k); 
@@ -145,8 +145,10 @@ bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(string &k, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("overwrite: ") + Operand(overwrite)._to_str(), SLOG_FUNC_INFO+9);
 
   if(has_key(k)) {
+
     if(!overwrite) return false;
   }
   map_[k] = move(vptr);
@@ -166,8 +168,8 @@ bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite
     //cout << "k: " << k << "\n";
     if(next==nullptr || next->type_ != OperandType::map_t) {                                                                                            
       if(!curr->add(k, make_unique<AstMap>(), overwrite)) {                                                                                       
-        return false;                                                                                                                                   
-      }                                                                                                                                                 
+        return false;
+      } else overwrite=true;
     }
     prev=curr;
     curr = (AstMap*)(*curr)[k]._vrptr();
@@ -183,18 +185,16 @@ bool AstMap::add(const AstList &index_keys, const operand_variant_t& ovv, bool o
   MYLOGGER_MSG(trace_function, string("v: ") + Operand(ovv).to_str()._to_str(), SLOG_FUNC_INFO);
 
   //cout << "AstList::add[" <<  index_keys << "] \n" ;
-  //cout << "1ovv: " << ovv << "\n";
 
   AstMap *curr=this, *next, *prev=this;
   s_integer i, s = index_keys.size();
   for(i=0; i<s; i++) {
     auto k= index_keys[i]._to_str();
     next = (AstMap*)(*curr)[k]._vrptr();
-    //cout << "k: " << k << "\n";
-    if(next==nullptr || next->type_ != OperandType::map_t) {                                                                                            
-      if(!curr->add(k, make_unique<AstMap>(), overwrite)) {                                                                                       
-        return false;                                                                                                                                   
-      }                                                                                                                                                 
+    if(next==nullptr || next->type_ != OperandType::map_t) { 
+      if(!curr->add(k, make_unique<AstMap>(), overwrite)) {
+        return false;
+      } else overwrite=true;
     }
     prev=curr;
     curr = (AstMap*)(*curr)[k]._vrptr();
@@ -207,7 +207,7 @@ bool AstMap::add(const AstList &index_keys, const operand_variant_t& ovv, bool o
 
 //------------------------------------- 
 astnode_ptr AstMap::_vrptr() const {
-  MYLOGGER(trace_function, "AstMap::_vptr()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "AstMap::_vptr()", __func__, SLOG_FUNC_INFO+39);
   return (AstNode*) this; 
 }
 

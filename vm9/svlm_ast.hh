@@ -59,10 +59,14 @@ public:
 class AstBinOp : public AstExpr {
 private:
 public:
-  AstBinOp (unique_ptr<AstNode> l, unique_ptr<AstNode> r, AstOpCode op);
+  AstBinOp (astnode_u_ptr l, astnode_u_ptr r, AstOpCode op);
   Operand to_str() const override;
   Operand get_type() const override { return OperandType::ast_binop_t;};
   Operand evaluate(astnode_u_ptr &) override;
+  astnode_u_ptr clone() const override {
+    cout << "AstBinOp::clone()\n";
+    return AstMap::clone();
+  };
   void print() ;
 };
 
@@ -70,7 +74,7 @@ public:
 
 class AstFunc: public AstExpr{
 private:
-  string name;
+  //string name;
 public:
   AstFunc(const Operand&,  astnode_u_ptr, astnode_u_ptr) ; 
   Operand to_str() const override;
@@ -141,6 +145,7 @@ public:
   bool assign(astnode_u_ptr& ctxt, Operand& ) override final;
   void print() const override;
   //astnode_u_ptr clone() const override; 
+  astnode_u_ptr clone() const override ;
 };
 
 class AstLvar : public AstAssign {

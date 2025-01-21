@@ -19,6 +19,11 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
   }
+  if(! root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true)) {
+    cerr << "can't add {" << CONTEXT_UNIV << " svlm_lang  }\n";
+    exit(1);
+  }
+
   //cout << "&root " << &root << "\n"; cout << "root " << root << "\n";
 }
 Operand SvlmAst::to_str() const {
@@ -62,6 +67,18 @@ string SvlmAst::get_current_module() {
 void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
   MYLOGGER(trace_function , string("SvlmAst::add_module()"),__func__, SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, mod_name._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("clist: ") + clist_ptr->to_str()._to_str(), SLOG_FUNC_INFO);
+
+/*
+  MYLOGGER_MSG(trace_function, "---good---", SLOG_FUNC_INFO);
+  Operand code(clist_ptr->clone());
+  MYLOGGER_MSG(trace_function, "---good---", SLOG_FUNC_INFO);
+  cout << "clist: code: " << *clist_ptr<< "\n";
+  MYLOGGER_MSG(trace_function, "---bad---", SLOG_FUNC_INFO);
+  cout << "addmodule: code: " << code << "\n";
+  MYLOGGER_MSG(trace_function, "--------", SLOG_FUNC_INFO);
+*/
+
 
   auto &clist = clist_ptr->_get_list_nc();
 
@@ -71,32 +88,38 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
 
   for(i=0; i < s; i++) {
     auto &nan = clist[i]; 
-  //  cout << "\nnan: " << nan << "\n";
-  //  cout << "nan.get_type: " << nan.get_type() << "\n";
+    cout << "\nnan: " << nan << "\n";
+    cout << "nan.get_type: " << nan.get_type() << "\n";
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
     auto &nan_vptr = nan.get_u_ptr();
 
-  //  cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
+    cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
+    cout << "*nan_vptr: " << *nan_vptr << "\n";
 
     // sub_node could be FUNC, CLASS, VAR
-    auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
-    //if(sub_node==nil_operand) { 
-    if(!sub_node.is_nil()) { 
-      cout << "sub_node != nil_operand, skip and continue\n";
+    auto &msub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
+    cout << "msub_node: " << msub_node << "\n";
+
+/*
+    if(msub_node.is_nil()) { 
+      cout << "msub_node is_nil: " <<  msub_node << ", skip and continue\n"; 
       continue; 
     }
+*/
 
-    auto sub_node_name = nan["name"]._to_str();
+    auto sub_node_name = (*nan_vptr)["name"]._to_str();
+    cout << "subnodename: " <<  sub_node_name<< "\n";
     //sub_node.add(sub_node_name, move(nan_vptr), true);
-    sub_node.add(sub_node_name, nan_vptr->clone(), true);
+    msub_node.add(sub_node_name, nan_vptr->clone(), true);
   }
   //cout << "\n\n";
 }
 
 
 Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType t) {
-  MYLOGGER(trace_function , string("SvlmAst::get_module_subnode()") + mod_name._to_str() + string("): ") + Operand(t)._to_str() ,__func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , string("SvlmAst::get_module_subnode()") ,__func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, mod_name._to_str() + string(":") + Operand(t)._to_str(), SLOG_FUNC_INFO);
 
  // cout << "SvlmAst::get_module_subnode, type" <<  Operand(t) <<"\n";
 
@@ -122,21 +145,18 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   }
 
 
-//  cout << "msub_node=root.get_branch(keys): "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+  cout << "msub_node=root[keys]: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
   auto &msub_node = root[keys];
-//  cout << "msub_node: " << msub_node << "\n";
 
-  // ex, if key mvar, create it if it's not found==nil else return already
+  // ex, if key mvar, create it if it's not found==nil, else return already
   // found. so that we won't overwrite the existing mvar varaibles in it.
   if(msub_node.is_nil()) {
-//    cout << "msub_node is nil_operand: " << msub_node << "--add\n";
-    //map_t new_map; //root[keys] = new_map;
-    //root[keys] = new map_t;
-    //root[keys] = move(new map_t);
+    cout << "'msub_node' is_nil: " << msub_node << ", adding\n";
     root.add(keys, make_unique<AstMap>(), true);
 
     auto &new_msub_node= root[keys];
-//    cout << "new node : " << nd << "--added\n\n";
+    cout << "now 'msub_node' is: " << new_msub_node << "--added\n\n";
+    if(new_msub_node.is_nil()) {cout << "new msubnode is nil\n"; }
     return new_msub_node;
   }
   return msub_node;
@@ -147,7 +167,7 @@ void SvlmAst::add_code(const Operand& name, list_u_ptr clist) {
   //cout << "add code:" << MOD << " " << n << "\n";
   auto &msub_node = get_module_subnode(name, OperandType::ast_mod_t);
   auto new_map=make_unique<AstMap>();
-  new_map->add(string("code"), move(clist));
+  new_map->add(string("code"), move(clist), true);
   msub_node.add(string("last"), move(new_map), true);
 
   //auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, name._to_str()}];
@@ -156,17 +176,19 @@ void SvlmAst::add_code(const Operand& name, list_u_ptr clist) {
 
 Operand SvlmAst::evaluate_prompt_line() {
   MYLOGGER(trace_function , "SvlmAst::evaluate_prompt_line()" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
+  cout <<"SvlmAst::evaluate_prompt_line()\n";
   auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Prompt", "last", "code"}];
+  auto Lptr = l.get_list_ptr_nc();
   //l.print(); cout << "\n";
   auto &ctxt = get_context();
-  return l.evaluate(ctxt);
+  return Lptr->evaluate(ctxt);
 }
 
 void SvlmAst::run_evaluate() {
   MYLOGGER(trace_function , "SvlmAst::run_evaluate()" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
   //cout << "Run eval Main::main \n";
-  auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Main", "function", "main", "code"}];
-  root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true);
+  auto Lptr = root[vec_str_t{CONTEXT_UNIV, MOD, "Main", "function", "main", "code"}].get_list_ptr_nc();
+  //root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true);
   //auto &c = l.get_u_ptr_nc();
   auto &ctxt = get_context();
   auto &frames = get_frames();
@@ -178,10 +200,10 @@ void SvlmAst::run_evaluate() {
 
   auto new_map=make_unique<AstMap>();
 
-  new_map->add(string("lvars"), make_unique<AstMap>());
+  new_map->add(string("lvars"), make_unique<AstMap>(), true);
   new_map->add(string("current_module"), Operand("Main"));
   frames->add(move(new_map));
-  l.evaluate(ctxt);
+  Lptr->evaluate(ctxt);
 
 /*
   for(s_integer i=0; i<l.size();  i++){
@@ -192,10 +214,8 @@ void SvlmAst::run_evaluate() {
 
 }
 //----------------------------------------------------------------------- AstBinOp
-
 AstBinOp::AstBinOp(astnode_u_ptr l, astnode_u_ptr r, AstOpCode op) 
  : AstExpr(OperandType::ast_binop_t) {
-  //(*this)["left"]= move(l);
   node["left"]= move(l);
   node["right"]= move(r);
   node["op"]= op;
@@ -206,6 +226,9 @@ void AstBinOp::print() {
   cout << to_str();
 }
 Operand AstBinOp::to_str() const { 
+  MYLOGGER(trace_function , "AstBinOp::to_str()" , __func__, SLOG_FUNC_INFO);
+  //cout << "AstBinOp::to_str()\n";
+
   auto &l = node["left"];
   auto &r = node["right"];
   auto &o = node["op"];
@@ -269,8 +292,11 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
 //----------------------------------------------------------------------- AstFunc
 AstFunc::AstFunc(const Operand &n, astnode_u_ptr pl,  astnode_u_ptr code_ptr) 
 : AstExpr(OperandType::ast_func_t) {
+  MYLOGGER(trace_function , "AstFunc::AstFunc()" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("clist: ") + code_ptr->to_str()._to_str(), SLOG_FUNC_INFO);
+
   //cout << "AstFunc::AstFunc(" << n <<")\n";
-  name = n._to_str();
+  //name = n._to_str();
   type_ = OperandType::ast_func_t;
 
   //  cout << "code_ptr: "<< code_ptr<< "\n";
@@ -287,7 +313,8 @@ Operand AstFunc::evaluate(astnode_u_ptr& ctxt) {
 }
 
 Operand AstFunc::to_str() const {
-  return string("func: ") + name;
+  //return string("func: ") + name;
+  return string("func: ") + node["name"]._to_str() + node["code"]._to_str();
 }
 Operand AstFunc::get_type() const { return OperandType::ast_func_t;}
 OperandType AstFunc::_get_type() const { return OperandType::ast_func_t;}
@@ -348,8 +375,8 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
 
   auto nm = make_unique<AstMap>();
   auto lvars = make_unique<AstMap>();
-  nm->add("current_function", node["callee_func"]);
-  nm->add("current_module",   node["callee_mod"]);
+  nm->add("current_function", node["callee_func"], true);
+  nm->add("current_module",   node["callee_mod"], true);
 
 
   auto &arg_list = node["arg_list"];
@@ -367,12 +394,12 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
     s_integer s = arg_list_result.size();
     for(s_integer i =0; i< s; i++) {
       //lvars->add(proto_list[i], arg_list_result[i]);
-      lvars->add(proto_list[i]._to_str(), arg_list_result[i]);
+      lvars->add(proto_list[i]._to_str(), arg_list_result[i], true);
     }
     // get from tree protolist and add to lvars
   }
 
-  nm->add(string("lvars"), move(lvars));
+  nm->add(string("lvars"), move(lvars), true);
   frames->add(move(nm));
 
 
@@ -494,6 +521,9 @@ string AstMvar::name() {
 string AstMvar::get_module() { 
   return node["mod_name"]._to_str();
 }
+astnode_u_ptr AstMvar::clone() const {
+  cout << "AstMvar::clone()\n";
+};
 
 
 Operand AstMvar::get_type() const { 

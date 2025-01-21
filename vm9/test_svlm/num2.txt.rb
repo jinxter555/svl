@@ -2,7 +2,7 @@
 
 module Main do
   def main() do
-    print  "main()\n"
+    print  "main()"
     $x = 1
     $y = 1
     $n1 = nil

@@ -31,13 +31,14 @@ SvlmInteractive::SvlmInteractive(const std::string& hf , const std::string&ps)
   vector<string> keys3b  = {CONTEXT_UNIV,"hello", "one-one", "two"};
 
   svlm_lang.root.add(keys0, 55555l, true);
-  if(svlm_lang.root.add(keys1,  123l, true)) { cout << "add keys1 123l success!\n"; }
-  if(svlm_lang.root.add(keys2,  456l, true)) { cout << "add keys2 456l success!\n"; }
+  svlm_lang.root.add(keys1,  123l, true);
+  svlm_lang.root.add(keys2,  456l, true);
   svlm_lang.root.add(keys3,  "somestrval", true);
   
 };
 
 void SvlmInteractive::print_tree(const std::string& line) {
+  MYLOGGER(trace_function , string("SvlmInteractive::print_tree(") + line + string(")") , __func__, SLOG_FUNC_INFO);
   std::vector<std::string> vstr = split_string(line, " ");
   if(vstr.size() == 1 && vstr.back() == ""){ 
     cout << "Universe: " << CONTEXT_UNIV << "\n";
@@ -46,9 +47,19 @@ void SvlmInteractive::print_tree(const std::string& line) {
 
   auto children = svlm_lang.root[vstr]._get_keys();
   if(children.empty()) {
-    //cout << "Node not found!\n";
     auto &value= svlm_lang.root[vstr];
-    cout << value << "\n";
+    cout << value << "\n";;
+
+    auto vptr = value._vrptr();
+    if(vptr->_get_type() == OperandType::list_t) {
+      auto &l = vptr->get_list()._get_list();
+      for(auto &e: l)  {
+        auto evptr = e._vrptr();
+        cout << "e.gettype: " << e.get_type() << "\n";
+        cout << "evptr.gettype: " << evptr->get_type() << "\n";
+      }
+    }
+
     return;
   }
 
@@ -155,7 +166,7 @@ void SvlmInteractive::evaluate_line() {
 }
 
 void SvlmInteractive::load(const std::string &cfn) {
-  MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , "SvlmInteractive::load()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
   std::vector<std::string> filenames = split_string(cfn, " ");
 
   for(auto filename : filenames) {
@@ -227,26 +238,6 @@ void SvlmInteractive::set_ui_commands() {
     add_readline(command);
   }
 
-/*
-  vector<string> vstr ;
-  vstr = {"svlvm", "readline", "commands", "svlm", "!!print_tree","svlvm","hello"};
-  auto &v= svlm_lang.root.get_branch(vstr);
-  cout << "v: " << v << "\n\n";
-  cout << "v.one: " << v.getv(string("one")) << "\n";
-
-
-  keys = v._get_keys() ;
-  std::cout << "hello keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n\n";
-  //cout << "v.hello: " << v._get_keys() << "\n";
-
-
-  vstr = {"svlvm", "readline", "commands", "svlm", "!!print_tree","svlvm","hello", "one"};
-  auto &v2= svlm_lang.root.get_branch(vstr);
-  cout << "v2: " <<  v2 << "\n";
-  keys = v2._get_keys() ;
-  std::cout << "one keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n\n";
-*/
-
 }
 
 void SvlmInteractive::add_readline(const string& cmd) {
@@ -257,13 +248,7 @@ void SvlmInteractive::add_readline(const string& cmd) {
   //cout << "adding to: " <<  cmd << " readline\n";
 
   if(cmd == "!!print_tree") {
-    //auto &univ = svlm_lang.root.get_branch({CONTEXT_UNIV});
-    //auto univ_ptr = svlm_lang.root.AstMap::get_raw_ptr(string(CONTEXT_UNIV));
-    //auto univ_ptr = svlm_lang.root[CONTEXT_UNIV].get_raw_ptr();
     auto univ_ptr = svlm_lang.root[CONTEXT_UNIV]._vrptr();
-    //cout << "univ_ptr: " << univ_ptr << "\n";
-    //cout << "*univ_ptr: " << *univ_ptr << "\n";
-    //cout << "Opernad(univ_ptr): " << Operand(univ_ptr) << "\n";
     svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd, CONTEXT_UNIV}, univ_ptr, true);
   } else
     svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd}, nil);

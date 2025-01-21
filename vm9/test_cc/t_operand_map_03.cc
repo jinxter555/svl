@@ -24,12 +24,20 @@ TEST_CASE("check operand map 3 with tree like structure ") {
 
   root.add(keys0, 55555l, true);
   cout << "root: " << root << "\n\n";
+
   root.add(keys1,  123l, true) ;
   cout << "root: " << root << "\n\n";
+  if(root.add(keys2,  456l, false)) cout << "add keys 2 successfull\n";
+  CHECK(root[keys1]==123l);
+
   if(root.add(keys2,  456l, true)) cout << "add keys 2 successfull\n";
+  CHECK(root[keys2]==456l);
+
+
   cout << "root: " << root << "\n\n";
-  if(root.add(keys3,  33333l, true)) cout << "add keys 2 successfull\n";
+  if(root.add(keys3,  333l, true)) cout << "add keys 3 successfull\n";
   cout << "root: " << root << "\n\n";
+  CHECK(root[keys3]==333l);
 
   
 }
