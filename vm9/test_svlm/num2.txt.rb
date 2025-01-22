@@ -5,7 +5,7 @@ module Main do
     print  "main()"
     $x = 1
     $y = 123
-#    $n1 = nil
+    $n1 = nil
   end
 end
 

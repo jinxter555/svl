@@ -90,7 +90,7 @@ public:
 
   astnode_u_ptr _uptr() ; 
 
-  bool has_key(const Operand &k)  const ;
+  bool has_key(const string &k)  const override;
 
   bool is_nil() const;
 

@@ -80,6 +80,9 @@ const Operand& AstMap::operator[] (const AstList& index_keys) const {
   for(i=0; i<s; i++) {
     auto &k= index_keys[i];
     auto kstr= k._to_str();
+
+    if(!Mptr->has_key(kstr)) { return nil_operand; }
+
     auto &v = (*Mptr)[kstr];
 
     if(v.is_nil()) { return nil_operand; }
@@ -147,13 +150,16 @@ bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
   if(vptr==nullptr) {
     MYLOGGER_MSG(trace_function, string("vptr: is nullptr ") , SLOG_FUNC_INFO);
     cout << "AstMap::add(string&,&&vptr==nullptr, bool)\n";
-    return false;
+    if(has_key(k)) {
+      if(!overwrite) return false;
+    }
+    map_[k] = nil;
+    return true;
   }
   MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("overwrite: ") + Operand(overwrite)._to_str(), SLOG_FUNC_INFO+9);
 
   if(has_key(k)) {
-
     if(!overwrite) return false;
   }
   map_[k] = move(vptr);
@@ -258,6 +264,7 @@ Operand AstMap::to_str() const {
 
 //------------------------------------- 
 vector<string> AstMap::_get_keys() const {
+  MYLOGGER(trace_function , "AstMap::_get_keys()" , __func__, SLOG_FUNC_INFO+10);
   vector<string> key_list;
   for (auto const& [key, val] : map_) {
     key_list.push_back(key);

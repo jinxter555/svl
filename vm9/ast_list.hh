@@ -29,6 +29,7 @@ public:
   const AstList& get_list() const override;
   const AstMap& get_map() const override;
   vector<string> _get_keys() const override;
+  bool has_key(const string &k)  const override;
 
 //-------------------------------------- 
   const Operand* get_operand_ptr() const override;

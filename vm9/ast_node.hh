@@ -33,6 +33,7 @@ public:
   virtual const AstList& get_list() const=0;
   virtual const AstMap& get_map() const=0;
 
+  virtual bool has_key(const string& k) const =0;
   virtual vector<string> _get_keys() const =0;
 
 

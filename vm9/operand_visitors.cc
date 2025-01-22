@@ -28,8 +28,8 @@ Operand     Operand::get_opcode()     const { return _get_opcode(); }
 AstOpCode   Operand::_get_opcode()    const { return visit(OpCode{}, value_); }
 //------------------------------------ 
 template <typename T> 
-AstOpCode Operand::OpCode::operator()(T& v) const { cout << "NOT opcode::(T& v)\n"; return AstOpCode::noop; }
-AstOpCode Operand::OpCode::operator()(const AstOpCode v) const { cout << "opcode::(opcode v)\n"; return v; }
+AstOpCode Operand::OpCode::operator()(T& v) const { return AstOpCode::noop; }
+AstOpCode Operand::OpCode::operator()(const AstOpCode v) const { return v; }
 AstOpCode Operand::OpCode::operator()(const Nil) const {  return AstOpCode::noop; }
 
 

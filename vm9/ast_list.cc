@@ -29,7 +29,16 @@ AstList::AstList(const vec_num_t& l) : AstNode(OperandType::list_t) {
 AstList::AstList(const vec_str_t& l) : AstNode(OperandType::list_t) {
   for(auto &e: l) list_.push_back(e); }
 
-
+bool AstList::has_key(const string &k)  const { 
+  try { 
+    const s_integer index{std::stol(k)}; 
+    if(index >= size() || index<0) return false;
+    return true;
+  } catch (std::invalid_argument const& ex) {
+    cerr<< "AstList::operator[] invalid_argument::what(): " << ex.what() << '\n';
+  }
+  return false; 
+}
 
 //--------------------------------------
 Operand AstList::evaluate(unique_ptr<AstNode>&ctxt) { 
@@ -44,7 +53,7 @@ Operand AstList::evaluate(unique_ptr<AstNode>&ctxt) {
     //result_list->add(list_[i].evaluate(ctxt).clone());
     auto Lrptr= list_[i]._vrptr();
 
-    cout << "Lrptr->gettype()" << Lrptr->get_type() << "\n";
+    //cout << "Lrptr->gettype()" << Lrptr->get_type() << "\n";
     //auto rv = list_[i].evaluate(ctxt);
     auto rv = Lrptr->evaluate(ctxt);
 
@@ -67,11 +76,20 @@ astnode_u_ptr AstList::clone() const {
 
 Operand& AstList::operator[] (const string& k) {
   MYLOGGER(trace_function, "AstList::operator[](string&)", __func__, SLOG_FUNC_INFO);
+  return const_cast<Operand&>(as_const(*this)[k]); 
   return nil_operand_nc;
 }
 //------------------------------------------------------------------------------------------------------------------ 
 const Operand& AstList::operator[] (const string& k) const {
   MYLOGGER(trace_function, "const AstList::operator[](string&)", __func__, SLOG_FUNC_INFO);
+
+  try { 
+    const s_integer index{std::stol(k)}; 
+    if(index >= size() || index<0) return nil_operand;
+    return list_[index];
+  } catch (std::invalid_argument const& ex) {
+    cerr<< "AstList::operator[] invalid_argument::what(): " << ex.what() << '\n';
+  }
   return nil_operand;
 }
 

@@ -286,8 +286,9 @@ Operand Operand::opfunc(const AstNode& v, AstOpCode op) {
   MYLOGGER(trace_function, string("Operand::opfunc(") + 
     v.to_str()._to_str()+ string(")") + Operand(op)._to_str() , __func__, SLOG_FUNC_INFO);
 
-  cout << "Operand::opfunc()\n";
-  cout << "Opcode: " << Operand(op)<< "\n";
+  //cout << "Operand::opfunc()\n";
+  //cout << "Opcode: " << Operand(op)<< "\n";
+
   Operand other(v.clone());
   
   // if(type_ != other.type_) throw std::runtime_error("Unsupported operation > for unequal types"); 

@@ -50,6 +50,7 @@ void SvlmInteractive::print_tree(const std::string& line) {
     auto &value= svlm_lang.root[vstr];
     cout << value << "\n";;
 
+/*
     auto vptr = value._vrptr();
     if(vptr->_get_type() == OperandType::list_t) {
       auto &l = vptr->get_list()._get_list();
@@ -59,7 +60,7 @@ void SvlmInteractive::print_tree(const std::string& line) {
         cout << "evptr.gettype: " << evptr->get_type() << "\n";
       }
     }
-
+*/
     return;
   }
 

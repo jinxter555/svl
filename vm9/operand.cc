@@ -225,9 +225,26 @@ const AstMap& Operand::get_map() const {
 vector<string> Operand::_get_keys() const {
   auto vptr = _vrptr();
   if(vptr == nullptr) return {};
-  if(vptr->_get_type()==OperandType::map_t) return vptr->_get_keys(); 
+  switch(type_) {
+  case OperandType::uptr_t:
+  case OperandType::sptr_t:
+  case OperandType::ptr_t:
+    return vptr->_get_keys(); 
+  }
   return {};
 }
+bool Operand::has_key(const string &k)  const {
+  auto vptr = _vrptr();
+  if(vptr == nullptr) return {};
+  switch(type_) {
+  case OperandType::uptr_t:
+  case OperandType::sptr_t:
+  case OperandType::ptr_t:
+    return vptr->has_key(k); 
+  }
+  return false;
+}
+
 
 
 //------------------------------------

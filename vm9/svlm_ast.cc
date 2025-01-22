@@ -18,7 +18,12 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
   if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, ov.clone(), true)) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
+  } else {
+    //auto &frames = get_frames();
+    auto &frames = root[vec_str_t{CONTEXT_UNIV, FRAMES}];
+    cout << "get frames: " << frames << "\n\n";
   }
+
   if(! root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true)) {
     cerr << "can't add {" << CONTEXT_UNIV << " svlm_lang  }\n";
     exit(1);
@@ -44,7 +49,7 @@ astnode_u_ptr& SvlmAst::get_frames() {
     cerr << "SvlmAst::get_frames is nil_operand!\n";
     return nil_ast_ptr_nc;
   }
-  cout << "frames c: " << c << "\n";
+  //cout << "frames c: " << c << "\n";
   return c.get_u_ptr_nc();
 }
 
@@ -78,8 +83,8 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
   for(i=0; i < s; i++) {
     auto &nan = clist[i]; 
 
-    //cout << "\nnan: " << nan << "\n";
-    //cout << "nan.get_type: " << nan.get_type() << "\n";
+    cout << "\nnan: " << nan << "\n";
+    cout << "nan.get_type: " << nan.get_type() << "\n";
 
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
@@ -180,6 +185,10 @@ Operand SvlmAst::evaluate_prompt_line() {
   auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Prompt", "last", "code"}];
   auto Lptr = l.get_list_ptr_nc();
   //l.print(); cout << "\n";
+  if(Lptr==nullptr) {
+    cerr << "evaluate prompt line: prompt code is null!\n";
+    return nil;
+  }
   auto &ctxt = get_context();
   return Lptr->evaluate(ctxt);
 }
@@ -203,6 +212,10 @@ void SvlmAst::run_evaluate() {
   new_map->add(string("lvars"), make_unique<AstMap>(), true);
   new_map->add(string("current_module"), Operand("Main"));
   frames->add(move(new_map));
+  if(Lptr == nullptr) {
+    cerr << "SvlmAst::run_evaluate Lptr==nullptr\n";
+    return;
+  }
   Lptr->evaluate(ctxt);
 
 /*
@@ -236,7 +249,7 @@ Operand AstBinOp::to_str() const {
 }
 Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function , "AstBinOp::evaluate(astnode_u_ptr& ctxt)" , __func__, SLOG_FUNC_INFO);
-  cout << "AstBinOp::evaluate(astnode_u_ptr&)\n";
+  //cout << "AstBinOp::evaluate(astnode_u_ptr&)\n";
 
 
   //auto &l = (*this)["left"];
@@ -248,12 +261,14 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
 
   MYLOGGER_MSG(trace_function, string("AstBinOp::") + string(__func__) + string(" ") +  l._to_str()  + opcode_str + r._to_str(), SLOG_FUNC_INFO);
 
+/*
   cout << "l: " << l << "\n";
   cout << "l.type: " << l.get_type() << "\n";
   cout << "op.gettype(): " << op.get_type()<< "\n";
   cout << "opcode_str: " << opcode_str << "\n";
   cout << "r.type: " << r.get_type() << "\n";
   cout << "r: " << r << "\n\n";
+*/
 
   auto r_v = r.evaluate(ctxt);
 
@@ -270,10 +285,12 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
       Operand rv = r_v.clone();
       variable->assign(ctxt, rv); 
     } else {
+      /*
       cout << "assigning regular var!\n";
       cout << "var:" << r_v << "\n";
       cout << "type:" << r_v.get_type() << "\n\n";
       //variable->assign(ctxt, r_vptr->clone());
+      */  
       variable->assign(ctxt, r_v);
     }
 
@@ -316,6 +333,7 @@ Operand AstFunc::evaluate(astnode_u_ptr& ctxt) {
 Operand AstFunc::to_str() const {
   //return string("func: ") + name;
   return string("func: ") + node["name"]._to_str() + node["code"]._to_str();
+  //return AstMap::to_str();
 }
 Operand AstFunc::get_type() const { return OperandType::ast_func_t;}
 OperandType AstFunc::_get_type() const { return OperandType::ast_func_t;}
