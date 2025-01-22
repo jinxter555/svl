@@ -177,7 +177,7 @@ void SvlmAst::add_code(const Operand& name, list_u_ptr clist) {
 
 Operand SvlmAst::evaluate_prompt_line() {
   MYLOGGER(trace_function , "SvlmAst::evaluate_prompt_line()" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
-  cout <<"SvlmAst::evaluate_prompt_line()\n";
+  //cout <<"SvlmAst::evaluate_prompt_line()\n";
   auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Prompt", "last", "code"}];
   auto Lptr = l.get_list_ptr_nc();
   //l.print(); cout << "\n";
@@ -598,7 +598,7 @@ Operand AstMvar::evaluate(astnode_u_ptr& ctxt) {
     auto index_i = get_index_i(ctxt);
     if(index_i >= 0) {
       //return result_var[index_i].clone_val();
-      cout << "index i: " << index_i << "\n";
+      //cout << "index i: " << index_i << "\n";
       //cout <<  "result_var: " <<  result_var << "\n";
       //cout <<  "result_var.gettype(): " <<  result_var.get_type() << "\n";
       //cout <<  result_var[index_i] << "\n";

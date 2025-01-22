@@ -160,7 +160,12 @@ void SvlmInteractive::evaluate_line() {
       cout << v << "\n";
     }
   } else {
-    cout << "result: " << result << "\n";
+    //cout << "result.type: " << result.get_type() << "\n";
+    if(result.type_==OperandType::nil_t){
+      cout << "nil\n";
+      return;
+    }
+    cout << result[0] << "\n";
   }
 }
 
