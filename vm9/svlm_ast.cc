@@ -11,18 +11,14 @@
 
 SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
   MYLOGGER(trace_function , string("SvlmAst::SvlmAst()") , __func__, SLOG_FUNC_INFO);
-  cout << "SvlmAst::SvlmAst()\n";
+  //cout << "SvlmAst::SvlmAst()\n";
 
   Operand ov(list_t{});
 
   if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, ov.clone(), true)) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
-  } else {
-    //auto &frames = get_frames();
-    auto &frames = root[vec_str_t{CONTEXT_UNIV, FRAMES}];
-    cout << "get frames: " << frames << "\n\n";
-  }
+  } 
 
   if(! root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true)) {
     cerr << "can't add {" << CONTEXT_UNIV << " svlm_lang  }\n";
@@ -83,8 +79,8 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
   for(i=0; i < s; i++) {
     auto &nan = clist[i]; 
 
-    cout << "\nnan: " << nan << "\n";
-    cout << "nan.get_type: " << nan.get_type() << "\n";
+    //cout << "\nnan: " << nan << "\n";
+    //cout << "nan.get_type: " << nan.get_type() << "\n";
 
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 

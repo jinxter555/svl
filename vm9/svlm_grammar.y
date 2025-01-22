@@ -54,7 +54,7 @@ namespace vslast {
 %nterm comments
 
 %nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple
-%nterm <astnode_u_ptr>  kv_pair_list
+%nterm <map_u_ptr>  kv_pair_list
 %nterm <string> map_key
 %type <tuple<string, astnode_u_ptr>> kv_pair 
 
@@ -285,9 +285,9 @@ map
 
 kv_pair_list
   : kv_pair_list COMMA kv_pair {
-    // $1->add(Operand(get<0>($3))._to_str(), move(get<1>($3)));
-    //$$ = move($1);
-    $$ = nullptr;
+     $1->add(Operand(get<0>($3))._to_str(), move(get<1>($3)));
+     $$ = move($1);
+    //$$ = nullptr;
   }
   | kv_pair {
     auto map_vptr = make_unique<AstMap>();

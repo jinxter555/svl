@@ -312,6 +312,7 @@ const Operand& Operand::operator[] (const string& k) const {
   auto vptr =(AstMap*) _vrptr();
   if(vptr==nullptr) return nil_operand;
   if(vptr->_get_type()!=OperandType::map_t) return nil_operand;
+  if(!vptr->has_key(k)) return nil_operand;
   //cout << "vptr: " << *vptr << "\n";
   //cout << "vptr->gettype(): " << vptr->get_type() << "\n";
   return (*vptr)[k];
