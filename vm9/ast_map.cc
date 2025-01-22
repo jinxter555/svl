@@ -11,7 +11,7 @@
 AstMap::AstMap() : AstNode(OperandType::map_t) {}
 AstMap::AstMap(const map_t& m) : AstNode(OperandType::map_t) {
    for (auto const& [key, val] : m) {                                                                                                                                        
-    map_[key] = val.clone();                                                                                                                                          
+    map_[key] = val.clone();
    }                                                                                                                                                                            
 }
 
@@ -144,6 +144,11 @@ bool AstMap::add(const vec_str_t&k, const operand_variant_t&v, bool overwrite)  
 bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(string &k, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
+  if(vptr==nullptr) {
+    MYLOGGER_MSG(trace_function, string("vptr: is nullptr ") , SLOG_FUNC_INFO);
+    cout << "AstMap::add(string&,&&vptr==nullptr, bool)\n";
+    return false;
+  }
   MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("overwrite: ") + Operand(overwrite)._to_str(), SLOG_FUNC_INFO+9);
 

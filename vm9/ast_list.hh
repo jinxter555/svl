@@ -71,8 +71,8 @@ public:
   Operand& back_nc()  override;
 //  const Operand& operator[] (const AstList &k) const ;
 
-  bool add(astnode_u_ptr &&vptr) override;  // for list
   bool add(const operand_variant_t&) ;  // for list
+  bool add(astnode_u_ptr &&vptr) override;  // for list
   bool add(const list_t &);
 
 

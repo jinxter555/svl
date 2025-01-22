@@ -4,8 +4,8 @@ module Main do
   def main() do
     print  "main()"
     $x = 1
-    $y = 1
-    $n1 = nil
+    $y = 123
+#    $n1 = nil
   end
 end
 

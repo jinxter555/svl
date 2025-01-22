@@ -36,15 +36,22 @@ Operand AstList::evaluate(unique_ptr<AstNode>&ctxt) {
   MYLOGGER(trace_function , "AstList::evaluate()" , string("AstList::") + string(__func__), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, to_str()._to_str(), SLOG_FUNC_INFO+9);
   //cout << "AstList::evaluate()\n";
+
   int i, s = size();
-  astnode_u_ptr result_list = make_unique<AstList>();
-  //cout << "in list eval!\n";
-  //cout << "size: " << size() << "\n";
+  auto result_list = make_unique<AstList>();
   for(i=0; i<s; i++) {
     //cout  << "list[" << i << "]" << list_[i] << "\n";
-    result_list->add(list_[i].evaluate(ctxt).clone());
+    //result_list->add(list_[i].evaluate(ctxt).clone());
+    auto Lrptr= list_[i]._vrptr();
+
+    cout << "Lrptr->gettype()" << Lrptr->get_type() << "\n";
+    //auto rv = list_[i].evaluate(ctxt);
+    auto rv = Lrptr->evaluate(ctxt);
+
+    result_list->add(rv._get_variant());
   }
-  return result_list;
+  astnode_u_ptr rl = move(result_list);
+  return rl;
 }
 //--------------------------------------
 astnode_u_ptr AstList::clone() const {
@@ -151,7 +158,7 @@ bool AstList::add(const list_t & l) {
 }
 
 /* bool AstList::add(const Operand& v) { list_.push_back(v.clone()); return true; }*/
-bool AstList::add(const operand_variant_t& ovv) {
+bool AstList::add(const operand_variant_t &ovv) {
   MYLOGGER(trace_function , "AstList::add(operand_variant)" , __func__, SLOG_FUNC_INFO+9);
   list_.push_back(ovv);
   return true;
@@ -319,10 +326,10 @@ Operand Tuple::to_str() const {
 
 Operand Tuple::get_type() const {
   return OperandType::tuple_t;
-};
+}
 OperandType Tuple::_get_type() const {
   return OperandType::tuple_t;
-};
+}
 
 void Tuple::print() const {
   cout <<  to_str();

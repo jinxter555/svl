@@ -40,5 +40,13 @@ TEST_CASE("check operand list 2") {
   ol2.add(ol1.clone());
   ol2.add(3.14159);
 
+  auto l3=make_unique<AstList>();
+  l3->add(123l);
+  l3->add(456l);
+  l3->add(789l);
+  l3->add(3.14159);
+  cout << "l3: " << *l3<< "\n";
+
+
   cout << "ol2: " << ol2 << "\n";
 }

@@ -69,17 +69,6 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
   MYLOGGER_MSG(trace_function, mod_name._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("clist: ") + clist_ptr->to_str()._to_str(), SLOG_FUNC_INFO);
 
-/*
-  MYLOGGER_MSG(trace_function, "---good---", SLOG_FUNC_INFO);
-  Operand code(clist_ptr->clone());
-  MYLOGGER_MSG(trace_function, "---good---", SLOG_FUNC_INFO);
-  cout << "clist: code: " << *clist_ptr<< "\n";
-  MYLOGGER_MSG(trace_function, "---bad---", SLOG_FUNC_INFO);
-  cout << "addmodule: code: " << code << "\n";
-  MYLOGGER_MSG(trace_function, "--------", SLOG_FUNC_INFO);
-*/
-
-
   auto &clist = clist_ptr->_get_list_nc();
 
   s_integer i, s=clist.size();
@@ -88,18 +77,22 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
 
   for(i=0; i < s; i++) {
     auto &nan = clist[i]; 
-    cout << "\nnan: " << nan << "\n";
-    cout << "nan.get_type: " << nan.get_type() << "\n";
+
+    //cout << "\nnan: " << nan << "\n";
+    //cout << "nan.get_type: " << nan.get_type() << "\n";
+
     if(nan._get_type() != OperandType::uptr_t) { continue; }
 
-    auto &nan_vptr = nan.get_u_ptr();
+    //auto &nan_vptr = nan.get_u_ptr();
+    auto &nan_vptr = nan.get_u_ptr_nc();
 
-    cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
-    cout << "*nan_vptr: " << *nan_vptr << "\n";
+    //cout << "nan_vptr.get_type: " << nan_vptr->get_type() << "\n";
+    //cout << "*nan_vptr: " << *nan_vptr << "\n";
 
     // sub_node could be FUNC, CLASS, VAR
     auto &msub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
-    cout << "msub_node: " << msub_node << "\n";
+
+    //cout << "msub_node: " << msub_node << "\n";
 
 /*
     if(msub_node.is_nil()) { 
@@ -109,9 +102,12 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
 */
 
     auto sub_node_name = (*nan_vptr)["name"]._to_str();
-    cout << "subnodename: " <<  sub_node_name<< "\n";
+
+    //cout << "subnodename: " <<  sub_node_name<< "\n";
     //sub_node.add(sub_node_name, move(nan_vptr), true);
-    msub_node.add(sub_node_name, nan_vptr->clone(), true);
+
+    //msub_node.add(sub_node_name, nan_vptr->clone(), true);
+    msub_node.add(sub_node_name, move(nan_vptr), true);
   }
   //cout << "\n\n";
 }
@@ -145,17 +141,21 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
   }
 
 
-  cout << "msub_node=root[keys]: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+  //cout << "msub_node=root[keys]: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+
   auto &msub_node = root[keys];
 
   // ex, if key mvar, create it if it's not found==nil, else return already
   // found. so that we won't overwrite the existing mvar varaibles in it.
   if(msub_node.is_nil()) {
-    cout << "'msub_node' is_nil: " << msub_node << ", adding\n";
+    //cout << "'msub_node' is_nil: " << msub_node << ", adding\n";
+
     root.add(keys, make_unique<AstMap>(), true);
 
     auto &new_msub_node= root[keys];
-    cout << "now 'msub_node' is: " << new_msub_node << "--added\n\n";
+
+    //cout << "now 'msub_node' is: " << new_msub_node << "--added\n\n";
+
     if(new_msub_node.is_nil()) {cout << "new msubnode is nil\n"; }
     return new_msub_node;
   }
@@ -236,6 +236,7 @@ Operand AstBinOp::to_str() const {
 }
 Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function , "AstBinOp::evaluate(astnode_u_ptr& ctxt)" , __func__, SLOG_FUNC_INFO);
+  cout << "AstBinOp::evaluate(astnode_u_ptr&)\n";
 
 
   //auto &l = (*this)["left"];

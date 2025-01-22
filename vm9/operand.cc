@@ -89,13 +89,13 @@ Operand::Operand(const operand_variant_t& v ) : AstNode(visit(Type(), v))
 
 Operand Operand::evaluate(unique_ptr<AstNode>&ctxt) { 
   MYLOGGER(trace_function , "Operand::evaluate()" , __func__, SLOG_FUNC_INFO);
-  auto vptr = _vrptr();
-  switch(vptr->_get_type()) {
-  case  OperandType::list_t:
-  case  OperandType::ast_binop_t:
-  case  OperandType::map_t:
+  switch(type_) {
+  case  OperandType::ptr_t:
+  case  OperandType::sptr_t:
+  case  OperandType::uptr_t: {
+    auto vptr = _vrptr();
     return vptr->evaluate(ctxt);
-  }
+  }}
   return _get_variant();
 }
 //------------------------------------------------------------------------------------------------------------------ 
@@ -381,17 +381,16 @@ bool Operand::is_nil() const {
   return false; 
 }
 //------------------------------------
-//---------------------------  to convert to share
-bool Operand::to_shared() {
+//---------------------------  to share
+astnode_s_ptr Operand::to_shared() {
   if(holds_alternative<astnode_u_ptr>(value_)) {
-    astnode_s_ptr tmp_s_ptr = move(get<astnode_u_ptr>(value_));
-    value_ = move(tmp_s_ptr);
-    type_ = OperandType::sptr_t;
-    return true;
+    return make_shared<Operand>(value_);
   } else if(holds_alternative<astnode_s_ptr>(value_)) {
-    return true;
+    return get<astnode_s_ptr>(value_);
+  } else if(holds_alternative<astnode_ptr>(value_)) {
+    return make_shared<Operand>(value_);
   } else {
-    return false;
+    return nullptr;
   }
 }
 //------------------------------------
