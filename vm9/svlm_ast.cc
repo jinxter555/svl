@@ -392,7 +392,7 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
   auto lvars = make_unique<AstMap>();
   nm->add("current_function", node["callee_func"], true);
   nm->add("current_module",   node["callee_mod"], true);
-
+  nm->add("current_flow", ControlFlow::run, true);
 
   auto &arg_list = node["arg_list"];
   auto &proto_list = node["proto_list"];
@@ -416,8 +416,6 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
 
   nm->add(string("lvars"), move(lvars), true);
   frames->add(move(nm));
-
-
 
   return frames->back_nc();
 }

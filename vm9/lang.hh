@@ -98,12 +98,23 @@ enum class OperandType {
   ast_binop_t,
   ast_class_t,
   ast_func_t,
-  ast_mvar_t,
-  ast_lvar_t,
-  ast_ovar_t,
+  ast_block_t,
+
+  ast_mvar_t, // module
+  ast_lvar_t, // local function
+  ast_ovar_t, // object vars
+  ast_bvar_t, // block vars
+
   ast_print_t,
   ast_caller_t,
   ast_tuple_t,
+
+  ast_case_t,
+  ast_case_match_t,
+  ast_case_else_t,
+  ast_case_when_t,
+
+  ast_repeat_t,
 
   except_t,
   svlm_lang_t,

@@ -389,6 +389,7 @@ Number Operand::_get_number() const {
   }
   //return get<Number>(_get_variant());
   auto vptr =(Operand*) _vrptr();
+  MYLOGGER_MSG(trace_function, vptr->get_type()._to_str(), SLOG_FUNC_INFO);
   return vptr->_get_number();
 }
 
