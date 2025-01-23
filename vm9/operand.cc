@@ -429,7 +429,16 @@ string Operand::_to_str() const {
 //------------------------------------
 
 void Operand::print() const { cout << *this; }
-s_integer Operand::size() const {return 0l;}
+s_integer Operand::size() const {
+  switch(type_) {
+  case OperandType::ptr_t:
+  case OperandType::uptr_t:
+  case OperandType::sptr_t:{
+    auto vptr =(Operand*) _vrptr();
+    return vptr->size();
+  }}
+  return 0l;
+}
 
 //------------------------------------ DeRef
 

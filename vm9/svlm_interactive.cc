@@ -157,7 +157,7 @@ void SvlmInteractive::evaluate_line() {
     if(v.is_nil()) { // Operand_math != is notworking 
       cout << "v==nil" << result << "\n";
     } else  {
-      cout << v << "\n";
+      cout << "v[] = " << v << "--\n";
     }
   } else {
     //cout << "result.type: " << result.get_type() << "\n";
@@ -165,7 +165,7 @@ void SvlmInteractive::evaluate_line() {
       cout << "nil\n";
       return;
     }
-    cout << result[0] << "\n";
+    cout << result[0] << "-\n";
   }
 }
 

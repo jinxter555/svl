@@ -365,6 +365,9 @@ Operand AstPrint::evaluate(astnode_u_ptr& ctxt) {
 AstCaller::AstCaller(const Operand& callee, astnode_u_ptr arg_list) 
 : AstExpr(OperandType::ast_caller_t)
 {
+  MYLOGGER(trace_function , "AstCaller::AstCaller()" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("arg_list: ") + arg_list->to_str()._to_str(), SLOG_FUNC_INFO+1)
+
   auto modfunc = split_string(callee._to_str(), ".");
   //cout << "modfunc size" << modfunc.size() << "\n";
   if(modfunc.size() > 1) {

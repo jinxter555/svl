@@ -79,7 +79,7 @@ program_start
   :  statement_list { 
     //cout << "program start:" << *$1 << "\n"; $1->print(); cout << "\n";
     svlm_lang->add_code(Operand("Prompt"), move($1));
-    }
+  }
   ;
 
 statement_list
@@ -205,7 +205,10 @@ literals
   ;
 caller
 //  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
-  : DOTSTR PAREN_L arg_list PAREN_R { $$= make_unique<AstCaller>($1, move($3)); }
+  : DOTSTR PAREN_L arg_list PAREN_R { 
+    //cout << "in Grammar: caller!\n" ; $3->print(); cout << "\n";
+    $$= make_unique<AstCaller>($1, move($3)); 
+    }
   ;
 
 
