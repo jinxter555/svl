@@ -156,7 +156,7 @@ bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
     map_[k] = nil;
     return true;
   }
-  MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("vptr: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("overwrite: ") + Operand(overwrite)._to_str(), SLOG_FUNC_INFO+9);
 
   if(has_key(k)) {
@@ -169,7 +169,11 @@ bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
 bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(AstList&, astnode_u_ptr&&, bool) ", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("v: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("vptr: ") + AstPtr2Str(vptr), SLOG_FUNC_INFO); 
+
+  //if(vptr!=nullptr)  { MYLOGGER_MSG(trace_function, string("vptr: ") + vptr->to_str()._to_str(), SLOG_FUNC_INFO); 
+  //} else { MYLOGGER_MSG(trace_function, string("vptr is nullptr: "), SLOG_FUNC_INFO); }
+
   //cout << "AstList::add[" <<  index_keys << "] \n" ;
   AstMap *curr=this, *next, *prev=this;
   s_integer i, s = index_keys.size();
@@ -192,12 +196,14 @@ bool AstMap::add(const AstList &index_keys, astnode_u_ptr &&vptr, bool overwrite
 //------------------------------------- 
 bool AstMap::add(const AstList &index_keys, const operand_variant_t& ovv, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(AstList&, operand_variant&, bool) ", __func__, SLOG_FUNC_INFO);
+
   MYLOGGER_MSG(trace_function, string("k: ") + index_keys.to_str()._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("v: ") + Operand(ovv).to_str()._to_str(), SLOG_FUNC_INFO);
 
   //cout << "AstList::add[" <<  index_keys << "] \n" ;
 
   AstMap *curr=this, *next, *prev=this;
+  
   s_integer i, s = index_keys.size();
   for(i=0; i<s; i++) {
     auto k= index_keys[i]._to_str();

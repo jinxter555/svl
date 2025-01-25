@@ -157,7 +157,8 @@ void SvlmInteractive::evaluate_line() {
     if(v.is_nil()) { // Operand_math != is notworking 
       cout << "v==nil" << result << "\n";
     } else  {
-      cout << "v[] = " << v << "--\n";
+      cout << "v.get_type(): " << v.get_type() << "--\n";
+      cout << v << "\n";
     }
   } else {
     //cout << "result.type: " << result.get_type() << "\n";
@@ -253,6 +254,10 @@ void SvlmInteractive::add_readline(const string& cmd) {
 
   if(cmd == "!!print_tree") {
     auto univ_ptr = svlm_lang.root[CONTEXT_UNIV]._vrptr();
+    if(univ_ptr==nullptr) {
+      cerr << "uni_ptr is null!\n";
+      exit(1);
+    }
     svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd, CONTEXT_UNIV}, univ_ptr, true);
   } else
     svlm_lang.root.add(vec_str_t{rlsvlm_loc, cmd}, nil);

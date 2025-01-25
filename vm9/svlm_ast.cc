@@ -8,14 +8,49 @@
 
 #define MOD "module"
 #define FRAMES "frames"
+#define PROCESSES "processes"
 
+/*
+ svlvm:
+  //  pid:
+  //  svlm_lang:
+  //  frames:
+  processes:
+    0:
+      pid:
+      svlvm:
+      frames:
+      processes:
+    1:
+      pid:
+      svlvm:
+      frames:
+      processes:
+*/
 SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
   MYLOGGER(trace_function , string("SvlmAst::SvlmAst()") , __func__, SLOG_FUNC_INFO);
   //cout << "SvlmAst::SvlmAst()\n";
 
-  Operand ov(list_t{});
 
-  if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, ov.clone(), true)) {
+  auto process  = make_unique<AstMap>();
+  auto univ_ptr = root[CONTEXT_UNIV]._vrptr();
+
+
+
+  //process->add(string(FRAMES), make_unique<AstList>, true);
+  //process->add(string(CONTEXT_UNIV), univ_ptr, true); // each process contains the universe
+  (*process)["pid"] = 0l;
+  (*process)[FRAMES] = unique_ptr<AstNode >(make_unique<AstList>());
+  //(*process)[CONTEXT_UNIV] = univ_ptr;
+
+  auto processes = make_unique<AstList>();
+
+
+  processes->add(move(process)); // add 
+
+  //if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, frames.clone(), true)) {
+  //if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, make_unique<AstList>(), true)) {
+  if(! root.add(vec_str_t{CONTEXT_UNIV, PROCESSES}, move(processes), true)) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
   } 
@@ -24,42 +59,62 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
     cerr << "can't add {" << CONTEXT_UNIV << " svlm_lang  }\n";
     exit(1);
   }
-
-  //cout << "&root " << &root << "\n"; cout << "root " << root << "\n";
 }
 Operand SvlmAst::to_str() const {
   return string("SvlmAst PTR");
 }
 
 astnode_u_ptr& SvlmAst::get_context() {
+  MYLOGGER(trace_function , string("SvlmAst::get_context()") , __func__, SLOG_FUNC_INFO);
   //auto &c= root[vec_str_t{CONTEXT_UNIV}];
   auto &c= root[CONTEXT_UNIV];
   return c.get_u_ptr_nc();
 }
-astnode_u_ptr& SvlmAst::get_frames() {
-  MYLOGGER(trace_function , string("SvlmAst::get_frames()") , __func__, SLOG_FUNC_INFO+9);
-  auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
+astnode_u_ptr& SvlmAst::get_processes() {
+  MYLOGGER(trace_function , string("SvlmAst::get_processes()") , __func__, SLOG_FUNC_INFO);
+  //cout << "SvlmAst::get_processes()\n";
+  //auto &c= root[vec_str_t{CONTEXT_UNIV}];
+  auto &c= root[vec_str_t{CONTEXT_UNIV, PROCESSES}];
+  //cout << "root : " << root.to_str() << "\n";
+  //cout << "processes: " << c << "\n";
+  //MYLOGGER_MSG(trace_function, string("processes: ") + c._to_str(), SLOG_FUNC_INFO);
+  
+  return c.get_u_ptr_nc();
+}
+astnode_u_ptr& SvlmAst::get_process(s_integer i) {
+  MYLOGGER(trace_function , string("SvlmAst::get_process(") + Operand(i)._to_str() + string(")") , __func__, SLOG_FUNC_INFO);
+  auto pl_ptr = get_processes()->get_list_ptr_nc();
+  //auto &p = pl_ptr[i].get_u_ptr_nc();
+  auto &p = (*pl_ptr)[i].get_u_ptr_nc();
+  return p;
+}
+
+// ctxt is proc
+astnode_u_ptr& SvlmAst::get_frames(astnode_u_ptr& ctxt) {
+  MYLOGGER(trace_function , string("SvlmAst::get_frames(astnode_u_ptr &ctxt)") , __func__, SLOG_FUNC_INFO+9);
+  //auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
+  auto &f= (*ctxt)[FRAMES];
   //cout << "&root " << &root << "\n"; cout << "root " << root << "\n";
   //if(c==nil_operand) {
-  if(c.is_nil()) {
+  if(f.is_nil()) {
     cerr << "SvlmAst::get_frames is nil_operand!\n";
     return nil_ast_ptr_nc;
   }
   //cout << "frames c: " << c << "\n";
-  return c.get_u_ptr_nc();
+  return f.get_u_ptr_nc();
 }
 
-Operand& SvlmAst::get_current_frame() {
+Operand& SvlmAst::get_current_frame(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function , string("SvlmAst::get_current_frame()")  ,__func__, SLOG_FUNC_INFO + 9)
-  auto &frames = get_frames();
+  auto &frames = get_frames(ctxt);
   if(frames == nil_operand_ptr_nc) {
     return nil_operand_nc;
   }
   return frames->back_nc();
 }
 
-string SvlmAst::get_current_module() {
-  auto& f = get_frames()->back();
+string SvlmAst::get_current_module(astnode_u_ptr& ctxt) {
+  auto& f = get_frames(ctxt)->back();
   auto &m = f["current_module"];
   //cout << "in SvlmAst::get_current_module: " << m << "\n";
   return m._to_str();
@@ -185,18 +240,25 @@ Operand SvlmAst::evaluate_prompt_line() {
     cerr << "evaluate prompt line: prompt code is null!\n";
     return nil;
   }
-  auto &ctxt = get_context();
+  //auto &ctxt = get_context();
+  auto &ctxt = get_process(0l);
+  if(ctxt==nullptr) {
+    cerr << "ctxt: get_process(0l) is nullptr!\n";
+    exit(1);
+  }
   return Lptr->evaluate(ctxt);
 }
 
+// got to get kernel 0 process to bootstrap everything
 void SvlmAst::run_evaluate() {
   MYLOGGER(trace_function , "SvlmAst::run_evaluate()" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
   //cout << "Run eval Main::main \n";
   auto Lptr = root[vec_str_t{CONTEXT_UNIV, MOD, "Main", "function", "main", "code"}].get_list_ptr_nc();
   //root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true);
   //auto &c = l.get_u_ptr_nc();
-  auto &ctxt = get_context();
-  auto &frames = get_frames();
+  //auto &ctxt = get_context();
+  auto &ctxt = get_process(0l);
+  auto &frames = get_frames(ctxt);
 
   if(frames == nullptr) {
     cerr << "frames: ptr is nullptr!\n";
@@ -389,7 +451,7 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
   //auto svlm_lang_ptr = ctxt->root["svlm_lang"].get_svlm_ptr();
 
   auto svlm_lang_ptr = (*ctxt)["svlm_lang"].get_svlm_ptr();
-  auto &frames = svlm_lang_ptr->get_frames();
+  auto &frames = svlm_lang_ptr->get_frames(ctxt);
 
   auto nm = make_unique<AstMap>();
   auto lvars = make_unique<AstMap>();
@@ -425,7 +487,7 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
 Operand& AstCaller::remove_frame(astnode_u_ptr &ctxt) { 
   auto &svlm_lang = (*ctxt)["svlm_lang"];
   auto ptr = svlm_lang.get_svlm_ptr();
-  auto &frames = ptr->get_frames();
+  auto &frames = ptr->get_frames(ctxt);
   auto &f = frames->back();
   //frames->pop
   return nil_operand_nc;
@@ -448,7 +510,7 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
 
 
   if(callee_mod._get_type() == OperandType::nil_t)  {
-    module_name = svlm_lang_ptr->get_current_module();
+    module_name = svlm_lang_ptr->get_current_module(ctxt);
   } else {
     module_name = callee_mod._to_str();
   }
@@ -584,7 +646,7 @@ Operand AstMvar::evaluate(astnode_u_ptr& ctxt) {
   mod_name_operand = mod_name.to_str();
 
   if(mod_name == nil_operand)  {
-    mod_name_operand  = svlm_lang_ptr->get_current_module();
+    mod_name_operand  = svlm_lang_ptr->get_current_module(ctxt);
     add(string("mod_name"), mod_name_operand);
   }
 
@@ -655,7 +717,7 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
 
 
   if(mod_name.is_nil() )  {
-     mod_name_operand = svlm_lang_ptr->get_current_module();
+     mod_name_operand = svlm_lang_ptr->get_current_module(ctxt);
     add(string("mod_name"), mod_name_operand);
   }
 
@@ -734,7 +796,7 @@ Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {
     cerr << "In AstMvar::Assign svlmlang is null!\n";
     return Operand();
   }
-  auto &frame = svlm_lang_ptr->get_current_frame();
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
   auto &lvars =  frame["lvars"];
   auto var_name = name();
   return lvars[var_name].clone();
@@ -742,7 +804,7 @@ Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {
 
 bool AstLvar::assign(astnode_u_ptr& ctxt, Operand& v) {
   auto svlm_lang_ptr = (*ctxt)["svlm_lang"].get_svlm_ptr();
-  auto &frame = svlm_lang_ptr->get_current_frame();
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
   auto &lvars =  frame["lvars"];
   lvars.add(name(), v);
 

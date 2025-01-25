@@ -45,3 +45,10 @@ ostream& operator<<(ostream& os, const astnode_u_ptr& ptr) {
   else ptr->print();
   return os;
 }
+
+
+#include "operand.hh"
+string AstNode::AstPtr2Str(astnode_u_ptr&ptr) const{
+ if(ptr==nullptr) return "nil";
+ return ptr->to_str()._to_str();
+};

@@ -52,9 +52,18 @@ astnode_ptr Operand::_vrptr() const {
 template <typename T> 
 astnode_ptr Operand::Vrptr::operator()(const T& value) const { return nullptr; }
 astnode_ptr Operand::Vrptr::operator()(const Nil) const { return nullptr; }
-astnode_ptr Operand::Vrptr::operator()(const astnode_ptr& vptr) const  { return vptr->_vrptr(); }
-astnode_ptr Operand::Vrptr::operator()(const astnode_s_ptr& vptr) const { return vptr->_vrptr();}
-astnode_ptr Operand::Vrptr::operator()(const astnode_u_ptr& vptr) const  { return vptr->_vrptr(); }
+astnode_ptr Operand::Vrptr::operator()(const astnode_ptr& vptr) const  { 
+  if(vptr==nullptr) return nullptr;
+  return vptr->_vrptr(); 
+}
+astnode_ptr Operand::Vrptr::operator()(const astnode_s_ptr& vptr) const { 
+  if(vptr==nullptr) return nullptr;
+  return vptr->_vrptr();
+}
+astnode_ptr Operand::Vrptr::operator()(const astnode_u_ptr& vptr) const  { 
+  if(vptr==nullptr) return nullptr;
+  return vptr->_vrptr(); 
+}
 
 //----------------------------------------------------------------------- Uptr
 /*

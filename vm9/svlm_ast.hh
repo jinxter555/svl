@@ -37,15 +37,19 @@ public:
   Operand& get_module_subnode(const Operand&, const OperandType t);
 
   astnode_u_ptr& get_context() ;
-  astnode_u_ptr& get_frames() ;
-  Operand& get_current_frame() ;
+  astnode_u_ptr& get_processes() ;
+  astnode_u_ptr& get_process(s_integer) ;
+
+  // ctxt is process 
+  astnode_u_ptr& get_frames(astnode_u_ptr& ctxt); 
+  Operand& get_current_frame(astnode_u_ptr& ctxt) ;
+  string get_current_module(astnode_u_ptr &ctxt) ;
 
   ControlFlow pop_control_flow();
   void push_control_flow();
 
 
 
-  string get_current_module() ;
 //  void add_readline_cmds(const string& cmd);
 //  vector<string> get_readline_cmds(const string& cmd);
 
@@ -57,6 +61,8 @@ public:
   void run_evaluate();
   Operand evaluate_prompt_line();
   //Operand evaluate(unique_ptr<Tree>&) override;
+
+
 
 };  
 

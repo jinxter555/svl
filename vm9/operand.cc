@@ -390,7 +390,16 @@ Number Operand::_get_number() const {
   //return get<Number>(_get_variant());
   auto vptr =(Operand*) _vrptr();
   MYLOGGER_MSG(trace_function, vptr->get_type()._to_str(), SLOG_FUNC_INFO);
-  return vptr->_get_number();
+  switch(type_) {
+  case OperandType::ptr_t:
+  case OperandType::uptr_t:
+  case OperandType::sptr_t:{
+    auto vptr =(Operand*) _vrptr();
+    return vptr->_get_number();
+  }}
+  cerr << "Operand::value_" << _to_str() << "\n";
+  throw std::runtime_error("Operand::Number() is not a number!"); 
+  return 0l; // this is error
 }
 
 //s_integer Operand::_get_int() const { return _get_number().get_int(); }
@@ -435,6 +444,7 @@ s_integer Operand::size() const {
   case OperandType::uptr_t:
   case OperandType::sptr_t:{
     auto vptr =(Operand*) _vrptr();
+    if(vptr==nullptr) return 0;
     return vptr->size();
   }}
   return 0l;
