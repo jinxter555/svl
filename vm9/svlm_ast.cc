@@ -33,15 +33,11 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
 
 
   auto process  = make_unique<AstMap>();
-  auto univ_ptr = root[CONTEXT_UNIV]._vrptr();
 
 
-
-  //process->add(string(FRAMES), make_unique<AstList>, true);
-  //process->add(string(CONTEXT_UNIV), univ_ptr, true); // each process contains the universe
   (*process)["pid"] = 0l;
   (*process)[FRAMES] = unique_ptr<AstNode >(make_unique<AstList>());
-  //(*process)[CONTEXT_UNIV] = univ_ptr;
+  (*process)["svlm_lang"] = this;
 
   auto processes = make_unique<AstList>();
 
@@ -50,6 +46,7 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
 
   //if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, frames.clone(), true)) {
   //if(! root.add(vec_str_t{CONTEXT_UNIV, FRAMES}, make_unique<AstList>(), true)) {
+
   if(! root.add(vec_str_t{CONTEXT_UNIV, PROCESSES}, move(processes), true)) {
     cerr << "can't create  {" << CONTEXT_UNIV << " " << FRAMES << "}\n";
     exit(1);
@@ -368,8 +365,9 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
 //----------------------------------------------------------------------- AstFunc
 AstFunc::AstFunc(const Operand &n, astnode_u_ptr pl,  astnode_u_ptr code_ptr) 
 : AstExpr(OperandType::ast_func_t) {
-  MYLOGGER(trace_function , "AstFunc::AstFunc()" , __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("clist: ") + code_ptr->to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , string("AstFunc::AstFunc(") + n._to_str()+ string(")") , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("proto_list: ") + AstPtr2Str(pl), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("clist: ") + AstPtr2Str(code_ptr), SLOG_FUNC_INFO);
 
   //cout << "AstFunc::AstFunc(" << n <<")\n";
   //name = n._to_str();
@@ -443,27 +441,28 @@ AstCaller::AstCaller(const Operand& callee, astnode_u_ptr arg_list)
 }
 
 Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) { 
-  MYLOGGER(trace_function , "AstCaller::add_frame()" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , "AstCaller::add_frame(astnode_u_ptr& ctxt)" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("ctxt: ") + AstPtr2Str(ctxt), SLOG_FUNC_INFO+1)
+
   // use current module if call
 
 
-  //auto svlm_lang = ctxt->root["svlm_lang"];
-  //auto svlm_lang_ptr = ctxt->root["svlm_lang"].get_svlm_ptr();
+  //auto svlm_lang = ctxt->root["svlm_lang"]; //auto svlm_lang_ptr = ctxt->root["svlm_lang"].get_svlm_ptr();
 
   auto svlm_lang_ptr = (*ctxt)["svlm_lang"].get_svlm_ptr();
   auto &frames = svlm_lang_ptr->get_frames(ctxt);
 
-  auto nm = make_unique<AstMap>();
+  auto new_frame = make_unique<AstMap>(); // nm, new frame here
   auto lvars = make_unique<AstMap>();
-  nm->add("current_function", node["callee_func"], true);
-  nm->add("current_module",   node["callee_mod"], true);
-  nm->add("current_flow", ControlFlow::run, true);
+  new_frame->add("current_function", node["callee_func"], true);
+  new_frame->add("current_module",   node["callee_mod"], true);
+  new_frame->add("current_flow", ControlFlow::run, true);
 
   auto &arg_list = node["arg_list"];
   auto &proto_list = node["proto_list"];
 
-  //cout << "arg_list: " <<  arg_list << "\n";
-  //cout << "proto_list: " <<  proto_list << "\n\n";
+  //cout << "arg_list: " <<  arg_list << "\n"; //cout << "proto_list: " <<  proto_list << "\n\n";
+
   if(arg_list.size() != proto_list.size()) {
     cerr << "Arguments do not match prototype!\n";
     return nil_operand_nc;
@@ -479,8 +478,8 @@ Operand& AstCaller::add_frame(astnode_u_ptr &ctxt) {
     // get from tree protolist and add to lvars
   }
 
-  nm->add(string("lvars"), move(lvars), true);
-  frames->add(move(nm));
+  new_frame->add(string("lvars"), move(lvars), true);
+  frames->add(move(new_frame));
 
   return frames->back_nc();
 }
@@ -503,8 +502,15 @@ void AstCaller::print() const {
   cout << "AstCaller Print: " << to_str();
 }
 Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
+  MYLOGGER(trace_function , "AstCaller::evaluate(astnode_u_ptr& ctxt)" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("ctxt: ") + AstPtr2Str(ctxt), SLOG_FUNC_INFO+1)
+
   string module_name;
   auto svlm_lang_ptr = (*ctxt)["svlm_lang"].get_svlm_ptr();
+
+  if(svlm_lang_ptr==nullptr) { throw std::runtime_error("AstCaller::evaluate() svlm_lang_ptr is nullptr"); }
+
+  auto &root = svlm_lang_ptr->get_root();
   auto &callee_mod = node["callee_mod"];
   auto &callee_func = node["callee_func"];
 
@@ -514,16 +520,25 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   } else {
     module_name = callee_mod._to_str();
   }
-  //cout << "module_name: " << module_name << "\n";
 
-  vector<string> keys_code = {MOD, module_name,  "function", callee_func._to_str(), "code"};
-  vector<string> keys_proto = {MOD, module_name,  "function", callee_func._to_str(), "proto_list"};
+  MYLOGGER_MSG(trace_function, module_name + ":" + callee_func._to_str(), SLOG_FUNC_INFO+1);
+
+
+  //vector<string> keys_func = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str()};
+  vector<string> keys_code = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "code"};
+  vector<string> keys_proto = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "proto_list"};
+
   //cout << "keys_code: " ; for(auto k : keys_code) { cout << k << ", "; } cout << "\n";
-  //auto &code = ctxt->get_branch(keys_code);
-  auto &code = (*ctxt)[keys_code];
-  auto &proto_list = (*ctxt)[keys_proto];
+  auto &code = root[keys_code];
+  auto &proto_list = root[keys_proto];
+
+  //cout << "AstCaller::evaluate: proto_list: " <<  module_name + string(":") + callee_func._to_str() << ":  " <<  proto_list  << "\n";
+  //cout << "AstCaller::evaluate:: code: " <<  code << "\n";
+
   node.add("callee_mod", Operand(module_name), true);
   node.add("proto_list", proto_list, true);
+
+  MYLOGGER_MSG(trace_function, string("proto_list: ") + proto_list._to_str(), SLOG_FUNC_INFO+1);
 
   add_frame(ctxt);
   auto result  = code.evaluate(ctxt);

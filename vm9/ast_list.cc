@@ -182,10 +182,7 @@ bool AstList::add(const operand_variant_t &ovv) {
   return true;
 }
 
-
-
-
-
+/*
 Operand AstList::to_str() const {
   int i, s = size();
   string outstr("[");
@@ -195,6 +192,18 @@ Operand AstList::to_str() const {
     outstr = outstr + list_[i]._to_str() + ",";
   }
   outstr = outstr + list_[i]._to_str() + "]";
+  return outstr;
+}
+*/
+Operand AstList::to_str() const {
+  int i, s = size();
+  string outstr("[\n");
+  if(s==0) {return Operand("[]");}
+
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + to_string(i) + " " +  list_[i]._to_str() + ",\n";
+  }
+  outstr = outstr + to_string(i)  + " " + list_[i]._to_str() + "\n]";
   return outstr;
 }
 
