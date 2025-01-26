@@ -34,7 +34,7 @@ public:
   void add_lvar();
   void add_code(const Operand&, list_u_ptr clist);
 
-  AstMap& get_root() {return root; };
+  AstMap& get_root();
 
   Operand& get_module_subnode(const Operand&, const OperandType t);
 
