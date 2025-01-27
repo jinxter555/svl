@@ -149,7 +149,7 @@ bool AstMap::add(const string &k, astnode_u_ptr &&vptr, bool overwrite)  {
   MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);
   if(vptr==nullptr) {
     MYLOGGER_MSG(trace_function, string("vptr: is nullptr ") , SLOG_FUNC_INFO);
-    cout << "AstMap::add(string&,&&vptr==nullptr, bool)\n";
+    //cout << "AstMap::add(string&,&&vptr==nullptr, bool)\n";
     if(has_key(k)) {
       if(!overwrite) return false;
     }

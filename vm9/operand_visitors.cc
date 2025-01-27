@@ -117,6 +117,7 @@ operand_variant_t Operand::Variant::operator()(const Nil v) const { return nil; 
 //operand_variant_t Operand::Variant::operator()(const astnode_ptr& vptr) const { return vptr; }
 //operand_variant_t Operand::Variant::operator()(const astnode_s_ptr& vptr) const { return vptr; }
 operand_variant_t Operand::Variant::operator()(const astnode_u_ptr& vptr) const { 
-  if(vptr==nullptr){cerr << "Operand::Variant::operator(astnode_u_ptr&) null!\n"; return nil;}
+  //if(vptr==nullptr){cerr << "Operand::Variant::operator(astnode_u_ptr&) null!\n"; return nil;}
+  if(vptr==nullptr){return nil;}
   return vptr->clone(); 
 }

@@ -114,7 +114,7 @@ bool Operand::operator==(const Operand& other) const {
   MYLOGGER(trace_function , "Operand::==(operand&)" ,__func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("this.type: ")+ get_type()._to_str()  + string(" -vs- other.type: ") + other.get_type()._to_str(), SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("this : ") + _to_str(), SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("other: ") + other.to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("other: ") + other._to_str(), SLOG_FUNC_INFO);
 
 /*
   cout << "Operand::==(const Operand&)\n";
@@ -128,14 +128,17 @@ bool Operand::operator==(const Operand& other) const {
   //auto a = get_raw_ptr(); auto b =  other.get_raw_ptr();
   auto vrptr  = _vrptr(); auto other_vrptr =  other._vrptr();
 
-  switch(vrptr->_get_type()) {
-  case OperandType::list_t: {
-    return vrptr->get_list() == other_vrptr->get_list();
-  }
-  case OperandType::map_t: {
-    return vrptr->get_map() == other_vrptr->get_map();
-  }}
+  if(vrptr==nullptr && other_vrptr!=nullptr) return false;
+  if(vrptr==nullptr) return false;
 
+  switch(vrptr->_get_type()) {
+  case OperandType::list_t: { return vrptr->get_list() == other_vrptr->get_list(); }
+  case OperandType::map_t: { return vrptr->get_map() == other_vrptr->get_map();}
+  }
+
+  if(other_vrptr==nullptr && vrptr->is_nil()) { return true;}
+ // if(other_vrptr==nullptr && vrptr==nullptr) { return true;}
+  if(other_vrptr==nullptr) { return false;} // can't compare anything 
   return visit(CmpEql(), vrptr->_get_variant(), other_vrptr->_get_variant());
 
 }
@@ -164,16 +167,17 @@ bool Operand::cmp_eql(const AstNode&other) const {
 
 
 bool Operand::operator>=(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-  if(type_ != other_type_) {
-    //throw std::runtime_error("Unsupported operation >= for unequal types"); 
+  auto vrptr = (Operand*) _vrptr();
+  auto other_vrptr =(Operand*) other._vrptr();
+
+  if(vrptr->type_ != other_vrptr->type_) { 
+    //throw std::runtime_error("Unsupported operation > for unequal types"); 
     return false;
   }
 
-  switch(type_) {
+  switch(vrptr->type_) {
   case OperandType::num_t: 
-    return get<Number>(value_) >= get<Number>(other.value_);
+    return vrptr->_get_number() >= other_vrptr->_get_number();
   case OperandType::str_t: 
     return get<std::string>(value_) >= get<std::string>(other.value_);
   default: 
@@ -182,15 +186,17 @@ bool Operand::operator>=(const Operand& other) const {
 }
 
 bool Operand::operator<=(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-  if(type_ != other_type_) {
-    //throw std::runtime_error("Unsupported operation <= for unequal types"); 
+  auto vrptr = (Operand*) _vrptr();
+  auto other_vrptr =(Operand*) other._vrptr();
+
+  if(vrptr->type_ != other_vrptr->type_) { 
+    //throw std::runtime_error("Unsupported operation > for unequal types"); 
     return false;
   }
-  switch(type_) {
+
+  switch(vrptr->type_) {
   case OperandType::num_t: 
-    return get<Number>(value_) <= get<Number>(other.value_);
+    return vrptr->_get_number() <= other_vrptr->_get_number();
   case OperandType::str_t: 
     return get<std::string>(value_) <= get<std::string>(other.value_);
   default: 
@@ -199,15 +205,18 @@ bool Operand::operator<=(const Operand& other) const {
 }
 
 bool Operand::operator<(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-  if(type_ != other_type_) {
-    //throw std::runtime_error("Unsupported operation < for unequal types"); 
+  auto vrptr = (Operand*) _vrptr();
+  auto other_vrptr =(Operand*) other._vrptr();
+
+  if(vrptr->type_ != other_vrptr->type_) { 
+    //throw std::runtime_error("Unsupported operation > for unequal types"); 
     return false;
   }
-  switch(type_) {
+
+  switch(vrptr->type_) {
   case OperandType::num_t: 
-    return get<Number>(value_) < get<Number>(other.value_);
+    //return get<Number>(value_) < get<Number>(other.value_);
+    return vrptr->_get_number() < other_vrptr->_get_number();
   case OperandType::str_t: 
     return get<std::string>(value_) < get<std::string>(other.value_);
   default: 

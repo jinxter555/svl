@@ -470,13 +470,22 @@ template <typename T>
 astnode_u_ptr Operand::Clone::operator()(const T& v) const { return make_unique<Operand>(v); }
 astnode_u_ptr Operand::Clone::operator()(const Nil v) const { return nullptr; }
 astnode_u_ptr Operand::Clone::operator()(const astnode_ptr& vptr) const { 
-  if(vptr==nullptr) {cerr << "clone vptr null!\n"; return nullptr;}
+  if(vptr==nullptr) {
+    //cerr << "clone vptr null!\n"; 
+    return nullptr;
+  }
   return vptr->clone(); }
 astnode_u_ptr Operand::Clone::operator()(const astnode_u_ptr& vptr) const {
-  if(vptr==nullptr) {cerr << "clone vptr null!\n"; return nullptr;}
+  if(vptr==nullptr) {
+    //cerr << "clone vptr null!\n"; 
+    return nullptr;
+  }
   return vptr->clone(); } 
 astnode_u_ptr Operand::Clone::operator()(const astnode_s_ptr& vptr) const { 
-  if(vptr==nullptr) {cerr << "clone vptr null!\n"; return nullptr;}
+  if(vptr==nullptr) {
+    //cerr << "clone vptr null!\n"; 
+    return nullptr;
+  }
   return vptr->clone(); 
 }
 
