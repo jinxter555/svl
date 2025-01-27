@@ -11,9 +11,6 @@
 
 //-----------------------------------------------------------------------
 Operand Operand::operator+(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-
   auto vrptr = _vrptr();
   auto other_vrptr = other._vrptr();
 
@@ -219,15 +216,19 @@ bool Operand::operator<(const Operand& other) const {
 }
 
 bool Operand::operator>(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-  if(type_ != other_type_) {
+  //auto type_ = _get_type();
+  auto vrptr = (Operand*) _vrptr();
+  auto other_vrptr =(Operand*) other._vrptr();
+
+  if(vrptr->type_ != other_vrptr->type_) { 
     //throw std::runtime_error("Unsupported operation > for unequal types"); 
     return false;
   }
-  switch(type_) {
+
+  switch(vrptr->type_) {
   case OperandType::num_t: 
-    return get<Number>(value_) > get<Number>(other.value_);
+    //return get<Number>(value_) > get<Number>(other.value_);
+    return vrptr->_get_number() > other_vrptr->_get_number();
   case OperandType::str_t: 
     return get<std::string>(value_) > get<std::string>(other.value_);
   default: 

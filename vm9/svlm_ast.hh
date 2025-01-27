@@ -47,8 +47,8 @@ public:
   Operand& get_current_frame(astnode_u_ptr& ctxt) ;
   string get_current_module(astnode_u_ptr &ctxt) ;
 
-  ControlFlow pop_control_flow();
-  void push_control_flow();
+  ControlFlow pop_control_flow(astnode_u_ptr &ctxt);
+  void push_control_flow(astnode_u_ptr &ctxt);
 
 
 

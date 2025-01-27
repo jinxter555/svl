@@ -1,3 +1,4 @@
+#include "lang.hh"
 #include "svlm_ast.hh"
 #include "svlm_interactive.hh"
 #include "my_helpers.hh"
@@ -12,6 +13,8 @@
 #define PID "pid"
 #define SVLM_LANG "svlm_lang"
 #define CURRENT_MODULE "current_module"
+#define CONTROL_FLOWS "control_flows"
+#define CFSTATE "cfstate"
 
 /*
  svlvm:
@@ -39,8 +42,8 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
   auto process  = make_unique<AstMap>();
   (*process)[PID] = 0l;
   (*process)[FRAMES] = unique_ptr<AstNode >(make_unique<AstList>());
-  (*process)["control_flows"] = unique_ptr<AstNode >(make_unique<AstList>());
-  (*process)["cfstate"] = ControlFlow::run;
+  (*process)[CONTROL_FLOWS] = unique_ptr<AstNode >(make_unique<AstList>());
+  (*process)[CFSTATE] = ControlFlow::run;
   (*process)[SVLM_LANG] = this;
 
   auto processes = make_unique<AstList>();
@@ -65,25 +68,20 @@ AstMap& SvlmAst::get_root() {return root; }
 
 astnode_u_ptr& SvlmAst::get_context() {
   MYLOGGER(trace_function , string("SvlmAst::get_context()") , __func__, SLOG_FUNC_INFO);
-  //auto &c= root[vec_str_t{CONTEXT_UNIV}];
   auto &c= root[CONTEXT_UNIV];
   return c.get_u_ptr_nc();
 }
 astnode_u_ptr& SvlmAst::get_processes() {
   MYLOGGER(trace_function , string("SvlmAst::get_processes()") , __func__, SLOG_FUNC_INFO);
-  //cout << "SvlmAst::get_processes()\n";
-  //auto &c= root[vec_str_t{CONTEXT_UNIV}];
-  auto &c= root[vec_str_t{CONTEXT_UNIV, PROCESSES}];
-  //cout << "root : " << root.to_str() << "\n";
-  //cout << "processes: " << c << "\n";
   //MYLOGGER_MSG(trace_function, string("processes: ") + c._to_str(), SLOG_FUNC_INFO);
-  
+  //cout << "SvlmAst::get_processes()\n";
+  auto &c= root[vec_str_t{CONTEXT_UNIV, PROCESSES}];
   return c.get_u_ptr_nc();
 }
+
 astnode_u_ptr& SvlmAst::get_process(s_integer i) {
   MYLOGGER(trace_function , string("SvlmAst::get_process(") + Operand(i)._to_str() + string(")") , __func__, SLOG_FUNC_INFO);
   auto pl_ptr = get_processes()->get_list_ptr_nc();
-  //auto &p = pl_ptr[i].get_u_ptr_nc();
   auto &p = (*pl_ptr)[i].get_u_ptr_nc();
   return p;
 }
@@ -91,15 +89,11 @@ astnode_u_ptr& SvlmAst::get_process(s_integer i) {
 // ctxt is proc
 astnode_u_ptr& SvlmAst::get_frames(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function , string("SvlmAst::get_frames(astnode_u_ptr &ctxt)") , __func__, SLOG_FUNC_INFO+9);
-  //auto &c= root[vec_str_t{CONTEXT_UNIV, FRAMES}];
   auto &f= (*ctxt)[FRAMES];
-  //cout << "&root " << &root << "\n"; cout << "root " << root << "\n";
-  //if(c==nil_operand) {
   if(f.is_nil()) {
     cerr << "SvlmAst::get_frames is nil_operand!\n";
     return nil_ast_ptr_nc;
   }
-  //cout << "frames c: " << c << "\n";
   return f.get_u_ptr_nc();
 }
 
@@ -117,6 +111,18 @@ string SvlmAst::get_current_module(astnode_u_ptr& ctxt) {
   auto &m = f[CURRENT_MODULE];
   //cout << "in SvlmAst::get_current_module: " << m << "\n";
   return m._to_str();
+}
+
+ControlFlow SvlmAst::pop_control_flow(astnode_u_ptr &ctxt) {
+  auto cfl= (*ctxt)[CONTROL_FLOWS].get_list_ptr_nc();
+  auto &v=cfl->remove();
+  return v._get_cf();
+}
+
+void SvlmAst::push_control_flow(astnode_u_ptr &ctxt) {
+  auto &cfs = (*ctxt)[CFSTATE];
+  auto cfl= (*ctxt)[CONTROL_FLOWS].get_list_ptr_nc();
+  cfl->add(cfs._get_variant());
 }
 
 void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
@@ -239,7 +245,6 @@ Operand SvlmAst::evaluate_prompt_line() {
     cerr << "evaluate prompt line: prompt code is null!\n";
     return nil;
   }
-  //auto &ctxt = get_context();
   auto &ctxt = get_process(0l);
   if(ctxt==nullptr) {
     cerr << "ctxt: get_process(0l) is nullptr!\n";
@@ -255,7 +260,6 @@ void SvlmAst::run_evaluate() {
   auto Lptr = root[vec_str_t{CONTEXT_UNIV, MOD, "Main", "function", "main", "code"}].get_list_ptr_nc();
   //root.add(vec_str_t{CONTEXT_UNIV, "svlm_lang"},  this, true);
   //auto &c = l.get_u_ptr_nc();
-  //auto &ctxt = get_context();
   auto &ctxt = get_process(0l);
   auto &frames = get_frames(ctxt);
 

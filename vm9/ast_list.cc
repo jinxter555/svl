@@ -174,6 +174,11 @@ bool AstList::add(const list_t & l) {
   add(move(new_list));
   return true;
 }
+Operand& AstList::remove() {
+  Operand &v = list_[size()];
+  list_.pop_back();
+  return v;
+}
 
 /* bool AstList::add(const Operand& v) { list_.push_back(v.clone()); return true; }*/
 bool AstList::add(const operand_variant_t &ovv) {

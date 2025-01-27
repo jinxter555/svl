@@ -77,6 +77,7 @@ public:
   //inline s_integer _get_int() const ;
   inline s_integer _get_int() const  { return _get_number().get_int(); };
   inline s_integer _get_float() const  { return _get_number().get_float(); };
+  ControlFlow _get_cf()  const;
 
 
   astnode_ptr _vrptr() const override; 

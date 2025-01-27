@@ -401,6 +401,12 @@ Number Operand::_get_number() const {
   throw std::runtime_error("Operand::Number() is not a number!"); 
   return 0l; // this is error
 }
+ControlFlow Operand::_get_cf() const { 
+  if(holds_alternative<ControlFlow>(value_)) {
+    return get<ControlFlow>(value_);
+  }
+  return ControlFlow::run;
+}
 
 //s_integer Operand::_get_int() const { return _get_number().get_int(); }
 

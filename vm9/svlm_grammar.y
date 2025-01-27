@@ -53,7 +53,7 @@ namespace vslast {
 %nterm <string> DOTSTR 
 %nterm comments
 
-%nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple
+%nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop
 %nterm <map_u_ptr>  kv_pair_list
 %nterm <string> map_key
 %type <tuple<string, astnode_u_ptr>> kv_pair 
@@ -70,7 +70,7 @@ namespace vslast {
 %right              EXPONENT
 
 %type <list_u_ptr> statement_list 
-%type <astnode_u_ptr> module function literals exp_eval variable statement print_exp caller comments
+%type <astnode_u_ptr> module function literals exp_eval variable statement print_exp caller comments 
 
 %start program_start
 
@@ -104,6 +104,7 @@ statement
   | function { $$ = move($1); }
   | print_exp {$$ = move($1); }
   | comments { $$ = nullptr; }
+  | repeat_loop { $$ = move($1); }
   ;
 
 comments
@@ -312,6 +313,15 @@ tuple
     $$ = make_unique<Tuple>(move($2));
   }
   ;
+
+repeat_loop
+  : REPEAT statement_list UNTIL exp_eval DONE {
+    cout << "grammar repeat!\n";
+    $$ = std::make_unique<AstRepeat>(move($4), move($2));
+  }
+  ;
+
+
 
 //--------------------------------------------------- EOS end of statement
 EOS
