@@ -38,13 +38,15 @@ Operand Operand::operator+(const Operand& other) const {
 
   // Overload subtraction operator (similar approach)
 Operand Operand::operator-(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
+  auto vrptr = _vrptr();
+  auto other_vrptr = other._vrptr();
 
-  if(type_ != other_type_) 
-    throw std::runtime_error("Unsupported operation + for unequal types"); 
+  if(vrptr->type_ != other_vrptr->type_) { 
+    cout << "error! " << *this << " + '" << other << "'\n";
+    return Operand(OperandErrorCode::invalid_op_t);
+  }
 
-  switch(type_) {
+  switch(vrptr->type_) {
   case OperandType::num_t: 
     return _get_number() - other._get_number();
   default: 
@@ -53,15 +55,13 @@ Operand Operand::operator-(const Operand& other) const {
 }
 
 Operand Operand::operator*(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
+  auto vrptr = _vrptr();
+  auto other_vrptr = other._vrptr();
 
-  if(type_ != other_type_)  {
-    //cout << "this get_type: " << get_type() << "\n"; cout << "other get_type: " << other.get_type() << "\n";
+  if(vrptr->type_ != other_vrptr->type_) { 
     throw std::runtime_error("Unsupported operation * for unequal types"); 
   }
-
-  switch(type_) {
+  switch(vrptr->type_) {
   case OperandType::num_t: 
     return _get_number() * other._get_number();
   default: 
@@ -70,17 +70,17 @@ Operand Operand::operator*(const Operand& other) const {
 }
 
 Operand Operand::operator/(const Operand& other) const {
-  auto type_ = _get_type();
-  auto other_type_ = other._get_type();
-  if(type_ != other_type_) 
-    throw std::runtime_error("Unsupported operation / for unequal types"); 
+  auto vrptr = _vrptr();
+  auto other_vrptr = other._vrptr();
 
-  switch(type_) {
+  if(vrptr->type_ != other_vrptr->type_) { 
+    throw std::runtime_error("Unsupported operation * for unequal types"); 
+  }
+  switch(vrptr->type_) {
   case OperandType::num_t:  {
     Number other_num = other._get_number();
     if(other_num==0l) return nil;
-    return _get_number() / other_num;
-  }
+    return _get_number() / other_num; }
   default: 
     throw std::runtime_error("Unsupported operation"); 
   }

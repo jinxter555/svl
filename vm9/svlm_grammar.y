@@ -53,7 +53,7 @@ namespace vslast {
 %nterm <string> DOTSTR 
 %nterm comments
 
-%nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop
+%nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop
 %nterm <map_u_ptr>  kv_pair_list
 %nterm <string> map_key
 %type <tuple<string, astnode_u_ptr>> kv_pair 
@@ -105,6 +105,7 @@ statement
   | print_exp {$$ = move($1); }
   | comments { $$ = nullptr; }
   | repeat_loop { $$ = move($1); }
+  | while_loop { $$ = move($1); }
   ;
 
 comments
@@ -314,9 +315,18 @@ tuple
   }
   ;
 
+//--------------------------------------------------- while loop 
+while_loop
+  : WHILE exp_eval DO statement_list END {
+    $$ = std::make_unique<AstWhile>(move($2), move($4));
+  }
+  ;
+
+
+//--------------------------------------------------- Repeat loop 
+
 repeat_loop
   : REPEAT statement_list UNTIL exp_eval DONE {
-    cout << "grammar repeat!\n";
     $$ = std::make_unique<AstRepeat>(move($4), move($2));
   }
   ;

@@ -1,14 +1,17 @@
-module mhello
-$abc = 22
-print $abc
-print "\n"
+module Main do
+  def main() do
+    $a = 10
 
-while $abc > 5 do
-  print "hello: "
-  print $abc
-  print "\n"
-  $abc = $abc - 1
+    print "a is: "
+    print $a
+    print "\n";
 
-
+    while $a > 0 do
+      print $a
+      print "\n";
+      $a = $a - 1
+    end
+    #
+    print $a
+  end
 end
-

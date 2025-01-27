@@ -214,4 +214,15 @@ public:
   Operand evaluate(astnode_u_ptr &) override;
 };
 
+//----------------------------- while expr
+class AstWhile : public AstExpr {
+public:
+  AstWhile(astnode_u_ptr cond, astnode_u_ptr  body);
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+  Operand evaluate(astnode_u_ptr &) override;
+};
+
 

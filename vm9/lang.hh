@@ -115,6 +115,7 @@ enum class OperandType {
   ast_case_when_t,
 
   ast_repeat_t,
+  ast_while_t,
 
   except_t,
   svlm_lang_t,
