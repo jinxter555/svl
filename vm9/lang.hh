@@ -111,6 +111,7 @@ enum class OperandType {
 
   ast_case_t,
   ast_case_match_t,
+  ast_case_match_is_t,
   ast_case_else_t,
   ast_case_when_t,
 

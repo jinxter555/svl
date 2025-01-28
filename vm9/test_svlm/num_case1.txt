@@ -1,20 +1,22 @@
-module mhello
-$abc = 456
-print $abc
-print "\n"
-#
-case 123 do
-is 123 ->
-  $a = 1+2 
-  print $a
-  print "\n"
+module Main do 
 
-is 222 -> 
-  print "hello b: "
-  $b = 2+25
-  print $b
-else ->
-  print "else here\n"
+  def main() do
+    $abc = 456
+    print $abc
+    print "\n"
+    #
+    case 123 do
+    is 123 ->
+      $a = 1+2 
+      print $a
+      print "\n"
+    
+    is 222 -> 
+      print "hello b: "
+      $b = 2+25
+      print $b
+    end
+  end
 end
-return
+
 

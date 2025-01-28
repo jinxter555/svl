@@ -47,7 +47,7 @@ AstWhile::AstWhile(astnode_u_ptr cond, astnode_u_ptr body) : AstExpr(OperandType
 Operand AstWhile::to_str() const {
   auto c = node["cond"]._to_str();
   auto b = node["body"]._to_str();
-  return string("while") +  c + " do " + c + " end";
+  return string("while") +  c + " do " + b + " end";
 }
 
 Operand AstWhile::evaluate(astnode_u_ptr &ctxt) {

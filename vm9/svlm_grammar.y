@@ -53,7 +53,8 @@ namespace vslast {
 %nterm <string> DOTSTR 
 %nterm comments
 
-%nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop
+%nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop 
+%nterm <astnode_u_ptr> case case_match_list case_match
 %nterm <map_u_ptr>  kv_pair_list
 %nterm <string> map_key
 %type <tuple<string, astnode_u_ptr>> kv_pair 
@@ -106,6 +107,7 @@ statement
   | comments { $$ = nullptr; }
   | repeat_loop { $$ = move($1); }
   | while_loop { $$ = move($1); }
+  | case { $$ = move($1); }
   ;
 
 comments
@@ -318,7 +320,7 @@ tuple
 //--------------------------------------------------- while loop 
 while_loop
   : WHILE exp_eval DO statement_list END {
-    $$ = std::make_unique<AstWhile>(move($2), move($4));
+    $$ = make_unique<AstWhile>(move($2), move($4));
   }
   ;
 
@@ -327,9 +329,51 @@ while_loop
 
 repeat_loop
   : REPEAT statement_list UNTIL exp_eval DONE {
-    $$ = std::make_unique<AstRepeat>(move($4), move($2));
+    $$ = make_unique<AstRepeat>(move($4), move($2));
   }
   ;
+
+//--------------------------------------------------- Case block 
+
+case
+  : CASE exp_eval DO case_match_list END {
+    unique_ptr<AstCase> case_ptr = make_unique<AstCase>(move($2), move($4));
+    $$ = move(case_ptr);
+  }
+  ;                                                                                                                                                               
+
+case_match_list
+  : %empty {
+    $$ = make_unique<AstList>();
+  }
+  | case_match {
+    auto  ml =   make_unique<AstList>();
+    ml->add(move($1));
+    $$ = move(ml);
+  }
+  | case_match_list case_match {
+    if($2 != nullptr)
+      $1->add(move($2));
+    $$ = move($1);
+  }
+  | case_match_list EOS case_match {
+    if($3 != nullptr)
+      $1->add(move($3));
+    $$ = move($1);
+  }
+  | case_match_list error EOS case_match { yyerrok; }
+
+  ;
+
+case_match
+  : IS literals ARROW_R statement_list {
+    //std::cout << "case match s->sl"; $1->print(); std::cout << "\n";
+    $$ = make_unique<AstCaseMatchIs>(move($2), move($4));
+  } 
+  ;
+
+
+
 
 
 

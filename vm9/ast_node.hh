@@ -21,7 +21,7 @@ public:
   AstNode() : Primordial(OperandType::nil_t) {};
   AstNode(OperandType t) : Primordial(t) {};
   
-  string AstPtr2Str(astnode_u_ptr&ptr) const;
+  string AstPtr2Str(const astnode_u_ptr&ptr) const;
 
   virtual Operand evaluate(unique_ptr<AstNode>&) =0 ;
   virtual Operand opfunc(const AstNode&, AstOpCode op) =0;

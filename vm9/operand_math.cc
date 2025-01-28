@@ -125,10 +125,9 @@ bool Operand::operator==(const Operand& other) const {
 
   if(result==true) return result;
 
-  //auto a = get_raw_ptr(); auto b =  other.get_raw_ptr();
   auto vrptr  = _vrptr(); auto other_vrptr =  other._vrptr();
 
-  if(vrptr==nullptr && other_vrptr!=nullptr) return false;
+//  if(vrptr==nullptr && other_vrptr!=nullptr) return false;
   if(vrptr==nullptr) return false;
 
   switch(vrptr->_get_type()) {

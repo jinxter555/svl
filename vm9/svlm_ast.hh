@@ -226,3 +226,44 @@ public:
 };
 
 
+//----------------------------------------------------------------------- Case Expr Block
+//----------------------------- Case Top
+class AstCase : public AstExpr {
+public:
+  AstCase(astnode_u_ptr top, astnode_u_ptr  body); // top expression
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+  Operand evaluate(astnode_u_ptr &) override;
+};
+
+//----------------------------- Case Match: Virtual
+class AstCaseMatch: public AstExpr {
+public:                                                                                                                                                               
+  AstCaseMatch(OperandType t) : AstExpr(t) { }                                                                                                                    
+  virtual bool match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) = 0 ;                                                                                        
+};
+
+//----------------------------- Case Match Is
+class AstCaseMatchIs: public AstCaseMatch {
+public:                                                                                                                                                               
+  AstCaseMatchIs(astnode_u_ptr is_, astnode_u_ptr body ) ;
+  Operand evaluate(astnode_u_ptr &) override;
+  bool match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) override ;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+};
+
+//----------------------------- Case Match Else
+class AstCaseMatchElse: public AstCaseMatch {
+public:                                                                                                                                                               
+  Operand evaluate(astnode_u_ptr &) override;
+  bool match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) override ;                                                                                        
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+};
