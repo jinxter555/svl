@@ -27,15 +27,9 @@ Operand AstCase::evaluate(astnode_u_ptr &ctxt) {
   if(blist==nullptr) {throw runtime_error( "AstCase::evaluate(): blist is nullptr!\n");  }
 
   for(s_integer i=0; i<blist->size(); i++) {
-    auto match_item =(AstCaseMatch*) blist[i]._vrptr();
-    MYLOGGER_MSG(trace_function, string("match_item: ") + match_item->to_str()._to_str(), SLOG_FUNC_INFO+9);
-    cout << "match_item: " << *match_item << "\n";
-    cout << "match_item->gettype():\n; ";  match_item->get_type();
-    cout << "match_item->print():\n; ";  match_item->print();
-    if(match_item ==nullptr) {throw runtime_error( "AstCase::evaluate(): match_item is nullptr!\n");  }
-    if(match_item->match(top, ctxt )) {
-      return match_item->evaluate(ctxt);
-    }
+    auto match_item_ptr =(AstCaseMatch*) (*blist)[i]._vrptr();
+    if(match_item_ptr ==nullptr) {throw runtime_error( "AstCase::evaluate(): match_item_ptr is nullptr!\n");  }
+    if(match_item_ptr->match(top, ctxt )) { return match_item_ptr->evaluate(ctxt); }
   }
   return nil;
 }
@@ -44,7 +38,9 @@ void AstCase::print() const {
   cout << to_str();
 }
 
-Operand AstCase::get_type() const { return OperandType::ast_case_t;}
+Operand AstCase::get_type() const { 
+  return OperandType::ast_case_t;
+}
 OperandType AstCase::_get_type() const { return OperandType::ast_case_t;}
 
 //----------------------------------------------------------------------- AstCaseMatchIs
@@ -66,7 +62,6 @@ Operand AstCaseMatchIs::to_str() const {
   return string("is ") +  is_ + " -> " + b ;
 }
 Operand AstCaseMatchIs::get_type() const { 
-  cout << "type case match is it!\n";
   return OperandType::ast_case_match_is_t;}
 OperandType AstCaseMatchIs::_get_type() const { 
   return OperandType::ast_case_match_is_t;

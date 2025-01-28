@@ -243,6 +243,14 @@ class AstCaseMatch: public AstExpr {
 public:                                                                                                                                                               
   AstCaseMatch(OperandType t) : AstExpr(t) { }                                                                                                                    
   virtual bool match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) = 0 ;                                                                                        
+  Operand get_type() const override {
+    cout << "AstCaseMatch::get_type()!!!\n";
+    return OperandType::nil_t;
+  };
+  void print() const override {
+    cout << "AstCaseMatch::print()!!!\n";
+
+  };
 };
 
 //----------------------------- Case Match Is
