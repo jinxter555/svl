@@ -23,9 +23,16 @@ Operand AstCase::evaluate(astnode_u_ptr &ctxt) {
   MYLOGGER(trace_function , string("AstCase::evalaute()") , __func__, SLOG_FUNC_INFO);
   auto &top = node["top"].get_u_ptr();
   auto blist = node["body"].get_list_ptr_nc();
+  if(top==nullptr) {throw runtime_error( "AstCase::evaluate(): top is nullptr!\n");  }
+  if(blist==nullptr) {throw runtime_error( "AstCase::evaluate(): blist is nullptr!\n");  }
 
   for(s_integer i=0; i<blist->size(); i++) {
     auto match_item =(AstCaseMatch*) blist[i]._vrptr();
+    MYLOGGER_MSG(trace_function, string("match_item: ") + match_item->to_str()._to_str(), SLOG_FUNC_INFO+9);
+    cout << "match_item: " << *match_item << "\n";
+    cout << "match_item->gettype():\n; ";  match_item->get_type();
+    cout << "match_item->print():\n; ";  match_item->print();
+    if(match_item ==nullptr) {throw runtime_error( "AstCase::evaluate(): match_item is nullptr!\n");  }
     if(match_item->match(top, ctxt )) {
       return match_item->evaluate(ctxt);
     }
@@ -50,6 +57,7 @@ AstCaseMatchIs::AstCaseMatchIs(astnode_u_ptr is_, astnode_u_ptr body)
 }
 
 void AstCaseMatchIs::print() const {
+  cout << "AstCaseMatchIs!\n";
   cout << to_str();
 }
 Operand AstCaseMatchIs::to_str() const {
@@ -57,14 +65,23 @@ Operand AstCaseMatchIs::to_str() const {
   auto b = node["body"]._to_str();
   return string("is ") +  is_ + " -> " + b ;
 }
-Operand AstCaseMatchIs::get_type() const { return OperandType::ast_case_match_is_t;}
-OperandType AstCaseMatchIs::_get_type() const { return OperandType::ast_case_match_is_t;}
+Operand AstCaseMatchIs::get_type() const { 
+  cout << "type case match is it!\n";
+  return OperandType::ast_case_match_is_t;}
+OperandType AstCaseMatchIs::_get_type() const { 
+  return OperandType::ast_case_match_is_t;
+}
 
 bool AstCaseMatchIs::match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) {
+  cout << "AstCaseMatchIs::match()\n";
   MYLOGGER(trace_function , string("AstCaseMatchIs::match()") , __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("top: ") + AstPtr2Str(top), SLOG_FUNC_INFO+9);
 
+
   auto &is_ = node["is"];
+
+  MYLOGGER_MSG(trace_function, string("is: ") + is_._to_str(), SLOG_FUNC_INFO+9);
+
   auto a = top->evaluate(ctxt);
   auto b = is_.evaluate(ctxt);
   return a == b;

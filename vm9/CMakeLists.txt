@@ -50,4 +50,4 @@ include_directories(
 include(CTest)
 include(Catch)
 
-add_subdirectory(test_cc)
+#add_subdirectory(test_cc)

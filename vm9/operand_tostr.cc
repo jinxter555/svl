@@ -47,6 +47,14 @@ Operand Operand::ToString::operator()(OperandType t) const {
   case OperandType::ast_ovar_t:  outstr ="ast_ovar_t"; break;
   case OperandType::ast_print_t:  outstr ="ast_print_t"; break;
   case OperandType::ast_caller_t:  outstr ="ast_caller_t"; break;
+  case OperandType::ast_tuple_t:  outstr ="ast_tuple_t"; break;
+  case OperandType::ast_case_t:  outstr ="ast_case_t"; break;
+  case OperandType::ast_case_match_t:  outstr ="ast_case_match_t"; break;
+  case OperandType::ast_case_match_is_t:  outstr ="ast_case_match_is_t"; break;
+  case OperandType::ast_case_else_t:  outstr ="ast_case_else_t"; break;
+  case OperandType::ast_case_when_t:  outstr ="ast_case_when_t"; break;
+  case OperandType::ast_while_t:  outstr ="ast_while_t"; break;
+  case OperandType::ast_repeat_t:  outstr ="ast_repeat_t"; break;
   case OperandType::svlm_ast_ptr_t:  outstr ="svlm_ast_ptr_t"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
   //case OperandType::any_t:  outstr ="any_t"; break;

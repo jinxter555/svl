@@ -367,7 +367,7 @@ case_match_list
 
 case_match
   : IS literals ARROW_R statement_list {
-    //std::cout << "case match s->sl"; $1->print(); std::cout << "\n";
+    //std::cout << "GRAMMAR case match s->sl"; $2->print(); std::cout << "\n";
     $$ = make_unique<AstCaseMatchIs>(move($2), move($4));
   } 
   ;
