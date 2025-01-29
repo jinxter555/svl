@@ -1,11 +1,10 @@
 module Main do 
 
   def main() do
-    $abc = 456
-    print $abc
+    print "in main\n"
     print "\n"
     #
-    case 123 do
+    case 125 do
     is 123 ->
       print "i am 123\n";
       $a = 1+2 
@@ -16,8 +15,12 @@ module Main do
       print "hello b: "
       $b = 2+25
       print $b
+    else ->
+      print "didn't match anything!\n";
     end
+
+    print "the end\n"
+
   end
+
 end
-
-

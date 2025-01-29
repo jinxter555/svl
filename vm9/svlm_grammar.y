@@ -370,11 +370,10 @@ case_match
     //std::cout << "GRAMMAR case match s->sl"; $2->print(); std::cout << "\n";
     $$ = make_unique<AstCaseMatchIs>(move($2), move($4));
   } 
+  | ELSE ARROW_R statement_list {
+    $$ = make_unique<AstCaseMatchElse>(move($3));
+  }
   ;
-
-
-
-
 
 
 //--------------------------------------------------- EOS end of statement

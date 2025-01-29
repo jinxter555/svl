@@ -268,6 +268,7 @@ public:
 //----------------------------- Case Match Else
 class AstCaseMatchElse: public AstCaseMatch {
 public:                                                                                                                                                               
+  AstCaseMatchElse(astnode_u_ptr body);
   Operand evaluate(astnode_u_ptr &) override;
   bool match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) override ;                                                                                        
   Operand to_str() const override;

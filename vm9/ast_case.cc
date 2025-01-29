@@ -53,7 +53,6 @@ AstCaseMatchIs::AstCaseMatchIs(astnode_u_ptr is_, astnode_u_ptr body)
 }
 
 void AstCaseMatchIs::print() const {
-  cout << "AstCaseMatchIs!\n";
   cout << to_str();
 }
 Operand AstCaseMatchIs::to_str() const {
@@ -68,10 +67,9 @@ OperandType AstCaseMatchIs::_get_type() const {
 }
 
 bool AstCaseMatchIs::match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) {
-  cout << "AstCaseMatchIs::match()\n";
   MYLOGGER(trace_function , string("AstCaseMatchIs::match()") , __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("top: ") + AstPtr2Str(top), SLOG_FUNC_INFO+9);
-
+  //cout << "AstCaseMatchIs::match()\n";
 
   auto &is_ = node["is"];
 
@@ -85,3 +83,33 @@ bool AstCaseMatchIs::match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) {
 Operand AstCaseMatchIs::evaluate(astnode_u_ptr &ctxt) {
   return node["body"].evaluate(ctxt);
 }
+
+//----------------------------------------------------------------------- AstCaseMatchElse
+AstCaseMatchElse::AstCaseMatchElse(astnode_u_ptr body) : AstCaseMatch(OperandType::ast_case_else_t) {
+  MYLOGGER(trace_function , string("AstCaseMatchElse::AstCaseMatchElse()") , __func__, SLOG_FUNC_INFO);
+  node["body"] = move(body);
+}
+Operand AstCaseMatchElse::evaluate(astnode_u_ptr &ctxt) {
+  return node["body"].evaluate(ctxt);
+}
+void AstCaseMatchElse::print() const {
+  cout << to_str();
+}
+Operand AstCaseMatchElse::to_str() const {
+  auto body = node["body"]._to_str();
+  return string("else ") +  " -> " + body ;
+}
+Operand AstCaseMatchElse::get_type() const { 
+  return OperandType::ast_case_else_t;}
+
+OperandType AstCaseMatchElse::_get_type() const { 
+  return OperandType::ast_case_else_t;
+}
+
+bool AstCaseMatchElse::match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) {
+  MYLOGGER(trace_function , string("AstCaseMatchIs::match()") , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("top: ") + AstPtr2Str(top), SLOG_FUNC_INFO+9);
+  //cout << "AstCaseMatchElse::match()\n";
+  return true;
+}
+
