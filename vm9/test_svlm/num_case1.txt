@@ -16,7 +16,7 @@ module Main do
       $b = 2+25
       print $b
     is x when x == 125 ->
-      print "did match x == 125!\n";
+      print "did match x == 125 !\n";
     else ->
       print "didn't match anything!\n";
     end
