@@ -7,6 +7,7 @@ module Main do
     #
     case 123 do
     is 123 ->
+      print "i am 123\n";
       $a = 1+2 
       print $a
       print "\n"

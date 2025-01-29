@@ -58,8 +58,8 @@ void AstCaseMatchIs::print() const {
 }
 Operand AstCaseMatchIs::to_str() const {
   auto is_ = node["is"]._to_str();
-  auto b = node["body"]._to_str();
-  return string("is ") +  is_ + " -> " + b ;
+  auto body = node["body"]._to_str();
+  return string("is ") +  is_ + " -> " + body ;
 }
 Operand AstCaseMatchIs::get_type() const { 
   return OperandType::ast_case_match_is_t;}
@@ -83,5 +83,5 @@ bool AstCaseMatchIs::match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) {
 }
 
 Operand AstCaseMatchIs::evaluate(astnode_u_ptr &ctxt) {
-  return AstMap::evaluate(ctxt);
+  return node["body"].evaluate(ctxt);
 }
