@@ -265,6 +265,18 @@ public:
   void print() const override;
 };
 
+//----------------------------- Case Match When
+class AstCaseMatchWhen: public AstCaseMatch {
+public:
+  AstCaseMatchWhen(astnode_u_ptr is_, astnode_u_ptr when_, astnode_u_ptr body);
+  Operand evaluate(astnode_u_ptr &) override;
+  bool match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) override ;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+};
+
 //----------------------------- Case Match Else
 class AstCaseMatchElse: public AstCaseMatch {
 public:                                                                                                                                                               

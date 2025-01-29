@@ -50,7 +50,7 @@ Operand Operand::ToString::operator()(OperandType t) const {
   case OperandType::ast_tuple_t:  outstr ="ast_tuple_t"; break;
   case OperandType::ast_case_t:  outstr ="ast_case_t"; break;
   case OperandType::ast_case_match_t:  outstr ="ast_case_match_t"; break;
-  case OperandType::ast_case_match_is_t:  outstr ="ast_case_match_is_t"; break;
+  case OperandType::ast_case_is_t:  outstr ="ast_case_is_t"; break;
   case OperandType::ast_case_else_t:  outstr ="ast_case_else_t"; break;
   case OperandType::ast_case_when_t:  outstr ="ast_case_when_t"; break;
   case OperandType::ast_while_t:  outstr ="ast_while_t"; break;
