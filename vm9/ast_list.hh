@@ -110,14 +110,19 @@ private:
 public:
   Tuple() {};
   Tuple(astnode_u_ptr) ;
-  bool operator==(const Tuple& other) const;
-  bool operator!=(const Tuple& other) const;
-  Operand opfunc(const AstNode&, AstOpCode op) override final;
+//  bool operator==(const Tuple& other) const;
+//  bool operator!=(const Tuple& other) const;
+//  bool cmp_eql(const AstNode &) const override;
+//  Operand opfunc(const AstNode&, AstOpCode op) override final;
+
+  using AstList::operator==;
+  using AstList::operator!=;
+  using AstList::opfunc;
+  using AstList::cmp_eql;
 
   Operand evaluate(astnode_u_ptr& ast_ctxt) override ;
 
   astnode_u_ptr clone() const override; 
-  bool cmp_eql(const AstNode &) const override;
 
   Operand to_str() const override ;
   Operand get_type() const override;

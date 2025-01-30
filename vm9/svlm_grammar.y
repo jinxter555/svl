@@ -367,10 +367,15 @@ case_match_list
 
 case_match
   : IS literals ARROW_R statement_list {
-    //std::cout << "GRAMMAR case match s->sl"; $2->print(); std::cout << "\n";
     $$ = make_unique<AstCaseMatchIs>(move($2), move($4));
   } 
   | IS variable WHEN statement ARROW_R statement_list {
+    $$ = make_unique<AstCaseMatchWhen>(move($2), move($4), move($6));
+  }
+  | IS tuple ARROW_R statement_list {
+    $$ = make_unique<AstCaseMatchIs>(move($2), move($4));
+  } 
+  | IS tuple WHEN statement ARROW_R statement_list {
     $$ = make_unique<AstCaseMatchWhen>(move($2), move($4), move($6));
   }
   | ELSE ARROW_R statement_list {

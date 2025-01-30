@@ -111,24 +111,24 @@ OperandType AstCaseMatchWhen::_get_type() const {
 bool AstCaseMatchWhen::match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) {
   MYLOGGER(trace_function , string("AstCaseMatchWhen::match()") , __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("top: ") + AstPtr2Str(top), SLOG_FUNC_INFO+9);
-  cout << "AstCaseMatchWhen::match()\n";
+  //cout << "AstCaseMatchWhen::match()\n";
   auto &is_ = node["is"];
   auto is_expr = is_._vrptr();
   auto &when_ = node["when"];
   auto a = top->evaluate(ctxt);
   auto b = is_.evaluate(ctxt);
 
-  cout << "is_expr type: " << is_expr->get_type() << "\n";
-  cout << "is_expr value: " << is_expr->to_str() << "\n";
-  cout << "is_expr.type_: " << Operand(is_expr->type_) << "\n";
+  //cout << "is_expr type: " << is_expr->get_type() << "\n";
+  //cout << "is_expr value: " << is_expr->to_str() << "\n";
+  //cout << "is_expr.type_: " << Operand(is_expr->type_) << "\n";
 
 
 
   if(is_expr->_get_type() == OperandType::ast_lvar_t 
-  || is_expr->_get_type() == OperandType::ast_mvar_t) {
-    cout << "assigning !\n";
+  || is_expr->_get_type() == OperandType::ast_mvar_t
+  || is_expr->_get_type() == OperandType::ast_tuple_t) {
     AstAssign* assign_exp = (AstAssign*)is_expr;
-    assign_exp->assign(ctxt, a);
+    if( assign_exp->assign(ctxt, a)  == false) return false;
   }
 
   return when_.evaluate(ctxt)==true;

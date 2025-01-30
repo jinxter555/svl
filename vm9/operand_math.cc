@@ -99,12 +99,10 @@ bool Operand::operator==(const AstNode& other) const {
   auto other_vrptr = other._vrptr();
 
   switch(vrptr->_get_type()) {
-  case OperandType::list_t: {
-    return vrptr->get_list() == other_vrptr->get_list();
+  case OperandType::list_t: { return vrptr->get_list() == other_vrptr->get_list(); }
+  case OperandType::tuple_t: { return vrptr->get_list() == other_vrptr->get_list(); }
+  case OperandType::map_t: { return vrptr->get_map() == other_vrptr->get_map(); }
   }
-  case OperandType::map_t: {
-    return vrptr->get_map() == other_vrptr->get_map();
-  }}
 
   return visit(CmpEql(), vrptr->_get_variant(), other_vrptr->_get_variant());
 
@@ -132,6 +130,7 @@ bool Operand::operator==(const Operand& other) const {
 
   switch(vrptr->_get_type()) {
   case OperandType::list_t: { return vrptr->get_list() == other_vrptr->get_list(); }
+  case OperandType::tuple_t: { return vrptr->get_list() == other_vrptr->get_list(); }
   case OperandType::map_t: { return vrptr->get_map() == other_vrptr->get_map();}
   }
 

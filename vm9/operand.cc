@@ -96,6 +96,7 @@ Operand Operand::evaluate(unique_ptr<AstNode>&ctxt) {
     auto vptr = _vrptr();
     return vptr->evaluate(ctxt);
   }}
+  MYLOGGER_MSG(trace_function, _to_str(), SLOG_FUNC_INFO+9);
   return _get_variant();
 }
 //------------------------------------------------------------------------------------------------------------------ 

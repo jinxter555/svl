@@ -299,7 +299,10 @@ bool AstList::cmp_eql(const AstList* other_ptr) const {
   }
   cout << "*other: " << *other_ptr << " other type: " << other_ptr->get_type() << "\n\n";
 
-  if(other_ptr->_get_type()!= OperandType::list_t) return false;
+  auto other_type_ = other_ptr->_get_type();
+  if(other_type_ != OperandType::list_t)
+    if(other_type_!= OperandType::tuple_t)
+      return false;
   if(s != other_ptr->size()) return false;
 
 
@@ -368,6 +371,7 @@ void Tuple::print() const {
 }
 Operand Tuple::evaluate(astnode_u_ptr &ctxt) {
   MYLOGGER(trace_function , "Tuple::evalaute()" ,__func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, to_str()._to_str(), SLOG_FUNC_INFO+9);
 
   int i, s = size();
   astnode_u_ptr result_tuple = make_unique<Tuple>();
@@ -390,6 +394,7 @@ astnode_u_ptr Tuple::clone() const {
 }
 
 //--------------------------------------
+/*
 bool Tuple::operator==(const Tuple&other) const { 
   MYLOGGER(trace_function , "Tuple::==(Tuple&)" , __func__, SLOG_FUNC_INFO);
   cout << "Tuple::==()\n";
@@ -432,3 +437,4 @@ Operand Tuple::opfunc(const AstNode& other, AstOpCode op) {
     return Operand();
   }
 }
+*/
