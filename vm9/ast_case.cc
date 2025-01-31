@@ -121,12 +121,14 @@ bool AstCaseMatchWhen::match(const astnode_u_ptr& top, astnode_u_ptr &ctxt) {
   //cout << "is_expr type: " << is_expr->get_type() << "\n";
   //cout << "is_expr value: " << is_expr->to_str() << "\n";
   //cout << "is_expr.type_: " << Operand(is_expr->type_) << "\n";
+  //cout << "is_expr._get_type: " << is_expr->get_type() << "\n";
 
 
 
   if(is_expr->_get_type() == OperandType::ast_lvar_t 
   || is_expr->_get_type() == OperandType::ast_mvar_t
-  || is_expr->_get_type() == OperandType::ast_tuple_t) {
+  || is_expr->_get_type() == OperandType::ast_tuple_t
+  ) {
     AstAssign* assign_exp = (AstAssign*)is_expr;
     if( assign_exp->assign(ctxt, a)  == false) return false;
   }

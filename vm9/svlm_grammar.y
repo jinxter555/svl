@@ -55,6 +55,7 @@ namespace vslast {
 
 %nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop 
 %nterm <astnode_u_ptr> case case_match_list case_match
+%nterm <astnode_u_ptr> tuple_arg_list
 %nterm <map_u_ptr>  kv_pair_list
 %nterm <string> map_key
 %type <tuple<string, astnode_u_ptr>> kv_pair 
@@ -190,7 +191,7 @@ exp_eval
   }
   | tuple ASSIGN tuple {
       $$ = make_unique<AstBinOp>(
-        make_unique<AstTuple>(move($1)),
+        move($1),
         move($3),
         AstOpCode::assign
       );
@@ -261,6 +262,20 @@ proto
   }
   ;
 //--------------------------------------------------- 
+tuple_arg_list
+  : tuple_arg_list COMMA arg {
+    $1->add(move($3));
+    $$ = move($1);
+  }
+  | arg {
+    auto al = make_unique<Tuple>();
+    al->add(move($1));
+    $$ = move(al);
+  }
+  | %empty {$$ = make_unique<Tuple>();}
+  ;
+
+//---------------------------------------------------  
 arg_list
   : arg_list COMMA arg {
     $1->add(move($3));
@@ -278,10 +293,10 @@ arg
   : exp_eval { $$ = move($1); }
   ;
 
+
 //--------------------------------------------------- 
 list 
   : SQBRK_L arg_list SQBRK_R { 
-    //$$ =  make_unique<Operand>( make_shared<Operand>( move($2) )); 
     $$ =  move($2); 
   } 
   ;
@@ -311,9 +326,10 @@ map_key : DQSTR | STR ;
 
 //--------------------------------------------------- 
 tuple
-  : CUR_L arg_list CUR_R {
-    //$$ = make_unique<AstTuple>(move($2));
-    $$ = make_unique<Tuple>(move($2));
+  //: CUR_L arg_list CUR_R {
+  : CUR_L tuple_arg_list CUR_R {
+    $$ = make_unique<AstTuple>(move($2));
+    //$$ = make_unique<AstTuple>(make_unique<Tuple>(move($2)));
   }
   ;
 

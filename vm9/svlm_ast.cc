@@ -723,7 +723,7 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
   MYLOGGER(trace_function
   , "AstMvar::assign(astnode_u_ptr& ctxt, const Operand& v)" 
   , string("AstMvar::") + string(__func__), SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, name() + string(" = ") + v.to_str()._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, name() + string(" = ") + v._to_str(), SLOG_FUNC_INFO);
 
   Operand mod_name_operand;
 
@@ -824,31 +824,45 @@ Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {
 }
 
 bool AstLvar::assign(astnode_u_ptr& ctxt, Operand& v) {
+  MYLOGGER(trace_function
+  , "AstLvar::assign(astnode_u_ptr& ctxt, const Operand& v)" 
+  , string("AstLvar::") + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, name() + string(" = ") + v._to_str(), SLOG_FUNC_INFO);
+
   auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
   auto &lvars =  frame["lvars"];
-  lvars.add(name(), v);
+  lvars.add(name(), v, true);
 
   return true;
 }
 //----------------------------------------------------------------------- Tuple
+AstTuple::AstTuple() : AstAssign(OperandType::ast_tuple_t) {
+  MYLOGGER(trace_function , "AstTuple::AstTuple()" , __func__, SLOG_FUNC_INFO); 
+  node["u_tuple"] = nil;
+}
+
 AstTuple::AstTuple(astnode_u_ptr u_tuple) : AstAssign(OperandType::ast_tuple_t){ 
+  MYLOGGER(trace_function , "AstTuple::AstTuple(astnode_u_ptr)" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("Tuple: ") + AstPtr2Str(u_tuple), SLOG_FUNC_INFO);
   //cout << "AstTuple::AstTuple()\n";
   node["u_tuple"] = move(u_tuple);
 }
+
+
 string AstTuple::name() {return "tuple name";}
 
 Operand AstTuple::to_str() const {
-  auto tuple_ptr = node["u_tuple"].get_raw_ptr();
+  auto &tuple_v = node["u_tuple"];
+  int i, s = tuple_v .size();
 
-  s_integer i, s = tuple_ptr->size();
-  Operand outstr("{");
+  string outstr("{");
   if(s==0) {return Operand("{}");}
 
   for(i=0; i<s-1; i++) {
-    outstr = outstr + (*tuple_ptr)[i].to_str() + ",";
+    outstr = outstr + tuple_v[i]._to_str() + ", ";
   }
-  outstr = outstr + (*tuple_ptr)[i].to_str() + "}";
+  outstr = outstr + tuple_v[i]._to_str() + "}";
   return outstr;
 }
 
@@ -861,44 +875,62 @@ OperandType AstTuple::_get_type() const {
 
 }
 Operand AstTuple::evaluate(astnode_u_ptr& ctxt) {
+  MYLOGGER(trace_function , "AstTuple::evaluate(astnode_u_ptr &ctxt)" , __func__, SLOG_FUNC_INFO);
   cout << "AstTuple::eval\n";
+  auto &tuple_v = node["u_tuple"];
 
-  auto &u_tuple = (*this)["u_tuple"];
-  //cout << "u_tuple " << u_tuple << "\n";
+  auto e_tuple  = tuple_v.evaluate(ctxt);
 
-  auto e_tuple  = u_tuple.evaluate(ctxt);
-  add(string("e_tuple"), make_unique<AstTuple>(e_tuple.clone()));
+  node["e_tuple"]=e_tuple.clone();
+
   //cout << "e_tuple " << e_tuple << "\n\n";
-
   return e_tuple;
 }
+
+
 astnode_u_ptr AstTuple::clone() const {
+  MYLOGGER(trace_function , "AstTuple::clone()" , __func__, SLOG_FUNC_INFO);
   cout << "AstTuple::clone()\n";
-  auto &u_tuple= (*this)["u_tuple"];
-  return  make_unique<AstTuple>(u_tuple.clone());
+  auto &tuple_v = node["u_tuple"];
+
+  int i, s = tuple_v.size();
+  auto new_tuple = make_unique<AstTuple>();
+  for(i=0; i<s; i++)  {
+    auto &e = tuple_v[i];
+    new_tuple->add(e.clone()); 
+  }
+  return new_tuple;
 }
 
 
 astnode_u_ptr AstTuple::elemptr(const Operand& v) {
-
   return nullptr;
-
 }
 
 
 bool AstTuple::assign(astnode_u_ptr& ctxt, Operand& v) {
+  MYLOGGER(trace_function , "AstTuple::assign(astnode_u_ptr &ctxt, Operand& v)" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("v: ") + v._to_str(), SLOG_FUNC_INFO);
+
   cout << "AstTuple::assign()\n";
-  auto &u_tuple = (*this)["u_tuple"];
+  //auto &u_tuple = (*this)["u_tuple"];
+  auto &u_tuple = node["u_tuple"];
   auto e_tuple = evaluate(ctxt);
 
   if(u_tuple.size() != v.size()) return false;
 
   for(s_integer i=0; i < u_tuple.size(); i++) {
+    auto u_e_vrptr = u_tuple[i]._vrptr(); // tuple unassigned element
 
-    if( u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_lvar_t || 
-        u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_mvar_t)  {
-        cout << "found var!\n";
-        continue;
+    if(u_e_vrptr==nullptr) throw std::runtime_error("AstTuple::assign() u_e_vrptr is nullptr");
+
+    auto u_e_type = u_e_vrptr->_get_type();
+    cout << "u_tuple[" << i << "]: " <<  *u_e_vrptr << "\n";
+    cout << "u_tuple[" << i << "].get_type(): " <<  u_e_vrptr->get_type() << "\n";
+
+    if( u_e_type == OperandType::ast_lvar_t || u_e_type == OperandType::ast_mvar_t)  {
+      cout << "found var: " <<  u_e_vrptr->to_str() <<"!\n";
+      continue;
     }
 
     if(e_tuple[i] != v[i]) {
@@ -906,10 +938,16 @@ bool AstTuple::assign(astnode_u_ptr& ctxt, Operand& v) {
       return false;
     }
   }
+
   cout << "\n\n";
   for(s_integer i=0; i < u_tuple.size(); i++) {
-    if( u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_lvar_t || 
-        u_tuple[i].get_u_ptr()->_get_type() == OperandType::ast_mvar_t)  {
+    auto u_e_vrptr = u_tuple[i]._vrptr(); // tuple unassigned element
+
+    if(u_e_vrptr==nullptr) throw std::runtime_error("AstTuple::assign() u_e_vrptr is nullptr");
+
+    auto u_e_type = u_e_vrptr->_get_type();
+
+    if( u_e_type == OperandType::ast_lvar_t || u_e_type == OperandType::ast_mvar_t)  {
       auto r_var =(AstAssign*) u_tuple[i].get_raw_ptr();
       Operand rv = v[i].clone();
       //r_var->assign(ctxt, v.getv(i).clone());

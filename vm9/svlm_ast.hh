@@ -176,10 +176,12 @@ public:
   void print() const override;
 };
 
+// AstTuple contains variables whereas Tuple just a dervied list_t
 class AstTuple : public AstAssign {
 private:
   astnode_u_ptr elemptr(const Operand&);
 public:
+  AstTuple();
   AstTuple(astnode_u_ptr);
   string name() override final;
   Operand to_str() const override;
@@ -189,6 +191,7 @@ public:
   bool assign(astnode_u_ptr& ctxt, Operand&) override final;
   astnode_u_ptr clone() const override;
   void print() const override;
+
 
 };
 
