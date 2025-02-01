@@ -795,7 +795,8 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
 
 //----------------------------------------------------------------------- AstLvar
 AstLvar::AstLvar(const string &name) : AstAssign(OperandType::ast_lvar_t) { 
-  add(string("var_name"), Operand(name));
+  //add(string("var_name"), Operand(name));
+  node["var_name"]= name;
 }
 string AstLvar::name() { return node["var_name"]._to_str(); }
 
@@ -809,6 +810,8 @@ void AstLvar::print() const {
   cout << to_str();
 }
 
+AstLvar::AstLvar(const string &v, astnode_u_ptr idx_key) : AstAssign(OperandType::ast_lvar_t) { 
+}
 
 Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {
   //cout << "AstLvar::evalaute\n";

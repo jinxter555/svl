@@ -167,6 +167,7 @@ private:
 
 public:
   AstLvar(const string&);
+  AstLvar(const string&, astnode_u_ptr idx_key);
   string name() override final;
   Operand to_str() const override;
   Operand get_type() const override ;

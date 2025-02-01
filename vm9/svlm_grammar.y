@@ -54,7 +54,7 @@ namespace vslast {
 %nterm comments
 
 %nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop 
-%nterm <astnode_u_ptr> case case_match_list case_match
+%nterm <astnode_u_ptr> case case_match_list case_match if_then_else
 %nterm <astnode_u_ptr> tuple_arg_list
 %nterm <map_u_ptr>  kv_pair_list
 %nterm <string> map_key
@@ -109,6 +109,7 @@ statement
   | repeat_loop { $$ = move($1); }
   | while_loop { $$ = move($1); }
   | case { $$ = move($1); }
+  | if_then_else { $$ = move($1); }
   ;
 
 comments
@@ -229,7 +230,10 @@ variable
   | DOLLAR DOTSTR { $$ = make_unique<AstMvar>($2); }
   | DOLLAR STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
   | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
+
   | STR { $$ = make_unique<AstLvar>($1); }
+//  | STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstLvar>($2, move($3)); }
+
   ;
 
 
@@ -405,6 +409,33 @@ case_match
     $$ = make_unique<AstCaseMatchElse>(move($3));
   }
   ;
+
+//--------------------------------------------------- if then else end
+if_then_else
+  :
+  ;
+if_then_else
+  : IF exp_eval THEN statement_list END {
+    auto l = make_unique<AstList>();
+    auto y = make_unique<Operand>(true);
+    l->add(make_unique<AstCaseMatchIs>(move(y), move($4)));
+    $$ = make_unique<AstCase>(move($2), move(l));
+  }
+  ;
+/*
+  | IF exp_eval THEN statement_list ELSE statement_list END {
+    auto l = make_unique<ListExprAst>("if then else end");
+    auto y = make_unique<OperandExprAst>(Operand(true));
+    l->add(std::make_unique<CaseMatchIsExprAst>(y, $4));
+    l->add(std::make_unique <CaseMatchElseExprAst>($6));
+    std::shared_ptr<CaseExprAst> case_ptr =
+      std::make_shared<CaseExprAst>($2, l);
+    $$ = case_ptr;
+  }
+  ;
+*/
+
+
 
 
 //--------------------------------------------------- EOS end of statement
