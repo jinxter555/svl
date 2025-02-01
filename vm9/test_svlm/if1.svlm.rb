@@ -1,10 +1,11 @@
 module Main do
   def main() do
-    $a = 5
+    $a = 1
     print $a
     print "\n";
     if $a>=6 then
       print "hello\n"
+    else
       print "world\n"
     end
   end

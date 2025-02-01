@@ -412,28 +412,21 @@ case_match
 
 //--------------------------------------------------- if then else end
 if_then_else
-  :
-  ;
-if_then_else
   : IF exp_eval THEN statement_list END {
     auto l = make_unique<AstList>();
     auto y = make_unique<Operand>(true);
     l->add(make_unique<AstCaseMatchIs>(move(y), move($4)));
     $$ = make_unique<AstCase>(move($2), move(l));
   }
-  ;
-/*
+
   | IF exp_eval THEN statement_list ELSE statement_list END {
-    auto l = make_unique<ListExprAst>("if then else end");
-    auto y = make_unique<OperandExprAst>(Operand(true));
-    l->add(std::make_unique<CaseMatchIsExprAst>(y, $4));
-    l->add(std::make_unique <CaseMatchElseExprAst>($6));
-    std::shared_ptr<CaseExprAst> case_ptr =
-      std::make_shared<CaseExprAst>($2, l);
-    $$ = case_ptr;
+    auto l = make_unique<AstList>();
+    auto y = make_unique<Operand>(true);
+    l->add(make_unique<AstCaseMatchIs>(move(y), move($4)));
+    l->add(make_unique<AstCaseMatchElse>(move($6)));
+    $$ = make_unique<AstCase>(move($2), move(l));
   }
   ;
-*/
 
 
 
