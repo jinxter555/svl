@@ -108,14 +108,23 @@ const astnode_ptr Operand::Rptr::operator()(const astnode_u_ptr& vptr) const { r
 
 //----------------------------------------------------------------------- Variant
 operand_variant_t Operand::_get_variant() const {
+  MYLOGGER(trace_function , "Operand::_get_variant()" ,__func__, SLOG_FUNC_INFO);
   return visit(Variant(), value_);
 };
 //------------------------------------ 
 template <typename T> 
 operand_variant_t Operand::Variant::operator()(const T &v) const { return v; }
 operand_variant_t Operand::Variant::operator()(const Nil v) const { return nil; }
-//operand_variant_t Operand::Variant::operator()(const astnode_ptr& vptr) const { return vptr; }
-//operand_variant_t Operand::Variant::operator()(const astnode_s_ptr& vptr) const { return vptr; }
+operand_variant_t Operand::Variant::operator()(const astnode_ptr& vptr) const { 
+  //if(vptr==nullptr){cerr << "Operand::Variant::operator(astnode_s_ptr&) null!\n"; return nil;}
+  if(vptr==nullptr){return nil;}
+  return vptr->clone(); 
+}
+operand_variant_t Operand::Variant::operator()(const astnode_s_ptr& vptr) const { 
+  //if(vptr==nullptr){cerr << "Operand::Variant::operator(astnode_s_ptr&) null!\n"; return nil;}
+  if(vptr==nullptr){return nil;}
+  return vptr->clone(); 
+}
 operand_variant_t Operand::Variant::operator()(const astnode_u_ptr& vptr) const { 
   //if(vptr==nullptr){cerr << "Operand::Variant::operator(astnode_u_ptr&) null!\n"; return nil;}
   if(vptr==nullptr){return nil;}

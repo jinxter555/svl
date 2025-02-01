@@ -35,14 +35,20 @@ Operand& AstNode::operator[] (const AstList& index_keys) {
 
 //--------------------------------------------------------- 
 ostream& operator<<(ostream& os, const AstNode& e) {
-  if(e.is_nil() ) cerr << "AstExpr is nil\n"; 
+  /*
+  if(e.is_nil() ) cerr << "<< AstNode is nil\n"; 
   else e.print();
+ */ 
+  if(!e.is_nil() ) e.print();
   return os;
 }
 
 ostream& operator<<(ostream& os, const astnode_u_ptr& ptr) {
-  if(ptr==nullptr) { cout << "astexpr_u_ptr is null\n"; } 
+  /*
+  if(ptr==nullptr) { cout << "<< astnode_u_ptr is null\n"; } 
   else ptr->print();
+ */ 
+  if(ptr!=nullptr) ptr->print();
   return os;
 }
 

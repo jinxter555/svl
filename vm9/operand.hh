@@ -147,8 +147,8 @@ public:
 struct Variant{
 template <typename T> operand_variant_t operator()(const T& value) const;
 operand_variant_t operator()(const Nil) const;
-//operand_variant_t operator()(const astnode_ptr& v) const  ;
-//operand_variant_t operator()(const astnode_s_ptr& v) const  ;
+operand_variant_t operator()(const astnode_ptr& v) const  ;
+operand_variant_t operator()(const astnode_s_ptr& v) const  ;
 operand_variant_t operator()(const astnode_u_ptr& v) const  ;
 };
 

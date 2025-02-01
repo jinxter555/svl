@@ -810,7 +810,9 @@ void AstLvar::print() const {
   cout << to_str();
 }
 
-AstLvar::AstLvar(const string &v, astnode_u_ptr idx_key) : AstAssign(OperandType::ast_lvar_t) { 
+AstLvar::AstLvar(const string &name, astnode_u_ptr idx_key) : AstAssign(OperandType::ast_lvar_t) { 
+  node["var_name"]= name;
+  node["idx_key"]= move(idx_key);
 }
 
 Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {

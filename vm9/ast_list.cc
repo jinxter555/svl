@@ -386,7 +386,7 @@ Operand Tuple::evaluate(astnode_u_ptr &ctxt) {
 astnode_u_ptr Tuple::clone() const {
   MYLOGGER(trace_function , "Tuple::clone()" ,__func__, SLOG_FUNC_INFO);
 
-  list_u_ptr new_list = make_unique<Tuple>();
+  auto new_list = make_unique<Tuple>();
   for(auto &e : list_)  {
     new_list->list_.push_back(e.clone()); 
   }

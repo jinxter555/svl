@@ -418,7 +418,6 @@ if_then_else
     l->add(make_unique<AstCaseMatchIs>(move(y), move($4)));
     $$ = make_unique<AstCase>(move($2), move(l));
   }
-
   | IF exp_eval THEN statement_list ELSE statement_list END {
     auto l = make_unique<AstList>();
     auto y = make_unique<Operand>(true);
@@ -427,8 +426,6 @@ if_then_else
     $$ = make_unique<AstCase>(move($2), move(l));
   }
   ;
-
-
 
 
 //--------------------------------------------------- EOS end of statement

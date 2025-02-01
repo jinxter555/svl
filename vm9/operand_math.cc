@@ -119,14 +119,26 @@ bool Operand::operator==(const Operand& other) const {
   cout << "this: " << to_str()<<  ", other: " << other << "\n";
   cout << "type: " << get_type() << "other_type: " << other.get_type() << "\n";
 */
-  auto result = visit(CmpEql(), value_, other.value_);
+  bool result;
+
+  switch(other.type_){
+  case OperandType::uptr_t:
+  case OperandType::sptr_t:
+  case OperandType::ptr_t:
+    result = visit(CmpEql(), value_, other._get_variant());
+    break;
+  default:
+    result = visit(CmpEql(), value_, other.value_);
+    break;
+  }
 
   if(result==true) return result;
 
   auto vrptr  = _vrptr(); auto other_vrptr =  other._vrptr();
 
-//  if(vrptr==nullptr && other_vrptr!=nullptr) return false;
-  if(vrptr==nullptr) return false;
+  if(vrptr==nullptr && other_vrptr==nullptr) { return true;}
+  if(vrptr==nullptr || vrptr->is_nil()) return false;
+  if(other_vrptr==nullptr) return false;
 
   switch(vrptr->_get_type()) {
   case OperandType::list_t: { return vrptr->get_list() == other_vrptr->get_list(); }
@@ -134,9 +146,16 @@ bool Operand::operator==(const Operand& other) const {
   case OperandType::map_t: { return vrptr->get_map() == other_vrptr->get_map();}
   }
 
+/*
   if(other_vrptr==nullptr && vrptr->is_nil()) { return true;}
- // if(other_vrptr==nullptr && vrptr==nullptr) { return true;}
+  if(other_vrptr==nullptr && vrptr==nullptr) { return true;}
   if(other_vrptr==nullptr) { return false;} // can't compare anything 
+*/
+  // not sure if this works
+  //cout << "*vrptr: " << *vrptr << " *other_vrptr: " << *other_vrptr << "\n";
+  //cout << "type: " << vrptr->get_type() << " other_type: " << other_vrptr->get_type() << "\n";
+  if( vrptr->get_type() != other_vrptr->get_type()) return false;
+
   return visit(CmpEql(), vrptr->_get_variant(), other_vrptr->_get_variant());
 
 }
@@ -329,7 +348,7 @@ template <typename T, typename U> bool Operand::CmpEql::operator()(const T &a, c
 };
 template <typename T> bool Operand::CmpEql::operator()(const T &a, const T &b) { 
   MYLOGGER(trace_function , "Operand::CmpEql::()(T, T)" ,__func__, SLOG_FUNC_INFO);
-//  cout << "T == T?\n";
+//  cout << "T == T?\n"; cout << a << " == " << b << "\n";
   return a==b; 
 };
 bool Operand::CmpEql::operator()(const Nil a, const Nil b){ 
@@ -338,6 +357,6 @@ bool Operand::CmpEql::operator()(const Nil a, const Nil b){
   return true; 
 }
 bool Operand::CmpEql::operator()(const AstNode *a, const AstNode *b) {
-  cout << "Operand::CmpEql::()(AstNode*, AstNode*)\n"; 
+//  cout << "Operand::CmpEql::()(AstNode*, AstNode*)\n"; 
   return visit(CmpEql(), a->_get_variant(), b->_get_variant());
 }

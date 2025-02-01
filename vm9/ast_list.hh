@@ -104,6 +104,9 @@ public:
 };
 
 
+//
+// tuple {nil}=={nil} return false problem
+//
 class Tuple : public AstList{
 private:
   OperandType type_;
