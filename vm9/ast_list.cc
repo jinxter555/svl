@@ -374,12 +374,15 @@ Operand Tuple::evaluate(astnode_u_ptr &ctxt) {
   MYLOGGER_MSG(trace_function, to_str()._to_str(), SLOG_FUNC_INFO+9);
 
   int i, s = size();
-  astnode_u_ptr result_tuple = make_unique<Tuple>();
+  //astnode_u_ptr result_tuple = make_unique<Tuple>();
+  list_u_ptr result_tuple = make_unique<Tuple>();
   for(i=0; i<s; i++) {
-    result_tuple->add(list_[i].evaluate(ctxt).clone());
+    //result_tuple->add(list_[i].evaluate(ctxt).clone());
+    auto rv = list_[i].evaluate(ctxt);
+    result_tuple->add(rv._get_variant());
   }
-  return result_tuple;
-
+  astnode_u_ptr rptr = move(result_tuple);
+  return rptr;
 }
 
 //--------------------------------------
