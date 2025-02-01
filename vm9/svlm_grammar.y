@@ -196,6 +196,13 @@ exp_eval
         AstOpCode::assign
       );
   }
+  | tuple ASSIGN variable {
+      $$ = make_unique<AstBinOp>(
+        move($1),
+        move($3),
+        AstOpCode::assign
+      );
+  }
   ;
 
 

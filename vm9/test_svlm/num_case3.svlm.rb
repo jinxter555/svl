@@ -3,9 +3,9 @@ module Main do
     print "in main\n"
     print "\n"
     #
-    a = {2,3}
+    a = {1,{3,4}}
     case a  do
-    is {$x,3} when $x == 1 ->
+    is {$x,{3,4}} when $x == 1 ->
       print a 
       print "did match x == 1 !\n";
     else ->
