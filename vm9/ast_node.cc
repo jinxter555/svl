@@ -52,3 +52,7 @@ string AstNode::AstPtr2Str(const astnode_u_ptr&ptr) const{
  if(ptr==nullptr) return "nil";
  return ptr->to_str()._to_str();
 };
+string AstNode::AstPtr2Str(const astnode_ptr&ptr) const{
+ if(ptr==nullptr) return "nil";
+ return ptr->to_str()._to_str();
+};

@@ -621,13 +621,13 @@ string AstMvar::get_module() {
   return node["mod_name"]._to_str();
 }
 astnode_u_ptr AstMvar::clone() const {
-  cout << "AstMvar::clone()\n";
+  //cout << "AstMvar::clone()\n";
   return AstMap::clone();
 };
 
 
 Operand AstMvar::get_type() const { 
-  cout << "AstMvar::get_type()\n";
+  //cout << "AstMvar::get_type()\n";
   return OperandType::ast_mvar_t;
 }
 OperandType AstMvar::_get_type() const { return OperandType::ast_mvar_t;}
@@ -876,15 +876,13 @@ OperandType AstTuple::_get_type() const {
 }
 Operand AstTuple::evaluate(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function , "AstTuple::evaluate(astnode_u_ptr &ctxt)" , __func__, SLOG_FUNC_INFO);
-  cout << "AstTuple::eval\n";
-  auto &tuple_v = node["u_tuple"];
+  //cout << "AstTuple::eval\n";
 
-  auto e_tuple  = tuple_v.evaluate(ctxt);
+  auto tuple_vptr = node["u_tuple"]._vrptr();         //cout <<"u_tuple:" <<  *tuple_vptr << "\n";
+  if(tuple_vptr==nullptr) { throw std::runtime_error("AstTuple::evaluate() u_tuple is nullptr"); }
 
-  node["e_tuple"]=e_tuple.clone();
+  return tuple_vptr->evaluate(ctxt); // tuple_t aka base::list_t to evaluate
 
-  //cout << "e_tuple " << e_tuple << "\n\n";
-  return e_tuple;
 }
 
 
@@ -910,37 +908,41 @@ astnode_u_ptr AstTuple::elemptr(const Operand& v) {
 
 bool AstTuple::assign(astnode_u_ptr& ctxt, Operand& v) {
   MYLOGGER(trace_function , "AstTuple::assign(astnode_u_ptr &ctxt, Operand& v)" , __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("v: ") + v._to_str(), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, to_str()._to_str() +  string(" = v: ") + v._to_str(), SLOG_FUNC_INFO);
 
-  cout << "AstTuple::assign()\n";
+  //cout << "AstTuple::assign()\n";
   //auto &u_tuple = (*this)["u_tuple"];
   auto &u_tuple = node["u_tuple"];
-  auto e_tuple = evaluate(ctxt);
 
-  if(u_tuple.size() != v.size()) return false;
 
-  for(s_integer i=0; i < u_tuple.size(); i++) {
+  s_integer s = u_tuple.size();
+
+  if(s != v.size()) return false;
+
+  //for(s_integer i=0; i < u_tuple.size(); i++) {
+  for(s_integer i=0; i < s; i++) {
     auto u_e_vrptr = u_tuple[i]._vrptr(); // tuple unassigned element
 
     if(u_e_vrptr==nullptr) throw std::runtime_error("AstTuple::assign() u_e_vrptr is nullptr");
 
     auto u_e_type = u_e_vrptr->_get_type();
-    cout << "u_tuple[" << i << "]: " <<  *u_e_vrptr << "\n";
-    cout << "u_tuple[" << i << "].get_type(): " <<  u_e_vrptr->get_type() << "\n";
+    //cout << "v[" << i << "]: " <<  v[i] << "\n";
+    //cout << "u_tuple[" << i << "]: " <<  *u_e_vrptr << "\n";
+    //cout << "u_tuple[" << i << "].get_type(): " <<  u_e_vrptr->get_type() << "\n";
 
     if( u_e_type == OperandType::ast_lvar_t || u_e_type == OperandType::ast_mvar_t)  {
-      cout << "found var: " <<  u_e_vrptr->to_str() <<"!\n";
+      cout << "found a var- " <<  u_e_vrptr->to_str() <<" -skipping!\n";
       continue;
     }
 
-    if(e_tuple[i] != v[i]) {
-      cout << e_tuple << " != " << v << "\n";
+    if(u_tuple[i].evaluate(ctxt) != v[i].evaluate(ctxt)) {
+      cerr << "tuple assign: " << u_tuple[i] << " != " << v[i] << " error\n";
       return false;
     }
   }
 
-  cout << "\n\n";
-  for(s_integer i=0; i < u_tuple.size(); i++) {
+  //for(s_integer i=0; i < u_tuple.size(); i++) {
+  for(s_integer i=0; i < s; i++) {
     auto u_e_vrptr = u_tuple[i]._vrptr(); // tuple unassigned element
 
     if(u_e_vrptr==nullptr) throw std::runtime_error("AstTuple::assign() u_e_vrptr is nullptr");
@@ -948,10 +950,12 @@ bool AstTuple::assign(astnode_u_ptr& ctxt, Operand& v) {
     auto u_e_type = u_e_vrptr->_get_type();
 
     if( u_e_type == OperandType::ast_lvar_t || u_e_type == OperandType::ast_mvar_t)  {
-      auto r_var =(AstAssign*) u_tuple[i].get_raw_ptr();
-      Operand rv = v[i].clone();
+      auto r_var =(AstAssign*) u_e_vrptr;
+      //cout << "r_var: " ; r_var->print(); cout << "\n";
+      //Operand rv = v[i].clone();
       //r_var->assign(ctxt, v.getv(i).clone());
-      r_var->assign(ctxt, rv);
+      //r_var->assign(ctxt, rv);
+      r_var->assign(ctxt, v[i]);
     }
   }
   //cout << e_tuple << "= " << vptr << "\n";

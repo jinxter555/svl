@@ -123,6 +123,7 @@ public:
   Operand evaluate(astnode_u_ptr& ast_ctxt) override ;
 
   astnode_u_ptr clone() const override; 
+  astnode_ptr _vrptr() const override;
 
   Operand to_str() const override ;
   Operand get_type() const override;

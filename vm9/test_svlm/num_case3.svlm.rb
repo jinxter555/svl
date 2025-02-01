@@ -3,12 +3,10 @@ module Main do
     print "in main\n"
     print "\n"
     #
-    a = {1,3}
-    case {1,3} do
+    a = {2,3}
+    case a  do
     is {$x,3} when $x == 1 ->
       print a 
-      print "\n"
-      print $x
       print "did match x == 1 !\n";
     else ->
       print a

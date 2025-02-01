@@ -22,12 +22,14 @@ Operand AstCase::to_str() const {
 Operand AstCase::evaluate(astnode_u_ptr &ctxt) {
   MYLOGGER(trace_function , string("AstCase::evalaute()") , __func__, SLOG_FUNC_INFO);
   auto &top = node["top"].get_u_ptr();
+  MYLOGGER_MSG(trace_function, string("top: ") + AstPtr2Str(top), SLOG_FUNC_INFO+9);
   auto blist = node["body"].get_list_ptr_nc();
   if(top==nullptr) {throw runtime_error( "AstCase::evaluate(): top is nullptr!\n");  }
   if(blist==nullptr) {throw runtime_error( "AstCase::evaluate(): blist is nullptr!\n");  }
 
   for(s_integer i=0; i<blist->size(); i++) {
     auto match_item_ptr =(AstCaseMatch*) (*blist)[i]._vrptr();
+    MYLOGGER_MSG(trace_function, string("match_item: ") + AstPtr2Str(match_item_ptr), SLOG_FUNC_INFO+9);
     if(match_item_ptr ==nullptr) {throw runtime_error( "AstCase::evaluate(): match_item_ptr is nullptr!\n");  }
     if(match_item_ptr->match(top, ctxt )) { return match_item_ptr->evaluate(ctxt); }
   }
@@ -99,7 +101,11 @@ void AstCaseMatchWhen::print() const {
 }
 Operand AstCaseMatchWhen::to_str() const {
   auto body = node["body"]._to_str();
-  return string("else ") +  " -> " + body ;
+  return  "is " 
+    + node["is"]._to_str()
+    + " when "
+    + node["when"]._to_str()
+    +  " -> " + body ;
 }
 Operand AstCaseMatchWhen::get_type() const { 
   return OperandType::ast_case_when_t;}

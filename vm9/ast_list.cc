@@ -392,6 +392,10 @@ astnode_u_ptr Tuple::clone() const {
   }
   return move(new_list);
 }
+astnode_ptr Tuple::_vrptr() const {
+  MYLOGGER(trace_function, "Tuple::_vptr()", __func__, SLOG_FUNC_INFO+39);
+  return (AstNode*) this; 
+}
 
 //--------------------------------------
 /*
