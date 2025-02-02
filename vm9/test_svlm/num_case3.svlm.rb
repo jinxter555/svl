@@ -4,6 +4,7 @@ module Main do
     print "\n"
     #
     a = {1,{3,4}}
+
     case a  do
     is {$x,{3,4}} when $x == 1 ->
       print a 
