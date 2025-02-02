@@ -183,6 +183,15 @@ exp_eval
         AstOpCode::assign
       ); 
   }
+
+  | STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstLvar>($1, move($3)),
+        move($6), 
+        AstOpCode::assign
+      ); 
+  }
+
   | STR ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstLvar>($1),
@@ -232,7 +241,7 @@ variable
   | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
 
   | STR { $$ = make_unique<AstLvar>($1); }
-//  | STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstLvar>($2, move($3)); }
+  | STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstLvar>(move($1), move($3)); }
 
   ;
 

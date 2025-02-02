@@ -797,22 +797,19 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
 AstLvar::AstLvar(const string &name) : AstAssign(OperandType::ast_lvar_t) { 
   //add(string("var_name"), Operand(name));
   node["var_name"]= name;
+  scale_ = OperandType::scalar_t;
 }
+
 string AstLvar::name() { return node["var_name"]._to_str(); }
-
 Operand AstLvar::get_type() const { return OperandType::ast_lvar_t;}
-
 OperandType AstLvar::_get_type() const { return OperandType::ast_lvar_t;}
-
 Operand AstLvar::to_str() const { return node["var_name"].to_str(); }
-
-void AstLvar::print() const {
-  cout << to_str();
-}
+void AstLvar::print() const { cout << to_str(); }
 
 AstLvar::AstLvar(const string &name, astnode_u_ptr idx_key) : AstAssign(OperandType::ast_lvar_t) { 
   node["var_name"]= name;
   node["idx_key"]= move(idx_key);
+  scale_ = OperandType::array_t;
 }
 
 Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {
@@ -825,7 +822,19 @@ Operand AstLvar::evaluate(astnode_u_ptr& ctxt) {
   auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
   auto &lvars =  frame["lvars"];
   auto var_name = name();
-  return lvars[var_name].clone();
+  auto &l_var = lvars[name()];
+  if(scale_ == OperandType::array_t){
+    //auto &result = sub_node.getv(var_name);
+    auto index_i = get_index_i(ctxt);
+    if(index_i >= 0) {
+      return l_var[index_i]._get_variant();
+    }
+    auto index_s = get_index_s(ctxt);
+    if(index_s != "" ) {
+      return l_var[index_s]._get_variant();
+    }
+  } 
+ return l_var._get_variant();
 }
 
 bool AstLvar::assign(astnode_u_ptr& ctxt, Operand& v) {
@@ -837,10 +846,30 @@ bool AstLvar::assign(astnode_u_ptr& ctxt, Operand& v) {
   auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
   auto &lvars =  frame["lvars"];
-  lvars.add(name(), v, true);
 
+  if(scale_ == OperandType::array_t){
+    //auto &result = sub_node.getv(var_name);
+
+    auto &l_var = lvars[name()];
+    auto index_i = get_index_i(ctxt);
+    if(index_i >= 0) {
+      l_var[index_i] = v.clone();
+      cout << "l_var: " << l_var<< "\n";
+      return true;
+    }
+    auto index_s = get_index_s(ctxt);
+    if(index_s != "" ) {
+      l_var.add(index_s, v, true);
+      cout << "l_var: " << l_var<< "\n";
+      return true;
+    }
+  } else {
+    lvars.add(name(), v, true);
+  }
   return true;
 }
+
+
 //----------------------------------------------------------------------- Tuple
 AstTuple::AstTuple() : AstAssign(OperandType::ast_tuple_t) {
   MYLOGGER(trace_function , "AstTuple::AstTuple()" , __func__, SLOG_FUNC_INFO); 
