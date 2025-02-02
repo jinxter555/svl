@@ -221,7 +221,7 @@ std::vector<std::string> SvlmInteractive::get_ui_commands(const std::vector<std:
   //keys = {CONTEXT_UNIV};
   keys.insert(keys.end(), ptk.begin(), ptk.end());
   
- // std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
+// std::cout << "keys: "; for(auto k: keys) { std::cout << k << ","; } std::cout << "\n";
 
   children = svlm_lang.root[keys]._get_keys();
   children.push_back("");
@@ -255,6 +255,7 @@ void SvlmInteractive::add_readline(const string& cmd) {
 
   if(cmd == "!!print_tree") {
     auto univ_ptr = svlm_lang.root[CONTEXT_UNIV]._vrptr();
+    //auto univ_ptr = &svlm_lang.root[CONTEXT_UNIV];
     if(univ_ptr==nullptr) {
       cerr << "uni_ptr is null!\n";
       exit(1);

@@ -137,6 +137,12 @@ bool AstMap::add(const string &k, const operand_variant_t&v, bool overwrite)  {
   if(has_key(k)) {
     if(!overwrite) return false;
   }
+
+  if(holds_alternative<astnode_ptr>(v)) { // to use raw pointer
+    map_[k] = get<astnode_ptr>(v);
+    return true;
+  }
+
   map_[k] = v;
   return true;
 }
@@ -237,6 +243,7 @@ bool AstMap::has_key(const Operand &k)  const {
 }
 bool AstMap::has_key(const string  &k)  const {
  // if(this==nullptr || type_ != OperandType::map_t) return false;
+  MYLOGGER(trace_function, string("AstMap::has_key(") + k + ")", __func__, SLOG_FUNC_INFO+39);
   if(type_ != OperandType::map_t) return false;
   if (map_.find(k) != map_.end())  {
     return true;
@@ -275,6 +282,7 @@ vector<string> AstMap::_get_keys() const {
   for (auto const& [key, val] : map_) {
     key_list.push_back(key);
   }
+  //cout << "key_list: " << key_list << "\n";
   return key_list;
 }
 
