@@ -130,6 +130,21 @@ bool AstMap::add(const string &k, const AstNode &v, bool overwrite)  {
   map_[k] = v.clone();
   return true;
 }
+bool AstMap::add(const Operand &k, const operand_variant_t&v, bool overwrite)  {
+  MYLOGGER(trace_function, "AstMap::add(Operand&k, operand_variant&, bool) ", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, string("k: ") + k._to_str(), SLOG_FUNC_INFO);
+  auto kptr = k._vrptr();
+  switch (kptr->_get_type()) {
+  case OperandType::list_t :
+    add(kptr->get_list(), v, overwrite) ;
+    return true;
+  case OperandType::str_t:
+    add(kptr->get_operand()._to_str(), v, overwrite) ;
+    return true;
+  }
+  return false;
+}
+
 bool AstMap::add(const string &k, const operand_variant_t&v, bool overwrite)  {
   MYLOGGER(trace_function, "AstMap::add(string &k, const operand_variant_t, bool) ", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("k: ") + k, SLOG_FUNC_INFO);

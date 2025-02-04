@@ -122,9 +122,9 @@ bool Operand::add(const Operand &k, const AstNode& v, bool overwrite) {
   auto vptr = get_map_ptr_nc();
   if(vptr==nullptr) return false;
 
-  if(v._get_type() == OperandType::uptr_t) 
+  if(v._get_type() == OperandType::uptr_t)  // to use clone for unique ptr
     return vptr->add(k, v.clone(), overwrite);
-  return vptr->add(k._to_str(), v._get_variant(), overwrite);
+  return vptr->add(k, v._get_variant(), overwrite); // shared ptr and everything else
 }
 
 bool Operand::add(const Operand &k, astnode_u_ptr&& vvptr, bool overwrite) {
