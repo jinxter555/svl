@@ -198,8 +198,8 @@ public:
 
 class AstFlow : public AstExpr {
 public:
-  AstFlow(OperandType t) ;
-  virtual string name() = 0;
+  AstFlow(ControlFlow);
+  AstFlow(ControlFlow, astnode_u_ptr) ;
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;

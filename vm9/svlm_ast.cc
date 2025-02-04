@@ -917,8 +917,8 @@ Operand AstTuple::get_type() const {
 }
 OperandType AstTuple::_get_type() const {
   return OperandType::ast_tuple_t;
-
 }
+
 Operand AstTuple::evaluate(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function , "AstTuple::evaluate(astnode_u_ptr &ctxt)" , __func__, SLOG_FUNC_INFO);
   //cout << "AstTuple::eval\n";
@@ -1010,3 +1010,47 @@ void AstTuple::print() const {
   cout << "ast_tuple: " << to_str();
 }
 
+
+//----------------------------------------------------------------------- Control Flow
+AstFlow::AstFlow(ControlFlow cf) : AstExpr(OperandType::control_flow_t) {
+  MYLOGGER(trace_function , "AstFlow::AstFlow(ControlFlow)" , __func__, SLOG_FUNC_INFO);
+  node["control_flow"] = cf;
+}
+AstFlow::AstFlow(ControlFlow cf, astnode_u_ptr exp) : AstExpr(OperandType::control_flow_t) {
+  node["control_flow"] = cf;
+  node["exp"] = move(exp);
+}
+
+
+
+Operand AstFlow::to_str() const {
+  auto &cf  = node["control_flow"];
+  auto &exp = node["exp"] ;
+  string outstr="noop";
+  switch(cf._get_cf()) {
+  case ControlFlow::run:
+    outstr="run"; break;
+  case ControlFlow::ast_break:
+    outstr="run"; break;
+  }
+  return outstr;
+}
+
+Operand AstFlow::get_type() const { return OperandType::control_flow_t; }
+OperandType AstFlow::_get_type() const { return OperandType::control_flow_t; }
+
+void AstFlow::print() const {
+  cout << "ast_tuple: " << to_str();
+}
+
+Operand AstFlow::evaluate(astnode_u_ptr &ctxt) {
+  MYLOGGER(trace_function , "AstFlow::evaluate(astnode_u_ptr &ctxt)" , __func__, SLOG_FUNC_INFO);
+
+  auto &cf = node["control_flow"];
+  auto cfstate  = cf._get_cf();
+
+  MYLOGGER_MSG(trace_function, cf._to_str(), SLOG_FUNC_INFO);
+
+  (*ctxt)[CFSTATE] = cfstate; // set the process control flow state
+  return cfstate;
+}

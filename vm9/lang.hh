@@ -83,7 +83,7 @@ enum class OperandType {
   uptr_t,
   sptr_t,
 
-  control_t,
+  control_flow_t,
 
   ast_uptr_t,     // ast operator type
   ast_sptr_t,     // ast operator type

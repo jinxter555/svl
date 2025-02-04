@@ -10,7 +10,7 @@ OperandType Operand::Type::operator()(const Nil& v) const  { return OperandType:
 OperandType Operand::Type::operator()(const bool v) const  { return OperandType::bool_t; }
 
 OperandType Operand::Type::operator()(const AstOpCode& v) const { return OperandType::ast_op_t; }
-OperandType Operand::Type::operator()(const ControlFlow& v) const { return OperandType::control_t; }
+OperandType Operand::Type::operator()(const ControlFlow& v) const { return OperandType::control_flow_t; }
 OperandType Operand::Type::operator()(const OperandType& v) const { return OperandType::type_t; }
 OperandType Operand::Type::operator()(const OperandStatusCode& v) const { return OperandType::status_t; }
 OperandType Operand::Type::operator()(const OperandErrorCode& v) const { return OperandType::err_t; }

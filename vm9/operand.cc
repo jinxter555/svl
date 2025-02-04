@@ -41,7 +41,7 @@ Operand::Operand(const OperandType &v)        : AstNode(OperandType::type_t), va
 Operand::Operand(const AstOpCode& v)          : AstNode(OperandType::ast_op_t), value_(v) {}
 Operand::Operand(const OperandErrorCode &v)   : AstNode(OperandType::err_t),    value_(v) {}
 Operand::Operand(const OperandStatusCode &v)  : AstNode(OperandType::status_t), value_(v) {}
-Operand::Operand(const ControlFlow &v )       : AstNode(OperandType::control_t), value_(v) {}
+Operand::Operand(const ControlFlow &v )       : AstNode(OperandType::control_flow_t), value_(v) {}
 Operand::Operand(astnode_u_ptr&&v )           : AstNode(OperandType::uptr_t), value_(move(v)) {}
 Operand::Operand(const astnode_s_ptr&v )      : AstNode(OperandType::sptr_t), value_(v) {}
 Operand::Operand(const astnode_ptr  v)      : AstNode(OperandType::ptr_t), value_(v) {}

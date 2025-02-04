@@ -110,6 +110,7 @@ statement
   | while_loop { $$ = move($1); }
   | case { $$ = move($1); }
   | if_then_else { $$ = move($1); }
+  | AST_RETURN { $$ = std::make_unique<AstFlow>(ControlFlow::ast_return); }
   ;
 
 comments
