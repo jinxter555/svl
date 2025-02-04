@@ -142,6 +142,10 @@ bool AstMap::add(const string &k, const operand_variant_t&v, bool overwrite)  {
     map_[k] = get<astnode_ptr>(v);
     return true;
   }
+  if(holds_alternative<astnode_s_ptr>(v)) { // to use raw pointer
+    map_[k] = get<astnode_s_ptr>(v);
+    return true;
+  }
 
   map_[k] = v;
   return true;

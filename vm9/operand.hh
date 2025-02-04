@@ -30,7 +30,7 @@ public:
   Operand(const ControlFlow&);
   Operand(astnode_u_ptr &&);
   //Operand(const astnode_u_ptr &);
-  //Operand(const astnode_s_ptr &);
+  Operand(const astnode_s_ptr &);
   Operand(const list_t &);
   Operand(const map_t &);
   Operand(const vec_num_t&);
@@ -63,6 +63,7 @@ public:
   Operand evaluate(unique_ptr<AstNode>& ctxt) override;
 //------------------------------------
  astnode_s_ptr to_shared();
+ bool be_shared();
 
   Operand to_str() const override;
   string _to_str() const;

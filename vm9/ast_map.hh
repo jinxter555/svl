@@ -88,6 +88,7 @@ public:
   bool add(const vec_str_t &k, const operand_variant_t&v, bool overwrite=false);
   bool add(const string &k,  const operand_variant_t& v, bool overwrite=false);
 
+
   bool add(astnode_u_ptr &&vptr) override {return false; };  // for list
 
   //-------------------------

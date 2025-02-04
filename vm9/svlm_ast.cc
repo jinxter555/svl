@@ -332,30 +332,42 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
 */
 
   auto r_v = r.evaluate(ctxt);
+  auto r_v_rptr = r_v._vrptr();
+
 
 
   if(opcode == AstOpCode::assign) {
     AstAssign* variable =(AstAssign*) l.get_raw_ptr();
     //cout << "r_vptr get_type: " <<  r_vptr->get_type() << "\n";
 
-    // to use shared pointer for list and map and maybe others
-    if(r_v._get_type() == OperandType::list_t ||
-      r_v._get_type() == OperandType::map_t 
-      ) {
-      //cout << "assigning list_t || map_t || tuple_t !\n ";
-      Operand rv = r_v.clone();
-      variable->assign(ctxt, rv); 
-    } else {
-      /*
-      cout << "assigning regular var!\n";
-      cout << "var:" << r_v << "\n";
-      cout << "type:" << r_v.get_type() << "\n\n";
-      //variable->assign(ctxt, r_vptr->clone());
-      */  
-      variable->assign(ctxt, r_v);
+    switch(r_v_rptr->_get_type()) {
+      case OperandType::list_t :
+      case OperandType::tuple_t:
+      case OperandType::map_t: {
+        cout << "assigning list_t || map_t || tuple_t !\n ";
+        if(r_v.be_shared()) { 
+          variable->assign(ctxt, r_v); 
+          return r_v; 
+        }
+        cerr << "can't convert r_v  be_shared()!\n"; 
+        break;}
+
+      case OperandType::ptr_t: 
+      case OperandType::uptr_t: 
+      case OperandType::sptr_t: { 
+        cout << "assigning ptr!\n ";
+        if(r_v.be_shared()) {
+          variable->assign(ctxt, r_v);
+          return r_v; }
+        cout << "can't convert to be shared ptr!\n ";
+        break;}
+
+      default: {
+        cout << "assigning regular var!\n";
+        variable->assign(ctxt, r_v);
+        return r_v; }
     }
 
-    return r_v;
   }
 
   auto l_v = l.evaluate(ctxt);
@@ -694,7 +706,7 @@ Operand AstMvar::evaluate(astnode_u_ptr& ctxt) {
       //return result_var[index_s].clone_val();
       return result_var[index_s].clone();
     }
-    return Operand();
+    return nil;
   }
   /*
   cout << "var gettype: " << get_type() << "\n";
@@ -749,9 +761,7 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
 
 
   //cout << "mvar assign\n";
-  //cout << "vptr (): " << vptr << "\n";
-  //cout << "vptr get_type(): " << vptr->get_type() << "\n";
-  //cout << "v.getv().get_type():" << v.getv().get_type() << "\n";
+  //cout << "v.get_type():" << v.get_type() << "\n";
 
 
   if(scale_ == OperandType::array_t){
@@ -781,11 +791,12 @@ bool AstMvar::assign(astnode_u_ptr& ctxt, Operand &v) {
   //cout << "sub_node: " << sub_node << "\n";
   //cout << "v.type(): " << v.get_type() << "\n";
 
-  if(v._get_type() == OperandType::uptr_t) v.to_shared();
+  //if(v._get_type() == OperandType::uptr_t) v.to_shared();
 
   //cout << "v.type(): " << v.get_type() << "\n";
 
   sub_node.add(var_name, v, true);
+  //sub_node[var_name]= v.clone();
 
   MYLOGGER_MSG(trace_function, "sub_node.add() after", SLOG_FUNC_INFO);
   return true;

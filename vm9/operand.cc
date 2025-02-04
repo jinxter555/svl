@@ -43,7 +43,7 @@ Operand::Operand(const OperandErrorCode &v)   : AstNode(OperandType::err_t),    
 Operand::Operand(const OperandStatusCode &v)  : AstNode(OperandType::status_t), value_(v) {}
 Operand::Operand(const ControlFlow &v )       : AstNode(OperandType::control_t), value_(v) {}
 Operand::Operand(astnode_u_ptr&&v )           : AstNode(OperandType::uptr_t), value_(move(v)) {}
-//Operand::Operand(const astnode_s_ptr&v )      : AstNode(OperandType::sptr_t), value_(v) {}
+Operand::Operand(const astnode_s_ptr&v )      : AstNode(OperandType::sptr_t), value_(v) {}
 Operand::Operand(const astnode_ptr  v)      : AstNode(OperandType::ptr_t), value_(v) {}
 Operand::Operand(const svlm_ast_ptr ptr)          : AstNode(OperandType::svlm_ast_ptr_t) , value_(ptr) {}
 
@@ -121,7 +121,10 @@ bool Operand::add(const Operand &k, const AstNode& v, bool overwrite) {
   //auto vptr = get_raw_ptr();
   auto vptr = get_map_ptr_nc();
   if(vptr==nullptr) return false;
-  return vptr->add(k, v.clone(), overwrite);
+
+  if(v._get_type() == OperandType::uptr_t) 
+    return vptr->add(k, v.clone(), overwrite);
+  return vptr->add(k._to_str(), v._get_variant(), overwrite);
 }
 
 bool Operand::add(const Operand &k, astnode_u_ptr&& vvptr, bool overwrite) {
@@ -423,11 +426,30 @@ astnode_s_ptr Operand::to_shared() {
   } else if(holds_alternative<astnode_s_ptr>(value_)) {
     return get<astnode_s_ptr>(value_);
   } else if(holds_alternative<astnode_ptr>(value_)) {
-    return make_shared<Operand>(value_);
+    auto vptr = get<astnode_ptr>(value_);
+    return make_shared<Operand>(vptr->_get_variant());
   } else {
-    return nullptr;
+    return make_shared<Operand>(value_);
   }
 }
+
+bool Operand::be_shared() {
+  MYLOGGER(trace_function, "Operand::be_shared()", __func__, SLOG_FUNC_INFO);
+  if(holds_alternative<astnode_u_ptr>(value_)) {
+    MYLOGGER_MSG(trace_function, string("u_ptr: ")+ _to_str(), SLOG_FUNC_INFO);
+    astnode_s_ptr tmp_s_ptr = move(get<astnode_u_ptr>(value_));
+    value_ = move(tmp_s_ptr);
+    type_ = OperandType::sptr_t;
+    return true;
+  } else if(holds_alternative<astnode_s_ptr>(value_)) {
+    MYLOGGER_MSG(trace_function, string("s_ptr: ")+ _to_str(), SLOG_FUNC_INFO);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
 //------------------------------------
 
 Operand Operand::to_str() const { 
