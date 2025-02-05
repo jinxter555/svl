@@ -11,6 +11,16 @@
 #include <string>
 #include <iostream>
 
+#define MOD "module"
+#define FRAMES "frames"
+#define PROCESSES "processes"
+#define PID "pid"
+#define SVLM_LANG "svlm_lang"
+#define CURRENT_MODULE "current_module"
+#define CONTROL_FLOWS "control_flows"
+#define CFSTATE "cfstate"
+#define RET_VAL "ret_val"
+
 
 using namespace  std;
 
@@ -129,6 +139,7 @@ enum class ControlFlow {
   ast_break, 
   ast_continue,
   ast_return,
+  ast_return_val,
   ast_wait,
   sleep,
   stop,
@@ -198,6 +209,7 @@ public:
   virtual void print() const =0;
   virtual s_integer size() const=0;
 };
+
 
 
 #endif

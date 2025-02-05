@@ -48,7 +48,9 @@ Operand AstList::evaluate(unique_ptr<AstNode>&ctxt) {
 
   int i, s = size();
   auto result_list = make_unique<AstList>();
-  for(i=0; i<s; i++) {
+  auto &cfs = (*ctxt)[CFSTATE];
+
+  for(i=0; i<s && cfs==ControlFlow::run; i++) {
     //cout  << "list[" << i << "]" << list_[i] << "\n";
     //result_list->add(list_[i].evaluate(ctxt).clone());
     auto Lrptr= list_[i]._vrptr();
@@ -372,6 +374,7 @@ void Tuple::print() const {
 Operand Tuple::evaluate(astnode_u_ptr &ctxt) {
   MYLOGGER(trace_function , "Tuple::evalaute()" ,__func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, to_str()._to_str(), SLOG_FUNC_INFO+9);
+
 
   int i, s = size();
   //astnode_u_ptr result_tuple = make_unique<Tuple>();

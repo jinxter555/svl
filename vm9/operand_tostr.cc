@@ -89,6 +89,8 @@ Operand Operand::ToString::operator()(ControlFlow cf) const {
     outstr = "continue"; break;
   case  ControlFlow::ast_return:
     outstr = "return"; break;
+  case  ControlFlow::ast_return_val:
+    outstr = "return_value "; break;
   default:
     outstr = "ast run state unknown"; break;
   }

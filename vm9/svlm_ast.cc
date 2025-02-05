@@ -7,14 +7,6 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-#define MOD "module"
-#define FRAMES "frames"
-#define PROCESSES "processes"
-#define PID "pid"
-#define SVLM_LANG "svlm_lang"
-#define CURRENT_MODULE "current_module"
-#define CONTROL_FLOWS "control_flows"
-#define CFSTATE "cfstate"
 
 /*
  svlvm:
@@ -268,11 +260,11 @@ void SvlmAst::run_evaluate() {
     exit(1);
   }
 
-  auto new_map=make_unique<AstMap>();
+  auto new_frame=make_unique<AstMap>();
 
-  new_map->add(string("lvars"), make_unique<AstMap>(), true);
-  new_map->add(string(CURRENT_MODULE), Operand("Main"));
-  frames->add(move(new_map));
+  new_frame->add(string("lvars"), make_unique<AstMap>(), true);
+  new_frame->add(string(CURRENT_MODULE), Operand("Main"));
+  frames->add(move(new_frame));
   if(Lptr == nullptr) {
     cerr << "SvlmAst::run_evaluate Lptr==nullptr\n";
     return;
@@ -506,7 +498,6 @@ Operand& AstCaller::remove_frame(astnode_u_ptr &ctxt) {
   auto ptr = svlm_lang.get_svlm_ptr();
   auto &frames = ptr->get_frames(ctxt);
   auto &f = frames->back();
-  //frames->pop
   return nil_operand_nc;
 }
 
@@ -558,8 +549,23 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
 
   MYLOGGER_MSG(trace_function, string("proto_list: ") + proto_list._to_str(), SLOG_FUNC_INFO+1);
 
+  svlm_lang_ptr->push_control_flow(ctxt);
   add_frame(ctxt);
   auto result  = code.evaluate(ctxt);
+
+  ControlFlow cfstate;
+  cfstate = (*ctxt)[CFSTATE]._get_cf(); // current control flow state
+
+  if(cfstate ==ControlFlow::ast_return_val) {
+    auto &v = (*ctxt)[RET_VAL];
+    cfstate =  svlm_lang_ptr->pop_control_flow(ctxt); // restore previous control flow state
+    (*ctxt)[CFSTATE] = cfstate;
+    return v._get_variant();
+  }
+
+  cfstate =  svlm_lang_ptr->pop_control_flow(ctxt); // restore previous control flow state
+  (*ctxt)[CFSTATE] = cfstate;
+
   return result;
 }
 
@@ -1052,5 +1058,10 @@ Operand AstFlow::evaluate(astnode_u_ptr &ctxt) {
   MYLOGGER_MSG(trace_function, cf._to_str(), SLOG_FUNC_INFO);
 
   (*ctxt)[CFSTATE] = cfstate; // set the process control flow state
+  if(cfstate==ControlFlow::ast_return_val){
+    auto &exp = node["exp"];
+    (*ctxt)[RET_VAL] = exp.evaluate(ctxt);
+    
+  }
   return cfstate;
 }

@@ -111,6 +111,7 @@ statement
   | case { $$ = move($1); }
   | if_then_else { $$ = move($1); }
   | AST_RETURN { $$ = std::make_unique<AstFlow>(ControlFlow::ast_return); }
+  | AST_RETURN exp_eval { $$ = std::make_unique<AstFlow>(ControlFlow::ast_return_val, move($2)); }
   ;
 
 comments

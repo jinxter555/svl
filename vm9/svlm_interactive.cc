@@ -187,6 +187,7 @@ void SvlmInteractive::load(const std::string &cfn) {
   }
 }
 void SvlmInteractive::reload(const std::string &cfn) {
+  MYLOGGER(trace_function , string("SvlmInteractive::reload(") + cfn + string(")") , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
   load(cfn);
 }
 
