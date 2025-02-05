@@ -30,7 +30,7 @@ end
 
 module Helper do
   def me(me_arg1) do
-    return 3.1415
+    return me_arg1
     print "in helper::me() "
     print me_arg1
     print "\n\n"
