@@ -133,6 +133,7 @@ enum class OperandType {
   svlm_lang_t,
   svlm_ast_ptr_t,
   svlm_ctxt_t,
+  svlm_dyn_load_t,
 };
 
 enum class ControlFlow {

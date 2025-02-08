@@ -56,6 +56,8 @@ Operand Operand::ToString::operator()(OperandType t) const {
   case OperandType::ast_while_t:  outstr ="ast_while_t"; break;
   case OperandType::ast_repeat_t:  outstr ="ast_repeat_t"; break;
   case OperandType::svlm_ast_ptr_t:  outstr ="svlm_ast_ptr_t"; break;
+  case OperandType::svlm_ctxt_t:  outstr ="context"; break;
+  case OperandType::svlm_dyn_load_t:  outstr ="dynamic loader"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
   //case OperandType::any_t:  outstr ="any_t"; break;
   default: outstr ="i have forgotten to add. type unknown"; break;

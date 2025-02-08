@@ -318,12 +318,13 @@ class SvlmBind : public AstExpr {
 public:
 };
 
-class Kernel : SvlmBind {
+class SvlmKernel : SvlmBind {
 public:
   Operand evaluate(astnode_u_ptr &) override;
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
   void print() const override;
-
+};
+class SvlmDynLoader: SvlmBind {
 };
