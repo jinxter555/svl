@@ -52,6 +52,9 @@ SvlmAst::SvlmAst(const OperandType&t) : Tree(t) {
     cerr << "can't add {" << CONTEXT_UNIV << " svlm_lang  }\n";
     exit(1);
   }
+
+  add_symfunc("Main", "eval", make_unique<AstList>(vec_str_t{"exp"}) );
+
 }
 Operand SvlmAst::to_str() const {
   return string("SvlmAst PTR");
@@ -143,7 +146,7 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
     //cout << "*nan_vptr: " << *nan_vptr << "\n";
 
     // sub_node could be FUNC, CLASS, VAR
-    auto &msub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
+    auto &sub_node = get_module_subnode(mod_name,  nan_vptr->_get_type());
 
     //cout << "msub_node: " << msub_node << "\n";
 
@@ -160,7 +163,7 @@ void SvlmAst::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
     //sub_node.add(sub_node_name, move(nan_vptr), true);
 
     //msub_node.add(sub_node_name, nan_vptr->clone(), true);
-    msub_node.add(sub_node_name, move(nan_vptr), true);
+    sub_node.add(sub_node_name, move(nan_vptr), true);
   }
   //cout << "\n\n";
 }
@@ -187,6 +190,9 @@ Operand& SvlmAst::get_module_subnode(const Operand& mod_name, const OperandType 
     break;
   case OperandType::ast_class_t:
     keys.push_back("class");
+    break;
+  case OperandType::ast_symfunc_t:
+    keys.push_back("symfunc");
     break;
   default:
     cerr << "unknown module subtype: " << Operand(t) << "! \n";
@@ -244,6 +250,41 @@ Operand SvlmAst::evaluate_prompt_line() {
   }
   return Lptr->evaluate(ctxt);
 }
+Operand SvlmAst::evaluate_prompt_line(astnode_u_ptr &ctxt) {
+  MYLOGGER(trace_function , "SvlmAst::evaluate_prompt_line(astnode_u_ptr &ctxt)" , string("SvlmAst::")  + string(__func__), SLOG_FUNC_INFO);
+  //cout <<"SvlmAst::evaluate_prompt_line()\n";
+  auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, "Prompt", "last", "code"}];
+  auto Lptr = l.get_list_ptr_nc();
+  //l.print(); cout << "\n";
+  if(Lptr==nullptr) {
+    cerr << "evaluate prompt line: prompt code is null!\n";
+    return nil;
+  }
+  if(ctxt==nullptr) {
+    cerr << "ctxt: get_process(0l) is nullptr!\n";
+    exit(1);
+  }
+  return Lptr->evaluate(ctxt);
+}
+
+Operand SvlmAst::eval(astnode_u_ptr &ctxt) {
+  //svlm_scanner.switch_streams(&input_buffer, &std::cerr);
+  //svlm_parser.parse();
+  auto &frame = get_current_frame(ctxt);
+  auto &lvars =  frame["lvars"];
+
+  auto exp_str = lvars["exp"]._to_str();
+
+
+  cout << "eval lvars: " <<  lvars << "\n";
+  cout << "eval exp: " <<  exp_str << "\n";
+
+  std::istringstream input_buffer(exp_str+"\n\n");
+  svlm_scanner_ptr->switch_streams(&input_buffer, &std::cerr);
+  svlm_parser_ptr->parse();
+
+  return nil;
+}
 
 // got to get kernel 0 process to bootstrap everything
 void SvlmAst::run_evaluate() {
@@ -279,6 +320,18 @@ void SvlmAst::run_evaluate() {
 */
 
 }
+
+bool SvlmAst::add_symfunc(const string& mod, const string& func_name , astnode_u_ptr pl) {
+  MYLOGGER(trace_function , string("SvlmAst::add_symfunc(") + mod + string(":") + func_name + string(")"), __func__, SLOG_FUNC_INFO)
+  auto &sub_node = get_module_subnode(mod, OperandType::ast_symfunc_t);
+
+  auto new_map = make_unique<AstMap>();
+  (*new_map)["proto_list"]= move(pl);
+
+  sub_node.add(func_name, move(new_map), true);
+  return true;
+}
+
 //----------------------------------------------------------------------- AstBinOp
 AstBinOp::AstBinOp(astnode_u_ptr l, astnode_u_ptr r, AstOpCode op) 
  : AstExpr(OperandType::ast_binop_t) {
@@ -524,11 +577,13 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   auto &callee_func = node["callee_func"];
 
 
-  if(callee_mod._get_type() == OperandType::nil_t)  {
+  // if(callee_mod._get_type() == OperandType::nil_t)  {
+  if(callee_mod.is_nil()){
     module_name = svlm_lang_ptr->get_current_module(ctxt);
   } else {
     module_name = callee_mod._to_str();
   }
+
 
   MYLOGGER_MSG(trace_function, module_name + ":" + callee_func._to_str(), SLOG_FUNC_INFO+1);
 
@@ -536,22 +591,45 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   //vector<string> keys_func = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str()};
   vector<string> keys_code = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "code"};
   vector<string> keys_proto = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "proto_list"};
+  vector<string> keys_proto_by_syms = {CONTEXT_UNIV, MOD, module_name,  "symfunc", callee_func._to_str(), "proto_list"};
 
   //cout << "keys_code: " ; for(auto k : keys_code) { cout << k << ", "; } cout << "\n";
   auto &code = root[keys_code];
   auto &proto_list = root[keys_proto];
 
+
+  // might need to check the symbol table from here
+  // look up mod:func in symbols
+  if(code.is_nil()) {
+    cerr << "function " <<  callee_func << " doesn't have code!\n";
+    if(callee_func._to_str() == "eval") {
+      auto &proto_list = root[keys_proto_by_syms];
+      node.add("proto_list", proto_list, true); // this is for function ?
+  //    svlm_lang_ptr->eval(ctxt);
+     // return nil;
+    }
+  } else {
+    node.add("proto_list", proto_list, true); // this is for function ?
+
+  }
+  
   //cout << "AstCaller::evaluate: proto_list: " <<  module_name + string(":") + callee_func._to_str() << ":  " <<  proto_list  << "\n";
   //cout << "AstCaller::evaluate:: code: " <<  code << "\n";
 
   node.add("callee_mod", Operand(module_name), true);
-  node.add("proto_list", proto_list, true);
 
   MYLOGGER_MSG(trace_function, string("proto_list: ") + proto_list._to_str(), SLOG_FUNC_INFO+1);
 
   svlm_lang_ptr->push_control_flow(ctxt);
   add_frame(ctxt);
-  auto result  = code.evaluate(ctxt);
+
+  Operand result;
+  if(code.is_nil()) {
+    svlm_lang_ptr->eval(ctxt);
+    result = svlm_lang_ptr->evaluate_prompt_line(ctxt);
+  } else 
+    result  = code.evaluate(ctxt);
+
 
   ControlFlow cfstate;
   cfstate = (*ctxt)[CFSTATE]._get_cf(); // current control flow state
@@ -579,6 +657,7 @@ string AstCaller::get_current_module(astnode_u_ptr& ctxt) {
   return m._to_str();
 }
 */
+//----------------------------------------------------------------------- AstMvar
 
 s_integer AstAssign::get_index_i(astnode_u_ptr &ctxt) {
   auto &idx_key =  node["idx_key"];
@@ -605,7 +684,7 @@ string AstAssign::get_index_s(astnode_u_ptr &ctxt) {
   return result.to_str()._to_str();
 }
 
-//----------------------------------------------------------------------- AstMvar
+//----------------------------------------------------------------------- 
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
   MYLOGGER(trace_function , "AstMvar::AstMvar(const string &v)" , __func__ , SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, string("var_name: ") + v, SLOG_FUNC_INFO)

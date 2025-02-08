@@ -17,6 +17,8 @@ SvlmInteractive::SvlmInteractive(const std::string& hf , const std::string&ps)
   MYLOGGER(trace_function , string("SvlmInteractive::SvlmInteractive()") , __func__, SLOG_FUNC_INFO);
 
   init_command_functions();
+  svlm_lang.svlm_scanner_ptr = &svlm_scanner; // set up scanner for self/recursive eval in ast
+  svlm_lang.svlm_parser_ptr = &svlm_parser;  // set up parser for self/recursive eval in ast
 
 
   vector<string> keys0 = {CONTEXT_UNIV, "bigbang"};

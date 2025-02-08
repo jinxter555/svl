@@ -108,6 +108,7 @@ enum class OperandType {
   ast_binop_t,
   ast_class_t,
   ast_func_t,
+  ast_symfunc_t,
   ast_block_t,
 
   ast_mvar_t, // module

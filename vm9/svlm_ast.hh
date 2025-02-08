@@ -15,12 +15,22 @@ public:
 
 };
 
+
+
+namespace vslast {
+  class SvlmScanner;
+  class SvlmParser ;
+};
+
+
 class SvlmAst : public Tree {
   friend class SvlmInteractive;
 protected:
 
   //Operand control_flow = ControlFlow::run;
   bool interactive=false;
+  vslast::SvlmScanner *svlm_scanner_ptr ;
+  vslast::SvlmParser *svlm_parser_ptr ;
 
 public:
   SvlmAst(const OperandType&t);
@@ -62,7 +72,12 @@ public:
   void print() const override {};
   void run_evaluate();
   Operand evaluate_prompt_line();
+  Operand evaluate_prompt_line(astnode_u_ptr& ctxt);
   //Operand evaluate(unique_ptr<Tree>&) override;
+
+  Operand eval(astnode_u_ptr &ctxt);
+
+  bool add_symfunc(const string& mod, const string& func_name , astnode_u_ptr pl);
 
 
 
@@ -119,12 +134,12 @@ public:
   OperandType _get_type() const override;
   void print() const override;
   //string get_current_module(astnode_u_ptr& ctxt) ; // get current module from frame only
-  string get_module() ; // if $module.var return module , if $var, return current_module
+//  string get_module() ; // if $module.var return module , if $var, return current_module
   Operand evaluate(astnode_u_ptr &) override;
   //astnode_u_ptr& get_frames(astnode_u_ptr& ctxt) ;
 
-  Operand& add_frame(unique_ptr<AstNode>& ctxt);
-  Operand& remove_frame(unique_ptr<AstNode>& ctxt);
+  Operand& add_frame(astnode_u_ptr& ctxt);
+  Operand& remove_frame(astnode_u_ptr& ctxt);
 
 
 };
@@ -291,4 +306,24 @@ public:
   Operand get_type() const override ;
   OperandType _get_type() const override;
   void print() const override;
+};
+
+
+//----------------------------------------------------------------------- SvlmBind
+// if func doesn't exist in module
+// look up symbols func. if it exists
+// assign new 
+
+class SvlmBind : public AstExpr {
+public:
+};
+
+class Kernel : SvlmBind {
+public:
+  Operand evaluate(astnode_u_ptr &) override;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+
 };
