@@ -28,6 +28,20 @@ public:
   ~SvlmDynLoader();
 
   template <typename Func>
-  Func loadFunction(const std::string& functionName);
+  Func* loadFunction(const std::string& functionName);
 
+};
+
+class FunctionRegistry {
+private:
+  SvlmDynLoader& loader;
+  unordered_map<string, void*> functions;
+public:
+  FunctionRegistry(SvlmDynLoader&);
+
+  template <typename Func>
+  void register_function(const string& function_name);
+
+  template <typename Func>
+  Func* get_function(const string& function_name);
 };

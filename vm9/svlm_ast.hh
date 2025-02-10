@@ -308,23 +308,3 @@ public:
   void print() const override;
 };
 
-
-//----------------------------------------------------------------------- SvlmBind
-// if func doesn't exist in module
-// look up symbols func. if it exists
-// assign new 
-
-class SvlmBind : public AstExpr {
-public:
-};
-
-class SvlmKernel : SvlmBind {
-public:
-  Operand evaluate(astnode_u_ptr &) override;
-  Operand to_str() const override;
-  Operand get_type() const override ;
-  OperandType _get_type() const override;
-  void print() const override;
-};
-class SvlmDynLoader: SvlmBind {
-};
