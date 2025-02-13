@@ -36,3 +36,11 @@ module Helper do
     print "\n\n"
   end
 end
+
+
+
+module Main do
+  def out() do
+    print "out\n"
+  end
+end

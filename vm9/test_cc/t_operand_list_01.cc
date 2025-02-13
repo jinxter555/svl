@@ -22,7 +22,9 @@ TEST_CASE("check operand list 1") {
   CHECK(f1._get_number() == Number(12.3450) );
 
 
-  Operand u_i1(make_unique<Operand>(555l));
+
+  astnode_u_ptr ptr = make_unique<Operand>(555l);
+  Operand u_i1(move(ptr));
   CHECK(u_i1._get_number() == 555l);
 
   //if(nil_operand == nil_operand) { cout << "nil operand=";}

@@ -17,11 +17,17 @@ TEST_CASE("check operand 1") {
   Operand s1(string("str1"));
   CHECK(s1._to_str() == "str1");
 
+  //auto ptr3 = Operand(make_unique<Operand>(5l));
+
   astnode_u_ptr ptr = make_unique<Operand>(555l);
   Operand u_i1(move(ptr));
-  Operand u_i2(make_unique<Operand>(555l));
+  astnode_u_ptr ptr2 = make_unique<Operand>(555l);
+  Operand u_i2(move(ptr2));
+
+
   CHECK(u_i1._get_number() == 555l);
   CHECK(u_i1 == u_i2);
+
 
   Operand v1=123l;
   Operand v2=v1.clone();

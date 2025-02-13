@@ -27,13 +27,13 @@ TEST_CASE("check operand value 1") {
   Operand s1(string("str1"));
   CHECK(s1._to_str() == "str1");
 
-  Operand u_i1(make_unique<Operand>(555l));
-  CHECK(u_i1._get_number() == 555l);
 
-  //Operand ptr1(make_unique<Operand>(123l));
-  Operand ptr1(make_unique<Operand>(
-    make_shared<Operand>( 123l)
-  ));
+  //astnode_s_ptr sptr = make_shared<Operand>( 123l);
+  astnode_s_ptr sptr = make_shared<Operand>( 123l);
+  astnode_u_ptr uptr = make_unique<Operand>(sptr );
+
+  Operand ptr1(move(uptr));
+
   auto &i1_pv =  ptr1.get_value();
   //cout << "i1_pv.gettype():" << i1_pv.get_type() << "\n";
   CHECK(i1_pv._get_number() == Number(123l));

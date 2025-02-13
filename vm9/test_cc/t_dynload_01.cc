@@ -8,11 +8,17 @@
 
 TEST_CASE("dynamic loader test 1") {
   SvlmDynLoader loader_math(LIBM_SO);
-  FunctionRegistry registry_math(loader_math);
+  ModuleRegistry registry_math(loader_math, "Math");
 
-  registry_math.register_function<double(double)>("sin");
+  registry_math.register_function<double(double)>("sin", nullptr);
   auto sin_function = registry_math.get_function<double(double)>("sin");
   double value = 0.5;
-  cout << sin_function(value) << "\n";
+  cout << "sin: " << sin_function(value) << "\n";
+
+  SvlmLibLoader trig;
+  trig.load_func(LIBM_SO, "cos");
+  auto cos_function = trig.get_function<double(double)>(LIBM_SO, "cos");
+  cout << "cos: " << cos_function(value) << "\n";
+
 
 }
