@@ -109,14 +109,3 @@ public:
   //bool operator==(const AstList& other) const { };
 
 };
-
-class AstExpr : public AstMap {
-protected:
-  OperandType type_;
-  AstMap &node=*(AstMap*)this;
-public:
-  AstExpr(OperandType t)  :  type_(t) {}
-  Operand get_type()  { return type_; }
-  OperandType _get_type()  { return type_; }
-//  virtual Operand evaluate(astnode_u_ptr&) =0;
-};

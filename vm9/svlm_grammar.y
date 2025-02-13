@@ -24,7 +24,10 @@
 %code requires { 
 #include "operand.hh"
 #include "operand_vars.hh"
+#include "ast_list.hh"
 #include "svlm_ast.hh"
+#include "ast.hh"
+
 
 namespace vslast {
   class SvlmScanner;

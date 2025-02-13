@@ -1,5 +1,5 @@
 #include "operand_vars.hh"
-#include "svlm_ast.hh"
+#include "ast.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"

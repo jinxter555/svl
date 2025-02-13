@@ -1,6 +1,7 @@
 #include <cassert>
 #include "operand.hh"
-#include "svlm_ast.hh"
+//#include "svlm_ast.hh"
+#include "ast.hh"
 
 #include <catch2/catch_all.hpp>
 

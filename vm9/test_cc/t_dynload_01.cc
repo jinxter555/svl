@@ -17,8 +17,13 @@ TEST_CASE("dynamic loader test 1") {
 
   SvlmLibLoader trig;
   trig.load_func(LIBM_SO, "cos");
+  trig.load_func(LIBM_SO, "tan");
   auto cos_function = trig.get_function<double(double)>(LIBM_SO, "cos");
+  auto tan_function = trig.get_function<double(double)>(LIBM_SO, "tan");
+  auto blah_function = trig.get_function<double(double)>(LIBM_SO, "blah");
   cout << "cos: " << cos_function(value) << "\n";
+  cout << "tan: " << tan_function(value) << "\n";
+  CHECK(blah_function==nullptr); //cout << "blah: " << blah_function(value) << "\n";
 
 
 }

@@ -49,13 +49,16 @@
  
 #include "operand.hh"
 #include "operand_vars.hh"
+#include "ast_list.hh"
 #include "svlm_ast.hh"
+#include "ast.hh"
+
 
 namespace vslast {
   class SvlmScanner;
 }
 
-#line 59 "svlm_parser.hh"
+#line 62 "svlm_parser.hh"
 
 
 # include <cstdlib> // std::abort
@@ -191,7 +194,7 @@ namespace vslast {
 
 #line 15 "svlm_grammar.y"
 namespace vslast {
-#line 195 "svlm_parser.hh"
+#line 198 "svlm_parser.hh"
 
 
 
@@ -398,32 +401,41 @@ namespace vslast {
       // print_exp
       // proto_list
       // proto
+      // tuple_arg_list
       // arg_list
       // arg
       // list
       // map
-      // kv_pair_list
       // tuple
+      // while_loop
+      // repeat_loop
+      // case
+      // case_match_list
+      // case_match
+      // if_then_else
       char dummy1[sizeof (astnode_u_ptr)];
 
       // statement_list
       char dummy2[sizeof (list_u_ptr)];
 
+      // kv_pair_list
+      char dummy3[sizeof (map_u_ptr)];
+
       // FLT
-      char dummy3[sizeof (s_float)];
+      char dummy4[sizeof (s_float)];
 
       // INT
-      char dummy4[sizeof (s_integer)];
+      char dummy5[sizeof (s_integer)];
 
       // IDENT_STR
       // STR
       // DQSTR
       // DOTSTR
       // map_key
-      char dummy5[sizeof (string)];
+      char dummy6[sizeof (string)];
 
       // kv_pair
-      char dummy6[sizeof (tuple<string, astnode_u_ptr>)];
+      char dummy7[sizeof (tuple<string, astnode_u_ptr>)];
     };
 
     /// The size of the largest semantic type.
@@ -633,15 +645,22 @@ namespace vslast {
         S_DOTSTR = 77,                           // DOTSTR
         S_proto_list = 78,                       // proto_list
         S_proto = 79,                            // proto
-        S_arg_list = 80,                         // arg_list
-        S_arg = 81,                              // arg
-        S_list = 82,                             // list
-        S_map = 83,                              // map
-        S_kv_pair_list = 84,                     // kv_pair_list
-        S_kv_pair = 85,                          // kv_pair
-        S_map_key = 86,                          // map_key
-        S_tuple = 87,                            // tuple
-        S_EOS = 88                               // EOS
+        S_tuple_arg_list = 80,                   // tuple_arg_list
+        S_arg_list = 81,                         // arg_list
+        S_arg = 82,                              // arg
+        S_list = 83,                             // list
+        S_map = 84,                              // map
+        S_kv_pair_list = 85,                     // kv_pair_list
+        S_kv_pair = 86,                          // kv_pair
+        S_map_key = 87,                          // map_key
+        S_tuple = 88,                            // tuple
+        S_while_loop = 89,                       // while_loop
+        S_repeat_loop = 90,                      // repeat_loop
+        S_case = 91,                             // case
+        S_case_match_list = 92,                  // case_match_list
+        S_case_match = 93,                       // case_match
+        S_if_then_else = 94,                     // if_then_else
+        S_EOS = 95                               // EOS
       };
     };
 
@@ -689,17 +708,27 @@ namespace vslast {
       case symbol_kind::S_print_exp: // print_exp
       case symbol_kind::S_proto_list: // proto_list
       case symbol_kind::S_proto: // proto
+      case symbol_kind::S_tuple_arg_list: // tuple_arg_list
       case symbol_kind::S_arg_list: // arg_list
       case symbol_kind::S_arg: // arg
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
-      case symbol_kind::S_kv_pair_list: // kv_pair_list
       case symbol_kind::S_tuple: // tuple
+      case symbol_kind::S_while_loop: // while_loop
+      case symbol_kind::S_repeat_loop: // repeat_loop
+      case symbol_kind::S_case: // case
+      case symbol_kind::S_case_match_list: // case_match_list
+      case symbol_kind::S_case_match: // case_match
+      case symbol_kind::S_if_then_else: // if_then_else
         value.move< astnode_u_ptr > (std::move (that.value));
         break;
 
       case symbol_kind::S_statement_list: // statement_list
         value.move< list_u_ptr > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_kv_pair_list: // kv_pair_list
+        value.move< map_u_ptr > (std::move (that.value));
         break;
 
       case symbol_kind::S_FLT: // FLT
@@ -767,6 +796,20 @@ namespace vslast {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const list_u_ptr& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, map_u_ptr&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const map_u_ptr& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -864,17 +907,27 @@ switch (yykind)
       case symbol_kind::S_print_exp: // print_exp
       case symbol_kind::S_proto_list: // proto_list
       case symbol_kind::S_proto: // proto
+      case symbol_kind::S_tuple_arg_list: // tuple_arg_list
       case symbol_kind::S_arg_list: // arg_list
       case symbol_kind::S_arg: // arg
       case symbol_kind::S_list: // list
       case symbol_kind::S_map: // map
-      case symbol_kind::S_kv_pair_list: // kv_pair_list
       case symbol_kind::S_tuple: // tuple
+      case symbol_kind::S_while_loop: // while_loop
+      case symbol_kind::S_repeat_loop: // repeat_loop
+      case symbol_kind::S_case: // case
+      case symbol_kind::S_case_match_list: // case_match_list
+      case symbol_kind::S_case_match: // case_match
+      case symbol_kind::S_if_then_else: // if_then_else
         value.template destroy< astnode_u_ptr > ();
         break;
 
       case symbol_kind::S_statement_list: // statement_list
         value.template destroy< list_u_ptr > ();
+        break;
+
+      case symbol_kind::S_kv_pair_list: // kv_pair_list
+        value.template destroy< map_u_ptr > ();
         break;
 
       case symbol_kind::S_FLT: // FLT
@@ -2058,7 +2111,7 @@ switch (yykind)
 
 
     /// Stored state numbers (used for stacks).
-    typedef signed char state_type;
+    typedef unsigned char state_type;
 
     /// Compute post-reduction state.
     /// \param yystate   the current state
@@ -2090,7 +2143,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -2098,17 +2151,17 @@ switch (yykind)
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const signed char yypgoto_[];
+    static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
-    static const signed char yydefgoto_[];
+    static const unsigned char yydefgoto_[];
 
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const signed char yytable_[];
+    static const short yytable_[];
 
-    static const signed char yycheck_[];
+    static const short yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
@@ -2350,9 +2403,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 177,     ///< Last index in yytable_.
-      yynnts_ = 24,  ///< Number of nonterminal symbols.
-      yyfinal_ = 44 ///< Termination state number.
+      yylast_ = 460,     ///< Last index in yytable_.
+      yynnts_ = 31,  ///< Number of nonterminal symbols.
+      yyfinal_ = 60 ///< Termination state number.
     };
 
 
@@ -2365,7 +2418,7 @@ switch (yykind)
 
 #line 15 "svlm_grammar.y"
 } // vslast
-#line 2369 "svlm_parser.hh"
+#line 2422 "svlm_parser.hh"
 
 
 
