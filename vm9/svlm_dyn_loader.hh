@@ -1,14 +1,14 @@
 #include <dlfcn.h>
 #include <gnu/lib-names.h> 
 //#include "ast_map.hh"
-#include "svlm_ast.hh"
+#include "svlm_lang.hh"
 //----------------------------------------------------------------------- SvlmBind
 // if func doesn't exist in module
 // look up symbols func. if it exists
 // assign new 
 
 //class SvlmBind : public AstExpr {
-class SvlmBind : public SvlmAst {
+class SvlmBind : public SvlmLang {
 public:
   SvlmBind(OperandType);
 };

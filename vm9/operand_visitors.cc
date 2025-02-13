@@ -21,7 +21,7 @@ OperandType Operand::Type::operator()(const string& v) const { return OperandTyp
 OperandType Operand::Type::operator()(const astnode_u_ptr& v) const { return OperandType::uptr_t;}
 OperandType Operand::Type::operator()(const astnode_s_ptr& v) const { return OperandType::sptr_t;}
 OperandType Operand::Type::operator()(const astnode_ptr& v) const { return OperandType::ptr_t;}
-OperandType Operand::Type::operator()(const svlm_ast_ptr& v) const { return OperandType::svlm_ast_ptr_t;}
+OperandType Operand::Type::operator()(const svlm_lang_ptr& v) const { return OperandType::svlm_lang_ptr_t;}
 
 //-----------------------------------------------------------------------  OpCode
 Operand     Operand::get_opcode()     const { return _get_opcode(); }

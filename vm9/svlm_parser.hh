@@ -50,7 +50,7 @@
 #include "operand.hh"
 #include "operand_vars.hh"
 #include "ast_list.hh"
-#include "svlm_ast.hh"
+#include "svlm_lang.hh"
 #include "ast.hh"
 
 
@@ -1076,7 +1076,7 @@ switch (yykind)
     };
 
     /// Build a parser object.
-    SvlmParser (SvlmScanner* scanner_yyarg, SvlmAst* svlm_lang_yyarg);
+    SvlmParser (SvlmScanner* scanner_yyarg, SvlmLang* svlm_lang_yyarg);
     virtual ~SvlmParser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -2411,7 +2411,7 @@ switch (yykind)
 
     // User arguments.
     SvlmScanner* scanner;
-    SvlmAst* svlm_lang;
+    SvlmLang* svlm_lang;
 
   };
 

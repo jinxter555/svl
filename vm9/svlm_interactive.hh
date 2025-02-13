@@ -16,7 +16,7 @@
 
 class SvlmInteractive : public LangPrompt {
 private:
-  SvlmAst svlm_lang; // static or not static to be determined
+  SvlmLang svlm_lang; // static or not static to be determined
   //SvlmAst slc;
   vslast::SvlmScanner svlm_scanner { std::cin, std::cerr };
   vslast::SvlmParser svlm_parser { &svlm_scanner , &svlm_lang };

@@ -131,7 +131,7 @@ enum class OperandType {
 
   except_t,
   svlm_lang_t,
-  svlm_ast_ptr_t,
+  svlm_lang_ptr_t,
   svlm_ctxt_t,
   svlm_dyn_load_t,
 };
@@ -166,7 +166,7 @@ class Number;
 
 class AstList;
 class AstMap;
-class SvlmAst;
+class SvlmLang;
 
 using map_t = map<string, Operand>; 
 using list_t = vector<Operand>; 
@@ -174,7 +174,7 @@ using list_u_ptr = unique_ptr<AstList>;
 using map_u_ptr = unique_ptr<AstMap>;
 using vec_num_t = vector<Number>;
 using vec_str_t = vector<string>;
-using svlm_ast_ptr = SvlmAst *;
+using svlm_lang_ptr = SvlmLang *;
 
 class AstNode;
 using astnode_u_ptr = unique_ptr<AstNode>;
@@ -192,7 +192,7 @@ using operand_variant_t = variant
 , astnode_u_ptr
 , astnode_s_ptr
 , astnode_ptr
-, svlm_ast_ptr
+, svlm_lang_ptr
 //, operand_u_ptr , operand_s_ptr , operand_ptr
 >;
 //--------------------------------------------------------- 

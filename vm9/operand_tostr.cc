@@ -1,5 +1,5 @@
 #include "operand.hh"
-#include "svlm_ast.hh"
+#include "svlm_lang.hh"
 
 #define DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -55,7 +55,7 @@ Operand Operand::ToString::operator()(OperandType t) const {
   case OperandType::ast_case_when_t:  outstr ="ast_case_when_t"; break;
   case OperandType::ast_while_t:  outstr ="ast_while_t"; break;
   case OperandType::ast_repeat_t:  outstr ="ast_repeat_t"; break;
-  case OperandType::svlm_ast_ptr_t:  outstr ="svlm_ast_ptr_t"; break;
+  case OperandType::svlm_lang_ptr_t:  outstr ="svlm_ast_ptr_t"; break;
   case OperandType::svlm_ctxt_t:  outstr ="context"; break;
   case OperandType::svlm_dyn_load_t:  outstr ="dynamic loader"; break;
   case OperandType::except_t:  outstr ="except_t"; break;
@@ -163,8 +163,8 @@ Operand Operand::ToString::operator()(const astnode_u_ptr &vptr) const {
   if(vptr==nullptr) return "nil";
   return vptr->to_str(); 
 }
-//Operand Operand::ToString::operator()(const svlm_ast_ptr &vptr) const { return vptr->to_str(); }
-Operand Operand::ToString::operator()(const svlm_ast_ptr &vptr) const { 
+//Operand Operand::ToString::operator()(const svlm_lang_ptr &vptr) const { return vptr->to_str(); }
+Operand Operand::ToString::operator()(const svlm_lang_ptr &vptr) const { 
   if(vptr==nullptr) return "nil";
   return vptr->to_str(); 
   //return "svlm_ast_ptr"; 

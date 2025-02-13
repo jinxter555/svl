@@ -155,7 +155,7 @@ namespace vslast {
 #line 156 "svlm_parser.cc"
 
   /// Build a parser object.
-  SvlmParser::SvlmParser (SvlmScanner* scanner_yyarg, SvlmAst* svlm_lang_yyarg)
+  SvlmParser::SvlmParser (SvlmScanner* scanner_yyarg, SvlmLang* svlm_lang_yyarg)
 #if YYDEBUG
     : yydebug_ (false),
       yycdebug_ (&std::cerr),

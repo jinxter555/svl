@@ -37,7 +37,7 @@ public:
   Operand(const vec_str_t&);
   Operand(const operand_variant_t& ) ;
   Operand(const astnode_ptr);
-  Operand(const svlm_ast_ptr) ;
+  Operand(const svlm_lang_ptr) ;
 
   bool add(astnode_u_ptr &&) ;  // for list
   bool add(const operand_variant_t&) ;  // for list
@@ -84,7 +84,7 @@ public:
   astnode_ptr _vrptr() const override; 
   astnode_ptr get_raw_ptr() const ;
 
-  svlm_ast_ptr get_svlm_ptr();
+  svlm_lang_ptr get_svlm_ptr();
 
 
   const astnode_u_ptr& get_u_ptr() const override;
@@ -209,7 +209,7 @@ OperandType operator()(const OperandErrorCode& v) const ;
 OperandType operator()(const astnode_u_ptr& v) const  ;
 OperandType operator()(const astnode_s_ptr& v) const  ;
 OperandType operator()(const astnode_ptr& v) const  ;
-OperandType operator()(const svlm_ast_ptr&) const;
+OperandType operator()(const svlm_lang_ptr&) const;
 };
 
 //------------------------------------
@@ -230,7 +230,7 @@ struct ToString {
   Operand operator()(OperandStatusCode status) const;
   Operand operator()(ControlFlow cf) const;
   Operand operator()(AstOpCode t_op) const;
-//  Operand operator()(const svlm_ast_ptr&) const ;
+//  Operand operator()(const svlm_lang_ptr&) const ;
   //Operand operator()(const operand_s_ptr&) const;
   //Operand operator()(const operand_u_ptr&) const;
   //Operand operator()(const operand_ptr&) const;
@@ -239,7 +239,7 @@ struct ToString {
   Operand operator()(const astnode_u_ptr&) const;
   Operand operator()(const astnode_s_ptr&) const;
   Operand operator()(const astnode_ptr&) const;
-  Operand operator()(const svlm_ast_ptr&) const;
+  Operand operator()(const svlm_lang_ptr&) const;
 
 
   //Operand operator()(const map_t &) const;

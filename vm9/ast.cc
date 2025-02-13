@@ -1,7 +1,7 @@
 #include "lang.hh"
 #include "ast.hh"
 
-#include "svlm_ast.hh"
+#include "svlm_lang.hh"
 #include "my_helpers.hh"
 #include "operand_vars.hh"
 #include "svlm_interactive.hh"

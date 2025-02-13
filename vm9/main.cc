@@ -8,7 +8,7 @@
 #include "commandline.hh"
 
 
-#include "svlm_ast.hh"
+#include "svlm_lang.hh"
 #include "svlm_interactive.hh"
 
 

@@ -15,7 +15,7 @@
 %define api.namespace {vslast}
 %define api.value.type variant
 %parse-param {SvlmScanner* scanner}
-%parse-param {SvlmAst* svlm_lang}
+%parse-param {SvlmLang* svlm_lang}
 
 
  
@@ -25,7 +25,7 @@
 #include "operand.hh"
 #include "operand_vars.hh"
 #include "ast_list.hh"
-#include "svlm_ast.hh"
+#include "svlm_lang.hh"
 #include "ast.hh"
 
 

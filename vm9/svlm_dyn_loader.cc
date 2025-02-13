@@ -6,7 +6,7 @@
 
 
 
-SvlmBind::SvlmBind(OperandType t) :SvlmAst(t) {
+SvlmBind::SvlmBind(OperandType t) :SvlmLang(t) {
 }
 //----------------------------------------------------------------------- Svml Dynamic Loader
 

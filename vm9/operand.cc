@@ -45,7 +45,7 @@ Operand::Operand(const ControlFlow &v )       : AstNode(OperandType::control_flo
 Operand::Operand(astnode_u_ptr&&v )           : AstNode(OperandType::uptr_t), value_(move(v)) {}
 Operand::Operand(const astnode_s_ptr&v )      : AstNode(OperandType::sptr_t), value_(v) {}
 Operand::Operand(const astnode_ptr  v)      : AstNode(OperandType::ptr_t), value_(v) {}
-Operand::Operand(const svlm_ast_ptr ptr)          : AstNode(OperandType::svlm_ast_ptr_t) , value_(ptr) {}
+Operand::Operand(const svlm_lang_ptr ptr)          : AstNode(OperandType::svlm_lang_ptr_t) , value_(ptr) {}
 
 
 //Operand::Operand(const astnode_u_ptr&v )      : AstNode(OperandType::ast_uptr_t), value_(move(v->clone())) {}
@@ -295,9 +295,9 @@ AstMap* Operand::get_map_ptr_nc() {
 }
 
 //------------------------------------
-svlm_ast_ptr Operand::get_svlm_ptr() {
-   if (holds_alternative<svlm_ast_ptr>(value_)) {
-    return get<svlm_ast_ptr>(value_);
+svlm_lang_ptr Operand::get_svlm_ptr() {
+   if (holds_alternative<svlm_lang_ptr>(value_)) {
+    return get<svlm_lang_ptr>(value_);
    }
    return nullptr;
 }
