@@ -1,5 +1,6 @@
 #pragma once
 #include "ast_map.hh"
+#include "svlm_dyn_loader.hh"
 
 class Tree : public Primordial<Tree>{
   friend class SvlmAst;
@@ -22,11 +23,10 @@ class SvlmLang : public Tree {
   friend class SvlmInteractive;
 protected:
 
-  //Operand control_flow = ControlFlow::run;
   bool interactive=false;
   vslast::SvlmScanner *svlm_scanner_ptr ;
   vslast::SvlmParser *svlm_parser_ptr ;
-  //SvlmLibLoader libs;
+  SvlmLibLoader libs;
 
 public:
   SvlmLang(const OperandType&t);
@@ -76,7 +76,40 @@ public:
 
   bool add_symfunc(const string& mod, const string& func_name , astnode_u_ptr pl);
 
-
-
 };  
 
+
+class ModuleRegistry {
+private:
+  SvlmDynLoader& loader;
+  unordered_map<string, void*> functions;
+  string module_name;
+public:
+  ModuleRegistry(SvlmDynLoader&, const string &);
+
+  template <typename Func>
+  void register_function(const string& function_name, astnode_u_ptr protol_list);
+
+  template <typename Func>
+  Func* get_function(const string& function_name);
+};
+
+class MathModuleBind : public ModuleRegistry {
+  void dispatch(const string &func_name);
+
+};
+
+//class SvlmBind : public AstExpr {
+class SvlmBind : public SvlmLang {
+public:
+  SvlmBind(OperandType);
+};
+
+class SvlmKernel : public SvlmBind {
+public:
+  //Operand evaluate(astnode_u_ptr &) override;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+};
