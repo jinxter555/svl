@@ -1,8 +1,14 @@
-
 #include "svlm_lang.hh"
+#include "ast_list.hh"
+#include "operand_vars.hh"
 
-//----------------------------------------------------------------------- Svml Function Register
-ModuleRegistry::ModuleRegistry(SvlmDynLoader &l, const string &mn) : loader(l), module_name(mn) {}
+//----------------------------------------------------------------------- Svml Bind
+SvlmBind::SvlmBind(OperandType t) : SvlmLang(t) {
+}
+//----------------------------------------------------------------------- Module Registery
+ModuleRegistry::ModuleRegistry(SvlmLang *ptr)  
+: AstExpr(OperandType::ast_bind_t)
+, svlm_lang_ptr(ptr) {}
 
 template<typename Func>
 void ModuleRegistry::register_function(const string &function_name, astnode_u_ptr proto_list){
@@ -19,6 +25,29 @@ Func* ModuleRegistry::get_function(const string &function_name){
   return (Func*) it->second;
 }
 
-//----------------------------------------------------------------------- Svml Bind
-SvlmBind::SvlmBind(OperandType t) :SvlmLang(t) {
+
+//----------------------------------------------------------------------- Math Module 
+MathModule::MathModule(SvlmLang*l) : ModuleRegistry(l) {
+  setup_syms();
+
+}
+void MathModule::setup_syms() {
+  svlm_lang_ptr->add_symfunc("Math", "sin", make_unique<AstList>(vec_str_t{"value"}) );
+  svlm_lang_ptr->add_symfunc("Math", "cos", make_unique<AstList>(vec_str_t{"value"}) );
+}
+Operand  MathModule::to_str() const {
+  return "MathModule";
+}
+Operand MathModule::get_type() const {
+  return OperandType::ast_bind_t;
+}
+OperandType MathModule::_get_type() const {
+  return OperandType::ast_bind_t;
+
+}
+void MathModule::print() const {
+  cout << to_str();
+}
+Operand MathModule::evaluate(astnode_u_ptr &) {
+  return nil;
 }

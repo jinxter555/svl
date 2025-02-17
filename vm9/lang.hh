@@ -115,6 +115,7 @@ enum class OperandType {
   ast_lvar_t, // local function
   ast_ovar_t, // object vars
   ast_bvar_t, // block vars
+  ast_bind_t, // block vars
 
   ast_print_t,
   ast_caller_t,

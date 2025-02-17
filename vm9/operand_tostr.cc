@@ -45,6 +45,7 @@ Operand Operand::ToString::operator()(OperandType t) const {
   case OperandType::ast_mvar_t:  outstr ="ast_mvar_t"; break;
   case OperandType::ast_lvar_t:  outstr ="ast_lvar_t"; break;
   case OperandType::ast_ovar_t:  outstr ="ast_ovar_t"; break;
+  case OperandType::ast_bind_t:  outstr ="ast_bind_t"; break;
   case OperandType::ast_print_t:  outstr ="ast_print_t"; break;
   case OperandType::ast_caller_t:  outstr ="ast_caller_t"; break;
   case OperandType::ast_tuple_t:  outstr ="ast_tuple_t"; break;

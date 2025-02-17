@@ -1,5 +1,6 @@
 #pragma once
 #include "ast_map.hh"
+#include "ast.hh"
 #include "svlm_dyn_loader.hh"
 
 class Tree : public Primordial<Tree>{
@@ -18,6 +19,24 @@ namespace vslast {
   class SvlmParser ;
 };
 
+//----------------------------------------------------------------------- Module Registry
+class SvlmLang ;
+class ModuleRegistry : public AstExpr {
+protected:
+  string module_name; // svlm module nmae
+  SvlmLang *svlm_lang_ptr;
+public:
+  ModuleRegistry(SvlmLang*);
+
+  template <typename Func>
+  void register_function(const string& function_name, astnode_u_ptr protol_list);
+
+  template <typename Func>
+  Func* get_function(const string& function_name);
+};
+
+
+//----------------------------------------------------------------------- Svlm Lang
 
 class SvlmLang : public Tree {
   friend class SvlmInteractive;
@@ -26,8 +45,8 @@ protected:
   bool interactive=false;
   vslast::SvlmScanner *svlm_scanner_ptr ;
   vslast::SvlmParser *svlm_parser_ptr ;
-  SvlmLibLoader libs;
-
+  SvlmLibLoader dl_libs;
+  unordered_map<string, unique_ptr<ModuleRegistry>> dyn_mods;
 public:
   SvlmLang(const OperandType&t);
 
@@ -76,27 +95,33 @@ public:
 
   bool add_symfunc(const string& mod, const string& func_name , astnode_u_ptr pl);
 
+  bool dyn_load(const string& l, const string& f);
+
+  template <typename Func> 
+  Func* dyn_get_func(const string& l, const string& f);
+
 };  
 
 
-class ModuleRegistry {
-private:
-  SvlmDynLoader& loader;
-  unordered_map<string, void*> functions;
-  string module_name;
-public:
-  ModuleRegistry(SvlmDynLoader&, const string &);
 
-  template <typename Func>
-  void register_function(const string& function_name, astnode_u_ptr protol_list);
 
-  template <typename Func>
-  Func* get_function(const string& function_name);
-};
 
-class MathModuleBind : public ModuleRegistry {
+
+class MathModule : public ModuleRegistry {
+  MathModule(SvlmLang*);
+
   void dispatch(const string &func_name);
+  void attach();
 
+  void setup_syms();
+  void sin();
+  void cos();
+
+  Operand evaluate(astnode_u_ptr &) override;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
 };
 
 //class SvlmBind : public AstExpr {

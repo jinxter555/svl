@@ -335,3 +335,12 @@ bool SvlmLang::add_symfunc(const string& mod, const string& func_name , astnode_
   sub_node.add(func_name, move(new_map), true);
   return true;
 }
+
+bool SvlmLang::dyn_load(const string& l, const string& f) {
+  return dl_libs.load_func(l, f);
+}
+
+template <typename Func> 
+Func* SvlmLang::dyn_get_func(const string& l, const string& f) {
+  return dl_libs.get_function<Func>(l, f);
+}
