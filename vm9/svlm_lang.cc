@@ -59,6 +59,10 @@ SvlmLang::SvlmLang(const OperandType&t) : Tree(t) {
 
   add_symfunc("Main", "eval", make_unique<AstList>(vec_str_t{"exp"}) );
 
+  //=== create module registers
+
+
+
 }
 Operand SvlmLang::to_str() const {
   return string("SvlmLang PTR");
@@ -336,6 +340,17 @@ bool SvlmLang::add_symfunc(const string& mod, const string& func_name , astnode_
   return true;
 }
 
+bool SvlmLang::add_symfunc(const string& mod, const string& func_name , astnode_u_ptr pl, shared_ptr<ModuleRegistry> mr ) {
+  MYLOGGER(trace_function , string("SvlmLang::add_symfunc(") + mod + string(":") + func_name + string(")"), __func__, SLOG_FUNC_INFO)
+  auto &sub_node = get_module_subnode(mod, OperandType::ast_symfunc_t);
+
+  auto new_map = make_unique<AstMap>();
+  (*new_map)["code"] =(astnode_s_ptr) mr;
+
+  sub_node.add(func_name, move(new_map), true);
+  return true;
+}
+
 bool SvlmLang::dyn_load(const string& l, const string& f) {
   return dl_libs.load_func(l, f);
 }
@@ -343,4 +358,11 @@ bool SvlmLang::dyn_load(const string& l, const string& f) {
 template <typename Func> 
 Func* SvlmLang::dyn_get_func(const string& l, const string& f) {
   return dl_libs.get_function<Func>(l, f);
+}
+
+//bool SvlmLang::bind_module(const string& mod, const string&f, ModuleRegistry *mr_ptr) {
+bool SvlmLang::bind_module(shared_ptr<ModuleRegistry> mr_ptr) {
+  mr_ptr->setup();
+  return true;
+
 }

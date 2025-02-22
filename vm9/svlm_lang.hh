@@ -24,15 +24,22 @@ class SvlmLang ;
 class ModuleRegistry : public AstExpr {
 protected:
   string module_name; // svlm module nmae
-  SvlmLang *svlm_lang_ptr;
+  //SvlmLang *svlm_lang_ptr=nullptr;
+  SvlmLang &svlm_lang;
 public:
-  ModuleRegistry(SvlmLang*);
+  ModuleRegistry(SvlmLang&);
+ // ModuleRegistry();
+  //virtual void setup(SvlmLang*)=0;
+  virtual void setup()=0;
+  virtual string mod_name() const=0;
+  //virtual void bind_sthis(shared_ptr<ModuleRegistry>) = 0;
 
+/*
   template <typename Func>
   void register_function(const string& function_name, astnode_u_ptr protol_list);
-
   template <typename Func>
   Func* get_function(const string& function_name);
+*/
 };
 
 
@@ -94,8 +101,12 @@ public:
   Operand eval(astnode_u_ptr &ctxt);
 
   bool add_symfunc(const string& mod, const string& func_name , astnode_u_ptr pl);
+  bool add_symfunc(const string& mod, const string& func_name , astnode_u_ptr pl, shared_ptr<ModuleRegistry>mr );
 
   bool dyn_load(const string& l, const string& f);
+
+  //bool bind_module(const string& m, const string&f,  ModuleRegistry *mr); // bind module registry derive class to
+  bool bind_module(shared_ptr<ModuleRegistry> mr); // bind module registry derive class to
 
   template <typename Func> 
   Func* dyn_get_func(const string& l, const string& f);
@@ -108,12 +119,16 @@ public:
 
 
 class MathModule : public ModuleRegistry {
-  MathModule(SvlmLang*);
+private:
+  shared_ptr<MathModule> sthis;
+public:
+  MathModule(SvlmLang &sl);
 
   void dispatch(const string &func_name);
   void attach();
 
-  void setup_syms();
+  //void setup(SvlmLang*) override;
+  void setup() override;
   void sin();
   void cos();
 
@@ -122,6 +137,8 @@ class MathModule : public ModuleRegistry {
   Operand get_type() const override ;
   OperandType _get_type() const override;
   void print() const override;
+  string mod_name() const override;
+  void bind_sthis(shared_ptr<MathModule>);
 };
 
 //class SvlmBind : public AstExpr {

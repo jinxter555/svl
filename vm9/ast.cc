@@ -288,6 +288,7 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
     cerr << "function " <<  callee_func << " doesn't have code!\n";
     if(callee_func._to_str() == "eval") {
       auto &proto_list = root[keys_proto_by_syms];
+      // need to get code from ModuleRegistry
       node.add("proto_list", proto_list, true); // this is for function ?
   //    svlm_lang_ptr->eval(ctxt);
      // return nil;

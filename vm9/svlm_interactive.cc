@@ -36,6 +36,10 @@ SvlmInteractive::SvlmInteractive(const std::string& hf , const std::string&ps)
   svlm_lang.root.add(keys1,  123l, true);
   svlm_lang.root.add(keys2,  456l, true);
   svlm_lang.root.add(keys3,  "somestrval", true);
+
+  shared_ptr<MathModule> math = make_shared<MathModule>(svlm_lang);
+  math->bind_sthis(math);
+  svlm_lang.bind_module(math);
   
 };
 
