@@ -345,6 +345,7 @@ bool SvlmLang::add_symfunc(const string& mod, const string& func_name , astnode_
   auto &sub_node = get_module_subnode(mod, OperandType::ast_symfunc_t);
 
   auto new_map = make_unique<AstMap>();
+  (*new_map)["proto_list"]= move(pl);
   (*new_map)["code"] =(astnode_s_ptr) mr;
 
   sub_node.add(func_name, move(new_map), true);
