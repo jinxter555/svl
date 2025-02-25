@@ -40,6 +40,10 @@ SvlmInteractive::SvlmInteractive(const std::string& hf , const std::string&ps)
   shared_ptr<MathModule> math = make_shared<MathModule>(svlm_lang);
   math->bind_sthis(math);
   svlm_lang.bind_module(math);
+
+  shared_ptr<KernelModule> kernel= make_shared<KernelModule>(svlm_lang);
+  kernel->bind_sthis(kernel);
+  svlm_lang.bind_module(kernel);
   
 };
 

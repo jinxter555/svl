@@ -47,6 +47,7 @@ public:
 
 class SvlmLang : public Tree {
   friend class SvlmInteractive;
+  friend class KernelModule;
 protected:
 
   bool interactive=false;
@@ -141,15 +142,18 @@ public:
   void bind_sthis(shared_ptr<MathModule>);
 };
 
-//class SvlmBind : public AstExpr {
-class SvlmBind : public SvlmLang {
-public:
-  SvlmBind(OperandType);
-};
 
-class SvlmKernel : public SvlmBind {
+class KernelModule : public ModuleRegistry {
+private:
+  shared_ptr<KernelModule> sthis;
 public:
-  //Operand evaluate(astnode_u_ptr &) override;
+  KernelModule(SvlmLang &sl);
+  string mod_name() const override;
+  void bind_sthis(shared_ptr<KernelModule>);
+  void setup() override;
+
+  Operand evaluate(astnode_u_ptr &) override;
+  Operand eval(astnode_u_ptr &ctxt) ;
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;

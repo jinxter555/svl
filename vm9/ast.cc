@@ -247,6 +247,7 @@ Operand AstCaller::to_str() const {
 void AstCaller::print() const {
   cout << "AstCaller Print: " << to_str();
 }
+
 Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   MYLOGGER(trace_function , "AstCaller::evaluate(astnode_u_ptr& ctxt)" , __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("ctxt: ") + AstPtr2Str(ctxt), SLOG_FUNC_INFO+1)
@@ -276,6 +277,7 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   vector<string> keys_code = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "code"};
   vector<string> keys_proto = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "proto_list"};
   vector<string> keys_proto_by_syms = {CONTEXT_UNIV, MOD, module_name,  "symfunc", callee_func._to_str(), "proto_list"};
+  vector<string> keys_code_by_syms = {CONTEXT_UNIV, MOD, module_name,  "symfunc", callee_func._to_str(), "code"};
 
   //cout << "keys_code: " ; for(auto k : keys_code) { cout << k << ", "; } cout << "\n";
   auto &code = root[keys_code];
@@ -285,22 +287,25 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   // might need to check the symbol table from here
   // look up mod:func in symbols
   if(code.is_nil()) {
-    cerr << "function " <<  callee_func << " doesn't have code!\n";
-    if(callee_func._to_str() == "eval") {
-      auto &proto_list = root[keys_proto_by_syms];
-      // need to get code from ModuleRegistry
-      node.add("proto_list", proto_list, true); // this is for function ?
-  //    svlm_lang_ptr->eval(ctxt);
-     // return nil;
-    }
-  } else {
-    node.add("proto_list", proto_list, true); // this is for function ?
+    auto &code_by_syms = root[keys_code_by_syms];
 
-  }
+    if(code_by_syms.is_nil()){
+      cerr << "function " <<  callee_func << " not found and doesn't have code!\n";
+      return nil;
+    }
+    // call symfunc using module registry function 
+    auto &proto_list = root[keys_proto_by_syms];
+    node.add("proto_list", proto_list, true); // this is for function ?
+    add_frame(ctxt);
+    return code_by_syms.evaluate(ctxt);
+
+  } 
+
   
   //cout << "AstCaller::evaluate: proto_list: " <<  module_name + string(":") + callee_func._to_str() << ":  " <<  proto_list  << "\n";
   //cout << "AstCaller::evaluate:: code: " <<  code << "\n";
 
+  node.add("proto_list", proto_list, true); // this is for function ?
   node.add("callee_mod", Operand(module_name), true);
 
   MYLOGGER_MSG(trace_function, string("proto_list: ") + proto_list._to_str(), SLOG_FUNC_INFO+1);
@@ -309,11 +314,7 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
   add_frame(ctxt);
 
   Operand result;
-  if(code.is_nil()) {
-    svlm_lang_ptr->eval(ctxt);
-    result = svlm_lang_ptr->evaluate_prompt_line(ctxt);
-  } else 
-    result  = code.evaluate(ctxt);
+  result  = code.evaluate(ctxt);
 
 
   ControlFlow cfstate;

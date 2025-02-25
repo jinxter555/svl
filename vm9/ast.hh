@@ -66,10 +66,12 @@ public:
   //string get_current_module(astnode_u_ptr& ctxt) ; // get current module from frame only
 //  string get_module() ; // if $module.var return module , if $var, return current_module
   Operand evaluate(astnode_u_ptr &) override;
+
   //astnode_u_ptr& get_frames(astnode_u_ptr& ctxt) ;
 
   Operand& add_frame(astnode_u_ptr& ctxt);
   Operand& remove_frame(astnode_u_ptr& ctxt);
+
 
 
 };
