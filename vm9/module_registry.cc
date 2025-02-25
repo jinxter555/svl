@@ -57,6 +57,11 @@ Operand KernelModule::evaluate(astnode_u_ptr &ctxt) {
   //auto &current_function = node["current_function"];
   auto &current_function = frame["current_function"];
   cout << "current_function: " << current_function << "\n";
+
+  if(current_function=="eval") {
+    return eval(ctxt);
+  }
+
   return nil;
 }
 void KernelModule::bind_sthis(shared_ptr<KernelModule> sptr) {
@@ -64,7 +69,8 @@ void KernelModule::bind_sthis(shared_ptr<KernelModule> sptr) {
 }
 Operand KernelModule::eval(astnode_u_ptr &ctxt) {
   auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
-  return svlm_lang_ptr->eval(ctxt);
+  svlm_lang_ptr->eval(ctxt);
+  return svlm_lang_ptr->evaluate_prompt_line(ctxt);
 }
 
 //----------------------------------------------------------------------- Math Module 
