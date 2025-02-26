@@ -130,7 +130,7 @@ public:
 
   //void setup(SvlmLang*) override;
   void setup() override;
-  void sin();
+  Operand sin_b(astnode_u_ptr&);
   void cos();
 
   Operand evaluate(astnode_u_ptr &) override;
@@ -140,6 +140,7 @@ public:
   void print() const override;
   string mod_name() const override;
   void bind_sthis(shared_ptr<MathModule>);
+
 };
 
 

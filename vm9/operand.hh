@@ -76,8 +76,8 @@ public:
 
   Number _get_number() const ;
   //inline s_integer _get_int() const ;
-  inline s_integer _get_int() const  { return _get_number().get_int(); };
-  inline s_integer _get_float() const  { return _get_number().get_float(); };
+  s_integer _get_int() const  { return _get_number().get_int(); };
+  s_float _get_float() const  { return _get_number().get_float(); };
   ControlFlow _get_cf()  const;
 
 

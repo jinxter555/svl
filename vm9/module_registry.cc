@@ -1,6 +1,7 @@
 #include "svlm_lang.hh"
 #include "ast_list.hh"
 #include "operand_vars.hh"
+#include "math.h"
 
 //----------------------------------------------------------------------- Svml Bind
 //----------------------------------------------------------------------- Module Registery
@@ -105,10 +106,36 @@ OperandType MathModule::_get_type() const {
 void MathModule::print() const {
   cout << to_str();
 }
-Operand MathModule::evaluate(astnode_u_ptr &) {
-  return nil;
-}
 void MathModule::bind_sthis(shared_ptr<MathModule> sptr) {
   sthis=shared_ptr<MathModule>(sptr);
+}
+//--------------------
+Operand MathModule::evaluate(astnode_u_ptr &ctxt) {
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+
+  //auto &current_function = node["current_function"];
+  auto &current_function = frame["current_function"];
+  cout << "current_function: " << current_function << "\n";
+
+  if(current_function=="sin") {
+    return sin_b(ctxt);
+  }
+
+  return nil;
+}
+
+
+Operand MathModule::sin_b(astnode_u_ptr&ctxt) {
+  cout << "I am in sin_b!\n";
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+  auto &lvars =  frame["lvars"];
+  auto &value = lvars["value"];
+  cout << "value: " << value << "\n";
+  cout << "sin " << sin(value._get_float()) << "\n";
+  return sin(value._get_float());
+
+
 }
 //----------------------------------------------------------------------- Math Module 
