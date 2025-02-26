@@ -134,7 +134,7 @@ public:
   //void setup(SvlmLang*) override;
   void setup() override;
   Operand sin_b(astnode_u_ptr&);
-  void cos();
+  Operand cos_b(astnode_u_ptr&);
 
   Operand evaluate(astnode_u_ptr &) override;
   Operand to_str() const override;

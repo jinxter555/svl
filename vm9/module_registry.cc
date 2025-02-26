@@ -133,6 +133,9 @@ Operand MathModule::evaluate(astnode_u_ptr &ctxt) {
   if(current_function=="sin") {
     return sin_b(ctxt);
   }
+  if(current_function=="cos") {
+    return cos_b(ctxt);
+  }
 
   return nil;
 }
@@ -145,13 +148,27 @@ Operand MathModule::sin_b(astnode_u_ptr&ctxt) {
   auto &value = lvars["value"];
   //return sin(value._get_float());
 
-  auto sin_function = svlm_lang.dl_libs.get_function<double(double)>("Math", "sin");
+  auto sin_function = svlm_lang.dl_libs.get_function<double(double)>(LIBM_SO, "sin");
   if(sin_function==nullptr) {
     cerr << "sin_function is nullptr!\n";
     return nil;
   }
   return sin_function(value._get_float());
-
-
 }
+Operand MathModule::cos_b(astnode_u_ptr&ctxt) {
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+  auto &lvars =  frame["lvars"];
+  auto &value = lvars["value"];
+  //return sin(value._get_float());
+
+  auto cos_function = svlm_lang.dl_libs.get_function<double(double)>(LIBM_SO, "cos");
+  if(cos_function==nullptr) {
+    cerr << "sin_function is nullptr!\n";
+    return nil;
+  }
+  return cos_function(value._get_float());
+}
+//----------------------------------------------------------------------- Math Module 
+
 //----------------------------------------------------------------------- Math Module 
