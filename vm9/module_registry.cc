@@ -1,7 +1,13 @@
+#include <gnu/lib-names.h>
+
 #include "svlm_lang.hh"
 #include "ast_list.hh"
 #include "operand_vars.hh"
 #include "math.h"
+#include "svlm_dyn_loader.cc"
+
+
+
 
 //----------------------------------------------------------------------- Svml Bind
 //----------------------------------------------------------------------- Module Registery
@@ -92,6 +98,12 @@ void MathModule::setup() {
   //sthis = shared_from_this();
   svlm_lang.add_symfunc("Math", "sin", make_unique<AstList>(vec_str_t{"value"}), sthis);
   svlm_lang.add_symfunc("Math", "cos", make_unique<AstList>(vec_str_t{"value"}), sthis);
+  if(!svlm_lang.dl_libs.load_func(LIBM_SO, "sin")) {
+    cerr << "can't load: " << LIBM_SO << ":sin()\n";
+  }
+  if(!svlm_lang.dl_libs.load_func(LIBM_SO, "cos")) {
+    cerr << "can't load: " << LIBM_SO << ":cos()\n";
+  }
 }
 Operand  MathModule::to_str() const {
   return "MathModule";
@@ -127,14 +139,18 @@ Operand MathModule::evaluate(astnode_u_ptr &ctxt) {
 
 
 Operand MathModule::sin_b(astnode_u_ptr&ctxt) {
-  cout << "I am in sin_b!\n";
   auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
   auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
   auto &lvars =  frame["lvars"];
   auto &value = lvars["value"];
-  cout << "value: " << value << "\n";
-  cout << "sin " << sin(value._get_float()) << "\n";
-  return sin(value._get_float());
+  //return sin(value._get_float());
+
+  auto sin_function = svlm_lang.dl_libs.get_function<double(double)>("Math", "sin");
+  if(sin_function==nullptr) {
+    cerr << "sin_function is nullptr!\n";
+    return nil;
+  }
+  return sin_function(value._get_float());
 
 
 }

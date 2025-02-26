@@ -1,3 +1,6 @@
+#ifndef SVLM_LANG_HH
+#define SVLM_LANG_HH
+
 #pragma once
 #include "ast_map.hh"
 #include "ast.hh"
@@ -44,7 +47,6 @@ public:
 
 
 //----------------------------------------------------------------------- Svlm Lang
-
 class SvlmLang : public Tree {
   friend class SvlmInteractive;
   friend class KernelModule;
@@ -53,9 +55,10 @@ protected:
   bool interactive=false;
   vslast::SvlmScanner *svlm_scanner_ptr ;
   vslast::SvlmParser *svlm_parser_ptr ;
-  SvlmLibLoader dl_libs;
-  unordered_map<string, unique_ptr<ModuleRegistry>> dyn_mods;
+  unordered_map<string, unique_ptr<ModuleRegistry>> dyn_mods; // later for Math, File, Socket , WebSock and so..
 public:
+  SvlmLibLoader dl_libs;
+
   SvlmLang(const OperandType&t);
 
   void add_program(const Operand&);
@@ -160,3 +163,5 @@ public:
   OperandType _get_type() const override;
   void print() const override;
 };
+
+#endif

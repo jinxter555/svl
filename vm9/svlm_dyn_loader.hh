@@ -1,3 +1,7 @@
+#ifndef SVLM_DYN_LOADER_HH
+#define SVLM_DYN_LOADER_HH
+
+#pragma once
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -31,8 +35,7 @@ class SvlmLibLoader {
 private:
   unordered_map<string, unique_ptr<SvlmDynLoader>> libs;
 public:
-  SvlmLibLoader(){};
-  ~SvlmLibLoader(){};
+  SvlmLibLoader();
   bool load_lib(const string& l);
   bool load_func(const string& l, const string& f);
 
@@ -40,3 +43,5 @@ public:
   Func* get_function(const string& l, const string& f);
 
 };
+
+#endif

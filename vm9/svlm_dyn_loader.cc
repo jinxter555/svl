@@ -2,7 +2,11 @@
 #define SVLM_DYN_LOADER_CC
 
 
+
+#ifndef SVLM_DYN_LOADER_HH
 #include "svlm_dyn_loader.hh"
+#endif
+
 #include <dlfcn.h>
 #include <gnu/lib-names.h> 
 #include <iostream>
@@ -51,6 +55,8 @@ Func* SvlmDynLoader::get_function(const string& function_name) {
 }
 
 //----------------------------------------------------------------------- Svml Library Loader
+SvlmLibLoader::SvlmLibLoader() {}
+
 bool SvlmLibLoader::load_lib(const string& l) {
   libs[l] = make_unique<SvlmDynLoader>(l);
   if(libs[l]) return true;
