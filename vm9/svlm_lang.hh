@@ -5,6 +5,7 @@
 #include "ast_map.hh"
 #include "ast.hh"
 #include "svlm_dyn_loader.hh"
+#include <functional>
 
 class Tree : public Primordial<Tree>{
   friend class SvlmAst;
@@ -29,6 +30,7 @@ protected:
   string module_name; // svlm module nmae
   //SvlmLang *svlm_lang_ptr=nullptr;
   SvlmLang &svlm_lang;
+  unordered_map<string, function<Operand(astnode_u_ptr&)>> func_name_lookup; 
 public:
   ModuleRegistry(SvlmLang&);
  // ModuleRegistry();
@@ -135,6 +137,7 @@ public:
   void setup() override;
   Operand sin_b(astnode_u_ptr&);
   Operand cos_b(astnode_u_ptr&);
+  Operand pow_b(astnode_u_ptr&);
 
   Operand evaluate(astnode_u_ptr &) override;
   Operand to_str() const override;
