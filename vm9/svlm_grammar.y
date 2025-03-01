@@ -126,11 +126,10 @@ comments
 
 
 module 
-  : MODULE STR DO statement_list END 
-  {
-    //cout << "Grammar!"; cout << "module : " << $2 << "\n"; cout << "statement list: " ; $4->print(); cout << "\n";
-    svlm_lang->add_module($2, move($4));
-  }
+  : MODULE STR DO statement_list END {
+    svlm_lang->add_module($2, move($4)); 
+    }
+  | MODULE STR statement_list EOS { svlm_lang->add_module($2, move($3)); }
   ;
 
 class 
