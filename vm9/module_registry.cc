@@ -158,7 +158,6 @@ Operand MathModule::evaluate(astnode_u_ptr &ctxt) {
   }
 */
 
-  return nil;
 }
 
 

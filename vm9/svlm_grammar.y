@@ -43,6 +43,7 @@ namespace vslast {
 
 %token YYEOF EOL COMMENT1 COMMENT2
 %token MODULE DEF DO END AST_BREAK AST_RETURN AST_DEFAULT PRINT 
+%token NEW DEL CLONE CLASS
 %token CASE FLOW WHILE REPEAT UNTIL DONE IS IF THEN ELSE WHEN WHERE
 %token PAREN_L PAREN_R CUR_L CUR_R ARROW_L ARROW_R
 %token SQBRK_L SQBRK_R
@@ -75,7 +76,7 @@ namespace vslast {
 %right              EXPONENT
 
 %type <list_u_ptr> statement_list 
-%type <astnode_u_ptr> module function literals exp_eval variable statement print_exp caller comments 
+%type <astnode_u_ptr> module class function literals exp_eval variable statement print_exp caller comments 
 
 %start program_start
 
@@ -106,6 +107,7 @@ statement
   : %empty {$$=nullptr;} // end of each statement
   | exp_eval { $$ = move($1); }
   | module { $$ = move($1); }
+  | class { $$ = move($1); }
   | function { $$ = move($1); }
   | print_exp {$$ = move($1); }
   | comments { $$ = nullptr; }
@@ -128,6 +130,12 @@ module
   {
     //cout << "Grammar!"; cout << "module : " << $2 << "\n"; cout << "statement list: " ; $4->print(); cout << "\n";
     svlm_lang->add_module($2, move($4));
+  }
+  ;
+
+class 
+  : CLASS STR DO statement_list END {
+    $$ = make_unique<AstClass>($2, move($4));
   }
   ;
 

@@ -14,6 +14,7 @@ Operand Operand::operator+(const Operand& other) const {
   auto vrptr = _vrptr();
   auto other_vrptr = other._vrptr();
 
+  if(vrptr==nullptr || other_vrptr==nullptr) return nil;
   if(vrptr->type_ != other_vrptr->type_) { 
     cout << "error! " << *this << " + '" << other << "'\n";
     return Operand(OperandErrorCode::invalid_op_t);

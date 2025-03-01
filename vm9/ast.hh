@@ -43,6 +43,16 @@ public:
 };
 
 
+class AstClass: public AstExpr{
+public:
+  AstClass(const Operand&,  astnode_u_ptr) ; 
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astnode_u_ptr &) override;
+  void print() const override;
+};
+
 class AstPrint : public AstExpr { 
 private:
 public:

@@ -830,3 +830,23 @@ Operand AstFlow::evaluate(astnode_u_ptr &ctxt) {
   }
   return cfstate;
 }
+//----------------------------------------------------------------------- AstClass
+AstClass::AstClass(const Operand&n,  astnode_u_ptr l) : AstExpr(OperandType::ast_class_t) {
+  node["name"] = n._to_str();
+}
+Operand AstClass::to_str() const {
+  return "Class" + node["name"]._to_str();
+}
+Operand  AstClass::get_type() const {
+  return OperandType::ast_class_t;
+}
+OperandType  AstClass::_get_type() const {
+  return OperandType::ast_class_t;
+}
+Operand  AstClass::evaluate(astnode_u_ptr &) {
+  return nil;
+}
+
+void  AstClass::print() const {
+  cout << to_str();
+}
