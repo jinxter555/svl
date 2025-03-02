@@ -1,4 +1,4 @@
-module Main 
+module Main  do
 
 def main() do
     #print "in main\n"
@@ -26,5 +26,7 @@ module Helper do
   def me() do
     print "helper me\n"
   end
+end
+
 end
 

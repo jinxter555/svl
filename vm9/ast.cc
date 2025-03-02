@@ -831,8 +831,19 @@ Operand AstFlow::evaluate(astnode_u_ptr &ctxt) {
   return cfstate;
 }
 //----------------------------------------------------------------------- AstClass
-AstClass::AstClass(const Operand&n,  astnode_u_ptr m) : AstExpr(OperandType::ast_class_t) {
+AstClass::AstClass(const Operand&n,  astnode_u_ptr m_list) : AstExpr(OperandType::ast_class_t) {
+//AstClass::AstClass(const Operand&n,  list_u_ptr m_list) : AstExpr(OperandType::ast_class_t) {
+  int s=m_list->size();
   node["name"] = n._to_str();
+
+  for(int i=0; i<s; i++) {
+    auto &member = (*m_list)[i];
+    auto &member_func= member.get_u_ptr_nc();
+    vec_str_t k = vec_str_t{string("members"), (*member_func)["name"]._to_str()}  ;
+    //node[k] = move(member_func);
+    node.add(k, move(member_func), true);
+  }
+
 }
 Operand AstClass::to_str() const {
   return "Class" + node["name"]._to_str();

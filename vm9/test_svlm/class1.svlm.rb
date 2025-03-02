@@ -5,6 +5,10 @@ module Main do
     def init() do
       print "hello"
     end
+
+    def run(arg1) do
+      print arg1
+    end
   end
 
   def main() do
