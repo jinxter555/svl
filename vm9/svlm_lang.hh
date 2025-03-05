@@ -64,6 +64,7 @@ public:
   SvlmLang(const OperandType&t);
 
   void add_program(const Operand&);
+  void add_module(const Operand&); // ast list
   void add_module(const Operand&, list_u_ptr clist );
   void add_class();
   void add_function();
@@ -75,6 +76,8 @@ public:
   AstMap& get_root();
 
   Operand& get_module_subnode(const Operand&, const OperandType t);
+  vec_str_t get_module_keys(const Operand&);
+
 
   astnode_u_ptr& get_context() ;
   astnode_u_ptr& get_processes() ;

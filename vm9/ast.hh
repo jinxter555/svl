@@ -16,6 +16,15 @@ public:
 //  virtual Operand evaluate(astnode_u_ptr&) =0;
 };
 
+class Object: public AstExpr {
+public:
+  Object(const string&);
+  string class_name();
+  Operand get_type()  { return type_; }
+  Operand call_member_func(const string&);
+  OperandType _get_type()  { return type_; }
+};
+
 
 class AstBinOp : public AstExpr {
 private:
@@ -121,7 +130,6 @@ public:
 class AstLvar : public AstAssign {
 private:
   bool initiated=false;
-
 public:
   AstLvar(const string&);
   AstLvar(const string&, astnode_u_ptr idx_key);
@@ -133,6 +141,34 @@ public:
   bool assign(astnode_u_ptr& ctxt, Operand&) override final;
   void print() const override;
 };
+
+class AstOvar : public AstAssign {
+private:
+  bool initiated=false;
+public:
+  AstOvar(const string&);
+  AstOvar(const string&, astnode_u_ptr idx_key);
+  string name() override final;
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astnode_u_ptr &) override;
+  bool assign(astnode_u_ptr& ctxt, Operand&) override final;
+  void print() const override;
+};
+
+class AstNew : public AstExpr {
+public:
+  AstNew(const string&);
+  //AstNew(const string&, astnode_u_ptr idx_key);
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand evaluate(astnode_u_ptr &) override;
+  void print() const override;
+};
+
+
 
 // AstTuple contains variables whereas Tuple just a dervied list_t
 class AstTuple : public AstAssign {

@@ -42,9 +42,13 @@ Operand Operand::ToString::operator()(OperandType t) const {
   case OperandType::ast_binop_t:  outstr ="ast_binop_t"; break;
   case OperandType::ast_func_t:  outstr ="ast_func_t"; break;
   case OperandType::ast_class_t:  outstr ="ast_class_t"; break;
+  case OperandType::ast_object_t:  outstr ="ast_object_t"; break;
   case OperandType::ast_mvar_t:  outstr ="ast_mvar_t"; break;
   case OperandType::ast_lvar_t:  outstr ="ast_lvar_t"; break;
   case OperandType::ast_ovar_t:  outstr ="ast_ovar_t"; break;
+  case OperandType::ast_new_t:  outstr ="ast_new_t"; break;
+  case OperandType::ast_del_t:  outstr ="ast_del_t"; break;
+  case OperandType::ast_clone_t:  outstr ="ast_clone_t"; break;
   case OperandType::ast_bind_t:  outstr ="ast_bind_t"; break;
   case OperandType::ast_print_t:  outstr ="ast_print_t"; break;
   case OperandType::ast_caller_t:  outstr ="ast_caller_t"; break;

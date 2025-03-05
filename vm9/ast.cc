@@ -5,6 +5,8 @@
 #include "my_helpers.hh"
 #include "operand_vars.hh"
 #include "svlm_interactive.hh"
+#include <algorithm>
+#include <numeric>
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -176,10 +178,12 @@ AstCaller::AstCaller(const Operand& callee, astnode_u_ptr arg_list)
   MYLOGGER_MSG(trace_function, string("arg_list: ") + arg_list->to_str()._to_str(), SLOG_FUNC_INFO+1)
 
   auto modfunc = split_string(callee._to_str(), ".");
+  int s=modfunc.size();
   //cout << "modfunc size" << modfunc.size() << "\n";
   if(modfunc.size() > 1) {
-    node["callee_mod"]= modfunc[0];
-    node["callee_func"]=modfunc[1];
+    node["callee_func"]=modfunc[s-1];
+    modfunc.pop_back();
+    node["callee_mod"]= concat_vector_string(modfunc, ".");
   } else {
     node["callee_mod"] = Operand();
     node["callee_func"] = modfunc[0];
@@ -269,15 +273,37 @@ Operand AstCaller::evaluate(astnode_u_ptr& ctxt) {
     module_name = callee_mod._to_str();
   }
 
-
   MYLOGGER_MSG(trace_function, module_name + ":" + callee_func._to_str(), SLOG_FUNC_INFO+1);
 
+  auto keys_module = svlm_lang_ptr->get_module_keys(module_name);
 
-  //vector<string> keys_func = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str()};
+ // cout << "keys_module: " << keys_module << "\n";
+/*
+  vector<string> keys_func = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str()};
   vector<string> keys_code = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "code"};
   vector<string> keys_proto = {CONTEXT_UNIV, MOD, module_name,  "function", callee_func._to_str(), "proto_list"};
   vector<string> keys_proto_by_syms = {CONTEXT_UNIV, MOD, module_name,  "symfunc", callee_func._to_str(), "proto_list"};
   vector<string> keys_code_by_syms = {CONTEXT_UNIV, MOD, module_name,  "symfunc", callee_func._to_str(), "code"};
+*/
+
+  vec_str_t keys_func=keys_module;
+
+  keys_func.insert(keys_func.end(), {"function", callee_func._to_str().c_str()});
+
+  vector<string> keys_code = keys_func; 
+  keys_code.push_back("code");
+
+  vector<string> keys_proto = keys_func;
+  keys_proto.push_back("proto_list");
+
+  vector<string> keys_symfunc=keys_module;
+  keys_symfunc.insert(keys_symfunc.end(), {"symfunc", callee_func._to_str().c_str()});
+
+  vector<string> keys_proto_by_syms = keys_symfunc;
+  keys_proto_by_syms.push_back("proto_list");
+
+  vector<string> keys_code_by_syms =  keys_symfunc;
+  keys_code_by_syms.push_back("code");
 
   //cout << "keys_code: " ; for(auto k : keys_code) { cout << k << ", "; } cout << "\n";
   auto &code = root[keys_code];
@@ -651,6 +677,81 @@ bool AstLvar::assign(astnode_u_ptr& ctxt, Operand& v) {
   return true;
 }
 
+//----------------------------------------------------------------------- AstOvar object variable
+AstOvar::AstOvar(const string &name) : AstAssign(OperandType::ast_ovar_t) { 
+  //add(string("var_name"), Operand(name));
+  node["var_name"]= name;
+  scale_ = OperandType::scalar_t;
+}
+
+string AstOvar::name() { return node["var_name"]._to_str(); }
+Operand AstOvar::get_type() const { return OperandType::ast_ovar_t;}
+OperandType AstOvar::_get_type() const { return OperandType::ast_ovar_t;}
+Operand AstOvar::to_str() const { return node["var_name"].to_str(); }
+void AstOvar::print() const { cout << to_str(); }
+
+AstOvar::AstOvar(const string &name, astnode_u_ptr idx_key) : AstAssign(OperandType::ast_ovar_t) { 
+  node["var_name"]= name;
+  node["idx_key"]= move(idx_key);
+  scale_ = OperandType::array_t;
+}
+
+Operand AstOvar::evaluate(astnode_u_ptr& ctxt) {
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  if(svlm_lang_ptr==nullptr) {
+    cerr << "In AstMvar::Assign svlmlang is null!\n";
+    return Operand();
+  }
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+  auto &ovars =  frame["ovars"];
+  auto var_name = name();
+  auto &o_var = ovars[name()];
+  if(scale_ == OperandType::array_t){
+    //auto &result = sub_node.getv(var_name);
+    auto index_i = get_index_i(ctxt);
+    if(index_i >= 0) {
+      return o_var[index_i]._get_variant();
+    }
+    auto index_s = get_index_s(ctxt);
+    if(index_s != "" ) {
+      return o_var[index_s]._get_variant();
+    }
+  } 
+ return o_var._get_variant();
+}
+
+bool AstOvar::assign(astnode_u_ptr& ctxt, Operand& v) {
+  MYLOGGER(trace_function
+  , "AstOvar::assign(astnode_u_ptr& ctxt, const Operand& v)" 
+  , string("AstOvar::") + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, name() + string(" = ") + v._to_str(), SLOG_FUNC_INFO);
+
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+  auto &ovars =  frame["ovars"];
+
+  if(scale_ == OperandType::array_t){
+    //auto &result = sub_node.getv(var_name);
+
+    auto &l_var = ovars[name()];
+    auto index_i = get_index_i(ctxt);
+    if(index_i >= 0) {
+      l_var[index_i] = v.clone();
+      cout << "l_var: " << l_var<< "\n";
+      return true;
+    }
+    auto index_s = get_index_s(ctxt);
+    if(index_s != "" ) {
+      l_var.add(index_s, v, true);
+      cout << "l_var: " << l_var<< "\n";
+      return true;
+    }
+  } else {
+    ovars.add(name(), v, true);
+  }
+  return true;
+}
+
 
 //----------------------------------------------------------------------- Tuple
 AstTuple::AstTuple() : AstAssign(OperandType::ast_tuple_t) {
@@ -859,5 +960,34 @@ Operand  AstClass::evaluate(astnode_u_ptr &) {
 }
 
 void  AstClass::print() const {
+  cout << to_str();
+}
+//----------------------------------------------------------------------- Object
+Object::Object(const string& cn) : AstExpr(OperandType::ast_object_t) {
+  node["class_name"] = cn;
+
+}
+//----------------------------------------------------------------------- AstNew
+AstNew::AstNew(const string& class_name) : AstExpr(OperandType::ast_new_t) {
+  node["class_name"] = class_name;
+
+}
+
+Operand AstNew::to_str() const {
+  return "new " + node["class_name"]._to_str();
+}
+Operand  AstNew::get_type() const {
+  return OperandType::ast_class_t;
+}
+OperandType  AstNew::_get_type() const {
+  return OperandType::ast_class_t;
+}
+Operand  AstNew::evaluate(astnode_u_ptr &) {
+  auto class_name = node["class_name"]._to_str();
+  astnode_s_ptr obj = make_shared<Object>(class_name);
+  return obj;
+}
+
+void  AstNew::print() const {
   cout << to_str();
 }

@@ -107,6 +107,7 @@ enum class OperandType {
   ast_map_t,
   ast_binop_t,
   ast_class_t,
+  ast_object_t,
   ast_func_t,
   ast_symfunc_t,
   ast_block_t,
@@ -126,6 +127,10 @@ enum class OperandType {
   ast_case_is_t,
   ast_case_else_t,
   ast_case_when_t,
+
+  ast_new_t,
+  ast_del_t,
+  ast_clone_t,
 
   ast_repeat_t,
   ast_while_t,

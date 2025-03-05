@@ -49,7 +49,7 @@ namespace vslast {
 %token SQBRK_L SQBRK_R
 %token DOT AT DOLLAR COLON COMMA SEMICOLON
 %token TRUE FALSE NIL
-%token <string> IDENT_STR STR DQSTR
+%token <string> IDENT_STR STR DQSTR SNAKE_STR
 %token <s_integer>  INT
 %token <s_float>     FLT
  
@@ -59,7 +59,7 @@ namespace vslast {
 
 %nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop 
 %nterm <astnode_u_ptr> case case_match_list case_match if_then_else
-%nterm <astnode_u_ptr> tuple_arg_list
+%nterm <astnode_u_ptr> tuple_arg_list object
 %nterm <map_u_ptr>  kv_pair_list
 %nterm <string> map_key
 %type <tuple<string, astnode_u_ptr>> kv_pair 
@@ -126,10 +126,10 @@ comments
 
 
 module 
-  : MODULE STR DO statement_list END {
+  : MODULE DOTSTR DO statement_list END {
     svlm_lang->add_module($2, move($4)); 
     }
-  | MODULE STR statement_list EOS { svlm_lang->add_module($2, move($3)); }
+  | MODULE DOTSTR statement_list EOS { svlm_lang->add_module($2, move($3)); }
   ;
 
 class 
@@ -151,6 +151,7 @@ exp_eval
   | variable { $$ = move($1); }
   | list { $$ = move($1); }
   | map { $$ = move($1); }
+  | object { $$ = move($1); }
   | tuple { $$ = move($1); }
   | caller { $$ = move($1); }
   | exp_eval MULTIPLY exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::mul); }
@@ -166,6 +167,7 @@ exp_eval
   | exp_eval AND exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::and_); }
   | exp_eval OR exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::or_); }
   | NOT exp_eval { $$ = make_unique<AstBinOp>(move($2), move($2), AstOpCode::not_); }
+
   | DOLLAR STR ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstMvar>($2),
@@ -196,6 +198,16 @@ exp_eval
       ); 
   }
 
+  | AT STR ASSIGN exp_eval { 
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstOvar>($2),
+        move($4), 
+        AstOpCode::assign
+      ); 
+  }
+
+
+
   | STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
       $$ = make_unique<AstBinOp>(
         make_unique<AstLvar>($1, move($3)),
@@ -205,6 +217,13 @@ exp_eval
   }
 
   | STR ASSIGN exp_eval { 
+      $$ = make_unique<AstBinOp>(
+        make_unique<AstLvar>($1),
+        move($3), 
+        AstOpCode::assign
+      ); 
+  }
+  | DOTSTR ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstLvar>($1),
         move($3), 
@@ -252,6 +271,7 @@ variable
   | DOLLAR STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
   | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
 
+  | DOTSTR { $$ = make_unique<AstLvar>($1); }
   | STR { $$ = make_unique<AstLvar>($1); }
   | STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstLvar>(move($1), move($3)); }
 
@@ -355,6 +375,13 @@ kv_pair_list
 kv_pair : map_key COLON exp_eval { $$ = {$1, move($3)}; } ;
 map_key : DQSTR | STR ;
 
+
+//--------------------------------------------------- 
+object 
+  : NEW STR {
+    $$ = make_unique<AstNew>($2);
+  }
+  ;
 
 //--------------------------------------------------- 
 tuple

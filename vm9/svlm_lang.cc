@@ -176,6 +176,22 @@ void SvlmLang::add_module(const Operand& mod_name, list_u_ptr clist_ptr) {
   //cout << "\n\n";
 }
 
+vec_str_t SvlmLang::get_module_keys(const Operand& mod_name) {
+  //vector<string> keys = {CONTEXT_UNIV, MOD, v._to_str()};
+  vector<string> keys = {CONTEXT_UNIV};
+  auto ms = move(split_string(mod_name._to_str(), "."));
+  int s=ms.size();
+  //cout << "split '.' size: " << s <<"\n";
+  for(int i=0; i<s; i++){
+    keys.push_back({MOD});
+    keys.push_back(ms[i]);
+  }
+
+  //cout << "get_module_keys: " << keys << "\n";
+
+  return keys;
+
+}
 
 Operand& SvlmLang::get_module_subnode(const Operand& mod_name, const OperandType t) {
   MYLOGGER(trace_function , string("SvlmLang::get_module_subnode()") ,__func__, SLOG_FUNC_INFO);
@@ -183,7 +199,8 @@ Operand& SvlmLang::get_module_subnode(const Operand& mod_name, const OperandType
 
  // cout << "SvlmLang::get_module_subnode, type" <<  Operand(t) <<"\n";
 
-  vector<string> keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
+  //vector<string> keys = {CONTEXT_UNIV, MOD, mod_name._to_str()};
+  vector<string> keys = get_module_keys(mod_name);
   switch(t) {
   case OperandType::ast_mod_t:
     //cout << "ast_mod_t!\n";
@@ -237,8 +254,6 @@ void SvlmLang::add_code(const Operand& name, list_u_ptr clist) {
   new_map->add(string("code"), move(clist), true);
   msub_node.add(string("last"), move(new_map), true);
 
-  //auto& l = root[vec_str_t{CONTEXT_UNIV, MOD, name._to_str()}];
-  //l.print(); cout << "\n";
 }
 
 Operand SvlmLang::evaluate_prompt_line() {

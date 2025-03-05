@@ -18,6 +18,7 @@ exp_opt         ({exp}?)
 integer         ({dseq})
 float           (({frac}{exp_opt})|({dseq}{exp}))
 identifier      ([a-zA-Z][a-zA-Z0-9_]*)
+cap             ([A-Z])
 blank           [ \t\r]           
 dqstring        \"([^"\\]|\\[^\n\\])*\"  
 
@@ -64,6 +65,7 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 {float}     yylval->emplace<s_float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
 {blank}     yylloc->step();
 {identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::STR;
+{cap}{identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::SNAKE_STR;
 
 "=="             return SvlmParser::token::EQL;
 "!="             return SvlmParser::token::NEQL;

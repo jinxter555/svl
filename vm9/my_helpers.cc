@@ -126,3 +126,13 @@ string add_vector_string(const vector<string> &vs, const string& delimiter) {
   result = result + vs[i]+ "]";
   return result;
 }
+
+string concat_vector_string(const vector<string> &vs, const string& delimiter) {
+  string result="";
+  int i, s=vs.size();
+  for(i=0; i<s-1; i++) {
+    result = result  + vs[i] + delimiter ;
+  }
+  result = result + vs[i];
+  return result;
+}

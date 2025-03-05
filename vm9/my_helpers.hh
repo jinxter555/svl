@@ -12,3 +12,4 @@ std::string match(const std::string& line, const std::string& pattern) ;
 std::string raw_to_escaped_string(const std::string& s);
 
 string add_vector_string(const vector<string> &vs, const string& delimiter=" ");
+string concat_vector_string(const vector<string> &vs, const string& delimiter=" ");
