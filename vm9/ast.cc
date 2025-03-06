@@ -72,9 +72,12 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
     //cout << "r_vptr get_type: " <<  r_vptr->get_type() << "\n";
 
     switch(r_v_rptr->_get_type()) {
+    //switch(r_v._get_type()) {
       case OperandType::list_t :
       case OperandType::tuple_t:
+      case OperandType::object_t:
       case OperandType::map_t: {
+        cout << "type: " << r_v_rptr->get_type() << "\n";
         cout << "assigning list_t || map_t || tuple_t !\n ";
         if(r_v.be_shared()) { 
           variable->assign(ctxt, r_v); 
@@ -369,7 +372,7 @@ string AstCaller::get_current_module(astnode_u_ptr& ctxt) {
   return m._to_str();
 }
 */
-//----------------------------------------------------------------------- AstMvar
+//----------------------------------------------------------------------- AstAssign
 
 s_integer AstAssign::get_index_i(astnode_u_ptr &ctxt) {
   auto &idx_key =  node["idx_key"];
@@ -396,7 +399,7 @@ string AstAssign::get_index_s(astnode_u_ptr &ctxt) {
   return result.to_str()._to_str();
 }
 
-//----------------------------------------------------------------------- 
+//----------------------------------------------------------------------- AstMvar
 AstMvar::AstMvar(const string &v) : AstAssign(OperandType::ast_mvar_t) { 
   MYLOGGER(trace_function , "AstMvar::AstMvar(const string &v)" , __func__ , SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, string("var_name: ") + v, SLOG_FUNC_INFO)
@@ -963,14 +966,31 @@ void  AstClass::print() const {
   cout << to_str();
 }
 //----------------------------------------------------------------------- Object
-Object::Object(const string& cn) : AstExpr(OperandType::ast_object_t) {
+Object::Object(const string& cn) : AstExpr(OperandType::object_t) {
   node["class_name"] = cn;
-
+  cout << "creating new object!\n";
 }
+
+string Object::class_name() {
+  return node["class_name"]._to_str();
+}
+
+Operand Object::to_str() const {
+  return node["class_name"].to_str() + AstExpr::to_str();
+}
+Operand Object::get_type()  const  { return OperandType::object_t; }
+OperandType Object:: _get_type() const   { return OperandType::object_t; }
+Operand Object::call_member_func(const string&) {
+  return nil;
+}
+
+void  Object::print() const {
+  cout << to_str();
+}
+
 //----------------------------------------------------------------------- AstNew
 AstNew::AstNew(const string& class_name) : AstExpr(OperandType::ast_new_t) {
   node["class_name"] = class_name;
-
 }
 
 Operand AstNew::to_str() const {
@@ -985,6 +1005,7 @@ OperandType  AstNew::_get_type() const {
 Operand  AstNew::evaluate(astnode_u_ptr &) {
   auto class_name = node["class_name"]._to_str();
   astnode_s_ptr obj = make_shared<Object>(class_name);
+  cout << "obj type: " <<  obj->get_type() << "\n";
   return obj;
 }
 

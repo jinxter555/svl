@@ -87,6 +87,7 @@ enum class OperandType {
   scalar_t,     // operand  entity
   array_t,     // operand  entity
   list_t,
+  object_t,
   map_t,
 
   ptr_t,

@@ -11,6 +11,10 @@ module Main do
     end
   end
 
+  def MyBabe() do 
+    print "my babe!\n"
+  end
+
   def main() do
     #print "in main\n"
     print "in main"
@@ -42,7 +46,7 @@ module Helper do
   def me(me_arg1) do
     return me_arg1
     print "in helper::me() "
-    print me_arg1
+    #print me_arg1
     print "\n\n"
   end
 end

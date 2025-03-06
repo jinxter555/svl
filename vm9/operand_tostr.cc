@@ -34,6 +34,7 @@ Operand Operand::ToString::operator()(OperandType t) const {
   case OperandType::array_t: outstr ="array_t"; break;
   case OperandType::list_t: outstr ="list_t"; break;
   case OperandType::map_t:  outstr ="map_t"; break;
+  case OperandType::object_t:  outstr ="object_t"; break;
   case OperandType::ptr_t:  outstr ="ptr_t"; break;
   case OperandType::uptr_t:  outstr ="uptr_t"; break;
   case OperandType::sptr_t:  outstr ="sptr_t"; break;

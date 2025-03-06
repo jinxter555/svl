@@ -54,7 +54,7 @@ namespace vslast {
 %token <s_float>     FLT
  
 %nterm EOS // end of statement
-%nterm <string> DOTSTR UC_DOTSTR mod_name_str class_name_str var_name_str mod_func_str func_str
+%nterm <string> DOTSTR UC_DOTSTR mod_name_str class_name_str var_name_str mod_func_str func_str mixed_str
 %nterm comments
 
 %nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop 
@@ -142,10 +142,12 @@ class
 
 function 
   //: DEF STR PAREN_L PAREN_R DO statement_list END {
-  : DEF STR PAREN_L proto_list PAREN_R DO statement_list END {
+  //: DEF STR PAREN_L proto_list PAREN_R DO statement_list END {
+  : DEF func_str PAREN_L proto_list PAREN_R DO statement_list END {
     //cout << "Grammar!"; cout << "func: " << $2 << "\n"; cout << "statement list: " ; $7->print(); cout << "\n";
     $$ = make_unique<AstFunc>($2, move($4), move($7));
   }
+  
   ;
 
 exp_eval
@@ -170,7 +172,7 @@ exp_eval
   | exp_eval OR exp_eval { $$ = make_unique<AstBinOp>(move($1), move($3), AstOpCode::or_); }
   | NOT exp_eval { $$ = make_unique<AstBinOp>(move($2), move($2), AstOpCode::not_); }
 
-  | DOLLAR STR ASSIGN exp_eval { 
+  | DOLLAR var_name_str ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstMvar>($2),
         move($4), 
@@ -185,7 +187,7 @@ exp_eval
       ); 
   }
 
-  | DOLLAR STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
+  | DOLLAR var_name_str SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
       $$ = make_unique<AstBinOp>(
         make_unique<AstMvar>($2, move($4)),
         move($7), 
@@ -200,7 +202,7 @@ exp_eval
       ); 
   }
 
-  | AT STR ASSIGN exp_eval { 
+  | AT var_name_str ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstOvar>($2),
         move($4), 
@@ -210,7 +212,7 @@ exp_eval
 
 
 
-  | STR SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
+  | var_name_str SQBRK_L exp_eval SQBRK_R ASSIGN exp_eval {
       $$ = make_unique<AstBinOp>(
         make_unique<AstLvar>($1, move($3)),
         move($6), 
@@ -218,7 +220,7 @@ exp_eval
       ); 
   }
 
-  | STR ASSIGN exp_eval { 
+  | var_name_str ASSIGN exp_eval { 
       $$ = make_unique<AstBinOp>(
         make_unique<AstLvar>($1),
         move($3), 
@@ -268,20 +270,27 @@ caller
   ;
 
 
+/*
 variable
   : DOLLAR STR { $$ = make_unique<AstMvar>($2); }
   | DOLLAR DOTSTR { $$ = make_unique<AstMvar>($2); }
   | DOLLAR STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
   | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
-
   | DOTSTR { $$ = make_unique<AstLvar>($1); }
   | STR { $$ = make_unique<AstLvar>($1); }
   | STR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstLvar>(move($1), move($3)); }
-
   ;
 
-
-
+*/
+variable
+  : DOLLAR var_name_str { $$ = make_unique<AstMvar>($2); }
+  | DOLLAR DOTSTR { $$ = make_unique<AstMvar>($2); }
+  | DOLLAR var_name_str SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
+  | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
+  | DOTSTR { $$ = make_unique<AstLvar>($1); }
+  | var_name_str { $$ = make_unique<AstLvar>($1); }
+  | var_name_str SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstLvar>(move($1), move($3)); }
+  ;
 
 
 print_exp
@@ -290,27 +299,40 @@ print_exp
   ;
 
 
-DOTSTR
-  : STR
-  | DOTSTR DOT STR { $$ = $1 + string(".")+ $3; }
+DOTSTR 
+  : STR 
+  | DOTSTR DOT STR { 
+    $$ = $1 + string(".")+ $3; } 
   ;
 
+/*
+DOTSTR 
+  : mixed_str
+  | DOTSTR DOT mixed_str { $$ = $1 + string(".")+ $3; } 
+  ;
+*/
+
+var_name_str
+  : LC_STR { $$ = $1; }
+  ;
+
+func_str : mixed_str ;
+
+mixed_str 
+  : UC_STR 
+  | LC_STR
+  | STR
+  ;
+
+// mod or function string for caller
 mod_func_str
-  : STR { 
-//   cout << "mod_name_str1: ";
-    $$ = $1; 
-  }
-  | UC_DOTSTR { 
-//    cout << "mod_name_str2: ";
-    $$ = $1; 
-  }
-  | UC_DOTSTR DOT STR { 
-//    cout << "mod_name_str3: ";
-    auto outstr = $1 + "." + $3; 
-    $$ = outstr;
+  : mixed_str { $$ = $1; }
+  | UC_DOTSTR DOT mixed_str { 
+    $$ = $1 + "." + $3; 
   }
   ;
 
+// mod name_str to define a module
 mod_name_str  : UC_DOTSTR;
 class_name_str  : UC_DOTSTR;
 
@@ -337,7 +359,8 @@ proto_list
   ;
 
 proto
-  : STR { //std::cout << "param: " << $1 << "\n"; 
+  //: STR { //std::cout << "param: " << $1 << "\n"; 
+  : var_name_str { //std::cout << "param: " << $1 << "\n"; 
     $$=make_unique<Operand>($1);
   }
   ;
@@ -370,7 +393,9 @@ arg_list
   ;
 
 arg
-  : exp_eval { $$ = move($1); }
+  : exp_eval { 
+    $$ = move($1); 
+  }
   ;
 
 

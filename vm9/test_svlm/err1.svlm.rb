@@ -2,7 +2,8 @@
 
 module Main do
   def main() do
-    a = 1 + nil
+    a = 1 + 1
+    print "hello2\n"
   end
 
   def func2() do
@@ -32,7 +33,7 @@ module Helper do
 end
 
 
-module helper do
+module Helper2 do
   def out() do
     print "out\n"
   end

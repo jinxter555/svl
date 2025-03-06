@@ -20,9 +20,11 @@ class Object: public AstExpr {
 public:
   Object(const string&);
   string class_name();
-  Operand get_type()  { return type_; }
   Operand call_member_func(const string&);
-  OperandType _get_type()  { return type_; }
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  Operand to_str() const override;
+  void print() const ;
 };
 
 
@@ -90,10 +92,9 @@ public:
 
   Operand& add_frame(astnode_u_ptr& ctxt);
   Operand& remove_frame(astnode_u_ptr& ctxt);
-
-
-
 };
+
+
 
 class AstAssign : public AstExpr {
 protected:
