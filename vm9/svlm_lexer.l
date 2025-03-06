@@ -64,8 +64,8 @@ std::string raw_to_escaped_string(const std::string& raw_string);
 {integer}   yylval->emplace<s_integer>(strtoll(YYText(), nullptr, 10)); return SvlmParser::token::INT;
 {float}     yylval->emplace<s_float>(strtod(YYText(), nullptr)); return SvlmParser::token::FLT;
 {blank}     yylloc->step();
+{cap}{identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::UC_STR;
 {identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::STR;
-{cap}{identifier}      yylval->emplace<std::string>(std::string(YYText())); return SvlmParser::token::SNAKE_STR;
 
 "=="             return SvlmParser::token::EQL;
 "!="             return SvlmParser::token::NEQL;

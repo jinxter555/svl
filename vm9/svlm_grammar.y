@@ -49,19 +49,19 @@ namespace vslast {
 %token SQBRK_L SQBRK_R
 %token DOT AT DOLLAR COLON COMMA SEMICOLON
 %token TRUE FALSE NIL
-%token <string> IDENT_STR STR DQSTR SNAKE_STR
+%token <string> IDENT_STR STR DQSTR UC_STR LC_STR ALLCAP_STR
 %token <s_integer>  INT
 %token <s_float>     FLT
  
 %nterm EOS // end of statement
-%nterm <string> DOTSTR 
+%nterm <string> DOTSTR UC_DOTSTR mod_name_str class_name_str var_name_str mod_func_str func_str
 %nterm comments
 
 %nterm <astnode_u_ptr> proto_list proto arg_list arg list map tuple repeat_loop while_loop 
 %nterm <astnode_u_ptr> case case_match_list case_match if_then_else
 %nterm <astnode_u_ptr> tuple_arg_list object
 %nterm <map_u_ptr>  kv_pair_list
-%nterm <string> map_key
+%nterm <string> map_key 
 %type <tuple<string, astnode_u_ptr>> kv_pair 
 
 
@@ -126,14 +126,16 @@ comments
 
 
 module 
-  : MODULE DOTSTR DO statement_list END {
+  //: MODULE DOTSTR DO statement_list END {
+  : MODULE mod_name_str DO statement_list END {
     svlm_lang->add_module($2, move($4)); 
     }
-  | MODULE DOTSTR statement_list EOS { svlm_lang->add_module($2, move($3)); }
+  | MODULE mod_name_str statement_list EOS { svlm_lang->add_module($2, move($3)); }
   ;
 
 class 
-  : CLASS STR DO statement_list END {
+  //: CLASS STR DO statement_list END {
+  : CLASS class_name_str DO statement_list END {
     $$ = make_unique<AstClass>($2, move($4));
   }
   ;
@@ -256,12 +258,13 @@ literals
   //| COLON STR { $$ = std::make_unique<OperandExprAst>(Operand(Atom($2))); }
   | DQSTR { $$ = make_unique<Operand>($1); }
   ;
+
 caller
 //  : STR PAREN_L PAREN_R { $$= std::make_unique<AstCaller>($1); }
-  : DOTSTR PAREN_L arg_list PAREN_R { 
-    //cout << "in Grammar: caller!\n" ; $3->print(); cout << "\n";
+//  : DOTSTR PAREN_L arg_list PAREN_R { 
+  : mod_func_str PAREN_L arg_list PAREN_R { 
     $$= make_unique<AstCaller>($1, move($3)); 
-    }
+  }
   ;
 
 
@@ -286,11 +289,36 @@ print_exp
   //| PRINT DQSTR { $$ = std::make_unique<AstPrint> (std::make_unique<AstPrint>($2)); }
   ;
 
+
 DOTSTR
   : STR
   | DOTSTR DOT STR { $$ = $1 + string(".")+ $3; }
   ;
 
+mod_func_str
+  : STR { 
+//   cout << "mod_name_str1: ";
+    $$ = $1; 
+  }
+  | UC_DOTSTR { 
+//    cout << "mod_name_str2: ";
+    $$ = $1; 
+  }
+  | UC_DOTSTR DOT STR { 
+//    cout << "mod_name_str3: ";
+    auto outstr = $1 + "." + $3; 
+    $$ = outstr;
+  }
+  ;
+
+mod_name_str  : UC_DOTSTR;
+class_name_str  : UC_DOTSTR;
+
+
+UC_DOTSTR
+  : UC_STR
+  | UC_DOTSTR DOT UC_STR { $$ = $1 + string(".")+ $3;}
+  ;
 
 //--------------------------------------------------- 
 proto_list
@@ -376,9 +404,11 @@ kv_pair : map_key COLON exp_eval { $$ = {$1, move($3)}; } ;
 map_key : DQSTR | STR ;
 
 
+
 //--------------------------------------------------- 
 object 
-  : NEW STR {
+  //: NEW STR {
+  : NEW class_name_str {
     $$ = make_unique<AstNew>($2);
   }
   ;

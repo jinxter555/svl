@@ -32,8 +32,7 @@ module Helper do
 end
 
 
-
-module Main do
+module helper do
   def out() do
     print "out\n"
   end

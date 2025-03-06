@@ -7,7 +7,6 @@ module Main do
     func2()
     func3(456)
 
-    Helper.me(999)
     # Helper.me()
   end
 
