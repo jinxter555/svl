@@ -112,9 +112,31 @@ Operand& SvlmLang::get_current_frame(astnode_u_ptr& ctxt) {
 string SvlmLang::get_current_module(astnode_u_ptr& ctxt) {
   auto& f = get_frames(ctxt)->back();
   auto &m = f[CURRENT_MODULE];
+  if(m.is_nil()) {
+    cerr << "current module is nil!\n";
+    return "";
+  }
   //cout << "in SvlmLang::get_current_module: " << m << "\n";
   return m._to_str();
 }
+
+astnode_ptr SvlmLang::get_class_ptr(astnode_u_ptr &ctxt, const string& class_name) {
+  MYLOGGER(trace_function , string("SvlmLang::get_class_ptr(astnode_u_ptr& ctxt, ")+ class_name + string(")"), __func__, SLOG_FUNC_INFO+9);
+  auto mod_name = get_current_module(ctxt);
+  auto class_keys = get_module_keys(mod_name);
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  auto &root = svlm_lang_ptr->get_root();
+  class_keys.push_back("class");
+  auto &class_ = root[class_keys];
+  auto &user_class  = class_[class_name];
+  cout << "\n\n";
+  cout << "mod_keys: " <<  class_keys << "\n";
+  cout << "user_class: " << user_class << "\n";
+  return nullptr;
+
+}
+
+
 
 ControlFlow SvlmLang::pop_control_flow(astnode_u_ptr &ctxt) {
   auto cfl= (*ctxt)[CONTROL_FLOWS].get_list_ptr_nc();

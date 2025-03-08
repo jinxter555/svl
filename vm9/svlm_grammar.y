@@ -267,6 +267,13 @@ caller
   : mod_func_str PAREN_L arg_list PAREN_R { 
     $$= make_unique<AstCaller>($1, move($3)); 
   }
+  | var_name_str DOT mod_func_str PAREN_L arg_list PAREN_R { 
+  //| LC_STR COLON mod_func_str PAREN_L arg_list PAREN_R { 
+  //| LC_STR DOT mod_func_str PAREN_L arg_list PAREN_R { 
+    auto obj = $1 + "."+$3;
+    cout << "obj: " << obj << "\n";
+    $$= make_unique<AstCallerLvar>(obj, move($5)); 
+  }
   ;
 
 
@@ -302,7 +309,9 @@ print_exp
 DOTSTR 
   : STR 
   | DOTSTR DOT STR { 
-    $$ = $1 + string(".")+ $3; } 
+    $$ = $1 + string(".")+ $3; 
+   // cout << "dotstr: " <<$$ << "\n";
+    } 
   ;
 
 /*

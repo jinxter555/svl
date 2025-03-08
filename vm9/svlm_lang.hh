@@ -87,6 +87,7 @@ public:
   astnode_u_ptr& get_frames(astnode_u_ptr& ctxt); 
   Operand& get_current_frame(astnode_u_ptr& ctxt) ;
   string get_current_module(astnode_u_ptr &ctxt) ;
+  astnode_ptr get_class_ptr(astnode_u_ptr &ctxt, const string& name) ;
 
   ControlFlow pop_control_flow(astnode_u_ptr &ctxt);
   void push_control_flow(astnode_u_ptr &ctxt);

@@ -16,12 +16,15 @@ module Main do
   end
 
   def main() do
+    obj = new MyClass
+    #
+    #obj.init()
     #print "in main\n"
     print "in main"
     func2()
     func3(456)
 
-    Helper.me(999)
+    #Helper.me(999)
     # Helper.me()
   end
 

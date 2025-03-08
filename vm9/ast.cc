@@ -372,6 +372,50 @@ string AstCaller::get_current_module(astnode_u_ptr& ctxt) {
   return m._to_str();
 }
 */
+//----------------------------------------------------------------------- AstCallerObject
+AstCallerLvar::AstCallerLvar(const Operand&callee, astnode_u_ptr ) : AstExpr(OperandType::ast_caller_object_t) {
+  auto objfunc = split_string(callee._to_str(), ".");
+  node["obj_var_name"] = objfunc[0];
+  node["obj_var_func"] = objfunc[1];
+
+
+}
+Operand AstCallerLvar::to_str() const {
+  return "Object member: " + node["obj_var_name"]._to_str() + node["obj_var_func"]._to_str();
+
+}
+Operand AstCallerLvar::get_type() const {
+  return OperandType::ast_caller_object_t;
+}
+
+OperandType AstCallerLvar::_get_type() const {
+  return OperandType::ast_caller_object_t;
+}
+
+void AstCallerLvar::print() const {
+  cout << to_str();
+}
+string AstCallerLvar::obj_var_name() const {
+  return node["obj_var_name"]._to_str();
+}
+
+Operand AstCallerLvar::evaluate(astnode_u_ptr &ctxt) {
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  if(svlm_lang_ptr==nullptr) {
+    cerr << "In AstMvar::Assign svlmlang is null!\n";
+    return Operand();
+  }
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+  auto &lvars =  frame["lvars"];
+  auto var_name = obj_var_name();
+  auto &variable = lvars[var_name];
+  cout << "variable: " << variable << "\n";
+  return nil;
+}
+
+//Operand& AstCallerObject::add_frame(astnode_u_ptr& ctxt) { }
+
+
 //----------------------------------------------------------------------- AstAssign
 
 s_integer AstAssign::get_index_i(astnode_u_ptr &ctxt) {
@@ -936,7 +980,7 @@ Operand AstFlow::evaluate(astnode_u_ptr &ctxt) {
 }
 //----------------------------------------------------------------------- AstClass
 AstClass::AstClass(const Operand&n,  astnode_u_ptr m_list) : AstExpr(OperandType::ast_class_t) {
-//AstClass::AstClass(const Operand&n,  list_u_ptr m_list) : AstExpr(OperandType::ast_class_t) {
+  MYLOGGER(trace_function , "AstClass::AstClass(Operand&n, astnode_u_ptr m_list)" , __func__, SLOG_FUNC_INFO);
   int s=m_list->size();
   node["name"] = n._to_str();
 
@@ -950,7 +994,7 @@ AstClass::AstClass(const Operand&n,  astnode_u_ptr m_list) : AstExpr(OperandType
 
 }
 Operand AstClass::to_str() const {
-  return "Class" + node["name"]._to_str();
+  return "Class " + node["name"]._to_str();
 }
 Operand  AstClass::get_type() const {
   return OperandType::ast_class_t;
@@ -966,8 +1010,14 @@ void  AstClass::print() const {
   cout << to_str();
 }
 //----------------------------------------------------------------------- Object
-Object::Object(const string& cn) : AstExpr(OperandType::object_t) {
+Object::Object(const string& cn, astnode_ptr cptr) : AstExpr(OperandType::object_t) {
+  MYLOGGER(trace_function , 
+  string("Object::Object(") + cn + string(")astnode_ptr class_map_ptr)") , 
+  __func__, SLOG_FUNC_INFO+9);
+
+
   node["class_name"] = cn;
+  node["class_ptr"] = cptr;
   cout << "creating new object!\n";
 }
 
@@ -990,6 +1040,10 @@ void  Object::print() const {
 
 //----------------------------------------------------------------------- AstNew
 AstNew::AstNew(const string& class_name) : AstExpr(OperandType::ast_new_t) {
+  MYLOGGER(trace_function , 
+  string("AstNew::AstNew(") + class_name + string(")"), 
+  __func__, SLOG_FUNC_INFO+9);
+
   node["class_name"] = class_name;
 }
 
@@ -1002,9 +1056,29 @@ Operand  AstNew::get_type() const {
 OperandType  AstNew::_get_type() const {
   return OperandType::ast_class_t;
 }
-Operand  AstNew::evaluate(astnode_u_ptr &) {
+Operand  AstNew::evaluate(astnode_u_ptr &ctxt) {
+  MYLOGGER(trace_function , "AstNew::evaluate(astnode_u_ptr& ctxt)", __func__, SLOG_FUNC_INFO+9);
+
+
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  if(svlm_lang_ptr==nullptr) {
+    cerr << "In AstMvar::Assign svlmlang is null!\n";
+    return Operand();
+  }
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+  auto &lvars =  frame["lvars"];
+
   auto class_name = node["class_name"]._to_str();
-  astnode_s_ptr obj = make_shared<Object>(class_name);
+
+
+
+  auto mod_name = svlm_lang_ptr->get_current_module(ctxt);
+  auto class_ptr = svlm_lang_ptr->get_class_ptr(ctxt, class_name);
+
+  // need to add class pointer in object
+  astnode_s_ptr obj = make_shared<Object>(class_name, class_ptr);
+
+  cout << "mod_name: " <<  mod_name << "\n";
   cout << "obj type: " <<  obj->get_type() << "\n";
   return obj;
 }

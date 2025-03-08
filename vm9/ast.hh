@@ -18,7 +18,7 @@ public:
 
 class Object: public AstExpr {
 public:
-  Object(const string&);
+  Object(const string&name, astnode_ptr c_ptr);
   string class_name();
   Operand call_member_func(const string&);
   Operand get_type() const override ;
@@ -79,20 +79,35 @@ class AstCaller : public AstExpr {
 private:
   bool evaluated=false;
 public:
-  AstCaller(const Operand&, astnode_u_ptr);
+  AstCaller(const Operand&, astnode_u_ptr arg_list);
+
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+  Operand evaluate(astnode_u_ptr &) override;
+  Operand& add_frame(astnode_u_ptr& ctxt);
+  Operand& remove_frame(astnode_u_ptr& ctxt);
+};
+
+class AstCallerLvar: public AstExpr {
+public:
+  AstCallerLvar(const Operand&, astnode_u_ptr arg_list);
   Operand to_str() const override;
   Operand get_type() const override ;
   OperandType _get_type() const override;
   void print() const override;
   //string get_current_module(astnode_u_ptr& ctxt) ; // get current module from frame only
 //  string get_module() ; // if $module.var return module , if $var, return current_module
-  Operand evaluate(astnode_u_ptr &) override;
+  Operand evaluate(astnode_u_ptr &ctxt) override;
 
   //astnode_u_ptr& get_frames(astnode_u_ptr& ctxt) ;
+  string obj_var_name() const;
 
-  Operand& add_frame(astnode_u_ptr& ctxt);
-  Operand& remove_frame(astnode_u_ptr& ctxt);
+  //Operand& add_frame(astnode_u_ptr& ctxt);
+  //Operand& remove_frame(astnode_u_ptr& ctxt);
 };
+
 
 
 

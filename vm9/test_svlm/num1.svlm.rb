@@ -25,6 +25,10 @@ module Main do
     print "\n\n"
   end
 
+  def func4Pp(f_arg1) do
+    print "func4pp\n"
+  end
+
 end
 
 module Helper do
