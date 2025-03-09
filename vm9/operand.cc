@@ -315,11 +315,22 @@ const Operand& Operand::operator[] (const string& k) const {
 
   auto vptr =(AstMap*) _vrptr();
   if(vptr==nullptr) return nil_operand;
-  if(vptr->_get_type()!=OperandType::map_t) return nil_operand;
-  if(!vptr->has_key(k)) return nil_operand;
+  MYLOGGER_MSG(trace_function, string("operand type: ") + vptr->get_type()._to_str(), SLOG_FUNC_INFO);
+
+  switch(vptr->_get_type()) {
+  case OperandType::map_t:
+  case OperandType::object_t:
+  case OperandType::ast_class_t:
+    if(!vptr->has_key(k)) return nil_operand;
+    return (*vptr)[k];
+  default:
+    return nil_operand;
+  }
   //cout << "vptr: " << *vptr << "\n";
   //cout << "vptr->gettype(): " << vptr->get_type() << "\n";
-  return (*vptr)[k];
+
+
+  return nil_operand;
 }
 
 //------------------------------------

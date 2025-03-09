@@ -398,6 +398,9 @@ void AstCallerLvar::print() const {
 string AstCallerLvar::obj_var_name() const {
   return node["obj_var_name"]._to_str();
 }
+string AstCallerLvar::obj_var_func() const {
+  return node["obj_var_func"]._to_str();
+}
 
 Operand AstCallerLvar::evaluate(astnode_u_ptr &ctxt) {
   auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
@@ -408,8 +411,33 @@ Operand AstCallerLvar::evaluate(astnode_u_ptr &ctxt) {
   auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
   auto &lvars =  frame["lvars"];
   auto var_name = obj_var_name();
+  auto var_func = obj_var_func();
   auto &variable = lvars[var_name];
+  if(variable.is_nil()) {
+    cerr << "variable : " << var_name << " does not exist!\n";
+    return nil;
+  }
+  auto &class_ptr = variable["class_ptr"];
+
+  cout << "var_name: " << var_name<< "\n";
+  cout << "var_func: " << var_func<< "\n";
   cout << "variable: " << variable << "\n";
+//  cout << "class_ptr[members]: " << class_ptr["members"] << "\n";
+
+  //vec_str_t code_keys = {"members", var_func, "code"};
+  //auto &code = class_ptr[code_keys];
+  auto &members = class_ptr["members"];
+  cout << "members: " << members << "\n";
+  auto &func = members[var_func];
+  cout << "-func- " << func << "\n";
+  return func.evaluate(ctxt);
+  auto &code = func["code"];
+
+  //cout << "code_keys: " << code_keys << "\n";
+  if(code.is_nil()) { 
+    cerr << "class.code is nil!\n";
+  }
+  return code.evaluate(ctxt);
   return nil;
 }
 

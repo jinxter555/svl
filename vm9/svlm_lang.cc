@@ -124,15 +124,22 @@ astnode_ptr SvlmLang::get_class_ptr(astnode_u_ptr &ctxt, const string& class_nam
   MYLOGGER(trace_function , string("SvlmLang::get_class_ptr(astnode_u_ptr& ctxt, ")+ class_name + string(")"), __func__, SLOG_FUNC_INFO+9);
   auto mod_name = get_current_module(ctxt);
   auto class_keys = get_module_keys(mod_name);
+  auto &mod = root[class_keys];
+  cout << "mod:gettype() " << mod.get_type() << "\n";
+
+
+
   auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
   auto &root = svlm_lang_ptr->get_root();
   class_keys.push_back("class");
+  class_keys.push_back(class_name);
   auto &class_ = root[class_keys];
-  auto &user_class  = class_[class_name];
   cout << "\n\n";
-  cout << "mod_keys: " <<  class_keys << "\n";
-  cout << "user_class: " << user_class << "\n";
-  return nullptr;
+  cout << "class_keys: " <<  class_keys << "\n";
+  cout << "class_: " << class_ << "\n";
+  cout << "class_:gettype() " << class_.get_type() << "\n";
+  cout << "class_[members]: " << class_["members"] << "\n";
+  return class_.get_raw_ptr();
 
 }
 

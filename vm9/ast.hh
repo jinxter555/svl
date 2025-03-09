@@ -103,6 +103,7 @@ public:
 
   //astnode_u_ptr& get_frames(astnode_u_ptr& ctxt) ;
   string obj_var_name() const;
+  string obj_var_func() const;
 
   //Operand& add_frame(astnode_u_ptr& ctxt);
   //Operand& remove_frame(astnode_u_ptr& ctxt);
