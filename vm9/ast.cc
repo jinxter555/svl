@@ -419,26 +419,20 @@ Operand AstCallerLvar::evaluate(astnode_u_ptr &ctxt) {
   }
   auto &class_ptr = variable["class_ptr"];
 
+/*
   cout << "var_name: " << var_name<< "\n";
   cout << "var_func: " << var_func<< "\n";
   cout << "variable: " << variable << "\n";
+*/
 //  cout << "class_ptr[members]: " << class_ptr["members"] << "\n";
+ // vec_str_t code_keys = {"members", var_func, "code"};
+ // auto &code = class_ptr[code_keys];
 
-  //vec_str_t code_keys = {"members", var_func, "code"};
-  //auto &code = class_ptr[code_keys];
   auto &members = class_ptr["members"];
-  cout << "members: " << members << "\n";
   auto &func = members[var_func];
-  cout << "-func- " << func << "\n";
-  return func.evaluate(ctxt);
   auto &code = func["code"];
-
-  //cout << "code_keys: " << code_keys << "\n";
-  if(code.is_nil()) { 
-    cerr << "class.code is nil!\n";
-  }
+  if(code.is_nil()) { cerr << "class.code is nil!\n"; }
   return code.evaluate(ctxt);
-  return nil;
 }
 
 //Operand& AstCallerObject::add_frame(astnode_u_ptr& ctxt) { }

@@ -271,7 +271,7 @@ caller
   //| LC_STR COLON mod_func_str PAREN_L arg_list PAREN_R { 
   //| LC_STR DOT mod_func_str PAREN_L arg_list PAREN_R { 
     auto obj = $1 + "."+$3;
-    cout << "obj: " << obj << "\n";
+  //  cout << "obj: " << obj << "\n";
     $$= make_unique<AstCallerLvar>(obj, move($5)); 
   }
   ;

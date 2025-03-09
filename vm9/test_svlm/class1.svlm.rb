@@ -4,7 +4,7 @@ module Main do
   class MyClass do
     def init() do
       print 1+2*3
-      print "hello\n\n\n"
+      print "hello\n"
     end
 
     def run(arg1) do

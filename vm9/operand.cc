@@ -321,6 +321,8 @@ const Operand& Operand::operator[] (const string& k) const {
   case OperandType::map_t:
   case OperandType::object_t:
   case OperandType::ast_class_t:
+  case OperandType::ast_func_t:
+  case OperandType::ast_mod_t:
     if(!vptr->has_key(k)) return nil_operand;
     return (*vptr)[k];
   default:
