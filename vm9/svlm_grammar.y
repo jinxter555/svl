@@ -295,6 +295,7 @@ variable
   | DOLLAR var_name_str SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
   | DOLLAR DOTSTR SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstMvar>($2, move($4)); }
   | DOTSTR { $$ = make_unique<AstLvar>($1); }
+  | AT var_name_str { $$ = make_unique<AstOvar>($2); }
   | var_name_str { $$ = make_unique<AstLvar>($1); }
   | var_name_str SQBRK_L exp_eval SQBRK_R { $$ = make_unique<AstLvar>(move($1), move($3)); }
   ;

@@ -4,7 +4,8 @@ module Main do
   class MyClass do
     def init() do
       @a=1+2*3
-      #print @a
+      @a=@a+1
+      print @a
       print "hello\n"
     end
 
