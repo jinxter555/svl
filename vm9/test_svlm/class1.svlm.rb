@@ -3,6 +3,7 @@
 module Main do
   class MyClass do
     def init() do
+      print "init!!!\n\n"
       @a=1+2*3
       @a=@a+1
       print @a
@@ -10,7 +11,10 @@ module Main do
     end
 
     def run(arg1) do
+      print "run!!!\n\n"
       print arg1
+      print "@a" 
+      print @a
     end
   end
 
@@ -21,6 +25,7 @@ module Main do
   def main() do
     #Helper.me(999)
     obj = new MyClass
+    obj.run(123)
     obj.init()
     #
     #obj.init()

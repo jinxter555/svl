@@ -31,7 +31,7 @@ add_executable(${PROJECT_NAME} main.cc svlm_parser.cc svlm_lang.cc svlm_interact
 
 #add_library(svlm-node  number.cc operand.cc operand_visitors.cc operand_tostr.cc ast_node.cc ast_list.cc ast_map.cc my_helpers.cc svlm_lang.cc )
 add_library( svlm-node  number.cc operand.cc operand_visitors.cc operand_tostr.cc operand_math.cc ast_node.cc ast_list.cc ast_map.cc 
-ast_loop.cc my_helpers.cc svlm_lang.cc ast_case.cc ast.cc module_registry.cc)
+ast_loop.cc my_helpers.cc svlm_lang.cc ast_case.cc ast.cc ast_caller.cc module_registry.cc)
 add_library(svlm-logger  scope_logger.cc)
 
 target_link_libraries(${PROJECT_NAME} svlm-node svlm-logger ${Readline_LIBRARY})
