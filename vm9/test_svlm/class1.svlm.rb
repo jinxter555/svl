@@ -3,7 +3,8 @@
 module Main do
   class MyClass do
     def init() do
-      print 1+2*3
+      @a=1+2*3
+      #print @a
       print "hello\n"
     end
 

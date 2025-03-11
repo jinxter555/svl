@@ -105,7 +105,7 @@ public:
   string obj_var_name() const;
   string obj_var_func() const;
 
-  //Operand& add_frame(astnode_u_ptr& ctxt);
+  Operand& add_frame(astnode_u_ptr& ctxt, Operand&object);
   //Operand& remove_frame(astnode_u_ptr& ctxt);
 };
 

@@ -121,7 +121,9 @@ enum class OperandType {
 
   ast_print_t,
   ast_caller_t,
-  ast_caller_object_t,
+  ast_caller_mvar_t,
+  ast_caller_lvar_t,
+  ast_caller_ovar_t,
   ast_tuple_t,
 
   ast_case_t,
