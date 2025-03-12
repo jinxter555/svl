@@ -134,12 +134,14 @@ astnode_ptr SvlmLang::get_class_ptr(astnode_u_ptr &ctxt, const string& class_nam
   class_keys.push_back("class");
   class_keys.push_back(class_name);
   auto &class_ = root[class_keys];
+/*
   cout << "\n\n";
   cout << "class_keys: " <<  class_keys << "\n";
   cout << "class_: " << class_ << "\n";
   cout << "class_:gettype() " << class_.get_type() << "\n";
   cout << "class_[members]: " << class_["members"] << "\n";
-  return class_.get_raw_ptr();
+ */ 
+return class_.get_raw_ptr();
 
 }
 

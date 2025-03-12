@@ -217,6 +217,7 @@ AstCallerLvar::AstCallerLvar(const Operand&callee, astnode_u_ptr arg_list) : Ast
   node["obj_var_name"] = objfunc[0];
   node["obj_var_func"] = objfunc[1];
   node["arg_list"] = move(arg_list);
+  node["object"] = nil;
 }
 
 Operand AstCallerLvar::to_str() const {
@@ -270,6 +271,9 @@ Operand AstCallerLvar::evaluate(astnode_u_ptr &ctxt) {
   auto &members = class_ptr["members"];
   auto &func = members[var_func];
   auto &code = func["code"];
+  node["proto_list"] = func["proto_list"].get_raw_ptr();
+  //node["proto_list"] = func["proto_list"].clone();
+
   if(code.is_nil()) { cerr << "class.code is nil!\n"; }
   add_frame(ctxt, object);
   return code.evaluate(ctxt);
@@ -296,9 +300,13 @@ Operand& AstCallerLvar::add_frame(astnode_u_ptr &ctxt, Operand &object) {
   new_frame->add("ovars", object["ovars"], true);
 
   auto &arg_list = node["arg_list"];
+
+  // proto list needs to be implemented
   auto &proto_list = node["proto_list"];
 
-  //cout << "arg_list: " <<  arg_list << "\n"; //cout << "proto_list: " <<  proto_list << "\n\n";
+  cout << "AstCallerLvar add_frames(), node: " <<  node<< "\n"; //cout << "proto_list: " <<  proto_list << "\n\n";
+  cout << "AstCallerLvar add_frames(), proto_list: " <<  proto_list << "\n"; //cout << "proto_list: " <<  proto_list << "\n\n";
+  cout << "AstCallerLvar add_frames(), arg_list: " <<  arg_list << "\n"; //cout << "proto_list: " <<  proto_list << "\n\n";
 
   if(arg_list.size() != proto_list.size()) {
     cerr << "Arguments do not match prototype!\n";
@@ -394,6 +402,7 @@ Operand AstCallerMvar::evaluate(astnode_u_ptr &ctxt) {
   auto &members = class_ptr["members"];
   auto &func = members[var_func];
   auto &code = func["code"];
+  node["proto_list"] = func["proto_list"].get_raw_ptr();
   if(code.is_nil()) { cerr << "class.code is nil!\n"; }
   add_frame(ctxt, object);
   return code.evaluate(ctxt);

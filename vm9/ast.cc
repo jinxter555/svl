@@ -77,8 +77,8 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
       case OperandType::tuple_t:
       case OperandType::object_t:
       case OperandType::map_t: {
-        cout << "type: " << r_v_rptr->get_type() << "\n";
-        cout << "assigning list_t || map_t || tuple_t || object_t !\n ";
+        //cout << "type: " << r_v_rptr->get_type() << "\n";
+        //cout << "assigning list_t || map_t || tuple_t || object_t !\n ";
         if(r_v.be_shared()) { 
           variable->assign(ctxt, r_v); 
           return r_v; 
@@ -97,7 +97,7 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
         break;}
 
       default: {
-        cout << "assigning regular var!\n";
+        //cout << "assigning regular var!\n";
         variable->assign(ctxt, r_v);
         return r_v; }
     }

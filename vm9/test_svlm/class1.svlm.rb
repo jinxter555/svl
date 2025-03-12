@@ -3,7 +3,7 @@
 module Main do
   class MyClass do
     def init() do
-      print "init!!!\n\n"
+      print "MyClass init()\n"
       @a=1+2*3
       @a=@a+1
       print @a
@@ -11,10 +11,15 @@ module Main do
     end
 
     def run(arg1) do
-      print "run!!!\n\n"
+      print "run()!!!\n"
+      print "arg1: "
       print arg1
-      print "@a" 
+
+      print "\n@a: " 
+      @a = @a + arg1
       print @a
+
+      print "\n\n"
     end
   end
 
@@ -29,8 +34,7 @@ module Main do
     obj.init()
     #
     #obj.init()
-    #print "in main\n"
-    print "in main"
+    print "in main()\n"
     func2()
     func3(456)
 
