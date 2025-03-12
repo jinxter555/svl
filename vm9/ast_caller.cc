@@ -217,9 +217,8 @@ AstCallerLvar::AstCallerLvar(const Operand&callee, astnode_u_ptr arg_list) : Ast
   node["obj_var_name"] = objfunc[0];
   node["obj_var_func"] = objfunc[1];
   node["arg_list"] = move(arg_list);
-
-
 }
+
 Operand AstCallerLvar::to_str() const {
   return "Object member: " + node["obj_var_name"]._to_str() + node["obj_var_func"]._to_str();
 
@@ -295,6 +294,132 @@ Operand& AstCallerLvar::add_frame(astnode_u_ptr &ctxt, Operand &object) {
   new_frame->add("current_function", node["obj_var_func"], true);
   new_frame->add(CURRENT_MODULE,   current_frame[CURRENT_MODULE], true);
   new_frame->add("ovars", object["ovars"], true);
+
+  auto &arg_list = node["arg_list"];
+  auto &proto_list = node["proto_list"];
+
+  //cout << "arg_list: " <<  arg_list << "\n"; //cout << "proto_list: " <<  proto_list << "\n\n";
+
+  if(arg_list.size() != proto_list.size()) {
+    cerr << "Arguments do not match prototype!\n";
+    return nil_operand_nc;
+  }
+
+  if(arg_list.size() > 0 ) {
+    auto arg_list_result = arg_list.evaluate(ctxt);
+    s_integer s = arg_list_result.size();
+    for(s_integer i =0; i< s; i++) {
+      //lvars->add(proto_list[i], arg_list_result[i]);
+      lvars->add(proto_list[i]._to_str(), arg_list_result[i], true);
+    }
+    // get from tree protolist and add to lvars
+  }
+
+  new_frame->add(string("lvars"), move(lvars), true);
+  frames->add(move(new_frame));
+
+  return frames->back_nc();
+}
+
+
+
+//----------------------------------------------------------------------- AstCallerMvar
+AstCallerMvar::AstCallerMvar(const Operand&callee, astnode_u_ptr arg_list) : AstExpr(OperandType::ast_caller_mvar_t) {
+  auto objfunc = split_string(callee._to_str(), ".");
+  node["obj_var_name"] = objfunc[0];
+  node["obj_var_func"] = objfunc[1];
+  node["arg_list"] = move(arg_list);
+}
+
+Operand AstCallerMvar::to_str() const {
+  return "Object member: " + node["obj_var_name"]._to_str() + node["obj_var_func"]._to_str();
+
+}
+Operand AstCallerMvar::get_type() const {
+  return OperandType::ast_caller_mvar_t;
+}
+
+OperandType AstCallerMvar::_get_type() const {
+  return OperandType::ast_caller_mvar_t;
+}
+
+void AstCallerMvar::print() const {
+  cout << to_str();
+}
+string AstCallerMvar::obj_var_name() const {
+  return node["obj_var_name"]._to_str();
+}
+string AstCallerMvar::obj_var_func() const {
+  return node["obj_var_func"]._to_str();
+}
+
+Operand AstCallerMvar::evaluate(astnode_u_ptr &ctxt) {
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  if(svlm_lang_ptr==nullptr) {
+    cerr << "In AstMvar::Assign svlmlang is null!\n";
+    return Operand();
+  }
+  auto &frame = svlm_lang_ptr->get_current_frame(ctxt);
+
+  Operand mod_name_operand;
+
+  auto &mod_name = (*this)["mod_name"];
+  mod_name_operand = mod_name.to_str();
+
+  if(mod_name == nil_operand)  {
+    mod_name_operand  = svlm_lang_ptr->get_current_module(ctxt);
+    add(string("mod_name"), mod_name_operand);
+  }
+
+  auto var_name = obj_var_name();
+  auto var_func = obj_var_func();
+  auto &sub_node = svlm_lang_ptr->get_module_subnode(mod_name_operand,  OperandType::ast_mvar_t);
+
+  auto &object = sub_node[var_name];
+  if(object.is_nil()) {
+    cerr << "variable : " << var_name << " does not exist!\n";
+    return nil;
+  }
+  auto &class_ptr = object["class_ptr"];
+
+/*
+  cout << "var_name: " << var_name<< "\n";
+  cout << "var_func: " << var_func<< "\n";
+  cout << "variable: " << variable << "\n";
+*/
+//  cout << "class_ptr[members]: " << class_ptr["members"] << "\n";
+ // vec_str_t code_keys = {"members", var_func, "code"};
+ // auto &code = class_ptr[code_keys];
+
+  auto &members = class_ptr["members"];
+  auto &func = members[var_func];
+  auto &code = func["code"];
+  if(code.is_nil()) { cerr << "class.code is nil!\n"; }
+  add_frame(ctxt, object);
+  return code.evaluate(ctxt);
+}
+
+//Operand& AstCallerObject::add_frame(astnode_u_ptr& ctxt) { }
+Operand& AstCallerMvar::add_frame(astnode_u_ptr &ctxt, Operand &object) { 
+  MYLOGGER(trace_function , "AstCallerLvar::add_frame(astnode_u_ptr& ctxt)" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("ctxt: ") + AstPtr2Str(ctxt), SLOG_FUNC_INFO+1)
+
+  // use current module if call
+
+
+  //auto svlm_lang = ctxt->root["svlm_lang"]; //auto svlm_lang_ptr = ctxt->root["svlm_lang"].get_svlm_ptr();
+
+  auto svlm_lang_ptr = (*ctxt)[SVLM_LANG].get_svlm_ptr();
+  auto &frames = svlm_lang_ptr->get_frames(ctxt);
+  auto &current_frame = svlm_lang_ptr->get_current_frame(ctxt);
+
+  auto new_frame = make_unique<AstMap>(); // nm, new frame here
+  auto lvars = make_unique<AstMap>();
+  auto ovars = object["ovars"].to_shared();
+  new_frame->add("current_function", node["obj_var_func"], true);
+  new_frame->add(CURRENT_MODULE,   current_frame[CURRENT_MODULE], true);
+  //new_frame->add("ovars", object["ovars"], true);
+  new_frame->add(string("ovars"), ovars, true);
 
   auto &arg_list = node["arg_list"];
   auto &proto_list = node["proto_list"];

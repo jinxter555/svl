@@ -78,7 +78,7 @@ Operand AstBinOp::evaluate(astnode_u_ptr& ctxt) {
       case OperandType::object_t:
       case OperandType::map_t: {
         cout << "type: " << r_v_rptr->get_type() << "\n";
-        cout << "assigning list_t || map_t || tuple_t !\n ";
+        cout << "assigning list_t || map_t || tuple_t || object_t !\n ";
         if(r_v.be_shared()) { 
           variable->assign(ctxt, r_v); 
           return r_v; 
@@ -777,7 +777,8 @@ Object::Object(const string& cn, astnode_ptr cptr) : AstExpr(OperandType::object
 
   node["class_name"] = cn;
   node["class_ptr"] = cptr;
-  node.add(string("ovars"), make_unique<AstMap>());
+  //node.add(string("ovars"), make_unique<AstMap>());
+  node.add(string("ovars"), make_shared<AstMap>());
   cout << "creating new object!\n";
 }
 

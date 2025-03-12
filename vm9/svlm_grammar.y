@@ -268,11 +268,12 @@ caller
     $$= make_unique<AstCaller>($1, move($3)); 
   }
   | var_name_str DOT mod_func_str PAREN_L arg_list PAREN_R { 
-  //| LC_STR COLON mod_func_str PAREN_L arg_list PAREN_R { 
-  //| LC_STR DOT mod_func_str PAREN_L arg_list PAREN_R { 
     auto obj = $1 + "."+$3;
-  //  cout << "obj: " << obj << "\n";
     $$= make_unique<AstCallerLvar>(obj, move($5)); 
+  }
+  | DOLLAR var_name_str DOT mod_func_str PAREN_L arg_list PAREN_R { 
+    auto obj = $2 + "."+$4;
+    $$= make_unique<AstCallerMvar>(obj, move($6)); 
   }
   ;
 
