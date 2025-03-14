@@ -177,6 +177,7 @@ bool AstList::add(const list_t & l) {
   return true;
 }
 Operand& AstList::remove() {
+  if(list_.empty()) return nil_operand_nc;
   Operand &v = list_[size()];
   list_.pop_back();
   return v;

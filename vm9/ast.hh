@@ -106,7 +106,7 @@ public:
   string obj_var_func() const;
 
   Operand& add_frame(astnode_u_ptr& ctxt, Operand&object);
-  //Operand& remove_frame(astnode_u_ptr& ctxt);
+  Operand& remove_frame(astnode_u_ptr& ctxt);
 };
 
 class AstCallerMvar: public AstExpr {
@@ -125,9 +125,27 @@ public:
   string obj_var_func() const;
 
   Operand& add_frame(astnode_u_ptr& ctxt, Operand&object);
-  //Operand& remove_frame(astnode_u_ptr& ctxt);
+  Operand& remove_frame(astnode_u_ptr& ctxt);
 };
 
+class AstCallerOvar: public AstExpr {
+public:
+  AstCallerOvar(const Operand&, astnode_u_ptr arg_list);
+  Operand to_str() const override;
+  Operand get_type() const override ;
+  OperandType _get_type() const override;
+  void print() const override;
+  //string get_current_module(astnode_u_ptr& ctxt) ; // get current module from frame only
+//  string get_module() ; // if $module.var return module , if $var, return current_module
+  Operand evaluate(astnode_u_ptr &ctxt) override;
+
+  //astnode_u_ptr& get_frames(astnode_u_ptr& ctxt) ;
+  string obj_var_name() const;
+  string obj_var_func() const;
+
+  Operand& add_frame(astnode_u_ptr& ctxt, Operand&object);
+  Operand& remove_frame(astnode_u_ptr& ctxt);
+};
 
 
 

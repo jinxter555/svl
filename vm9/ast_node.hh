@@ -67,6 +67,7 @@ public:
   virtual const Operand& back() const = 0;
   virtual Operand& back_nc() = 0;
   virtual bool add(astnode_u_ptr &&vptr) =0;  // for list
+  virtual Operand& remove() =0;  // for list
   
 
 

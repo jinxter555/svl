@@ -451,3 +451,6 @@ Operand AstMap::opfunc(const AstNode& other, AstOpCode op) {
 
 
 };
+Operand& AstMap::remove() {
+  return nil_operand_nc;
+};

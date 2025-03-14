@@ -91,6 +91,7 @@ public:
 
 
   bool add(astnode_u_ptr &&vptr) override {return false; };  // for list
+  Operand& remove()override;
 
   //-------------------------
 

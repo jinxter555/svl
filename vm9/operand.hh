@@ -39,7 +39,8 @@ public:
   Operand(const astnode_ptr);
   Operand(const svlm_lang_ptr) ;
 
-  bool add(astnode_u_ptr &&) ;  // for list
+  bool add(astnode_u_ptr &&) override;  // for list
+  Operand& remove() override;
   bool add(const operand_variant_t&) ;  // for list
 
   //-------------------------------------------

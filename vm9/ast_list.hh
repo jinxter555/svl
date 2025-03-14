@@ -75,7 +75,7 @@ public:
   bool add(const operand_variant_t&) ;  // for list
   bool add(astnode_u_ptr &&vptr) override;  // for list
   bool add(const list_t &);
-  Operand& remove();
+  Operand& remove()override;
 
 
   const list_t& _get_list() const;

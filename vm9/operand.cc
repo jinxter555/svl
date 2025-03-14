@@ -115,6 +115,13 @@ bool Operand::add(const operand_variant_t&ovv) {
   list->add(ovv);
   return true;
 }
+Operand& Operand::remove() {
+  MYLOGGER(trace_function , "Operand::remove()" , __func__, SLOG_FUNC_INFO);
+  auto list = get_list_ptr_nc();
+  if(list==nullptr) return nil_operand_nc;
+  return list->remove();
+};
+
 //-------------------------------------------
 bool Operand::add(const Operand &k, const AstNode& v, bool overwrite) {
   //cout << "Operand::add(const Operand &k, const AstExpr& v, bool overwrite)\n";
