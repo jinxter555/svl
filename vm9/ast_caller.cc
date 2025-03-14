@@ -300,9 +300,11 @@ Operand& AstCallerLvar::add_frame(astnode_u_ptr &ctxt, Operand &object) {
 
   auto new_frame = make_unique<AstMap>(); // nm, new frame here
   auto lvars = make_unique<AstMap>();
+  auto ovars = object["ovars"].to_shared();
   new_frame->add("current_function", node["obj_var_func"], true);
   new_frame->add(CURRENT_MODULE,   current_frame[CURRENT_MODULE], true);
-  new_frame->add("ovars", object["ovars"], true);
+  //new_frame->add("ovars", object["ovars"], true);
+  new_frame->add(string("ovars"), ovars, true);
 
   auto &arg_list = node["arg_list"];
 
@@ -564,9 +566,11 @@ Operand& AstCallerOvar::add_frame(astnode_u_ptr &ctxt, Operand &object) {
 
   auto new_frame = make_unique<AstMap>(); // nm, new frame here
   auto lvars = make_unique<AstMap>();
+  auto ovars = object["ovars"].to_shared();
   new_frame->add("current_function", node["obj_var_func"], true);
   new_frame->add(CURRENT_MODULE,   current_frame[CURRENT_MODULE], true);
-  new_frame->add("ovars", object["ovars"], true);
+  //new_frame->add("ovars", object["ovars"], true);
+  new_frame->add(string("ovars"), ovars, true);
 
   auto &arg_list = node["arg_list"];
 
