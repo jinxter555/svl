@@ -1,0 +1,753 @@
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
+#include <type_traits>
+#include "node.hh"
+#include "lisp.hh"
+
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
+
+string Node::Error::type_to_string(Node::Error::Type type) {
+  switch(type) {
+    case Node::Error::Type::InvalidOperation: return "InvalidOperation";
+    case Node::Error::Type::KeyAlreadyExists: return "KeyAlreadyExists";
+    case Node::Error::Type::IndexOutOfBounds: return "IndexOutOfBounds";
+    case Node::Error::Type::DivideByZero:     return "DivideByZero";
+    case Node::Error::Type::Incomplete:       return "Incomplete";
+  }
+  return "Unknown Error";
+}
+
+string Node::type_to_string(Type type) {
+  switch (type) {
+    case Type::Null: return "Null";
+    case Type::Error: return "Error";
+    case Type::Integer: return "Integer";
+    case Type::Float: return "Float";
+    case Type::String: return "String";
+    case Type::List: return "List";
+    case Type::Vector: return "Vector";
+    case Type::DeQue: return "DeQue";
+    case Type::Map: return "Map";
+    case Type::Atom: return "Atom";
+    case Type::LispOp: return "LispOp";
+    case Type::Identifier: return "Identifier";
+  }
+  return "Unknown Type";
+}
+
+
+
+Node::Node() 
+  : value_(std::monostate{})
+  , type_(Type::Null)
+  {}
+
+
+Node::Node(Value v)
+  : value_(move(v)) {
+
+  type_ = visit([](auto&& inner_arg) -> Type {
+    using U = decay_t<decltype(inner_arg)>;
+    if constexpr (is_same_v<U, monostate>) return Type::Null;
+    else if constexpr (is_same_v<U, Error>) return Type::Error;
+    else if constexpr (is_same_v<U, Integer>) return Type::Integer;
+    else if constexpr (is_same_v<U, Float>) return Type::Float;
+    else if constexpr (is_same_v<U, Lisp::Op>) return Type::LispOp;
+    else if constexpr (is_same_v<U, string>) return Type::String;
+    else if constexpr (is_same_v<U, List>) return Type::List;
+    else if constexpr (is_same_v<U, Vector>) return Type::Vector;
+    else if constexpr (is_same_v<U, DeQue>) return Type::DeQue;
+    else if constexpr (is_same_v<U, Map>) return Type::Map;
+    return Type::Null;
+  //}, get<Value>(this->value));
+  }, value_);
+}
+Node::Node(Type t)
+  : type_(t) {
+  switch(t) {
+  case Type::Integer: value_=0; break;
+  case Type::Float: value_=0.0; break;
+  case Type::Map: { 
+    Map nm={};
+    value_ = move(nm);
+    break;}
+  case Type::List: { 
+    List l={};
+    value_ = move(l);
+    break;}}
+}
+
+
+unique_ptr<Node> Node::create_error(Node::Error::Type t, const string& msg) {
+  return make_unique<Node>(Value(Node::Error{t, msg}));
+}
+
+unique_ptr<Node> Node::clone(const List& list) {
+  List cloned_list;
+  for(const auto& child_ptr :list ) 
+    cloned_list.push_back(child_ptr->clone());
+  return Node::create(move(cloned_list));
+}
+
+unique_ptr<Node> Node::clone(const DeQue& list) {
+  DeQue cloned_list;
+  for(const auto& child_ptr :list ) 
+    cloned_list.push_back(child_ptr->clone());
+  return Node::create(move(cloned_list));
+}
+unique_ptr<Node> Node::clone(const Vector& list) {
+  Vector cloned_list;
+  for(const auto& child_ptr :list ) 
+    cloned_list.push_back(child_ptr->clone());
+  return Node::create(move(cloned_list));
+}
+
+
+
+
+unique_ptr<Node> Node::clone(const Map& map) {
+  Map cloned_map;
+  for(const auto& [key, child_ptr] : map) {
+    cloned_map.try_emplace(key, child_ptr->clone());
+  }
+  return Node::create(move(cloned_map));
+}
+
+unique_ptr<Node> Node::clone() const {
+  if(holds_alternative<monostate>(value_)) 
+    return make_unique<Node>();
+
+  return visit([&](auto&& arg) -> unique_ptr<Node> {
+    using T = decay_t<decltype(arg)>;
+    if constexpr(is_same_v<T, monostate>)
+      return make_unique<Node>(Node());
+    else if constexpr(is_same_v<T, Node::Error>) {
+      // return make_unique<Node>(Value(arg));
+      return make_unique<Node>(arg);
+    }
+    else if constexpr(
+        is_same_v<T, Integer> || is_same_v<T, Float> || 
+        is_same_v<T, string> || is_same_v<T, Lisp::Op>)
+      //return Node::create(Value(arg));
+      return Node::create(arg);
+    else if constexpr(is_same_v<T, List>) {
+      return clone(arg);
+    }
+    else if constexpr(is_same_v<T, Vector>) {
+      return clone(arg);
+    }
+    else if constexpr(is_same_v<T, DeQue>) {
+      return clone(arg);
+    }
+    else if constexpr(is_same_v<T, Map>) {
+      return clone(arg);
+  }
+  }, value_);
+}
+
+void Node::set(Integer v)  { *this = Node(v); }
+void Node::set(Float v)  { *this = Node(v); }
+void Node::set(Lisp::Op v)  { *this = Node(v); }
+void Node::set(const string& v) { *this = Node(v); }
+void Node::set(List v) { *this = Node(Value(move(v))); }
+void Node::set(Map v) { *this = Node(Value(move(v))); }
+void Node::set(unique_ptr<Node> new_node) {
+  if(!new_node) {
+    set_null();
+  } else {
+    this->value_ = move(new_node->value_);
+    this->type_ = new_node->type_;
+  }
+}
+
+void Node::set_null() { this->value_ = monostate{}; type_=Type::Null; }
+void Node::set_atom(Integer v)  { *this = Node(v); type_ = Type::Atom; }
+void Node::set_atom()  { type_ = Type::Atom; }
+void Node::set_identifier(const string& v) { *this = Node(v); type_ = Type::Identifier; }
+void Node::set_identifier() { type_ = Type::Identifier; }
+
+Node::OpStatus Node::set(size_t index, unique_ptr<Node> child) {
+  if(type_ != Type::Vector) 
+    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot set index on a non-List node.")};
+
+  Vector &list = get<Vector>(value_);
+  if(index >= list.size()) {
+    ostringstream msg;
+    msg << "Index " << index << " is out of bounds for list size " << list.size() << ".";
+    return {false, create_error(Node::Error::Type::IndexOutOfBounds, msg.str())};
+  }
+  list[index] = move(child);
+  return {true, nullptr};
+}
+
+Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
+  if (type_ != Type::Map) {
+    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
+  }        
+  Map& map= get<Map>(value_);
+  map[key] = move(child);
+  return {true, nullptr};
+}
+
+//Node::OpStatus Node::set(size_t index, Integer v) { return set(index, Node::create(Value(v))); }
+Node::OpStatus Node::set(size_t index, Integer v) { return set(index, Node::create(v)); }
+Node::OpStatus Node::set(size_t index, Float v) { return set(index, Node::create(v)); }
+Node::OpStatus Node::set(size_t index, const string&v ) { return set(index, Node::create(v)); }
+
+Node::OpStatus Node::set(const string&key, Integer v ) { return set(key, Node::create(v)); }
+Node::OpStatus Node::set(const string&key, Float v ) { return set(key, Node::create(v)); }
+Node::OpStatus Node::set(const string&key, Lisp::Op v ) { return set(key, Node::create(v)); }
+Node::OpStatus Node::set(const string&key, const string&v ) { return set(key, Node::create(v)); }
+
+
+Node::Node(vector<ValueSimple> vl) : type_(Type::List) {
+  //cout << "In node:: set:: vector<ValueSimple> \n";
+  List list;
+  //value = List{};
+  //List list = get<List>(value);
+  for(auto &v : vl ) { 
+    auto ptr = visit([](auto&& arg) -> unique_ptr<Node> {
+      using T = decay_t<decltype(arg)>;
+      if constexpr (is_same_v<T, monostate>) return make_unique<Node>();
+      else if constexpr (is_same_v<T, Error>) return make_unique<Node>(arg);
+      else if constexpr (is_same_v<T, Integer>) { 
+        //cout << "int arg: " << arg << "\n";
+        return create(arg);
+      }
+      else if constexpr (is_same_v<T, Float>) {
+        //cout << "float arg: " << arg << "\n";
+        return make_unique<Node>(arg); 
+      }
+      else if constexpr (is_same_v<T, Lisp::Op>) {
+        //cout << "LispOp:  \n";
+        return make_unique<Node>(arg); 
+      }
+      else if constexpr (is_same_v<T, string>) {
+        //cout << "string arg: " << arg << "\n";
+        return make_unique<Node>(arg); 
+      }
+      /*
+      else if constexpr (is_same_v<T, List>) { 
+        //cout << "list:  \n"; //return make_unique<Node>(move(arg)); 
+        return make_unique<Node>(arg); 
+      }
+      else if constexpr (is_same_v<T, Map>) {  
+        //cout << "map:  \n"; //return make_unique<Node>(move(arg)); }
+        return make_unique<Node>(arg); }
+      */
+      else {
+        ////cout << "unknown arg: " << arg << "\n";
+        return make_unique<Node>(); 
+      }
+    }, v);
+    //cout << "node::set list size.size()" <<  list.size() << "\n";
+    list.push_back(move(ptr));
+  }
+  value_ = move(list);
+  //Node(move(list));
+  //cout << "list:beg " << "\n";
+  //print_value_recursive(*this, 0);
+  //cout << "list:end " << "\n";
+}
+
+Node::OpStatus Node::add(unique_ptr<Node> child) {
+  if(type_ != Type::List) 
+    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot add element to a non-List node.")};
+
+  List& list = get<List>(value_);
+  list.push_back(move(child));
+  return {true, nullptr};
+}
+
+Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
+  if (type_ != Type::Map) {
+    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
+  }        
+  Map& map = get<Map>(value_);
+
+  if(!map.try_emplace(key, std::move(child)).second) {
+    return {false, create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+  }
+  return {true, nullptr};
+}
+
+
+Node::OpStatus Node::delete_key(const string &key) {
+  if(type_ != Type::Map)
+    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
+
+  Map& map = get<Map>(value_);
+  if(map.erase(key)==0)
+    return {false, create_error(Node::Error::Type::InvalidOperation,  "Key '" + key + "' not found in map.")};
+  return {true, nullptr};
+}
+
+//------------------------------------------------------------------------
+//--------------------------------
+Node::OpStatus Node::pop_back() {
+  MYLOGGER(trace_function, "Node::pop_back()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_), SLOG_FUNC_INFO+30);
+
+  return visit([&](auto&& list) -> OpStatus {
+    using T = decay_t<decltype(list)>;
+    if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> || is_same_v<T, Vector>){
+      if(list.empty()) { return {false, 
+        create_error(Node::Error::Type::InvalidOperation, "Cannot pop_back from an empty List or DeQue node.")};};
+      auto back = move(list.back());
+      list.pop_back();
+      return {true, move(back)};
+    } else {
+      return {false, nullptr};
+    }
+  }, value_);
+  return {false, nullptr};
+}
+
+//--------------------------------
+Node::OpStatus Node::pop_front() {
+  MYLOGGER(trace_function, "Node::pop_front()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_), SLOG_FUNC_INFO+30);
+
+  return visit([&](auto&& list) -> OpStatus {
+    using T = decay_t<decltype(list)>;
+    if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue>){
+      if(list.empty()) { return {false, 
+        create_error(Node::Error::Type::InvalidOperation, "Cannot pop_front from an empty List or DeQue node.")};};
+      auto front = move(list.front());
+      list.pop_front();
+      return {true, move(front)};
+    } else if constexpr (is_same_v<T, Vector>){
+      cerr << "Warning!: Node::pop_front() with vector object";
+      if(list.empty()) { return {false, 
+        create_error(Node::Error::Type::InvalidOperation, "Cannot pop_front from an empty Vector node.")};};
+      auto front = move(list.front());
+      list.erase(list.begin());
+      return {true, move(front)};
+
+    } else {
+      return {false, nullptr};
+    }
+  }, value_);
+  return {false, nullptr};
+}
+
+//--------------------------------
+Node::OpStatus Node::push_back(unique_ptr<Node> node) {
+  MYLOGGER(trace_function, "Node::pop_front()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_), SLOG_FUNC_INFO+30);
+}
+Node::OpStatus Node::push_front(unique_ptr<Node> node) {
+}
+
+
+//------------------------------------------------------------------------
+// Equivalent to std::vector::clear
+Node::OpStatus Node::clear() {
+  if (type_ != Type::List) {
+    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot clear a non-List node.")};
+  }
+  List& list = get<List>(value_);
+  list.clear();
+  return {true, nullptr}; // Success
+}
+
+
+// --- Overloaded Square Bracket Operators (Read-only access) ---
+
+/**
+ * @brief Accesses an element in a List node by index. Returns a clone of the Node via OpStatus.
+ */
+
+Node::OpStatus Node::operator[](size_t index) const {
+  if(type_ != Type::Vector) {
+    return { false,
+    create_error(
+      Node::Error::Type::InvalidOperation,
+      "Operator[] (index) can only be used on vector nodes. Current type: " + type_to_string(type_)
+    )};
+  }
+  const Vector& list = get<Vector>(value_);
+  if(index >= list.size()){
+    string msg;
+    msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
+    return {false, create_error(Node::Error::Type::IndexOutOfBounds, msg)};
+  }
+  return {true, list[index]->clone()};
+}
+
+
+
+/**
+ * @brief Accesses an element in a Map node by key. Returns a clone of the Node via OpStatus.
+ */
+
+Node::OpStatus Node::operator[](const string& key) const {
+  if(type_ != Type::Map){
+    return {false, create_error(Node::Error::Type::InvalidOperation, 
+    "Operator[] (key) can only be used on Map nodes. Current type: " + type_to_string(type_))};
+  }
+  const Map& map = get<Map>(value_);
+  auto it=map.find(key);
+
+  if(it==map.end()) {
+    string msg;
+    msg = "key '" + key + "' not found in map.";
+    return {false, create_error(Node::Error::Type::KeyNotFound, 
+    "Operator[] (key) can only be used on Map nodes. Current type: " + type_to_string(type_))};
+  }
+  return {true, it->second->clone()};
+}
+
+
+//------------------------------------------------------------------------
+Node Node::operator+(const Node &other) const {
+  return visit([&](auto&& lhs, auto&& rhs) -> Node {
+    using L = decay_t<decltype(lhs)>;
+    using R = decay_t<decltype(rhs)>;
+
+    if constexpr (is_arithmetic_v<L> && is_arithmetic_v<R>) {
+      if constexpr (is_same_v<L, Integer> && is_same_v<R, Integer>)
+        return Node(static_cast<Integer>(lhs + rhs));
+      else
+        return Node(static_cast<Float>(lhs) + static_cast<Float>(rhs));
+      } else if constexpr (is_same_v<L, string> && is_same_v<R, string>) {
+        return Node(lhs + rhs);
+      } else {
+        return Node(Node::Error{Node::Error::Type::InvalidOperation, 
+            "Unsupported types for addition! " + type_to_string(type_) + 
+            " : " + type_to_string(other.type_)});
+      }
+  }, value_, other.value_);
+}
+
+Node Node::operator*(const Node &other) const {
+  return visit([&](auto&& lhs, auto&& rhs) -> Node {
+    using L = decay_t<decltype(lhs)>;
+    using R = decay_t<decltype(rhs)>;
+
+    if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
+      if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
+        return Node(static_cast<Integer>(lhs + rhs));
+      else
+        return Node(static_cast<Float>(lhs) * static_cast<Float>(rhs));
+    } else {
+      return Node(Node::Error{Node::Error::Type::InvalidOperation, "Unsupported types for multiplication"});
+    }
+
+  }, value_, other.value_);
+}
+
+Node Node::operator/(const Node &other) const {
+
+  return visit([&](auto&& lhs, auto&& rhs) -> Node {
+    using L = decay_t<decltype(lhs)>;
+    using R = decay_t<decltype(rhs)>;
+
+    if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
+      if(static_cast<Float>(rhs) == 0.0)
+        return Node(Node::Error{Node::Error::Type::DivideByZero,
+          "Divide by zero "});
+      return Node(static_cast<Float>(lhs) / static_cast<Float>(rhs));
+    } else {
+      return Node(Node::Error{Node::Error::Type::InvalidOperation, "Unsupported types for Division"});
+    }
+  }, value_, other.value_);
+}
+
+//------------------------------------------------------------------------
+string Node::_to_str() const {
+  return visit([this](auto&& arg) -> string {
+    using T = decay_t<decltype(arg)>;
+    if constexpr(is_same_v<T, monostate>) 
+      return "Null";
+    else if constexpr(is_same_v<T, Node::Error>) 
+      return "[Error: " + Node::Error::type_to_string(arg.type_) + "] " + arg.message_;
+    else if constexpr(is_same_v<T, Integer>) 
+      return to_string(arg);
+    else if constexpr(is_same_v<T, string>) 
+      return arg;
+    else if constexpr(is_same_v<T, Float>)  {
+      ostringstream oss;
+      oss << fixed << setprecision(2) << arg;
+      return oss.str();
+    } else if constexpr(is_same_v<T, Lisp::Op>) {
+      return Lisp::_to_str(arg);
+    } else if constexpr (is_same_v<T, List>) {
+      return _to_str(arg);
+    } else if constexpr (is_same_v<T, DeQue>) {
+      return _to_str(arg);
+    } else if constexpr (is_same_v<T, Vector>) {
+      return _to_str(arg);
+    } else if constexpr (is_same_v<T, Map>) {
+      //return "{Map, size=" + to_string(arg.size()) + "}";
+      return _to_str(arg);
+    }
+    else
+      return "Unknown Node Type";
+
+
+  }, value_);
+}
+string Node::_to_str(const Map&map) const {
+
+  if(map.empty()) return "{}";
+
+  vector<string> kv_paires ;
+  string colon(":");
+  string q("\"");
+  string outstr;
+
+  for (auto const& [key, val] : map) {
+    outstr = q + key + q  + colon + " " + val->_to_str();
+    kv_paires.push_back(outstr);
+  }
+
+  outstr="{";
+  int i, s = kv_paires.size();
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + kv_paires[i] + ", ";
+  }
+  outstr = outstr + kv_paires[i] + "}";
+  return (outstr);
+}
+
+string Node::_to_str(const Vector&list) const {
+  size_t s = list.size(), i;
+  string outstr("[");
+  if(s==0) {return "[]";}
+
+  for(i=0; i<s-1; i++) {
+    auto &e = list[i];
+    if(e==nullptr) continue;
+    outstr = outstr + e->_to_str() + ", ";
+  }
+  outstr = outstr + list[i]->_to_str() + "]";
+  return outstr;
+}
+
+string Node::_to_str(const List&list) const {
+  size_t s = list.size(), i;
+  string outstr("[");
+  if(s==0) {return "[]";}
+
+  for(auto &e : list) {
+    if(e==nullptr) continue;
+    outstr = outstr + e->_to_str() + ", ";
+  }
+  outstr = outstr + " ]";
+  return outstr;
+}
+
+string Node::_to_str(const DeQue&list) const {
+  size_t s = list.size(), i;
+  string outstr("[");
+  if(s==0) {return "[]";}
+
+  for(auto &e : list) {
+    if(e==nullptr) continue;
+    outstr = outstr + e->_to_str() + ", ";
+  }
+  outstr = outstr + " ]";
+  return outstr;
+}
+
+
+
+//------------------------------------------------------------------------
+void Node::print(int depth) { print_value_recursive(*this, depth); }
+
+void Node::print_value_recursive(const Node& node, int depth) {
+  if(depth==0) cout << "print recursive:\n";
+  auto indent=[depth]() {
+    for(int i = 0; i<depth; i++) cout << " ";
+  };
+
+  visit([&](auto&& arg) {
+    using T = decay_t<decltype(arg)>;
+
+    if constexpr (is_same_v<T, monostate>){
+      cout << "Null";
+    }
+    else if constexpr (is_same_v<T, Node::Error>){
+      cout << "\033[31m[ERROR: " << Node::Error::type_to_string(arg.type_) << "]\033[0m: " << arg.message_;
+    } else if constexpr (is_same_v<T, Integer>) {
+      cout << arg; 
+    } else if constexpr (is_same_v<T, Float>) {
+      cout << fixed << setprecision(2) << arg; 
+    } else if constexpr (is_same_v<T, Lisp::Op>) {
+      cout << Lisp::_to_str(arg); 
+    } else if constexpr (is_same_v<T, string>) {
+      std::cout << "\"" << arg << "\""; 
+    } else if constexpr (is_same_v<T, List>) {
+      cout << "List["; 
+      for(auto &e : arg) cout << *e <<","; 
+      cout << "]";
+    } else if constexpr (is_same_v<T, DeQue>) {
+      cout << "DeQue["; 
+      for(auto &e : arg) cout << *e <<","; 
+      cout << "]";
+    } 
+    else if constexpr (is_same_v<T, Vector>) {
+      cout << "Vector[ (List, size=" << arg.size() << ") " << endl;
+      for(size_t i=0; i<arg.size(); ++i) {
+        indent();
+        cout  << "  - [" << i << ", Type: " << Node::type_to_string(arg[i]->type_) << "]: ";
+        print_value_recursive(*arg[i].get(), depth+1);
+        cout << "\n";
+      }
+      indent(); 
+      cout << "]";
+    } else if constexpr (is_same_v<T, Map>) {
+      cout << "{ (Map, size=" << arg.size() << ") " << endl;
+      for(const auto&[key, child_ptr] : arg) {
+        indent(); 
+        cout << "  - " << key << " (Type: " << Node::type_to_string(child_ptr->type_) << "): ";
+        print_value_recursive(*child_ptr.get(), depth+1);
+        cout << "\n";
+      }
+      indent();
+      cout << "}";
+    }
+  }, node.value_);
+}
+
+
+
+ostream& operator<<(ostream& os, const Node& v) {
+  cout << v._to_str();
+  return os;
+}
+
+
+Node::OpStatus Node::eval(Node& env) {
+  return {true, clone()};
+}
+
+//------------------------------------------------------------------------
+Node::OpStatus Node::list_add() const {
+  unique_ptr<Node> result = make_unique<Node>(0);
+  return visit([&](auto&& list) -> OpStatus {
+    using T = decay_t<decltype(list)>;
+    if constexpr (is_same_v<T, Vector> || is_same_v<T, List> || is_same_v<T, DeQue>)  {
+      for(auto& e: list ) {
+        *result = *result + *e;
+        if(result->type_ == Node::Type::Error) {
+          cerr << "Error: " << *result << "\n";
+          return {false, move(result)};
+        }
+      }
+      return {true, move(result)};
+    } else { return {false, nullptr}; }
+    return {true, move(result)};
+  }, value_);
+}
+
+void Node::print_value(const Value& v, int depth) {
+  visit([&](auto&& arg) {
+    using T = decay_t<decltype(arg)>;
+
+    if constexpr (is_same_v<T, monostate>){
+      cout << "Null";
+    }
+    else if constexpr (is_same_v<T, Node::Error>){
+      cout << "\033[31m[ERROR: " << Node::Error::type_to_string(arg.type_) << "]\033[0m: " << arg.message_;
+    } else if constexpr (is_same_v<T, Integer>) {
+      cout << arg; 
+    } else if constexpr (is_same_v<T, Float>) {
+      cout << fixed << setprecision(2) << arg; 
+    } else if constexpr (is_same_v<T, Lisp::Op>) {
+      cout << Lisp::_to_str(arg); 
+    } else if constexpr (is_same_v<T, string>) {
+      std::cout << "\"" << arg << "\""; 
+    } else if constexpr (is_same_v<T, List>) {
+      cout << "List["; 
+      for(auto &e : arg) cout << *e <<","; 
+      cout << "]";
+    } else if constexpr (is_same_v<T, DeQue>) {
+      cout << "DeQue["; 
+      for(auto &e : arg) cout << *e <<","; 
+      cout << "]";
+    } else if constexpr (is_same_v<T, Vector>) {
+      cout << "Vector["; 
+      for(auto &e : arg) cout << *e <<","; 
+      cout << "]";
+    } else if constexpr (is_same_v<T, Map>) {
+      cout << "{ (Map, size=" << arg.size() << ") " << endl;
+
+      for(const auto&[key, child_ptr] : arg) {
+        cout << "  - " << key << " (Type: " << Node::type_to_string(child_ptr->type_) << "): ";
+        cout << "\n";
+      }
+      cout << "}";
+    }
+  }, v);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+Node::OpStatus Node::list_mul(size_t start) const {
+  const List &list = get<List>(value_);
+
+  unique_ptr<Node> result = make_unique<Node>(1);
+  for(size_t i=start; i<list.size(); i++) {
+    auto &e = list[i];
+    if(e->type_ != Type::Integer || e->type_ != Type::Float) return {false, nullptr};
+    *result = *result * *e;
+  }
+  return {true, move(result)};
+}
+  */
+
+/*
+int main() {
+  cout << "--- Tree Class with Path-Based Branching Demonstration (Using OpStatus) ---" << endl;
+  Tree data_tree(Node::create(Value(Map{})));
+  OpStatus status;
+
+  cout << "\n--- 1. Set Branches (Creation) ---" << std::endl;
+
+  status = data_tree.set_branch({"name"}, Node::create(Value("Project Alpha")));
+  if(!status.first) { Node::print_value_recursive(*status.second.get(), 0); std::cout << std::endl; }
+
+  status = data_tree.set_branch({"config", "settings", "enable"}, Node::create(Value(true)));
+  if(!status.first) { Node::print_value_recursive(*status.second.get(), 0); std::cout << std::endl; }
+
+  Node::print_value_recursive(*data_tree.get_root(), 0);
+  cout <<"\n";
+
+  Node a(10); Node b(20);
+  Node v = a + b;
+  cout << "a + b: " << v;
+  cout << "\n";
+
+  return 0;
+}
+  */
