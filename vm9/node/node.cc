@@ -40,6 +40,7 @@ string Node::type_to_string(Type type) {
 }
 
 
+unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
 
 Node::Node() 
   : value_(std::monostate{})
@@ -71,6 +72,7 @@ Node::Node(Type t)
   switch(t) {
   case Type::Integer: value_=0; break;
   case Type::Float: value_=0.0; break;
+  case Type::String: value_=""; break;
   case Type::Map: { 
     Map nm={};
     value_ = move(nm);
@@ -78,7 +80,16 @@ Node::Node(Type t)
   case Type::List: { 
     List l={};
     value_ = move(l);
-    break;}}
+    break;}
+  case Type::Vector: { 
+    Vector l={};
+    value_ = move(l);
+    break;}
+  case Type::DeQue: { 
+    DeQue l={};
+    value_ = move(l);
+    break;}
+  }
 }
 
 
@@ -320,14 +331,15 @@ Node::OpStatus Node::pop_front() {
       auto front = move(list.front());
       list.pop_front();
       return {true, move(front)};
+
     } else if constexpr (is_same_v<T, Vector>){
-      cerr << "Warning!: Node::pop_front() with vector object";
+      cerr << "Warning!: Node::pop_front() with vector object\n";
       if(list.empty()) { return {false, 
         create_error(Node::Error::Type::InvalidOperation, "Cannot pop_front from an empty Vector node.")};};
       auto front = move(list.front());
       list.erase(list.begin());
       return {true, move(front)};
-
+      
     } else {
       return {false, nullptr};
     }
@@ -337,10 +349,41 @@ Node::OpStatus Node::pop_front() {
 
 //--------------------------------
 Node::OpStatus Node::push_back(unique_ptr<Node> node) {
-  MYLOGGER(trace_function, "Node::pop_front()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_), SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
+
+  return visit([&](auto&& list) -> OpStatus {
+    using T = decay_t<decltype(list)>;
+    if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> || is_same_v<T, Vector>){
+      list.push_back(move(node));
+      return {true, nullptr};
+    } else {
+      return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
+    }
+  }, value_);
+  return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
 }
+
+
+
 Node::OpStatus Node::push_front(unique_ptr<Node> node) {
+  MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
+
+  return visit([&](auto&& list) -> OpStatus {
+    using T = decay_t<decltype(list)>;
+    if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> ){
+      list.push_front(move(node));
+      return {true, nullptr};
+    }  else if constexpr(is_same_v<T, Vector>) {
+      cerr << "Warning!: Node::push_front() with vector object\n";
+      list.insert(list.begin(), move(node));
+      return {true, nullptr};
+    } else {
+      return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
+    }
+  }, value_);
+  return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
 }
 
 
@@ -688,66 +731,29 @@ void Node::print_value(const Value& v, int depth) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-Node::OpStatus Node::list_mul(size_t start) const {
-  const List &list = get<List>(value_);
-
-  unique_ptr<Node> result = make_unique<Node>(1);
-  for(size_t i=start; i<list.size(); i++) {
-    auto &e = list[i];
-    if(e->type_ != Type::Integer || e->type_ != Type::Float) return {false, nullptr};
-    *result = *result * *e;
-  }
-  return {true, move(result)};
+Node::Integer Node::size() const {
+  return visit([&](auto&& arg) -> Integer {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
+      is_same_v<T, Vector> || is_same_v<T, Map>) {
+      return arg.size();
+    } else {
+      return -1;
+    }
+  }, value_);
+  return -1;
 }
-  */
 
-/*
-int main() {
-  cout << "--- Tree Class with Path-Based Branching Demonstration (Using OpStatus) ---" << endl;
-  Tree data_tree(Node::create(Value(Map{})));
-  OpStatus status;
-
-  cout << "\n--- 1. Set Branches (Creation) ---" << std::endl;
-
-  status = data_tree.set_branch({"name"}, Node::create(Value("Project Alpha")));
-  if(!status.first) { Node::print_value_recursive(*status.second.get(), 0); std::cout << std::endl; }
-
-  status = data_tree.set_branch({"config", "settings", "enable"}, Node::create(Value(true)));
-  if(!status.first) { Node::print_value_recursive(*status.second.get(), 0); std::cout << std::endl; }
-
-  Node::print_value_recursive(*data_tree.get_root(), 0);
-  cout <<"\n";
-
-  Node a(10); Node b(20);
-  Node v = a + b;
-  cout << "a + b: " << v;
-  cout << "\n";
-
-  return 0;
+bool Node::empty() const {
+  return visit([&](auto&& arg) -> bool {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
+      is_same_v<T, Vector> || is_same_v<T, Map>) {
+      return arg.empty();
+    } else {
+      return false;
+    }
+  }, value_);
+  return false;
 }
-  */
+

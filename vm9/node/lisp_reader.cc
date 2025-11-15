@@ -118,7 +118,8 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
 
       if(status.first) list.push_back(move(status.second));
     }
-    tokens.erase(tokens.begin());
+    //tokens.erase(tokens.begin());
+    tokens.pop_front();
     return {true, Node::create(move(list))};
 
   } else if(token.value_==")") {

@@ -57,15 +57,17 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   MYLOGGER(trace_function, "LispExpr::build_program(const string&input)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
 
-  auto tokens = reader.tokenize(input);
-  auto list_status = reader.parse(tokens);
-  auto env_status = get_env();
+  auto tokens = reader.tokenize(input); // list<Token>
+  auto parsed_status = reader.parse(tokens); 
 
-  if(!list_status.first) {
+  if(!parsed_status.first) {
     cout << "parse error for input string: " << input  << "\n";
-    return  list_status;
+    return  parsed_status;
   }
-  parse_node_tokens(*list_status.second);
+
+  parse_node_tokens(*parsed_status.second);
+
+  auto env_status = get_env();
 //  cout << "build_program parsed tokens: " <<  *list_status.second << "\n";
   
   /*
@@ -77,41 +79,47 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
   //cout << "result: " << *result_status.second << "\n";
  */ 
-return list_status;
+return parsed_status;
 
 
 }
-Node::OpStatus LispExpr::parse_node_tokens(Node& token_node) {
+
+// tokens: double linked list of tokens
+Node::OpStatus LispExpr::parse_node_tokens(Node& tokens) {
   MYLOGGER(trace_function, "LispExpr::parse_node_tokens(Node&tokens)", __func__, SLOG_FUNC_INFO);
-  cout << "parse tokens: " <<  token_node << "\n";
-  if(token_node.type_ != Node::Type::List) {
+  cout << "parse tokens: " <<  tokens << "\n";
+  if(tokens.type_ != Node::Type::List) {
     cerr << "parse tokens type ! list: \n";
     return {false, nullptr};
 
   }
-  auto &tokens = get<Node::List>(token_node.value_);
-  auto &head = tokens.front();
-  cout << "head " << *head << "\n";
-  parse_list(tokens);
-  //auto &head =  tokens.front(); tokens.pop_front();
+  auto head_status = tokens.pop_front(); 
 
+  if(!head_status.first) return head_status;
 
+  auto head = get<Lisp::Op>(head_status.second->value_);
+  switch(head) {
+  case Lisp::Op::print:  {
+    cout << "print: tokens: " <<  tokens << "\n";
+    return {true, nullptr};}
+  default: {
+    cout << "unknown: tokens: " <<  tokens << "\n";
+    return {true, nullptr};
+  }}
   return {true, nullptr};
-
 }
 
 //------------------------------------------------------------------------
 //Node::OpStatus LispExpr::build_program(const string& input) { }
 //------------------------------------------------------------------------
 
+/*
 Node::OpStatus LispExpr::parse_list(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::parse_list(List& list)", __func__, SLOG_FUNC_INFO);
-  cout << "parse list!\n";
-  cout << "list.size:" << list.size() <<" \n";
   cout << "list.size:" << list.size() <<" \n";
   //Node::print_value(list);
   auto head = move(list.front());
-  list.pop_front();
+  //list.pop_front();
   if(head ==nullptr) {
     cerr << "head is nullptr \n";
     return {false, nullptr};
@@ -143,6 +151,7 @@ Node::OpStatus LispExpr::parse_list(Node::List& list) {
 
   return {false, nullptr};
 }
+  */
 
 /*
  * list[0] = (def

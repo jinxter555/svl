@@ -21,7 +21,7 @@ int main() {
   //string input="(def :module Main (def :fun main(+ 5 3)))"; //string input;
   //lisp.print(); cout << "\n";
   //string input="(add 1 2 3)"; //string input;
-  string input="(print (list 1 2 3))"; //string input;
+  string input="(print (vector 1 2 3))"; //string input;
   //string input="(def :module 2 3)"; //string input;
   //cout << "input: ";
   //cin >> input;

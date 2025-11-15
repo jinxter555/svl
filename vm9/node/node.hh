@@ -1,6 +1,6 @@
 #pragma once
 #include "lisp.hh"
-#include <map>                                                                        
+#include <unordered_map>                                                                        
 #include <variant>                                                                    
 #include <memory>                                                                     
 #include <string>                                                                     
@@ -47,7 +47,7 @@ public:
   //
   using ProgramList = List; // program build list type
   //
-  using Map = map<string, unique_ptr<Node>>;
+  using Map = unordered_map<string, unique_ptr<Node>>;
   using Value = variant<monostate, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op>;
   using ValueSimple = variant<monostate, Lisp::Op, Integer, Float, string>;
 
@@ -63,9 +63,7 @@ public:
   Node(vector<ValueSimple> v);
   static string type_to_string(Type type);
 
-  static unique_ptr<Node> create(Value v) {
-    return make_unique<Node>(move(v));
-  }
+  static unique_ptr<Node> create(Value v);
 
   static unique_ptr<Node> create_error(Error::Type type, const string& msg);
 
@@ -138,6 +136,9 @@ public:
   OpStatus operator[](const std::string& key) const;
 
 
+  // for list and map
+  Integer size() const;
+  bool empty() const;
   //
   string _to_str() const;
   string _to_str(const Map&m) const;

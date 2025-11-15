@@ -26,7 +26,7 @@ int main() {
   cout << "l1.add(): " <<  *result1b.second << "\n";
   cout << "\n\n";
 
-  Node::List nl2;
+  Node::Vector nl2;
   nl2.push_back(Node::create(3));
   nl2.push_back(Node::create(5));
   nl2.push_back(Node::create(7));
