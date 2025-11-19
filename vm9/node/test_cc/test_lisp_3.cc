@@ -11,7 +11,7 @@ using namespace  std;
 int main() {
   trace_function.open("test.log", ios::out);
   ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 3100);
-  MYLOGGER(trace_function, "test_node_1 main()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "test_lisp_3 main()", __func__, SLOG_FUNC_INFO);
 
   LispExpr lisp;
   //string input="(add 1 2 3 (add 5 3))"; //string input;
@@ -21,14 +21,19 @@ int main() {
   //string input="(def :module Main (def :fun main(+ 5 3)))"; //string input;
   //lisp.print(); cout << "\n";
   //string input="(add 1 2 3)"; //string input;
-  string input="(print (vector 1 2 3))"; //string input;
+  //string input="(print (vector 1 2 3))"; //string input;
+  string input="(vector 1 2 3 (vector 5 6 7))"; //string input;
+  //string input="(vector 1  (vector 2 3) )"; //string input;
+  //string input="(vector 1  (vector 2))"; //string input;
+  //string input="(vector 1  2 3 )"; //string input;
   //string input="(def :module 2 3)"; //string input;
   //cout << "input: ";
   //cin >> input;
   //auto tokens = reader.tokenize("(plus 1 2)");
   auto result  = lisp.build_program(input);
   //cout << "result: " <<  *result.second << "\n";
-  cout << "result:\n " ;
+  cout << "result: " <<  result <<"\n " ;
+  result.second->print();
   //cout << *result.second << "\n";
 
 

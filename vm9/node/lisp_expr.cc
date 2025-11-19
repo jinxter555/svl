@@ -57,15 +57,16 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   MYLOGGER(trace_function, "LispExpr::build_program(const string&input)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
 
-  auto tokens = reader.tokenize(input); // list<Token>
-  auto parsed_status = reader.parse(tokens); 
+  auto tokens_first_pass = reader.tokenize(input); // list<Token>
+  auto parsed_status_first_pass = reader.parse(tokens_first_pass); 
 
-  if(!parsed_status.first) {
-    cout << "parse error for input string: " << input  << "\n";
-    return  parsed_status;
+  if(!parsed_status_first_pass.first) {
+    cerr << "building_program: Reader.tokenizer() and Reader.parser(): parse error for input string: " << input  << "\n";
+    return  parsed_status_first_pass;
   }
 
-  parse_node_tokens(*parsed_status.second);
+  auto parsed_status_second_pass =  parse(*parsed_status_first_pass.second);
+  cout << "status parsed second pass: " << parsed_status_second_pass << "\n";
 
   auto env_status = get_env();
 //  cout << "build_program parsed tokens: " <<  *list_status.second << "\n";
@@ -79,232 +80,88 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
   //cout << "result: " << *result_status.second << "\n";
  */ 
-return parsed_status;
-
+return parsed_status_second_pass;
 
 }
 
 // tokens: double linked list of tokens
-Node::OpStatus LispExpr::parse_node_tokens(Node& tokens) {
-  MYLOGGER(trace_function, "LispExpr::parse_node_tokens(Node&tokens)", __func__, SLOG_FUNC_INFO);
-  cout << "parse tokens: " <<  tokens << "\n";
+Node::OpStatus LispExpr::parse(Node& tokens) {
+  MYLOGGER(trace_function, "LispExpr::parse(Node&tokens)", __func__, SLOG_FUNC_INFO);
+  cout << "parse tokens: " <<  tokens << "\n\n";
   if(tokens.type_ != Node::Type::List) {
-    cerr << "parse tokens type ! list: \n";
-    return {false, nullptr};
+    //cerr << "parse tokens type ! list: \n";
+    //return {false, nullptr};
+    return {true, tokens.clone()};
 
   }
   auto head_status = tokens.pop_front(); 
+  //cout << "head_status: " <<  head_status << "\n";
 
-  if(!head_status.first) return head_status;
-
+  if(!head_status.first) {
+    cerr << "head_status error from front(): " <<  head_status << "\n";
+    return head_status;
+  }
   auto head = get<Lisp::Op>(head_status.second->value_);
+  auto &list = get<Node::List>(tokens.value_);
+
   switch(head) {
   case Lisp::Op::print:  {
-    cout << "print: tokens: " <<  tokens << "\n";
+    cout << "print: " <<  tokens << "\n";
     return {true, nullptr};}
+  case Lisp::Op::list:  {
+    cout << "parsing list: " <<  tokens << "\n";
+    return {true, nullptr};}
+    return build_parsed_list(list);
+  case Lisp::Op::vector:  {
+    cout << "parsing vector: " <<  tokens << "\n";
+    return build_parsed_vector(list);
+  }
+  
   default: {
-    cout << "unknown: tokens: " <<  tokens << "\n";
-    return {true, nullptr};
+    //cout << "unknown: tokens: " <<  tokens << "\n";
+    return {true, nullptr}; 
   }}
   return {true, nullptr};
 }
 
-//------------------------------------------------------------------------
-//Node::OpStatus LispExpr::build_program(const string& input) { }
-//------------------------------------------------------------------------
-
-/*
-Node::OpStatus LispExpr::parse_list(Node::List& list) {
-  MYLOGGER(trace_function, "LispExpr::parse_list(List& list)", __func__, SLOG_FUNC_INFO);
-  cout << "list.size:" << list.size() <<" \n";
-  //Node::print_value(list);
-  auto head = move(list.front());
-  //list.pop_front();
-  if(head ==nullptr) {
-    cerr << "head is nullptr \n";
-    return {false, nullptr};
-
-
+Node::OpStatus LispExpr::build_parsed_vector(Node& node) {
+  MYLOGGER(trace_function, "LispExpr::build_vector(Node&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
+  if(node.type_ != Node::Type::List) {
   }
-  cout << "head " << *head << "\n";
-  //cout << "rest " << list << "\n";
-
-  return {true, nullptr};
-
-  auto op = get<Lisp::Op>(head->value_);
-  //cout << list->print() << "\n";
-  
-  switch(op)  {
-  case Lisp::Op::error: return {false, nullptr};
-  //case Lisp::Op::def:  return  parse_def(list);
-  case Lisp::Op::list:  return  build_list(list);
-  case Lisp::Op::vector:  return  build_vector(list);
-  case Lisp::Op::deque:  return  build_deque(list);
-  case Lisp::Op::print:  {
-    auto& rest = list.front();
-    cout << "print: " <<  *rest << "\n";
-    return {true, nullptr};
-
-  }
-  default:  return {true, Node::clone(list)};
-  }
-
-  return {false, nullptr};
-}
-  */
-
-/*
- * list[0] = (def
- * list[1] = :module, :func, :mvar, :lvar
-Node::OpStatus LispExpr::parse_def(const Node::List& list) {
-  //MYLOGGER(trace_function, "LispExpr::parse_def(List& list)", __func__, SLOG_FUNC_INFO);
-  cout << "parse def:";
-  auto def_type = get<Node::Integer >(list[1]->value_);
-  unique_ptr<Node> node_module_ptr;
-
-  //auto op = get<Node::LispOp>(head->value_);
-  if(def_type == sym_module) {
-    cout << "found def :module!\n";
-    string module_name = get<string>(list[2]->value_);
-  }
-  return {true, Node::create("module")};
-}
- */
-
-//------------------------------------------------------------------------
-Node::OpStatus LispExpr::eval(Node& env) {
-  /*
-  if(type_ != Type::LispOp)
-    return {false, create_error(Node::Error::Type::InvalidOperation, "Not a Lisp Expression")};
-
-  auto &list = get<Node::List>(value_);
-  auto head = get<LispOp>(list[0]->value_);
-
-  switch(head) {
-  case LispOp::add: return builtin_add(env, 1);
-  case LispOp::mul: return builtin_mul(env, 1);
-  }
-*/
-  return {false, nullptr};
+  auto &list = get<Node::List>(node.value_);
+  return build_parsed_vector(list);
 }
 
-/*
-Node::OpStatus LispExpr::eval_list(Node& env, const Node::List& list) {
-  auto &head = list[0];
-  auto op = get<Node::LispOp>(head->value_);
-  
-  switch(op)  {
-  case Node::LispOp::root: 
-    return builtin_list_root(env, list, 1);
-  case Node::LispOp::error: 
-  return {false, nullptr};
-  case Node::LispOp::noop: 
-  return {false, nullptr};
-  case Node::LispOp::add: 
-    return builtin_list_add(env, list, 1);
-  case Node::LispOp::sub: 
-  return {false, nullptr};
-  case Node::LispOp::mul:
-    return builtin_list_mul(env, list, 1);
-  case Node::LispOp::div:
-  return {false, nullptr};
-  case Node::LispOp::mod:
-  return {false, nullptr};
-  case Node::LispOp::list: 
-    return builtin_list_list(env, list, 1);
-  case Node::LispOp::def: 
-  return {false, nullptr};
-  case Node::LispOp::call: 
-  return {false, nullptr};
-  case Node::LispOp::ret: 
-  return {false, nullptr};
-  case Node::LispOp::send: 
-  return {false, nullptr};
-  case Node::LispOp::cond: 
-  return {false, nullptr};
-  case Node::LispOp::print: return builtin_list_print(env, list, 1);
-  }
-  return {false, nullptr};
+Node::OpStatus LispExpr::build_parsed_vector(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_vector(Node::List&list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-}
-
-//------------------------------------------------------------------------
-Node::OpStatus LispExpr::builtin_add(Node &env, const Node::List& list, size_t start) {
-
-  cout << "builtin_add\n";
-  cout << "start: " << start << "\n";
-  cout << "list.size: " << list.size() << "\n";
-  unique_ptr<Node> result = make_unique<Node>(0);
-  for(size_t i=start; i<list.size(); i++) {
-    auto e = list[i]->eval(env);
-    cout << "e: " << *e.second << "\n";
-    if(e.first == false) return {false, nullptr};
-    *result = *result + *e.second;
-    cout << "result: " << *result << "\n";
-
-  }
-  return {true, move(result)};
-
-}
-
-Node::OpStatus LispExpr::builtin_mul(Node &env, const Node::List& list, size_t start) {
-  unique_ptr<Node> result = make_unique<Node>(1);
-  for(size_t i=start; i<list.size(); i++) {
-    auto e = list[i]->eval(env);
-    if(e.first == false) return {false, nullptr};
-    *result = *result * *e.second;
-  }
-  return {true, move(result)};
-}
-
-Node::OpStatus LispExpr::builtin_print(Node &env, const Node::List& list, size_t start) {
-  cout << "builtin_print\n";
-  cout << "start: " << start << "\n";
-  cout << "list.size: " << list.size() << "\n";
-  unique_ptr<Node> result = make_unique<Node>(0);
-  for(size_t i=start; i<list.size(); i++) {
-    auto e = list[i]->eval(env);
-    cout << "e: " << *e.second << "\n";
-  }
-  return {true, nullptr};
-}
-
-Node::OpStatus LispExpr::builtin_list(Node &env, const Node::List& list, size_t start) {
-  Node::List result_list;
-  for(size_t i=start; i<list.size(); i++) {
-    auto e = list[i]->eval(env);
-    if(e.first == false) return e;
-    result_list.push_back(move(e.second));
-
-  }
-  return {true, Node::create(move(result_list))};
-}
-
-Node::OpStatus LispExpr::builtin_root(Node& env, const Node::List& list, size_t start) {
-  auto &root = list[0];
-  auto &cmd = get<string>(list[1]->value_);
-  if(cmd == "set_branch") {
-
-  } 
-  return {true, nullptr};
-
-}
-*/
-
-Node::OpStatus LispExpr::build_vector(const Node::List& list) {
   Node::Vector vl;
   vl.reserve(list.size());
-  for(auto& e : list) vl.push_back(e->clone());
+  for(auto& ele: list) {
+    if(ele->type_ == Node::Type::List) { // nested parsing
+      MYLOGGER_MSG(trace_function, string("build nested list: ") + ele->_to_str(), SLOG_FUNC_INFO+30);
+      auto status_parsed = parse(*ele);
+      if(!status_parsed.first) return { false, nullptr};
+      MYLOGGER_MSG(trace_function, string("returned list type: ") + Node::_to_str(status_parsed.second->type_), SLOG_FUNC_INFO+30);
+      vl.push_back(move(status_parsed.second));
+    } else 
+    vl.push_back(move(ele->clone()));
+  }
   return {true, Node::create(move(vl))};
 }
 
-Node::OpStatus LispExpr::build_deque(const Node::List& list) {
+
+
+
+Node::OpStatus LispExpr::build_parsed_deque(Node::List& list) {
   Node::DeQue dl;
   for(auto& e : list) dl.push_back(e->clone());
   return {true, Node::create(move(dl))};
 }
 
-Node::OpStatus LispExpr::build_list(const Node::List& list) {
+Node::OpStatus LispExpr::build_parsed_list(Node::List& list) {
   return {true, Node::clone(list)};
 }
 

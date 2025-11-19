@@ -32,9 +32,8 @@ public:
   //LispExpr(vector<Node::ValueSimple> v) : Tree() {}
   
   Node::OpStatus build_program(const string& input); // create module structure 
-  Node::OpStatus parse_node_tokens(Node& token_node); // create module structure 
-
-//  Node::OpStatus parse(const string& input); // build lists
+  Node::OpStatus parse(Node& tokens, Node& env); // parse Node::List of tokens
+  Node::OpStatus parse(Node& tokens); // parse Node::List of tokens
   Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_env();
 
@@ -51,9 +50,13 @@ public:
   Node::OpStatus eval(Node& env);
   Node::OpStatus eval_list(Node& env, const Node::List& list);
   // 
-  Node::OpStatus build_list(const Node::List& list);
-  Node::OpStatus build_vector(const Node::List& list);
-  Node::OpStatus build_deque(const Node::List& list);
+  Node::OpStatus build_parsed_list(Node& node);
+  Node::OpStatus build_parsed_vector(Node& node);
+  Node::OpStatus build_parsed_deque(Node& node);
+  // 
+  Node::OpStatus build_parsed_list(Node::List& list);
+  Node::OpStatus build_parsed_vector(Node::List& list);
+  Node::OpStatus build_parsed_deque(Node::List& list);
   
   // Node::OpStatus builtin_add(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_mul(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_print(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_root(Node& env, const Node::List& list, size_t start=0);
   //

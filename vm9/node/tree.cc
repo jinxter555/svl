@@ -40,7 +40,7 @@ Node::OpStatus Tree::set_branch(const vector<string>&path, unique_ptr<Node> chil
     const string& key = path[i];
 
     if(current_node->type_ != Node::Type::Map ){
-      string msg = "Cannot navigate path: '" + key + "' parent is not a Map (Type: " + Node::type_to_string(current_node->type_) + ")";
+      string msg = "Cannot navigate path: '" + key + "' parent is not a Map (Type: " + Node::_to_str(current_node->type_) + ")";
       return {false, Node::create_error(Node::Error::Type::InvalidOperation, msg)};
     }
     Node::Map& map = get<Node::Map>(current_node->value_);

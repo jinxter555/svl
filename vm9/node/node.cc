@@ -10,7 +10,7 @@
 #include "scope_logger.hh"
 
 
-string Node::Error::type_to_string(Node::Error::Type type) {
+string Node::Error::_to_str(Node::Error::Type type) {
   switch(type) {
     case Node::Error::Type::InvalidOperation: return "InvalidOperation";
     case Node::Error::Type::KeyAlreadyExists: return "KeyAlreadyExists";
@@ -21,7 +21,7 @@ string Node::Error::type_to_string(Node::Error::Type type) {
   return "Unknown Error";
 }
 
-string Node::type_to_string(Type type) {
+string Node::_to_str(Type type) {
   switch (type) {
     case Type::Null: return "Null";
     case Type::Error: return "Error";
@@ -175,6 +175,8 @@ void Node::set(unique_ptr<Node> new_node) {
   }
 }
 
+Node::Type Node::_get_type() const { return type_; }
+
 void Node::set_null() { this->value_ = monostate{}; type_=Type::Null; }
 void Node::set_atom(Integer v)  { *this = Node(v); type_ = Type::Atom; }
 void Node::set_atom()  { type_ = Type::Atom; }
@@ -301,7 +303,7 @@ Node::OpStatus Node::delete_key(const string &key) {
 //--------------------------------
 Node::OpStatus Node::pop_back() {
   MYLOGGER(trace_function, "Node::pop_back()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_), SLOG_FUNC_INFO+30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;
@@ -321,7 +323,7 @@ Node::OpStatus Node::pop_back() {
 //--------------------------------
 Node::OpStatus Node::pop_front() {
   MYLOGGER(trace_function, "Node::pop_front()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_), SLOG_FUNC_INFO+30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;
@@ -350,7 +352,7 @@ Node::OpStatus Node::pop_front() {
 //--------------------------------
 Node::OpStatus Node::push_back(unique_ptr<Node> node) {
   MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;
@@ -368,7 +370,7 @@ Node::OpStatus Node::push_back(unique_ptr<Node> node) {
 
 Node::OpStatus Node::push_front(unique_ptr<Node> node) {
   MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "type: " + type_to_string(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;
@@ -410,7 +412,7 @@ Node::OpStatus Node::operator[](size_t index) const {
     return { false,
     create_error(
       Node::Error::Type::InvalidOperation,
-      "Operator[] (index) can only be used on vector nodes. Current type: " + type_to_string(type_)
+      "Operator[] (index) can only be used on vector nodes. Current type: " + _to_str(type_)
     )};
   }
   const Vector& list = get<Vector>(value_);
@@ -431,7 +433,7 @@ Node::OpStatus Node::operator[](size_t index) const {
 Node::OpStatus Node::operator[](const string& key) const {
   if(type_ != Type::Map){
     return {false, create_error(Node::Error::Type::InvalidOperation, 
-    "Operator[] (key) can only be used on Map nodes. Current type: " + type_to_string(type_))};
+    "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
   const Map& map = get<Map>(value_);
   auto it=map.find(key);
@@ -440,7 +442,7 @@ Node::OpStatus Node::operator[](const string& key) const {
     string msg;
     msg = "key '" + key + "' not found in map.";
     return {false, create_error(Node::Error::Type::KeyNotFound, 
-    "Operator[] (key) can only be used on Map nodes. Current type: " + type_to_string(type_))};
+    "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
   return {true, it->second->clone()};
 }
@@ -461,8 +463,8 @@ Node Node::operator+(const Node &other) const {
         return Node(lhs + rhs);
       } else {
         return Node(Node::Error{Node::Error::Type::InvalidOperation, 
-            "Unsupported types for addition! " + type_to_string(type_) + 
-            " : " + type_to_string(other.type_)});
+            "Unsupported types for addition! " + _to_str(type_) + 
+            " : " + _to_str(other.type_)});
       }
   }, value_, other.value_);
 }
@@ -501,41 +503,47 @@ Node Node::operator/(const Node &other) const {
   }, value_, other.value_);
 }
 
-//------------------------------------------------------------------------
 string Node::_to_str() const {
-  return visit([this](auto&& arg) -> string {
-    using T = decay_t<decltype(arg)>;
-    if constexpr(is_same_v<T, monostate>) 
-      return "Null";
-    else if constexpr(is_same_v<T, Node::Error>) 
-      return "[Error: " + Node::Error::type_to_string(arg.type_) + "] " + arg.message_;
-    else if constexpr(is_same_v<T, Integer>) 
-      return to_string(arg);
-    else if constexpr(is_same_v<T, string>) 
-      return arg;
-    else if constexpr(is_same_v<T, Float>)  {
+  MYLOGGER(trace_function, "Node::_to_str()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("type: ") + _to_str(type_), SLOG_FUNC_INFO+30);
+
+  switch(type_) {
+    case Type::Null: return "Null";
+    case Type::Error: {
+      Error  err = get<Error>(value_);
+      return "[Error: " + Error::_to_str(err.type_) + "] " + err.message_;}
+    case Type::Integer: {
+      Integer num = get<Integer>(value_);
+      return to_string(num); }
+    case Type::Float:  {
       ostringstream oss;
-      oss << fixed << setprecision(2) << arg;
-      return oss.str();
-    } else if constexpr(is_same_v<T, Lisp::Op>) {
-      return Lisp::_to_str(arg);
-    } else if constexpr (is_same_v<T, List>) {
-      return _to_str(arg);
-    } else if constexpr (is_same_v<T, DeQue>) {
-      return _to_str(arg);
-    } else if constexpr (is_same_v<T, Vector>) {
-      return _to_str(arg);
-    } else if constexpr (is_same_v<T, Map>) {
-      //return "{Map, size=" + to_string(arg.size()) + "}";
-      return _to_str(arg);
-    }
-    else
-      return "Unknown Node Type";
-
-
-  }, value_);
+      Float num = get<Float>(value_);
+      oss << fixed << setprecision(2) << num;
+      return oss.str(); }
+    case Type::LispOp: {
+      Lisp::Op op = get<Lisp::Op>(value_);
+      return Lisp::_to_str(op);}
+    
+    case Type::List: {
+      //cout << "_to_str() List\n";
+      auto& list = get<List>(value_);
+      return _to_str(list);}
+    case Type::DeQue: {
+      auto& list = get<DeQue>(value_);
+      return _to_str(list);}
+    case Type::Vector: {
+      //cout << "_to_str() vector\n";
+      auto& list = get<Vector>(value_);
+      return _to_str(list);}
+    case Type::Map: {
+      auto& map = get<Map>(value_);
+      return _to_str(map);}
+    default: { return "_to_str() unknwon type " + _to_str(type_); }
+  }
+  return "_to_str() unknwon type " + _to_str(type_); 
 }
-string Node::_to_str(const Map&map) const {
+
+string Node::_to_str(const Map&map) {
 
   if(map.empty()) return "{}";
 
@@ -558,10 +566,11 @@ string Node::_to_str(const Map&map) const {
   return (outstr);
 }
 
-string Node::_to_str(const Vector&list) const {
+string Node::_to_str(const Vector&list) {
+  MYLOGGER(trace_function, "Node::_to_str(const Vector&list)", __func__, SLOG_FUNC_INFO);
   size_t s = list.size(), i;
-  string outstr("[");
-  if(s==0) {return "[]";}
+  if(s==0) {return "Vector[]";}
+  string outstr("Vector[");
 
   for(i=0; i<s-1; i++) {
     auto &e = list[i];
@@ -572,23 +581,45 @@ string Node::_to_str(const Vector&list) const {
   return outstr;
 }
 
-string Node::_to_str(const List&list) const {
-  size_t s = list.size(), i;
-  string outstr("[");
-  if(s==0) {return "[]";}
+string Node::_to_str(const List&list) {
+  MYLOGGER(trace_function, "Node::_to_str(const List&list)", __func__, SLOG_FUNC_INFO);
+  size_t s = list.size(), i=0;
+  MYLOGGER_MSG(trace_function, string("size: ") + to_string(s), SLOG_FUNC_INFO+30);
+  if(s==0) {return "List[]";}
+
+  string outstr("List[");
 
   for(auto &e : list) {
+    if(i==s-1) break;
     if(e==nullptr) continue;
     outstr = outstr + e->_to_str() + ", ";
+    i++;
   }
-  outstr = outstr + " ]";
+  if(list.empty()) return outstr + "]";
+  auto& e = list.back();
+  outstr = outstr + e->_to_str() +" ]";
   return outstr;
 }
-
-string Node::_to_str(const DeQue&list) const {
-  size_t s = list.size(), i;
-  string outstr("[");
+/*
+string Node::_to_str(const List&list) {
+  MYLOGGER(trace_function, "Node::_to_str(const List&list)", __func__, SLOG_FUNC_INFO);
+  size_t s = list.size(), i=0;
+  MYLOGGER_MSG(trace_function, string("size: ") + to_string(s), SLOG_FUNC_INFO+30);
   if(s==0) {return "[]";}
+
+  string outstr("[");
+  for(auto &e : list) {
+    outstr = outstr + e->_to_str() + ", ";
+  }
+
+  return outstr;
+}
+*/
+
+string Node::_to_str(const DeQue&list) {
+  size_t s = list.size(), i;
+  if(s==0) {return "DeQue[]";}
+  string outstr("DeQue[");
 
   for(auto &e : list) {
     if(e==nullptr) continue;
@@ -616,7 +647,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
       cout << "Null";
     }
     else if constexpr (is_same_v<T, Node::Error>){
-      cout << "\033[31m[ERROR: " << Node::Error::type_to_string(arg.type_) << "]\033[0m: " << arg.message_;
+      cout << "\033[31m[ERROR: " << Node::Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;
     } else if constexpr (is_same_v<T, Integer>) {
       cout << arg; 
     } else if constexpr (is_same_v<T, Float>) {
@@ -635,10 +666,10 @@ void Node::print_value_recursive(const Node& node, int depth) {
       cout << "]";
     } 
     else if constexpr (is_same_v<T, Vector>) {
-      cout << "Vector[ (List, size=" << arg.size() << ") " << endl;
+      cout << "Vector[(size=" << arg.size() << ") " << endl;
       for(size_t i=0; i<arg.size(); ++i) {
         indent();
-        cout  << "  - [" << i << ", Type: " << Node::type_to_string(arg[i]->type_) << "]: ";
+        cout  << "  - [" << i << ", Type: " << Node::_to_str(arg[i]->type_) << "]: ";
         print_value_recursive(*arg[i].get(), depth+1);
         cout << "\n";
       }
@@ -648,7 +679,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
       cout << "{ (Map, size=" << arg.size() << ") " << endl;
       for(const auto&[key, child_ptr] : arg) {
         indent(); 
-        cout << "  - " << key << " (Type: " << Node::type_to_string(child_ptr->type_) << "): ";
+        cout << "  - " << key << " (Type: " << Node::_to_str(child_ptr->type_) << "): ";
         print_value_recursive(*child_ptr.get(), depth+1);
         cout << "\n";
       }
@@ -664,6 +695,17 @@ ostream& operator<<(ostream& os, const Node& v) {
   cout << v._to_str();
   return os;
 }
+ostream& operator<<(ostream& os, const Node::OpStatus& s) {
+  MYLOGGER(trace_function, "ostream& << (Node::OpStatus&)", __func__, SLOG_FUNC_INFO);
+  if(s.first)  cout << "true: "; else cout << "false: ";
+  if(s.second==nullptr) cout << "nullptr";
+  cout << "type: " <<  Node::_to_str(s.second->_get_type()) << "\n";
+
+//  s.second->print();
+  cout << s.second->_to_str();
+  return os;
+}
+
 
 
 Node::OpStatus Node::eval(Node& env) {
@@ -697,7 +739,7 @@ void Node::print_value(const Value& v, int depth) {
       cout << "Null";
     }
     else if constexpr (is_same_v<T, Node::Error>){
-      cout << "\033[31m[ERROR: " << Node::Error::type_to_string(arg.type_) << "]\033[0m: " << arg.message_;
+      cout << "\033[31m[ERROR: " << Node::Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;
     } else if constexpr (is_same_v<T, Integer>) {
       cout << arg; 
     } else if constexpr (is_same_v<T, Float>) {
@@ -722,7 +764,7 @@ void Node::print_value(const Value& v, int depth) {
       cout << "{ (Map, size=" << arg.size() << ") " << endl;
 
       for(const auto&[key, child_ptr] : arg) {
-        cout << "  - " << key << " (Type: " << Node::type_to_string(child_ptr->type_) << "): ";
+        cout << "  - " << key << " (Type: " << Node::_to_str(child_ptr->type_) << "): ";
         cout << "\n";
       }
       cout << "}";

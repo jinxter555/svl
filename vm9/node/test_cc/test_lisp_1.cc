@@ -26,10 +26,15 @@ int main() {
   cout << "l1.add(): " <<  *result1b.second << "\n";
   cout << "\n\n";
 
-  Node::Vector nl2;
+  Node::Vector nl2, vl2;
+
   nl2.push_back(Node::create(3));
   nl2.push_back(Node::create(5));
   nl2.push_back(Node::create(7));
+  vl2.push_back(Node::clone(nl2));
+
+
+
   Node l2(move(nl2));
   cout << "l2: " << l2 << "\n";
   auto result2 =  l2.list_add();
@@ -42,6 +47,15 @@ int main() {
   cout << "l2.add(): " <<  *result2b.second << "\n";
   cout << "\n\n";
 
+
+
+  vl2.push_back(Node::create(6));
+  vl2.push_back(Node::create(7));
+  vl2.push_back(Node::create(8));
+  Node v2(move(vl2));
+
+  v2.print();
+  cout << "v2: " << v2._to_str() << "\n";
 
 
 

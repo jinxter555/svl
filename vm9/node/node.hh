@@ -21,6 +21,7 @@ class Node {
   friend class Tree;
   friend class LispExpr;
   friend class LispReader;
+  friend class ostream;
 public:
 
   struct Error{
@@ -34,7 +35,7 @@ public:
     };
     Type type_;
     string message_;
-    static string type_to_string(Type t);
+    static string _to_str(Type t);
   };
   
   //enum class LispOp {kernel, system, root, error, noop, list, deque, vector, add, sub, div, mul, mod, def, call, send, ret, cond, print};
@@ -61,7 +62,6 @@ public:
   Node(Type t);
   //Node(vector<Value> v);
   Node(vector<ValueSimple> v);
-  static string type_to_string(Type type);
 
   static unique_ptr<Node> create(Value v);
 
@@ -99,6 +99,9 @@ public:
   OpStatus set(const string& key, Float v);                                          
   OpStatus set(const string& key, Lisp::Op v);                                          
   OpStatus set(const string& key, const string& v);                           
+
+
+  Type _get_type() const;
 
   OpStatus add(unique_ptr<Node> child);
   OpStatus add(const string&key, unique_ptr<Node> child);
@@ -141,10 +144,12 @@ public:
   bool empty() const;
   //
   string _to_str() const;
-  string _to_str(const Map&m) const;
-  string _to_str(const Vector&l) const;
-  string _to_str(const List&l) const;
-  string _to_str(const DeQue&l) const;
+
+  static string _to_str(const Map&m) ;
+  static string _to_str(const Vector&l) ;
+  static string _to_str(const List&l) ;
+  static string _to_str(const DeQue&l) ;
+  static string _to_str(Type type);
   //Node to_str() const;
 
 
@@ -168,3 +173,4 @@ protected:
 };
 
 ostream& operator<<(ostream& os, const Node& v) ;
+ostream& operator<<(ostream& os, const Node::OpStatus& s) ;
