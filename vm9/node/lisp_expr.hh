@@ -15,7 +15,7 @@
 class LispExpr : public Lang {
 private:
   LispReader reader;
-  static const vector<string> lisp_main_key ; 
+  static const vector<string> lisp_module_key ; 
   static const vector<string> lisp_path_key ; 
   static const vector<string> lisp_lang_atoms; 
   unique_ptr<Node> env_ptr;
@@ -28,11 +28,12 @@ public:
   //enum class Keywords {def, call, ret, list, identifier};
   LispExpr();
   void bootstrap();
+
+  unique_ptr<Node> process_create();
   //LispExpr(Node::Value v) : Tree() {}
   //LispExpr(vector<Node::ValueSimple> v) : Tree() {}
   
   Node::OpStatus build_program(const string& input); // create module structure 
-  Node::OpStatus parse(Node& tokens, Node& env); // parse Node::List of tokens
   Node::OpStatus parse(Node& tokens); // parse Node::List of tokens
   Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_env();
