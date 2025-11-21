@@ -16,6 +16,7 @@ public:
   , add, sub, div, mul, mod
   , def, call, send, ret
   , loop, cond, print
+  , module, defun
   };
 
   static bool initialized;

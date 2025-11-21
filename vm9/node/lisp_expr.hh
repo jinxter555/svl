@@ -58,6 +58,13 @@ public:
   Node::OpStatus build_parsed_list(Node::List& list);
   Node::OpStatus build_parsed_vector(Node::List& list);
   Node::OpStatus build_parsed_deque(Node::List& list);
+  Node::OpStatus build_parsed_map(Node::List& list); // ((k1 v1)(k2 v2)...)
+
+  Node::OpStatus build_parsed_func(Node::List& list); // (fun_name (param_list)(code list))
+  //Node::OpStatus build_parsed_func(Node::List& list) ;
+
+  //
+  Node::OpStatus build_parsed_def(Node::List& list);
   
   // Node::OpStatus builtin_add(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_mul(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_print(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_root(Node& env, const Node::List& list, size_t start=0);
   //

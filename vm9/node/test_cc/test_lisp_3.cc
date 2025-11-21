@@ -22,19 +22,18 @@ int main() {
   //lisp.print(); cout << "\n";
   //string input="(add 1 2 3)"; //string input;
   //string input="(print (vector 1 2 3))"; //string input;
-  string input="(vector 1 2 3 (vector 5 6 7))"; //string input;
-  //string input="(vector 1  (vector 2 3) )"; //string input;
+  //string input="(vector 1 2 3 (vector 5 6 7))"; //string input;
+  string input="(vector 1  (vector 2 3) )"; //string input;
   //string input="(vector 1  (vector 2))"; //string input;
-  //string input="(vector 1  2 3 )"; //string input;
-  //string input="(def :module 2 3)"; //string input;
+  //string input="(vector 1  )"; //string input;
+  //string input="(def :module Main 2 3)"; //string input;
   //cout << "input: ";
   //cin >> input;
   //auto tokens = reader.tokenize("(plus 1 2)");
+
   auto result  = lisp.build_program(input);
-  //cout << "result: " <<  *result.second << "\n";
   cout << "result: " <<  result <<"\n " ;
   result.second->print();
-  //cout << *result.second << "\n";
 
 
 

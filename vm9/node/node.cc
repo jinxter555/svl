@@ -505,6 +505,10 @@ Node Node::operator/(const Node &other) const {
 
 string Node::_to_str() const {
   MYLOGGER(trace_function, "Node::_to_str()", __func__, SLOG_FUNC_INFO);
+  if(this==nullptr) { 
+    MYLOGGER_MSG(trace_function, string("this==nullptr")  , SLOG_FUNC_INFO+30);
+    return "Null";
+  }
   MYLOGGER_MSG(trace_function, string("type: ") + _to_str(type_), SLOG_FUNC_INFO+30);
 
   switch(type_) {
@@ -512,6 +516,7 @@ string Node::_to_str() const {
     case Type::Error: {
       Error  err = get<Error>(value_);
       return "[Error: " + Error::_to_str(err.type_) + "] " + err.message_;}
+    case Type::Atom: // { //extern Node::OpStatus Lang::atom_to_str(Node::Integer v) ; }
     case Type::Integer: {
       Integer num = get<Integer>(value_);
       return to_string(num); }
@@ -591,14 +596,20 @@ string Node::_to_str(const List&list) {
 
   for(auto &e : list) {
     if(i==s-1) break;
-    if(e==nullptr) continue;
+    if(e==nullptr) {
+      cerr << "list::_to_str() is null!\n";
+      continue;
+    }
     outstr = outstr + e->_to_str() + ", ";
     i++;
   }
   if(list.empty()) return outstr + "]";
-  auto& e = list.back();
-  outstr = outstr + e->_to_str() +" ]";
-  return outstr;
+  auto& e = list.back(); 
+  // to prevent last back() node_ptr is null 
+  if(e==nullptr)  return outstr + "]"; 
+  //outstr = outstr + e->_to_str() +" ]";
+  return outstr + e->_to_str() +" ]";
+  //return outstr;
 }
 /*
 string Node::_to_str(const List&list) {
@@ -698,9 +709,12 @@ ostream& operator<<(ostream& os, const Node& v) {
 ostream& operator<<(ostream& os, const Node::OpStatus& s) {
   MYLOGGER(trace_function, "ostream& << (Node::OpStatus&)", __func__, SLOG_FUNC_INFO);
   if(s.first)  cout << "true: "; else cout << "false: ";
-  if(s.second==nullptr) cout << "nullptr";
-  cout << "type: " <<  Node::_to_str(s.second->_get_type()) << "\n";
 
+  if(s.second==nullptr) { 
+    cout << "nullptr";
+    return os;
+  }
+  cout << "type: " <<  Node::_to_str(s.second->_get_type()) << "\n";
 //  s.second->print();
   cout << s.second->_to_str();
   return os;

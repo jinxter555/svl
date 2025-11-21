@@ -25,6 +25,8 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::ret: return "ret";
     case Lisp::Op::cond: return "cond";
     case Lisp::Op::print: return "print";
+    case Lisp::Op::module: return "module";
+    case Lisp::Op::defun: return "defun";
   }
   return "Unknown LispOp";
 }
@@ -50,7 +52,13 @@ void Lisp::init() {
   map_->set("ret", Op::ret);
   map_->set("cond", Op::cond);
   map_->set("print",Op::print);
+  map_->set("module",Op::module);
+  map_->set("defun",Op::defun);
+
   map_->set("+", Op::add);
+  map_->set("-", Op::sub);
   map_->set("*", Op::mul);
+  map_->set("/", Op::div);
+  map_->set("%", Op::mod);
   initialized=true;
 }

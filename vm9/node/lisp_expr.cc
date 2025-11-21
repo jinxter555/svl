@@ -57,17 +57,23 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   MYLOGGER(trace_function, "LispExpr::build_program(const string&input)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
 
-  auto tokens_first_pass = reader.tokenize(input); // list<Token>
-  auto parsed_status_first_pass = reader.parse(tokens_first_pass); 
+  auto tokens_raw_text = reader.tokenize(input); // list<Token>
+  auto parsed_status_first_pass = reader.parse(tokens_raw_text); 
 
   if(!parsed_status_first_pass.first) {
-    cerr << "building_program: Reader.tokenizer() and Reader.parser(): parse error for input string: " << input  << "\n";
+    cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string: " << input  << "\n";
     return  parsed_status_first_pass;
   }
 
 
+  cout << "before1 token : " << parsed_status_first_pass << "\n";
+  cout << "before1 token size: " << parsed_status_first_pass.second->size() << "\n";
   auto parsed_status_second_pass =  parse(*parsed_status_first_pass.second);
+  cout << "after1 token : " << parsed_status_first_pass << "\n";
+  cout << "after1 token size: " << parsed_status_first_pass.second->size() << "\n\n";
+
   cout << "status parsed second pass: " << parsed_status_second_pass << "\n";
+  cout << "\n\n";
 
   //set_branch(lisp_lang_atoms, 123.12d);
   auto env_status = get_env();
@@ -110,11 +116,16 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
   case Lisp::Op::print:  { //cout << "print: " <<  tokens << "\n";
     return {true, nullptr};}
   case Lisp::Op::deque:  { 
-    return {true, nullptr}; }
+    return build_parsed_deque(list); }
   case Lisp::Op::list:  { //cout << "parsing list: " <<  tokens << "\n";
     return build_parsed_list(list); }
   case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
     return build_parsed_vector(list);}
+
+  case Lisp::Op::def: {
+    cout << "case parse def\n";
+    return build_parsed_def(list); }
+
   default: {
     cerr << "unknown: tokens: " <<  tokens << "\n";
     return {true, nullptr}; 
@@ -124,6 +135,8 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
 
 //------------------------------------------------------------------------ build parse
 // asssumes Node.value_ contains a Node::List of nodes
+
+//-------------------------------- vector
 
 Node::OpStatus LispExpr::build_parsed_vector(Node& node) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_vector(Node&)", __func__, SLOG_FUNC_INFO);
@@ -148,12 +161,13 @@ Node::OpStatus LispExpr::build_parsed_vector(Node::List& list) {
       MYLOGGER_MSG(trace_function, string("returned list type: ") + Node::_to_str(status_parsed.second->type_), SLOG_FUNC_INFO+30);
       vl.push_back(move(status_parsed.second));
     } else 
-    vl.push_back(move(ele->clone()));
+    //vl.push_back(move(ele->clone()));
+    vl.push_back(move(ele));
   }
   return {true, Node::create(move(vl))};
 }
 
-//--------------------------------
+//-------------------------------- list
 Node::OpStatus LispExpr::build_parsed_list(Node& node) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_list(Node& node)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
@@ -173,13 +187,14 @@ Node::OpStatus LispExpr::build_parsed_list(Node::List& list) {
       MYLOGGER_MSG(trace_function, string("returned list type: ") + Node::_to_str(status_parsed.second->type_), SLOG_FUNC_INFO+30);
       dl.push_back(move(status_parsed.second));
     } else 
-    dl.push_back(move(ele->clone()));
+    //dl.push_back(move(ele->clone()));
+    dl.push_back(move(ele));
   }
   return {true, Node::create(move(dl))};
 
 }
 
-//--------------------------------
+//-------------------------------- deque
 
 Node::OpStatus LispExpr::build_parsed_deque(Node::List& list) {
   Node::DeQue dl;
@@ -194,6 +209,54 @@ Node::OpStatus LispExpr::build_parsed_deque(Node& node) {
   return build_parsed_deque(list);
   //return {true, Node::clone(node)};
 }
+
+//-------------------------------- map
+Node::OpStatus LispExpr::build_parsed_map(Node::List& list) {
+  Node::Map map;
+  for(auto& e : list) {
+
+  }
+  return {true, Node::create(move(map))};
+}
+//Node::OpStatus LispExpr::build_parsed_map(Node& node) { }
+
+
+//-------------------------------- parse def
+Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_def(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  auto def_type_ptr = move(list.front()); //cout << "head_status: " <<  head_status << "\n";
+  list.pop_front();
+  auto def_type = get<Node::Integer>(def_type_ptr->value_);
+
+  if(def_type ==  sym_module) {
+    cout << "def module\n";
+
+  } else if(def_type == sym_fun) {
+    cout << "def fun\n";
+
+  }
+  return {true, Node::create(1)};
+}
+
+
+//-------------------------------- parse fun
+// (fun_name (param_list)(code list))
+// return map as function
+//
+Node::OpStatus LispExpr::build_parsed_func(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_fun(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  auto fun_name_ptr = move(list.front()); //cout << "head_status: " <<  head_status << "\n";
+  list.pop_front();
+  Node::Map map={};
+  map["name"] = fun_name_ptr->clone();
+
+
+ }
+
 
 //------------------------------------------------------------------------
 //Node::OpStatus LispExpr::builtin_add(Node &env, const Node::List& list, size_t start) {
