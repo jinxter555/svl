@@ -11,8 +11,8 @@ class Lisp {
 public:
   enum class Op 
   { kernel, system, root
-  , error, noop
-  , list, deque, vector
+  , not_found, error, noop
+  , identifier, list, deque, vector
   , add, sub, div, mul, mod
   , def, call, send, ret
   , loop, cond, print

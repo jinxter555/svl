@@ -66,11 +66,11 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   }
 
 
-  cout << "before1 token : " << parsed_status_first_pass << "\n";
-  cout << "before1 token size: " << parsed_status_first_pass.second->size() << "\n";
+  //cout << "before1 token : " << parsed_status_first_pass << "\n";
+  //cout << "before1 token size: " << parsed_status_first_pass.second->size() << "\n";
   auto parsed_status_second_pass =  parse(*parsed_status_first_pass.second);
-  cout << "after1 token : " << parsed_status_first_pass << "\n";
-  cout << "after1 token size: " << parsed_status_first_pass.second->size() << "\n\n";
+  //cout << "after1 token : " << parsed_status_first_pass << "\n";
+  //cout << "after1 token size: " << parsed_status_first_pass.second->size() << "\n\n";
 
   cout << "status parsed second pass: " << parsed_status_second_pass << "\n";
   cout << "\n\n";
@@ -102,35 +102,53 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
   if(tokens.type_ != Node::Type::List) 
     return {true, tokens.clone()};
 
-  auto head_status = tokens.pop_front(); //cout << "head_status: " <<  head_status << "\n";
+
+
+  //cout << "tokens: " <<  tokens<< "\n";
+  auto head_status = tokens.pop_front(); 
+  //cout << "parse(token): head_status: " <<  head_status << "\n";
+  //cout << "head_status.second value: " <<  *head_status.second << "\n";
+  //cout << "tokens: " <<  tokens<< "\n";
+
 
   if(!head_status.first) {
     cerr << "head_status error from front(): " <<  head_status << "\n";
     return head_status;
   }
-
-  auto head = get<Lisp::Op>(head_status.second->value_);
+  // have to check type_
   auto &list = get<Node::List>(tokens.value_);
 
-  switch(head) {
-  case Lisp::Op::print:  { //cout << "print: " <<  tokens << "\n";
-    return {true, nullptr};}
-  case Lisp::Op::deque:  { 
-    return build_parsed_deque(list); }
-  case Lisp::Op::list:  { //cout << "parsing list: " <<  tokens << "\n";
-    return build_parsed_list(list); }
-  case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
-    return build_parsed_vector(list);}
 
-  case Lisp::Op::def: {
-    cout << "case parse def\n";
-    return build_parsed_def(list); }
+  if(head_status.second->type_ == Node::Type::LispOp) {
 
-  default: {
-    cerr << "unknown: tokens: " <<  tokens << "\n";
-    return {true, nullptr}; 
-  }}
-  return {true, nullptr};
+    Lisp::Op op_head = get<Lisp::Op>(head_status.second->value_);
+
+    switch(op_head) {
+    case Lisp::Op::print:  { //cout << "print: " <<  tokens << "\n";
+      return {true, Node::create()};}
+    case Lisp::Op::deque:  { 
+      return build_parsed_deque(list); }
+    case Lisp::Op::list:  { //cout << "parsing list: " <<  tokens << "\n";
+      return build_parsed_list(list); }
+    case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
+      return build_parsed_vector(list);}
+    case Lisp::Op::def: {// cout << "case parse def\n";
+      return build_parsed_def(list); }
+    case Lisp::Op::defun: {
+      return build_parsed_fun(list); }
+    default: {
+      cerr << "unknown: tokens: " <<  tokens << "\n";
+      return {true, Node::create()}; 
+    }}
+
+    //cout << "lisp op head: " << Lisp::_to_str(op_head) << "\n";
+  } else  {  // identifiers starts as (head ...)
+    // return a list of identifers
+    list.push_front(move(head_status.second));
+    return {true, Node::create(move(list)) };
+  }
+
+  return {true, Node::create()};
 }
 
 //------------------------------------------------------------------------ build parse
@@ -242,18 +260,27 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
 
 
 //-------------------------------- parse fun
-// (fun_name (param_list)(code list))
+// (fun_name (param_list) (description) (code list))
 // return map as function
 //
-Node::OpStatus LispExpr::build_parsed_func(Node::List& list) {
+Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_fun(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-  auto fun_name_ptr = move(list.front()); //cout << "head_status: " <<  head_status << "\n";
+  Node::Map map={}; //auto fun_name_ptr = move(list.front()); //cout << "head_status: " <<  head_status << "\n";
+  map["name"] = move(list.front()); 
   list.pop_front();
-  Node::Map map={};
-  map["name"] = fun_name_ptr->clone();
 
+  map["params"] = move(list.front()); 
+  list.pop_front();
+
+  map["description"] = move(list.front()); 
+  list.pop_front();
+
+  map["code"] = move(list.front()); 
+  list.pop_front();
+
+  return {true, Node::create(move(map))};
 
  }
 
@@ -272,7 +299,7 @@ Node::OpStatus LispExpr::builtin_add(Node& env, const T& list) {
     }
     return {false, move(result)};
   } else {
-    return {false, nullptr};
+    return {false, Node::create()};
   }
 }
 
@@ -286,7 +313,7 @@ Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
         cout << *ev.second << "\n";
       }
     }
-    return {true, nullptr};
+    return {true, Node::create()};
   } else {
     cout << "builtin_print something\n";
     //cout << list << "\n";

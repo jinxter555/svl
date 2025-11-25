@@ -36,7 +36,7 @@ LispReader::LispReader(LispExpr *l) : lisp(l) {
 void LispReader::reset() { col_=1; line_=1; }
 
 Lisp::Op LispReader::str_to_op(const string &input) {
-  MYLOGGER(trace_function, "LispReader::keyword_lookup()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispReader::str_to_op()", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("lookup input: ") + input, SLOG_FUNC_INFO+30);
 
   //auto &map_ = Lisp::map_;
@@ -47,14 +47,17 @@ Lisp::Op LispReader::str_to_op(const string &input) {
   }
   auto status = (*Lisp::map_)[input];
   if(!status.first) {
-    cout << "lisp keyworld not found!\n";
-    return Lisp::Op::error;
+    MYLOGGER_MSG(trace_function, "keyword: " + input + " not found , return as identifier", SLOG_FUNC_INFO+30);
+    return Lisp::Op::identifier;
   }
   auto op = get<Lisp::Op>(status.second->value_);
   return op;
 }
 
 list<Token> LispReader::tokenize(const string& input)  {
+  MYLOGGER(trace_function, "LispReader::tokenize(string&input)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
+
   list<Token> tokens;
   Token token; 
   string token_str;
@@ -102,18 +105,30 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
     Node::List list;
     bool first_loop_run=true;
     while(tokens.front().value_ != ")") {
+
       auto status = parse(tokens); //if(first_loop_run && token.value_!= "(") {
+      if(!status.first ) return {false, Node::create()};
+
       if(first_loop_run ) {       //cout << "first loop run: " << *status.second << "\n";
         string token_str;
+        first_loop_run = false; 
+
         try {
            token_str = get<string>(status.second->value_);
         } catch(...) { 
           cout << "(keyword ): get<string>() keyword not string: " << *status.second << "\n";
           return {false, nullptr};
         }
-        auto op = str_to_op(token_str);
-        if(status.first) list.push_back(Node::create(op));
-        first_loop_run = false; continue;
+        auto op = str_to_op(token_str); // Lisp::Op
+        
+        if(op == Lisp::Op::identifier)  { // identifier
+          auto node_ptr = Node::create(token_str);
+          node_ptr->set_identifier();
+          list.push_back(move(node_ptr));
+
+        } else 
+        list.push_back(Node::create(op));
+        continue;
       }
 
       if(status.first) list.push_back(move(status.second));

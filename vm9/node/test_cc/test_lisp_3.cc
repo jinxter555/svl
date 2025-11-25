@@ -23,10 +23,12 @@ int main() {
   //string input="(add 1 2 3)"; //string input;
   //string input="(print (vector 1 2 3))"; //string input;
   //string input="(vector 1 2 3 (vector 5 6 7))"; //string input;
-  string input="(vector 1  (vector 2 3) )"; //string input;
+  //string input="(vector 1  (vector 2 3) )"; //string input;
   //string input="(vector 1  (vector 2))"; //string input;
   //string input="(vector 1  )"; //string input;
   //string input="(def :module Main 2 3)"; //string input;
+  string input="(defun main (argc argv) main_func_what (line2 line3))"; //string input;
+  //string input="(vector (argc argv))"; //string input;
   //cout << "input: ";
   //cin >> input;
   //auto tokens = reader.tokenize("(plus 1 2)");

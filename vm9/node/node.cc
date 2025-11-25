@@ -40,6 +40,7 @@ string Node::_to_str(Type type) {
 }
 
 
+unique_ptr<Node> Node::create() { return make_unique<Node>(); }
 unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
 
 Node::Node() 
@@ -314,10 +315,10 @@ Node::OpStatus Node::pop_back() {
       list.pop_back();
       return {true, move(back)};
     } else {
-      return {false, nullptr};
+      return {false, Node::create()};
     }
   }, value_);
-  return {false, nullptr};
+  return {false, Node::create()};
 }
 
 //--------------------------------
@@ -343,10 +344,10 @@ Node::OpStatus Node::pop_front() {
       return {true, move(front)};
       
     } else {
-      return {false, nullptr};
+      return {false, Node::create()};
     }
   }, value_);
-  return {false, nullptr};
+  return {false, Node::create()};
 }
 
 //--------------------------------
@@ -358,7 +359,7 @@ Node::OpStatus Node::push_back(unique_ptr<Node> node) {
     using T = decay_t<decltype(list)>;
     if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> || is_same_v<T, Vector>){
       list.push_back(move(node));
-      return {true, nullptr};
+      return {true, Node::create()};
     } else {
       return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
     }
@@ -376,11 +377,11 @@ Node::OpStatus Node::push_front(unique_ptr<Node> node) {
     using T = decay_t<decltype(list)>;
     if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> ){
       list.push_front(move(node));
-      return {true, nullptr};
+      return {true, Node::create()};
     }  else if constexpr(is_same_v<T, Vector>) {
       cerr << "Warning!: Node::push_front() with vector object\n";
       list.insert(list.begin(), move(node));
-      return {true, nullptr};
+      return {true, Node::create()};
     } else {
       return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
     }
@@ -525,9 +526,15 @@ string Node::_to_str() const {
       Float num = get<Float>(value_);
       oss << fixed << setprecision(2) << num;
       return oss.str(); }
+    case Type::Identifier: 
+    case Type::String: {
+      string str = get<string>(value_);
+      return str; }
+
     case Type::LispOp: {
       Lisp::Op op = get<Lisp::Op>(value_);
       return Lisp::_to_str(op);}
+    
     
     case Type::List: {
       //cout << "_to_str() List\n";
@@ -543,7 +550,7 @@ string Node::_to_str() const {
     case Type::Map: {
       auto& map = get<Map>(value_);
       return _to_str(map);}
-    default: { return "_to_str() unknwon type " + _to_str(type_); }
+    default: { return "_to_str() unknown type " + _to_str(type_); }
   }
   return "_to_str() unknwon type " + _to_str(type_); 
 }
@@ -714,9 +721,8 @@ ostream& operator<<(ostream& os, const Node::OpStatus& s) {
     cout << "nullptr";
     return os;
   }
-  cout << "type: " <<  Node::_to_str(s.second->_get_type()) << "\n";
+  cout << "value: " << s.second->_to_str() << ", type: " <<  Node::_to_str(s.second->_get_type());
 //  s.second->print();
-  cout << s.second->_to_str();
   return os;
 }
 
