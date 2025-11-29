@@ -136,6 +136,11 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
       return build_parsed_def(list); }
     case Lisp::Op::defun: {
       return build_parsed_fun(list); }
+    case Lisp::Op::module: {
+
+      return build_parsed_module(list); 
+    }
+
     default: {
       cerr << "unknown: tokens: " <<  tokens << "\n";
       return {true, Node::create()}; 
@@ -267,20 +272,48 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_fun(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-  Node::Map map={}; //auto fun_name_ptr = move(list.front()); //cout << "head_status: " <<  head_status << "\n";
-  map["name"] = move(list.front()); 
-  list.pop_front();
+  Node::Map map_n={}, map={}; 
+  string name = get<string>(list.front()->value_); list.pop_front(); // function name
 
-  map["params"] = move(list.front()); 
-  list.pop_front();
+  // set func
+  map["params"] = move(list.front()); list.pop_front();
+  map["description"] = move(list.front()); list.pop_front();
+  map["code"] = move(list.front()); list.pop_front();
 
-  map["description"] = move(list.front()); 
-  list.pop_front();
+  map_n[name]  = Node::create(move(map));
 
-  map["code"] = move(list.front()); 
-  list.pop_front();
+  return {true, Node::create(move(map_n))};
 
-  return {true, Node::create(move(map))};
+}
+//-------------------------------- parse module
+// (module Main (defun main ) (defun f1 ) (defun f2))
+Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_module(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  //MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  unique_ptr<Node> node_f;
+  Node::Map map_n={}, map_f={}, map={}; 
+  cout << "parse module1\n";
+  string name = get<string>(list.front()->value_); list.pop_front(); // module name
+ // auto &name_l = get<Node::List>(list.front()->value_); list.pop_front(); // module name
+  //auto  &name_s = name_l.front();
+  //cout << "name_s " <<  *name_s << "\n";
+  cout << "name " <<  name << "\n";
+  cout << "parse module2\n";
+
+  //map["name"] = move(list.front()); list.pop_front();
+
+  for(auto& ele: list) {  
+    cout << "ele: " << *ele << "\n";
+    auto status_fun = parse(*ele); // parse (defun ...)
+    if(!status_fun.first) return status_fun;
+    //for(auto& p : *status_fun.second) {}
+    //map_f.merge(  move(status_fun.second));
+    node_f->merge(move(status_fun.second));
+  }
+  map_n["function"] = move(node_f);
+  //map[name] = Node::create(move(map_n));
+  //return {true, Node::create(move(map))};
 
  }
 

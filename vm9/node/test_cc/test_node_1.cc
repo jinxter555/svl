@@ -10,7 +10,7 @@ using namespace  std;
 int main() {
 
   trace_function.open("test.log", ios::out);
-  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 11);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 3100);
   MYLOGGER(trace_function, "test_node_1 main()", __func__, SLOG_FUNC_INFO);
 
   Node a(10);
@@ -52,5 +52,10 @@ int main() {
   cout << "list: " << list._to_str() << "\n";
 
 
+  Node tm2(Node::Type::Map);
+  cout << "\ntm2: " <<  tm2 << "\n";
+  vector<string> p = {"hello", "world"};
+  tm2.extend(p, true);
+  cout << "tm2: " <<  tm2 << "\n";
 
 }

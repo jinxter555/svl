@@ -39,7 +39,7 @@ public:
   };
   
   //enum class LispOp {kernel, system, root, error, noop, list, deque, vector, add, sub, div, mul, mod, def, call, send, ret, cond, print};
-  enum class Type { Null, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, Atom, Mvar, Lvar };
+  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, Atom, Mvar, Lvar };
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
   using List = list<unique_ptr<Node>>;
@@ -49,8 +49,8 @@ public:
   using ProgramList = List; // program build list type
   //
   using Map = unordered_map<string, unique_ptr<Node>>;
-  using Value = variant<monostate, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op>;
-  using ValueSimple = variant<monostate, Lisp::Op, Integer, Float, string>;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op>;
+  using ValueSimple = variant<monostate, bool,  Lisp::Op, Integer, Float, string>;
 
   using OpStatus = pair<bool, unique_ptr<Node>>;
   using SExpr= pair<unique_ptr<Node>, unique_ptr<Node>>;
@@ -96,10 +96,20 @@ public:
   OpStatus set(size_t index, Float v);                                                    
   OpStatus set(size_t index, const string& v);                                     
 
+  //---  map
   OpStatus set(const string& key, Integer v);                                          
   OpStatus set(const string& key, Float v);                                          
   OpStatus set(const string& key, Lisp::Op v);                                          
   OpStatus set(const string& key, const string& v);                           
+
+  OpStatus set(const vector<string>&path, unique_ptr<Node>child);
+
+  OpStatus merge(unique_ptr<Node> n, bool override=false);
+  OpStatus merge(Map &m, bool override=false);
+  OpStatus has_key(const string&key);
+  bool extend(const vector<string>&path, bool override=false);
+
+  //----
 
 
   Type _get_type() const;
@@ -168,9 +178,17 @@ public:
   void print(int depth=0);
   static void print_value_recursive(const Node& node, int depth=0);
   static void print_value(const Value& node, int depth=0);
+
+  // map
+  static Node* extend_node_by_key(Map& map, const string&key, bool create=true); // for map
 protected:
+
+
+
   Value value_;
   Type type_;
+private:
+  inline bool m_has_key(const string&key);
 };
 
 ostream& operator<<(ostream& os, const Node& v) ;

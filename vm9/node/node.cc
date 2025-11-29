@@ -24,6 +24,7 @@ string Node::Error::_to_str(Node::Error::Type type) {
 string Node::_to_str(Type type) {
   switch (type) {
     case Type::Null: return "Null";
+    case Type::Bool: return "Bool";
     case Type::Error: return "Error";
     case Type::Integer: return "Integer";
     case Type::Float: return "Float";
@@ -55,6 +56,7 @@ Node::Node(Value v)
   type_ = visit([](auto&& inner_arg) -> Type {
     using U = decay_t<decltype(inner_arg)>;
     if constexpr (is_same_v<U, monostate>) return Type::Null;
+    else if constexpr (is_same_v<U, bool>) return Type::Bool;
     else if constexpr (is_same_v<U, Error>) return Type::Error;
     else if constexpr (is_same_v<U, Integer>) return Type::Integer;
     else if constexpr (is_same_v<U, Float>) return Type::Float;
@@ -71,6 +73,7 @@ Node::Node(Value v)
 Node::Node(Type t)
   : type_(t) {
   switch(t) {
+  case Type::Bool: value_=true; break;
   case Type::Integer: value_=0; break;
   case Type::Float: value_=0.0; break;
   case Type::String: value_=""; break;
@@ -142,7 +145,7 @@ unique_ptr<Node> Node::clone() const {
       return make_unique<Node>(arg);
     }
     else if constexpr(
-        is_same_v<T, Integer> || is_same_v<T, Float> || 
+        is_same_v<T, Integer> || is_same_v<T, Float> ||  is_same_v<T, bool>||
         is_same_v<T, string> || is_same_v<T, Lisp::Op>)
       //return Node::create(Value(arg));
       return Node::create(arg);
@@ -195,7 +198,7 @@ Node::OpStatus Node::set(size_t index, unique_ptr<Node> child) {
     return {false, create_error(Node::Error::Type::IndexOutOfBounds, msg.str())};
   }
   list[index] = move(child);
-  return {true, nullptr};
+  return {true, Node::create(true)};
 }
 
 Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
@@ -204,7 +207,7 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   }        
   Map& map= get<Map>(value_);
   map[key] = move(child);
-  return {true, nullptr};
+  return {true, Node::create(true)};
 }
 
 //Node::OpStatus Node::set(size_t index, Integer v) { return set(index, Node::create(Value(v))); }
@@ -514,6 +517,11 @@ string Node::_to_str() const {
 
   switch(type_) {
     case Type::Null: return "Null";
+    case Type::Bool: {
+      bool b = get<bool>(value_);
+      if(b== true) return "true";
+      return "false";
+    }
     case Type::Error: {
       Error  err = get<Error>(value_);
       return "[Error: " + Error::_to_str(err.type_) + "] " + err.message_;}
@@ -664,7 +672,9 @@ void Node::print_value_recursive(const Node& node, int depth) {
     if constexpr (is_same_v<T, monostate>){
       cout << "Null";
     }
-    else if constexpr (is_same_v<T, Node::Error>){
+    else if constexpr (is_same_v<T, bool>){
+      cout << "bool: " << arg;
+    } else if constexpr (is_same_v<T, Node::Error>){
       cout << "\033[31m[ERROR: " << Node::Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;
     } else if constexpr (is_same_v<T, Integer>) {
       cout << arg; 
@@ -757,6 +767,9 @@ void Node::print_value(const Value& v, int depth) {
 
     if constexpr (is_same_v<T, monostate>){
       cout << "Null";
+    }
+    else if constexpr (is_same_v<T, bool>){
+      cout << "bool: " << arg;
     }
     else if constexpr (is_same_v<T, Node::Error>){
       cout << "\033[31m[ERROR: " << Node::Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;

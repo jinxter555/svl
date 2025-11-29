@@ -27,7 +27,10 @@ int main() {
   //string input="(vector 1  (vector 2))"; //string input;
   //string input="(vector 1  )"; //string input;
   //string input="(def :module Main 2 3)"; //string input;
-  string input="(defun main (argc argv) main_func_what (line2 line3))"; //string input;
+  //string input="(defun main (argc argv) description_main_func_what (code_line2 _codeline3))"; //string input;
+  //string input="(myname (defun main (argc argv) description_main_func_what (code_line2 _codeline3)))"; //string input;
+  string input="(module my_mod1 (defun main (argc argv) description_main_func_what (code_line2 _codeline3)))"; //string input;
+  //string input="(module( defun main (argc argv) main_func_what (line2 line3)))"; //string input;
   //string input="(vector (argc argv))"; //string input;
   //cout << "input: ";
   //cin >> input;

@@ -95,6 +95,9 @@ list<Token> LispReader::tokenize(const string& input)  {
 }
 
 Node::OpStatus LispReader::parse(list<Token>& tokens) {
+  MYLOGGER(trace_function, "LispReader::parse(list<Token>&tokens)", __func__, SLOG_FUNC_INFO);
+  //MYLOGGER_MSG(trace_function, string("lookup input: ") + input, SLOG_FUNC_INFO+30);
+
   if(tokens.empty()) 
     return {false, Node::create_error(Node::Error::Type::Incomplete, "Unexpected EOF parsing LispExpr.")};
 
@@ -122,12 +125,14 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
         auto op = str_to_op(token_str); // Lisp::Op
         
         if(op == Lisp::Op::identifier)  { // identifier
+          MYLOGGER_MSG(trace_function, string("identifier: ") + token_str, SLOG_FUNC_INFO+30);
+
           auto node_ptr = Node::create(token_str);
           node_ptr->set_identifier();
           list.push_back(move(node_ptr));
-
         } else 
-        list.push_back(Node::create(op));
+          MYLOGGER_MSG(trace_function, string("Lisp::Op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);
+          list.push_back(Node::create(op));
         continue;
       }
 

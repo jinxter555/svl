@@ -4,12 +4,12 @@ CC=g++ -g -std=c++23
 TMPDIR = /dev/shm
 MAKE=make
 
-objects = node.o tree.o lang.o lisp.o lisp_expr.o lisp_reader.o scope_logger.o
+objects = node.o node_map.o tree.o lang.o lisp.o lisp_expr.o lisp_reader.o scope_logger.o
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
 
 #all: test_cc_d $(objects) 
-all: $(objects)   #test_cc_d
+all: $(objects)   test_cc_d
 
 
 
