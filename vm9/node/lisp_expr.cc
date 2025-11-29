@@ -289,9 +289,10 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
 // (module Main (defun main ) (defun f1 ) (defun f2))
 Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_module(Node::List& list)", __func__, SLOG_FUNC_INFO);
-  //MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-  unique_ptr<Node> node_f;
+  // unique_ptr<Node> node_f(Node::Type::Map);
+  auto node_f=make_unique<Node>(Node::Type::Map);
   Node::Map map_n={}, map_f={}, map={}; 
   cout << "parse module1\n";
   string name = get<string>(list.front()->value_); list.pop_front(); // module name
@@ -311,9 +312,10 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
     //map_f.merge(  move(status_fun.second));
     node_f->merge(move(status_fun.second));
   }
+  cout << "parse module3\n";
   map_n["function"] = move(node_f);
-  //map[name] = Node::create(move(map_n));
-  //return {true, Node::create(move(map))};
+  map[name] = Node::create(move(map_n));
+  return {true, Node::create(move(map))};
 
  }
 

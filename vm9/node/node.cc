@@ -73,6 +73,7 @@ Node::Node(Value v)
 Node::Node(Type t)
   : type_(t) {
   switch(t) {
+  case Type::Null: value_= {}; break;
   case Type::Bool: value_=true; break;
   case Type::Integer: value_=0; break;
   case Type::Float: value_=0.0; break;

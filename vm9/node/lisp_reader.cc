@@ -61,15 +61,20 @@ list<Token> LispReader::tokenize(const string& input)  {
   list<Token> tokens;
   Token token; 
   string token_str;
+  bool token_begin = false;
   for(char c : input) {
     if(isspace(c)) {
+      token_begin = true;
       if(!token_str.empty()) {
         //token.line_ = line_; token.col_ = col_;
         token.value_ = move(token_str);
         tokens.push_back(token);
       }
-      if(c=='\n') line_++;
+      if(c=='\n') {line_++; col_= 1;};
+
     } else if(c=='(' || c==')') {
+      token_begin = true;
+
       if(!token_str.empty()) {
         //token.line_ = line_; token.col_ = col_-1;
         token.value_ = move(token_str);
@@ -80,6 +85,7 @@ list<Token> LispReader::tokenize(const string& input)  {
       tokens.push_back(token);
 
     } else {
+      if(token_begin) { token.col_ = col_; token_begin=false;}
       token_str += c;
 
     }
@@ -120,7 +126,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
            token_str = get<string>(status.second->value_);
         } catch(...) { 
           cout << "(keyword ): get<string>() keyword not string: " << *status.second << "\n";
-          return {false, nullptr};
+          return {false, Node::create()};
         }
         auto op = str_to_op(token_str); // Lisp::Op
         
@@ -130,9 +136,10 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
           auto node_ptr = Node::create(token_str);
           node_ptr->set_identifier();
           list.push_back(move(node_ptr));
-        } else 
+        } else  {
           MYLOGGER_MSG(trace_function, string("Lisp::Op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);
           list.push_back(Node::create(op));
+        }
         continue;
       }
 
