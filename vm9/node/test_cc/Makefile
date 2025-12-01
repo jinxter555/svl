@@ -9,8 +9,10 @@ objects = test_node_1.o
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
 
-all: test_node_1.out  test_lisp_1.out  test_lisp_2.out test_lisp_3.out
+all: test_node_1.out  test_map_1.out test_lisp_1.out  test_lisp_2.out test_lisp_3.out
 
+test_map_1.out : test_map_1.o $(node_o)
+	$(CC) $^ -o $@
 
 test_node_1.out : test_node_1.o $(node_o)
 	$(CC) $^ -o $@

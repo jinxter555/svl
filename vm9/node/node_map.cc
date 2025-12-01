@@ -2,6 +2,8 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+Node null_node(Node::Type::Null);
+
 Node::OpStatus Node::merge(unique_ptr<Node> n, bool override) {
   switch(n->type_) {
     case Type::Map: {
@@ -49,7 +51,7 @@ bool Node::m_has_key(const string&key) {
 
 
 
-
+/*
 bool Node::extend(const vector<string>&path, bool override) {
   MYLOGGER(trace_function, "Node::extend(vector& path)", __func__, SLOG_FUNC_INFO);
 
@@ -60,9 +62,22 @@ bool Node::extend(const vector<string>&path, bool override) {
     node_ptr = extend_node_by_key(map, p, override);
     if(node_ptr==nullptr) return false;
   }
-
   return true;
+}
+*/
+bool Node::extend(const vector<string>&path, bool override) {
+  MYLOGGER(trace_function, "Node::extend(vector& path)", __func__, SLOG_FUNC_INFO);
 
+  Node* node_ptr=this;
+  for(auto key : path) {
+    try { 
+      auto &map = get<Map>(node_ptr->value_);
+      node_ptr = extend_node_by_key(map, key);
+    } catch (...) {
+      if(!override) return false;
+    }
+  }
+  return true;
 }
 
 
@@ -77,4 +92,38 @@ Node* Node::extend_node_by_key(Map& map,  const string&key, bool create) {
   Map new_map={};
   map[key] = Node::create(move(new_map));
   return map[key].get();
+}
+
+Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
+  MYLOGGER(trace_function, "Node::set(vector& path)", __func__, SLOG_FUNC_INFO);
+
+  Node* node_ptr=this;
+  for(auto key : path) {
+    try { 
+      auto &map = get<Map>(node_ptr->value_);
+      node_ptr = extend_node_by_key(map, key, override);
+    } catch (...) {
+      if(!override) return {false, Node::create(false)};
+    }
+    if(node_ptr==nullptr) return {false, Node::create(false)};
+  }
+  node_ptr->set(move(child));
+  return {true, Node::create(true)};
+}
+
+Node::OpStatusRef Node::get_node(const vector<string>&path) {
+  if(type_ != Type::Map) return {false, null_node};
+
+  Node* current = this;
+  for(const auto&key : path) {
+    if(!current || current->type_ != Node::Type::Map) {
+      return {false, null_node};
+    }
+    Node::Map& map = get<Node::Map>(current->value_);
+    auto it = map.find(key);
+    if(it == map.end()) return {false, null_node};
+    current = it->second.get();
+  }
+  return {true, *current};
+
 }

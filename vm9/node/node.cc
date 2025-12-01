@@ -78,6 +78,7 @@ Node::Node(Type t)
   case Type::Integer: value_=0; break;
   case Type::Float: value_=0.0; break;
   case Type::String: value_=""; break;
+  case Type::Error: value_ = {} ; break;
   case Type::Map: { 
     Map nm={};
     value_ = move(nm);

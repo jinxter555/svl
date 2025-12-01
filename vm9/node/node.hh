@@ -54,6 +54,7 @@ public:
   using ValueSimple = variant<monostate, bool,  Lisp::Op, Integer, Float, string>;
 
   using OpStatus = pair<bool, unique_ptr<Node>>;
+  using OpStatusRef = pair<bool, Node&>;
   using SExpr= pair<unique_ptr<Node>, unique_ptr<Node>>;
 
 
@@ -103,7 +104,8 @@ public:
   OpStatus set(const string& key, Lisp::Op v);                                          
   OpStatus set(const string& key, const string& v);                           
 
-  OpStatus set(const vector<string>&path, unique_ptr<Node>child);
+  OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
+  OpStatusRef get_node(const vector<string>&path);
 
   OpStatus merge(unique_ptr<Node> n, bool override=false);
   OpStatus merge(Map &m, bool override=false);
