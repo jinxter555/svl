@@ -107,6 +107,15 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
     }
     if(node_ptr==nullptr) return {false, Node::create(false)};
   }
+  /*
+  auto status_empty = node_ptr->empty();
+  if(!status_empty.first) { // operation success or not , not = not map
+    if(!override) return status_empty;
+  }*/
+  // operation is good, current node_ptr is a map
+  if(!override) return {false, create(false)};
+
+
   node_ptr->set(move(child));
   return {true, Node::create(true)};
 }

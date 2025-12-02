@@ -22,7 +22,17 @@ int main() {
   cout << "tm2: " <<  tm2 << "\n";
   tm2.set(p2, Node::create(123), true);
   cout << "tm2: " <<  tm2 << "\n";
-  tm2.set(p2, Node::create(456));
-  cout << "tm2: " <<  tm2 << "\n";
+  cout << "tm2 getnode p2: " << tm2.get_node(p2) << "\n";
+  cout << "tm2 getnode p3: " << tm2.get_node(p3) << "\n";
 
+
+  tm2.set(p2, Node::create(456), true);
+  cout << "tm2: " <<  tm2 << "\n";
+  cout << "tm2 getnode p2: " << tm2.get_node(p2) << "\n";
+
+  tm2.set(p, Node::create(789), false);
+  cout << "try 789 with no overrwide tm2: " <<  tm2 << "\n";
+
+  tm2.set(p, Node::create(789), true);
+  cout << "try 789 with override tm2: " <<  tm2 << "\n";
 }

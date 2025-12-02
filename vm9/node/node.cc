@@ -107,20 +107,20 @@ unique_ptr<Node> Node::clone(const List& list) {
   List cloned_list;
   for(const auto& child_ptr :list ) 
     cloned_list.push_back(child_ptr->clone());
-  return Node::create(move(cloned_list));
+  return create(move(cloned_list));
 }
 
 unique_ptr<Node> Node::clone(const DeQue& list) {
   DeQue cloned_list;
   for(const auto& child_ptr :list ) 
     cloned_list.push_back(child_ptr->clone());
-  return Node::create(move(cloned_list));
+  return create(move(cloned_list));
 }
 unique_ptr<Node> Node::clone(const Vector& list) {
   Vector cloned_list;
   for(const auto& child_ptr :list ) 
     cloned_list.push_back(child_ptr->clone());
-  return Node::create(move(cloned_list));
+  return create(move(cloned_list));
 }
 
 
@@ -131,7 +131,7 @@ unique_ptr<Node> Node::clone(const Map& map) {
   for(const auto& [key, child_ptr] : map) {
     cloned_map.try_emplace(key, child_ptr->clone());
   }
-  return Node::create(move(cloned_map));
+  return create(move(cloned_map));
 }
 
 unique_ptr<Node> Node::clone() const {
@@ -150,7 +150,7 @@ unique_ptr<Node> Node::clone() const {
         is_same_v<T, Integer> || is_same_v<T, Float> ||  is_same_v<T, bool>||
         is_same_v<T, string> || is_same_v<T, Lisp::Op>)
       //return Node::create(Value(arg));
-      return Node::create(arg);
+      return create(arg);
     else if constexpr(is_same_v<T, List>) {
       return clone(arg);
     }
@@ -200,7 +200,7 @@ Node::OpStatus Node::set(size_t index, unique_ptr<Node> child) {
     return {false, create_error(Node::Error::Type::IndexOutOfBounds, msg.str())};
   }
   list[index] = move(child);
-  return {true, Node::create(true)};
+  return {true, create(true)};
 }
 
 Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
@@ -209,18 +209,18 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   }        
   Map& map= get<Map>(value_);
   map[key] = move(child);
-  return {true, Node::create(true)};
+  return {true, create(true)};
 }
 
 //Node::OpStatus Node::set(size_t index, Integer v) { return set(index, Node::create(Value(v))); }
-Node::OpStatus Node::set(size_t index, Integer v) { return set(index, Node::create(v)); }
-Node::OpStatus Node::set(size_t index, Float v) { return set(index, Node::create(v)); }
-Node::OpStatus Node::set(size_t index, const string&v ) { return set(index, Node::create(v)); }
+Node::OpStatus Node::set(size_t index, Integer v) { return set(index, create(v)); }
+Node::OpStatus Node::set(size_t index, Float v) { return set(index, create(v)); }
+Node::OpStatus Node::set(size_t index, const string&v ) { return set(index, create(v)); }
 
-Node::OpStatus Node::set(const string&key, Integer v ) { return set(key, Node::create(v)); }
-Node::OpStatus Node::set(const string&key, Float v ) { return set(key, Node::create(v)); }
-Node::OpStatus Node::set(const string&key, Lisp::Op v ) { return set(key, Node::create(v)); }
-Node::OpStatus Node::set(const string&key, const string&v ) { return set(key, Node::create(v)); }
+Node::OpStatus Node::set(const string&key, Integer v ) { return set(key, create(v)); }
+Node::OpStatus Node::set(const string&key, Float v ) { return set(key, create(v)); }
+Node::OpStatus Node::set(const string&key, Lisp::Op v ) { return set(key, create(v)); }
+Node::OpStatus Node::set(const string&key, const string&v ) { return set(key, create(v)); }
 
 
 Node::Node(vector<ValueSimple> vl) : type_(Type::List) {
@@ -320,10 +320,10 @@ Node::OpStatus Node::pop_back() {
       list.pop_back();
       return {true, move(back)};
     } else {
-      return {false, Node::create()};
+      return {false, create()};
     }
   }, value_);
-  return {false, Node::create()};
+  return {false, create()};
 }
 
 //--------------------------------
@@ -349,10 +349,10 @@ Node::OpStatus Node::pop_front() {
       return {true, move(front)};
       
     } else {
-      return {false, Node::create()};
+      return {false, create()};
     }
   }, value_);
-  return {false, Node::create()};
+  return {false, create()};
 }
 
 //--------------------------------
@@ -364,7 +364,7 @@ Node::OpStatus Node::push_back(unique_ptr<Node> node) {
     using T = decay_t<decltype(list)>;
     if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> || is_same_v<T, Vector>){
       list.push_back(move(node));
-      return {true, Node::create()};
+      return {true, create()};
     } else {
       return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
     }
@@ -382,11 +382,11 @@ Node::OpStatus Node::push_front(unique_ptr<Node> node) {
     using T = decay_t<decltype(list)>;
     if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> ){
       list.push_front(move(node));
-      return {true, Node::create()};
+      return {true, create()};
     }  else if constexpr(is_same_v<T, Vector>) {
       cerr << "Warning!: Node::push_front() with vector object\n";
       list.insert(list.begin(), move(node));
-      return {true, Node::create()};
+      return {true, create()};
     } else {
       return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
     }
@@ -737,6 +737,12 @@ ostream& operator<<(ostream& os, const Node::OpStatus& s) {
 //  s.second->print();
   return os;
 }
+ostream& operator<<(ostream& os, const Node::OpStatusRef& s) {
+  MYLOGGER(trace_function, "ostream& << (Node::OpStatus&)", __func__, SLOG_FUNC_INFO);
+  if(s.first)  cout << "true: "; else cout << "false: ";
+  cout << "value: " << s.second ;
+  return os;
+}
 
 
 
@@ -821,7 +827,20 @@ Node::Integer Node::size() const {
   return -1;
 }
 
-bool Node::empty() const {
+Node::OpStatus Node::empty() const {
+  return visit([&](auto&& arg) -> Node::OpStatus {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
+      is_same_v<T, Vector> || is_same_v<T, Map>) {
+      return {true, create(arg.empty())};
+    } else {
+      return {false, create(false)};
+    }
+  }, value_);
+  return {false, create(false)};
+}
+
+bool Node::empty_container() const {
   return visit([&](auto&& arg) -> bool {
     using T = decay_t<decltype(arg)>;
     if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
@@ -833,4 +852,3 @@ bool Node::empty() const {
   }, value_);
   return false;
 }
-

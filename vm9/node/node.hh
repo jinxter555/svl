@@ -155,7 +155,8 @@ public:
 
   // for list and map
   Integer size() const;
-  bool empty() const;
+  OpStatus empty() const;
+  bool empty_container() const;
   //
   string _to_str() const;
 
@@ -196,3 +197,4 @@ private:
 
 ostream& operator<<(ostream& os, const Node& v) ;
 ostream& operator<<(ostream& os, const Node::OpStatus& s) ;
+ostream& operator<<(ostream& os, const Node::OpStatusRef& s) ;
