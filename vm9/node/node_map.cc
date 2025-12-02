@@ -2,6 +2,8 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+string  _to_str(const vector<string>& keys) ;
+
 Node null_node(Node::Type::Null);
 
 Node::OpStatus Node::merge(unique_ptr<Node> n, bool override) {
@@ -96,6 +98,7 @@ Node* Node::extend_node_by_key(Map& map,  const string&key, bool create) {
 
 Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
   MYLOGGER(trace_function, "Node::set(vector& path)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);
 
   Node* node_ptr=this;
   for(auto key : path) {

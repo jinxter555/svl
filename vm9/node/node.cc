@@ -10,6 +10,14 @@
 #include "scope_logger.hh"
 
 
+string  _to_str_ext(const vector<string>& keys) {
+  string v="["; size_t i=0, s=keys.size();
+  for(; i<s-1; i++) {
+    v = v+ keys[i] + ", ";
+  }
+  return v+keys[i]+"]";
+}
+
 string Node::Error::_to_str(Node::Error::Type type) {
   switch(type) {
     case Node::Error::Type::InvalidOperation: return "InvalidOperation";

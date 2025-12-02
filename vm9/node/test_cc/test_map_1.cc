@@ -35,4 +35,8 @@ int main() {
 
   tm2.set(p, Node::create(789), true);
   cout << "try 789 with override tm2: " <<  tm2 << "\n";
+
+  tm2.set({"hello2", "world2"}, Node::create(5555), true);
+  cout << "hello2 tm2: " <<  tm2 << "\n";
+
 }

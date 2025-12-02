@@ -209,9 +209,10 @@ Node::OpStatus LispExpr::build_parsed_list(Node::List& list) {
       if(!status_parsed.first) return status_parsed;
       MYLOGGER_MSG(trace_function, string("returned list type: ") + Node::_to_str(status_parsed.second->type_), SLOG_FUNC_INFO+30);
       dl.push_back(move(status_parsed.second));
-    } else 
-    //dl.push_back(move(ele->clone()));
-    dl.push_back(move(ele));
+    } else {
+      //dl.push_back(move(ele->clone()));
+      dl.push_back(move(ele));
+    }
   }
   return {true, Node::create(move(dl))};
 
@@ -291,31 +292,24 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_module(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-  // unique_ptr<Node> node_f(Node::Type::Map);
-  auto node_f=make_unique<Node>(Node::Type::Map);
-  Node::Map map_n={}, map_f={}, map={}; 
-  cout << "parse module1\n";
-  string name = get<string>(list.front()->value_); list.pop_front(); // module name
- // auto &name_l = get<Node::List>(list.front()->value_); list.pop_front(); // module name
-  //auto  &name_s = name_l.front();
-  //cout << "name_s " <<  *name_s << "\n";
-  cout << "name " <<  name << "\n";
-  cout << "parse module2\n";
+  vector<string> keys={};
 
-  //map["name"] = move(list.front()); list.pop_front();
+  auto node_functions=make_unique<Node>(Node::Type::Map);
+  auto node_module=make_unique<Node>(Node::Type::Map);
+
+  string name = get<string>(list.front()->value_); list.pop_front(); // module name
+
+  keys.push_back(name);
+  keys.push_back("function");
 
   for(auto& ele: list) {  
-    cout << "ele: " << *ele << "\n";
     auto status_fun = parse(*ele); // parse (defun ...)
     if(!status_fun.first) return status_fun;
-    //for(auto& p : *status_fun.second) {}
-    //map_f.merge(  move(status_fun.second));
-    node_f->merge(move(status_fun.second));
+    node_functions->merge(move(status_fun.second));
   }
-  cout << "parse module3\n";
-  map_n["function"] = move(node_f);
-  map[name] = Node::create(move(map_n));
-  return {true, Node::create(move(map))};
+  node_module->set(keys, move(node_functions), true);
+
+  return {true, move(node_module)};
 
  }
 
