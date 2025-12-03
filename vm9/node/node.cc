@@ -112,6 +112,7 @@ unique_ptr<Node> Node::create_error(Node::Error::Type t, const string& msg) {
 }
 
 unique_ptr<Node> Node::clone(const List& list) {
+  MYLOGGER(trace_function, "Node::clone(const List&)", __func__, SLOG_FUNC_INFO);
   List cloned_list;
   for(const auto& child_ptr :list ) 
     cloned_list.push_back(child_ptr->clone());
@@ -119,12 +120,14 @@ unique_ptr<Node> Node::clone(const List& list) {
 }
 
 unique_ptr<Node> Node::clone(const DeQue& list) {
+  MYLOGGER(trace_function, "Node::clone(const DeQue&)", __func__, SLOG_FUNC_INFO);
   DeQue cloned_list;
   for(const auto& child_ptr :list ) 
     cloned_list.push_back(child_ptr->clone());
   return create(move(cloned_list));
 }
 unique_ptr<Node> Node::clone(const Vector& list) {
+  MYLOGGER(trace_function, "Node::clone(const Vector&)", __func__, SLOG_FUNC_INFO);
   Vector cloned_list;
   for(const auto& child_ptr :list ) 
     cloned_list.push_back(child_ptr->clone());
@@ -135,6 +138,8 @@ unique_ptr<Node> Node::clone(const Vector& list) {
 
 
 unique_ptr<Node> Node::clone(const Map& map) {
+  MYLOGGER(trace_function, "Node::clone(const Map&map)", __func__, SLOG_FUNC_INFO);
+
   Map cloned_map;
   for(const auto& [key, child_ptr] : map) {
     cloned_map.try_emplace(key, child_ptr->clone());
@@ -143,6 +148,8 @@ unique_ptr<Node> Node::clone(const Map& map) {
 }
 
 unique_ptr<Node> Node::clone() const {
+  MYLOGGER(trace_function, "Node::clone()", __func__, SLOG_FUNC_INFO);
+
   if(holds_alternative<monostate>(value_)) 
     return make_unique<Node>();
 

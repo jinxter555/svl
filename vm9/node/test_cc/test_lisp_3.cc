@@ -37,8 +37,12 @@ int main() {
   //auto tokens = reader.tokenize("(plus 1 2)");
 
   auto result  = lisp.build_program(input);
-  cout << "result: " <<  result <<"\n " ;
-  result.second->print();
+  //cout << "result: " <<  result <<"\n " ;
+
+  //if(result.first) result.second->print();
+  cout << "\n";
+
+  lisp.print();
 
 
 

@@ -16,8 +16,9 @@ LispExpr::LispExpr() : Lang(), reader(this)
 , sym_class(str_to_atom("class"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
-  Node::Vector vector;
-  set_branch(lisp_module_key, Node::create(move(vector)));
+  Node::Map map_module;
+  set_branch(lisp_module_key, Node::create(move(map_module)));
+  //set_branch(lisp_module_key, Node::create(Node::Type::Map));
   //for(auto &v : lisp_lang_atoms ) str_to_atom(v);
 }
 void LispExpr::set_symbols() {
@@ -66,30 +67,45 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   }
 
 
-  //cout << "before1 token : " << parsed_status_first_pass << "\n";
-  //cout << "before1 token size: " << parsed_status_first_pass.second->size() << "\n";
   auto parsed_status_second_pass =  parse(*parsed_status_first_pass.second);
-  //cout << "after1 token : " << parsed_status_first_pass << "\n";
-  //cout << "after1 token size: " << parsed_status_first_pass.second->size() << "\n\n";
 
-  cout << "status parsed second pass: " << parsed_status_second_pass << "\n";
+  cout << "status parsed second pass1: " << parsed_status_second_pass << "\n";
   cout << "\n\n";
 
-  //set_branch(lisp_lang_atoms, 123.12d);
-  auto env_status = get_env();
-//  cout << "build_program parsed tokens: " <<  *list_status.second << "\n";
-  
+
+  auto attach_status = attach_module(parsed_status_second_pass.second->clone());
+  //auto attach_status = attach_module(move(parsed_status_second_pass.second));
   /*
-  cout << "getting value!\n";
-  auto &list = get<Node::List>(list_status.second->value_);
-  cout << "list size: " << list.size() << "\n";
-  auto result_status2 = parse_list(list);
-  //auto result_status = eval_list(*env_status.second, list);
+  if(parsed_status_second_pass.first) {
+    auto cm  = parsed_status_second_pass.second->clone();
+    cout << "cm: " << *cm << "\n";
+    auto attach_status = attach_module(move(cm));
+  }*/
+  //cout << "status parsed second pass2: " << parsed_status_second_pass << "\n";
 
-  //cout << "result: " << *result_status.second << "\n";
- */ 
-return parsed_status_second_pass;
+  // this cause it to crap
+  // auto attach_status = attach_module(make_unique<Node>(Node::Type::Map));
+   //auto ptr = make_unique<Node>(Node::Type::Map); attach_module(move(ptr));
 
+  //auto attach_status = attach_module(parsed_status_second_pass.second->clone());
+  cout << "status parsed second pass.print():\n";
+  parsed_status_second_pass.second->print();
+
+
+
+  auto env_status = get_env();
+  //return parsed_status_second_pass;
+  return {false, nullptr};
+
+}
+
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
+  MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
+  auto mod_loc = get_branch(lisp_module_key);
+  mod_loc->merge(move(module));
+  cout << "mod_loc: " << *mod_loc << "\n\n";
+  return {false, Node::create(true)};
 }
 
 //------------------------------------------------------------------------ build parse

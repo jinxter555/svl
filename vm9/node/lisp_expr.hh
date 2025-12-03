@@ -34,6 +34,9 @@ public:
   //LispExpr(vector<Node::ValueSimple> v) : Tree() {}
   
   Node::OpStatus build_program(const string& input); // create module structure 
+  Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
+
+
   Node::OpStatus parse(Node& tokens); // parse Node::List of tokens
   Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_env();
