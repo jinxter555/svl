@@ -73,11 +73,12 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
   auto parsed_status_second_pass =  parse(*parsed_status_first_pass.second);
 
-  cout << "status parsed second pass1: " << parsed_status_second_pass << "\n";
-  cout << "\n\n";
+  //cout << "status parsed second pass1: " << parsed_status_second_pass << "\n";
+  //cout << "\n\n";
 
 
   auto attach_status = attach_module(parsed_status_second_pass.second->clone());
+
   //auto attach_status = attach_module(move(parsed_status_second_pass.second));
   /*
   if(parsed_status_second_pass.first) {
@@ -92,33 +93,34 @@ Node::OpStatus LispExpr::build_program(const string& input) {
    //auto ptr = make_unique<Node>(Node::Type::Map); attach_module(move(ptr));
 
   //auto attach_status = attach_module(parsed_status_second_pass.second->clone());
-  cout << "status parsed second pass.print():\n";
-  parsed_status_second_pass.second->print();
+  //cout << "status parsed second pass.print():\n";
+  //parsed_status_second_pass.second->print();
 
 
 
   auto env_status = get_env();
   //return parsed_status_second_pass;
-  return {false, nullptr};
+  return {false, Node::create(false)};
 
 }
 
 Node::OpStatus LispExpr::run_program() { 
   MYLOGGER(trace_function, "LispExpr::run_program()", __func__, SLOG_FUNC_INFO);
 
-  /*
   vector<string> main_path=  LispExpr::lisp_module_key ;
   vector<string> code_path = {"Main", "function", "main", "code"};
 
   main_path.insert(main_path.end(), code_path.begin(), code_path.end());
 
   Node::OpStatusRef node_status = get_node(main_path);
-  if(!node_status.first)  return  {false, nullptr};
+  if(!node_status.first)  return  {false, Node::create()};
 
   auto env_status = get_env();
   if(!env_status.first) return env_status;
+  //eval(node_status.second,  *env_status.second);
   eval(node_status.second,  *env_status.second);
-*/
+  return  {false, nullptr};
+
 }
 
 //------------------------------------------------------------------------
@@ -429,7 +431,8 @@ Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
       }
     }
     //return {true, Node::create()};
-    return {true, nullptr};
+    //return {true, nullptr};
+    return {true, Node::create()};
   } else {
     cout << "builtin_print something\n";
     //cout << list << "\n";
@@ -440,14 +443,14 @@ Node::OpStatus LispExpr::builtin_print_n(Node& env, const T& list, size_t start)
   if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
     size_t s=list.size();
     for(size_t i = start;  i<s; i++) {
-      //auto &element = list[i];
-      //cout << element;
+      auto &element = list[i];
+      cout << *element;
     }
   } else {
     cout << "builtin_print_n unknown T list\n";
 
   }
-  return {true, nullptr};
+  return {true, Node::create()};
 }
 
 //------------------------------------------------------------------------
@@ -467,7 +470,8 @@ Node::OpStatus LispExpr::eval(const Node& node, Node& env) {
   case Lisp::Op::print: {
     builtin_print_n(env, code, 1);
   }}
-  return {true, nullptr};
+  //return {true, nullptr};
+  return {true, Node::create()};
 
 
 }
