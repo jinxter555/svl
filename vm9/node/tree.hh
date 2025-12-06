@@ -12,5 +12,8 @@ public:
   Node::OpStatus delete_branch(const vector<string>&path);
   Node* get_branch(const vector<string>&path) const ;
 
-
+  // use Node methods
+  Node::OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
+  Node::OpStatusRef get_node(const vector<string>&path);
+  void print();
 };

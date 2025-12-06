@@ -155,7 +155,8 @@ public:
 
 
   // for list and map
-  Integer size() const;
+  Integer size_container() const;
+  OpStatus size() const;
   OpStatus empty() const;
   bool empty_container() const;
   //
@@ -186,6 +187,9 @@ public:
 
   // map
   static Node* extend_node_by_key(Map& map, const string&key, bool create=true); // for map
+  // list
+  static vector<string> list_to_vector_string(const List &list); // for map
+
 protected:
 
 

@@ -15,6 +15,7 @@ int main() {
 
   LispExpr lisp;
   //string input="(add 1 2 3 (add 5 3))"; //string input;
+  //string input="(add 1 2 3 (add 5 3))"; //string input;
   //string input="(add 1 2 3 (def :mod 5 3))"; //string input;
   //string input="(def :module 5 3)"; //string input;
   //string input="(def :module Main (def :fun main(+ 5 3)))"; //string input;
@@ -26,12 +27,13 @@ int main() {
   //string input="(vector 1  (vector 2 3) )"; //string input;
   //string input="(vector 1  (vector 2))"; //string input;
   //string input="(vector 1  )"; //string input;
-  //string input="(def :module Main 2 3)"; //string input;
-  //string input="(defun main (argc argv) description_main_func_what (code_line2 _codeline3))"; //string input;
-  //string input="(myname (defun main (argc argv) description_main_func_what (code_line2 _codeline3)))"; //string input;
-  string input="(module my_mod1 (defun main (argc argv) description_main_func_what (line2 line3)))"; //string input;
+  //string input="(module my_mod1 (defun main (argc argv) description_main_func_what (line2 line3)))"; //string input;
+  //string input="(add 1 2 3 )"; //string input;
+
+string input="(module my_mod1 (defun main (argc argv) \"description main func what\" (line2 line3)))"; //string input;
+
   //string input="(vector (argc argv))"; //string input;
-  //string input="(argc argv)"; //string input;
+ // string input="(argc argv)"; //string input;
   //cout << "input: ";
   //cin >> input;
   //auto tokens = reader.tokenize("(plus 1 2)");

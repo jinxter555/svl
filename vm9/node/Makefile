@@ -4,7 +4,7 @@ CC=g++ -g -std=c++23
 TMPDIR = /dev/shm
 MAKE=make
 
-objects = node.o node_map.o tree.o lang.o lisp.o lisp_expr.o lisp_reader.o scope_logger.o
+objects = node.o node_map.o node_list.o tree.o lang.o lisp.o lisp_expr.o lisp_reader.o scope_logger.o commandline.o
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
 

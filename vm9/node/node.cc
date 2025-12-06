@@ -828,8 +828,21 @@ void Node::print_value(const Value& v, int depth) {
   }, v);
 }
 
+Node::OpStatus Node::size() const {
+  return visit([&](auto&& arg) -> OpStatus {
+    using T = decay_t<decltype(arg)>;
+    if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 
+      is_same_v<T, Vector> || is_same_v<T, Map>) {
+      Integer s = arg.size();
+      return {true, create(s)};
+    } else {
+      return {false, create(-1)};
+    }
+  }, value_);
+  return {false, create(-1)};
+}
 
-Node::Integer Node::size() const {
+Node::Integer Node::size_container() const {
   return visit([&](auto&& arg) -> Integer {
     using T = decay_t<decltype(arg)>;
     if constexpr (is_same_v<T, List> || is_same_v<T, DeQue> || 

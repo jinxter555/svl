@@ -4,9 +4,11 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-const vector<string> LispExpr::lisp_path_key = {"Lang", "Lisp"};
-const vector<string> LispExpr::lisp_module_key = {"Lang", "Lisp", "Module"};
-const vector<string> LispExpr::lisp_lang_atoms = {"module", "fun", "mvar", "lvar", "class"};
+#define UNIVERSE "universe"
+const vector<string> LispExpr::lisp_path_key = {UNIVERSE, "Lang", "Lisp"};
+const vector<string> LispExpr::lisp_module_key = {UNIVERSE, "Lang", "Lisp", "Module"};
+const vector<string> LispExpr::lisp_lang_atoms = {UNIVERSE, "module", "fun", "mvar", "lvar", "class"};
+const vector<string> LispExpr::interactive_key  = {UNIVERSE, "interactive"};
 
 LispExpr::LispExpr() : Lang(), reader(this)
 , sym_module(str_to_atom("module"))
@@ -14,6 +16,8 @@ LispExpr::LispExpr() : Lang(), reader(this)
 , sym_mvar(str_to_atom("mvar"))
 , sym_lvar(str_to_atom("lvar"))
 , sym_class(str_to_atom("class"))
+, sym_get(str_to_atom("get"))
+, sym_set(str_to_atom("set"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;
@@ -103,9 +107,9 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
   auto mod_loc = get_branch(lisp_module_key);
-  mod_loc->merge(move(module));
-  cout << "mod_loc: " << *mod_loc << "\n\n";
-  return {false, Node::create(true)};
+  return mod_loc->merge(move(module));
+  //cout << "mod_loc: " << *mod_loc << "\n\n";
+  //return {false, Node::create(true)};
 }
 
 //------------------------------------------------------------------------ build parse
@@ -138,6 +142,7 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
   if(head_status.second->type_ == Node::Type::LispOp) {
 
     Lisp::Op op_head = get<Lisp::Op>(head_status.second->value_);
+    MYLOGGER_MSG(trace_function, string("LispOp: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
 
     switch(op_head) {
     case Lisp::Op::print:  { //cout << "print: " <<  tokens << "\n";
@@ -153,20 +158,26 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     case Lisp::Op::defun: {
       return build_parsed_fun(list); }
     case Lisp::Op::module: {
-
-      return build_parsed_module(list); 
-    }
+      return build_parsed_module(list); }
+    case Lisp::Op::root: {
+      return build_parsed_root(list); }
 
     default: {
-      cerr << "unknown: tokens: " <<  tokens << "\n";
-      return {true, Node::create()}; 
+      cerr << "Parser build interpreter: Lisp Op not permitted  : " <<  Lisp::_to_str(op_head) << ", " << tokens << "\n";
+      return {false, Node::create()}; 
     }}
 
     //cout << "lisp op head: " << Lisp::_to_str(op_head) << "\n";
   } else  {  // identifiers starts as (head ...)
+    MYLOGGER_MSG(trace_function, string("Node::Type: ") + Node::_to_str(head_status.second->type_), SLOG_FUNC_INFO+30);
+    cerr << "Parser build unknown instruction: " << *head_status.second <<  ": " << tokens << "\n";
+    return {false, Node::create()}; 
+
+    // throw std::runtime_error("unknown keyword");
+
     // return a list of identifers
-    list.push_front(move(head_status.second));
-    return {true, Node::create(move(list)) };
+    //list.push_front(move(head_status.second));
+    //return {true, Node::create(move(list)) };
   }
 
   return {true, Node::create()};
@@ -329,6 +340,34 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
 
  }
 
+//-------------------------------- parse root
+// (root :set (path,..) value )
+// (root :get () )
+Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_root(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  try {
+    auto root_sym_op = get<Node::Integer>(list.front()->value_); list.pop_front(); // root op symbol 
+    if(root_sym_op == sym_set) {
+      auto path_list = move(get<Node::List>(list.front()->value_));  list.pop_front();
+      auto value = move(list.front());  list.pop_front();
+
+      auto path_vec_str = Node::list_to_vector_string(path_list);
+      return set(path_vec_str, move(value), true);
+      //return {true, Node::create(true)};
+
+    } else if(root_sym_op== sym_get){
+      cout << "root get\n";
+      return {true, Node::create()};
+    }
+  } catch(...) { 
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation, 
+        "error: parsed root get symbol") };
+  }
+  return {true, Node::create()};
+
+}
 
 //------------------------------------------------------------------------
 //Node::OpStatus LispExpr::builtin_add(Node &env, const Node::List& list, size_t start) {

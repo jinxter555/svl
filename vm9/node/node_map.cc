@@ -2,7 +2,7 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-string  _to_str(const vector<string>& keys) ;
+string  _to_str_ext(const vector<string>& keys) ;
 
 Node null_node(Node::Type::Null);
 

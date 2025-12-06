@@ -54,6 +54,31 @@ Lisp::Op LispReader::str_to_op(const string &input) {
   return op;
 }
 
+//
+string LispReader::extract_quoted_string(const string&input, size_t &i) {
+  string result;
+  bool in_quote = true;
+  bool escaped = false;
+  for(++i; i<input.size(); i++) {
+    char c = input[i];
+    if(escaped) {
+      result += c;
+      escaped = false;
+    }  else if(c == '\\') {
+      escaped = true;
+    } else if(c =='"') {
+      in_quote = !in_quote;
+      break;
+    } else {
+      result += c;
+    }
+    
+  }
+  cout << "result string: " << result << "\n";
+  return result;
+
+}
+
 list<Token> LispReader::tokenize(const string& input)  {
   MYLOGGER(trace_function, "LispReader::tokenize(string&input)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
@@ -62,7 +87,9 @@ list<Token> LispReader::tokenize(const string& input)  {
   Token token; 
   string token_str;
   bool token_begin = false;
-  for(char c : input) {
+  //for(char c : input) {
+  for(size_t i=0; i<input.size(); i++) {
+    char c = input[i];
     if(isspace(c)) {
       token_begin = true;
       if(!token_str.empty()) {
@@ -84,6 +111,10 @@ list<Token> LispReader::tokenize(const string& input)  {
       token.value_ = string(1,c);
       tokens.push_back(token);
 
+    } else if(c == '"') {
+      token.value_ = move(extract_quoted_string(input, i));
+      tokens.push_back(token);
+      token_begin = true;
     } else {
       if(token_begin) { token.col_ = col_; token_begin=false;}
       token_str += c;
@@ -91,6 +122,9 @@ list<Token> LispReader::tokenize(const string& input)  {
     }
     col_++;
   }
+
+
+
   if(!token_str.empty()) {
     //token.line_ = line_; token.col_ = col_-1;
     token.value_ = move(token_str);

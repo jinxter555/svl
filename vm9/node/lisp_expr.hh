@@ -16,13 +16,14 @@ class LispExpr : public Lang {
 private:
   LispReader reader;
   static const vector<string> lisp_module_key ; 
+  static const vector<string> interactive_key; 
   static const vector<string> lisp_path_key ; 
   static const vector<string> lisp_lang_atoms; 
   unique_ptr<Node> env_ptr;
 
   Node::OpStatus parse_def(const Node::List &list);
   void set_symbols();
-  const Node::Integer sym_module, sym_fun, sym_mvar, sym_lvar, sym_class; // internal lisp hashed symbol values  (def :symbol ... )
+  const Node::Integer sym_module, sym_fun, sym_mvar, sym_lvar, sym_class, sym_get, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
 public: 
 
   //enum class Keywords {def, call, ret, list, identifier};
@@ -65,6 +66,7 @@ public:
 
   Node::OpStatus build_parsed_fun(Node::List& list); // (fun_name (param_list)(code list))
   Node::OpStatus build_parsed_module(Node::List& list); // (fun_name (param_list)(code list))
+  Node::OpStatus build_parsed_root(Node::List& list); // (fun_name (param_list)(code list))
   //Node::OpStatus build_parsed_func(Node::List& list) ;
 
   //
