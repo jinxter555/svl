@@ -35,6 +35,8 @@ public:
   //LispExpr(vector<Node::ValueSimple> v) : Tree() {}
   
   Node::OpStatus build_program(const string& input); // create module structure 
+  Node::OpStatus run_program(); // create module structure 
+
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
 
 
@@ -52,7 +54,7 @@ public:
   //Node::OpStatus parse(vector<Token>& tokens);
   void print();
 
-  Node::OpStatus eval(Node& env);
+  Node::OpStatus eval(const Node& code, Node& env);
   Node::OpStatus eval_list(Node& env, const Node::List& list);
   // 
   Node::OpStatus build_parsed_list(Node& node);
@@ -72,10 +74,14 @@ public:
   //
   Node::OpStatus build_parsed_def(Node::List& list);
   
-  // Node::OpStatus builtin_add(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_mul(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_print(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_root(Node& env, const Node::List& list, size_t start=0);
+  template <typename T>
+  Node::OpStatus builtin_add_n(Node& env, const T& list, size_t start=0); 
+  //Node::OpStatus builtin_mul(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_print(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_root(Node& env, const Node::List& list, size_t start=0);
   //
   template <typename T>
   Node::OpStatus builtin_add(Node& env, const T& list);
   template <typename T>
   Node::OpStatus builtin_print(Node& env, const T& list);
+  template <typename T>
+  Node::OpStatus builtin_print_n(Node& env, const T& list, size_t start=0);
 };

@@ -103,6 +103,24 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
 }
 
+Node::OpStatus LispExpr::run_program() { 
+  MYLOGGER(trace_function, "LispExpr::run_program()", __func__, SLOG_FUNC_INFO);
+
+  /*
+  vector<string> main_path=  LispExpr::lisp_module_key ;
+  vector<string> code_path = {"Main", "function", "main", "code"};
+
+  main_path.insert(main_path.end(), code_path.begin(), code_path.end());
+
+  Node::OpStatusRef node_status = get_node(main_path);
+  if(!node_status.first)  return  {false, nullptr};
+
+  auto env_status = get_env();
+  if(!env_status.first) return env_status;
+  eval(node_status.second,  *env_status.second);
+*/
+}
+
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
@@ -112,7 +130,7 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   //return {false, Node::create(true)};
 }
 
-//------------------------------------------------------------------------ build parse
+//------------------------------------------------------------------------ build and parse interpreter 
 
 // tokens: double linked list of tokens
 Node::OpStatus LispExpr::parse(Node& tokens) {
@@ -304,9 +322,19 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   string name = get<string>(list.front()->value_); list.pop_front(); // function name
 
   // set func
-  map["params"] = move(list.front()); list.pop_front();
+  {// turn params List to params Vector for speed performance
+  auto status=  build_parsed_vector(*list.front()); 
+  if(!status.first) return status;
+  map["params"] = move(status.second); list.pop_front();
+  }
+
   map["description"] = move(list.front()); list.pop_front();
-  map["code"] = move(list.front()); list.pop_front();
+  
+  {// turn code List to code Vector for speed performance
+  auto status=  build_parsed_vector(*list.front()); 
+  if(!status.first) return status;
+  map["code"] = move(status.second); list.pop_front();
+  }
 
   map_n[name]  = Node::create(move(map));
 
@@ -358,8 +386,10 @@ Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
       //return {true, Node::create(true)};
 
     } else if(root_sym_op== sym_get){
-      cout << "root get\n";
-      return {true, Node::create()};
+      auto path_list = move(get<Node::List>(list.front()->value_));  list.pop_front();
+      auto path_vec_str = Node::list_to_vector_string(path_list);
+      auto node_ref = get_node(path_vec_str);
+      if(node_ref.first) return {true, node_ref.second.clone()};
     }
   } catch(...) { 
     return {false, Node::create_error(Node::Error::Type::InvalidOperation, 
@@ -389,6 +419,7 @@ Node::OpStatus LispExpr::builtin_add(Node& env, const T& list) {
 
 template <typename T>
 Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
+  MYLOGGER(trace_function, "LispExpr::print(Node&env, T&list)", __func__, SLOG_FUNC_INFO);
   if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
     cout << "builtin_print_list\n";
     for(auto& element : list) { 
@@ -397,9 +428,46 @@ Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
         cout << *ev.second << "\n";
       }
     }
-    return {true, Node::create()};
+    //return {true, Node::create()};
+    return {true, nullptr};
   } else {
     cout << "builtin_print something\n";
     //cout << list << "\n";
   }
+}
+template <typename T>
+Node::OpStatus LispExpr::builtin_print_n(Node& env, const T& list, size_t start) {
+  if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
+    size_t s=list.size();
+    for(size_t i = start;  i<s; i++) {
+      //auto &element = list[i];
+      //cout << element;
+    }
+  } else {
+    cout << "builtin_print_n unknown T list\n";
+
+  }
+  return {true, nullptr};
+}
+
+//------------------------------------------------------------------------
+// eval node 
+Node::OpStatus LispExpr::eval(const Node& node, Node& env) {
+  MYLOGGER(trace_function, "LispExpr::eval(Node&node, Node&env)", __func__, SLOG_FUNC_INFO);
+
+  if(node.type_ != Node::Type::Vector) {
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+      "Can't eval unknown code vector type!\n")};
+  }
+
+
+  auto &code = get<Node::Vector>(node.value_);
+  Lisp::Op op_head = get<Lisp::Op>(code[0]->value_);
+  switch(op_head){
+  case Lisp::Op::print: {
+    builtin_print_n(env, code, 1);
+  }}
+  return {true, nullptr};
+
+
 }

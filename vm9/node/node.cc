@@ -181,6 +181,11 @@ unique_ptr<Node> Node::clone() const {
   }, value_);
 }
 
+// eval list
+Node::OpStatus Node::eval(Node& env) {
+  return {true, clone()};
+}
+
 void Node::set(Integer v)  { *this = Node(v); }
 void Node::set(Float v)  { *this = Node(v); }
 void Node::set(Lisp::Op v)  { *this = Node(v); }
@@ -469,61 +474,6 @@ Node::OpStatus Node::operator[](const string& key) const {
 }
 
 
-//------------------------------------------------------------------------
-Node Node::operator+(const Node &other) const {
-  return visit([&](auto&& lhs, auto&& rhs) -> Node {
-    using L = decay_t<decltype(lhs)>;
-    using R = decay_t<decltype(rhs)>;
-
-    if constexpr (is_arithmetic_v<L> && is_arithmetic_v<R>) {
-      if constexpr (is_same_v<L, Integer> && is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs + rhs));
-      else
-        return Node(static_cast<Float>(lhs) + static_cast<Float>(rhs));
-      } else if constexpr (is_same_v<L, string> && is_same_v<R, string>) {
-        return Node(lhs + rhs);
-      } else {
-        return Node(Node::Error{Node::Error::Type::InvalidOperation, 
-            "Unsupported types for addition! " + _to_str(type_) + 
-            " : " + _to_str(other.type_)});
-      }
-  }, value_, other.value_);
-}
-
-Node Node::operator*(const Node &other) const {
-  return visit([&](auto&& lhs, auto&& rhs) -> Node {
-    using L = decay_t<decltype(lhs)>;
-    using R = decay_t<decltype(rhs)>;
-
-    if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
-      if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs + rhs));
-      else
-        return Node(static_cast<Float>(lhs) * static_cast<Float>(rhs));
-    } else {
-      return Node(Node::Error{Node::Error::Type::InvalidOperation, "Unsupported types for multiplication"});
-    }
-
-  }, value_, other.value_);
-}
-
-Node Node::operator/(const Node &other) const {
-
-  return visit([&](auto&& lhs, auto&& rhs) -> Node {
-    using L = decay_t<decltype(lhs)>;
-    using R = decay_t<decltype(rhs)>;
-
-    if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
-      if(static_cast<Float>(rhs) == 0.0)
-        return Node(Node::Error{Node::Error::Type::DivideByZero,
-          "Divide by zero "});
-      return Node(static_cast<Float>(lhs) / static_cast<Float>(rhs));
-    } else {
-      return Node(Node::Error{Node::Error::Type::InvalidOperation, "Unsupported types for Division"});
-    }
-  }, value_, other.value_);
-}
-
 string Node::_to_str() const {
   MYLOGGER(trace_function, "Node::_to_str()", __func__, SLOG_FUNC_INFO);
   if(this==nullptr) { 
@@ -761,9 +711,6 @@ ostream& operator<<(ostream& os, const Node::OpStatusRef& s) {
 
 
 
-Node::OpStatus Node::eval(Node& env) {
-  return {true, clone()};
-}
 
 //------------------------------------------------------------------------
 Node::OpStatus Node::list_add() const {
