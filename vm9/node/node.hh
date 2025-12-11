@@ -33,6 +33,7 @@ public:
       KeyNotFound, // e.g., calling 'add' with a duplicate map key
       IndexOutOfBounds,  // e.g., calling 'set' with an invalid list index
       Incomplete,
+      System,
       Unknown,
     };
     Type type_;

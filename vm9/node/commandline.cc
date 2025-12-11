@@ -1,19 +1,25 @@
+#include "interactive.hh"
 #include "commandline.hh"
 
 struct option Commandline::long_options[] = {
   {"inputfile", required_argument, NULL, 'f'},
+  {"lang", required_argument, NULL, 'l'},
   {NULL, 0, NULL, 0}
 };
 
 Commandline::Commandline(int argc, char* argv[]) {
   int opt;
-  while( (opt = getopt_long(argc, argv, "marhif:o:", long_options, NULL)) != -1) {
+  while( (opt = getopt_long(argc, argv, "rhil:f:o:", long_options, NULL)) != -1) {
     switch(opt) {
-      case 'i': interactive = true; break;
-      case 'a': assembly_lang = true; svlm_lang = false; break;
-      case 'm': assembly_lang = false; svlm_lang = true; break;
-      case 'r': run = true; break;
-      case 'f': infile_name  = optarg; break;
+      case 'i': opt_interactive = true; break;
+      case 'r': opt_run= true; break;
+      case 'l': {
+        if(optarg == "lisp") lisp_lang = true;
+        if(optarg == "svlm") svlm_lang = true;
+        if(optarg == "asm") assembly_lang = true;
+        break;
+      }
+      case 'f': infile_name  = optarg; opt_file=true; break;
       case 'h': outerr(argv); exit(0); break;
     }
   }
@@ -32,7 +38,8 @@ void Commandline::outerr(char *argv[]) {
     ;
 
 
-}
+};
+
 
 void Commandline::printout() {
   /*
@@ -51,10 +58,19 @@ void Commandline::printout() {
   std::cout << "infile:" << infile_name << "\n";
 
 
-  if(interactive)
+  if(opt_interactive)
     std::cout << "interactive: true" << " ";
   else
     std::cout << "interactive: false" << " ";
 
   std::cout << "\n";
-};
+}
+
+void Commandline::run(Interactive* interactive) {
+
+  if(opt_file){
+    auto status = interactive->load(infile_name);
+    if(!status.first) { exit(1); }
+    Node::print_value_recursive(*status.second);
+  }
+}

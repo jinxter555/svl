@@ -9,7 +9,8 @@ objects = interactive.o node.o node_map.o node_list.o node_math.o tree.o lang.o 
 headers  := (wildcard: *.hh)
 
 #all: test_cc_d $(objects) 
-all: $(objects)  test_cc_d
+all: $(objects)   test_cc_d
+
 
 
 $(objects): %.o: %.cc 
