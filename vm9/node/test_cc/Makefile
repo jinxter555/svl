@@ -9,7 +9,7 @@ objects = test_node_1.o
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
 
-all:  main.out test_interactive_1.out # test_lisp_4.out  test_lisp_3.out test_node_1.out  # test_tree_1.out test_map_1.out test_lisp_1.out  test_lisp_2.out  
+all:  main.out test_interactive_1.out  test_lisp_4.out  test_lisp_3.out # test_node_1.out  # test_tree_1.out test_map_1.out test_lisp_1.out  test_lisp_2.out  
 
 main.out : main.o $(node_o)
 	$(CC) $^ -o $@

@@ -23,6 +23,8 @@ public:
   void interact(Commandline &cmdline) ; // parse readline line
   Node::OpStatus load(const std::string &filename) override; // load files from command line
   void reload(const string &filename); // reload file
+
+  Node::OpStatus build_program(const string& input); // create module structure 
   void run_program(const std::string &l="") override;
 
   void evaluate_line();       // evaluate ast_current_context pop back members
@@ -51,6 +53,7 @@ public:
   void printGoodbye(const std::string& message);
   void print_ast(const std::string& line);
   void print_stack(const std::string& line);
+  void print();
 
 
 };

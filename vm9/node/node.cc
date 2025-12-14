@@ -18,6 +18,9 @@ string  _to_str_ext(const vector<string>& keys) {
   return v+keys[i]+"]";
 }
 
+
+
+
 string Node::Error::_to_str(Node::Error::Type type) {
   switch(type) {
     case Node::Error::Type::InvalidOperation: return "InvalidOperation";
@@ -180,6 +183,13 @@ unique_ptr<Node> Node::clone() const {
   }
   }, value_);
 }
+
+// _get
+Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
+Node::Float Node::_get_float() const { return get<Float>(value_); }
+//string Node::_get_str() const { return get<string>(value_); }
+string Node::_get_str() const { return _to_str(); }
+Node::Map& Node::_get_map_ref() { return get<Map>(value_); }
 
 // eval list
 Node::OpStatus Node::eval(Node& env) {
@@ -827,3 +837,4 @@ bool Node::empty_container() const {
   }, value_);
   return false;
 }
+

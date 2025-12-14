@@ -154,6 +154,11 @@ public:
      */
   OpStatus operator[](const std::string& key) const;
 
+  // _get
+  Integer _get_integer() const;
+  Float _get_float() const;
+  string _get_str() const;
+  Map& _get_map_ref() ;
 
   // for list and map
   Integer size_container() const;
@@ -162,6 +167,7 @@ public:
   bool empty_container() const;
   //
   string _to_str() const;
+
 
   static string _to_str(const Map&m) ;
   static string _to_str(const Vector&l) ;

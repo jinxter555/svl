@@ -36,9 +36,10 @@ void Interactive::parse_prompt(const std::string &line) {
 void Interactive::parse(const std::string &line) {
   std::istringstream input_buffer(line+"\n");
   evaluate_line();
-
   // evaluate ast_current_context pop back members
 }
+
+
 void Interactive::evaluate_line() {
   MYLOGGER(trace_function , "SvlmInteractive::evaluate_line()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
   //std::cout << "evaluate line" << "\n";
@@ -65,8 +66,9 @@ void Interactive::evaluate_line() {
 }
 
 void Interactive::interact(Commandline &cmdline) {
-  cout << "hello, world!\n";
+  //cout << "hello, world!\n";
   cmdline.run(this);
+
 }
 
 void Interactive::interact(const std::string &c) {
@@ -102,8 +104,17 @@ void Interactive::run_program(const std::string &l) {
   MYLOGGER(trace_function , "SvlmInteractive::run_program()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
   //std::cout << "run program\n";
   //svlm_lang.run_evaluate();
+  lang.run_program();
 
 }
+Node::OpStatus Interactive::build_program(const std::string &source) {
+  MYLOGGER(trace_function , "Interactive::build_program()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
+  return lang.build_program(source);
+}
+void Interactive::print() {
+  lang.print();
+}
+
 
 /*
 void Interactive::interact(const std::string &cline) {

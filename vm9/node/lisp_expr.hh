@@ -19,6 +19,7 @@ private:
   static const vector<string> interactive_key; 
   static const vector<string> lisp_path_key ; 
   static const vector<string> lisp_lang_atoms; 
+  static const vector<string> lisp_process; 
   unique_ptr<Node> env_ptr;
 
   Node::OpStatus parse_def(const Node::List &list);

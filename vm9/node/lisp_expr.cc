@@ -9,6 +9,7 @@ const vector<string> LispExpr::lisp_path_key = {UNIVERSE, "Lang", "Lisp"};
 const vector<string> LispExpr::lisp_module_key = {UNIVERSE, "Lang", "Lisp", "Module"};
 const vector<string> LispExpr::lisp_lang_atoms = {UNIVERSE, "module", "fun", "mvar", "lvar", "class"};
 const vector<string> LispExpr::interactive_key  = {UNIVERSE, "interactive"};
+const vector<string> LispExpr::lisp_process = {UNIVERSE, "Process"};
 
 LispExpr::LispExpr() : Lang(), reader(this)
 , sym_module(str_to_atom("module"))
@@ -21,7 +22,11 @@ LispExpr::LispExpr() : Lang(), reader(this)
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;
+  Node::Vector vector_proc;
+  vector_proc.reserve(10);
   set_branch(lisp_module_key, Node::create(move(map_module)));
+  set_branch(lisp_process, Node::create(move(vector_proc)));
+
   //set_branch(lisp_module_key, Node::create(Node::Type::Map));
   //for(auto &v : lisp_lang_atoms ) str_to_atom(v);
 }
@@ -100,7 +105,7 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
   auto env_status = get_env();
   //return parsed_status_second_pass;
-  return {false, Node::create(false)};
+  return {true, Node::create(true)};
 
 }
 
@@ -113,13 +118,21 @@ Node::OpStatus LispExpr::run_program() {
   main_path.insert(main_path.end(), code_path.begin(), code_path.end());
 
   Node::OpStatusRef node_status = get_node(main_path);
-  if(!node_status.first)  return  {false, Node::create()};
+  if(!node_status.first)  {
+    cerr << "main path not found!\n";
+    return  {false, Node::create_error(
+      Node::Error::Type::KeyNotFound, 
+      "main path node not found " + _to_str_ext(main_path))};
+  }
 
   auto env_status = get_env();
-  if(!env_status.first) return env_status;
+  if(!env_status.first) {
+    cerr << "no env_status ! found!\n";
+    return env_status;
+  }
   //eval(node_status.second,  *env_status.second);
   eval(node_status.second,  *env_status.second);
-  return  {false, nullptr};
+  return  {true, nullptr};
 
 }
 
@@ -440,6 +453,8 @@ Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
 }
 template <typename T>
 Node::OpStatus LispExpr::builtin_print_n(Node& env, const T& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::print(Node&env, const T&list, size_t)", __func__, SLOG_FUNC_INFO);
+  cout << "builtin print!\n";
   if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
     size_t s=list.size();
     for(size_t i = start;  i<s; i++) {
@@ -466,6 +481,7 @@ Node::OpStatus LispExpr::eval(const Node& node, Node& env) {
 
   auto &code = get<Node::Vector>(node.value_);
   Lisp::Op op_head = get<Lisp::Op>(code[0]->value_);
+
   switch(op_head){
   case Lisp::Op::print: {
     builtin_print_n(env, code, 1);

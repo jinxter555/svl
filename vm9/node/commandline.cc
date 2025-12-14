@@ -69,8 +69,30 @@ void Commandline::printout() {
 void Commandline::run(Interactive* interactive) {
 
   if(opt_file){
-    auto status = interactive->load(infile_name);
-    if(!status.first) { exit(1); }
-    Node::print_value_recursive(*status.second);
+    auto load_status = interactive->load(infile_name);
+    if(!load_status.first) { 
+      cerr << "load file error: status error:" << load_status << "\n";
+      exit(1); 
+    }
+    Node::print_value_recursive(*load_status.second); cout << "\n";
+
+    auto source_status = (*load_status.second)["source_str"];
+    if(!source_status.first) {
+      cerr << "map source[] status error" << source_status << "\n";
+      return;
+    }
+    //cout << "getstr:" << source_status.second->_get_str() << "\n";
+    auto build_status  = interactive->build_program( source_status.second->_get_str());
+    if(!build_status.first) {
+      cerr << "build error status error: " << build_status << "\n";
+      return;
+    }
+
+    interactive->print();
+  }
+  if(opt_run) {
+    cout << "run program\n";
+    interactive->run_program();
+
   }
 }
