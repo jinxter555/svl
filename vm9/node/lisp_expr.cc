@@ -226,9 +226,11 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     MYLOGGER_MSG(trace_function, string("Node::Type: ") + Node::_to_str(head_status.second->type_), SLOG_FUNC_INFO+30);
 
     cout << "function call: what is up!\n";
-
-
     cerr << "Parser build unknown instruction: " << *head_status.second <<  ": " << tokens << "\n";
+    Node::List nl;
+    nl.push_back(move(head_status.second));
+    return {true, Node::create(move(nl))};
+
 
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Parser build unknown lisp macro instruction: " + head_status.second->_to_str() +

@@ -161,22 +161,26 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
     if(is_first_element) {
       is_first_element = false;
 
+      // got a list after parse
       if(token_status.second->type_== Node::Type::List) { list.push_back(move(token_status.second)); continue; }
 
-      token_str = get<string>(token_status.second->value_);
+      try {  // see if (keyword) or (scalar)
 
-      auto op = str_to_op(token_str); // Lisp::Op
-      if(op == Lisp::Op::scalar)  { // identifier or scalar
-        MYLOGGER_MSG(trace_function, string("scalar: ") + token_str, SLOG_FUNC_INFO+30);
-        list.push_back(move(token_status.second));
-      } else  {
-        MYLOGGER_MSG(trace_function, string("Lisp::Op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);
-        list.push_back(Node::create(op));
-      }
+        token_str = get<string>(token_status.second->value_);
+        auto op = str_to_op(token_str); // Lisp::Op
 
-    } else {
-      list.push_back(move(token_status.second));
-    }
+        if(op != Lisp::Op::scalar)  { // identifier or scalar
+          MYLOGGER_MSG(trace_function, string("Lisp::Op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);
+          list.push_back(Node::create(op));
+          continue;
+        }
+
+          //MYLOGGER_MSG(trace_function, string("scalar: ") + token_str, SLOG_FUNC_INFO+30);
+          //list.push_back(move(token_status.second));
+      } catch(...) {}
+
+    } 
+    list.push_back(move(token_status.second));
   }
 
   tokens.pop_front(); // remove ')' token
