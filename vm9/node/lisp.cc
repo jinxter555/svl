@@ -11,6 +11,8 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::root: return "root";
     case Lisp::Op::error: return "error";
     case Lisp::Op::noop: return "noop";
+    case Lisp::Op::identifier: return "identifier";
+    case Lisp::Op::scalar: return "scalar";
     case Lisp::Op::list: return "list";
     case Lisp::Op::deque: return "deque";
     case Lisp::Op::vector: return "vector";
@@ -38,6 +40,8 @@ void Lisp::init() {
   map_->set("root",   Op::root);
   map_->set("error",Op::error);
   map_->set("noop", Op::noop);
+  map_->set("identifier", Op::identifier);
+  map_->set("scalar", Op::scalar);
   map_->set("list", Op::list);
   map_->set("vector", Op::vector);
   map_->set("deque", Op::deque);

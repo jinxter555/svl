@@ -35,12 +35,15 @@ int main(int argc, char *argv[]) {
 
   //log_output.open("svlm.log", std::ios::out);
   trace_function.open("trace.log", std::ios::out);
-  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO + 3100);
+  ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
   MYLOGGER(trace_function, "int main(int, char*[])", __func__, SLOG_FUNC_INFO);
 
   Interactive lang_it(".svlm_history", "svlm> ");
   Commandline cml(argc, argv);
   lang_it.interact(cml);
+  cout << "\n\n";
+  lang_it.print();
+  cout << "\n";
 
 
 

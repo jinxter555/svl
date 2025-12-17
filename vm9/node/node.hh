@@ -34,7 +34,9 @@ public:
       IndexOutOfBounds,  // e.g., calling 'set' with an invalid list index
       Incomplete,
       System,
+      Parse,
       Unknown,
+
     };
     Type type_;
     string message_;
@@ -188,7 +190,7 @@ public:
   
   virtual OpStatus eval(Node& env);
 
-  void print(int depth=0);
+  void print(int depth=0) const;
   static void print_value_recursive(const Node& node, int depth=0);
   static void print_value(const Value& node, int depth=0);
 

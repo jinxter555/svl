@@ -1,0 +1,59 @@
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mfirst pass: List[module, Main, List[defun, main, List[x, y ], my func des, List[List[p55 ], List[p66 ], List[p77 ] ] ] ]
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mfunction call: what is up!
+p55List[][0m[0m[0m[0m[0m[0mparse module succ
+print recursive:
+[31m[ERROR: InvalidOperation][0m: Parser build unknown lisp macro instruction: p55 and type: Identifier
+
+[0m[0m[0mstatus parsed second pass1: false: value: [Error: InvalidOperation] error: parsed root get symbol, type: Error[0m
+
+
+[0m[0m[0m[0mLisp Interpreter
+{"universe": {"Process": Vector[], "Lang": {"Lisp": {"Module": {}}, "Atoms": {"4625761978203795338": set, "-4705652595650921993": get, "3211040718132763761": class, "1325213333779622127": lvar, "7765881685828984094": mvar, "-2331651408838895954": fun, "-1154038927901484491": module}}}}
+print recursive:
+{ (Map, size=1) 
+  - universe (Type: Map): { (Map, size=2) 
+   - Process (Type: Vector): Vector[(size=0) 
+  ]
+   - Lang (Type: Map): { (Map, size=2) 
+    - Lisp (Type: Map): { (Map, size=1) 
+     - Module (Type: Map): { (Map, size=0) 
+    }
+   }
+    - Atoms (Type: Map): { (Map, size=7) 
+     - 4625761978203795338 (Type: String): "set"
+     - -4705652595650921993 (Type: String): "get"
+     - 3211040718132763761 (Type: String): "class"
+     - 1325213333779622127 (Type: String): "lvar"
+     - 7765881685828984094 (Type: String): "mvar"
+     - -2331651408838895954 (Type: String): "fun"
+     - -1154038927901484491 (Type: String): "module"
+   }
+  }
+ }
+}[0m[0m
+
+Lisp Interpreter
+{"universe": {"Process": Vector[], "Lang": {"Lisp": {"Module": {}}, "Atoms": {"4625761978203795338": set, "-4705652595650921993": get, "3211040718132763761": class, "1325213333779622127": lvar, "7765881685828984094": mvar, "-2331651408838895954": fun, "-1154038927901484491": module}}}}
+print recursive:
+{ (Map, size=1) 
+  - universe (Type: Map): { (Map, size=2) 
+   - Process (Type: Vector): Vector[(size=0) 
+  ]
+   - Lang (Type: Map): { (Map, size=2) 
+    - Lisp (Type: Map): { (Map, size=1) 
+     - Module (Type: Map): { (Map, size=0) 
+    }
+   }
+    - Atoms (Type: Map): { (Map, size=7) 
+     - 4625761978203795338 (Type: String): "set"
+     - -4705652595650921993 (Type: String): "get"
+     - 3211040718132763761 (Type: String): "class"
+     - 1325213333779622127 (Type: String): "lvar"
+     - 7765881685828984094 (Type: String): "mvar"
+     - -2331651408838895954 (Type: String): "fun"
+     - -1154038927901484491 (Type: String): "module"
+   }
+  }
+ }
+}
+[0m

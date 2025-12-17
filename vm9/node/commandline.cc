@@ -74,7 +74,8 @@ void Commandline::run(Interactive* interactive) {
       cerr << "load file error: status error:" << load_status << "\n";
       exit(1); 
     }
-    Node::print_value_recursive(*load_status.second); cout << "\n";
+
+    //Node::print_value_recursive(*load_status.second); cout << "\n";
 
     auto source_status = (*load_status.second)["source_str"];
     if(!source_status.first) {
@@ -91,7 +92,6 @@ void Commandline::run(Interactive* interactive) {
     interactive->print();
   }
   if(opt_run) {
-    cout << "run program\n";
     interactive->run_program();
 
   }

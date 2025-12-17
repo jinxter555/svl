@@ -24,6 +24,8 @@ public:
   list<Token> tokenize(const string& input);  // turn everything in to a stream of tokens
   Node::OpStatus parse(list<Token>& tokens);  // turn everything in to stream of node
   Node::OpStatus parse_sequence(list<Token>& tokens);  // turn everything in to stream of node
+//  Node::OpStatus token_to_node(const Token& token);  // return node
+ 
   Lisp::Op str_to_op(const string&input);
   string _to_str(const list<Token>& tokens);
   void reset();

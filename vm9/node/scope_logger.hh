@@ -47,5 +47,8 @@ public:
 #endif
 
 #define SLOG_FUNC_INFO   10
+#define SLOG_TO_STR      5000
+
+#define SLOG_NODE_OP      5000
 
 #endif

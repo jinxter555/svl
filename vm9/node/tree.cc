@@ -90,6 +90,6 @@ Node::OpStatus Tree::set(const vector<string>&path, unique_ptr<Node>child, bool 
 
 Node::OpStatusRef Tree::get_node(const vector<string>&path) { return root->get_node(path); }
 
-void Tree::print() {
+void Tree::print() const {
   root->print();
 }

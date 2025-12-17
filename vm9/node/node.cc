@@ -23,11 +23,15 @@ string  _to_str_ext(const vector<string>& keys) {
 
 string Node::Error::_to_str(Node::Error::Type type) {
   switch(type) {
+    case Node::Error::Type::DivideByZero:     return "DivideByZero";
     case Node::Error::Type::InvalidOperation: return "InvalidOperation";
     case Node::Error::Type::KeyAlreadyExists: return "KeyAlreadyExists";
+    case Node::Error::Type::KeyNotFound: return "KeyNotFound";
     case Node::Error::Type::IndexOutOfBounds: return "IndexOutOfBounds";
-    case Node::Error::Type::DivideByZero:     return "DivideByZero";
     case Node::Error::Type::Incomplete:       return "Incomplete";
+    case Node::Error::Type::System:       return "System";
+    case Node::Error::Type::Parse:       return "Parse";
+    case Node::Error::Type::Unknown:       return "Unknown";
   }
   return "Unknown Error";
 }
@@ -165,10 +169,16 @@ unique_ptr<Node> Node::clone() const {
       return make_unique<Node>(arg);
     }
     else if constexpr(
-        is_same_v<T, Integer> || is_same_v<T, Float> ||  is_same_v<T, bool>||
-        is_same_v<T, string> || is_same_v<T, Lisp::Op>)
+      is_same_v<T, Integer> || is_same_v<T, Float> ||  is_same_v<T, bool>||
+      is_same_v<T, string> || is_same_v<T, Lisp::Op>) {
       //return Node::create(Value(arg));
-      return create(arg);
+      auto node_ptr = create(arg);
+      if(type_ == Type::Identifier) node_ptr->set_identifier();
+      if(type_ == Type::Atom) node_ptr->set_atom();
+      return move(node_ptr);
+
+    }
+
     else if constexpr(is_same_v<T, List>) {
       return clone(arg);
     }
@@ -338,8 +348,8 @@ Node::OpStatus Node::delete_key(const string &key) {
 //------------------------------------------------------------------------
 //--------------------------------
 Node::OpStatus Node::pop_back() {
-  MYLOGGER(trace_function, "Node::pop_back()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_), SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, "Node::pop_back()", __func__, SLOG_NODE_OP);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_), SLOG_NODE_OP+ 30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;
@@ -358,8 +368,8 @@ Node::OpStatus Node::pop_back() {
 
 //--------------------------------
 Node::OpStatus Node::pop_front() {
-  MYLOGGER(trace_function, "Node::pop_front()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_), SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, "Node::pop_front()", __func__, SLOG_NODE_OP);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_), SLOG_NODE_OP+30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;
@@ -387,7 +397,7 @@ Node::OpStatus Node::pop_front() {
 
 //--------------------------------
 Node::OpStatus Node::push_back(unique_ptr<Node> node) {
-  MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_NODE_OP);
   MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
 
   return visit([&](auto&& list) -> OpStatus {
@@ -405,7 +415,7 @@ Node::OpStatus Node::push_back(unique_ptr<Node> node) {
 
 
 Node::OpStatus Node::push_front(unique_ptr<Node> node) {
-  MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_NODE_OP);
   MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
 
   return visit([&](auto&& list) -> OpStatus {
@@ -485,12 +495,12 @@ Node::OpStatus Node::operator[](const string& key) const {
 
 
 string Node::_to_str() const {
-  MYLOGGER(trace_function, "Node::_to_str()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Node::_to_str()", __func__, SLOG_TO_STR);
   if(this==nullptr) { 
-    MYLOGGER_MSG(trace_function, string("this==nullptr")  , SLOG_FUNC_INFO+30);
+    MYLOGGER_MSG(trace_function, string("this==nullptr")  , SLOG_TO_STR);
     return "Null";
   }
-  MYLOGGER_MSG(trace_function, string("type: ") + _to_str(type_), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("type: ") + _to_str(type_), SLOG_TO_STR+30);
 
   switch(type_) {
     case Type::Null: return "Null";
@@ -541,6 +551,7 @@ string Node::_to_str() const {
 }
 
 string Node::_to_str(const Map&map) {
+  MYLOGGER(trace_function, "Node::_to_str(const Map&map)", __func__, SLOG_TO_STR);
 
   if(map.empty()) return "{}";
 
@@ -564,7 +575,7 @@ string Node::_to_str(const Map&map) {
 }
 
 string Node::_to_str(const Vector&list) {
-  MYLOGGER(trace_function, "Node::_to_str(const Vector&list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Node::_to_str(const Vector&list)", __func__, SLOG_TO_STR);
   size_t s = list.size(), i;
   if(s==0) {return "Vector[]";}
   string outstr("Vector[");
@@ -579,9 +590,9 @@ string Node::_to_str(const Vector&list) {
 }
 
 string Node::_to_str(const List&list) {
-  MYLOGGER(trace_function, "Node::_to_str(const List&list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Node::_to_str(const List&list)", __func__, SLOG_TO_STR);
   size_t s = list.size(), i=0;
-  MYLOGGER_MSG(trace_function, string("size: ") + to_string(s), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("size: ") + to_string(s), SLOG_TO_STR+30);
   if(s==0) {return "List[]";}
 
   string outstr("List[");
@@ -620,6 +631,7 @@ string Node::_to_str(const List&list) {
 */
 
 string Node::_to_str(const DeQue&list) {
+  MYLOGGER(trace_function, "Node::_to_str(const DeQue&list)", __func__, SLOG_TO_STR);
   size_t s = list.size(), i;
   if(s==0) {return "DeQue[]";}
   string outstr("DeQue[");
@@ -635,7 +647,7 @@ string Node::_to_str(const DeQue&list) {
 
 
 //------------------------------------------------------------------------
-void Node::print(int depth) { print_value_recursive(*this, depth); }
+void Node::print(int depth) const { print_value_recursive(*this, depth); }
 
 void Node::print_value_recursive(const Node& node, int depth) {
   if(depth==0) cout << "print recursive:\n";

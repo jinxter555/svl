@@ -166,7 +166,7 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
       token_str = get<string>(token_status.second->value_);
 
       auto op = str_to_op(token_str); // Lisp::Op
-      if(op == Lisp::Op::scalar)  { // identifier or scalar
+      if(op == Lisp::Op::scalar)  { // identifier
         MYLOGGER_MSG(trace_function, string("scalar: ") + token_str, SLOG_FUNC_INFO+30);
         list.push_back(move(token_status.second));
       } else  {
@@ -178,8 +178,6 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
       list.push_back(move(token_status.second));
     }
   }
-
-  tokens.pop_front(); // remove ')' token
   return {true, Node::create(move(list))};
 
 }

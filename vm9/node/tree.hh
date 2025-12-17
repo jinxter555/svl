@@ -15,5 +15,5 @@ public:
   // use Node methods
   Node::OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
   Node::OpStatusRef get_node(const vector<string>&path);
-  void print();
+  void print() const;
 };
