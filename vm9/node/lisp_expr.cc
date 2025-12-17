@@ -200,20 +200,12 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     case Lisp::Op::defun: {
       return build_parsed_fun(list); }
     case Lisp::Op::module: {
-      //return build_parsed_module(list); 
-      auto ptr = build_parsed_module(list); 
-      if(ptr.first) {
-        cerr << "parse module error\n";
-      } else {
-        cout  << "parse module succ\n";
-        ptr.second->print();
-        cout  << "\n\n";
-      }
-
-
+      return build_parsed_module(list); 
     }
     case Lisp::Op::root: {
-      return build_parsed_root(list); }
+      MYLOGGER_MSG(trace_function, string("Lisp::Op::root: ") + tokens._to_str(), SLOG_FUNC_INFO+30);
+      return build_parsed_root(list); 
+    }
 
     default: {
       cerr << "Parser build interpreter: Lisp Op not permitted  : " <<  Lisp::_to_str(op_head) << ", " << tokens << "\n";
