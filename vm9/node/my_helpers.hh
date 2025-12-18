@@ -10,6 +10,7 @@ std::string trim(const std::string& str, const std::string& whitespace = " \t") 
 std::string reduce(const std::string& str, const std::string& fill = " ", const std::string& whitespace = " \t");
 std::string match(const std::string& line, const std::string& pattern) ;
 std::string raw_to_escaped_string(const std::string& s);
+char escaped_char(const char& c);
 
 string add_vector_string(const vector<string> &vs, const string& delimiter=" ");
 string concat_vector_string(const vector<string> &vs, const string& delimiter=" ");

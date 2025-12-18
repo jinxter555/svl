@@ -1,6 +1,7 @@
 #include <iostream>
 #include "lisp_reader.hh"
 #include "lisp_expr.hh"
+#include "my_helpers.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -62,7 +63,8 @@ string LispReader::extract_quoted_string(const string&input, size_t &i) {
   for(++i; i<input.size(); i++) {
     char c = input[i];
     if(escaped) {
-      result += c;
+      //result += c;
+      result += escaped_char(c);
       escaped = false;
     }  else if(c == '\\') {
       escaped = true;
@@ -231,7 +233,8 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
     // " quoted string with 
     if(token.value_[0]=='"') {
       token.value_.erase(0, 1);
-      auto node_ptr = Node::create(token.value_); 
+      string esc_str = raw_to_escaped_string(token.value_);
+      auto node_ptr = Node::create(esc_str); 
       return {true, move(node_ptr)}; 
     }
     

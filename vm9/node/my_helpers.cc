@@ -59,6 +59,24 @@ std::string match(const std::string& line, const std::string& pattern) {
     return "";
   }
 }
+char escaped_char(const char& c) {
+  switch (c) {
+     case '\\': return '\\'; // Backslash
+     case 'n': return '\n'; // Newline
+     case 't': return '\t'; // Tab
+     case '\"': return '\"'; // Double quote
+     case '\'': return '\''; // Single quote
+     case 'r': return '\r'; // Carriage return
+     case 'b': return  '\b'; // Backspace
+     case 'f': return '\f'; // Form feed
+     case 'a': return '\a'; // Alert (bell)
+     case 'v': return '\v'; // Vertical tab
+     case '?': return '\?'; // Question mark
+     case '0': return '\0'; // Null character
+     default: return c;
+  }
+}
+
 
 std::string raw_to_escaped_string(const std::string& s) {
     std::string result;

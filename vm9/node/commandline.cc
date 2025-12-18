@@ -92,6 +92,7 @@ void Commandline::run(Interactive* interactive) {
     //interactive->print();
   }
   if(opt_run) {
+    //interactive->print();
     interactive->run_program();
 
   }

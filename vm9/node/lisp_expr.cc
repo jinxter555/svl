@@ -136,8 +136,7 @@ Node::OpStatus LispExpr::run_program() {
     return env_status;
   }
 
-  cout << "run program node code!\n ";
-  node_status.second.print();
+  //cout << "run program node code!\n "; node_status.second.print();
 
   //eval(node_status.second,  *env_status.second);
   eval(node_status.second,  *env_status.second);
@@ -461,6 +460,7 @@ template <typename T>
 Node::OpStatus LispExpr::builtin_print_n(Node& env, const T& list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::print(Node&env, const T&list, size_t)", __func__, SLOG_FUNC_INFO);
   //cout << "builtin print!\n";
+  //return {true, Node::create(true)};
   if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
     size_t s=list.size();
     for(size_t i = start;  i<s; i++) {
@@ -483,8 +483,7 @@ Node::OpStatus LispExpr::eval(const Node& node, Node& env) {
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Can't eval unknown code vector type!\n")};
   }
-  cout << "eval: \n";
-  node.print();
+  //cout << "eval: \n"; node.print();
 
 
   auto &code = get<Node::Vector>(node.value_);
