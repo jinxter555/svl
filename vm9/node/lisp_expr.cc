@@ -69,7 +69,7 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
   auto tokens_raw_text = reader.tokenize(input); // list<Token>
   auto parsed_status_first_pass = reader.parse(tokens_raw_text); 
-  cout << "first pass: " <<  *parsed_status_first_pass.second << "\n";
+  //cout << "first pass: " <<  *parsed_status_first_pass.second << "\n";
   //cout << "first pass: " <<  "\n";
   //parsed_status_first_pass.second->print();
 
@@ -84,8 +84,7 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
   auto parsed_status_second_pass =  parse(*parsed_status_first_pass.second);
 
-  cout << "status parsed second pass1: " << parsed_status_second_pass << "\n";
-  cout << "\n\n";
+  //cout << "status parsed second pass1: " << parsed_status_second_pass << "\n"; cout << "\n\n";
 
 
   auto attach_status = attach_module(parsed_status_second_pass.second->clone());
@@ -200,12 +199,8 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     case Lisp::Op::defun: {
       return build_parsed_fun(list); }
     case Lisp::Op::module: {
-      return build_parsed_module(list); 
-    }
-    case Lisp::Op::root: {
-      MYLOGGER_MSG(trace_function, string("Lisp::Op::root: ") + tokens._to_str(), SLOG_FUNC_INFO+30);
-      return build_parsed_root(list); 
-    }
+      return build_parsed_module(list); }
+    case Lisp::Op::root: { return build_parsed_root(list); }
 
     default: {
       cerr << "Parser build interpreter: Lisp Op not permitted  : " <<  Lisp::_to_str(op_head) << ", " << tokens << "\n";
@@ -214,26 +209,11 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
 
     //cout << "lisp op head: " << Lisp::_to_str(op_head) << "\n";
   } else  {  // identifiers starts as (head ...)
+    // convert it to a vector and return it
 
-    MYLOGGER_MSG(trace_function, string("Node::Type: ") + Node::_to_str(head_status.second->type_), SLOG_FUNC_INFO+30);
+    list.push_front(move(head_status.second));
+    return build_parsed_vector( list);
 
-    cout << "function call: what is up!\n";
-    cerr << "Parser build unknown instruction: " << *head_status.second <<  ": " << tokens << "\n";
-    Node::List nl;
-    nl.push_back(move(head_status.second));
-    return {true, Node::create(move(nl))};
-
-
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
-      "Parser build unknown lisp macro instruction: " + head_status.second->_to_str() +
-      " and type: " + Node::_to_str(head_status.second->type_)
-    )}; 
-
-    // throw std::runtime_error("unknown keyword");
-
-    // return a list of identifers
-    //list.push_front(move(head_status.second));
-    //return {true, Node::create(move(list)) };
   }
 
   return {true, Node::create()};
@@ -376,8 +356,6 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   }
 
   map_n[name]  = Node::create(move(map));
-
-  cout << "map_n: " << Node::_to_str(map_n) << "\n";
 
   return {true, Node::create(move(map_n))};
 

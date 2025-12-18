@@ -89,7 +89,7 @@ void Commandline::run(Interactive* interactive) {
       return;
     }
 
-    interactive->print();
+    //interactive->print();
   }
   if(opt_run) {
     interactive->run_program();

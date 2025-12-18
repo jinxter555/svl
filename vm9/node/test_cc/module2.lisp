@@ -1,10 +1,10 @@
 (module Main 
   (defun main (x y) "my func des" 
      (
-      (11) 
-      (p55) 
-      (p66)
-      (p77)
+      (11 22) 
+      (p55 hello world) 
+      (p66 hola mundo)
+      (p77 hallo wie geit)
      )
   )
 )
