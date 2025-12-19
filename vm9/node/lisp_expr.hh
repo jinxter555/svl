@@ -6,8 +6,8 @@
 /*
  * Env: current_process, parent_process, 
  * frames[] = list of maps of current function vars
- * inbox, outbox, urgent = messages, message types = other_process, file, network, 
- * state = run, sleep, stopped, wait_send, wait_receive, wait_process_queues ,wait_dead, defunc(waiting to be collected),
+ *  state = run, sleep, stopped, wait_send, wait_receive, wait_process_queues ,wait_dead, defunc(waiting to be collected),
+ *  inbox, outbox, urgent = messages, message types = other_process, file, network, 
  * control_flow_state = ret, loop
  * 
  */
@@ -44,6 +44,8 @@ public:
   Node::OpStatus parse(Node& tokens); // parse Node::List of tokens
   Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_env();
+  Node::OpStatus proc_read(size_t pid);
+  Node::OpStatusRef proc_create();
 
   LispReader& get_reader(); // lisp lexer and parser
 

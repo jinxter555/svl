@@ -398,7 +398,7 @@ Node::OpStatus Node::pop_front() {
 //--------------------------------
 Node::OpStatus Node::push_back(unique_ptr<Node> node) {
   MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_NODE_OP);
-  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_NODE_OP+30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;
@@ -416,7 +416,7 @@ Node::OpStatus Node::push_back(unique_ptr<Node> node) {
 
 Node::OpStatus Node::push_front(unique_ptr<Node> node) {
   MYLOGGER(trace_function, "Node::push_back()", __func__, SLOG_NODE_OP);
-  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(type_) + ": node value: " + node->_to_str(), SLOG_NODE_OP+30);
 
   return visit([&](auto&& list) -> OpStatus {
     using T = decay_t<decltype(list)>;

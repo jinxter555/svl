@@ -2,6 +2,7 @@
 #include "tree.hh"
 
 #include <functional>
+#define UNIVERSE "universe"
 class Lang : public Tree {
 protected:
   static const vector<string> atoms_key ; 

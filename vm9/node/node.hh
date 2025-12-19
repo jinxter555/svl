@@ -110,6 +110,7 @@ public:
 
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
   OpStatusRef get_node(const vector<string>&path);
+  OpStatusRef get_node(size_t i);
 
   OpStatus merge(unique_ptr<Node> n, bool override=false);
   OpStatus merge(Map &m, bool override=false);

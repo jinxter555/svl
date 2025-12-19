@@ -1,7 +1,6 @@
 #include "lang.hh"
 #include <iostream>
 
-#define UNIVERSE "universe"
 const vector<string> Lang::atoms_key = {UNIVERSE, "Lang", "Atoms"};
 
 Lang::Lang() : Tree() {
