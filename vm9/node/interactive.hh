@@ -4,7 +4,6 @@
 #include <string>
 #include <functional>
 
-#include "lang.hh"
 #include "prompt.hh"
 #include "commandline.hh"
 #include "lisp_expr.hh"

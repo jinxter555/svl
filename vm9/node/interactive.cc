@@ -2,7 +2,7 @@
 #include "interactive.hh"
 #include "my_helpers.hh"
 
-#include "lang.hh"
+#include "kernel.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"

@@ -1,5 +1,5 @@
 #pragma once
-#include "lang.hh"
+#include "kernel.hh"
 #include "lisp.hh"
 #include "lisp_reader.hh"
 
@@ -12,7 +12,7 @@
  * 
  */
 
-class LispExpr : public Lang {
+class LispExpr : public Kernel {
 private:
   LispReader reader;
   static const vector<string> lisp_module_key ; 
@@ -29,7 +29,6 @@ public:
 
   //enum class Keywords {def, call, ret, list, identifier};
   LispExpr();
-  void bootstrap();
 
   unique_ptr<Node> process_create();
   //LispExpr(Node::Value v) : Tree() {}
@@ -44,8 +43,8 @@ public:
   Node::OpStatus parse(Node& tokens); // parse Node::List of tokens
   Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_env();
-  Node::OpStatus proc_read(size_t pid);
-  Node::OpStatusRef proc_create();
+//  Node::OpStatus proc_read(size_t pid);
+//  Node::OpStatusRef proc_create();
 
   LispReader& get_reader(); // lisp lexer and parser
 

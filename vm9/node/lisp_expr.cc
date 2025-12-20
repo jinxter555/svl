@@ -12,7 +12,7 @@ const vector<string> LispExpr::lisp_lang_atoms = {UNIVERSE, "module", "fun", "mv
 const vector<string> LispExpr::interactive_key  = {UNIVERSE, "interactive"};
 const vector<string> LispExpr::lisp_process = {UNIVERSE, "Process"};
 
-LispExpr::LispExpr() : Lang(), reader(this)
+LispExpr::LispExpr() : Kernel(), reader(this)
 , sym_module(str_to_atom("module"))
 , sym_fun(str_to_atom("fun"))
 , sym_mvar(str_to_atom("mvar"))
@@ -35,67 +35,9 @@ void LispExpr::set_symbols() {
 
 }
 
-void LispExpr::bootstrap() {
-  string boot_str = "(root set_branch (list Lang Lisp))";
-  // create environemtn
-  // create kernel
-  // create some pre modules and functions
-}
 
-Node::OpStatusRef LispExpr::proc_create() {
-  MYLOGGER(trace_function, "LispExpr::proc_create()", __func__, SLOG_FUNC_INFO);
-  //MYLOGGER_MSG(trace_function, string("pid: ") + to_string(pid), SLOG_FUNC_INFO+30);
-
-  auto proc_node = get_branch(lisp_process);
-  cout << "proc type: " << Node::_to_str(proc_node->type_) << "\n";
-
-  if(proc_node->type_ != Node::Type::Vector)
-    return {false, *Node::create_error(Node::Error::Type::System,
-      "lisp_process not a vector: " + _to_str_ext(lisp_process)) };
-  
-  auto pid = proc_node->size_container();
-  Node::Map map={}; 
-
-  map["pid"] = Node::create(pid);
-  proc_node->push_back( Node::create(move(map))  );
-  auto r = (*proc_node)[pid];
-
-  //return {r.first, *r.second};
-  //return {r.first, null_node};
-  return proc_node->get_node(pid);
-
-//  cout << "proc_node r: " <<  r << "\n";
-//  cout << r.second->get_node(pid) << "\n";
-
-  //return  {true, r.second->get_node()};
-//  return  r.second->get_node(pid);
-    
-
-
-}
-
-Node::OpStatus LispExpr::proc_read(size_t pid) {
-  MYLOGGER(trace_function, "LispExpr::proc_read(pid)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("pid: ") + to_string(pid), SLOG_FUNC_INFO+30);
-  auto proc_node = get_branch(lisp_process);
-  cout << "proc type" << Node::_to_str(proc_node->type_) << "\n";
-  auto proc_status = (*proc_node)[pid];
-
-  if(!proc_status.first) {
-    cout << "proc first" << pid << " error\n";
-    return  proc_status;
-  }
-  if(proc_status.second==nullptr) {
-    cout << "proc pid " << pid << " is nullptr\n";
-  }
-    cout << "proc status second" << *proc_status.second<< " \n";
-  
-  return (*proc_node)[pid];
-}
-
-
-Node::Integer  LispExpr::str_to_atom(const string& input) { return Lang::str_to_atom(input);}
-Node::OpStatus LispExpr::atom_to_str(Node::Integer v) { return Lang::atom_to_str(v); }
+Node::Integer  LispExpr::str_to_atom(const string& input) { return Kernel::str_to_atom(input);}
+Node::OpStatus LispExpr::atom_to_str(Node::Integer v) { return Kernel::atom_to_str(v); }
 
 void LispExpr::print() {
   cout << "Lisp Interpreter\n";
