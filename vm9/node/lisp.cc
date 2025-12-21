@@ -1,8 +1,8 @@
 #include "lisp.hh"
 #include "node.hh"
 
-bool Lisp::initialized=false;
-unique_ptr<Node> Lisp::map_=nullptr;
+
+Lisp::Lisp(){}
 
 string Lisp::_to_str(Lisp::Op op) {
   switch (op) {
@@ -31,38 +31,4 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::defun: return "defun";
   }
   return "Unknown LispOp";
-}
-void Lisp::init() {
-  if(initialized) return;
-  map_ = make_unique<Node>(Node::Type::Map);
-  map_->set("kernel", Op::kernel);
-  map_->set("system", Op::system);
-  map_->set("root",   Op::root);
-  map_->set("error",Op::error);
-  map_->set("noop", Op::noop);
-  map_->set("identifier", Op::identifier);
-  map_->set("scalar", Op::scalar);
-  map_->set("list", Op::list);
-  map_->set("vector", Op::vector);
-  map_->set("deque", Op::deque);
-  map_->set("add", Op::add);
-  map_->set("sub", Op::sub); 
-  map_->set("mul", Op::mul);
-  map_->set("div", Op::div);
-  map_->set("mod", Op::mod); 
-  map_->set("def", Op::def); 
-  map_->set("call", Op::call);
-  map_->set("send", Op::send);
-  map_->set("ret", Op::ret);
-  map_->set("cond", Op::cond);
-  map_->set("print",Op::print);
-  map_->set("module",Op::module);
-  map_->set("defun",Op::defun);
-
-  map_->set("+", Op::add);
-  map_->set("-", Op::sub);
-  map_->set("*", Op::mul);
-  map_->set("/", Op::div);
-  map_->set("%", Op::mod);
-  initialized=true;
 }

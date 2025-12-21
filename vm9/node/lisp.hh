@@ -1,5 +1,7 @@
+#ifndef LANG_HH
+#define LANG_HH
+
 #pragma once
-//#include "lang.hh"
 #include <string>
 #include <memory>
 
@@ -18,9 +20,8 @@ public:
   , loop, cond, print
   , module, defun
   };
-
-  static bool initialized;
-  static unique_ptr<Node> map_;
+  Lisp();
   static string _to_str(Lisp::Op op);
-  static void init();
 };
+
+#endif

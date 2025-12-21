@@ -54,7 +54,7 @@ Node::OpStatus LispExpr::eval(const Node& node, Node& env) {
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Can't eval unknown code vector type!\n")};
   }
-  //cout << "eval: \n"; node.print();
+  cout << "eval env: \n"; env.print();
 
 
   auto &code = get<Node::Vector>(node.value_);

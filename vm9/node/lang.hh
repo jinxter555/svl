@@ -1,9 +1,9 @@
 #pragma once
-#include "tree.hh"
+#include "kernel.hh"
 
 #include <functional>
 #define UNIVERSE "universe"
-class Lang : public Tree {
+class Lang : public Kernel {
 protected:
   static const vector<string> atoms_key ; 
   std::hash<string> hasher;
@@ -12,5 +12,5 @@ public:
 
   Node::Integer str_to_atom(const string& input);
   Node::OpStatus atom_to_str(Node::Integer v);
-  virtual void bootstrap()=0;
+  void bootstrap() override;
 };

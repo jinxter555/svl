@@ -6,13 +6,14 @@
 
 extern Node null_node;
 
-const vector<string> LispExpr::lisp_path_key = {UNIVERSE, "Lang", "Lisp"};
-const vector<string> LispExpr::lisp_module_key = {UNIVERSE, "Lang", "Lisp", "Module"};
+const vector<string> LispExpr::lisp_path= {UNIVERSE, "Lang", "Lisp"};
+const vector<string> LispExpr::lisp_path_module= {UNIVERSE, "Lang", "Lisp", "Module"};
+const vector<string> LispExpr::lisp_path_keyword= {UNIVERSE, "Lang", "Lisp", "Keyword"};
 const vector<string> LispExpr::lisp_lang_atoms = {UNIVERSE, "module", "fun", "mvar", "lvar", "class"};
-const vector<string> LispExpr::interactive_key  = {UNIVERSE, "interactive"};
-const vector<string> LispExpr::lisp_process = {UNIVERSE, "Process"};
+//const vector<string> LispExpr::interactive_key  = {UNIVERSE, "interactive"};
+//const vector<string> LispExpr::lisp_process = {UNIVERSE, "Process"};
 
-LispExpr::LispExpr() : Kernel(), reader(this)
+LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , sym_module(str_to_atom("module"))
 , sym_fun(str_to_atom("fun"))
 , sym_mvar(str_to_atom("mvar"))
@@ -23,21 +24,23 @@ LispExpr::LispExpr() : Kernel(), reader(this)
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;
-  Node::Vector vector_proc;
-  vector_proc.reserve(10);
-  set_branch(lisp_module_key, Node::create(move(map_module)));
-  set_branch(lisp_process, Node::create(move(vector_proc)));
+  set_branch(lisp_path_module, Node::create(move(map_module)));
+  bootstrap();
 
   //set_branch(lisp_module_key, Node::create(Node::Type::Map));
   //for(auto &v : lisp_lang_atoms ) str_to_atom(v);
 }
-void LispExpr::set_symbols() {
+
+void LispExpr::bootstrap() {
+  set_keywords();
+  string boot_str = "(root set_branch (list Lang Lisp))";
+  auto proc0 = proc_create();
 
 }
 
 
-Node::Integer  LispExpr::str_to_atom(const string& input) { return Kernel::str_to_atom(input);}
-Node::OpStatus LispExpr::atom_to_str(Node::Integer v) { return Kernel::atom_to_str(v); }
+//Node::Integer  LispExpr::str_to_atom(const string& input) { return Lang::str_to_atom(input);}
+//Node::OpStatus LispExpr::atom_to_str(Node::Integer v) { return Lang::atom_to_str(v); }
 
 void LispExpr::print() {
   cout << "Lisp Interpreter\n";
@@ -112,7 +115,7 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 Node::OpStatus LispExpr::run_program() { 
   MYLOGGER(trace_function, "LispExpr::run_program()", __func__, SLOG_FUNC_INFO);
 
-  vector<string> main_path=  LispExpr::lisp_module_key ;
+  vector<string> main_path=  LispExpr::lisp_path_module;
   vector<string> code_path = {"Main", "function", "main", "code"};
 
   main_path.insert(main_path.end(), code_path.begin(), code_path.end());
@@ -126,23 +129,77 @@ Node::OpStatus LispExpr::run_program() {
   }
 
   auto env_status = get_env();
-  auto proc_kernel = proc_create();
+  auto proc_1= proc_create();
 
   if(!env_status.first) {
     cerr << "no env_status ! found!\n";
     return env_status;
   }
 
-  if(!proc_kernel.first) {
+  if(!proc_1.first) {
     cerr << "no proc_kernel ! found!\n";
     return {false, Node::create(false)};
   }
-  cout << "kernel: " << proc_kernel.second << "\n";
+  cout << "init: " << proc_1.second << "\n";
 
   //cout << "run program node code!\n "; node_status.second.print();
 
   //eval(node_status.second,  *env_status.second);
-  eval(node_status.second,  *env_status.second);
+  eval(node_status.second,  proc_1.second);
   return  {true, nullptr};
 
+}
+
+void LispExpr::set_keywords() {
+  auto map_ = make_unique<Node>(Node::Type::Map);
+  map_->set("kernel", Op::kernel);
+  map_->set("system", Op::system);
+  map_->set("root",   Op::root);
+  map_->set("error",Op::error);
+  map_->set("noop", Op::noop);
+  map_->set("identifier", Op::identifier);
+  map_->set("scalar", Op::scalar);
+  map_->set("list", Op::list);
+  map_->set("vector", Op::vector);
+  map_->set("deque", Op::deque);
+  map_->set("add", Op::add);
+  map_->set("sub", Op::sub); 
+  map_->set("mul", Op::mul);
+  map_->set("div", Op::div);
+  map_->set("mod", Op::mod); 
+  map_->set("def", Op::def); 
+  map_->set("call", Op::call);
+  map_->set("send", Op::send);
+  map_->set("ret", Op::ret);
+  map_->set("cond", Op::cond);
+  map_->set("print",Op::print);
+  map_->set("module",Op::module);
+  map_->set("defun",Op::defun);
+
+  map_->set("+", Op::add);
+  map_->set("-", Op::sub);
+  map_->set("*", Op::mul);
+  map_->set("/", Op::div);
+  map_->set("%", Op::mod);
+  set_branch(lisp_path_keyword, move(map_));
+}
+
+Lisp::Op LispExpr::keyword_to_op(const string &input) {
+  MYLOGGER(trace_function, "LispExpr::keyword_to_op()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("lookup input: ") + input, SLOG_FUNC_INFO+30);
+
+  auto map_ = get_branch(lisp_path_keyword);
+  //auto &map_ = Lisp::map_;
+
+  if(map_ == nullptr || map_->type_ != Node::Type::Map) {
+    cout << "lisp keyworld map_ type != map\n";
+    return Lisp::Op::error;
+  }
+  auto status = (*map_)[input];
+  if(!status.first) {
+    MYLOGGER_MSG(trace_function, "Lisp keyword: " + input + " not found , return as scalar", SLOG_FUNC_INFO+30);
+    return Lisp::Op::scalar;
+  }
+  auto op = get<Lisp::Op>(status.second->value_);
+  return op;
 }

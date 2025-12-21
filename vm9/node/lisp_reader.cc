@@ -6,56 +6,15 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-/*
-unique_ptr<Node> tokenize(const string& input) {
-  Node::List tokens;
-  string token;
-  for (char c : input) {
-    if (isspace(c)) {
-      if (!token.empty()) tokens.push_back(Node::create(token)), token.clear();
-    } else if (c == '(' || c == ')') {
-      if (!token.empty()) tokens.push_back(Node::create(token)), token.clear();
-        tokens.push_back(Node::create(string(1, c)) );
-    } else {
-       token += c;
-    }
-  }
-  if (!token.empty()) tokens.push_back(Node::create(token));
-  return Node::create( move(tokens));
-}
-*/
-
-//LispReader::lisp_op_map.set("kernel", Node::LispOp::kernel);
 
 LispReader::LispReader(LispExpr *l) : lisp(l) {
   MYLOGGER(trace_function, "LispReader::LispReader(LispExpr *) ", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("keywords init: ") , SLOG_FUNC_INFO);
 
-  Lisp::init();
 }
 
 void LispReader::reset() { col_=1; line_=1; }
 
-Lisp::Op LispReader::str_to_op(const string &input) {
-  MYLOGGER(trace_function, "LispReader::str_to_op()", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("lookup input: ") + input, SLOG_FUNC_INFO+30);
-
-  //auto &map_ = Lisp::map_;
-
-  if(Lisp::map_->type_ != Node::Type::Map) {
-    cout << "lisp keyworld type != map\n";
-    return Lisp::Op::error;
-  }
-  auto status = (*Lisp::map_)[input];
-  if(!status.first) {
-    MYLOGGER_MSG(trace_function, "Lisp keyword: " + input + " not found , return as scalar", SLOG_FUNC_INFO+30);
-    return Lisp::Op::scalar;
-  }
-  auto op = get<Lisp::Op>(status.second->value_);
-  return op;
-}
-
-//
 string LispReader::extract_quoted_string(const string&input, size_t &i) {
   string result;
   bool in_quote = true;
@@ -169,7 +128,7 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
       try {  // see if (keyword) or (scalar)
 
         token_str = get<string>(token_status.second->value_);
-        auto op = str_to_op(token_str); // Lisp::Op
+        auto op = lisp->keyword_to_op(token_str); // Lisp::Op
 
         if(op != Lisp::Op::scalar)  { // identifier or scalar
           MYLOGGER_MSG(trace_function, string("Lisp::Op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);

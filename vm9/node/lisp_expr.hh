@@ -1,5 +1,5 @@
 #pragma once
-#include "kernel.hh"
+#include "lang.hh"
 #include "lisp.hh"
 #include "lisp_reader.hh"
 
@@ -12,23 +12,28 @@
  * 
  */
 
-class LispExpr : public Kernel {
+class LispExpr : public Lang, public Lisp {
 private:
   LispReader reader;
-  static const vector<string> lisp_module_key ; 
-  static const vector<string> interactive_key; 
-  static const vector<string> lisp_path_key ; 
+  static const vector<string> lisp_path; 
+  static const vector<string> lisp_path_module; 
+  static const vector<string> lisp_path_keyword; 
+  //static const vector<string> interactive_key; 
   static const vector<string> lisp_lang_atoms; 
-  static const vector<string> lisp_process; 
+ // static const vector<string> lisp_process; 
   unique_ptr<Node> env_ptr;
 
   Node::OpStatus parse_def(const Node::List &list);
-  void set_symbols();
+
   const Node::Integer sym_module, sym_fun, sym_mvar, sym_lvar, sym_class, sym_get, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
+
+  void set_keywords();
 public: 
+  Lisp::Op keyword_to_op(const string &kw); // convert 
 
   //enum class Keywords {def, call, ret, list, identifier};
   LispExpr();
+  void bootstrap() override;
 
   unique_ptr<Node> process_create();
   //LispExpr(Node::Value v) : Tree() {}
@@ -48,8 +53,8 @@ public:
 
   LispReader& get_reader(); // lisp lexer and parser
 
-  Node::Integer str_to_atom(const string& input);
-  Node::OpStatus atom_to_str(Node::Integer v);
+  //Node::Integer str_to_atom(const string& input);
+  //Node::OpStatus atom_to_str(Node::Integer v);
 
 
   //vector<Token> tokenize(const string& input) ;

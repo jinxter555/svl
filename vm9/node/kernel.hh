@@ -1,4 +1,8 @@
+#ifndef KERNEL_HH
+#define KERNEL_HH
+
 #pragma once
+#include "node.hh"
 #include "tree.hh"
 
 #include <functional>
@@ -7,9 +11,9 @@
 #define CFS "control_flow_state"
 #define FRAMES "frames"
 
+
 class Kernel : public Tree {
 protected:
-  static const vector<string> path_to_atoms; 
   static const vector<string> path_to_processes; 
   std::hash<string> hasher;
 
@@ -17,10 +21,11 @@ protected:
   
 public:
   Kernel();
-  void bootstrap();
-  Node::OpStatusRef proc_create();
 
-  Node::Integer str_to_atom(const string& input);
-  Node::OpStatus atom_to_str(Node::Integer v);
-  virtual void bootstrap()=0;
+  Node::OpStatusRef proc_create();
+  string _to_str(ProcState state);
+
+  virtual void bootstrap();
 };
+
+#endif

@@ -3,7 +3,7 @@
 
 const vector<string> Lang::atoms_key = {UNIVERSE, "Lang", "Atoms"};
 
-Lang::Lang() : Tree() {
+Lang::Lang() : Kernel() {
   Node::Map map;
   set_branch(atoms_key, Node::create(move(map)));
 }
@@ -28,3 +28,6 @@ Node::OpStatus Lang::atom_to_str(Node::Integer v) {
   auto atoms = get_branch(atoms_key);
   return (*atoms)[to_string(v)];
 }
+
+
+void Lang::bootstrap() {}

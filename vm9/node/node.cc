@@ -9,6 +9,7 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+Node null_node(Node::Type::Null);
 
 string  _to_str_ext(const vector<string>& keys) {
   string v="["; size_t i=0, s=keys.size();

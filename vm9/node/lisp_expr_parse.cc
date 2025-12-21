@@ -61,9 +61,7 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     //cout << "lisp op head: " << Lisp::_to_str(op_head) << "\n";
   } else  {  // identifiers starts as (head ...)
     // convert it to a vector and return it
-    if(head_status.second->type_ == Node::Type::Identifier) {
-      cout << "head_status "  << *head_status.second << " is identifier!\n";
-    }
+    // if(head_status.second->type_ == Node::Type::Identifier) { cout << "head_status "  << *head_status.second << " is identifier!\n"; }
 
     list.push_front(move(head_status.second));
     return build_parsed_vector( list);
@@ -204,7 +202,7 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
-  auto mod_loc = get_branch(lisp_module_key);
+  auto mod_loc = get_branch(lisp_path_module);
   return mod_loc->merge(move(module));
   //cout << "mod_loc: " << *mod_loc << "\n\n";
   //return {false, Node::create(true)};

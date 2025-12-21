@@ -1,4 +1,5 @@
 #pragma once
+//#include "kernel.hh"
 #include "lisp.hh"
 #include <unordered_map>                                                                        
 #include <variant>                                                                    
@@ -13,6 +14,7 @@
 
 class Node;
 using namespace std;
+
 
 string  _to_str_ext(const vector<string>& keys) ;
 
@@ -45,7 +47,7 @@ public:
   };
   
   //enum class LispOp {kernel, system, root, error, noop, list, deque, vector, add, sub, div, mul, mod, def, call, send, ret, cond, print};
-  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, Atom, Mvar, Lvar };
+  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState,  Atom, Mvar, Lvar };
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
   using List = list<unique_ptr<Node>>;
@@ -214,3 +216,5 @@ private:
 ostream& operator<<(ostream& os, const Node& v) ;
 ostream& operator<<(ostream& os, const Node::OpStatus& s) ;
 ostream& operator<<(ostream& os, const Node::OpStatusRef& s) ;
+
+extern Node null_node;

@@ -4,7 +4,6 @@
 
 string  _to_str_ext(const vector<string>& keys) ;
 
-Node null_node(Node::Type::Null);
 
 Node::OpStatus Node::merge(unique_ptr<Node> n, bool override) {
   switch(n->type_) {
