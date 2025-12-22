@@ -49,11 +49,22 @@ string Node::_to_str(Type type) {
     case Type::Map: return "Map";
     case Type::Atom: return "Atom";
     case Type::LispOp: return "LispOp";
+    case Type::ProcState: return "ProcessState";
     case Type::Identifier: return "Identifier";
   }
   return "Unknown Type";
 }
 
+string Node::_to_str(ProcState ps) {
+  switch (ps) {
+  case ProcState::run: return "Run";
+  case ProcState::sleep: return "sleep";
+  case ProcState::suspend: return "suspend";
+  case ProcState::stop: return "stop";
+  case ProcState::wait: return "wait";
+  }
+  return "Unknown Process State";
+}
 
 
 

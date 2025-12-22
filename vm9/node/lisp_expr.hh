@@ -35,7 +35,7 @@ public:
   LispExpr();
   void bootstrap() override;
 
-  unique_ptr<Node> process_create();
+  Node::OpStatusRef process_create();
   //LispExpr(Node::Value v) : Tree() {}
   //LispExpr(vector<Node::ValueSimple> v) : Tree() {}
   

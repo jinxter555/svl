@@ -18,7 +18,6 @@ class Kernel : public Tree {
 protected:
   static const vector<string> path_to_processes; 
 
-  enum class ProcState { run, sleep, suspend, stop, wait };
   
 public:
   Kernel();
