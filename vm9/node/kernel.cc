@@ -38,8 +38,9 @@ Node::OpStatusRef Kernel::proc_create() {
   frames.reserve(20);
 
   map[PID] = Node::create(pid);
-  map[CFS]= Node::create(pid);
+  //map[CFS]= Node::create(pid);
   map[FRAMES] = Node::create(move(frames));
+  //map[STATE] = Node::create(move(frames));
 
   proc_node->push_back( Node::create(move(map))  );
 

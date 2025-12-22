@@ -9,22 +9,21 @@
 #include <string>
 #define UNIVERSE "universe"
 #define PID "pid"
-//#define CFS "control_flow_state"
+#define CFS "control_flow_state"
 #define FRAMES "frames"
-#define STATE "state"
 
 
-class Kernel : public Tree {
+class KernelKW {
 protected:
   static const vector<string> path_to_processes; 
 
   enum class ProcState { run, sleep, suspend, stop, wait };
   
 public:
-  Kernel();
+  //Kernel();
 
   Node::OpStatusRef proc_create();
-  //string _to_str(ProcState state);
+  string _to_str(ProcState state);
 
   virtual void bootstrap();
 };

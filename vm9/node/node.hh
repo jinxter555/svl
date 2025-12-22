@@ -1,5 +1,4 @@
 #pragma once
-//#include "kernel.hh"
 #include "lisp.hh"
 #include <unordered_map>                                                                        
 #include <variant>                                                                    
