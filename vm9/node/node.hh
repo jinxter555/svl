@@ -46,8 +46,9 @@ public:
   };
   
   enum class ProcState { run, sleep, suspend, stop, wait };
+  enum class ControlFlow { cf_run, cf_break, cf_continue, cf_return, cf_return_val};
 
-  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState,  Atom, Mvar, Lvar };
+  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Mvar, Lvar };
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
   using List = list<unique_ptr<Node>>;
@@ -57,8 +58,8 @@ public:
   using ProgramList = List; // program build list type
   //
   using Map = unordered_map<string, unique_ptr<Node>>;
-  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState>;
-  using ValueSimple = variant<monostate, bool,  Lisp::Op, ProcState, Integer, Float, string>;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow>;
+  using ValueSimple = variant<monostate, bool,  Lisp::Op, ProcState, ControlFlow, Integer, Float, string>;
 
   using OpStatus = pair<bool, unique_ptr<Node>>;
   using OpStatusRef = pair<bool, Node&>;
@@ -87,6 +88,7 @@ public:
   void set(Float v);
   void set(Lisp::Op v);
   void set(ProcState v);
+  void set(ControlFlow v);
   void set(const string& v);
   void set(List v);
   void set(Map v);
@@ -111,9 +113,12 @@ public:
   OpStatus set(const string& key, Float v);                                          
   OpStatus set(const string& key, Lisp::Op v);                                          
   OpStatus set(const string& key, ProcState v);                                          
+  OpStatus set(const string& key, ControlFlow);
   OpStatus set(const string& key, const string& v);                           
 
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
+
+  OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(size_t i);
 
@@ -165,6 +170,7 @@ public:
   // _get
   Integer _get_integer() const;
   Float _get_float() const;
+  bool _get_bool() const;
   string _get_str() const;
   Map& _get_map_ref() ;
 
@@ -183,6 +189,7 @@ public:
   static string _to_str(const DeQue&l) ;
   static string _to_str(Type type);
   static string _to_str(ProcState ps);
+  static string _to_str(ControlFlow ps);
   //Node to_str() const;
 
 

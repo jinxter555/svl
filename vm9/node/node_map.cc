@@ -136,5 +136,13 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
     current = it->second.get();
   }
   return {true, *current};
+}
 
+Node::OpStatusRef Node::get_node(const string&key) {
+  if(type_ != Type::Map)
+    return {false, null_node};
+  Node::Map& map = get<Node::Map>(value_);
+  auto it = map.find(key);
+  if(it == map.end()) return {false, null_node};
+  return {true, *it->second.get()};
 }

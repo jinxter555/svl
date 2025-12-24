@@ -50,6 +50,7 @@ string Node::_to_str(Type type) {
     case Type::Atom: return "Atom";
     case Type::LispOp: return "LispOp";
     case Type::ProcState: return "ProcessState";
+    case Type::ControlFlow: return "ControlFlow";
     case Type::Identifier: return "Identifier";
   }
   return "Unknown Type";
@@ -66,6 +67,16 @@ string Node::_to_str(ProcState ps) {
   return "Unknown Process State";
 }
 
+string Node::_to_str(ControlFlow cf) {
+  switch (cf) {
+  case ControlFlow::cf_run: return "Run";
+  case ControlFlow::cf_break: return "break";
+  case ControlFlow::cf_continue: return "continue";
+  case ControlFlow::cf_return: return "return";
+  case ControlFlow::cf_return_val: return "return value";
+  }
+  return "Unknown Control Flow State";
+}
 
 
 string Node::_to_str() const {
@@ -103,7 +114,14 @@ string Node::_to_str() const {
     case Type::LispOp: {
       Lisp::Op op = get<Lisp::Op>(value_);
       return Lisp::_to_str(op);}
+
+    case Type::ProcState: {
+      ProcState ps = get<ProcState>(value_);
+      return _to_str(ps);}
     
+    case Type::ControlFlow: {
+      ControlFlow cf = get<ControlFlow>(value_);
+      return _to_str(cf);}
     
     case Type::List: {
       //cout << "_to_str() List\n";

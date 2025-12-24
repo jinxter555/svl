@@ -33,6 +33,7 @@ Node::Node(Value v)
     else if constexpr (is_same_v<U, Float>) return Type::Float;
     else if constexpr (is_same_v<U, Lisp::Op>) return Type::LispOp;
     else if constexpr (is_same_v<U, ProcState>) return Type::ProcState;
+    else if constexpr (is_same_v<U, ControlFlow>) return Type::ControlFlow;
     else if constexpr (is_same_v<U, string>) return Type::String;
     else if constexpr (is_same_v<U, List>) return Type::List;
     else if constexpr (is_same_v<U, Vector>) return Type::Vector;
@@ -127,7 +128,7 @@ unique_ptr<Node> Node::clone() const {
     }
     else if constexpr(
       is_same_v<T, Integer> || is_same_v<T, Float> ||  is_same_v<T, bool>||
-      is_same_v<T, string> || is_same_v<T, Lisp::Op> || is_same_v<T, ProcState>) {
+      is_same_v<T, string> || is_same_v<T, Lisp::Op> || is_same_v<T, ProcState> || is_same_v<T, ControlFlow>) {
       //return Node::create(Value(arg));
       auto node_ptr = create(arg);
       if(type_ == Type::Identifier) node_ptr->set_identifier();
@@ -152,9 +153,9 @@ unique_ptr<Node> Node::clone() const {
 }
 
 // _get
+bool Node::_get_bool() const { return get<bool>(value_); }
 Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
 Node::Float Node::_get_float() const { return get<Float>(value_); }
-//string Node::_get_str() const { return get<string>(value_); }
 string Node::_get_str() const { return _to_str(); }
 Node::Map& Node::_get_map_ref() { return get<Map>(value_); }
 
@@ -167,6 +168,7 @@ void Node::set(Integer v)  { *this = Node(v); }
 void Node::set(Float v)  { *this = Node(v); }
 void Node::set(Lisp::Op v)  { *this = Node(v); }
 void Node::set(ProcState v)  { *this = Node(v); }
+void Node::set(ControlFlow v)  { *this = Node(v); }
 void Node::set(const string& v) { *this = Node(v); }
 void Node::set(List v) { *this = Node(Value(move(v))); }
 void Node::set(Map v) { *this = Node(Value(move(v))); }
@@ -219,6 +221,7 @@ Node::OpStatus Node::set(const string&key, Integer v ) { return set(key, create(
 Node::OpStatus Node::set(const string&key, Float v ) { return set(key, create(v)); }
 Node::OpStatus Node::set(const string&key, Lisp::Op v ) { return set(key, create(v)); }
 Node::OpStatus Node::set(const string&key, ProcState v ) { return set(key, create(v)); }
+Node::OpStatus Node::set(const string&key, ControlFlow v ) { return set(key, create(v)); }
 Node::OpStatus Node::set(const string&key, const string&v ) { return set(key, create(v)); }
 
 
@@ -480,6 +483,8 @@ void Node::print_value_recursive(const Node& node, int depth) {
       cout << Lisp::_to_str(arg); 
     } else if constexpr (is_same_v<T, ProcState>) {
       cout << _to_str(arg); 
+    } else if constexpr (is_same_v<T, ControlFlow>) {
+      cout << _to_str(arg); 
     } else if constexpr (is_same_v<T, string>) {
       std::cout << "\"" << arg << "\""; 
     } else if constexpr (is_same_v<T, List>) {
@@ -581,6 +586,8 @@ void Node::print_value(const Value& v, int depth) {
     } else if constexpr (is_same_v<T, Lisp::Op>) {
       cout << Lisp::_to_str(arg); 
     } else if constexpr (is_same_v<T, ProcState>) {
+      cout << _to_str(arg); 
+    } else if constexpr (is_same_v<T, ControlFlow>) {
       cout << _to_str(arg); 
     } else if constexpr (is_same_v<T, string>) {
       std::cout << "\"" << arg << "\""; 

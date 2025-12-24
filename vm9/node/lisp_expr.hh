@@ -11,6 +11,8 @@
  * control_flow_state = ret, loop
  * 
  */
+#define CFS "control_flow_state"
+#define LVAR "lvar"
 
 class LispExpr : public Lang, public Lisp {
 private:
@@ -45,11 +47,14 @@ public:
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
 
 
-  Node::OpStatus parse(Node& tokens); // parse Node::List of tokens
+  Node::OpStatus frame_create() const ; // create a frame 
+  Node::OpStatus frame_push(Node&env, unique_ptr<Node>frame) ; // 
+
+  // parse Node::List of tokens, returns a hierarchical tree
+  // of modules.function.mvar ...
+  Node::OpStatus parse(Node& tokens); 
   Node::OpStatus parse_list(Node::List& list);
-  Node::OpStatus get_env();
-//  Node::OpStatus proc_read(size_t pid);
-//  Node::OpStatusRef proc_create();
+  Node::OpStatus get_process();
 
   LispReader& get_reader(); // lisp lexer and parser
 
@@ -61,8 +66,8 @@ public:
   //Node::OpStatus parse(vector<Token>& tokens);
   void print();
 
-  Node::OpStatus eval(const Node& code, Node& env);
-  Node::OpStatus eval_list(Node& env, const Node::List& list);
+  Node::OpStatus eval(const Node& code, Node& process);
+  Node::OpStatus eval_list(Node& process, const Node::List& list);
   // 
   Node::OpStatus build_parsed_list(Node& node);
   Node::OpStatus build_parsed_vector(Node& node);
@@ -81,14 +86,14 @@ public:
   //
   Node::OpStatus build_parsed_def(Node::List& list);
   
-  template <typename T>
-  Node::OpStatus builtin_add_n(Node& env, const T& list, size_t start=0); 
+  //template <typename T>
+  //Node::OpStatus builtin_add_n(Node& process, const T& list, size_t start=0); 
   //Node::OpStatus builtin_mul(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_print(Node& env, const Node::List& list, size_t start=0); Node::OpStatus builtin_root(Node& env, const Node::List& list, size_t start=0);
   //
   template <typename T>
-  Node::OpStatus builtin_add(Node& env, const T& list);
+  Node::OpStatus builtin_add(Node& process, const T& list);
   template <typename T>
-  Node::OpStatus builtin_print(Node& env, const T& list);
+  Node::OpStatus builtin_print(Node& process, const T& list);
   template <typename T>
-  Node::OpStatus builtin_print_n(Node& env, const T& list, size_t start=0);
+  Node::OpStatus builtin_print_n(Node& process, const T& list, size_t start=0);
 };
