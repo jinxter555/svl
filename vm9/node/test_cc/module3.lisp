@@ -1,6 +1,6 @@
 (module Main 
   (defun main (x y) "my func des" 
-    (list
+    (vector
       (print "hello, world")
       (p55)
       (p65)

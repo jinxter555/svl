@@ -58,6 +58,7 @@ string Node::_to_str(Type type) {
 
 string Node::_to_str(ProcState ps) {
   switch (ps) {
+  case ProcState::init: return "init";
   case ProcState::run: return "Run";
   case ProcState::sleep: return "sleep";
   case ProcState::suspend: return "suspend";

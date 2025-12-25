@@ -13,6 +13,8 @@
  */
 #define CFS "control_flow_state"
 #define LVAR "lvar"
+#define NAME_SPACE "name_space"
+#define CURRENT_MODULE "current_module"
 
 class LispExpr : public Lang, public Lisp {
 private:
@@ -48,7 +50,7 @@ public:
 
 
   Node::OpStatus frame_create() const ; // create a frame 
-  Node::OpStatus frame_push(Node&env, unique_ptr<Node>frame) ; // 
+  Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...
@@ -66,8 +68,11 @@ public:
   //Node::OpStatus parse(vector<Token>& tokens);
   void print();
 
-  Node::OpStatus eval(const Node& code, Node& process);
+  //Node::OpStatus eval(const Node& code, Node& process);
+  Node::OpStatus eval(Node& process, const Node& code_node);
+  Node::OpStatus eval(Node& process, const Node::Vector& code_list);
   Node::OpStatus eval_list(Node& process, const Node::List& list);
+  Node::OpStatus call(Node& process, const Node& code_list);
   // 
   Node::OpStatus build_parsed_list(Node& node);
   Node::OpStatus build_parsed_vector(Node& node);

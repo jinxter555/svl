@@ -37,11 +37,9 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     MYLOGGER_MSG(trace_function, string("LispOp: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
 
     switch(op_head) {
-    case Lisp::Op::print:  { //cout << "print: " <<  tokens << "\n";
-      return {true, Node::create()};}
-    case Lisp::Op::deque:  { 
-      return build_parsed_deque(list); }
-    case Lisp::Op::list:  { //cout << "parsing list: " <<  tokens << "\n";
+    //case Lisp::Op::print:  { return {true, Node::create(Lisp::Op::print)};}
+    case Lisp::Op::deque:  { return build_parsed_deque(list); }
+    case Lisp::Op::list:  { 
       return build_parsed_list(list); }
     case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
       return build_parsed_vector(list);}
@@ -52,23 +50,14 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     case Lisp::Op::module: {
       return build_parsed_module(list); }
     case Lisp::Op::root: { return build_parsed_root(list); }
+    }
+  } 
+  // convert it to a vector and return it
+  // if(head_status.second->type_ == Node::Type::Identifier) 
 
-    default: {
-      cerr << "Parser build interpreter: Lisp Op not permitted  : " <<  Lisp::_to_str(op_head) << ", " << tokens << "\n";
-      return {false, Node::create()}; 
-    }}
+  list.push_front(move(head_status.second));
+  return build_parsed_vector(list);
 
-    //cout << "lisp op head: " << Lisp::_to_str(op_head) << "\n";
-  } else  {  // identifiers starts as (head ...)
-    // convert it to a vector and return it
-    // if(head_status.second->type_ == Node::Type::Identifier) { cout << "head_status "  << *head_status.second << " is identifier!\n"; }
-
-    list.push_front(move(head_status.second));
-    return build_parsed_vector( list);
-
-  }
-
-  return {true, Node::create()};
 }
 
 //-------------------------------- parse fun

@@ -21,7 +21,7 @@ void Kernel::bootstrap() {
 }
 
 //------------------------------------------------------------------------
-Node::OpStatusRef Kernel::proc_create() {
+Node::OpStatusRef Kernel::process_create() {
   MYLOGGER(trace_function, "LispExpr::proc_create()", __func__, SLOG_FUNC_INFO);
   //MYLOGGER_MSG(trace_function, string("pid: ") + to_string(pid), SLOG_FUNC_INFO+30);
 
@@ -40,7 +40,7 @@ Node::OpStatusRef Kernel::proc_create() {
   map[PID] = Node::create(pid);
   //map[CFS]= Node::create(pid);
   map[FRAMES] = Node::create(move(frames));
-  map[STATE] = Node::create(Node::ProcState::run);
+  map[STATE] = Node::create(Node::ProcState::init);
 
   proc_vector_node->push_back( Node::create(move(map))  );
 

@@ -26,5 +26,6 @@ public:
   void outerr(char *argv[]);
   void printout();
   void run(Interactive*);
+  void load_files(Interactive *i, const std::string& file_str);
 
 };

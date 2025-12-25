@@ -22,7 +22,7 @@ protected:
 public:
   Kernel();
 
-  Node::OpStatusRef proc_create();
+  Node::OpStatusRef process_create();
   //string _to_str(ProcState state);
 
   virtual void bootstrap();

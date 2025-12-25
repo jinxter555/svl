@@ -75,6 +75,7 @@ void Interactive::interact(const std::string &c) {
 }
 Node::OpStatus Interactive::load(const std::string &filename) {
   MYLOGGER(trace_function , "Interactive::load(string cfn)" , __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("filename: ") + filename, SLOG_FUNC_INFO);
 
   std::ifstream infile(filename);
   if(! infile.is_open()) {
@@ -94,6 +95,8 @@ Node::OpStatus Interactive::load(const std::string &filename) {
   map["source_str"] = Node::create(move(source_str));
 
   return {true, Node::create(move(map))};
+
+
 }
 void Interactive::reload(const std::string &cfn) {
   MYLOGGER(trace_function , string("SvlmInteractive::reload(") + cfn + string(")") , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);

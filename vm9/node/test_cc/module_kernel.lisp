@@ -1,8 +1,8 @@
 (module Kernel 
   (defun main (x y) my_func_des
     (
-    (print "hello, world1\n")
-    (print "hello, world2\n")
+      (print "hello, kernel\n")
+      (print "hola, kernel\n")
     )
   )
 )

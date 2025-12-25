@@ -47,41 +47,100 @@ Node::OpStatus LispExpr::builtin_print_n(Node& env, const T& list, size_t start)
 
 //------------------------------------------------------------------------
 // eval node 
-Node::OpStatus LispExpr::eval(const Node& node, Node& env) {
-  MYLOGGER(trace_function, "LispExpr::eval(Node&node, Node&env)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
+  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node&code_node)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_list: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
 
-  if(node.type_ != Node::Type::Vector) {
+  if(code_node.type_ != Node::Type::Vector) {
+    /*
+    cerr << "Can't eval unknown code vector type: " << Node::_to_str(code_node.type_) << "!\n";
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Can't eval unknown code vector type!\n")};
+    */
+   return {true, code_node.clone()};
   }
-  cout << "eval env: \n"; env.print();
+  //cout << "eval process: \n"; process.print();
 
 
-  auto &code = get<Node::Vector>(node.value_);
+  auto const &code_list = get<Node::Vector>(code_node.value_);
+  return eval(process, code_list);
 
-
-  if(code[0]->type_== Node::Type::LispOp) {
-    //
-
-    Lisp::Op op_head = get<Lisp::Op>(code[0]->value_);
-    switch(op_head){
-    case Lisp::Op::print: {
-      builtin_print_n(env, code, 1);
-      break;}
-    default: {
-      cout << "unknown command()!\n";
-      break; }};
-
-  } else if(code[0]->type_==Node::Type::Identifier) {
-
-    cerr << "unknown command or function call: type is : " <<  Node::_to_str(code[0]->type_) << "\n";
-    cerr << "value is : " <<  code[0]->_to_str() << "\n";
-    return {false, Node::create(false)};
-
-  }
-  
-  //return {true, nullptr};
-  return {true, Node::create()};
+  //cout << "what is going on3: " << Node::_to_str(code_list)<< "\n";
 
 
 }
+
+Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
+  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+
+  switch(code_list[0]->type_) {
+  case Node::Type::LispOp: {
+
+    Lisp::Op op_head = get<Lisp::Op>(code_list[0]->value_);
+    switch(op_head){
+    case Lisp::Op::print: 
+      return builtin_print_n(process, code_list, 1);
+    //case Lisp::Op::call: return call(process, code_list);
+
+    case Lisp::Op::vector:  {
+      cout << "lisp::op:  nested vector code!\n";
+      auto nested_status = code_list[0]->get_node(0);
+      if(!nested_status.first)  {
+        cerr << "error getting node!\n";
+        return {false, Node::create_error(Node::Error::Type::KeyNotFound, 
+          "Nested vector code error" + nested_status.second._to_str())};
+      }
+      return eval(process, nested_status.second);
+    }
+
+    default: { 
+      cout << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; }
+    }
+
+    break;
+  }
+  case Node::Type::Identifier: {
+    cerr << "unknown command or function call: type is : " <<  Node::_to_str(code_list[0]->type_) << "\n";
+    cerr << "value is : " <<  code_list[0]->_to_str() << "\n";
+    return {false, Node::create(false)};
+  }
+  case Node::Type::Vector: {
+    cout << "nested vector code!\n";
+    auto &nested_code_list = get<Node::Vector>(code_list[0]->value_);
+    eval(process, nested_code_list);
+    for(size_t i=1; i<code_list.size(); i++) {
+      auto &code_node = code_list[i];
+      eval(process, *code_node);
+    }
+    //for(auto &nested_code : nested_code_list) { }
+  }}
+  
+  //return {true, nullptr};
+  return {true, Node::create()};
+}
+
+// (call (module function) (arg1 arg2 arg3))
+
+/*
+Node::OpStatus LispExpr::call(Node& process, const Node& code_list) {
+  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_list: ") + code_list._to_str(), SLOG_FUNC_INFO+30);
+
+  if(code_list.type_ != Node::Type::Vector)
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+      "Can't call module_function != (module function)\n")};
+
+  if(code_list.size_container() != 3)
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+      "Can't call module_function != (call (module function))\n")};
+
+      /*
+  auto mf = code_list[1];
+  if(!mf.first) return mf;
+
+  vector<string> code_path_list =  LispExpr::lisp_path_module;
+  auto &mf_list = get<Node::Vector>(code_list.value_);
+  code_path_list.insert(code_path_list.end(), mf_list.begin(), mf_list.end());
+} 
+  */

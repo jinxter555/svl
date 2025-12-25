@@ -1,5 +1,7 @@
+#include <string>
 #include "interactive.hh"
 #include "commandline.hh"
+#include "my_helpers.hh"
 
 struct option Commandline::long_options[] = {
   {"inputfile", required_argument, NULL, 'f'},
@@ -69,7 +71,20 @@ void Commandline::printout() {
 void Commandline::run(Interactive* interactive) {
 
   if(opt_file){
-    auto load_status = interactive->load(infile_name);
+    load_files(interactive, infile_name);
+  }
+  if(opt_run) {
+    //interactive->print();
+    interactive->run_program();
+
+  }
+}
+
+// build with mulitple source lisp files
+void Commandline::load_files(Interactive *interactive, const string& file_str) {
+  auto files = split_string(file_str, " ");
+  for(auto file : files) {
+    auto load_status = interactive->load(file);
     if(!load_status.first) { 
       cerr << "load file error: status error:" << load_status << "\n";
       exit(1); 
@@ -90,10 +105,6 @@ void Commandline::run(Interactive* interactive) {
     }
 
     //interactive->print();
-  }
-  if(opt_run) {
-    //interactive->print();
-    interactive->run_program();
 
   }
 }

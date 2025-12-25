@@ -45,7 +45,7 @@ public:
     static string _to_str(Type t);
   };
   
-  enum class ProcState { run, sleep, suspend, stop, wait };
+  enum class ProcState { init, run, sleep, suspend, stop, wait };
   enum class ControlFlow { cf_run, cf_break, cf_continue, cf_return, cf_return_val};
 
   enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Mvar, Lvar };

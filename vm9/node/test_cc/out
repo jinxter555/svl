@@ -1,47 +1,69 @@
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mfirst pass: List[module, Main, List[defun, main, List[x, y ], my func des, List[List[p55 ], List[p66 ], List[p77 ] ] ] ]
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mfunction call: what is up!
-p55List[][0m[0m[0m[0m[0m[0mparse module succ
-print recursive:
-[31m[ERROR: InvalidOperation][0m: Parser build unknown lisp macro instruction: p55 and type: Identifier
-
-[0m[0m[0mstatus parsed second pass1: false: value: [Error: InvalidOperation] error: parsed root get symbol, type: Error[0m
-
-
-[0m[0m[0m[0mLisp Interpreter
-{"universe": {"Process": Vector[], "Lang": {"Lisp": {"Module": {}}, "Atoms": {"4625761978203795338": set, "-4705652595650921993": get, "3211040718132763761": class, "1325213333779622127": lvar, "7765881685828984094": mvar, "-2331651408838895954": fun, "-1154038927901484491": module}}}}
-print recursive:
-{ (Map, size=1) 
-  - universe (Type: Map): { (Map, size=2) 
-   - Process (Type: Vector): Vector[(size=0) 
-  ]
-   - Lang (Type: Map): { (Map, size=2) 
-    - Lisp (Type: Map): { (Map, size=1) 
-     - Module (Type: Map): { (Map, size=0) 
-    }
-   }
-    - Atoms (Type: Map): { (Map, size=7) 
-     - 4625761978203795338 (Type: String): "set"
-     - -4705652595650921993 (Type: String): "get"
-     - 3211040718132763761 (Type: String): "class"
-     - 1325213333779622127 (Type: String): "lvar"
-     - 7765881685828984094 (Type: String): "mvar"
-     - -2331651408838895954 (Type: String): "fun"
-     - -1154038927901484491 (Type: String): "module"
-   }
-  }
- }
-}[0m[0m
-
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mwhat is going on3: Vector[vector, Vector[print, hello, kernel
+], Vector[print, hola, kernel
+]]
+lisp::op:  nested vector code!
+[0m[0m[0m[0m[0m
 Lisp Interpreter
-{"universe": {"Process": Vector[], "Lang": {"Lisp": {"Module": {}}, "Atoms": {"4625761978203795338": set, "-4705652595650921993": get, "3211040718132763761": class, "1325213333779622127": lvar, "7765881685828984094": mvar, "-2331651408838895954": fun, "-1154038927901484491": module}}}}
 print recursive:
 { (Map, size=1) 
   - universe (Type: Map): { (Map, size=2) 
-   - Process (Type: Vector): Vector[(size=0) 
-  ]
    - Lang (Type: Map): { (Map, size=2) 
-    - Lisp (Type: Map): { (Map, size=1) 
-     - Module (Type: Map): { (Map, size=0) 
+    - Lisp (Type: Map): { (Map, size=2) 
+     - Keyword (Type: Map): { (Map, size=28) 
+      - / (Type: LispOp): div
+      - * (Type: LispOp): mul
+      - module (Type: LispOp): module
+      - print (Type: LispOp): print
+      - ret (Type: LispOp): ret
+      - + (Type: LispOp): add
+      - mod (Type: LispOp): mod
+      - div (Type: LispOp): div
+      - kernel (Type: LispOp): kernel
+      - vector (Type: LispOp): vector
+      - cond (Type: LispOp): cond
+      - def (Type: LispOp): def
+      - system (Type: LispOp): system
+      - noop (Type: LispOp): noop
+      - identifier (Type: LispOp): identifier
+      - scalar (Type: LispOp): scalar
+      - defun (Type: LispOp): defun
+      - sub (Type: LispOp): sub
+      - list (Type: LispOp): list
+      - - (Type: LispOp): sub
+      - deque (Type: LispOp): deque
+      - % (Type: LispOp): mod
+      - send (Type: LispOp): send
+      - root (Type: LispOp): root
+      - add (Type: LispOp): add
+      - call (Type: LispOp): call
+      - error (Type: LispOp): error
+      - mul (Type: LispOp): mul
+    }
+     - Module (Type: Map): { (Map, size=1) 
+      - Kernel (Type: Map): { (Map, size=1) 
+       - function (Type: Map): { (Map, size=1) 
+        - main (Type: Map): { (Map, size=3) 
+         - code (Type: Vector): Vector[(size=3) 
+          - [0, Type: LispOp]: vector
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, kernel
+"
+         ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hola, kernel
+"
+         ]
+        ]
+         - description (Type: Identifier): "my_func_des"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+        ]
+       }
+      }
+     }
     }
    }
     - Atoms (Type: Map): { (Map, size=7) 
@@ -54,6 +76,20 @@ print recursive:
      - -1154038927901484491 (Type: String): "module"
    }
   }
+   - Process (Type: Vector): Vector[(size=2) 
+    - [0, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=0) 
+    ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 0
+   }
+    - [1, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=0) 
+    ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 1
+   }
+  ]
  }
 }
 [0m
