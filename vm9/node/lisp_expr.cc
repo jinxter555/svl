@@ -132,7 +132,7 @@ Node::OpStatus LispExpr::run_program() {
 
   vector<string> kernel_path=  LispExpr::lisp_path_module;
   //vector<string> code_path = {"Main", "function", "main", "code"};
-  vector<string> code_path = {"Kernel", "function", "main", "code"};
+  vector<string> code_path = {"Kernel", FUNCTION, "main", "code"};
 
   kernel_path.insert(kernel_path.end(), code_path.begin(), code_path.end());
 

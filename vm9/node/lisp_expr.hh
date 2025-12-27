@@ -15,6 +15,7 @@
 #define LVAR "lvar"
 #define NAME_SPACE "name_space"
 #define CURRENT_MODULE "current_module"
+#define FUNCTION "function"
 
 class LispExpr : public Lang, public Lisp {
 private:
@@ -32,6 +33,10 @@ private:
   const Node::Integer sym_module, sym_fun, sym_mvar, sym_lvar, sym_class, sym_get, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
+
+
+  // (call (module function)(...))  the module function to vector  path with prefix
+  vector<string> node_mf_to_path(const Node&node,  const vector<string> prefix);
 public: 
   Lisp::Op keyword_to_op(const string &kw); // convert 
 
@@ -71,8 +76,10 @@ public:
   //Node::OpStatus eval(const Node& code, Node& process);
   Node::OpStatus eval(Node& process, const Node& code_node);
   Node::OpStatus eval(Node& process, const Node::Vector& code_list);
-  Node::OpStatus eval_list(Node& process, const Node::List& list);
-  Node::OpStatus call(Node& process, const Node& code_list);
+  //Node::OpStatus eval_list(Node& process, const Node::List& list);
+
+  Node::OpStatus call(Node& process, Node& code_node);
+  Node::OpStatus call(Node& process, const Node::Vector& code_list);
   // 
   Node::OpStatus build_parsed_list(Node& node);
   Node::OpStatus build_parsed_vector(Node& node);

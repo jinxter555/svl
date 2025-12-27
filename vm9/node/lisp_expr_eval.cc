@@ -94,6 +94,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
       return eval(process, nested_status.second);
     }
 
+    case Lisp::Op::call:  {
+      cout << "lisp::op:call vector code!\n";
+      return call(process, code_list);
+    }
+
     default: { 
       cout << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; }
     }
@@ -120,27 +125,97 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   return {true, Node::create()};
 }
 
+//------------------------------------------------------------------------
+// helper function 
 // (call (module function) (arg1 arg2 arg3))
+// returns a full path of [universe prefix, ..., module function,  code]
+vector<string> LispExpr::node_mf_to_path(const Node&node_mf,  const vector<string> prefix) {
+  MYLOGGER(trace_function, "LispExpr::node_mf_to_path(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
+  //MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
 
-/*
-Node::OpStatus LispExpr::call(Node& process, const Node& code_list) {
+  vector<string> path = prefix;
+  if(node_mf.type_ != Node::Type::Vector)
+    return {};
+  
+  auto m = node_mf[0].second->_to_str();
+  path.push_back(m);
+  path.push_back(FUNCTION);
+  auto f = node_mf[1].second->_to_str();
+  path.push_back(f);
+  return path;
+
+
+}
+
+//------------------------------------------------------------------------
+// (call (module function) (arg1 arg2 arg3))
+Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("code_list: ") + code_list._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("code_node: ") + Node::_to_str( code_list), SLOG_FUNC_INFO+30);
 
-  if(code_list.type_ != Node::Type::Vector)
+  if(code_list.size() != 3)
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+      "Can't call module_function != (call (module function)(...))\n")};
+
+
+  const auto &mf_node_ptr=  code_list[1];
+
+  auto call_path = move(node_mf_to_path(*mf_node_ptr, lisp_path_module));
+  cout << "call_path vector " << _to_str_ext(call_path) << "\n";
+
+  call_path.push_back("code");
+
+  Node::OpStatusRef code_list_status = get_node(call_path);
+
+  if(!code_list_status.first)  {
+    cerr << _to_str_ext(call_path) << " path not found!\n";
+    return  {false, Node::create_error(
+      Node::Error::Type::KeyNotFound, 
+      "LispExpr::call(Node& process, Node::Vector& code_list) path node not found: " + _to_str_ext(call_path))};
+  }
+
+  eval(process, code_list_status.second);
+
+
+  //vector<string> code_path_list =  LispExpr::lisp_path_module;
+  //auto call_path = move(node_mf_to_path(mf.second, lisp_path_module));
+
+  /*
+  code_path_list.insert(code_path_list.end(), mf_list.begin(), mf_list.end());
+  */
+ return {true, nullptr};
+}
+
+// (call (module function) (arg1 arg2 arg3))
+Node::OpStatus LispExpr::call(Node& process, Node& code_node) {
+  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_node)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
+
+  cout << "lispExpr:: call()\n";
+
+  if(code_node.type_ != Node::Type::Vector)
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Can't call module_function != (module function)\n")};
 
-  if(code_list.size_container() != 3)
+  if(code_node.size_container() != 3)
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Can't call module_function != (call (module function))\n")};
 
-      /*
-  auto mf = code_list[1];
-  if(!mf.first) return mf;
+  //auto mf=  code_node.get_node(1);
+  Node::OpStatusRef mf=  code_node.get_node(1);
+  if(!mf.first) return {false, 
+    Node::create_error(Node::Error::Type::KeyNotFound,
+      "Error in LispExpr::Call get_node(1) not found")};
+
+  auto call_path = move(node_mf_to_path(mf.second, lisp_path_module));
+
 
   vector<string> code_path_list =  LispExpr::lisp_path_module;
-  auto &mf_list = get<Node::Vector>(code_list.value_);
+  cout << "mf : " << mf.second._to_str() << "\n";
+
+  /*
   code_path_list.insert(code_path_list.end(), mf_list.begin(), mf_list.end());
-} 
   */
+ return {true, nullptr};
+
+} 

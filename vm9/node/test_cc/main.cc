@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
   Commandline cml(argc, argv);
   lang_it.interact(cml);
   cout << "\n"; lang_it.print(); cout << "\n";
+  lang_it.interact(cml);
 
 
 
