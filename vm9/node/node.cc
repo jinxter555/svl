@@ -427,8 +427,7 @@ Node::OpStatusRef Node::operator[](size_t index) {
   }
   Vector& list = get<Vector>(value_);
   if(index >= list.size()){
-    string msg;
-    msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
+    string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
     return {false, *create_error(Node::Error::Type::IndexOutOfBounds, msg)};
   }
   return {true, *list[index]};
@@ -450,10 +449,8 @@ Node::OpStatusRef Node::operator[](const string& key) {
   auto it=map.find(key);
 
   if(it==map.end()) {
-    string msg;
-    msg = "key '" + key + "' not found in map.";
-    return {false, *create_error(Node::Error::Type::KeyNotFound, 
-    "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
+    string msg = "key '" + key + "' not found in map.";
+    return {false, *create_error(Node::Error::Type::KeyNotFound, msg)};
   }
   return {true, *it->second};
 }

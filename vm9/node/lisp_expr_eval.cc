@@ -158,22 +158,30 @@ vector<string> LispExpr::node_to_mf(Node& process, Node&node_mf) {
 
   if(node_mf.type_ != Node::Type::Vector)
     return {};
+  
+  // call (func)  no module specified
   if(node_mf.size_container() == 1 ) {
     auto f = node_mf[0].second._to_str();
 
     //.second._to_str();
 
-    auto frames_status = process.get_node(FRAMES);
+    //auto frames_status = process.get_node(FRAMES);
+    auto frames_status = process[FRAMES];
     if(!frames_status.first) return {};
     auto last_frame_status = frames_status.second.back();
     if(!last_frame_status.first) return {};
 
-    auto current_module = last_frame_status.second[CURRENT_MODULE];
+    auto current_module_status = last_frame_status.second[CURRENT_MODULE];
+    if(!current_module_status.first) return {};
+    auto m  = current_module_status.second._to_str();
+    return {m, f};
 
   } else if(node_mf.size_container() == 2 ) {
     auto m = node_mf[0].second._to_str();
     auto f = node_mf[1].second._to_str();
+    return {m, f};
   }
+  return {};
 }
 
 //------------------------------------------------------------------------
@@ -188,10 +196,15 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
 
   const auto &mf_node_ptr=  code_list[1];
 
-  auto call_path = move(node_mf_to_path(*mf_node_ptr, lisp_path_module));
+  //auto call_path = move(node_mf_to_path(*mf_node_ptr, lisp_path_module));
+  auto call_path = lisp_path_module;
+  auto mf_vector = node_to_mf(process, *mf_node_ptr);
   //cout << "call_path vector " << _to_str_ext(call_path) << "\n";
-
-  call_path.push_back("code");
+ 
+  call_path.push_back(mf_vector[0]);
+  call_path.push_back(FUNCTION);
+  call_path.push_back(mf_vector[1]);
+  call_path.push_back(CODE);
 
   Node::OpStatusRef code_list_status = get_node(call_path);
 

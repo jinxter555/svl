@@ -13,9 +13,11 @@
  */
 #define CFS "control_flow_state"
 #define LVAR "lvar"
+#define MVAR "Mvar"
 #define NAME_SPACE "name_space"
 #define CURRENT_MODULE "current_module"
 #define FUNCTION "function"
+#define CODE "code"
 
 class LispExpr : public Lang, public Lisp {
 private:
