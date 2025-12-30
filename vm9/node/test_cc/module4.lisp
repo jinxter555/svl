@@ -8,7 +8,8 @@
   (defun p55 (x y) "my func p55" 
     (
       (print "hello, p55, 55\n")
-      (call (Kernel p56) (1 2))
+      (call (p56) (1 2))
+      (print "hello, p55, 55 again\n")
     )
   )
   (defun p56 (x y) "my func p56" 

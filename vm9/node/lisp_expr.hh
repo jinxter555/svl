@@ -58,7 +58,8 @@ public:
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
 
 
-  Node::OpStatus frame_create() const ; // create a frame 
+  //Node::OpStatus frame_create() const ; // create a frame 
+  unique_ptr<Node> frame_create() const ; // create a frame 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree

@@ -48,3 +48,13 @@ Node::OpStatusRef Kernel::process_create() {
   return proc_vector_node->get_node(pid);
 
 }
+
+Node::OpStatusRef Kernel::process_get(Node::Integer pid) {
+  auto proc_vector_node = get_branch(path_to_processes);
+  //cout << "proc type: " << Node::_to_str(proc_node->type_) << "\n";
+
+  if(proc_vector_node->type_ != Node::Type::Vector)
+    return {false, *Node::create_error(Node::Error::Type::System,
+      "lisp_process not a vector: " + _to_str_ext(path_to_processes)) };
+  return proc_vector_node->get_node(pid);
+}

@@ -206,6 +206,11 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
   call_path.push_back(mf_vector[1]);
   call_path.push_back(CODE);
 
+  auto frame = frame_create();
+  frame->set(CURRENT_MODULE, mf_vector[0]);
+  frame_push(process, move(frame));
+
+
   Node::OpStatusRef code_list_status = get_node(call_path);
 
   if(!code_list_status.first)  {

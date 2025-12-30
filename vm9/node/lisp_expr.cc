@@ -94,7 +94,8 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 
 }
 
-Node::OpStatus LispExpr::frame_create() const { 
+//Node::OpStatus LispExpr::frame_create() const { 
+unique_ptr< Node> LispExpr::frame_create() const { 
   MYLOGGER(trace_function, "LispExpr::frame_create()", __func__, SLOG_FUNC_INFO);
   Node::Map nm={}; Node::Map lvar={};
   //return {true, Node::create(move(nm))}; 
@@ -103,7 +104,8 @@ Node::OpStatus LispExpr::frame_create() const {
   nm[LVAR]=Node::create(move(lvar));
   //nm[CURRENT_MODULE]=Node::create(CURRENT_MODULE);
   //nm[NAME_SPACE]=Node::create(NAME_SPACE);
-  return {true, Node::create(move(nm))};
+  //return {true, Node::create(move(nm))};
+  return Node::create(move(nm));
 
 }
 
@@ -135,6 +137,18 @@ Node::OpStatus LispExpr::run_program() {
   vector<string> code_path = {"Kernel", FUNCTION, "main", "code"};
 
   kernel_path.insert(kernel_path.end(), code_path.begin(), code_path.end());
+
+  auto frame = frame_create();
+  auto proc0  = process_get(0); 
+  if(!proc0.first) {
+    return  {false, Node::create_error(
+      Node::Error::Type::InvalidOperation, 
+      "LispExpr::run_program() Kernel proc 0 not found: " )};
+  }
+
+  frame->set(CURRENT_MODULE, "Kernel");
+  frame->set("Pi", 3.1415);
+  frame_push(proc0.second, move(frame));
 
   Node::OpStatusRef code_list_status = get_node(kernel_path);
   if(!code_list_status.first)  {
