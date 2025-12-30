@@ -145,6 +145,8 @@ public:
   OpStatus pop_front();
   OpStatus push_front(unique_ptr<Node>node);
   OpStatus push_back(unique_ptr<Node>node);
+  OpStatusRef back();
+  OpStatusRef front();
 
   /**
     * @brief Clears all elements from a List node (equivalent to std::vector::clear).
@@ -158,14 +160,14 @@ public:
      * @param index The index to access.
      * @return OpStatus containing a clone of the Node or an Error Node.
      */
-  OpStatus operator[](size_t index) const;
+  OpStatusRef operator[](size_t index) ;
 
     /**
      * @brief Accesses an element in a Map node by key. Returns a clone of the Node via OpStatus.
      * @param key The key to access.
      * @return OpStatus containing a clone of the Node or an Error Node.
      */
-  OpStatus operator[](const std::string& key) const;
+  OpStatusRef operator[](const std::string& key) ;
 
   // _get
   Integer _get_integer() const;

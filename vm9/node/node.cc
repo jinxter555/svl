@@ -10,6 +10,8 @@
 #include "scope_logger.hh"
 
 Node null_node(Node::Type::Null);
+Node node_null(Node::Type::Null);
+Node node_error;
 
 
 unique_ptr<Node> Node::create() { return make_unique<Node>(); }
@@ -415,22 +417,23 @@ Node::OpStatus Node::clear() {
  * @brief Accesses an element in a List node by index. Returns a clone of the Node via OpStatus.
  */
 
-Node::OpStatus Node::operator[](size_t index) const {
+Node::OpStatusRef Node::operator[](size_t index) {
   if(type_ != Type::Vector) {
     return { false,
-    create_error(
+    *create_error(
       Node::Error::Type::InvalidOperation,
       "Operator[] (index) can only be used on vector nodes. Current type: " + _to_str(type_)
     )};
   }
-  const Vector& list = get<Vector>(value_);
+  Vector& list = get<Vector>(value_);
   if(index >= list.size()){
     string msg;
     msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
-    return {false, create_error(Node::Error::Type::IndexOutOfBounds, msg)};
+    return {false, *create_error(Node::Error::Type::IndexOutOfBounds, msg)};
   }
-  return {true, list[index]->clone()};
+  return {true, *list[index]};
 }
+
 
 
 
@@ -438,9 +441,9 @@ Node::OpStatus Node::operator[](size_t index) const {
  * @brief Accesses an element in a Map node by key. Returns a clone of the Node via OpStatus.
  */
 
-Node::OpStatus Node::operator[](const string& key) const {
+Node::OpStatusRef Node::operator[](const string& key) {
   if(type_ != Type::Map){
-    return {false, create_error(Node::Error::Type::InvalidOperation, 
+    return {false, *create_error(Node::Error::Type::InvalidOperation, 
     "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
   const Map& map = get<Map>(value_);
@@ -449,11 +452,77 @@ Node::OpStatus Node::operator[](const string& key) const {
   if(it==map.end()) {
     string msg;
     msg = "key '" + key + "' not found in map.";
-    return {false, create_error(Node::Error::Type::KeyNotFound, 
+    return {false, *create_error(Node::Error::Type::KeyNotFound, 
     "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
-  return {true, it->second->clone()};
+  return {true, *it->second};
 }
+
+//------------------------------------------------------------------------
+Node::OpStatusRef Node::front() {
+  MYLOGGER(trace_function, "Node::front()", __func__, SLOG_FUNC_INFO);
+
+  switch(type_) {
+  case Type::Vector: {
+    if(empty_container()) return {false, 
+      *create_error(Node::Error::Type::InvalidOperation,
+      "Node::front() is empty: " )};
+    auto &list = get<Vector>(value_);
+    return {true, *list.front()}; }
+
+  case Type::List:{
+    if(empty_container()) return {false, 
+      *create_error(Node::Error::Type::InvalidOperation,
+      "Node::front() is empty: " )};
+    auto &list = get<List>(value_);
+    return {true, *list.front()}; }
+
+  case Type::DeQue: {
+    if(empty_container()) return {false, 
+      *create_error(Node::Error::Type::InvalidOperation,
+      "Node::front() is empty: " )};
+    auto &list = get<DeQue>(value_);
+    return {true, *list.front()}; }
+
+  default:  
+    return {false, *create_error(Node::Error::Type::InvalidOperation,
+    "Node::type_ not vector, list or DeQue. Current type: " + _to_str(type_))};
+  }
+}
+
+Node::OpStatusRef Node::back() {
+  MYLOGGER(trace_function, "Node::back()", __func__, SLOG_FUNC_INFO);
+
+  switch(type_) {
+  case Type::Vector: {
+    if(empty_container()) return {false, 
+      *create_error(Node::Error::Type::InvalidOperation,
+      "Node::back() is empty: " )};
+
+    auto &list = get<Vector>(value_);
+    return {true, *list.back()}; }
+
+  case Type::List:{
+    if(empty_container()) return {false, 
+      *create_error(Node::Error::Type::InvalidOperation,
+      "Node::back() is empty: " )};
+    auto &list = get<List>(value_);
+    return {true, *list.back()}; }
+
+  case Type::DeQue: {
+    if(empty_container()) return {false, 
+      *create_error(Node::Error::Type::InvalidOperation,
+      "Node::back() is empty: " )};
+
+    auto &list = get<DeQue>(value_);
+    return {true, *list.back()}; }
+
+  default:  
+    return {false, *create_error(Node::Error::Type::InvalidOperation,
+    "Node::type_ not vector, list or DeQue. Current type: " + _to_str(type_))};
+  }
+}
+
 
 
 //------------------------------------------------------------------------

@@ -338,6 +338,6 @@ Lisp::Op LispExpr::keyword_to_op(const string &input) {
     MYLOGGER_MSG(trace_function, "Lisp keyword: " + input + " not found , return as scalar", SLOG_FUNC_INFO+30);
     return Lisp::Op::scalar;
   }
-  auto op = get<Lisp::Op>(status.second->value_);
+  auto op = get<Lisp::Op>(status.second.value_);
   return op;
 }

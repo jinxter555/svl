@@ -6,6 +6,6 @@
     )
   )
   (defun p55 (x y) "my func p55" 
-    (print "hello, 555")
+    (print "hello, p55, 555\n")
   )
 )
