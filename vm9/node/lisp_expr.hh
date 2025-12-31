@@ -92,7 +92,7 @@ public:
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 
   Node::OpStatus call(Node& process, Node& code_node);
-  Node::OpStatus call(Node& process, const Node::Vector& code_list);
+  Node::OpStatus call(Node& process, const Node::Vector& code_list, int start=0);
   // 
   Node::OpStatus build_parsed_list(Node& node);
   Node::OpStatus build_parsed_vector(Node& node);

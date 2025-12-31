@@ -84,7 +84,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     //case Lisp::Op::call: return call(process, code_list);
 
     case Lisp::Op::vector:  {
-      cout << "lisp::op:  nested vector code!\n";
+      //cout << "lisp::op:  nested vector code!\n";
       auto nested_status = code_list[0]->get_node(0);
       if(!nested_status.first)  {
         cerr << "error getting node!\n";
@@ -95,8 +95,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     }
 
     case Lisp::Op::call:  {
-      cout << "lisp::op:call vector code!\n";
-      return call(process, code_list);
+      //cout << "lisp::op:call vector code!\n";
+      return call(process, code_list, 1);
     }
 
     default: { 
@@ -106,18 +106,26 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     break;
   }
   case Node::Type::Identifier: {
-    cerr << "unknown command or function call: type is : " <<  Node::_to_str(code_list[0]->type_) << "\n";
-    cerr << "value is : " <<  code_list[0]->_to_str() << "\n";
+//    cerr << "unknown command or function call: type is : " <<  Node::_to_str(code_list[0]->type_) << "\n";
+//    cerr << "value is : " <<  code_list[0]->_to_str() << "\n";
+//    cerr << "code_list.size : " <<  code_list.size() << "\n";
+    if(code_list.size() > 1) {
+      // need to push call lisp:op
+ //     cout << "Identifier call!" << Node::_to_str(code_list) << "\n";
+      return call(process, code_list);
+
+    }
     return {false, Node::create(false)};
   }
   case Node::Type::Vector: {
-    cout << "nested vector code: code_list: " << Node::_to_str(code_list) << "\n";
+    //cout << "nested vector code: code_list: " << Node::_to_str(code_list) << "\n";
     auto &nested_code_list = get<Node::Vector>(code_list[0]->value_);
     eval(process, nested_code_list);
     for(size_t i=1; i<code_list.size(); i++) {
       auto &code_node = code_list[i];
       eval(process, *code_node);
     }
+    return {true, nullptr};
     //for(auto &nested_code : nested_code_list) { }
   }
   default: {
@@ -232,7 +240,7 @@ Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, cons
 
 //------------------------------------------------------------------------
 // code_list = (call (module function) (arg1 arg2 arg3))
-Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
+Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int start) {
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_node: ") + Node::_to_str( code_list), SLOG_FUNC_INFO+30);
 
@@ -240,10 +248,9 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Can't call module_function != (call (module function)(...))\n")};
 
-  const auto &mf_node_ptr=  code_list[1];
+  const auto &mf_node_ptr=  code_list[start];
 
   auto mf_vector = node_to_mf(process, *mf_node_ptr);
-
   auto func_path = lisp_path_module;
  
   // function path 
@@ -262,13 +269,14 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
   frame->set(CURRENT_FUNCTION, mf_vector[1]);
 
   // argument set up
-  const auto &argv_node_ptr=  code_list[2];
+  const auto &argv_node_ptr=  code_list[start+1];
   //cout << "*argv_node_ptr : " << *argv_node_ptr<< "\n";
   auto argv_list  = eval(process, *argv_node_ptr);
   if(!argv_list.first) return argv_list;
-  cout << "argv_list status: " << argv_list << "\n";
+  //cout << "argv_list status: " << argv_list << "\n";
   //frame->set(LVAR, move(argv_list.second));
-  attach_arguments_to_frame(frame, params_path, move(argv_list.second));
+  auto aatf_status =  attach_arguments_to_frame(frame, params_path, move(argv_list.second));
+  if(!aatf_status.first) return aatf_status;
 
 
 

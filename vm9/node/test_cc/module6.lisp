@@ -1,10 +1,9 @@
 (module Kernel 
   (defun main (x y) "my func des" 
     (
-      (print "hello, world\n")
-      (call (Kernel p55) (1 2))
+      (print "hello, world")
       (p55 (1 2))
-      (print "\n\n")
+      (p77)
     )
   )
   (defun p55 (x y) "my func p55" 
