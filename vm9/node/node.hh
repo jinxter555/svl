@@ -48,7 +48,7 @@ public:
   enum class ProcState { init, run, sleep, suspend, stop, wait };
   enum class ControlFlow { cf_run, cf_break, cf_continue, cf_return, cf_return_val};
 
-  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Mvar, Lvar };
+  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Mvar, Lvar, Shared };
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
   using List = list<unique_ptr<Node>>;
@@ -175,6 +175,7 @@ public:
   bool _get_bool() const;
   string _get_str() const;
   Map& _get_map_ref() ;
+  Vector& _get_vector_ref() ;
 
   // for list and map
   Integer size_container() const;

@@ -111,7 +111,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     return {false, Node::create(false)};
   }
   case Node::Type::Vector: {
-    cout << "nested vector code!\n";
+    cout << "nested vector code: code_list: " << Node::_to_str(code_list) << "\n";
     auto &nested_code_list = get<Node::Vector>(code_list[0]->value_);
     eval(process, nested_code_list);
     for(size_t i=1; i<code_list.size(); i++) {
@@ -119,7 +119,24 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
       eval(process, *code_node);
     }
     //for(auto &nested_code : nested_code_list) { }
+  }
+  default: {
+    Node::Vector rlist;
+    size_t s=code_list.size();
+    rlist.reserve(s);
+    for(size_t i=0; i<s; i++) {
+      auto &code_node = code_list[i];
+      auto evaled_status =  eval(process, *code_node);
+      if(!evaled_status.first) return evaled_status;
+      rlist.push_back(move(evaled_status.second));
+    }
+    return  {true, Node::create(move(rlist))};
   }}
+
+
+  //cout << "outside of swithc code_list: " <<  Node::_to_str( code_list) << "\n";
+  
+  //if(code_list.size() > 1) { }
   
   //return {true, nullptr};
   return {true, Node::create()};
@@ -185,6 +202,35 @@ vector<string> LispExpr::node_to_mf(Node& process, Node&node_mf) {
 }
 
 //------------------------------------------------------------------------
+Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list) {
+  MYLOGGER(trace_function, "LispExpr::attach_argument_to_frame(...)", __func__, SLOG_FUNC_INFO);
+
+  Node::OpStatusRef params_list_status = get_node(params_path);
+  if(!params_list_status.first) {
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+      "Can't create arguments list for" + _to_str_ext(params_path) + " \n")};
+  }
+  size_t s =  params_list_status.second.size_container();
+
+  if(params_list_status.second.size_container() != arg_list->size_container()) {
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+      "Can't create arguments list for " + _to_str_ext(params_path) + " size() are different  \n")};
+  }
+
+  Node::Map args;
+  auto &params_vector = params_list_status.second._get_vector_ref();
+  auto &arg_vector = arg_list->_get_vector_ref();
+  for(size_t i=0; i <s; i++) {
+    auto param_name = params_vector[i]->_to_str();
+
+    args[param_name] = move(arg_vector[i]);
+  }
+  frame->set(ARGS, Node::create(move(args)));
+  return {true, nullptr};
+
+}
+
+//------------------------------------------------------------------------
 // code_list = (call (module function) (arg1 arg2 arg3))
 Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
@@ -196,20 +242,38 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list) {
 
   const auto &mf_node_ptr=  code_list[1];
 
-  //auto call_path = move(node_mf_to_path(*mf_node_ptr, lisp_path_module));
-  auto call_path = lisp_path_module;
   auto mf_vector = node_to_mf(process, *mf_node_ptr);
-  //cout << "call_path vector " << _to_str_ext(call_path) << "\n";
+
+  auto func_path = lisp_path_module;
  
-  call_path.push_back(mf_vector[0]);
-  call_path.push_back(FUNCTION);
-  call_path.push_back(mf_vector[1]);
+  // function path 
+  func_path.push_back(mf_vector[0]);
+  func_path.push_back(FUNCTION);
+
+  func_path.push_back(mf_vector[1]);
+  auto call_path = func_path;
+  auto params_path = func_path;
   call_path.push_back(CODE);
+  params_path.push_back(PARAMS);
+  
 
   auto frame = frame_create();
   frame->set(CURRENT_MODULE, mf_vector[0]);
-  frame_push(process, move(frame));
+  frame->set(CURRENT_FUNCTION, mf_vector[1]);
 
+  // argument set up
+  const auto &argv_node_ptr=  code_list[2];
+  //cout << "*argv_node_ptr : " << *argv_node_ptr<< "\n";
+  auto argv_list  = eval(process, *argv_node_ptr);
+  if(!argv_list.first) return argv_list;
+  cout << "argv_list status: " << argv_list << "\n";
+  //frame->set(LVAR, move(argv_list.second));
+  attach_arguments_to_frame(frame, params_path, move(argv_list.second));
+
+
+
+  //
+  frame_push(process, move(frame));
 
   Node::OpStatusRef code_list_status = get_node(call_path);
 

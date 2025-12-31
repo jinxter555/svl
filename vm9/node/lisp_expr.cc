@@ -97,11 +97,11 @@ Node::OpStatus LispExpr::build_program(const string& input) {
 //Node::OpStatus LispExpr::frame_create() const { 
 unique_ptr< Node> LispExpr::frame_create() const { 
   MYLOGGER(trace_function, "LispExpr::frame_create()", __func__, SLOG_FUNC_INFO);
-  Node::Map nm={}; Node::Map lvar={};
+  Node::Map nm={}; //Node::Map lvar={};
   //return {true, Node::create(move(nm))}; 
 
-  nm[CFS]=Node::create(Node::ControlFlow::cf_run);
-  nm[LVAR]=Node::create(move(lvar));
+  //nm[CFS]=Node::create(Node::ControlFlow::cf_run);
+  //nm[LVAR]=Node::create(move(lvar));
   //nm[CURRENT_MODULE]=Node::create(CURRENT_MODULE);
   //nm[NAME_SPACE]=Node::create(NAME_SPACE);
   //return {true, Node::create(move(nm))};

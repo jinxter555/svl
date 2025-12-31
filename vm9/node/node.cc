@@ -160,6 +160,7 @@ Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
 Node::Float Node::_get_float() const { return get<Float>(value_); }
 string Node::_get_str() const { return _to_str(); }
 Node::Map& Node::_get_map_ref() { return get<Map>(value_); }
+Node::Vector& Node::_get_vector_ref() { return get<Vector>(value_); }
 
 // eval list
 Node::OpStatus Node::eval(Node& env) {

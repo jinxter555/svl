@@ -12,12 +12,17 @@
  * 
  */
 #define CFS "control_flow_state"
+#define VAR "var"
 #define LVAR "lvar"
 #define MVAR "Mvar"
 #define NAME_SPACE "name_space"
 #define CURRENT_MODULE "current_module"
+#define CURRENT_FUNCTION "current_function"
 #define FUNCTION "function"
 #define CODE "code"
+#define PARAMS "params"
+#define ARGS "args"
+#define DESC "description"
 
 class LispExpr : public Lang, public Lisp {
 private:
@@ -35,6 +40,9 @@ private:
   const Node::Integer sym_module, sym_fun, sym_mvar, sym_lvar, sym_class, sym_get, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
+  Node::OpStatus attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list);
+
+  
 
 
   // (call (module function)(...))  the module function to vector  path with prefix

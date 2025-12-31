@@ -1,8 +1,19 @@
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mwhat is going on3: Vector[vector, Vector[print, hello, kernel
-], Vector[print, hola, kernel
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mnested vector code: code_list: Vector[Vector[print, hello, world], Vector[call, Vector[Kernel, p55], Vector[1, 2]]]
+[0mhello, world[0m[0m[0m[0mlisp::op:call vector code!
+[0m*argv_node_ptr : Vector[1, 2]
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0margv_list status: true: value: Vector[1, 2], type: Vector[0m
+[0m[0m[0mnested vector code: code_list: Vector[Vector[print, hello, p55, 55
 ]]
-lisp::op:  nested vector code!
-[0m[0m[0m[0m[0m
+[0mhello, p55, 55
+[0m[0m[0m[0mhello, p55, 55
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mhello, world[0m[0m[0m[0m[0mlisp::op:call vector code!
+[0m*argv_node_ptr : Vector[1, 2]
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0margv_list status: true: value: Vector[1, 2], type: Vector[0m
+[0m[0m[0mnested vector code: code_list: Vector[Vector[print, hello, p55, 55
+]]
+[0mhello, p55, 55
+[0m[0m[0m[0mhello, p55, 55
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -41,22 +52,40 @@ print recursive:
     }
      - Module (Type: Map): { (Map, size=1) 
       - Kernel (Type: Map): { (Map, size=1) 
-       - function (Type: Map): { (Map, size=1) 
-        - main (Type: Map): { (Map, size=3) 
-         - code (Type: Vector): Vector[(size=3) 
-          - [0, Type: LispOp]: vector
-          - [1, Type: Vector]: Vector[(size=2) 
+       - function (Type: Map): { (Map, size=2) 
+        - p55 (Type: Map): { (Map, size=3) 
+         - code (Type: Vector): Vector[(size=1) 
+          - [0, Type: Vector]: Vector[(size=2) 
            - [0, Type: LispOp]: print
-           - [1, Type: String]: "hello, kernel
-"
-         ]
-          - [2, Type: Vector]: Vector[(size=2) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "hola, kernel
+           - [1, Type: String]: "hello, p55, 55
 "
          ]
         ]
-         - description (Type: Identifier): "my_func_des"
+         - description (Type: String): "my func p55"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+        ]
+       }
+        - main (Type: Map): { (Map, size=3) 
+         - code (Type: Vector): Vector[(size=2) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, world"
+         ]
+          - [1, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: call
+           - [1, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "Kernel"
+            - [1, Type: Identifier]: "p55"
+          ]
+           - [2, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Integer]: 1
+            - [1, Type: Integer]: 2
+          ]
+         ]
+        ]
+         - description (Type: String): "my func des"
          - params (Type: Vector): Vector[(size=2) 
           - [0, Type: Identifier]: "x"
           - [1, Type: Identifier]: "y"
@@ -78,13 +107,31 @@ print recursive:
   }
    - Process (Type: Vector): Vector[(size=2) 
     - [0, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=0) 
+     - frames (Type: Vector): Vector[(size=1) 
+      - [0, Type: Map]: { (Map, size=2) 
+       - Pi (Type: Float): 3.14
+       - current_module (Type: String): "Kernel"
+     }
     ]
      - state (Type: ProcessState): init
      - pid (Type: Integer): 0
    }
     - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=0) 
+     - frames (Type: Vector): Vector[(size=2) 
+      - [0, Type: Map]: { (Map, size=2) 
+       - lvar (Type: Vector): Vector[(size=2) 
+        - [0, Type: Integer]: 1
+        - [1, Type: Integer]: 2
+      ]
+       - current_module (Type: String): "Kernel"
+     }
+      - [1, Type: Map]: { (Map, size=2) 
+       - lvar (Type: Vector): Vector[(size=2) 
+        - [0, Type: Integer]: 1
+        - [1, Type: Integer]: 2
+      ]
+       - current_module (Type: String): "Kernel"
+     }
     ]
      - state (Type: ProcessState): init
      - pid (Type: Integer): 1
@@ -92,4 +139,19 @@ print recursive:
   ]
  }
 }
-[0m
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mfalse: value: false, type: Bool[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mnested vector code: code_list: Vector[Vector[print, hello, world], Vector[call, Vector[Kernel, p55], Vector[1, 2]]]
+[0mhello, world[0m[0m[0m[0mlisp::op:call vector code!
+[0m*argv_node_ptr : Vector[1, 2]
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0margv_list status: true: value: Vector[1, 2], type: Vector[0m
+[0m[0m[0mnested vector code: code_list: Vector[Vector[print, hello, p55, 55
+]]
+[0mhello, p55, 55
+[0m[0m[0m[0mhello, p55, 55
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mhello, world[0m[0m[0m[0m[0mlisp::op:call vector code!
+[0m*argv_node_ptr : Vector[1, 2]
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0margv_list status: true: value: Vector[1, 2], type: Vector[0m
+[0m[0m[0mnested vector code: code_list: Vector[Vector[print, hello, p55, 55
+]]
+[0mhello, p55, 55
+[0m[0m[0m[0mhello, p55, 55
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m

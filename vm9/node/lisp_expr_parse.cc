@@ -75,10 +75,10 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   {// turn params List to params Vector for speed performance
   auto status=  build_parsed_vector(*list.front()); 
   if(!status.first) return status;
-  map["params"] = move(status.second); list.pop_front();
+  map[PARAMS] = move(status.second); list.pop_front();
   }
 
-  map["description"] = move(list.front()); list.pop_front();
+  map[DESC] = move(list.front()); list.pop_front();
   
   {// turn code List to code Vector for speed performance
   auto status=  build_parsed_vector(*list.front()); 
