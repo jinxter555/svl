@@ -14,3 +14,7 @@ char escaped_char(const char& c);
 
 string add_vector_string(const vector<string> &vs, const string& delimiter=" ");
 string concat_vector_string(const vector<string> &vs, const string& delimiter=" ");
+
+std::string extractClassName(const std::string& prettyFunction);
+
+#define __CLASS_NAME__ extractClassName(__PRETTY_FUNCTION__)

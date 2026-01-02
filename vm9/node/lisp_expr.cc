@@ -113,7 +113,10 @@ Node::OpStatus LispExpr::frame_push(Node&process, unique_ptr<Node>frame) {
   MYLOGGER(trace_function, "LispExpr::frame_push(Node&process)", __func__, SLOG_FUNC_INFO);
   auto key_status = process.has_key(FRAMES);
 
-  if(!key_status.first) return key_status;
+  if(!key_status.first) { 
+    cerr << "process " << process[PID] << " has no frames!\n";
+    return key_status;
+  }
   if(!key_status.second->_get_bool() ) {
     return {false, Node::create_error(Node::Error::Type::KeyNotFound, 
       "LispExpr::frame_push(...) no frames vector not found in process:")};
@@ -123,6 +126,8 @@ Node::OpStatus LispExpr::frame_push(Node&process, unique_ptr<Node>frame) {
     return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get frames")};
 
   frames_status.second.push_back(move(frame));
+  //cout << "process id: " << process[PID] << ": frame status " << frames_status << "\n";
+
   return {true, Node::create(true)};
 
 

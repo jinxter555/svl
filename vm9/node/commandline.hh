@@ -15,12 +15,13 @@ public:
   std::vector<std::string> arguments;
 
   static struct option long_options[];
-  bool opt_interactive=false;
-  bool opt_run=false;
-  bool opt_file=false;
-  bool assembly_lang=false;
-  bool lisp_lang=false;
-  bool svlm_lang=false;
+  bool opt_interactive=false,
+  opt_run=false,
+  opt_file=false,
+  assembly_lang=false,
+  lisp_lang=false,
+  svlm_lang=false,
+  opt_print=false;
 
   Commandline(int argc, char* argv[]);
   void outerr(char *argv[]);

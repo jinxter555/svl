@@ -154,3 +154,11 @@ string concat_vector_string(const vector<string> &vs, const string& delimiter) {
   result = result + vs[i];
   return result;
 }
+
+std::string extractClassName(const std::string& prettyFunction) {
+    size_t colons = prettyFunction.find("::");
+    if (colons == std::string::npos) return "::";
+    size_t begin = prettyFunction.substr(0, colons).rfind(" ") + 1;
+    size_t end = colons - begin;
+    return prettyFunction.substr(begin, end);
+}

@@ -20,7 +20,7 @@
 #define CURRENT_FUNCTION "current_function"
 #define FUNCTION "function"
 #define CODE "code"
-#define PARAMS "params"
+#define _PARAMS "params"
 #define ARGS "args"
 #define DESC "description"
 
@@ -69,6 +69,7 @@ public:
   //Node::OpStatus frame_create() const ; // create a frame 
   unique_ptr<Node> frame_create() const ; // create a frame 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
+  Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...

@@ -11,10 +11,11 @@ struct option Commandline::long_options[] = {
 
 Commandline::Commandline(int argc, char* argv[]) {
   int opt;
-  while( (opt = getopt_long(argc, argv, "rhil:f:o:", long_options, NULL)) != -1) {
+  while( (opt = getopt_long(argc, argv, "prhil:f:o:", long_options, NULL)) != -1) {
     switch(opt) {
-      case 'i': opt_interactive = true; break;
-      case 'r': opt_run= true; break;
+      case 'i': { opt_interactive = true; break; }
+      case 'r': { opt_run= true; break;}
+      case 'p': { opt_print= true; break;}
       case 'l': {
         if(optarg == "lisp") lisp_lang = true;
         if(optarg == "svlm") svlm_lang = true;
@@ -27,6 +28,7 @@ Commandline::Commandline(int argc, char* argv[]) {
   }
   for(; optind < argc; optind++){      
     infile_name += std::string(" ") + std::string(argv[optind]);  
+    opt_file=true;
   } 
 
 }
@@ -74,10 +76,10 @@ void Commandline::run(Interactive* interactive) {
     load_files(interactive, infile_name);
   }
   if(opt_run) {
-    //interactive->print();
     interactive->run_program();
-
   }
+  // tree structure print after build and run to show frames
+  if(opt_print) interactive->print();
 }
 
 // build with mulitple source lisp files

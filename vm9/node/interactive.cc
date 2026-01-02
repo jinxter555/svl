@@ -99,22 +99,24 @@ Node::OpStatus Interactive::load(const std::string &filename) {
 
 }
 void Interactive::reload(const std::string &cfn) {
-  MYLOGGER(trace_function , string("SvlmInteractive::reload(") + cfn + string(")") , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , string("Interactive::reload(") + cfn + string(")") , __func__, SLOG_FUNC_INFO);
   load(cfn);
 }
 
 void Interactive::run_program(const std::string &l) {
-  MYLOGGER(trace_function , "SvlmInteractive::run_program()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , "Interactive::run_program()" , __func__, SLOG_FUNC_INFO);
+  //MYLOGGER(trace_function , __PRETTY_FUNCTION__ , __func__, SLOG_FUNC_INFO);
   //std::cout << "run program\n";
   //svlm_lang.run_evaluate();
   lang.run_program();
 
 }
 Node::OpStatus Interactive::build_program(const std::string &source) {
-  MYLOGGER(trace_function , "Interactive::build_program()" , string("SvlmInteractive::")  + string(__func__), SLOG_FUNC_INFO);
+  MYLOGGER(trace_function , "Interactive::build_program()" , __func__, SLOG_FUNC_INFO);
   return lang.build_program(source);
 }
 void Interactive::print() {
+  MYLOGGER(trace_function , "Interactive::print()" ,  __CLASS_NAME__ + "::" +  __func__, SLOG_FUNC_INFO);
   lang.print();
 }
 

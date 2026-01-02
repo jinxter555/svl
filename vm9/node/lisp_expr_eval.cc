@@ -28,15 +28,18 @@ Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
 }
 
 template <typename T>
-Node::OpStatus LispExpr::builtin_print_n(Node& env, const T& list, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::print(Node&env, const T&list, size_t)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::builtin_print_n(Node&env, const T&list, size_t)", __func__, SLOG_FUNC_INFO);
   //cout << "builtin print!\n";
   //return {true, Node::create(true)};
   if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
     size_t s=list.size();
     for(size_t i = start;  i<s; i++) {
       auto &element = list[i];
-      cout << *element;
+      auto ee = eval(process, *element);
+      if(!ee.first ) return ee;
+      //cout << *element;
+      cout << *ee.second;
     }
   } else {
     cout << "builtin_print_n unknown T list\n";
@@ -45,6 +48,19 @@ Node::OpStatus LispExpr::builtin_print_n(Node& env, const T& list, size_t start)
   return {true, Node::create()};
 }
 
+//------------------------------------------------------------------------
+// symbol lookup 
+Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
+  auto frames_ref_status = process[FRAMES];
+  if(!frames_ref_status.first) return frames_ref_status;
+  auto frame_ref_back_status = frames_ref_status.second.back();
+  if(!frame_ref_back_status.first) return frame_ref_back_status;
+  auto arg_ref_status = frame_ref_back_status.second[ARGS];
+  if(!arg_ref_status.first) return arg_ref_status;
+  return arg_ref_status.second[name];
+}
 //------------------------------------------------------------------------
 // eval node 
 Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
@@ -109,7 +125,13 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
 //    cerr << "unknown command or function call: type is : " <<  Node::_to_str(code_list[0]->type_) << "\n";
 //    cerr << "value is : " <<  code_list[0]->_to_str() << "\n";
 //    cerr << "code_list.size : " <<  code_list.size() << "\n";
-    if(code_list.size() > 1) {
+    auto s = code_list.size() ;
+
+    if(s == 1) {
+      cout << "Identifier var! " << code_list[0]->_to_str() << " need to lookup\n";
+      cout << "symbol lookup " << symbol_lookup(process, code_list[0]->_to_str()) << "\n";
+
+    } else if(s > 1) {
       // need to push call lisp:op
  //     cout << "Identifier call!" << Node::_to_str(code_list) << "\n";
       return call(process, code_list);
@@ -261,7 +283,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int 
   auto call_path = func_path;
   auto params_path = func_path;
   call_path.push_back(CODE);
-  params_path.push_back(PARAMS);
+  params_path.push_back(_PARAMS);
   
 
   auto frame = frame_create();
