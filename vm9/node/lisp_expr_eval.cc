@@ -67,20 +67,20 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node&code_node)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_list: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
 
-  if(code_node.type_ != Node::Type::Vector) {
-    /*
-    cerr << "Can't eval unknown code vector type: " << Node::_to_str(code_node.type_) << "!\n";
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
-      "Can't eval unknown code vector type!\n")};
-    */
-   return {true, code_node.clone()};
-  }
+  switch(code_node.type_) {
+  case Node::Type::Vector: {
+    auto const &code_list = get<Node::Vector>(code_node.value_);
+    return eval(process, code_list); }
+
+  case Node::Type::Identifier: {
+    auto name = get<string>(code_node.value_);
+    auto rv_ref_status = symbol_lookup(process, name  );
+    if(!rv_ref_status.first) return {false, rv_ref_status.second.clone()};
+    return {true, rv_ref_status.second.clone()};
+  }}
+
+  return {true, code_node.clone()};
   //cout << "eval process: \n"; process.print();
-
-
-  auto const &code_list = get<Node::Vector>(code_node.value_);
-  return eval(process, code_list);
-
   //cout << "what is going on3: " << Node::_to_str(code_list)<< "\n";
 
 
@@ -128,8 +128,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     auto s = code_list.size() ;
 
     if(s == 1) {
-      cout << "Identifier var! " << code_list[0]->_to_str() << " need to lookup\n";
-      cout << "symbol lookup " << symbol_lookup(process, code_list[0]->_to_str()) << "\n";
+      //cout << "Identifier var! " << code_list[0]->_to_str() << " need to lookup\n";
+      //cout << "symbol lookup " << symbol_lookup(process, code_list[0]->_to_str()) << "\n";
+      auto rv_ref_status = symbol_lookup(process, code_list[0]->_to_str());
+      if(!rv_ref_status.first) return {false, rv_ref_status.second.clone()};
+      return {true, rv_ref_status.second.clone()};
 
     } else if(s > 1) {
       // need to push call lisp:op

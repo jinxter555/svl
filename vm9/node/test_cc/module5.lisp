@@ -10,6 +10,9 @@
   (defun p55 (x y) "my func p55" 
     (
       (print (x))
+      (print "\n")
+      (print "-" x "-")
+      (print "\n")
       (print "hello, p55, 55\n")
     )
   )
