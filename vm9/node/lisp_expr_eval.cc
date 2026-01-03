@@ -307,6 +307,15 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int 
 
   //
   frame_push(process, move(frame));
+  auto scope = scope_create();
+  auto scope_status =  scope_push(process, move(scope));
+  if(!scope_status.first) {
+    cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
+    
+  }
+
+
+
 
   Node::OpStatusRef code_list_status = get_node(call_path);
 

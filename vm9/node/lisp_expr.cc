@@ -77,36 +77,22 @@ Node::OpStatus LispExpr::build_program(const string& input) {
     return  tokens_interpreted ;
   }
 
-
   // builds the interpreter tree, as in modules and function hierarchy
   auto hierarchical_code =  parse(*tokens_interpreted.second); 
 
-  //auto attach_status = attach_module(hierarchical_code.second->clone());
-
-  //auto attach_status = attach_module(move(hierarchical_code.second));
   return attach_module(move(hierarchical_code.second));
-  //if(!attach_status.first) return attach_status;
-
-  //auto process_status = get_process();
-  //return parsed_status_second_pass;
-
-  //return {true, Node::create(true)};
 
 }
 
+//------------------------------------------------------------------------
 //Node::OpStatus LispExpr::frame_create() const { 
 unique_ptr< Node> LispExpr::frame_create() const { 
   MYLOGGER(trace_function, "LispExpr::frame_create()", __func__, SLOG_FUNC_INFO);
   Node::Map nm={}; //Node::Map lvar={};
-  //return {true, Node::create(move(nm))}; 
-
-  //nm[CFS]=Node::create(Node::ControlFlow::cf_run);
-  //nm[LVAR]=Node::create(move(lvar));
-  //nm[CURRENT_MODULE]=Node::create(CURRENT_MODULE);
-  //nm[NAME_SPACE]=Node::create(NAME_SPACE);
-  //return {true, Node::create(move(nm))};
+  Node::Vector scope;
+  scope.reserve(10);
+  nm[SCOPES] = Node::create(move(scope));
   return Node::create(move(nm));
-
 }
 
 Node::OpStatus LispExpr::frame_push(Node&process, unique_ptr<Node>frame) {
@@ -130,10 +116,45 @@ Node::OpStatus LispExpr::frame_push(Node&process, unique_ptr<Node>frame) {
 
   return {true, Node::create(true)};
 
+}
+//------------------------------------------------------------------------
+// create a new scope with var and immute
+unique_ptr<Node> LispExpr::scope_create() const {
+  MYLOGGER(trace_function, "LispExpr::scope_create()", __func__, SLOG_FUNC_INFO);
+  Node::Map scope={}; //Node::Map lvar={};
+  scope[VAR] = Node::create(Node::Type::Map);
+  scope[IMMUTE] = Node::create(Node::Type::Map);
+  return Node::create(move(scope));
+}
 
+Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
+  MYLOGGER(trace_function, "LispExpr::scope_push(process, scope)", __func__, SLOG_FUNC_INFO);
+  auto frames_ref_status = process.get_node(FRAMES);
+  if(!frames_ref_status.first)
+    return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get frames")};
+
+  //cout << "frame status " <<  frames_ref_status << "\n";
+
+  auto last_frame_ref_status = frames_ref_status.second.back();
+  if(!last_frame_ref_status.first) {
+    return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get last frame aka back()")};
+  }
+
+  auto scopes_status = last_frame_ref_status.second.get_node(SCOPES);
+  if(!scopes_status.first) {
+    cerr << "scope_push() scope_status: " << scopes_status << "\n";
+    return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get scopes")};
+  }
+
+  scopes_status.second.push_back(move(scope));
+  return {true, Node::create(true)};
 
 }
 
+
+
+
+//------------------------------------------------------------------------
 Node::OpStatus LispExpr::run_program() { 
   MYLOGGER(trace_function, "LispExpr::run_program()", __func__, SLOG_FUNC_INFO);
 

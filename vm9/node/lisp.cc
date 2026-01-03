@@ -21,6 +21,8 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::mul: return "mul";
     case Lisp::Op::div: return "div";
     case Lisp::Op::mod: return "mod";
+    case Lisp::Op::var: return "var";
+    case Lisp::Op::assign: return "assign";
     case Lisp::Op::def: return "def";
     case Lisp::Op::call: return "call";
     case Lisp::Op::send: return "send";

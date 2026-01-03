@@ -16,6 +16,29 @@ Node node_error;
 
 unique_ptr<Node> Node::create() { return make_unique<Node>(); }
 unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
+unique_ptr<Node> Node::create(Type t) { 
+  switch(t) {
+  case Type::Map: {
+    Node::Map m;
+    return make_unique<Node>(move(m));
+  }
+  case Type::List: {
+    Node::List l;
+    return make_unique<Node>(move(l));
+  }
+  case Type::Vector: {
+    Node::Vector v;
+    v.resize(10);
+    return make_unique<Node>(move(v));
+  }
+  case Type::DeQue: {
+    Node::DeQue q;
+    return make_unique<Node>(move(q));
+  }}
+//  throw std::runtime_error("Unsupported Node::create() type" + _to_str(t)); 
+  return make_unique<Node>();
+
+}
 
 Node::Node() 
   : value_(std::monostate{})

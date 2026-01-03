@@ -75,6 +75,7 @@ public:
 
   static unique_ptr<Node> create();
   static unique_ptr<Node> create(Value v);
+  static unique_ptr<Node> create(Type t);
 
   static unique_ptr<Node> create_error(Error::Type type, const string& msg);
 

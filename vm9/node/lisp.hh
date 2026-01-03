@@ -15,6 +15,7 @@ public:
   { kernel, system, root
   , not_found, error, noop
   , identifier, scalar, list, deque, vector
+  , var, assign
   , add, sub, div, mul, mod
   , def, call, send, ret
   , loop, cond, print

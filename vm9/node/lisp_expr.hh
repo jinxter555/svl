@@ -11,8 +11,8 @@
  * control_flow_state = ret, loop
  * 
  */
-#define CFS "control_flow_state"
 #define VAR "var"
+#define IMMUTE "immute"
 #define LVAR "lvar"
 #define MVAR "Mvar"
 #define NAME_SPACE "name_space"
@@ -22,6 +22,7 @@
 #define CODE "code"
 #define _PARAMS "params"
 #define ARGS "args"
+#define SCOPES "scopes"
 #define DESC "description"
 
 class LispExpr : public Lang, public Lisp {
@@ -66,9 +67,12 @@ public:
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
 
 
-  //Node::OpStatus frame_create() const ; // create a frame 
   unique_ptr<Node> frame_create() const ; // create a frame 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
+
+  unique_ptr<Node> scope_create() const ; // create a scope 
+  Node::OpStatus scope_push(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
+
   Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree
