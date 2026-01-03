@@ -184,7 +184,10 @@ Node::OpStatus LispExpr::run_program() {
       "LispExpr::run_program() path node not found: " + _to_str_ext(kernel_path))};
   }
 
+  auto frame1 = frame_create();
+  frame1->set(CURRENT_MODULE, "Kernel");
   auto proc_1= process_create();
+  frame_push(proc_1.second, move(frame1));
 
 
   if(!proc_1.first) {

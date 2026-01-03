@@ -136,7 +136,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
 
     } else if(s > 1) {
       // need to push call lisp:op
- //     cout << "Identifier call!" << Node::_to_str(code_list) << "\n";
+     //cout << "Identifier call!" << Node::_to_str(code_list) << "\n";
       return call(process, code_list);
 
     }
@@ -198,37 +198,72 @@ vector<string> LispExpr::node_mf_to_path(Node&node_mf,  const vector<string> pre
 
 
 // (call (module function) (arg1 arg2 arg3))
-// (call (function) (arg1 arg2 arg3))  --- use process frame to get module name
-
+//       (module function )
+// (identifer (x y z ...))
+//        (module, function) = identifier
 // returns {module, function}
-vector<string> LispExpr::node_to_mf(Node& process, Node&node_mf) {
-  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
+vector<string> LispExpr::extract_mf(Node& process, Node&node_mf) {
+  MYLOGGER(trace_function, "LispExpr::extract_mf(Node&process, const Node& node_mf)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node_mf: ") + node_mf._to_str(), SLOG_FUNC_INFO+30);
 
+  switch(node_mf.type_) {
+  case Node::Type::Identifier: {
+    Node::Vector list;
+    auto mf = node_mf._get_str();
+    list.push_back(Node::create(mf));
+    //cout << "identifier mf: "  << mf << " \n";
+    return extract_mf(process, list);
+  }
+  case  Node::Type::Vector:{
+    auto &list = node_mf._get_vector_ref();
+    return extract_mf(process, list);
+  }}
+  return {};
+}
 
-  if(node_mf.type_ != Node::Type::Vector)
-    return {};
+vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
+  MYLOGGER(trace_function, "LispExpr::extract_mf(Node&process, const Node& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+
   
   // call (func)  no module specified
-  if(node_mf.size_container() == 1 ) {
-    auto f = node_mf[0].second._to_str();
+  if(list.size() == 1 ) {
+    //cout << "extract mf size 1\n";
+    auto f = list[0]->_to_str();
 
     //.second._to_str();
 
     //auto frames_status = process.get_node(FRAMES);
     auto frames_status = process[FRAMES];
-    if(!frames_status.first) return {};
+    if(!frames_status.first) { 
+      cerr << " frames[] not found: " << frames_status.second._to_str() << "\n";
+      return {};
+    }
     auto last_frame_status = frames_status.second.back();
-    if(!last_frame_status.first) return {};
+    if(!last_frame_status.first)  { 
+      /*
+      cout << "process: " << process << "\n";
+      cout << "pid: " << process[PID] << "\n";
+      cout << "frames: " << frames_status.second << "\n";
+      */
+      cerr << " last frame not found: " << last_frame_status.second._to_str() << "\n";
+      return {};
+    }
 
     auto current_module_status = last_frame_status.second[CURRENT_MODULE];
-    if(!current_module_status.first) return {};
+    if(!current_module_status.first) {return {};
+      cerr << " current module not found in last frame: " << current_module_status.second._to_str() << "\n";
+      return {};
+    }
+
     auto m  = current_module_status.second._to_str();
+   // cout << "m:"  << m  << ", f:" << f <<"\n";
     return {m, f};
 
-  } else if(node_mf.size_container() == 2 ) {
-    auto m = node_mf[0].second._to_str();
-    auto f = node_mf[1].second._to_str();
+  } else if(list.size() == 2 ) {
+    auto m = list[0]->_to_str();
+    auto f = list[1]->_to_str();
     return {m, f};
   }
   return {};
@@ -264,21 +299,45 @@ Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, cons
 }
 
 //------------------------------------------------------------------------
+// (call (module function) (arg1 arg2 arg3))
+Node::OpStatus LispExpr::call(Node& process, Node& code_node) {
+  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_node)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
+
+  if(code_node.type_ != Node::Type::Vector)
+    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+      "Can't call module_function != (module function)\n")};
+
+  const auto& code_list =get<Node::Vector>(code_node.value_);
+  return call(process, code_list);
+
+} 
+
+
 // code_list = (call (module function) (arg1 arg2 arg3))
 Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int start) {
-  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("code_node: ") + Node::_to_str( code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node::Vector& code_list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_node: ") + Node::_to_str( code_list) + " start:" + to_string(start), SLOG_FUNC_INFO+30);
 
-  if(code_list.size() != 3)
+/*
+  if(code_list.size() != 3 && start !=0) {
+    cerr << "code list size! 3\n";
     return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
       "Can't call module_function != (call (module function)(...))\n")};
 
-  const auto &mf_node_ptr=  code_list[start];
+  }
+ */ 
+ const auto &mf_node_ptr=  code_list[start];
 
-  auto mf_vector = node_to_mf(process, *mf_node_ptr);
+  auto mf_vector = extract_mf(process, *mf_node_ptr);
+  //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
   auto func_path = lisp_path_module;
+
+  //return {true, nullptr};
  
+  // need to extract module func with just identifier call
   // function path 
+
   func_path.push_back(mf_vector[0]);
   func_path.push_back(FUNCTION);
 
@@ -336,17 +395,3 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int 
   code_path_list.insert(code_path_list.end(), mf_list.begin(), mf_list.end());
   */
 }
-
-// (call (module function) (arg1 arg2 arg3))
-Node::OpStatus LispExpr::call(Node& process, Node& code_node) {
-  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& code_node)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
-
-  if(code_node.type_ != Node::Type::Vector)
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
-      "Can't call module_function != (module function)\n")};
-
-  const auto& code_list =get<Node::Vector>(code_node.value_);
-  return call(process, code_list);
-
-} 

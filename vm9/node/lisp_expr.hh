@@ -48,7 +48,8 @@ private:
 
   // (call (module function)(...))  the module function to vector  path with prefix
   vector<string> node_mf_to_path(Node&node_,  const vector<string> prefix);
-  vector<string> node_to_mf(Node&process, Node&node);
+  vector<string> extract_mf(Node&process, Node&node); // extract module function
+  vector<string> extract_mf(Node&process, Node::Vector &list); // extract module function
 
 public: 
   Lisp::Op keyword_to_op(const string &kw); // convert 

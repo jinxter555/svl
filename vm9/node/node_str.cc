@@ -12,6 +12,7 @@
 
 string  _to_str_ext(const vector<string>& keys) {
   string v="["; size_t i=0, s=keys.size();
+  if(s==0) return "[]";
   for(; i<s-1; i++) {
     v = v+ keys[i] + ", ";
   }
