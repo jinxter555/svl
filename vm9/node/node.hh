@@ -1,5 +1,6 @@
 #pragma once
 #include "lisp.hh"
+#include "error.hh"
 #include <unordered_map>                                                                        
 #include <variant>                                                                    
 #include <memory>                                                                     
@@ -11,13 +12,10 @@
 #include <algorithm>                                                                  
 #include <type_traits> // For std::decay_t            
 
-class Node;
 using namespace std;
 
 
 string  _to_str_ext(const vector<string>& keys) ;
-
-//class Lisp;
 
 class Node {
   friend class Tree;
@@ -27,23 +25,6 @@ class Node {
   friend class ostream;
 public:
 
-  struct Error{
-    enum class Type {
-      DivideByZero, // e.g., divide by zero error
-      InvalidOperation, // e.g., calling 'add' on an Integer node
-      KeyAlreadyExists, // e.g., calling 'add' with a duplicate map key
-      KeyNotFound, // e.g., calling 'add' with a duplicate map key
-      IndexOutOfBounds,  // e.g., calling 'set' with an invalid list index
-      Incomplete,
-      System,
-      Parse,
-      Unknown,
-
-    };
-    Type type_;
-    string message_;
-    static string _to_str(Type t);
-  };
   
   enum class ProcState { init, run, sleep, suspend, stop, wait };
   enum class ControlFlow { cf_run, cf_break, cf_continue, cf_return, cf_return_val};
@@ -59,7 +40,7 @@ public:
   //
   using Map = unordered_map<string, unique_ptr<Node>>;
   using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow>;
-  using ValueSimple = variant<monostate, bool,  Lisp::Op, ProcState, ControlFlow, Integer, Float, string>;
+  using ValueSimple = variant<monostate, bool,  Error, Lisp::Op, ProcState, ControlFlow, Integer, Float, string>;
 
   using OpStatus = pair<bool, unique_ptr<Node>>;
   using OpStatusRef = pair<bool, Node&>;
@@ -226,6 +207,7 @@ protected:
 private:
   inline bool m_has_key(const string&key);
 };
+
 
 ostream& operator<<(ostream& os, const Node& v) ;
 ostream& operator<<(ostream& os, const Node::OpStatus& s) ;

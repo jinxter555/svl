@@ -143,7 +143,7 @@ Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
       if(node_ref.first) return {true, node_ref.second.clone()};
     }
   } catch(...) { 
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation, 
+    return {false, Node::create_error(Error::Type::InvalidOperation, 
         "error: parsed root get symbol") };
   }
   return {true, Node::create()};
@@ -300,6 +300,8 @@ void LispExpr::set_keywords() {
   map_->set("list", Op::list);
   map_->set("vector", Op::vector);
   map_->set("deque", Op::deque);
+  map_->set("var", Op::var);
+  map_->set("asssign", Op::assign);
   map_->set("add", Op::add);
   map_->set("sub", Op::sub); 
   map_->set("mul", Op::mul);

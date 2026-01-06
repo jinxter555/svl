@@ -79,14 +79,14 @@ Node::OpStatus Interactive::load(const std::string &filename) {
 
   std::ifstream infile(filename);
   if(! infile.is_open()) {
-    return {false, Node::create_error(Node::Error::Type::System, "Can't open file: " + filename)};
+    return {false, Node::create_error(Error::Type::System, "Can't open file: " + filename)};
   }
 
   string line, source_str; 
   Node::List source; Node::Map map;
 
   while(getline(infile, line) ) {
-    source_str += line;
+    source_str = source_str + line + "\n" ;
     source.push_back(Node::create(line));
   }
   infile.close();

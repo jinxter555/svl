@@ -15,7 +15,7 @@ Node Node::operator+(const Node &other) const {
       } else if constexpr (is_same_v<L, string> && is_same_v<R, string>) {
         return Node(lhs + rhs);
       } else {
-        return Node(Node::Error{Node::Error::Type::InvalidOperation, 
+        return Node(Error{Error::Type::InvalidOperation, 
             "Unsupported types for addition! " + _to_str(type_) + 
             " : " + _to_str(other.type_)});
       }
@@ -33,7 +33,7 @@ Node Node::operator*(const Node &other) const {
       else
         return Node(static_cast<Float>(lhs) * static_cast<Float>(rhs));
     } else {
-      return Node(Node::Error{Node::Error::Type::InvalidOperation, "Unsupported types for multiplication"});
+      return Node(Error{Error::Type::InvalidOperation, "Unsupported types for multiplication"});
     }
 
   }, value_, other.value_);
@@ -47,11 +47,11 @@ Node Node::operator/(const Node &other) const {
 
     if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
       if(static_cast<Float>(rhs) == 0.0)
-        return Node(Node::Error{Node::Error::Type::DivideByZero,
+        return Node(Error{Error::Type::DivideByZero,
           "Divide by zero "});
       return Node(static_cast<Float>(lhs) / static_cast<Float>(rhs));
     } else {
-      return Node(Node::Error{Node::Error::Type::InvalidOperation, "Unsupported types for Division"});
+      return Node(Error{Error::Type::InvalidOperation, "Unsupported types for Division"});
     }
   }, value_, other.value_);
 }

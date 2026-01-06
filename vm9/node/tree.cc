@@ -41,7 +41,7 @@ Node::OpStatus Tree::set_branch(const vector<string>&path, unique_ptr<Node> chil
 
     if(current_node->type_ != Node::Type::Map ){
       string msg = "Cannot navigate path: '" + key + "' parent is not a Map (Type: " + Node::_to_str(current_node->type_) + ")";
-      return {false, Node::create_error(Node::Error::Type::InvalidOperation, msg)};
+      return {false, Node::create_error(Error::Type::InvalidOperation, msg)};
     }
     Node::Map& map = get<Node::Map>(current_node->value_);
     auto it = map.find(key);
@@ -62,7 +62,7 @@ Node::OpStatus Tree::delete_branch(const vector<string>&path) {
   if(path.empty())   
     return { 
       false, 
-      Node::create_error(Node::Error::Type::InvalidOperation,  "Cannot delete the root node via delete_branch.") 
+      Node::create_error(Error::Type::InvalidOperation,  "Cannot delete the root node via delete_branch.") 
     };
 
   vector<string> parent_path(path.begin(), path.end()-1);
@@ -71,7 +71,7 @@ Node::OpStatus Tree::delete_branch(const vector<string>&path) {
 
   if(!parent_node || parent_node->type_ != Node::Type::Map){
     return { false
-      , Node::create_error(Node::Error::Type::InvalidOperation, 
+      , Node::create_error(Error::Type::InvalidOperation, 
         "Invalid path: parent node is not a Map or doesn't exist.")}; 
   }
 

@@ -22,7 +22,7 @@ Node::OpStatus Node::merge(Map &mv, bool override){
   MYLOGGER_MSG(trace_function, string("with mapv: ") + Node::_to_str(mv), SLOG_FUNC_INFO+30);
 
   if(type_ != Node::Type::Map) {
-    return {false, create_error(Node::Error::Type::InvalidOperation, 
+    return {false, create_error(Error::Type::InvalidOperation, 
       "Node::Merge(), Can't for non map type: " + _to_str(type_) )};
   }
   auto &map = get<Map>(value_);
@@ -35,7 +35,7 @@ Node::OpStatus Node::merge(Map &mv, bool override){
 
 Node::OpStatus Node::has_key(const string&key) {
   if(type_ != Node::Type::Map) {
-    return {false, create_error(Node::Error::Type::InvalidOperation, 
+    return {false, create_error(Error::Type::InvalidOperation, 
       "Can't lookup key '" + key + "' for non map type: type: " + _to_str(type_) )};
   }
   auto &map = get<Map>(value_);
@@ -124,15 +124,16 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
 
 Node::OpStatusRef Node::get_node(const vector<string>&path) {
   if(type_ != Type::Map){
-    return {false, *create_error(Node::Error::Type::InvalidOperation, 
+    return {false, *create_error(Error::Type::InvalidOperation, 
     "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
 
   Node* current = this;
   for(const auto&key : path) {
     if(!current || current->type_ != Node::Type::Map) {
-      return {false, *create_error(Node::Error::Type::InvalidOperation, 
-      "current is nullptr, or not Map node/branch." + key  +  "Current type: " + _to_str(current->type_))};
+      return {false, *create_error(Error::Type::InvalidOperation, 
+      "current is nullptr, or not Map node/branch. Current key:" + key  +  
+      ", Current type: " + _to_str(current->type_))};
     }
 
     Node::Map& map = get<Node::Map>(current->value_);
@@ -140,7 +141,7 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
     if(it==map.end()) {
       string msg = "key '" + key + "' not found in map.";
-      return {false, *create_error(Node::Error::Type::KeyNotFound, msg)};
+      return {false, *create_error(Error::Type::KeyNotFound, msg)};
     }
 
     current = it->second.get();
@@ -150,14 +151,14 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
 Node::OpStatusRef Node::get_node(const string&key) {
   if(type_ != Type::Map){
-    return {false, *create_error(Node::Error::Type::InvalidOperation, 
+    return {false, *create_error(Error::Type::InvalidOperation, 
     "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
   Node::Map& map = get<Node::Map>(value_);
   auto it = map.find(key);
   if(it==map.end()) {
     string msg = "key '" + key + "' not found in map.";
-    return {false, *create_error(Node::Error::Type::KeyNotFound, msg)};
+    return {false, *create_error(Error::Type::KeyNotFound, msg)};
   }
 
   return {true, *it->second.get()};

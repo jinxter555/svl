@@ -76,7 +76,8 @@ Node::Node(Type t)
   case Type::Integer: value_=0; break;
   case Type::Float: value_=0.0; break;
   case Type::String: value_=""; break;
-  case Type::Error: value_ = {} ; break;
+  //case Type::Error: value_ = {} ; break;
+  case Type::Error: value_ = Error{Error::Type::Unknown, "Unknown Init"} ; break;
   case Type::Map: { 
     Map nm={};
     value_ = move(nm);
@@ -97,8 +98,8 @@ Node::Node(Type t)
 }
 
 
-unique_ptr<Node> Node::create_error(Node::Error::Type t, const string& msg) {
-  return make_unique<Node>(Value(Node::Error{t, msg}));
+unique_ptr<Node> Node::create_error(Error::Type t, const string& msg) {
+  return make_unique<Node>(Value(Error{t, msg}));
 }
 
 unique_ptr<Node> Node::clone(const List& list) {
@@ -147,7 +148,7 @@ unique_ptr<Node> Node::clone() const {
     using T = decay_t<decltype(arg)>;
     if constexpr(is_same_v<T, monostate>)
       return make_unique<Node>(Node());
-    else if constexpr(is_same_v<T, Node::Error>) {
+    else if constexpr(is_same_v<T, Error>) {
       // return make_unique<Node>(Value(arg));
       return make_unique<Node>(arg);
     }
@@ -217,13 +218,13 @@ void Node::set_identifier() { type_ = Type::Identifier; }
 
 Node::OpStatus Node::set(size_t index, unique_ptr<Node> child) {
   if(type_ != Type::Vector) 
-    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot set index on a non-List node.")};
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot set index on a non-List node.")};
 
   Vector &list = get<Vector>(value_);
   if(index >= list.size()) {
     ostringstream msg;
     msg << "Index " << index << " is out of bounds for list size " << list.size() << ".";
-    return {false, create_error(Node::Error::Type::IndexOutOfBounds, msg.str())};
+    return {false, create_error(Error::Type::IndexOutOfBounds, msg.str())};
   }
   list[index] = move(child);
   return {true, create(true)};
@@ -231,7 +232,7 @@ Node::OpStatus Node::set(size_t index, unique_ptr<Node> child) {
 
 Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   if (type_ != Type::Map) {
-    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
   }        
   Map& map= get<Map>(value_);
   map[key] = move(child);
@@ -303,7 +304,7 @@ Node::Node(vector<ValueSimple> vl) : type_(Type::List) {
 
 Node::OpStatus Node::add(unique_ptr<Node> child) {
   if(type_ != Type::List) 
-    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot add element to a non-List node.")};
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot add element to a non-List node.")};
 
   List& list = get<List>(value_);
   list.push_back(move(child));
@@ -312,12 +313,12 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
 
 Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
   if (type_ != Type::Map) {
-    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot add key-value to a non-Map node.")};
   }        
   Map& map = get<Map>(value_);
 
   if(!map.try_emplace(key, std::move(child)).second) {
-    return {false, create_error(Node::Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
+    return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
   return {true, nullptr};
 }
@@ -325,11 +326,11 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
 
 Node::OpStatus Node::delete_key(const string &key) {
   if(type_ != Type::Map)
-    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
 
   Map& map = get<Map>(value_);
   if(map.erase(key)==0)
-    return {false, create_error(Node::Error::Type::InvalidOperation,  "Key '" + key + "' not found in map.")};
+    return {false, create_error(Error::Type::InvalidOperation,  "Key '" + key + "' not found in map.")};
   return {true, nullptr};
 }
 
@@ -343,7 +344,7 @@ Node::OpStatus Node::pop_back() {
     using T = decay_t<decltype(list)>;
     if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue> || is_same_v<T, Vector>){
       if(list.empty()) { return {false, 
-        create_error(Node::Error::Type::InvalidOperation, "Cannot pop_back from an empty List or DeQue node.")};};
+        create_error(Error::Type::InvalidOperation, "Cannot pop_back from an empty List or DeQue node.")};};
       auto back = move(list.back());
       list.pop_back();
       return {true, move(back)};
@@ -363,7 +364,7 @@ Node::OpStatus Node::pop_front() {
     using T = decay_t<decltype(list)>;
     if constexpr (is_same_v<T, List>  || is_same_v<T, DeQue>){
       if(list.empty()) { return {false, 
-        create_error(Node::Error::Type::InvalidOperation, "Cannot pop_front from an empty List or DeQue node.")};};
+        create_error(Error::Type::InvalidOperation, "Cannot pop_front from an empty List or DeQue node.")};};
       auto front = move(list.front());
       list.pop_front();
       return {true, move(front)};
@@ -371,7 +372,7 @@ Node::OpStatus Node::pop_front() {
     } else if constexpr (is_same_v<T, Vector>){
       cerr << "Warning!: Node::pop_front() with vector object\n";
       if(list.empty()) { return {false, 
-        create_error(Node::Error::Type::InvalidOperation, "Cannot pop_front from an empty Vector node.")};};
+        create_error(Error::Type::InvalidOperation, "Cannot pop_front from an empty Vector node.")};};
       auto front = move(list.front());
       list.erase(list.begin());
       return {true, move(front)};
@@ -394,10 +395,10 @@ Node::OpStatus Node::push_back(unique_ptr<Node> node) {
       list.push_back(move(node));
       return {true, create()};
     } else {
-      return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
+      return {false, create_error(Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
     }
   }, value_);
-  return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
+  return {false, create_error(Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
 }
 
 
@@ -416,10 +417,10 @@ Node::OpStatus Node::push_front(unique_ptr<Node> node) {
       list.insert(list.begin(), move(node));
       return {true, create()};
     } else {
-      return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
+      return {false, create_error(Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
     }
   }, value_);
-  return {false, create_error(Node::Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
+  return {false, create_error(Error::Type::InvalidOperation, "push_back() current node is not list, deque or vector !")};
 }
 
 
@@ -427,7 +428,7 @@ Node::OpStatus Node::push_front(unique_ptr<Node> node) {
 // Equivalent to std::vector::clear
 Node::OpStatus Node::clear() {
   if (type_ != Type::List) {
-    return {false, create_error(Node::Error::Type::InvalidOperation, "Cannot clear a non-List node.")};
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot clear a non-List node.")};
   }
   List& list = get<List>(value_);
   list.clear();
@@ -445,14 +446,14 @@ Node::OpStatusRef Node::operator[](size_t index) {
   if(type_ != Type::Vector) {
     return { false,
     *create_error(
-      Node::Error::Type::InvalidOperation,
+      Error::Type::InvalidOperation,
       "Operator[] (index) can only be used on vector nodes. Current type: " + _to_str(type_)
     )};
   }
   Vector& list = get<Vector>(value_);
   if(index >= list.size()){
     string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
-    return {false, *create_error(Node::Error::Type::IndexOutOfBounds, msg)};
+    return {false, *create_error(Error::Type::IndexOutOfBounds, msg)};
   }
   return {true, *list[index]};
 }
@@ -466,7 +467,7 @@ Node::OpStatusRef Node::operator[](size_t index) {
 
 Node::OpStatusRef Node::operator[](const string& key) {
   if(type_ != Type::Map){
-    return {false, *create_error(Node::Error::Type::InvalidOperation, 
+    return {false, *create_error(Error::Type::InvalidOperation, 
     "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
   const Map& map = get<Map>(value_);
@@ -474,7 +475,7 @@ Node::OpStatusRef Node::operator[](const string& key) {
 
   if(it==map.end()) {
     string msg = "key '" + key + "' not found in map.";
-    return {false, *create_error(Node::Error::Type::KeyNotFound, msg)};
+    return {false, *create_error(Error::Type::KeyNotFound, msg)};
   }
   return {true, *it->second};
 }
@@ -486,27 +487,27 @@ Node::OpStatusRef Node::front() {
   switch(type_) {
   case Type::Vector: {
     if(empty_container()) return {false, 
-      *create_error(Node::Error::Type::InvalidOperation,
+      *create_error(Error::Type::InvalidOperation,
       "Node::front() is empty: " )};
     auto &list = get<Vector>(value_);
     return {true, *list.front()}; }
 
   case Type::List:{
     if(empty_container()) return {false, 
-      *create_error(Node::Error::Type::InvalidOperation,
+      *create_error(Error::Type::InvalidOperation,
       "Node::front() is empty: " )};
     auto &list = get<List>(value_);
     return {true, *list.front()}; }
 
   case Type::DeQue: {
     if(empty_container()) return {false, 
-      *create_error(Node::Error::Type::InvalidOperation,
+      *create_error(Error::Type::InvalidOperation,
       "Node::front() is empty: " )};
     auto &list = get<DeQue>(value_);
     return {true, *list.front()}; }
 
   default:  
-    return {false, *create_error(Node::Error::Type::InvalidOperation,
+    return {false, *create_error(Error::Type::InvalidOperation,
     "Node::type_ not vector, list or DeQue. Current type: " + _to_str(type_))};
   }
 }
@@ -516,30 +517,34 @@ Node::OpStatusRef Node::back() {
 
   switch(type_) {
   case Type::Vector: {
-    if(empty_container()) return {false, 
-      *create_error(Node::Error::Type::InvalidOperation,
-      "Node::back() is empty: " )};
+    if(empty_container()) {
+      cerr << "vector is empty !!!\n";
+      auto err = create_error(Error::Type::InvalidOperation, "Node::back() is empty: " );
+      //cout << "err: " << *err << "\n";
+      //return {false, *create_error(Error::Type::InvalidOperation, "Node::back() is empty: " )};
+      return {false, *err};
+    }
 
     auto &list = get<Vector>(value_);
     return {true, *list.back()}; }
 
   case Type::List:{
     if(empty_container()) return {false, 
-      *create_error(Node::Error::Type::InvalidOperation,
+      *create_error(Error::Type::InvalidOperation,
       "Node::back() is empty: " )};
     auto &list = get<List>(value_);
     return {true, *list.back()}; }
 
   case Type::DeQue: {
     if(empty_container()) return {false, 
-      *create_error(Node::Error::Type::InvalidOperation,
+      *create_error(Error::Type::InvalidOperation,
       "Node::back() is empty: " )};
 
     auto &list = get<DeQue>(value_);
     return {true, *list.back()}; }
 
   default:  
-    return {false, *create_error(Node::Error::Type::InvalidOperation,
+    return {false, *create_error(Error::Type::InvalidOperation,
     "Node::type_ not vector, list or DeQue. Current type: " + _to_str(type_))};
   }
 }
@@ -563,8 +568,8 @@ void Node::print_value_recursive(const Node& node, int depth) {
     }
     else if constexpr (is_same_v<T, bool>){
       cout << "bool: " << arg;
-    } else if constexpr (is_same_v<T, Node::Error>){
-      cout << "\033[31m[ERROR: " << Node::Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;
+    } else if constexpr (is_same_v<T, Error>){
+      cout << "\033[31m[ERROR: " << Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;
     } else if constexpr (is_same_v<T, Integer>) {
       cout << arg; 
     } else if constexpr (is_same_v<T, Float>) {
@@ -667,8 +672,8 @@ void Node::print_value(const Value& v, int depth) {
     else if constexpr (is_same_v<T, bool>){
       cout << "bool: " << arg;
     }
-    else if constexpr (is_same_v<T, Node::Error>){
-      cout << "\033[31m[ERROR: " << Node::Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;
+    else if constexpr (is_same_v<T, Error>){
+      cout << "\033[31m[ERROR: " << Error::_to_str(arg.type_) << "]\033[0m: " << arg.message_;
     } else if constexpr (is_same_v<T, Integer>) {
       cout << arg; 
     } else if constexpr (is_same_v<T, Float>) {

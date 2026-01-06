@@ -8,7 +8,6 @@
 
 using namespace  std;
 
-class Node;
 class Lisp {
 public:
   enum class Op 

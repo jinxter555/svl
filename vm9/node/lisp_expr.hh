@@ -74,6 +74,10 @@ public:
   unique_ptr<Node> scope_create() const ; // create a scope 
   Node::OpStatus scope_push(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
 
+  Node::OpStatusRef scope_current(Node&process) ; // 
+  Node::OpStatusRef var_current(Node&process) ; // 
+  Node::OpStatusRef immute_current(Node&process) ; // 
+
   Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree

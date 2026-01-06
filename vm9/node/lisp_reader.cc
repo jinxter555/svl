@@ -15,6 +15,13 @@ LispReader::LispReader(LispExpr *l) : lisp(l) {
 
 void LispReader::reset() { col_=1; line_=1; }
 
+void LispReader::to_newline(const string&input, size_t &i) {
+  for(++i; i<input.size(); i++) {
+    char c = input[i];
+    if(c=='\n') break;
+  }
+}
+
 string LispReader::extract_quoted_string(const string&input, size_t &i) {
   string result;
   bool in_quote = true;
@@ -57,7 +64,7 @@ list<Token> LispReader::tokenize(const string& input)  {
         token.value_ = move(token_str);
         tokens.push_back(token);
       }
-      if(c=='\n') {line_++; col_= 1;};
+      if(c=='\n') { line_++; col_= 1; continue;}
 
     } else if(c=='(' || c==')') {
       token_begin = true;
@@ -76,6 +83,16 @@ list<Token> LispReader::tokenize(const string& input)  {
       token.value_ = "\"" + move(extract_quoted_string(input, i));
       tokens.push_back(token);
       token_begin = true;
+    } else if(c == ';') {
+      token_begin = true;
+      if(!token_str.empty()) {
+        token.value_ = move(token_str);
+        tokens.push_back(token);
+      }
+      to_newline(input, i);
+      line_++; col_ = 1; 
+      continue;
+
     } else {
       if(token_begin) { token.col_ = col_; token_begin=false;}
       token_str += c;
@@ -116,7 +133,7 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
     auto token_status = parse(tokens); //if(first_loop_run && token.value_!= "(") {
 
     if(!token_status.first) return { false, 
-      Node::create_error(Node::Error::Type::Parse, 
+      Node::create_error(Error::Type::Parse, 
       "parsed error: " + token_status.second->_to_str() + "\n") };
 
     if(is_first_element) {
@@ -154,7 +171,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   //MYLOGGER_MSG(trace_function, string("lookup input: ") + input, SLOG_FUNC_INFO+30);
 
   if(tokens.empty()) 
-    return {false, Node::create_error(Node::Error::Type::Incomplete, "Unexpected EOF parsing LispExpr.")};
+    return {false, Node::create_error(Error::Type::Incomplete, "Unexpected EOF parsing LispExpr.")};
 
   //Token token = tokens.front(); tokens.erase(tokens.begin());
   Token token = tokens.front(); tokens.pop_front();
@@ -164,7 +181,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
 
   } else if(token.value_==")") {
 
-    return {false, Node::create_error(Node::Error::Type::Incomplete, "Unexpected ')'.")};
+    return {false, Node::create_error(Error::Type::Incomplete, "Unexpected ')'.")};
 
   } else {
     // Float

@@ -17,6 +17,7 @@ private:
   LispExpr *lisp;   // lisp to atom hasher
 
   string extract_quoted_string(const string&input, size_t &i);
+  void to_newline(const string&input, size_t &i);
 public:
   LispReader(LispExpr*);
   //void tokenize(const string& input) { }

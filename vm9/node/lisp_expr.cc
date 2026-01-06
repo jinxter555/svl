@@ -104,12 +104,12 @@ Node::OpStatus LispExpr::frame_push(Node&process, unique_ptr<Node>frame) {
     return key_status;
   }
   if(!key_status.second->_get_bool() ) {
-    return {false, Node::create_error(Node::Error::Type::KeyNotFound, 
+    return {false, Node::create_error(Error::Type::KeyNotFound, 
       "LispExpr::frame_push(...) no frames vector not found in process:")};
   }
   auto frames_status = process.get_node(FRAMES);
   if(!frames_status.first)
-    return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get frames")};
+    return {false, Node::create_error(Error::Type::Unknown, "Can't get frames")};
 
   frames_status.second.push_back(move(frame));
   //cout << "process id: " << process[PID] << ": frame status " << frames_status << "\n";
@@ -131,19 +131,19 @@ Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
   MYLOGGER(trace_function, "LispExpr::scope_push(process, scope)", __func__, SLOG_FUNC_INFO);
   auto frames_ref_status = process.get_node(FRAMES);
   if(!frames_ref_status.first)
-    return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get frames")};
+    return {false, Node::create_error(Error::Type::Unknown, "Can't get frames")};
 
   //cout << "frame status " <<  frames_ref_status << "\n";
 
   auto last_frame_ref_status = frames_ref_status.second.back();
   if(!last_frame_ref_status.first) {
-    return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get last frame aka back()")};
+    return {false, Node::create_error(Error::Type::Unknown, "Can't get last frame aka back()")};
   }
 
   auto scopes_status = last_frame_ref_status.second.get_node(SCOPES);
   if(!scopes_status.first) {
     cerr << "scope_push() scope_status: " << scopes_status << "\n";
-    return {false, Node::create_error(Node::Error::Type::Unknown, "Can't get scopes")};
+    return {false, Node::create_error(Error::Type::Unknown, "Can't get scopes")};
   }
 
   scopes_status.second.push_back(move(scope));
@@ -151,6 +151,34 @@ Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
 
 }
 
+Node::OpStatusRef LispExpr::scope_current(Node&process)  {
+  MYLOGGER(trace_function, "LispExpr::scope_current(Node& process)", __func__, SLOG_FUNC_INFO);
+  auto frames_ref_status = process[FRAMES];
+  if(!frames_ref_status.first) return frames_ref_status;
+  auto frame_ref_back_status = frames_ref_status.second.back();
+  if(!frame_ref_back_status.first) return frame_ref_back_status;
+  auto scopes_ref_status = frame_ref_back_status.second[SCOPES];
+  if(!scopes_ref_status.first) return scopes_ref_status;
+  if(!scopes_ref_status.first) {
+    cerr << "scopes[] doesn't exist!\n";
+    return scopes_ref_status;
+  }
+  cout << "\nscopes :" << scopes_ref_status << "\n";
+
+  auto r = scopes_ref_status.second.back();
+  if(!r.first) {
+   cerr << "scopes back() failed!"  << r.second._to_str() << "\n";
+   //cerr << "scopes back() failed!\n";
+  return  {true, null_node};
+  }
+
+  
+  auto s = r.second._to_str();
+  //cout << "scopes back() " << scopes_ref_status.second << "\n";
+  //cout << "scopes back() " << scopes_ref_status.second.back() << "\n";
+  return  {true, null_node};
+  //return scopes_ref_status.second.back();
+}
 
 
 
@@ -168,7 +196,7 @@ Node::OpStatus LispExpr::run_program() {
   auto proc0  = process_get(0); 
   if(!proc0.first) {
     return  {false, Node::create_error(
-      Node::Error::Type::InvalidOperation, 
+      Error::Type::InvalidOperation, 
       "LispExpr::run_program() Kernel proc 0 not found: " )};
   }
 
@@ -180,7 +208,7 @@ Node::OpStatus LispExpr::run_program() {
   if(!code_list_status.first)  {
     cerr << _to_str_ext(kernel_path) << " path not found!\n";
     return  {false, Node::create_error(
-      Node::Error::Type::KeyNotFound, 
+      Error::Type::KeyNotFound, 
       "LispExpr::run_program() path node not found: " + _to_str_ext(kernel_path))};
   }
 

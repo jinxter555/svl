@@ -4,7 +4,8 @@ CC=g++ -g -std=c++23
 TMPDIR = /dev/shm
 MAKE=make
 
-objects = interactive.o node.o node_str.o node_map.o node_list.o node_math.o tree.o kernel.o lang.o lisp.o  \
+objects = interactive.o node.o node_str.o node_map.o node_list.o node_math.o tree.o kernel.o \
+lang.o lisp.o  error.o \
 lisp_expr.o lisp_expr_parse.o  lisp_expr_eval.o \
 lisp_reader.o scope_logger.o commandline.o my_helpers.o
 

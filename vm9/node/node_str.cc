@@ -21,20 +21,6 @@ string  _to_str_ext(const vector<string>& keys) {
 
 
 
-string Node::Error::_to_str(Node::Error::Type type) {
-  switch(type) {
-    case Node::Error::Type::DivideByZero:     return "DivideByZero";
-    case Node::Error::Type::InvalidOperation: return "InvalidOperation";
-    case Node::Error::Type::KeyAlreadyExists: return "KeyAlreadyExists";
-    case Node::Error::Type::KeyNotFound: return "KeyNotFound";
-    case Node::Error::Type::IndexOutOfBounds: return "IndexOutOfBounds";
-    case Node::Error::Type::Incomplete:       return "Incomplete";
-    case Node::Error::Type::System:       return "System";
-    case Node::Error::Type::Parse:       return "Parse";
-    case Node::Error::Type::Unknown:       return "Unknown";
-  }
-  return "Unknown Error";
-}
 
 string Node::_to_str(Type type) {
   switch (type) {

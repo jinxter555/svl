@@ -104,10 +104,16 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
       auto nested_status = code_list[0]->get_node(0);
       if(!nested_status.first)  {
         cerr << "error getting node!\n";
-        return {false, Node::create_error(Node::Error::Type::KeyNotFound, 
+        return {false, Node::create_error(Error::Type::KeyNotFound, 
           "Nested vector code error" + nested_status.second._to_str())};
       }
       return eval(process, nested_status.second);
+    }
+
+    case Lisp::Op::var: {
+      cout << "lisp::op::var !" << Node::_to_str( code_list) <<"\n";
+      cout << "scope_current: " << scope_current(process) << "\n";
+      break;
     }
 
     case Lisp::Op::call:  {
@@ -275,13 +281,13 @@ Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, cons
 
   Node::OpStatusRef params_list_status = get_node(params_path);
   if(!params_list_status.first) {
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+    return {false, Node::create_error(Error::Type::InvalidOperation,  
       "Can't create arguments list for" + _to_str_ext(params_path) + " \n")};
   }
   size_t s =  params_list_status.second.size_container();
 
   if(params_list_status.second.size_container() != arg_list->size_container()) {
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+    return {false, Node::create_error(Error::Type::InvalidOperation,  
       "Can't create arguments list for " + _to_str_ext(params_path) + " size() are different  \n")};
   }
 
@@ -305,7 +311,7 @@ Node::OpStatus LispExpr::call(Node& process, Node& code_node) {
   MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
 
   if(code_node.type_ != Node::Type::Vector)
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+    return {false, Node::create_error(Error::Type::InvalidOperation,  
       "Can't call module_function != (module function)\n")};
 
   const auto& code_list =get<Node::Vector>(code_node.value_);
@@ -322,7 +328,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int 
 /*
   if(code_list.size() != 3 && start !=0) {
     cerr << "code list size! 3\n";
-    return {false, Node::create_error(Node::Error::Type::InvalidOperation,  
+    return {false, Node::create_error(Error::Type::InvalidOperation,  
       "Can't call module_function != (call (module function)(...))\n")};
 
   }
@@ -381,7 +387,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int 
   if(!code_list_status.first)  {
     cerr << _to_str_ext(call_path) << " path not found!\n";
     return  {false, Node::create_error(
-      Node::Error::Type::KeyNotFound, 
+      Error::Type::KeyNotFound, 
       "LispExpr::call(Node& process, Node::Vector& code_list) path node not found: " + _to_str_ext(call_path))};
   }
 
