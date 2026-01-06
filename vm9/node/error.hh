@@ -19,6 +19,7 @@ public:
     KeyNotFound, // e.g., calling 'add' with a duplicate map key
     IndexOutOfBounds,  // e.g., calling 'set' with an invalid list index
     IndexWrongType,  // e.g., calling 'set' with an invalid list index
+    EmptyContainer,  // get front() or back() when list,queu,vector is empty
     Incomplete,
     System,
     Parse,

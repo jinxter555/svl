@@ -18,6 +18,7 @@ void Error::init() {
   list[size_t(Type::KeyAlreadyExists)] = Node::create_error(Type::KeyAlreadyExists, "");
   list[size_t(Type::KeyNotFound)] = Node::create_error(Type::KeyNotFound, "");
   list[size_t(Type::IndexOutOfBounds)] = Node::create_error(Type::IndexOutOfBounds, "");
+  list[size_t(Type::EmptyContainer)] = Node::create_error(Type::EmptyContainer, "");
   list[size_t(Type::Incomplete)] = Node::create_error(Type::Incomplete, "");
   list[size_t(Type::System)] = Node::create_error(Type::System, "");
   list[size_t(Type::Parse)] = Node::create_error(Type::Parse, "");
@@ -46,6 +47,7 @@ string Error::_to_str(Type type) {
     case Type::KeyNotFound: return "KeyNotFound";
     case Type::IndexOutOfBounds: return "IndexOutOfBounds";
     case Type::IndexWrongType: return "IndexWrongType";
+    case Type::EmptyContainer: return "EmptyContainer";
     case Type::Incomplete:       return "Incomplete";
     case Type::System:       return "System";
     case Type::Parse:       return "Parse";

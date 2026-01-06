@@ -445,7 +445,7 @@ Node::OpStatus Node::clear() {
 Node::OpStatusRef Node::operator[](size_t index) {
   if(type_ != Type::Vector) {
     return { false,
-    *create_error(
+    Error::ref(
       Error::Type::InvalidOperation,
       "Operator[] (index) can only be used on vector nodes. Current type: " + _to_str(type_)
     )};
@@ -453,7 +453,7 @@ Node::OpStatusRef Node::operator[](size_t index) {
   Vector& list = get<Vector>(value_);
   if(index >= list.size()){
     string msg = "Index " + to_string(index) + " is out of bounds for list size " + to_string(list.size()) + ".";
-    return {false, *create_error(Error::Type::IndexOutOfBounds, msg)};
+    return {false, Error::ref(Error::Type::IndexOutOfBounds, msg)};
   }
   return {true, *list[index]};
 }
@@ -467,15 +467,15 @@ Node::OpStatusRef Node::operator[](size_t index) {
 
 Node::OpStatusRef Node::operator[](const string& key) {
   if(type_ != Type::Map){
-    return {false, *create_error(Error::Type::InvalidOperation, 
-    "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
+    return {false, Error::ref(Error::Type::InvalidOperation, 
+    "Operator[] (key: " + key +  ") can only be used on Map nodes. Current type: " + _to_str(type_))};
   }
   const Map& map = get<Map>(value_);
   auto it=map.find(key);
 
   if(it==map.end()) {
     string msg = "key '" + key + "' not found in map.";
-    return {false, *create_error(Error::Type::KeyNotFound, msg)};
+    return {false, Error::ref(Error::Type::KeyNotFound, msg)};
   }
   return {true, *it->second};
 }
@@ -487,27 +487,27 @@ Node::OpStatusRef Node::front() {
   switch(type_) {
   case Type::Vector: {
     if(empty_container()) return {false, 
-      *create_error(Error::Type::InvalidOperation,
+      Error::ref(Error::Type::EmptyContainer,
       "Node::front() is empty: " )};
     auto &list = get<Vector>(value_);
     return {true, *list.front()}; }
 
   case Type::List:{
     if(empty_container()) return {false, 
-      *create_error(Error::Type::InvalidOperation,
+      Error::ref(Error::Type::EmptyContainer,
       "Node::front() is empty: " )};
     auto &list = get<List>(value_);
     return {true, *list.front()}; }
 
   case Type::DeQue: {
     if(empty_container()) return {false, 
-      *create_error(Error::Type::InvalidOperation,
+      Error::ref(Error::Type::EmptyContainer,
       "Node::front() is empty: " )};
     auto &list = get<DeQue>(value_);
     return {true, *list.front()}; }
 
   default:  
-    return {false, *create_error(Error::Type::InvalidOperation,
+    return {false, Error::ref(Error::Type::IndexWrongType,
     "Node::type_ not vector, list or DeQue. Current type: " + _to_str(type_))};
   }
 }
@@ -518,11 +518,7 @@ Node::OpStatusRef Node::back() {
   switch(type_) {
   case Type::Vector: {
     if(empty_container()) {
-      cerr << "vector is empty !!!\n";
-      auto err = create_error(Error::Type::InvalidOperation, "Node::back() is empty: " );
-      //cout << "err: " << *err << "\n";
-      //return {false, *create_error(Error::Type::InvalidOperation, "Node::back() is empty: " )};
-      return {false, *err};
+      return {false, Error::ref(Error::Type::EmptyContainer, "Node::back() is empty: " )};
     }
 
     auto &list = get<Vector>(value_);
@@ -530,21 +526,21 @@ Node::OpStatusRef Node::back() {
 
   case Type::List:{
     if(empty_container()) return {false, 
-      *create_error(Error::Type::InvalidOperation,
+      Error::ref(Error::Type::EmptyContainer,
       "Node::back() is empty: " )};
     auto &list = get<List>(value_);
     return {true, *list.back()}; }
 
   case Type::DeQue: {
     if(empty_container()) return {false, 
-      *create_error(Error::Type::InvalidOperation,
+      Error::ref(Error::Type::EmptyContainer,
       "Node::back() is empty: " )};
 
     auto &list = get<DeQue>(value_);
     return {true, *list.back()}; }
 
   default:  
-    return {false, *create_error(Error::Type::InvalidOperation,
+    return {false, Error::ref(Error::Type::EmptyContainer,
     "Node::type_ not vector, list or DeQue. Current type: " + _to_str(type_))};
   }
 }

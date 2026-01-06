@@ -124,14 +124,14 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
 
 Node::OpStatusRef Node::get_node(const vector<string>&path) {
   if(type_ != Type::Map){
-    return {false, *create_error(Error::Type::InvalidOperation, 
-    "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
+    return {false, Error::ref(Error::Type::IndexWrongType, 
+    "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(type_))};
   }
 
   Node* current = this;
   for(const auto&key : path) {
     if(!current || current->type_ != Node::Type::Map) {
-      return {false, *create_error(Error::Type::InvalidOperation, 
+      return {false, Error::ref(Error::Type::IndexWrongType, 
       "current is nullptr, or not Map node/branch. Current key:" + key  +  
       ", Current type: " + _to_str(current->type_))};
     }
@@ -141,7 +141,7 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
     if(it==map.end()) {
       string msg = "key '" + key + "' not found in map.";
-      return {false, *create_error(Error::Type::KeyNotFound, msg)};
+      return {false, Error::ref(Error::Type::KeyNotFound, msg)};
     }
 
     current = it->second.get();
@@ -151,14 +151,14 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
 Node::OpStatusRef Node::get_node(const string&key) {
   if(type_ != Type::Map){
-    return {false, *create_error(Error::Type::InvalidOperation, 
-    "Operator[] (key) can only be used on Map nodes. Current type: " + _to_str(type_))};
+    return {false, Error::ref(Error::Type::IndexWrongType, 
+    "get_node(string&key) only works Map nodes. Current type: " + _to_str(type_))};
   }
   Node::Map& map = get<Node::Map>(value_);
   auto it = map.find(key);
   if(it==map.end()) {
     string msg = "key '" + key + "' not found in map.";
-    return {false, *create_error(Error::Type::KeyNotFound, msg)};
+    return {false, Error::ref(Error::Type::KeyNotFound, msg)};
   }
 
   return {true, *it->second.get()};
