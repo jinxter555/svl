@@ -153,30 +153,33 @@ Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
 
 Node::OpStatusRef LispExpr::scope_current(Node&process)  {
   MYLOGGER(trace_function, "LispExpr::scope_current(Node& process)", __func__, SLOG_FUNC_INFO);
+
   auto frames_ref_status = process[FRAMES];
-  if(!frames_ref_status.first) return frames_ref_status;
+  if(!frames_ref_status.first) {
+    cerr << "frames[] doesn't exist!\n";
+    return frames_ref_status;
+  }
+
   auto frame_ref_back_status = frames_ref_status.second.back();
   if(!frame_ref_back_status.first) return frame_ref_back_status;
+
   auto scopes_ref_status = frame_ref_back_status.second[SCOPES];
-  if(!scopes_ref_status.first) return scopes_ref_status;
   if(!scopes_ref_status.first) {
     cerr << "scopes[] doesn't exist!\n";
     return scopes_ref_status;
   }
-  cout << "\nscopes :" << scopes_ref_status << "\n";
 
-  auto r = scopes_ref_status.second.back();
-  if(!r.first) {
-   cerr << "scopes back() failed!"  << r.second._to_str() << "\n";
-   //cerr << "scopes back() failed!\n";
-  return  {true, null_node};
+  auto scope_ref_back_status = scopes_ref_status.second.back();
+  if(!scope_ref_back_status.first) {
+    cerr << "scopes back() failed!"  << scope_ref_back_status.second._to_str() << "\n";
   }
+  return  scope_ref_back_status;
 
   
-  auto s = r.second._to_str();
+  //auto s = r.second._to_str();
   //cout << "scopes back() " << scopes_ref_status.second << "\n";
   //cout << "scopes back() " << scopes_ref_status.second.back() << "\n";
-  return  {true, null_node};
+  //return  {true, null_node};
   //return scopes_ref_status.second.back();
 }
 
@@ -186,15 +189,19 @@ Node::OpStatusRef LispExpr::scope_current(Node&process)  {
 Node::OpStatus LispExpr::run_program() { 
   MYLOGGER(trace_function, "LispExpr::run_program()", __func__, SLOG_FUNC_INFO);
 
+
   vector<string> kernel_path=  LispExpr::lisp_path_module;
   //vector<string> code_path = {"Main", "function", "main", "code"};
   vector<string> code_path = {"Kernel", FUNCTION, "main", "code"};
 
   kernel_path.insert(kernel_path.end(), code_path.begin(), code_path.end());
 
+  unique_ptr<Node> scope; Node::OpStatus scope_status;
+
+  //  proc0
   auto frame = frame_create();
-  auto proc0  = process_get(0); 
-  if(!proc0.first) {
+  auto proc_0  = process_get(0); 
+  if(!proc_0.first) {
     return  {false, Node::create_error(
       Error::Type::InvalidOperation, 
       "LispExpr::run_program() Kernel proc 0 not found: " )};
@@ -202,7 +209,13 @@ Node::OpStatus LispExpr::run_program() {
 
   frame->set(CURRENT_MODULE, "Kernel");
   frame->set("Pi", 3.1415);
-  frame_push(proc0.second, move(frame));
+  frame_push(proc_0.second, move(frame));
+  scope = scope_create();
+  scope_status =  scope_push(proc_0.second, move(scope));
+  if(!scope_status.first) {
+    cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
+  }
+    
 
   Node::OpStatusRef code_list_status = get_node(kernel_path);
   if(!code_list_status.first)  {
@@ -212,11 +225,20 @@ Node::OpStatus LispExpr::run_program() {
       "LispExpr::run_program() path node not found: " + _to_str_ext(kernel_path))};
   }
 
+  // proc1
+
   auto frame1 = frame_create();
   frame1->set(CURRENT_MODULE, "Kernel");
   auto proc_1= process_create();
   frame_push(proc_1.second, move(frame1));
 
+  /*
+  scope = scope_create();
+  scope_status =  scope_push(proc_1.second, move(scope));
+  if(!scope_status.first) {
+    cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
+  }
+*/
 
   if(!proc_1.first) {
     cerr << "no proc1 aka init ! found!\n";
@@ -225,8 +247,8 @@ Node::OpStatus LispExpr::run_program() {
 
   //cout << "init: " << proc_1.second << "\n";
 
-  eval(proc_1.second, code_list_status.second);
-  return  {true, nullptr};
+  return eval(proc_1.second, code_list_status.second);
+  //return  {true, nullptr};
 
 }
 
@@ -242,4 +264,37 @@ Node::OpStatusRef  LispExpr::process_create() {
   return proc_status;
 
 
+}
+
+Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, int start)  {
+  MYLOGGER(trace_function, "LispExpr::var_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
+  auto scope_ref_status = scope_current(process);
+  if(!scope_ref_status.first) {
+    cerr 
+      << "something really wrong process: "  
+      << Kernel::pid(process) 
+      << " doesn't contain scope! "
+      << scope_ref_status.second
+      << "\n";
+
+    return {false, scope_ref_status.second.clone()};
+  }
+  auto scope_vars_status = scope_ref_status.second.get_node(VAR);
+  if(!scope_vars_status.first)  
+    return {false, scope_vars_status.second.clone()};
+
+
+  cout << "current pid : " << Kernel::pid(process) << "\n";;
+  //for(auto const &ele : var_list) {
+  size_t s = var_list.size();
+  for(size_t i=start; i<s; i++) {
+    auto const &ele = var_list[i];
+    cout << "ele:"  << *ele << "\n";
+    if(ele->type_ == Node::Type::Identifier) {
+      scope_vars_status.second.set(ele->_to_str(),  make_unique<Node>());
+      cout << "ididentifer:\n";
+    }
+  }
+  return {true, nullptr};
 }

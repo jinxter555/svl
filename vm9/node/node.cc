@@ -250,6 +250,7 @@ Node::OpStatus Node::set(const string&key, Lisp::Op v ) { return set(key, create
 Node::OpStatus Node::set(const string&key, ProcState v ) { return set(key, create(v)); }
 Node::OpStatus Node::set(const string&key, ControlFlow v ) { return set(key, create(v)); }
 Node::OpStatus Node::set(const string&key, const string&v ) { return set(key, create(v)); }
+//Node::OpStatus Node::set_null(const string& key) { return set(key, create()); }
 
 
 Node::Node(vector<ValueSimple> vl) : type_(Type::List) {

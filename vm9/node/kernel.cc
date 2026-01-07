@@ -20,6 +20,13 @@ void Kernel::bootstrap() {
   set_branch(path_to_processes, Node::create(move(vector_proc)));
 }
 
+Node::Integer Kernel::pid(Node&process) {
+  auto pid_status = process[PID];
+  if(!pid_status.first) return -1;
+  if(pid_status.second.type_!=Node::Type::Integer) return -1;
+  return get<Node::Integer>(pid_status.second.value_);
+}
+
 //------------------------------------------------------------------------
 Node::OpStatusRef Kernel::process_create() {
   MYLOGGER(trace_function, "LispExpr::proc_create()", __func__, SLOG_FUNC_INFO);

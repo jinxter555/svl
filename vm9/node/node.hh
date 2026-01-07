@@ -97,6 +97,7 @@ public:
   OpStatus set(const string& key, ProcState v);                                          
   OpStatus set(const string& key, ControlFlow);
   OpStatus set(const string& key, const string& v);                           
+  //OpStatus set_null(const string& key);
 
   OpStatus set(const vector<string>&path, unique_ptr<Node>child, bool override=false);
 

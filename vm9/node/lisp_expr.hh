@@ -75,6 +75,7 @@ public:
   Node::OpStatus scope_push(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
 
   Node::OpStatusRef scope_current(Node&process) ; // 
+  Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, int start=0) ; // 
   Node::OpStatusRef var_current(Node&process) ; // 
   Node::OpStatusRef immute_current(Node&process) ; // 
 

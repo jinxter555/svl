@@ -112,8 +112,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
 
     case Lisp::Op::var: {
       cout << "lisp::op::var !" << Node::_to_str( code_list) <<"\n";
-      cout << "scope_current: " << scope_current(process) << "\n";
-      break;
+      //cout << "scope_current: " << scope_current(process) << "\n";
+      return var_attach(process, code_list, 1);
     }
 
     case Lisp::Op::call:  {

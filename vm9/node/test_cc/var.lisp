@@ -3,7 +3,7 @@
     (
 ;    (print "hello, world1\n")    (print "hello, world2\n")
     (var v1 v2 (s1 "hello") (s2 "world"))
-    ; (p55 (11111 22222))
+     (p55 (11111 22222))
     )
   )
 

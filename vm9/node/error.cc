@@ -10,9 +10,10 @@ Node::Vector Error::list = {};
 //vector<unique_ptr<Node>> Error::list;
 
 Error::Error() {}
+Error::Error(Type t, string msg) : type_(t), message_(msg) {}
+
 void Error::init() {
   list.resize(size_t(Type::Unknown)+1);
-
   list[size_t(Error::Type::DivideByZero)] =  Node::create_error(Type::DivideByZero, "");
   list[size_t(Type::InvalidOperation)] =  Node::create_error(Type::InvalidOperation, "");
   list[size_t(Type::KeyAlreadyExists)] = Node::create_error(Type::KeyAlreadyExists, "");
@@ -25,9 +26,6 @@ void Error::init() {
   list[size_t(Type::User)] = Node::create_error(Type::User, "");
   list[size_t(Type::Unknown)] = Node::create_error(Type::Unknown, "");
 }
-
-Error::Error(Type t, string msg) : type_(t), message_(msg) {}
-
 /*
 Node::OpStatusRef Error::operator[](Type t) {
 }*/
