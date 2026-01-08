@@ -50,7 +50,7 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
 
 //------------------------------------------------------------------------
 // symbol lookup 
-Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
+Node::OpStatusRef LispExpr::arg_lookup(Node&process, const string&name ) {
   MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
   auto frames_ref_status = process[FRAMES];
@@ -61,6 +61,13 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
   if(!arg_ref_status.first) return arg_ref_status;
   return arg_ref_status.second[name];
 }
+Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
+  auto arg_ref = arg_lookup(process, name);
+  if(arg_ref.first) return arg_ref;
+  return arg_ref;
+}
+
+
 //------------------------------------------------------------------------
 // eval node 
 Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
@@ -75,7 +82,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   case Node::Type::Identifier: {
     auto name = get<string>(code_node.value_);
     auto rv_ref_status = symbol_lookup(process, name  );
-    if(!rv_ref_status.first) return {false, rv_ref_status.second.clone()};
+    if(!rv_ref_status.first) {
+      cerr << "Identifier: " << name << " not found!\n";
+      return {false, rv_ref_status.second.clone()};
+    }
     return {true, rv_ref_status.second.clone()};
   }}
 
@@ -111,9 +121,14 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     }
 
     case Lisp::Op::var: {
-      cout << "lisp::op::var !" << Node::_to_str( code_list) <<"\n";
+      //cout << "lisp::op::var !" << Node::_to_str( code_list) <<"\n";
       //cout << "scope_current: " << scope_current(process) << "\n";
       return var_attach(process, code_list, 1);
+    }
+    case Lisp::Op::assign: {
+      cout << "lisp::op::assign !" << Node::_to_str( code_list) <<"\n";
+      return assign_attach(process, code_list, 1);
+      break;
     }
 
     case Lisp::Op::call:  {
@@ -137,7 +152,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
       //cout << "Identifier var! " << code_list[0]->_to_str() << " need to lookup\n";
       //cout << "symbol lookup " << symbol_lookup(process, code_list[0]->_to_str()) << "\n";
       auto rv_ref_status = symbol_lookup(process, code_list[0]->_to_str());
-      if(!rv_ref_status.first) return {false, rv_ref_status.second.clone()};
+      if(!rv_ref_status.first) {
+        cerr << "symbol lookup failed!\n";
+        return { false, rv_ref_status.second.clone() };
+      }
       return {true, rv_ref_status.second.clone()};
 
     } else if(s > 1) {

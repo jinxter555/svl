@@ -483,7 +483,7 @@ Node::OpStatusRef Node::operator[](const string& key) {
 
 //------------------------------------------------------------------------
 Node::OpStatusRef Node::front() {
-  MYLOGGER(trace_function, "Node::front()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Node::front()", __func__, SLOG_FUNC_INFO+31);
 
   switch(type_) {
   case Type::Vector: {
@@ -514,7 +514,7 @@ Node::OpStatusRef Node::front() {
 }
 
 Node::OpStatusRef Node::back() {
-  MYLOGGER(trace_function, "Node::back()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "Node::back()", __func__, SLOG_FUNC_INFO+31);
 
   switch(type_) {
   case Type::Vector: {

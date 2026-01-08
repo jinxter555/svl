@@ -15,6 +15,7 @@
       (print (x))
       (print "\n")
       (print "-" x "-")
+      (print "-" z "-")
       (print "\n")
       (p56 (66 2))
     )

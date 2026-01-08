@@ -70,15 +70,19 @@ public:
 
   unique_ptr<Node> frame_create() const ; // create a frame 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
+  Node::OpStatusRef frame_current(Node&process) ; // 
 
   unique_ptr<Node> scope_create() const ; // create a scope 
   Node::OpStatus scope_push(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
-
   Node::OpStatusRef scope_current(Node&process) ; // 
+
   Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, int start=0) ; // 
+  Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, int start=0) ; // 
   Node::OpStatusRef var_current(Node&process) ; // 
   Node::OpStatusRef immute_current(Node&process) ; // 
 
+  Node::OpStatusRef arg_lookup(Node&process, const string&name ) ; // 
+  Node::OpStatusRef var_lookup(Node&process, const string&name ) ; // 
   Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree

@@ -117,6 +117,22 @@ Node::OpStatus LispExpr::frame_push(Node&process, unique_ptr<Node>frame) {
   return {true, Node::create(true)};
 
 }
+Node::OpStatusRef LispExpr::frame_current(Node&process)  {
+  MYLOGGER(trace_function, "LispExpr::frame_current(Node& process)", __func__, SLOG_FUNC_INFO);
+
+  auto frames_ref_status = process[FRAMES];
+  if(!frames_ref_status.first) {
+    cerr << "frames[] doesn't exist!\n";
+    return frames_ref_status;
+  }
+
+  auto frame_ref_back_status = frames_ref_status.second.back();
+  if(!frame_ref_back_status.first) {
+    cerr << "frames back() doesn't exist!\n";
+  }
+  return frame_ref_back_status;
+}
+
 //------------------------------------------------------------------------
 // create a new scope with var and immute
 unique_ptr<Node> LispExpr::scope_create() const {
@@ -129,13 +145,9 @@ unique_ptr<Node> LispExpr::scope_create() const {
 
 Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
   MYLOGGER(trace_function, "LispExpr::scope_push(process, scope)", __func__, SLOG_FUNC_INFO);
-  auto frames_ref_status = process.get_node(FRAMES);
-  if(!frames_ref_status.first)
-    return {false, Node::create_error(Error::Type::Unknown, "Can't get frames")};
 
-  //cout << "frame status " <<  frames_ref_status << "\n";
+  auto last_frame_ref_status = frame_current(process);
 
-  auto last_frame_ref_status = frames_ref_status.second.back();
   if(!last_frame_ref_status.first) {
     return {false, Node::create_error(Error::Type::Unknown, "Can't get last frame aka back()")};
   }
@@ -154,13 +166,9 @@ Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
 Node::OpStatusRef LispExpr::scope_current(Node&process)  {
   MYLOGGER(trace_function, "LispExpr::scope_current(Node& process)", __func__, SLOG_FUNC_INFO);
 
-  auto frames_ref_status = process[FRAMES];
-  if(!frames_ref_status.first) {
-    cerr << "frames[] doesn't exist!\n";
-    return frames_ref_status;
-  }
 
-  auto frame_ref_back_status = frames_ref_status.second.back();
+  auto frame_ref_back_status = frame_current(process);
+
   if(!frame_ref_back_status.first) return frame_ref_back_status;
 
   auto scopes_ref_status = frame_ref_back_status.second[SCOPES];
@@ -266,6 +274,7 @@ Node::OpStatusRef  LispExpr::process_create() {
 Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, int start)  {
   MYLOGGER(trace_function, "LispExpr::var_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
+
   auto scope_ref_status = scope_current(process);
   if(!scope_ref_status.first) {
     cerr 
@@ -300,4 +309,31 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
     default: return {false, Node::create_error(Error::Type::Unknown, "Unknown var error")}; }
   }
   return {true, Node::create(true)};
+}
+Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_list, int start) {
+  MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
+  auto &identifier = var_list[start];
+  auto &value_expr = var_list[start+1];
+  auto value_status = eval(process, *value_expr);
+  if(!value_status.first) return value_status;
+
+  auto scope_ref_status = scope_current(process);
+  if(!scope_ref_status.first) {
+    cerr 
+      << "something really wrong process: "  
+      << Kernel::pid(process) 
+      << " doesn't contain scope! "
+      << scope_ref_status.second
+      << "\n";
+
+    return {false, scope_ref_status.second.clone()};
+  }
+  auto scope_vars_status = scope_ref_status.second.get_node(VAR);
+  if(!scope_vars_status.first)  
+    return {false, scope_vars_status.second.clone()};
+
+
+  return scope_vars_status.second.set(identifier->_to_str(),  move(value_status.second));
+
 }

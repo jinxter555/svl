@@ -199,7 +199,7 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
 
 
 //------------------------------------------------------------------------ build parse
-// asssumes Node.value_ contains a Node::List of nodes
+// assumes Node.value_ contains a Node::List of nodes
 
 //-------------------------------- vector
 
@@ -301,7 +301,7 @@ void LispExpr::set_keywords() {
   map_->set("vector", Op::vector);
   map_->set("deque", Op::deque);
   map_->set("var", Op::var);
-  map_->set("asssign", Op::assign);
+  map_->set("assign", Op::assign);
   map_->set("add", Op::add);
   map_->set("sub", Op::sub); 
   map_->set("mul", Op::mul);
