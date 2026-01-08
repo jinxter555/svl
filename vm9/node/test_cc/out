@@ -1,9 +1,188 @@
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mhello, world
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mhello, p55, 55
-[0m[0m[0m[0mhello, p55, 55
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m
-
-[0m[0m[0m[0m[0mhello, world
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mhello, p55, 55
-[0m[0m[0m[0mhello, p55, 55
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mlisp::op::var !Vector[var, v1, v2, Vector[s1, hello], Vector[s2, world]]
+[0m[0m[0m[0mcurrent pid : 1
+ele:v1
+ididentifer:
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mhello, p55, 55
+[0m[0m[0m[0m[0m[0m[0m[0m[0m11111[0m[0m
+[0m[0m[0m[0m[0m22222[0m[0m
+[0m[0m[0m[0m[0mlisp::op::var !Vector[var, v1, v2, Vector[s1, hello], Vector[s2, world]]
+[0m[0m[0m[0mcurrent pid : 1
+ele:v1
+ididentifer:
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mLisp Interpreter
+print recursive:
+{ (Map, size=1) 
+  - universe (Type: Map): { (Map, size=2) 
+   - Lang (Type: Map): { (Map, size=2) 
+    - Lisp (Type: Map): { (Map, size=2) 
+     - Keyword (Type: Map): { (Map, size=30) 
+      - % (Type: LispOp): mod
+      - add (Type: LispOp): add
+      - root (Type: LispOp): root
+      - send (Type: LispOp): send
+      - deque (Type: LispOp): deque
+      - - (Type: LispOp): sub
+      - identifier (Type: LispOp): identifier
+      - noop (Type: LispOp): noop
+      - scalar (Type: LispOp): scalar
+      - sub (Type: LispOp): sub
+      - defun (Type: LispOp): defun
+      - error (Type: LispOp): error
+      - list (Type: LispOp): list
+      - call (Type: LispOp): call
+      - var (Type: LispOp): var
+      - def (Type: LispOp): def
+      - mul (Type: LispOp): mul
+      - cond (Type: LispOp): cond
+      - vector (Type: LispOp): vector
+      - kernel (Type: LispOp): kernel
+      - div (Type: LispOp): div
+      - + (Type: LispOp): add
+      - system (Type: LispOp): system
+      - ret (Type: LispOp): ret
+      - mod (Type: LispOp): mod
+      - print (Type: LispOp): print
+      - asssign (Type: LispOp): assign
+      - module (Type: LispOp): module
+      - * (Type: LispOp): mul
+      - / (Type: LispOp): div
+    }
+     - Module (Type: Map): { (Map, size=1) 
+      - Kernel (Type: Map): { (Map, size=1) 
+       - function (Type: Map): { (Map, size=2) 
+        - p55 (Type: Map): { (Map, size=3) 
+         - code (Type: Vector): Vector[(size=3) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, p55, 55
+"
+         ]
+          - [1, Type: Vector]: Vector[(size=5) 
+           - [0, Type: LispOp]: print
+           - [1, Type: Identifier]: "x"
+           - [2, Type: String]: "
+"
+           - [3, Type: Identifier]: "y"
+           - [4, Type: String]: "
+"
+         ]
+          - [2, Type: Vector]: Vector[(size=5) 
+           - [0, Type: LispOp]: var
+           - [1, Type: Identifier]: "v1"
+           - [2, Type: Identifier]: "v2"
+           - [3, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "s1"
+            - [1, Type: String]: "hello"
+          ]
+           - [4, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "s2"
+            - [1, Type: String]: "world"
+          ]
+         ]
+        ]
+         - description (Type: String): "my func p55"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+        ]
+       }
+        - main (Type: Map): { (Map, size=3) 
+         - code (Type: Vector): Vector[(size=2) 
+          - [0, Type: Vector]: Vector[(size=5) 
+           - [0, Type: LispOp]: var
+           - [1, Type: Identifier]: "v1"
+           - [2, Type: Identifier]: "v2"
+           - [3, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "s1"
+            - [1, Type: String]: "hello"
+          ]
+           - [4, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "s2"
+            - [1, Type: String]: "world"
+          ]
+         ]
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "p55"
+           - [1, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Integer]: 11111
+            - [1, Type: Integer]: 22222
+          ]
+         ]
+        ]
+         - description (Type: Identifier): "my_func_des"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+        ]
+       }
+      }
+     }
+    }
+   }
+    - Atoms (Type: Map): { (Map, size=7) 
+     - 4625761978203795338 (Type: String): "set"
+     - -4705652595650921993 (Type: String): "get"
+     - 3211040718132763761 (Type: String): "class"
+     - 1325213333779622127 (Type: String): "lvar"
+     - 7765881685828984094 (Type: String): "mvar"
+     - -2331651408838895954 (Type: String): "fun"
+     - -1154038927901484491 (Type: String): "module"
+   }
+  }
+   - Process (Type: Vector): Vector[(size=2) 
+    - [0, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=1) 
+      - [0, Type: Map]: { (Map, size=3) 
+       - Pi (Type: Float): 3.14
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=2) 
+         - immute (Type: Map): { (Map, size=0) 
+        }
+         - var (Type: Map): { (Map, size=0) 
+        }
+       }
+      ]
+     }
+    ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 0
+   }
+    - [1, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=2) 
+      - [0, Type: Map]: { (Map, size=2) 
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=2) 
+         - immute (Type: Map): { (Map, size=0) 
+        }
+         - var (Type: Map): { (Map, size=1) 
+          - v1 (Type: Null): Null
+        }
+       }
+      ]
+     }
+      - [1, Type: Map]: { (Map, size=4) 
+       - args (Type: Map): { (Map, size=2) 
+        - y (Type: Integer): 22222
+        - x (Type: Integer): 11111
+      }
+       - current_function (Type: String): "p55"
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=2) 
+         - immute (Type: Map): { (Map, size=0) 
+        }
+         - var (Type: Map): { (Map, size=1) 
+          - v1 (Type: Null): Null
+        }
+       }
+      ]
+     }
+    ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 1
+   }
+  ]
+ }
+}[0m[0m

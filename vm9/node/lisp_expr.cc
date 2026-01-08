@@ -226,19 +226,16 @@ Node::OpStatus LispExpr::run_program() {
   }
 
   // proc1
-
   auto frame1 = frame_create();
   frame1->set(CURRENT_MODULE, "Kernel");
   auto proc_1= process_create();
   frame_push(proc_1.second, move(frame1));
 
-  /*
   scope = scope_create();
   scope_status =  scope_push(proc_1.second, move(scope));
   if(!scope_status.first) {
     cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
   }
-*/
 
   if(!proc_1.first) {
     cerr << "no proc1 aka init ! found!\n";
@@ -285,16 +282,22 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
     return {false, scope_vars_status.second.clone()};
 
 
-  cout << "current pid : " << Kernel::pid(process) << "\n";;
-  //for(auto const &ele : var_list) {
+  //cout << "current pid : " << Kernel::pid(process) << "\n";;
   size_t s = var_list.size();
   for(size_t i=start; i<s; i++) {
     auto const &ele = var_list[i];
-    cout << "ele:"  << *ele << "\n";
-    if(ele->type_ == Node::Type::Identifier) {
+    switch(ele->type_) {
+    case Node::Type::Identifier: {
       scope_vars_status.second.set(ele->_to_str(),  make_unique<Node>());
-      cout << "ididentifer:\n";
-    }
+      break; }
+    case Node::Type::Vector: {
+      auto v_name_ref_1 = (*ele)[0];
+      auto v_var_ref_1 = (*ele)[1];
+      auto v = eval(process, v_var_ref_1.second);
+      if(!v.first) return v;
+      scope_vars_status.second.set(v_name_ref_1.second._to_str(),  move(v.second));
+      break; }
+    default: return {false, Node::create_error(Error::Type::Unknown, "Unknown var error")}; }
   }
-  return {true, nullptr};
+  return {true, Node::create(true)};
 }
