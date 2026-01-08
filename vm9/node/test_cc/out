@@ -1,15 +1,5 @@
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mlisp::op::var !Vector[var, v1, v2, Vector[s1, hello], Vector[s2, world]]
-[0m[0m[0m[0mcurrent pid : 1
-ele:v1
-ididentifer:
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mhello, p55, 55
-[0m[0m[0m[0m[0m[0m[0m[0m[0m11111[0m[0m
-[0m[0m[0m[0m[0m22222[0m[0m
-[0m[0m[0m[0m[0mlisp::op::var !Vector[var, v1, v2, Vector[s1, hello], Vector[s2, world]]
-[0m[0m[0m[0mcurrent pid : 1
-ele:v1
-ididentifer:
-[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mLisp Interpreter
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mscope var: true: value: {"s1": hello, "s2": world, "v3": 3.14, "v2": 12345, "v1": Null}[0m
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mLisp Interpreter
 print recursive:
 { (Map, size=1) 
   - universe (Type: Map): { (Map, size=2) 
@@ -20,13 +10,11 @@ print recursive:
       - add (Type: LispOp): add
       - root (Type: LispOp): root
       - send (Type: LispOp): send
+      - assign (Type: LispOp): assign
       - deque (Type: LispOp): deque
       - - (Type: LispOp): sub
       - identifier (Type: LispOp): identifier
       - noop (Type: LispOp): noop
-      - scalar (Type: LispOp): scalar
-      - sub (Type: LispOp): sub
-      - defun (Type: LispOp): defun
       - error (Type: LispOp): error
       - list (Type: LispOp): list
       - call (Type: LispOp): call
@@ -36,13 +24,15 @@ print recursive:
       - cond (Type: LispOp): cond
       - vector (Type: LispOp): vector
       - kernel (Type: LispOp): kernel
+      - scalar (Type: LispOp): scalar
+      - sub (Type: LispOp): sub
+      - defun (Type: LispOp): defun
       - div (Type: LispOp): div
       - + (Type: LispOp): add
       - system (Type: LispOp): system
       - ret (Type: LispOp): ret
       - mod (Type: LispOp): mod
       - print (Type: LispOp): print
-      - asssign (Type: LispOp): assign
       - module (Type: LispOp): module
       - * (Type: LispOp): mul
       - / (Type: LispOp): div
@@ -88,25 +78,29 @@ print recursive:
        }
         - main (Type: Map): { (Map, size=3) 
          - code (Type: Vector): Vector[(size=2) 
-          - [0, Type: Vector]: Vector[(size=5) 
+          - [0, Type: Vector]: Vector[(size=6) 
            - [0, Type: LispOp]: var
            - [1, Type: Identifier]: "v1"
-           - [2, Type: Identifier]: "v2"
+           - [2, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "v2"
+            - [1, Type: Integer]: 12345
+          ]
            - [3, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "v3"
+            - [1, Type: Float]: 3.14
+          ]
+           - [4, Type: Vector]: Vector[(size=2) 
             - [0, Type: Identifier]: "s1"
             - [1, Type: String]: "hello"
           ]
-           - [4, Type: Vector]: Vector[(size=2) 
+           - [5, Type: Vector]: Vector[(size=2) 
             - [0, Type: Identifier]: "s2"
             - [1, Type: String]: "world"
           ]
          ]
           - [1, Type: Vector]: Vector[(size=2) 
-           - [0, Type: Identifier]: "p55"
-           - [1, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Integer]: 11111
-            - [1, Type: Integer]: 22222
-          ]
+           - [0, Type: LispOp]: print
+           - [1, Type: Identifier]: "v2"
          ]
         ]
          - description (Type: Identifier): "my_func_des"
@@ -149,31 +143,18 @@ print recursive:
      - pid (Type: Integer): 0
    }
     - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=2) 
+     - frames (Type: Vector): Vector[(size=1) 
       - [0, Type: Map]: { (Map, size=2) 
        - current_module (Type: String): "Kernel"
        - scopes (Type: Vector): Vector[(size=1) 
         - [0, Type: Map]: { (Map, size=2) 
          - immute (Type: Map): { (Map, size=0) 
         }
-         - var (Type: Map): { (Map, size=1) 
-          - v1 (Type: Null): Null
-        }
-       }
-      ]
-     }
-      - [1, Type: Map]: { (Map, size=4) 
-       - args (Type: Map): { (Map, size=2) 
-        - y (Type: Integer): 22222
-        - x (Type: Integer): 11111
-      }
-       - current_function (Type: String): "p55"
-       - current_module (Type: String): "Kernel"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=0) 
-        }
-         - var (Type: Map): { (Map, size=1) 
+         - var (Type: Map): { (Map, size=5) 
+          - s1 (Type: String): "hello"
+          - s2 (Type: String): "world"
+          - v3 (Type: Float): 3.14
+          - v2 (Type: Integer): 12345
           - v1 (Type: Null): Null
         }
        }

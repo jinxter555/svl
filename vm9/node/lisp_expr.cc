@@ -329,11 +329,11 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
 
     return {false, scope_ref_status.second.clone()};
   }
-  auto scope_vars_status = scope_ref_status.second.get_node(VAR);
-  if(!scope_vars_status.first)  
-    return {false, scope_vars_status.second.clone()};
+  auto scope_vars_ref_status = scope_ref_status.second.get_node(VAR);
+  if(!scope_vars_ref_status.first)  
+    return {false, scope_vars_ref_status.second.clone()};
 
 
-  return scope_vars_status.second.set(identifier->_to_str(),  move(value_status.second));
+  return scope_vars_ref_status.second.set(identifier->_to_str(),  move(value_status.second));
 
 }

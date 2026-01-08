@@ -11,13 +11,14 @@
   )
   (defun p55 (x y) "my func p55" 
     (
+      (var (z "zzz"))
       (print "hello, p55, 55\n")
       (print (x))
       (print "\n")
       (print "-" x "-")
       (print "-" z "-")
       (print "\n")
-      (p56 (66 2))
+    ;  (p56 (66 2))
     )
   )
   (defun p56 (x y) "my func p56" 

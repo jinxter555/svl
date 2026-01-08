@@ -51,7 +51,7 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
 //------------------------------------------------------------------------
 // symbol lookup 
 Node::OpStatusRef LispExpr::arg_lookup(Node&process, const string&name ) {
-  MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::arg_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
   auto frames_ref_status = process[FRAMES];
   if(!frames_ref_status.first) return frames_ref_status;
@@ -61,10 +61,32 @@ Node::OpStatusRef LispExpr::arg_lookup(Node&process, const string&name ) {
   if(!arg_ref_status.first) return arg_ref_status;
   return arg_ref_status.second[name];
 }
+
+Node::OpStatusRef LispExpr::var_lookup(Node&process, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::var_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
+  auto scope_ref_status = scope_current(process);
+  if(!scope_ref_status.first) {
+    cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
+    return scope_ref_status;
+  }
+  auto scope_vars_ref_status = scope_ref_status.second.get_node(VAR);
+  if(!scope_vars_ref_status.first) {
+    cerr << "var[] lookup failed!" <<  scope_vars_ref_status.second._to_str() << "\n";
+    return scope_vars_ref_status;
+  }
+  cout  <<"scope var: " << scope_vars_ref_status << "\n";
+  return scope_vars_ref_status.second[name];
+}
+
 Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
   auto arg_ref = arg_lookup(process, name);
   if(arg_ref.first) return arg_ref;
-  return arg_ref;
+  auto var_ref = var_lookup(process, name);
+  if(var_ref.first) return var_ref;
+  return var_ref;
 }
 
 
