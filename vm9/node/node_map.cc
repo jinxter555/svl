@@ -13,6 +13,9 @@ Node::OpStatus Node::merge(unique_ptr<Node> n, bool override) {
     }
     case Type::List: {
     }
+    default: {
+
+    }
   }
   return {false, Node::create(false)};
 }

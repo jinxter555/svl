@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-CC=g++ -g -std=c++23 
+CC=g++ -g -std=c++23 -Wall
 # Define temporary directory
 TMPDIR = /dev/shm
 MAKE=make

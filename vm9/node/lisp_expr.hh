@@ -78,11 +78,13 @@ public:
 
   Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, int start=0) ; // 
   Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, int start=0) ; // 
-  Node::OpStatusRef var_current(Node&process) ; // 
-  Node::OpStatusRef immute_current(Node&process) ; // 
+  Node::OpStatusRef var_current(Node&scope) ; // 
+  Node::OpStatusRef immute_current(Node&scope) ; // 
 
   Node::OpStatusRef arg_lookup(Node&process, const string&name ) ; // 
-  Node::OpStatusRef var_lookup(Node&process, const string&name ) ; // 
+  // var lookup should pass frame 
+  Node::OpStatusRef var_lookup(Node&scope, const string&name ) ; //  should use
+  Node::OpStatusRef immute_lookup(Node&scope, const string&name ) ; //  should use
   Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree

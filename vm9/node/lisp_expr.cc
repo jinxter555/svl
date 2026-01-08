@@ -125,6 +125,7 @@ Node::OpStatusRef LispExpr::frame_current(Node&process)  {
     cerr << "frames[] doesn't exist!\n";
     return frames_ref_status;
   }
+  auto s = frames_ref_status.second.size();
 
   auto frame_ref_back_status = frames_ref_status.second.back();
   if(!frame_ref_back_status.first) {
@@ -313,7 +314,7 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
 Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_list, int start) {
   MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
-  auto &identifier = var_list[start];
+  auto identifier = var_list[start]->_to_str();
   auto &value_expr = var_list[start+1];
   auto value_status = eval(process, *value_expr);
   if(!value_status.first) return value_status;
@@ -333,7 +334,21 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   if(!scope_vars_ref_status.first)  
     return {false, scope_vars_ref_status.second.clone()};
 
+  auto scope_immute_ref_status = scope_ref_status.second.get_node(IMMUTE);
+  if(!scope_immute_ref_status.first)  
+    return {false, scope_immute_ref_status.second.clone()};
 
-  return scope_vars_ref_status.second.set(identifier->_to_str(),  move(value_status.second));
+
+  if(!scope_vars_ref_status.second.m_has_key(identifier)){
+    if(!scope_immute_ref_status.second.m_has_key(identifier)) 
+      return scope_immute_ref_status.second.set(identifier,  move(value_status.second));
+    else  {
+      cerr << "identifier " << identifier  <<" can not be reassigned\n";
+      return {false, nullptr};
+    }
+  }
+
+
+  return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
 
 }

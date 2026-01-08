@@ -1,4 +1,3 @@
-#pragma
 #include <iostream>
 #include "error.hh"
 #include "node.hh"
@@ -9,7 +8,7 @@
 Node::Vector Error::list = {};
 //vector<unique_ptr<Node>> Error::list;
 
-Error::Error() {}
+//Error::Error() {}
 Error::Error(Type t, string msg) : type_(t), message_(msg) {}
 
 void Error::init() {
@@ -20,6 +19,9 @@ void Error::init() {
   list[size_t(Type::KeyNotFound)] = Node::create_error(Type::KeyNotFound, "");
   list[size_t(Type::IndexOutOfBounds)] = Node::create_error(Type::IndexOutOfBounds, "");
   list[size_t(Type::EmptyContainer)] = Node::create_error(Type::EmptyContainer, "");
+  list[size_t(Type::ModuleNotFound)] = Node::create_error(Type::ModuleNotFound, "");
+  list[size_t(Type::SymbolNotFound)] = Node::create_error(Type::SymbolNotFound, "");
+  list[size_t(Type::FunctionNotFound)] = Node::create_error(Type::FunctionNotFound, "");
   list[size_t(Type::Incomplete)] = Node::create_error(Type::Incomplete, "");
   list[size_t(Type::System)] = Node::create_error(Type::System, "");
   list[size_t(Type::Parse)] = Node::create_error(Type::Parse, "");
@@ -46,6 +48,9 @@ string Error::_to_str(Type type) {
     case Type::IndexOutOfBounds: return "IndexOutOfBounds";
     case Type::IndexWrongType: return "IndexWrongType";
     case Type::EmptyContainer: return "EmptyContainer";
+    case Type::ModuleNotFound: return "ModuleNotfound";
+    case Type::FunctionNotFound: return "FunctionNotFound";
+    case Type::SymbolNotFound: return "SymbolNotFound";
     case Type::Incomplete:       return "Incomplete";
     case Type::System:       return "System";
     case Type::Parse:       return "Parse";

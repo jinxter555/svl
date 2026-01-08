@@ -20,6 +20,9 @@ public:
     IndexOutOfBounds,  // e.g., calling 'set' with an invalid list index
     IndexWrongType,  // e.g., calling 'set' with an invalid list index
     EmptyContainer,  // get front() or back() when list,queu,vector is empty
+    ModuleNotFound,  //  module
+    FunctionNotFound,  // function not found
+    SymbolNotFound,  // var, immute, arg not found
     Incomplete,
     System,
     Parse,
@@ -27,7 +30,7 @@ public:
     Unknown,
   };
 
-  Error();
+  //Error();
   Error(Type t, const string msg="");
   static Node& ref(Type t); 
   static Node& ref(Type t, const string& msg); 
@@ -36,6 +39,6 @@ public:
 
   static vector<unique_ptr<Node>> list;
 private: 
-  string message_;
   Type type_;
+  string message_;
 };

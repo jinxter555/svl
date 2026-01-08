@@ -64,7 +64,7 @@ ScopeLogger::~ScopeLogger() {
 
   out << color << s << " Exit:  " << spacing() << msg_out << endl; 
   const std::string reset("\033[0m");
-  cout << reset;
+  out << reset;
 
   levels.pop_back();
 
@@ -89,7 +89,7 @@ void ScopeLogger::msg(const string& msg, int verbose_level) {
   out << color << s << " -msg-  " << spacing() << " " << msg << "\n";
 
   const std::string reset("\033[0m");
-  cout << reset;
+  out << reset;
 }
 
 

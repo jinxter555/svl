@@ -17,9 +17,9 @@ Commandline::Commandline(int argc, char* argv[]) {
       case 'r': { opt_run= true; break;}
       case 'p': { opt_print= true; break;}
       case 'l': {
-        if(optarg == "lisp") lisp_lang = true;
-        if(optarg == "svlm") svlm_lang = true;
-        if(optarg == "asm") assembly_lang = true;
+        if(optarg == string("lisp")) lisp_lang = true;
+        if(optarg == string("svlm")) svlm_lang = true;
+        if(optarg == string("asm")) assembly_lang = true;
         break;
       }
       case 'f': infile_name  = optarg; opt_file=true; break;
@@ -55,12 +55,9 @@ void Commandline::printout() {
       << std::endl;
   */
   std::cout << "\n";
-  for (auto const& str : arguments)
+  for(auto const& str : arguments) 
     std::cout << str << " ";
-    std::cout << "\n";
-
-  std::cout << "infile:" << infile_name << "\n";
-
+  std::cout << "\ninfile:" << infile_name << "\n";
 
   if(opt_interactive)
     std::cout << "interactive: true" << " ";

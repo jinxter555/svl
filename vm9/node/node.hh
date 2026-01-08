@@ -29,7 +29,7 @@ public:
   enum class ProcState { init, run, sleep, suspend, stop, wait };
   enum class ControlFlow { cf_run, cf_break, cf_continue, cf_return, cf_return_val};
 
-  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Mvar, Lvar, Shared };
+  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Shared };
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
   using List = list<unique_ptr<Node>>;
@@ -206,7 +206,7 @@ protected:
   Value value_;
   Type type_;
 private:
-  inline bool m_has_key(const string&key);
+  bool m_has_key(const string&key);
 };
 
 

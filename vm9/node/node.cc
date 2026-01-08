@@ -34,8 +34,10 @@ unique_ptr<Node> Node::create(Type t) {
   case Type::DeQue: {
     Node::DeQue q;
     return make_unique<Node>(move(q));
-  }}
+  }
+  default: return make_unique<Node>();}
 //  throw std::runtime_error("Unsupported Node::create() type" + _to_str(t)); 
+
   return make_unique<Node>();
 
 }
@@ -94,7 +96,11 @@ Node::Node(Type t)
     DeQue l={};
     value_ = move(l);
     break;}
-  }
+  default: {
+    value_ = monostate{};
+    type_ = Type::Null;
+
+  }}
 }
 
 
@@ -159,8 +165,7 @@ unique_ptr<Node> Node::clone() const {
       auto node_ptr = create(arg);
       if(type_ == Type::Identifier) node_ptr->set_identifier();
       if(type_ == Type::Atom) node_ptr->set_atom();
-      return move(node_ptr);
-
+      return node_ptr;
     }
 
     else if constexpr(is_same_v<T, List>) {

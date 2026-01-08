@@ -35,6 +35,7 @@ string Node::_to_str(Type type) {
     case Type::DeQue: return "DeQue";
     case Type::Map: return "Map";
     case Type::Atom: return "Atom";
+    case Type::Shared: return "Shared";
     case Type::LispOp: return "LispOp";
     case Type::ProcState: return "ProcessState";
     case Type::ControlFlow: return "ControlFlow";
@@ -69,10 +70,8 @@ string Node::_to_str(ControlFlow cf) {
 
 string Node::_to_str() const {
   MYLOGGER(trace_function, "Node::_to_str()", __func__, SLOG_TO_STR);
-  if(this==nullptr) { 
-    MYLOGGER_MSG(trace_function, string("this==nullptr")  , SLOG_TO_STR);
-    return "Null";
-  }
+  //if(this==nullptr) { MYLOGGER_MSG(trace_function, string("this==nullptr")  , SLOG_TO_STR); return "Null"; }
+
   MYLOGGER_MSG(trace_function, string("type: ") + _to_str(type_), SLOG_TO_STR+30);
 
   switch(type_) {
@@ -212,7 +211,7 @@ string Node::_to_str(const List&list) {
 
 string Node::_to_str(const DeQue&list) {
   MYLOGGER(trace_function, "Node::_to_str(const DeQue&list)", __func__, SLOG_TO_STR);
-  size_t s = list.size(), i;
+  size_t s = list.size();
   if(s==0) {return "DeQue[]";}
   string outstr("DeQue[");
 

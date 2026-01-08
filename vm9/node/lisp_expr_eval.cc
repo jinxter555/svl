@@ -53,40 +53,88 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
 Node::OpStatusRef LispExpr::arg_lookup(Node&process, const string&name ) {
   MYLOGGER(trace_function, "LispExpr::arg_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
+
+  /*
   auto frames_ref_status = process[FRAMES];
   if(!frames_ref_status.first) return frames_ref_status;
   auto frame_ref_back_status = frames_ref_status.second.back();
+*/
+  auto frame_ref_back_status = frame_current(process);
   if(!frame_ref_back_status.first) return frame_ref_back_status;
   auto arg_ref_status = frame_ref_back_status.second[ARGS];
   if(!arg_ref_status.first) return arg_ref_status;
   return arg_ref_status.second[name];
 }
 
-Node::OpStatusRef LispExpr::var_lookup(Node&process, const string&name ) {
-  MYLOGGER(trace_function, "LispExpr::var_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
+//------------------------------------------------------------------------
+Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::var_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
-  auto scope_ref_status = scope_current(process);
-  if(!scope_ref_status.first) {
-    cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
-    return scope_ref_status;
-  }
-  auto scope_vars_ref_status = scope_ref_status.second.get_node(VAR);
+
+  auto scope_vars_ref_status = scope.get_node(VAR);
   if(!scope_vars_ref_status.first) {
     cerr << "var[] lookup failed!" <<  scope_vars_ref_status.second._to_str() << "\n";
     return scope_vars_ref_status;
   }
-  cout  <<"scope var: " << scope_vars_ref_status << "\n";
+  //cout  <<"scope var: " << scope_vars_ref_status << "\n";
   return scope_vars_ref_status.second[name];
 }
 
+Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::immute_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
+
+  auto scope_immute_ref_status = scope.get_node(IMMUTE);
+  if(!scope_immute_ref_status.first) {
+    cerr << "immute[] lookup failed!" <<  scope_immute_ref_status.second._to_str() << "\n";
+    return scope_immute_ref_status;
+  }
+  //cout  <<"scope immute: " << scope_immute_ref_status << "\n";
+  return scope_immute_ref_status.second[name];
+}
+
+
+
+
+//------------------------------------------------------------------------
+// lookup both var, immute and then argument list in current frame
 Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
   MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
+
+
+  auto frame_ref_status = frame_current(process);
+  if(!frame_ref_status.first) return frame_ref_status;
+
+  auto scopes_ref_status = frame_ref_status.second[SCOPES];
+
+  if(!scopes_ref_status.first) return scopes_ref_status;
+  Node::Integer s = scopes_ref_status.second.size_container() ;
+
+  //cout << "symbol lookup size: " << s << "\n";
+
+  for(Node::Integer i=s-1; i>=0; i--) {
+    //auto scope_ref_status = scope_current(process);
+    //cout << "symbol lookup i: " << i << "\n";
+    auto scope_ref_status = scopes_ref_status.second[i];
+    if(!scope_ref_status.first) {
+      cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
+      return scope_ref_status;
+    }
+  
+    auto var_ref = var_lookup(scope_ref_status.second, name);
+    if(var_ref.first) return var_ref;
+  
+    auto immute_ref = immute_lookup(scope_ref_status.second, name);
+    if(immute_ref.first) return immute_ref;
+  }
+
+
+
   auto arg_ref = arg_lookup(process, name);
   if(arg_ref.first) return arg_ref;
-  auto var_ref = var_lookup(process, name);
-  if(var_ref.first) return var_ref;
-  return var_ref;
+
+  return {false, Error::ref(Error::Type::SymbolNotFound)};
 }
 
 
@@ -105,11 +153,13 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     auto name = get<string>(code_node.value_);
     auto rv_ref_status = symbol_lookup(process, name  );
     if(!rv_ref_status.first) {
-      cerr << "Identifier: " << name << " not found!\n";
+      cerr << "Identifier: " << name << " not found!" << rv_ref_status.second._to_str() << "\n";
       return {false, rv_ref_status.second.clone()};
     }
     return {true, rv_ref_status.second.clone()};
-  }}
+  }
+  default: return {true, code_node.clone()};
+  }
 
   return {true, code_node.clone()};
   //cout << "eval process: \n"; process.print();
@@ -148,7 +198,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
       return var_attach(process, code_list, 1);
     }
     case Lisp::Op::assign: {
-      cout << "lisp::op::assign !" << Node::_to_str( code_list) <<"\n";
+      //cout << "lisp::op::assign !" << Node::_to_str( code_list) <<"\n";
       return assign_attach(process, code_list, 1);
       break;
     }
@@ -258,12 +308,11 @@ vector<string> LispExpr::extract_mf(Node& process, Node&node_mf) {
     auto mf = node_mf._get_str();
     list.push_back(Node::create(mf));
     //cout << "identifier mf: "  << mf << " \n";
-    return extract_mf(process, list);
-  }
+    return extract_mf(process, list); }
   case  Node::Type::Vector:{
     auto &list = node_mf._get_vector_ref();
-    return extract_mf(process, list);
-  }}
+    return extract_mf(process, list); }
+  default: return {}; }
   return {};
 }
 
