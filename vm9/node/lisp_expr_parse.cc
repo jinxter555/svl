@@ -80,7 +80,9 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   map[_PARAMS] = move(status.second); list.pop_front();
   }
 
-  map[DESC] = move(list.front()); list.pop_front();
+  //cout << "fun size:" <<  list.size() << "\n";
+  if(list.size() == 2) {map[DESC] = move(list.front()); list.pop_front();}
+  else map[DESC] = Node::create();
   
   {// turn code List to code Vector for speed performance
   auto status=  build_parsed_vector(*list.front()); 
