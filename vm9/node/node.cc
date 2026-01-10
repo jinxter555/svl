@@ -28,7 +28,7 @@ unique_ptr<Node> Node::create(Type t) {
   }
   case Type::Vector: {
     Node::Vector v;
-    v.resize(10);
+    v.reserve(10);
     return make_unique<Node>(move(v));
   }
   case Type::DeQue: {

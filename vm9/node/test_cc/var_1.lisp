@@ -4,7 +4,8 @@
 ;    (print "hello, world1\n")    (print "hello, world2\n")
     (var v1 (v2 12345) (v3 3.14159) (s1 "hello") (s2 "world"))
     (print v2)
- ;    (p55 (11111 22222))
+     (p55 (11111 22222))
+     
     )
   )
 
@@ -16,7 +17,7 @@
              "\n" ; print new
              y "\n"; new line
             )
-      (var v1 v2 (s1 "hello") (s2 "world"))
+;      (var v1 v2 (s1 "hello") (s2 "world"))
     )
   )
 

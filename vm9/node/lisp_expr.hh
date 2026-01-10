@@ -105,6 +105,7 @@ public:
 
   //Node::OpStatus eval(const Node& code, Node& process);
   Node::OpStatus eval(Node& process, const Node& code_node);
+  Node::OpStatus eval(Node& process, const Lisp::Op op, const Node::Vector& code_list, int start=0);
   Node::OpStatus eval(Node& process, const Node::Vector& code_list);
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 

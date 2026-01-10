@@ -142,7 +142,9 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 // eval node 
 Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node&code_node)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("code_list: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
+
+  if(code_node.empty_container())  return{true, Node::create(Node::Type::Vector)}; 
 
   switch(code_node.type_) {
   case Node::Type::Vector: {
@@ -158,98 +160,84 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     }
     return {true, rv_ref_status.second.clone()};
   }
-  default: return {true, code_node.clone()};
+  default: { //cout << "code_node scalar: " << *code_node.clone() <<" \n";
+    return {true, code_node.clone()};
+  }}
+
+  return {true, Node::create_error(Error::Type::Unknown, 
+    "Unknown error should not reach!")};
+
+}
+Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node::Vector& code_list, int start) {
+  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("lisp::op: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+
+  switch(op_head){
+  case Lisp::Op::vector:  {
+    //cout << "lisp::op:  nested vector code! start: " << start <<"\n";
+    size_t s=code_list.size()-1, i; 
+
+    for(i=start; i<s; i++) {
+      auto evaled_status =  eval(process, *code_list[i]);
+      if(!evaled_status.first) return evaled_status;
+    }
+    return  eval(process, *code_list[i]);
+
+  }
+  case Lisp::Op::print: return builtin_print_n(process, code_list, start);
+  case Lisp::Op::var:     return var_attach(process, code_list, start); 
+  case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
+  case Lisp::Op::call:   return call(process, code_list, start); 
+  default: { cout << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; }
   }
 
-  return {true, code_node.clone()};
-  //cout << "eval process: \n"; process.print();
-  //cout << "what is going on3: " << Node::_to_str(code_list)<< "\n";
-
-
+  return {true, nullptr};
 }
 
 Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
 
+  //cout << "code_list size " << code_list.size() << "\n"; cout << "code_list str " << Node::_to_str(code_list) << "\n";
+  if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
+
   switch(code_list[0]->type_) {
   case Node::Type::LispOp: {
-
     Lisp::Op op_head = get<Lisp::Op>(code_list[0]->value_);
-    switch(op_head){
-    case Lisp::Op::print: 
-      return builtin_print_n(process, code_list, 1);
-    //case Lisp::Op::call: return call(process, code_list);
-
-    case Lisp::Op::vector:  {
-      //cout << "lisp::op:  nested vector code!\n";
-      auto nested_status = code_list[0]->get_node(0);
-      if(!nested_status.first)  {
-        cerr << "error getting node!\n";
-        return {false, Node::create_error(Error::Type::KeyNotFound, 
-          "Nested vector code error" + nested_status.second._to_str())};
-      }
-      return eval(process, nested_status.second);
-    }
-
-    case Lisp::Op::var: {
-      //cout << "lisp::op::var !" << Node::_to_str( code_list) <<"\n";
-      //cout << "scope_current: " << scope_current(process) << "\n";
-      return var_attach(process, code_list, 1);
-    }
-    case Lisp::Op::assign: {
-      //cout << "lisp::op::assign !" << Node::_to_str( code_list) <<"\n";
-      return assign_attach(process, code_list, 1);
-      break;
-    }
-
-    case Lisp::Op::call:  {
-      //cout << "lisp::op:call vector code!\n";
-      return call(process, code_list, 1);
-    }
-
-    default: { 
-      cout << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; }
-    }
-
-    break;
-  }
+    // skip the first element that's op_head
+    return eval(process, op_head, code_list, 1); }
   case Node::Type::Identifier: {
-//    cerr << "unknown command or function call: type is : " <<  Node::_to_str(code_list[0]->type_) << "\n";
-//    cerr << "value is : " <<  code_list[0]->_to_str() << "\n";
 //    cerr << "code_list.size : " <<  code_list.size() << "\n";
     auto s = code_list.size() ;
 
-    if(s == 1) {
-      //cout << "Identifier var! " << code_list[0]->_to_str() << " need to lookup\n";
-      //cout << "symbol lookup " << symbol_lookup(process, code_list[0]->_to_str()) << "\n";
+    if(s == 1) { // identifier, var, immut, arg lookup
       auto rv_ref_status = symbol_lookup(process, code_list[0]->_to_str());
       if(!rv_ref_status.first) {
-        cerr << "symbol lookup failed!\n";
+        cerr << "symbol : " <<  code_list[0]->_to_str() <<" lookup failed!" <<  rv_ref_status <<"\n";
         return { false, rv_ref_status.second.clone() };
       }
       return {true, rv_ref_status.second.clone()};
 
-    } else if(s > 1) {
-      // need to push call lisp:op
-     //cout << "Identifier call!" << Node::_to_str(code_list) << "\n";
+    } else if(s > 1) { // function lookup // cout << "identifier s>1!\n";
       return call(process, code_list);
-
     }
-    return {false, Node::create(false)};
+    return {false, Node::create_error(Error::Type::Unknown, "Unknown error in Identifier")};
   }
   case Node::Type::Vector: {
     //cout << "nested vector code: code_list: " << Node::_to_str(code_list) << "\n";
-    auto &nested_code_list = get<Node::Vector>(code_list[0]->value_);
-    eval(process, nested_code_list);
-    for(size_t i=1; i<code_list.size(); i++) {
-      auto &code_node = code_list[i];
-      eval(process, *code_node);
+    //auto &nested_code_list = get<Node::Vector>(code_list[0]->value_);
+    //eval(process, nested_code_list);
+    size_t i;
+    for(i=0; i<code_list.size()-1; i++) {
+      eval(process, *code_list[i]);
     }
-    return {true, nullptr};
-    //for(auto &nested_code : nested_code_list) { }
+    auto rv = eval(process, *code_list[i]);
+    //cout << "Vector: rv " << rv << "\n";
+    return rv;
   }
-  default: {
+  // scalars here int, float string, etc
+  default: { //cout << "eval default! type: " << Node::_to_str(code_list[0]->type_) << "\n";
     Node::Vector rlist;
     size_t s=code_list.size();
     rlist.reserve(s);
@@ -366,7 +354,9 @@ vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
 
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list) {
-  MYLOGGER(trace_function, "LispExpr::attach_argument_to_frame(...)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::attach_argument_to_frame(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("param_path: ") + _to_str_ext(params_path), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("arg_list: ") + arg_list->_to_str(), SLOG_FUNC_INFO+30);
 
   Node::OpStatusRef params_list_status = get_node(params_path);
   if(!params_list_status.first) {
@@ -376,13 +366,16 @@ Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, cons
   size_t s =  params_list_status.second.size_container();
 
   if(params_list_status.second.size_container() != arg_list->size_container()) {
+    //cout << "param size:" << params_list_status.second.size_container() << "\n";
+    //cout << "arg size:" << arg_list->size_container() << "\n";
     return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "Can't create arguments list for " + _to_str_ext(params_path) + " size() are different  \n")};
+      "Can't create arguments list for " + _to_str_ext(params_path) + " size() are different")};
   }
 
   Node::Map args;
   auto &params_vector = params_list_status.second._get_vector_ref();
   auto &arg_vector = arg_list->_get_vector_ref();
+  //cout << "attach to frame!" << arg_list->_to_str() << "\n";
   for(size_t i=0; i <s; i++) {
     auto param_name = params_vector[i]->_to_str();
 

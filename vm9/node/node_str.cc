@@ -70,7 +70,7 @@ string Node::_to_str(ControlFlow cf) {
 
 string Node::_to_str() const {
   MYLOGGER(trace_function, "Node::_to_str()", __func__, SLOG_TO_STR);
-  //if(this==nullptr) { MYLOGGER_MSG(trace_function, string("this==nullptr")  , SLOG_TO_STR); return "Null"; }
+  if(this==nullptr) { MYLOGGER_MSG(trace_function, string("this==nullptr")  , SLOG_TO_STR); return "Null"; }
 
   MYLOGGER_MSG(trace_function, string("type: ") + _to_str(type_), SLOG_TO_STR+30);
 

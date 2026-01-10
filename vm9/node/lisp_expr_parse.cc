@@ -15,6 +15,8 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
 
   if(tokens.type_ != Node::Type::List) 
     return {true, tokens.clone()};
+  if(tokens.empty_container())
+    return {true, Node::create(Node::Type::Vector) };
 
   //cout << "tokens: " <<  tokens<< "\n";
   auto head_status = tokens.pop_front(); 
