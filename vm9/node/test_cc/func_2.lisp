@@ -1,8 +1,10 @@
 (module Kernel 
   (defun main (x y) my_func_des
     (
-      (print (p55 ()))
-      (print "\n")
+      (assign x (p55 ()))
+      (print "x is: " x "\n")
+      (print (cat (p55 ())))
+      (print x)
 ;      p55
     )
   )

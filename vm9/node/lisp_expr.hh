@@ -126,6 +126,10 @@ public:
   Node::OpStatus build_parsed_root(Node::List& list); // (fun_name (param_list)(code list))
   //Node::OpStatus build_parsed_func(Node::List& list) ;
 
+  // 
+  Node::OpStatus car(Node&process, const Node::Vector &list, int start=0);
+  Node::OpStatus cdr(Node&process, const Node::Vector &list, int start=0);
+
   //
   Node::OpStatus build_parsed_def(Node::List& list);
   
@@ -139,4 +143,5 @@ public:
   Node::OpStatus builtin_print(Node& process, const T& list);
   template <typename T>
   Node::OpStatus builtin_print_n(Node& process, const T& list, size_t start=0);
+
 };

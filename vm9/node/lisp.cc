@@ -9,6 +9,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::kernel: return "kernel";
     case Lisp::Op::system: return "system";
     case Lisp::Op::root: return "root";
+    case Lisp::Op::clone: return "clone";
     case Lisp::Op::error: return "error";
     case Lisp::Op::noop: return "noop";
     case Lisp::Op::identifier: return "identifier";
@@ -16,6 +17,8 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::list: return "list";
     case Lisp::Op::deque: return "deque";
     case Lisp::Op::vector: return "vector";
+    case Lisp::Op::car: return "car";
+    case Lisp::Op::cdr: return "cdr";
     case Lisp::Op::add: return "add";
     case Lisp::Op::sub: return "sub";
     case Lisp::Op::mul: return "mul";
@@ -31,6 +34,9 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::print: return "print";
     case Lisp::Op::module: return "module";
     case Lisp::Op::defun: return "defun";
+    case Lisp::Op::defmacro: return "defmacro";
+    case Lisp::Op::alias: return "alias";
+    case Lisp::Op::lambda: return "lambda";
   }
   return "Unknown LispOp";
 }

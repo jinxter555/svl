@@ -297,6 +297,7 @@ void LispExpr::set_keywords() {
   map_->set("kernel", Op::kernel);
   map_->set("system", Op::system);
   map_->set("root",   Op::root);
+  map_->set("clone",   Op::clone);
   map_->set("error",Op::error);
   map_->set("noop", Op::noop);
   map_->set("identifier", Op::identifier);
@@ -306,6 +307,8 @@ void LispExpr::set_keywords() {
   map_->set("deque", Op::deque);
   map_->set("var", Op::var);
   map_->set("assign", Op::assign);
+  map_->set("car", Op::car);
+  map_->set("cdr", Op::cdr);
   map_->set("add", Op::add);
   map_->set("sub", Op::sub); 
   map_->set("mul", Op::mul);
@@ -318,7 +321,10 @@ void LispExpr::set_keywords() {
   map_->set("cond", Op::cond);
   map_->set("print",Op::print);
   map_->set("module",Op::module);
-  map_->set("defun",Op::defun);
+  map_->set("defun", Op::defun);
+  map_->set("defmacro", Op::defmacro);
+  map_->set("alias", Op::alias);
+  map_->set("lambda", Op::lambda);
 
   map_->set("+", Op::add);
   map_->set("-", Op::sub);

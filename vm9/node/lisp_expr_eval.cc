@@ -4,49 +4,9 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+#include "lisp_expr_func_tmpl.cc"
 
-template <typename T>
-Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
-  MYLOGGER(trace_function, "LispExpr::print(Node&env, T&list)", __func__, SLOG_FUNC_INFO);
-  if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
 
-    cout << "builtin_print_list\n";
-
-    for(auto& element : list) { 
-      if(element.first) {
-        auto& ev = element.second->eval(env);
-        cout << *ev.second << "\n";
-      }
-    }
-    //return {true, Node::create()};
-    //return {true, nullptr};
-    return {true, Node::create()};
-  } else {
-    cout << "builtin_print something\n";
-    //cout << list << "\n";
-  }
-}
-
-template <typename T>
-Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::builtin_print_n(Node&env, const T&list, size_t)", __func__, SLOG_FUNC_INFO);
-  //cout << "builtin print!\n";
-  //return {true, Node::create(true)};
-  if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
-    size_t s=list.size();
-    for(size_t i = start;  i<s; i++) {
-      auto &element = list[i];
-      auto ee = eval(process, *element);
-      if(!ee.first ) return ee;
-      //cout << *element;
-      cout << *ee.second;
-    }
-  } else {
-    cout << "builtin_print_n unknown T list\n";
-
-  }
-  return {true, Node::create()};
-}
 
 //------------------------------------------------------------------------
 // symbol lookup 
@@ -54,11 +14,6 @@ Node::OpStatusRef LispExpr::arg_lookup(Node&process, const string&name ) {
   MYLOGGER(trace_function, "LispExpr::arg_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
-  /*
-  auto frames_ref_status = process[FRAMES];
-  if(!frames_ref_status.first) return frames_ref_status;
-  auto frame_ref_back_status = frames_ref_status.second.back();
-*/
   auto frame_ref_back_status = frame_current(process);
   if(!frame_ref_back_status.first) return frame_ref_back_status;
   auto arg_ref_status = frame_ref_back_status.second[ARGS];
@@ -189,6 +144,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 
+  case Lisp::Op::car:   return car(process, code_list, 1);
+  case Lisp::Op::lambda:   {
+    cout << "lambda " << Node::_to_str( code_list )<< "\n";
+    break;
+  }
   default: { cout << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; }
   }
 
@@ -203,14 +163,14 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
 
   switch(code_list[0]->type_) {
+
   case Node::Type::LispOp: {
     Lisp::Op op_head = get<Lisp::Op>(code_list[0]->value_);
     // skip the first element that's op_head
     return eval(process, op_head, code_list, 1); }
-  case Node::Type::Identifier: {
-//    cerr << "code_list.size : " <<  code_list.size() << "\n";
-    auto s = code_list.size() ;
 
+  case Node::Type::Identifier: { //    cerr << "code_list.size : " <<  code_list.size() << "\n";
+    auto s = code_list.size() ;
     if(s == 1) { // identifier, var, immut, arg lookup
       auto rv_ref_status = symbol_lookup(process, code_list[0]->_to_str());
       if(!rv_ref_status.first) {
@@ -224,38 +184,28 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     }
     return {false, Node::create_error(Error::Type::Unknown, "Unknown error in Identifier")};
   }
-  case Node::Type::Vector: {
-    //cout << "nested vector code: code_list: " << Node::_to_str(code_list) << "\n";
-    //auto &nested_code_list = get<Node::Vector>(code_list[0]->value_);
-    //eval(process, nested_code_list);
+
+  case Node::Type::Vector: { // normally this is the code list block and return last element
     size_t i;
-    for(i=0; i<code_list.size()-1; i++) {
+    for(i=0; i<code_list.size()-1; i++) 
       eval(process, *code_list[i]);
-    }
-    auto rv = eval(process, *code_list[i]);
-    //cout << "Vector: rv " << rv << "\n";
-    return rv;
+    return eval(process, *code_list[i]);
   }
+
   // scalars here int, float string, etc
   default: { //cout << "eval default! type: " << Node::_to_str(code_list[0]->type_) << "\n";
     Node::Vector rlist;
     size_t s=code_list.size();
     rlist.reserve(s);
     for(size_t i=0; i<s; i++) {
-      auto &code_node = code_list[i];
-      auto evaled_status =  eval(process, *code_node);
+      auto evaled_status =  eval(process, *code_list[i]);
       if(!evaled_status.first) return evaled_status;
       rlist.push_back(move(evaled_status.second));
     }
     return  {true, Node::create(move(rlist))};
   }}
 
-
-  //cout << "outside of swithc code_list: " <<  Node::_to_str( code_list) << "\n";
-  
-  //if(code_list.size() > 1) { }
-  
-  //return {true, nullptr};
+  // code should not reach here
   return {true, Node::create()};
 }
 
