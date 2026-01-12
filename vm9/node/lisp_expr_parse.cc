@@ -52,6 +52,7 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     case Lisp::Op::module: {
       return build_parsed_module(list); }
     case Lisp::Op::root: { return build_parsed_root(list); }
+    default: {}
     }
   } 
   // convert it to a vector and return it
@@ -283,9 +284,7 @@ Node::OpStatus LispExpr::build_parsed_deque(Node& node) {
 //-------------------------------- map
 Node::OpStatus LispExpr::build_parsed_map(Node::List& list) {
   Node::Map map;
-  for(auto& e : list) {
-
-  }
+  //for(auto& e : list) { }
   return {true, Node::create(move(map))};
 }
 //Node::OpStatus LispExpr::build_parsed_map(Node& node) { }

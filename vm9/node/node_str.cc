@@ -35,11 +35,13 @@ string Node::_to_str(Type type) {
     case Type::DeQue: return "DeQue";
     case Type::Map: return "Map";
     case Type::Atom: return "Atom";
-    case Type::Shared: return "Shared";
     case Type::LispOp: return "LispOp";
     case Type::ProcState: return "ProcessState";
     case Type::ControlFlow: return "ControlFlow";
     case Type::Identifier: return "Identifier";
+    case Type::Shared: return "SharedPtr";
+    case Type::Raw: return "RawPtr";
+    case Type::Unique: return "UniquePtr";
   }
   return "Unknown Type";
 }
@@ -124,6 +126,15 @@ string Node::_to_str() const {
     case Type::Map: {
       auto& map = get<Map>(value_);
       return _to_str(map);}
+    case Type::Shared: {
+      auto& ptr_s = get<ptr_S>(value_);
+      //cout << "shared to_str()";
+      return ptr_s->_to_str();}
+    case Type::Raw: {
+      cout << "raw to_str()";
+      auto& ptr_r = get<ptr_R>(value_);
+      return ptr_r->_to_str();}
+
     default: { return "_to_str() unknown type " + _to_str(type_); }
   }
   return "_to_str() unknwon type " + _to_str(type_); 

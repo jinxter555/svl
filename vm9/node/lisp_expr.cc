@@ -323,7 +323,9 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   auto &value_expr = var_list[start+1];
   auto value_status = eval(process, *value_expr);
   if(!value_status.first) return value_status;
-  cout << "ret value : " << value_status << "\n";
+  //cout << "ret value : " << value_status << "\n";
+
+  //Node m1=make_shared<Node>(1);
 
 
   auto scope_ref_status = scope_current(process);
@@ -348,14 +350,15 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
 
   if(!scope_vars_ref_status.second.m_has_key(identifier)){
     if(!scope_immute_ref_status.second.m_has_key(identifier)) 
-      return scope_immute_ref_status.second.set(identifier,  move(value_status.second));
+      //return scope_immute_ref_status.second.set(identifier,  move(value_status.second));
+      return scope_immute_ref_status.second.set(identifier,  Node::ptr_US( move(value_status.second)));
     else  {
       cerr << "identifier " << identifier  <<" can not be reassigned\n";
       return {false, nullptr};
     }
   }
 
-
-  return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
+  //return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
+  return scope_vars_ref_status.second.set(identifier,  Node::ptr_US( move(value_status.second)));
 
 }

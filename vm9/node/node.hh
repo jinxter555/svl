@@ -29,17 +29,20 @@ public:
   enum class ProcState { init, run, sleep, suspend, stop, wait };
   enum class ControlFlow { cf_run, cf_break, cf_continue, cf_return, cf_return_val};
 
-  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Shared };
+  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Shared, Raw, Unique };
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
   using List = list<unique_ptr<Node>>;
   using Vector = vector<unique_ptr<Node>>;
   using DeQue = deque<unique_ptr<Node>>;
+  using ptr_R = Node *;
+  using ptr_S = shared_ptr<Node>;
+  using ptr_U = unique_ptr<Node>;
   //
   using ProgramList = List; // program build list type
   //
   using Map = unordered_map<string, unique_ptr<Node>>;
-  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow>;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow, ptr_S, ptr_R, ptr_U>;
   using ValueSimple = variant<monostate, bool,  Error, Lisp::Op, ProcState, ControlFlow, Integer, Float, string>;
 
   using OpStatus = pair<bool, unique_ptr<Node>>;
@@ -50,6 +53,9 @@ public:
 
   Node();
   Node(Value v);
+  Node(ptr_S ptr);
+  Node(ptr_R ptr);
+  Node(ptr_U ptr);
   Node(Type t);
   //Node(vector<Value> v);
   Node(vector<ValueSimple> v);
@@ -110,6 +116,12 @@ public:
   OpStatus has_key(const string&key);
   bool extend(const vector<string>&path, bool override=false);
 
+  //----
+  static unique_ptr<Node> ptr_US(unique_ptr<Node> node); // convert to  unique pointer -> unique pointer(shared pointer)
+  static unique_ptr<Node> ptr_USU(const unique_ptr<Node> &node); // make a clone of unique shared without recursive cloning.
+  static unique_ptr<Node> ptr_USU(const Node& node); // make a clone of unique shared without recursive cloning.
+  static OpStatus container_obj_to_US(unique_ptr<Node>); // convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
+  
   //----
 
 

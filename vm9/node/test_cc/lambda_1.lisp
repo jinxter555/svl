@@ -15,7 +15,7 @@
     (
      (print "p55\n")
      (assign f4 (defun abc (x y) (print "what is abc") ))
-;     (print "\n\nf4:\n" f4)
+     (print "\n\nf4:\n" f4)
     )
   )
 )

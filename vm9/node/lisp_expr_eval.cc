@@ -113,8 +113,14 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
       cerr << "Identifier: " << name << " not found!" << rv_ref_status.second._to_str() << "\n";
       return {false, rv_ref_status.second.clone()};
     }
+//    cout << "looked up identifier rv_ref : " << rv_ref_status << "\n";
+//    cout << "looked up identifier rv_ref second.type: " << Node::_to_str( rv_ref_status.second.type_) << "\n";
+    if(rv_ref_status.second.type_ == Node::Type::Shared) 
+      return {true, Node::ptr_USU(rv_ref_status.second)}; // clone a uniqu ptr to shared ptr without  recursive clone
+
     return {true, rv_ref_status.second.clone()};
   }
+  //case Node::Type::Shared: { cout << "shared ptr!\n"; }
   default: { //cout << "code_node scalar: " << *code_node.clone() <<" \n";
   }}
   return {true, code_node.clone()};
@@ -185,6 +191,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
         cerr << "symbol : " <<  code_list[0]->_to_str() <<" lookup failed!" <<  rv_ref_status <<"\n";
         return { false, rv_ref_status.second.clone() };
       }
+      cout << "looked up identifier rv_ref : " << rv_ref_status << "\n";
       return {true, rv_ref_status.second.clone()};
 
     } else if(s > 1) { // function lookup // cout << "identifier s>1!\n";
@@ -214,6 +221,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   }}
 
   // code should not reach here
+  cerr << "code should not reach here!\n";
   return {true, Node::create()};
 }
 

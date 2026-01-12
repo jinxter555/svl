@@ -47,6 +47,9 @@ Node::Node()
   , type_(Type::Null)
   {}
 
+Node::Node(ptr_S ptr) {value_ = ptr; type_ = Type::Shared;}
+Node::Node(ptr_R ptr) {value_ = ptr; type_ = Type::Raw;}
+Node::Node(ptr_U ptr) {value_ = move(ptr); type_ = Type::Unique;}
 
 Node::Node(Value v)
   : value_(move(v)) {
@@ -66,6 +69,9 @@ Node::Node(Value v)
     else if constexpr (is_same_v<U, Vector>) return Type::Vector;
     else if constexpr (is_same_v<U, DeQue>) return Type::DeQue;
     else if constexpr (is_same_v<U, Map>) return Type::Map;
+    else if constexpr (is_same_v<U, ptr_R>) return Type::Raw;
+    else if constexpr (is_same_v<U, ptr_S>) return Type::Shared;
+    else if constexpr (is_same_v<U, ptr_U>) return Type::Unique;
     return Type::Null;
   //}, get<Value>(this->value));
   }, value_);
@@ -179,7 +185,16 @@ unique_ptr<Node> Node::clone() const {
     }
     else if constexpr(is_same_v<T, Map>) {
       return clone(arg);
-  }
+    }
+    else if constexpr(is_same_v<T, ptr_S>) {
+      return arg->clone();
+    }
+    else if constexpr(is_same_v<T, ptr_U>) {
+      return arg->clone();
+    }
+    else if constexpr(is_same_v<T, ptr_R>) {
+      return arg->clone();
+    }
   }, value_);
 }
 
@@ -243,6 +258,7 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   map[key] = move(child);
   return {true, create(true)};
 }
+
 
 //Node::OpStatus Node::set(size_t index, Integer v) { return set(index, Node::create(Value(v))); }
 Node::OpStatus Node::set(size_t index, Integer v) { return set(index, create(v)); }
@@ -613,7 +629,16 @@ void Node::print_value_recursive(const Node& node, int depth) {
       }
       indent();
       cout << "}";
+    } else if constexpr (is_same_v<T, ptr_S>) {
+      cout << "shared_ptr*:" << *arg;
+    } else if constexpr (is_same_v<T, ptr_R>) {
+      cout << "raw*:" << *arg;
+    } else if constexpr (is_same_v<T, ptr_U>) {
+      cout << "unique_ptr*:" << *arg;
     }
+      
+
+
   }, node.value_);
 }
 
@@ -633,14 +658,14 @@ ostream& operator<<(ostream& os, const Node::OpStatus& s) {
     cout << "nullptr";
     return os;
   }
-  cout << "value: " << s.second->_to_str() << ", type: " <<  Node::_to_str(s.second->_get_type());
+  cout << "value: " << s.second->_to_str() << ", type: " <<  Node::_to_str(s.second->_get_type()) ;
 //  s.second->print();
   return os;
 }
 ostream& operator<<(ostream& os, const Node::OpStatusRef& s) {
   MYLOGGER(trace_function, "ostream& << (Node::OpStatus&)", __func__, SLOG_FUNC_INFO);
   if(s.first)  cout << "true: "; else cout << "false: ";
-  cout << "value: " << s.second ;
+  cout << "value: " << s.second << ", type: " << Node::_to_str(s.second._get_type());
   return os;
 }
 
@@ -710,6 +735,12 @@ void Node::print_value(const Value& v, int depth) {
         cout << "\n";
       }
       cout << "}";
+    } else if constexpr (is_same_v<T, ptr_S>) {
+      cout << "shared_ptr*:" << *arg;
+    } else if constexpr (is_same_v<T, ptr_R>) {
+      cout << "raw*:" << *arg;
+    } else if constexpr (is_same_v<T, ptr_U>) {
+      cout << "unique_ptr*:" << *arg;
     }
   }, v);
 }
@@ -767,3 +798,38 @@ bool Node::empty_container() const {
   return false;
 }
 
+//------------------------------------------------------------------------
+
+ // conver to  unique pointer -> unique pointer(shared pointer)
+ // it's a shared ptr being wrapped in a unqiue ptr
+ // for object reference passing 
+unique_ptr<Node> Node::ptr_US(unique_ptr<Node> node) {
+  MYLOGGER(trace_function, "Node::ptr_US(unique_ptr<Node>node)", __func__, SLOG_FUNC_INFO);
+
+  Node::ptr_S s_ptr_node = move(node);
+  return make_unique<Node>(s_ptr_node);
+}
+// convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
+Node::OpStatus Node::container_obj_to_US(unique_ptr<Node> node) {
+  switch(node->type_) {
+  case Node::Type::Map:
+  case Node::Type::List:
+  case Node::Type::Vector:
+  case Node::Type::DeQue:
+    return  {true, ptr_US(move(node))};
+  default: {}
+  }
+  return {false, nullptr};
+}
+
+// make a clone of unique shared without recursive cloning.
+unique_ptr<Node> Node::ptr_USU(const unique_ptr<Node> &node) {
+  MYLOGGER(trace_function, "Node::ptr_USU(const unique_ptr<Node>&node)", __func__, SLOG_FUNC_INFO);
+  const auto sptr = get<ptr_S>(node->value_);
+  return make_unique<Node>(sptr);
+}
+unique_ptr<Node> Node::ptr_USU(const Node &node) {
+  MYLOGGER(trace_function, "Node::ptr_USU(const Node& node)", __func__, SLOG_FUNC_INFO);
+  const auto sptr = get<ptr_S>(node.value_);
+  return make_unique<Node>(sptr);
+}
