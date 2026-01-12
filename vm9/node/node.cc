@@ -620,6 +620,8 @@ void Node::print_value_recursive(const Node& node, int depth) {
 
 
 ostream& operator<<(ostream& os, const Node& v) {
+  //cout << "\naddr v:" <<  &v << " "; cout << v._to_str();
+  //cout << "\n";
   cout << v._to_str();
   return os;
 }

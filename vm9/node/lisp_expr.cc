@@ -272,6 +272,8 @@ Node::OpStatusRef  LispExpr::process_create() {
 
 }
 
+// create a var name list in current scope
+// (var identifer1 (identifier2 value) ...)
 Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, int start)  {
   MYLOGGER(trace_function, "LispExpr::var_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
@@ -311,6 +313,9 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
   }
   return {true, Node::create(true)};
 }
+
+
+// assign to scope immute or var
 Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_list, int start) {
   MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
@@ -318,6 +323,8 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   auto &value_expr = var_list[start+1];
   auto value_status = eval(process, *value_expr);
   if(!value_status.first) return value_status;
+  cout << "ret value : " << value_status << "\n";
+
 
   auto scope_ref_status = scope_current(process);
   if(!scope_ref_status.first) {

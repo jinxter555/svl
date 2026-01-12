@@ -13,7 +13,7 @@ public:
   enum class Op 
   { kernel, system, root, clone
   , error, noop
-  , identifier, scalar, list, deque, vector
+  , identifier, scalar, list, deque, vector, map
   , var, assign
   , car, cdr
   , add, sub, div, mul, mod

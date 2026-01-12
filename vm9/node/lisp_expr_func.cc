@@ -6,9 +6,11 @@
 
 
 
+/*
 Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, int start) {
-  MYLOGGER(trace_function, "LispExpr::car(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, "LispExpr::car(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
 
   //if(list.empty()) return {false, Node::create_error(Error::Type::EmptyContainer, "Empty List front()!")};
   if(list.empty()) return {true, Node::create()}; // return null
@@ -55,15 +57,52 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, int start) 
   return {true, head->clone()};
 
 }
-Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, int start) {
-    Node::Vector rlist;
-    size_t s=list.size();
-    rlist.reserve(s);
-    for(size_t i=0; i<s; i++) {
-      auto evaled_status =  eval(process, *list[i]);
-      if(!evaled_status.first) return evaled_status;
-      rlist.push_back(move(evaled_status.second));
-    }
-    return  {true, Node::create(move(rlist))};
+*/
 
+Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, int start) {
+  MYLOGGER(trace_function, "LispExpr::car(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
+
+  if(list.empty()) return {true, Node::create()}; // return null
+
+  auto &head = list[start];
+  auto rv_status = eval(process, *head);
+  if(!rv_status.first) {
+    cerr << "Error encounter in lisp::car eval" << rv_status << "\n";
+    return rv_status;
+  }
+  if(rv_status.second->type_==Node::Type::Vector) {
+    auto &plist = get<Node::Vector>(rv_status.second->value_);
+    if(plist.size()==0) return {true, Node::create()};
+    return {true, move(plist[0])};
+  }
+  return {true, Node::create()};
+}
+
+Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, int start) {
+  MYLOGGER(trace_function, "LispExpr::cdr(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
+  if(list.empty()) return {true, Node::create()}; // return null
+
+  auto &head = list[start];
+  auto rv_status = eval(process, *head);
+  if(!rv_status.first) {
+    cerr << "Error encounter in lisp::cdr eval" << rv_status << "\n";
+    return rv_status;
+  }
+  if(rv_status.second->type_==Node::Type::Vector) {
+    Node::Vector rlist;
+    auto &plist = get<Node::Vector>(rv_status.second->value_);
+    size_t  s= plist.size(); 
+    if(s==0) return {true, Node::create()};
+    for(size_t i=1; i<s; i++) {
+      rlist.push_back(move(plist[i]));
+    }
+    return {true, Node::create(move(rlist))};
+  }
+  // from scalar
+  return {true, Node::create()};
 }

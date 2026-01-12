@@ -2,9 +2,8 @@
   (defun main (x y) "my func des" 
     (
       (print "hello, world\n")
-      (print "using call (...) \n")
       (call (Kernel p55) (5555 2))
-      (print "\nusing identifier (...) \n")
+      (print "\n")
       (p55 (55 2))
       (print "\n\n")
     )

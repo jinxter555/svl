@@ -116,11 +116,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     return {true, rv_ref_status.second.clone()};
   }
   default: { //cout << "code_node scalar: " << *code_node.clone() <<" \n";
-    return {true, code_node.clone()};
   }}
+  return {true, code_node.clone()};
 
-  return {true, Node::create_error(Error::Type::Unknown, 
-    "Unknown error should not reach!")};
+  //return {true, Node::create_error(Error::Type::Unknown, "Unknown error should not reach!")};
 
 }
 Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node::Vector& code_list, int start) {
@@ -144,15 +143,24 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 
-  case Lisp::Op::car:   return car(process, code_list, 1);
-  case Lisp::Op::lambda:   {
-    cout << "lambda " << Node::_to_str( code_list )<< "\n";
+  case Lisp::Op::car:   return car(process, code_list, start);
+  case Lisp::Op::cdr:   return cdr(process, code_list, start);
+  case Lisp::Op::lambda:   { 
+    return {true, Node::clone( code_list)};
+    //return cdr(process, code_list, start); 
+  }
+  case Lisp::Op::map:   {  // (map identifier :set (key val)) : __map_info__
+    cout << "map in eval!\n";
+    break;
+
+  }
+  case Lisp::Op::defun:   {
+    cout << "defun in eval!\n";
     break;
   }
-  default: { cout << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; }
-  }
-
-  return {true, nullptr};
+  default:{}}
+  cerr << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; 
+  return {false, Node::create_error(Error::Type::Unknown, "Unknown Lisp::Op command")};
 }
 
 Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
