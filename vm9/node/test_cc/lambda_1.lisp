@@ -1,21 +1,25 @@
 (module Kernel 
   (defun main (x y) my_func_des
     (
+     (assign pi 3.1415)
      (assign f1 (lambda (z) (print "hello")) )
      (assign f2 123)
      (assign f3 (defun abc (x y) (print "what is abc") ))
      (print "\n\nf3:\n" f3)
      (p55())
      (print "\n")
-     (p55())
+;     (p55())
      (print "\n")
     )
   )
   (defun p55 () 
     (
      (print "p55\n")
+     (var f4)
      (assign f4 (defun abc (x y) (print "what is abc") ))
      (print "\n\nf4:\n" f4)
+     (assign f4b  f4)
+     (print "\n\nf4b:\n" f4b)
     )
   )
 )

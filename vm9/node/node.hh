@@ -120,7 +120,7 @@ public:
   static unique_ptr<Node> ptr_US(unique_ptr<Node> node); // convert to  unique pointer -> unique pointer(shared pointer)
   static unique_ptr<Node> ptr_USU(const unique_ptr<Node> &node); // make a clone of unique shared without recursive cloning.
   static unique_ptr<Node> ptr_USU(const Node& node); // make a clone of unique shared without recursive cloning.
-  static OpStatus container_obj_to_US(unique_ptr<Node>); // convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
+  static unique_ptr<Node>  container_obj_to_US(unique_ptr<Node>); // convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
   
   //----
 

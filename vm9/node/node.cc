@@ -810,16 +810,17 @@ unique_ptr<Node> Node::ptr_US(unique_ptr<Node> node) {
   return make_unique<Node>(s_ptr_node);
 }
 // convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
-Node::OpStatus Node::container_obj_to_US(unique_ptr<Node> node) {
+unique_ptr<Node> Node::container_obj_to_US(unique_ptr<Node> node) {
   switch(node->type_) {
   case Node::Type::Map:
   case Node::Type::List:
   case Node::Type::Vector:
   case Node::Type::DeQue:
-    return  {true, ptr_US(move(node))};
+    return ptr_US(move(node));
   default: {}
   }
-  return {false, nullptr};
+  //return move(node);
+  return node;
 }
 
 // make a clone of unique shared without recursive cloning.

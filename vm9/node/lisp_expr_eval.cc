@@ -128,6 +128,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   //return {true, Node::create_error(Error::Type::Unknown, "Unknown error should not reach!")};
 
 }
+
+// lisp op head
 Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node::Vector& code_list, int start) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("lisp::op: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
@@ -192,6 +194,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
         return { false, rv_ref_status.second.clone() };
       }
       cout << "looked up identifier rv_ref : " << rv_ref_status << "\n";
+      if(rv_ref_status.second.type_ == Node::Type::Shared) 
+        return {true, Node::ptr_USU(rv_ref_status.second)}; // clone a uniqu ptr to shared ptr without  recursive clone
       return {true, rv_ref_status.second.clone()};
 
     } else if(s > 1) { // function lookup // cout << "identifier s>1!\n";

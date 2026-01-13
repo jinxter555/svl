@@ -351,7 +351,7 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   if(!scope_vars_ref_status.second.m_has_key(identifier)){
     if(!scope_immute_ref_status.second.m_has_key(identifier)) 
       //return scope_immute_ref_status.second.set(identifier,  move(value_status.second));
-      return scope_immute_ref_status.second.set(identifier,  Node::ptr_US( move(value_status.second)));
+      return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
     else  {
       cerr << "identifier " << identifier  <<" can not be reassigned\n";
       return {false, nullptr};
@@ -359,6 +359,6 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   }
 
   //return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
-  return scope_vars_ref_status.second.set(identifier,  Node::ptr_US( move(value_status.second)));
+  return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
 
 }
