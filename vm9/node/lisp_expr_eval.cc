@@ -157,11 +157,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     return {true, Node::clone( code_list)};
     //return cdr(process, code_list, start); 
   }
-  case Lisp::Op::map:   {  // (map identifier :set (key val)) : __map_info__
-    cout << "map in eval!\n";
-    break;
-
-  }
+  case Lisp::Op::map:   return map_create(process, code_list, start);
   case Lisp::Op::defun:   {
     cout << "defun in eval!\n";
     break;

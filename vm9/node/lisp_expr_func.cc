@@ -106,3 +106,41 @@ Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, int start) 
   // from scalar
   return {true, Node::create()};
 }
+
+// create a map object
+// (map ( (k1 v1) (k2 v2) )) //creates a new map object
+Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, int start) {
+  MYLOGGER(trace_function, "LispExpr::map_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list_kv: ") + Node::_to_str(list_kv), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+  Node::Map map;
+  auto map_ = make_unique<Node>(Node::Type::Map);
+
+  if(list_kv.empty()) return {true, Node::create(Node::Type::Map)}; // empty map
+
+  cout << "map!\n";
+  size_t  s = list_kv.size();
+  for(size_t i=start; i<s; i++) {
+    auto &kv_pair = list_kv[i];
+    auto const &key_ref_status  = kv_pair->get_node(0);
+    if(!key_ref_status.first) {
+      cerr << "map create, key,  error! "  <<  key_ref_status.second << "\n";
+      return {false, key_ref_status.second.clone()};
+    }
+
+    auto const &value_ref_status = kv_pair->get_node(1);
+    if(!value_ref_status.first) {
+      cerr << "map create, value, error! "  <<  value_ref_status.second << "\n";
+      return {false, value_ref_status.second.clone()};
+    }
+    auto value_status = eval(process, value_ref_status.second);
+    if(!value_status.first) {
+      cerr << "map create key,value eval pair error! "  <<  value_status << "\n";
+      return value_status;
+    }
+    map[key_ref_status.second._to_str()] = move(value_status.second);
+
+  }
+  cout << "map " << Node::_to_str( map) << "\n";
+  return {true, Node::create(move(map))};
+}

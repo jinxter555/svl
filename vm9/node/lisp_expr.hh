@@ -129,6 +129,9 @@ public:
   // 
   Node::OpStatus car(Node&process, const Node::Vector &list, int start=0);
   Node::OpStatus cdr(Node&process, const Node::Vector &list, int start=0);
+  //
+  // (map ( (k1 v1) (k2 v2) )) //creates a new map object
+  Node::OpStatus map_create(Node&process, const Node::Vector &list_kv, int start=0);
 
   //
   Node::OpStatus build_parsed_def(Node::List& list);
