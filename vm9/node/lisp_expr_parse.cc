@@ -201,6 +201,21 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   //cout << "mod_loc: " << *mod_loc << "\n\n";
   //return {false, Node::create(true)};
 }
+Node::OpStatus LispExpr::attach_cc_fun(const string&name, const Node::Fun& f) {
+  MYLOGGER(trace_function, "LispExpr::attach_cc_fun(const string&name, const Node::Fun&f)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("name: ") + name, SLOG_FUNC_INFO+30);
+
+  auto mod_loc = get_branch(cc_path_module);
+  if(mod_loc==nullptr) {
+    cerr << "attach_cc_fun(): mod_loc is nullptr!\n";
+    return {false, Node::create_error(Error::Type::Unknown, "attach_cc_fun(): mod loc is nullptr!")};
+  }
+
+  Node::Map nm = {};
+  nm[name] = Node::clone(f);
+  return mod_loc->merge(Node::create(move(nm)));
+  return mod_loc->merge(Node::create(move(nm)));
+}
 
 
 //------------------------------------------------------------------------ build parse

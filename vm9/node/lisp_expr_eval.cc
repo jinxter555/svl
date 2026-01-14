@@ -158,9 +158,14 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     //return cdr(process, code_list, start); 
   }
   case Lisp::Op::map:   return map_create(process, code_list, start);
+  case Lisp::Op::send:   {
+    cout << "sending message in eval!\n";
+    return {true, nullptr};
+
+  }
   case Lisp::Op::defun:   {
     cout << "defun in eval!\n";
-    break;
+    return {true, nullptr};
   }
   default:{}}
   cerr << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; 

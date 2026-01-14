@@ -24,6 +24,7 @@
 #define ARGS "args"
 #define SCOPES "scopes"
 #define DESC "description"
+#define OBJ_INFO "__object_info__"
 
 class LispExpr : public Lang, public Lisp {
 private:
@@ -33,6 +34,8 @@ private:
   static const vector<string> lisp_path_keyword; 
   //static const vector<string> interactive_key; 
   static const vector<string> lisp_lang_atoms; 
+  static const vector<string> cc_path; 
+  static const vector<string> cc_path_module; 
  // static const vector<string> lisp_process; 
   unique_ptr<Node> env_ptr;
 
@@ -66,6 +69,7 @@ public:
   Node::OpStatus run_program(); // create module structure 
 
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
+  Node::OpStatus attach_cc_fun(const string&name, const Node::Fun& f);// create module structure 
 
 
   unique_ptr<Node> frame_create() const ; // create a frame 
@@ -132,6 +136,9 @@ public:
   //
   // (map ( (k1 v1) (k2 v2) )) //creates a new map object
   Node::OpStatus map_create(Node&process, const Node::Vector &list_kv, int start=0);
+  Node::OpStatus map_messages(Node&process, const Node::Vector &list_kv, int start=0);
+  // procdess, node this, arguments..
+  static Node::OpStatus map_get_keys(Node&process, Node&map, const Node::Vector& args ={});
 
   //
   Node::OpStatus build_parsed_def(Node::List& list);

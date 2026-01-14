@@ -42,6 +42,7 @@ string Node::_to_str(Type type) {
     case Type::Shared: return "SharedPtr";
     case Type::Raw: return "RawPtr";
     case Type::Unique: return "UniquePtr";
+    case Type::Fun: return "Function";
   }
   return "Unknown Type";
 }

@@ -50,6 +50,7 @@ Node::Node()
 Node::Node(ptr_S ptr) {value_ = ptr; type_ = Type::Shared;}
 Node::Node(ptr_R ptr) {value_ = ptr; type_ = Type::Raw;}
 Node::Node(ptr_U ptr) {value_ = move(ptr); type_ = Type::Unique;}
+Node::Node(Fun f) {value_ = move(f); type_ = Type::Fun;}
 
 Node::Node(Value v)
   : value_(move(v)) {
@@ -72,6 +73,7 @@ Node::Node(Value v)
     else if constexpr (is_same_v<U, ptr_R>) return Type::Raw;
     else if constexpr (is_same_v<U, ptr_S>) return Type::Shared;
     else if constexpr (is_same_v<U, ptr_U>) return Type::Unique;
+    else if constexpr (is_same_v<U, Fun>) return Type::Fun;
     return Type::Null;
   //}, get<Value>(this->value));
   }, value_);
@@ -136,6 +138,10 @@ unique_ptr<Node> Node::clone(const Vector& list) {
     cloned_list.push_back(child_ptr->clone());
   return create(move(cloned_list));
 }
+unique_ptr<Node> Node::clone(const Fun& f) {
+  //return create(make_shared<Node>(f));
+  return make_unique<Node>(f);
+}
 
 
 
@@ -194,6 +200,9 @@ unique_ptr<Node> Node::clone() const {
     }
     else if constexpr(is_same_v<T, ptr_R>) {
       return arg->clone();
+    }
+    else if constexpr(is_same_v<T, Fun>) {
+      return clone(arg);
     }
   }, value_);
 }
@@ -635,8 +644,9 @@ void Node::print_value_recursive(const Node& node, int depth) {
       cout << "raw*:" << *arg;
     } else if constexpr (is_same_v<T, ptr_U>) {
       cout << "unique_ptr*:" << *arg;
+    } else if constexpr (is_same_v<T, Fun>) {
+      cout << "Fun*:" ;
     }
-      
 
 
   }, node.value_);
@@ -741,6 +751,8 @@ void Node::print_value(const Value& v, int depth) {
       cout << "raw*:" << *arg;
     } else if constexpr (is_same_v<T, ptr_U>) {
       cout << "unique_ptr*:" << *arg;
+    } else if constexpr (is_same_v<T, Fun>) {
+      cout << "Fun*:";
     }
   }, v);
 }

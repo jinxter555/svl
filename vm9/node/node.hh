@@ -10,6 +10,7 @@
 #include <deque>
 #include <stdexcept>                                                                  
 #include <algorithm>                                                                  
+#include <functional>
 #include <type_traits> // For std::decay_t            
 
 using namespace std;
@@ -29,7 +30,11 @@ public:
   enum class ProcState { init, run, sleep, suspend, stop, wait };
   enum class ControlFlow { cf_run, cf_break, cf_continue, cf_return, cf_return_val};
 
-  enum class Type { Null, Bool, Error, Integer, Float, String, Identifier, List, Map, Vector, DeQue, LispOp, ProcState, ControlFlow, Atom, Shared, Raw, Unique };
+  enum class Type { 
+    Null, Bool, Error, Integer, Float, String, 
+    Identifier, List, Map, Vector, DeQue, LispOp, ProcState, 
+    ControlFlow, Atom, Shared, Raw, Unique, Fun };
+
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
   using List = list<unique_ptr<Node>>;
@@ -38,14 +43,15 @@ public:
   using ptr_R = Node *;
   using ptr_S = shared_ptr<Node>;
   using ptr_U = unique_ptr<Node>;
+  using OpStatus = pair<bool, unique_ptr<Node>>;
   //
   using ProgramList = List; // program build list type
   //
   using Map = unordered_map<string, unique_ptr<Node>>;
-  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow, ptr_S, ptr_R, ptr_U>;
+  using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
+  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow, ptr_S, ptr_R, ptr_U, Fun>;
   using ValueSimple = variant<monostate, bool,  Error, Lisp::Op, ProcState, ControlFlow, Integer, Float, string>;
 
-  using OpStatus = pair<bool, unique_ptr<Node>>;
   using OpStatusRef = pair<bool, Node&>;
   using SExpr= pair<unique_ptr<Node>, unique_ptr<Node>>;
 
@@ -56,6 +62,7 @@ public:
   Node(ptr_S ptr);
   Node(ptr_R ptr);
   Node(ptr_U ptr);
+  Node(Fun fun);
   Node(Type t);
   //Node(vector<Value> v);
   Node(vector<ValueSimple> v);
@@ -71,6 +78,7 @@ public:
   static unique_ptr<Node> clone(const Vector& list) ;
   static unique_ptr<Node> clone(const DeQue& list) ;
   static unique_ptr<Node> clone(const Map& map) ;
+  static unique_ptr<Node> clone(const Fun& fun) ;
 
   void set(Integer v);
   void set(Float v);

@@ -10,6 +10,7 @@ const vector<string> LispExpr::lisp_path= {UNIVERSE, "Lang", "Lisp"};
 const vector<string> LispExpr::lisp_path_module= {UNIVERSE, "Lang", "Lisp", "Module"};
 const vector<string> LispExpr::lisp_path_keyword= {UNIVERSE, "Lang", "Lisp", "Keyword"};
 const vector<string> LispExpr::lisp_lang_atoms = {UNIVERSE, "module", "fun", "mvar", "lvar", "class"};
+const vector<string> LispExpr::cc_path_module= {UNIVERSE, "Lang", "CC", "Module"};
 //const vector<string> LispExpr::interactive_key  = {UNIVERSE, "interactive"};
 //const vector<string> LispExpr::lisp_process = {UNIVERSE, "Process"};
 
@@ -24,7 +25,10 @@ LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;
-  set_branch(lisp_path_module, Node::create(move(map_module)));
+  //set_branch(lisp_path_module, Node::create(move(map_module)));
+  //set_branch(lisp_path_module, Node::create(move(map_module)));
+  set_branch(lisp_path_module, Node::create(Node::Type::Map));
+  set_branch(cc_path_module, Node::create(Node::Type::Map));
   bootstrap();
 
   //set_branch(lisp_module_key, Node::create(Node::Type::Map));
@@ -80,6 +84,11 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   // builds the interpreter tree, as in modules and function hierarchy
   auto hierarchical_code =  parse(*tokens_interpreted.second); 
 
+  Node::Fun f;
+  f = map_get_keys;
+  //auto f = map_get_keys;
+
+  attach_cc_fun("map_get_key", map_get_keys);
   return attach_module(move(hierarchical_code.second));
 
 }

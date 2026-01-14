@@ -1,20 +1,16 @@
-
-
-f3:
-{"abc": {"params": Vector[x, y], "description": Null, "code": Vector[print, what is abc]}}p55
-
-
-f4:
-{"abc": {"params": Vector[x, y], "description": Null, "code": Vector[print, what is abc]}}
-
-f4b:
-{"abc": {"params": Vector[x, y], "description": Null, "code": Vector[print, what is abc]}}
-
+hello, world1
+{"__object_info__": {}, "k4": {"__object_info__": {}, "l1": 456}, "k3": 456, "k2": 456, "k1": 123}
+sending message in eval!
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
   - universe (Type: Map): { (Map, size=2) 
-   - Lang (Type: Map): { (Map, size=2) 
+   - Lang (Type: Map): { (Map, size=3) 
+    - CC (Type: Map): { (Map, size=1) 
+     - Module (Type: Map): { (Map, size=1) 
+      - map_get_key (Type: Function): Fun*:
+    }
+   }
     - Lisp (Type: Map): { (Map, size=2) 
      - Keyword (Type: Map): { (Map, size=37) 
       - % (Type: LispOp): mod
@@ -57,126 +53,59 @@ print recursive:
     }
      - Module (Type: Map): { (Map, size=1) 
       - Kernel (Type: Map): { (Map, size=1) 
-       - function (Type: Map): { (Map, size=2) 
-        - p55 (Type: Map): { (Map, size=3) 
-         - code (Type: Vector): Vector[(size=6) 
+       - function (Type: Map): { (Map, size=1) 
+        - main (Type: Map): { (Map, size=3) 
+         - code (Type: Vector): Vector[(size=5) 
           - [0, Type: Vector]: Vector[(size=2) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "p55
-"
+           - [0, Type: LispOp]: var
+           - [1, Type: Identifier]: "m1"
          ]
           - [1, Type: Vector]: Vector[(size=2) 
-           - [0, Type: LispOp]: var
-           - [1, Type: Identifier]: "f4"
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, world1
+"
          ]
           - [2, Type: Vector]: Vector[(size=3) 
            - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "f4"
-           - [2, Type: Map]: { (Map, size=1) 
-            - abc (Type: Map): { (Map, size=3) 
-             - code (Type: Vector): Vector[(size=2) 
-              - [0, Type: LispOp]: print
-              - [1, Type: String]: "what is abc"
-            ]
-             - description (Type: Null): Null
-             - params (Type: Vector): Vector[(size=2) 
-              - [0, Type: Identifier]: "x"
-              - [1, Type: Identifier]: "y"
-            ]
-           }
-          }
-         ]
-          - [3, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "
-
-f4:
-"
-           - [2, Type: Identifier]: "f4"
-         ]
-          - [4, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "f4b"
-           - [2, Type: Identifier]: "f4"
-         ]
-          - [5, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "
-
-f4b:
-"
-           - [2, Type: Identifier]: "f4b"
-         ]
-        ]
-         - description (Type: Null): Null
-         - params (Type: Vector): Vector[(size=0) 
-        ]
-       }
-        - main (Type: Map): { (Map, size=3) 
-         - code (Type: Vector): Vector[(size=8) 
-          - [0, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "pi"
-           - [2, Type: Float]: 3.14
-         ]
-          - [1, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "f1"
-           - [2, Type: Vector]: Vector[(size=3) 
-            - [0, Type: LispOp]: lambda
-            - [1, Type: Vector]: Vector[(size=1) 
-             - [0, Type: Identifier]: "z"
+           - [1, Type: Identifier]: "m1"
+           - [2, Type: Vector]: Vector[(size=5) 
+            - [0, Type: LispOp]: map
+            - [1, Type: Vector]: Vector[(size=2) 
+             - [0, Type: Identifier]: "k1"
+             - [1, Type: Integer]: 123
            ]
             - [2, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "hello"
+             - [0, Type: Identifier]: "k2"
+             - [1, Type: Integer]: 456
+           ]
+            - [3, Type: Vector]: Vector[(size=2) 
+             - [0, Type: Identifier]: "k3"
+             - [1, Type: Integer]: 456
+           ]
+            - [4, Type: Vector]: Vector[(size=2) 
+             - [0, Type: Identifier]: "k4"
+             - [1, Type: Vector]: Vector[(size=2) 
+              - [0, Type: LispOp]: map
+              - [1, Type: Vector]: Vector[(size=2) 
+               - [0, Type: Identifier]: "l1"
+               - [1, Type: Integer]: 456
+             ]
+            ]
            ]
           ]
          ]
-          - [2, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "f2"
-           - [2, Type: Integer]: 123
-         ]
           - [3, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "f3"
-           - [2, Type: Map]: { (Map, size=1) 
-            - abc (Type: Map): { (Map, size=3) 
-             - code (Type: Vector): Vector[(size=2) 
-              - [0, Type: LispOp]: print
-              - [1, Type: String]: "what is abc"
-            ]
-             - description (Type: Null): Null
-             - params (Type: Vector): Vector[(size=2) 
-              - [0, Type: Identifier]: "x"
-              - [1, Type: Identifier]: "y"
-            ]
-           }
-          }
+           - [0, Type: LispOp]: print
+           - [1, Type: Identifier]: "m1"
+           - [2, Type: String]: "
+"
          ]
           - [4, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "
-
-f3:
-"
-           - [2, Type: Identifier]: "f3"
-         ]
-          - [5, Type: Vector]: Vector[(size=2) 
-           - [0, Type: Identifier]: "p55"
-           - [1, Type: Vector]: Vector[(size=0) 
+           - [0, Type: LispOp]: send
+           - [1, Type: Identifier]: "m1"
+           - [2, Type: Vector]: Vector[(size=1) 
+            - [0, Type: Atom]: -4131762680556488183
           ]
-         ]
-          - [6, Type: Vector]: Vector[(size=2) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "
-"
-         ]
-          - [7, Type: Vector]: Vector[(size=2) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "
-"
          ]
         ]
          - description (Type: Identifier): "my_func_des"
@@ -189,9 +118,10 @@ f3:
      }
     }
    }
-    - Atoms (Type: Map): { (Map, size=7) 
+    - Atoms (Type: Map): { (Map, size=8) 
      - 4625761978203795338 (Type: String): "set"
      - -4705652595650921993 (Type: String): "get"
+     - -4131762680556488183 (Type: String): "get_keys"
      - 3211040718132763761 (Type: String): "class"
      - 1325213333779622127 (Type: String): "lvar"
      - 7765881685828984094 (Type: String): "mvar"
@@ -219,34 +149,15 @@ f3:
      - pid (Type: Integer): 0
    }
     - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=2) 
+     - frames (Type: Vector): Vector[(size=1) 
       - [0, Type: Map]: { (Map, size=2) 
        - current_module (Type: String): "Kernel"
        - scopes (Type: Vector): Vector[(size=1) 
         - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=4) 
-          - f3 (Type: SharedPtr): shared_ptr*:{"abc": {"params": Vector[x, y], "description": Null, "code": Vector[print, what is abc]}}
-          - f2 (Type: Integer): 123
-          - f1 (Type: SharedPtr): shared_ptr*:Vector[lambda, Vector[z], Vector[print, hello]]
-          - pi (Type: Float): 3.14
-        }
-         - var (Type: Map): { (Map, size=0) 
-        }
-       }
-      ]
-     }
-      - [1, Type: Map]: { (Map, size=4) 
-       - args (Type: Map): { (Map, size=0) 
-      }
-       - current_function (Type: String): "p55"
-       - current_module (Type: String): "Kernel"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=1) 
-          - f4b (Type: SharedPtr): shared_ptr*:{"abc": {"params": Vector[x, y], "description": Null, "code": Vector[print, what is abc]}}
+         - immute (Type: Map): { (Map, size=0) 
         }
          - var (Type: Map): { (Map, size=1) 
-          - f4 (Type: SharedPtr): shared_ptr*:{"abc": {"params": Vector[x, y], "description": Null, "code": Vector[print, what is abc]}}
+          - m1 (Type: SharedPtr): shared_ptr*:{"__object_info__": {}, "k4": {"__object_info__": {}, "l1": 456}, "k3": 456, "k2": 456, "k1": 123}
         }
        }
       ]

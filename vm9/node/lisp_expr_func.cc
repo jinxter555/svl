@@ -118,7 +118,6 @@ Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, i
 
   if(list_kv.empty()) return {true, Node::create(Node::Type::Map)}; // empty map
 
-  cout << "map!\n";
   size_t  s = list_kv.size();
   for(size_t i=start; i<s; i++) {
     auto &kv_pair = list_kv[i];
@@ -141,6 +140,32 @@ Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, i
     map[key_ref_status.second._to_str()] = move(value_status.second);
 
   }
-  cout << "map " << Node::_to_str( map) << "\n";
+  map[OBJ_INFO] = make_unique<Node>(Node::Type::Map);
+
+
+  //cout << "map " << Node::_to_str( map) << "\n";
   return {true, Node::create(move(map))};
+}
+// handling messages for map
+Node::OpStatus LispExpr::map_messages(Node&process, const Node::Vector &list, int start) {
+  MYLOGGER(trace_function, "LispExpr::map_messages(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
+}
+// 
+Node::OpStatus LispExpr::map_get_keys(Node&process, Node &node, const Node::Vector& args) {
+  MYLOGGER(trace_function, "LispExpr::map_messages(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
+  if(node.type_!=Node::Type::Map)
+  return {false, Node::create_error(
+    Error::Type::IndexWrongType, 
+    "trying to get keys and not map")};
+  auto const &map = get<Node::Map>(node.value_);
+  Node::Vector list_key;
+
+  for(const auto& kv : map) {
+    list_key.push_back(kv.second->clone());
+  }
+  return {true, Node::create(move(list_key))};
 }
