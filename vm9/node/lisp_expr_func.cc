@@ -151,21 +151,77 @@ Node::OpStatus LispExpr::map_messages(Node&process, const Node::Vector &list, in
   MYLOGGER(trace_function, "LispExpr::map_messages(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+  auto &head = list[start];
+  auto &args = list[start+1];
+  switch(head->type_) {
+  case Node::Type::Identifier: {
+    auto name_var = head->_to_str();
+    auto const &fun_name_ref_status = args->get_node(0);
+
+    auto value_ref_status = symbol_lookup(process, head->_to_str());
+    if(!value_ref_status.first) {
+      cerr << "error sending message to object" + name_var + "  lookup up failed";
+      return{false, Node::create_error(Error::Type::SymbolNotFound, "error sending message to object" + name_var + "  lookup up failed")};
+    }
+    if(!fun_name_ref_status.first) {
+      cerr << "args.. error sending message: " 
+      +  fun_name_ref_status.second._to_str() 
+      + " to object" + name_var + "  lookup up failed";
+      return{false, Node::create_error(Error::Type::SymbolNotFound, "error sending message: "
+      +  fun_name_ref_status.second._to_str() 
+      + " to object" + name_var + "  lookup up failed:")};
+    }
+    auto method_path = cc_path_module;
+    method_path.push_back(fun_name_ref_status.second._to_str());
+    auto fun_method_ref_status = get_node(method_path);
+    if(!fun_method_ref_status.first) {
+      cerr << "method function not found!" <<   fun_name_ref_status.second._to_str();
+      return{false, Node::create_error(Error::Type::FunctionNotFound, "method function not found") };
+    }
+
+    Node::Fun method_fun = get<Node::Fun>(fun_method_ref_status.second.value_);
+    auto result_status = method_fun(process, value_ref_status.second, {});
+
+
+
+    cout << "Identerier: " <<  head->_to_str() << "\n";
+    cout << "value : " <<  value_ref_status << "\n";
+    cout << "args : " <<  *args << "\n";
+    cout << "funrefstatus: " <<  fun_name_ref_status<< "\n";
+    cout << "resultstat: " <<  result_status <<  "\n";
+
+  }
+
+  }
+  return {true, nullptr};
 
 }
 // 
 Node::OpStatus LispExpr::map_get_keys(Node&process, Node &node, const Node::Vector& args) {
   MYLOGGER(trace_function, "LispExpr::map_messages(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
-  if(node.type_!=Node::Type::Map)
-  return {false, Node::create_error(
-    Error::Type::IndexWrongType, 
-    "trying to get keys and not map")};
-  auto const &map = get<Node::Map>(node.value_);
-  Node::Vector list_key;
 
-  for(const auto& kv : map) {
-    list_key.push_back(kv.second->clone());
+  switch(node.type_) {
+  case Node::Type::Map: {
+    Node::Vector list_key; 
+    auto &map = get<Node::Map>(node.value_);
+    for(const auto& kv : map) list_key.push_back(kv.second->clone());
+    return {true, Node::create(move(list_key))};
+    }
+  case Node::Type::Shared: {
+    Node::Vector list_key; 
+    auto &map_ptr = get<Node::ptr_S>(node.value_);
+    auto &map= get<Node::Map>(map_ptr->value_);
+    for(const auto& kv : map) list_key.push_back(kv.second->clone());
+    return {true, Node::create(move(list_key))};
+    }
+  default: 
+    return {false, Node::create_error(
+    Error::Type::IndexWrongType, 
+    "map get keys and but type is not map, type: "+  Node::_to_str(node.type_))};
   }
-  return {true, Node::create(move(list_key))};
+
+
+
+
 }

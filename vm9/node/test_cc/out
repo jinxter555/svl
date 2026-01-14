@@ -8,7 +8,7 @@ print recursive:
    - Lang (Type: Map): { (Map, size=3) 
     - CC (Type: Map): { (Map, size=1) 
      - Module (Type: Map): { (Map, size=1) 
-      - map_get_key (Type: Function): Fun*:
+      - map_get_keys (Type: Function): Fun*:
     }
    }
     - Lisp (Type: Map): { (Map, size=2) 
@@ -104,7 +104,7 @@ print recursive:
            - [0, Type: LispOp]: send
            - [1, Type: Identifier]: "m1"
            - [2, Type: Vector]: Vector[(size=1) 
-            - [0, Type: Atom]: -4131762680556488183
+            - [0, Type: Identifier]: "get_get_keys"
           ]
          ]
         ]
@@ -118,10 +118,9 @@ print recursive:
      }
     }
    }
-    - Atoms (Type: Map): { (Map, size=8) 
+    - Atoms (Type: Map): { (Map, size=7) 
      - 4625761978203795338 (Type: String): "set"
      - -4705652595650921993 (Type: String): "get"
-     - -4131762680556488183 (Type: String): "get_keys"
      - 3211040718132763761 (Type: String): "class"
      - 1325213333779622127 (Type: String): "lvar"
      - 7765881685828984094 (Type: String): "mvar"

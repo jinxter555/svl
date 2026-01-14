@@ -126,6 +126,9 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
 }
 
 Node::OpStatusRef Node::get_node(const vector<string>&path) {
+  MYLOGGER(trace_function, "Node::get_node(vector& path)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);
+
   if(type_ != Type::Map){
     return {false, Error::ref(Error::Type::IndexWrongType, 
     "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(type_))};
@@ -153,6 +156,9 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 }
 
 Node::OpStatusRef Node::get_node(const string&key) {
+  MYLOGGER(trace_function, "Node::get_node(string& key)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_FUNC_INFO+30);
+
   if(type_ != Type::Map){
     return {false, Error::ref(Error::Type::IndexWrongType, 
     "get_node(string&key) only works Map nodes. Current type: " + _to_str(type_))};

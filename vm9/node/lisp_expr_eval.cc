@@ -160,6 +160,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::map:   return map_create(process, code_list, start);
   case Lisp::Op::send:   {
     cout << "sending message in eval!\n";
+    return map_messages(process, code_list, start );
     return {true, nullptr};
 
   }

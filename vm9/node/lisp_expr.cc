@@ -88,7 +88,7 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   f = map_get_keys;
   //auto f = map_get_keys;
 
-  attach_cc_fun("map_get_key", map_get_keys);
+  attach_cc_fun("map_get_keys", map_get_keys);
   return attach_module(move(hierarchical_code.second));
 
 }
