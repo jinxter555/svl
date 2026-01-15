@@ -222,6 +222,13 @@ Node::OpStatus LispExpr::map_get_keys(Node&process, Node &node, const Node::Vect
   }
 
 
-
-
+}
+Node::OpStatus LispExpr::literal(const Node::Vector &list, int start) {
+  MYLOGGER(trace_function, "LispExpr::literal(const Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "start: " + start, SLOG_FUNC_INFO+30);
+  Node::Vector list_result;
+  size_t s=list.size();
+  for(size_t i=start; i<s; i++) 
+    list_result.push_back(list[i]->clone());
+  return {true, Node::create(move(list_result))};
 }

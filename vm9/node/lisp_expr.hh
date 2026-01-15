@@ -154,4 +154,6 @@ public:
   template <typename T>
   Node::OpStatus builtin_print_n(Node& process, const T& list, size_t start=0);
 
+  Node::OpStatus literal(const Node::Vector &list, int start=0);
+
 };

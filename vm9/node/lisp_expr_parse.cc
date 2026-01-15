@@ -201,6 +201,7 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   //cout << "mod_loc: " << *mod_loc << "\n\n";
   //return {false, Node::create(true)};
 }
+//--------------------------------  attach c++ static function
 Node::OpStatus LispExpr::attach_cc_fun(const string&name, const Node::Fun& f) {
   MYLOGGER(trace_function, "LispExpr::attach_cc_fun(const string&name, const Node::Fun&f)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("name: ") + name, SLOG_FUNC_INFO+30);
@@ -213,7 +214,6 @@ Node::OpStatus LispExpr::attach_cc_fun(const string&name, const Node::Fun& f) {
 
   Node::Map nm = {};
   nm[name] = Node::clone(f);
-  return mod_loc->merge(Node::create(move(nm)));
   return mod_loc->merge(Node::create(move(nm)));
 }
 
@@ -316,6 +316,7 @@ void LispExpr::set_keywords() {
   map_->set("noop", Op::noop);
   map_->set("identifier", Op::identifier);
   map_->set("scalar", Op::scalar);
+  map_->set("literal", Op::literal);
   map_->set("list", Op::list);
   map_->set("vector", Op::vector);
   map_->set("deque", Op::deque);

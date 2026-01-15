@@ -14,6 +14,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::noop: return "noop";
     case Lisp::Op::identifier: return "identifier";
     case Lisp::Op::scalar: return "scalar";
+    case Lisp::Op::literal: return "literal";
     case Lisp::Op::list: return "list";
     case Lisp::Op::deque: return "deque";
     case Lisp::Op::vector: return "vector";

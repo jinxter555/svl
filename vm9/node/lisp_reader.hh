@@ -6,7 +6,10 @@ struct Token {
   Node::Integer col_;
   Node::Integer line_;
   string value_;
-};
+} ;
+
+
+
 class LispExpr;
 
 class LispReader  : public Lisp {
@@ -26,6 +29,6 @@ public:
   Node::OpStatus parse(list<Token>& tokens);  // turn everything in to stream of node
   Node::OpStatus parse_sequence(list<Token>& tokens);  // turn everything in to stream of node
   Lisp::Op str_to_op(const string&input);
-  string _to_str(const list<Token>& tokens);
+  static string _to_str(const list<Token>& tokens);
   void reset();
 };

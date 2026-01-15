@@ -148,6 +148,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 
   }
   case Lisp::Op::print: return builtin_print_n(process, code_list, start);
+  case Lisp::Op::literal: return literal(code_list, start);
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 

@@ -112,7 +112,7 @@ list<Token> LispReader::tokenize(const string& input)  {
 
 string LispReader::_to_str(const list<Token>& tokens) {
   string result="[";
-
+ 
   size_t i=0, s=tokens.size();
   for(auto token : tokens) {
     result = result + ","  + token.value_;
@@ -175,6 +175,14 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
 
   //Token token = tokens.front(); tokens.erase(tokens.begin());
   Token token = tokens.front(); tokens.pop_front();
+
+  if(token.value_ == "'") { //  parse escaped literal list
+    Token token_next = tokens.front(); tokens.pop_front();
+    if(token_next.value_ == "(") {
+      tokens.push_front({token_next.col_, token_next.line_, "literal"});
+      return parse_sequence(tokens);
+    }
+  }
 
   if(token.value_ == "(") {
     return parse_sequence(tokens);
