@@ -82,14 +82,20 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   }
 
   // builds the interpreter tree, as in modules and function hierarchy
-  auto hierarchical_code =  parse(*tokens_interpreted.second); 
+  auto hierarchical_code_status =  parse(*tokens_interpreted.second); 
+
+  if(!hierarchical_code_status.first) {
+    cerr << "parse build interpreter error!" <<  hierarchical_code_status.second->_to_str() <<"\n";
+    return hierarchical_code_status;
+  }
 
   Node::Fun f;
   f = map_get_keys;
   //auto f = map_get_keys;
 
   attach_cc_fun("map_get_keys", map_get_keys);
-  return attach_module(move(hierarchical_code.second));
+  attach_cc_fun("Map", "map_get_keys", map_get_keys);
+  return attach_module(move(hierarchical_code_status.second));
 
 }
 

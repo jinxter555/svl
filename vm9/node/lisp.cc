@@ -9,6 +9,9 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::kernel: return "kernel";
     case Lisp::Op::system: return "system";
     case Lisp::Op::root: return "root";
+    case Lisp::Op::class_: return "class";
+    case Lisp::Op::new_: return "new";
+    case Lisp::Op::delete_: return "delete";
     case Lisp::Op::clone: return "clone";
     case Lisp::Op::error: return "error";
     case Lisp::Op::noop: return "noop";
@@ -30,6 +33,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::assign: return "assign";
     case Lisp::Op::def: return "def";
     case Lisp::Op::call: return "call";
+    case Lisp::Op::extern_: return "extern";
     case Lisp::Op::send: return "send";
     case Lisp::Op::ret: return "ret";
     case Lisp::Op::cond: return "cond";

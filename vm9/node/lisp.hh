@@ -11,13 +11,13 @@ using namespace  std;
 class Lisp {
 public:
   enum class Op 
-  { kernel, system, root, clone
+  { kernel, system, root, class_, new_, delete_, clone
   , error, noop
   , identifier, scalar, literal, list, deque, vector, map
   , var, assign
   , car, cdr
   , add, sub, div, mul, mod
-  , def, call, send, ret
+  , def, call, send, ret, extern_
   , loop, cond, print
   , module, defun, defmacro, alias, lambda
   };

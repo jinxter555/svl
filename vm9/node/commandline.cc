@@ -100,7 +100,8 @@ void Commandline::load_files(Interactive *interactive, const string& file_str) {
     auto build_status  = interactive->build_program( source_status.second._get_str());
     if(!build_status.first) {
       cerr << "build error status error: " << build_status << "\n";
-      return;
+      exit(1);
+      //return ;
     }
 
     //interactive->print();

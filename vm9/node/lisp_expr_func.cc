@@ -191,12 +191,13 @@ Node::OpStatus LispExpr::map_messages(Node&process, const Node::Vector &list, in
     cout << "resultstat: " <<  result_status <<  "\n";
 
   }
+  default: {}
 
   }
   return {true, nullptr};
 
 }
-// 
+// process, node this object, and args pass to this object
 Node::OpStatus LispExpr::map_get_keys(Node&process, Node &node, const Node::Vector& args) {
   MYLOGGER(trace_function, "LispExpr::map_messages(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);

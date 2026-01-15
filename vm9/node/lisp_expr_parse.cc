@@ -51,6 +51,11 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
       return build_parsed_fun(list); }
     case Lisp::Op::module: {
       return build_parsed_module(list); }
+    case Lisp::Op::class_: {
+      cout << "class build!\n";
+      //return build_parsed_module(list); 
+      break;
+    }
     case Lisp::Op::root: { return build_parsed_root(list); }
     default: {}
     }
@@ -70,6 +75,8 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
 Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_fun(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  if(list.size()<3) return {false, Node::create_error(Error::Type::Parse, "defun requires 3 parameters! " + Node::_to_str(list))};
 
   Node::Map map_n={}, map={}; 
   string name = get<string>(list.front()->value_); list.pop_front(); // function name
@@ -194,6 +201,8 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
 }
 
 //------------------------------------------------------------------------
+// attach module to 'Lisp' Language tree
+//
 Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
   auto mod_loc = get_branch(lisp_path_module);
@@ -215,6 +224,33 @@ Node::OpStatus LispExpr::attach_cc_fun(const string&name, const Node::Fun& f) {
   Node::Map nm = {};
   nm[name] = Node::clone(f);
   return mod_loc->merge(Node::create(move(nm)));
+}
+Node::OpStatus LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun& f) {
+  MYLOGGER(trace_function, "LispExpr::attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun&f)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "name_mod: " + name_mod + ", name_fun: " + name_fun, SLOG_FUNC_INFO+30);
+  auto location  = cc_path_module;
+  location.push_back(name_mod);
+  auto mod_loc_ref = get_node(location );
+  if(!mod_loc_ref.first) {
+    cerr << "CC_path_module returned false! !" << mod_loc_ref.second._to_str() << ", create new module\n";
+    //return {false, mod_loc_ref.second.clone()};
+    set_branch(location , Node::create(Node::Type::Map));
+  }
+  location.push_back("function");
+  auto modfun_loc = get_branch(location );
+
+  cout << "location: " << _to_str_ext(location) << "\n";
+  if(modfun_loc==nullptr) {
+    cerr << "modfun_loc is nullptr!\n";
+    set_branch(location , Node::create(Node::Type::Map));
+  }
+
+  modfun_loc = get_branch(location );
+  Node::Map nm = {};
+  nm[name_fun] = Node::clone(f);
+  return modfun_loc->merge(Node::create(move(nm)));
+
+
 }
 
 
@@ -311,6 +347,9 @@ void LispExpr::set_keywords() {
   map_->set("kernel", Op::kernel);
   map_->set("system", Op::system);
   map_->set("root",   Op::root);
+  map_->set("new",   Op::new_);
+  map_->set("delete",   Op::delete_);
+  map_->set("class",   Op::class_);
   map_->set("clone",   Op::clone);
   map_->set("error",Op::error);
   map_->set("noop", Op::noop);
@@ -332,6 +371,7 @@ void LispExpr::set_keywords() {
   map_->set("mod", Op::mod); 
   map_->set("def", Op::def); 
   map_->set("call", Op::call);
+  map_->set("extern", Op::extern_);
   map_->set("send", Op::send);
   map_->set("ret", Op::ret);
   map_->set("cond", Op::cond);

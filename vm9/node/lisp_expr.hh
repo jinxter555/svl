@@ -70,6 +70,8 @@ public:
 
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
   Node::OpStatus attach_cc_fun(const string&name, const Node::Fun& f);// create module structure 
+  Node::OpStatus attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun& f);// create module structure 
+  Node::OpStatus attach_cc_fun(const vector<string>&name, const Node::Fun& f);// 
 
 
   unique_ptr<Node> frame_create() const ; // create a frame 
