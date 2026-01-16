@@ -160,11 +160,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   }
   case Lisp::Op::map:   return map_create(process, code_list, start);
   case Lisp::Op::send:   {
-    cout << "sending message in eval!\n";
+    cout << "sendng message in eval!\n";
     return map_messages(process, code_list, start );
     return {true, nullptr};
-
   }
+  case Lisp::Op::call_extern: { return call_extern(process, code_list, start ); }
   case Lisp::Op::defun:   {
     cout << "defun in eval!\n";
     return {true, nullptr};
@@ -455,4 +455,67 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, int 
   /*
   code_path_list.insert(code_path_list.end(), mf_list.begin(), mf_list.end());
   */
+}
+
+// code_list = (call_extern (module function) this_node_var& (arg1 arg2 arg3))
+Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_list, int start) {
+  MYLOGGER(trace_function, "LispExpr::call_extern(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
+  auto &modfun = code_list[start];
+  auto mod_ref_status= modfun->get_node(0);
+  auto fun_ref_status= modfun->get_node(1);
+  auto &node_this = code_list[start+1];
+
+  if(!mod_ref_status.first || !fun_ref_status.first)  {
+    cerr << "LispExpr::call_extern() error getting module and function: !"  
+    << mod_ref_status.second._to_str() 
+    + " : "  
+    + fun_ref_status.second._to_str() + "\n";
+    return {false, fun_ref_status.second.clone()};
+  }
+
+  auto node_this_status = eval(process, *node_this);
+  if(!node_this_status.first) {
+    cerr << "3rd argument aka node this failed to eval!\n";
+    return node_this_status;
+  }
+
+
+  //cout << "mod: " << mod_ref_status.second._to_str() << "\n";
+  //cout << "fun: " << fun_ref_status.second._to_str() << "\n";
+  //cout << "node_this_status:"  << node_this_status << "\n";
+
+  return call_extern(process, 
+    mod_ref_status.second._to_str(), 
+    fun_ref_status.second._to_str(), 
+    *node_this_status.second, code_list);
+  return {true, fun_ref_status.second.clone()};
+
+
+}
+Node::OpStatus LispExpr::call_extern(Node& process, const string&name_mod, const string&name_fun, Node& node_this, const Node::Vector& args) {
+  MYLOGGER(trace_function, "LispExpr::call_extern(Node&process, Node& node_this, Node::Vector&args)", __func__, SLOG_FUNC_INFO);
+
+  auto method_path = cc_path_module;
+  method_path.push_back(name_mod);
+  method_path.push_back(FUNCTION);
+  method_path.push_back(name_fun);
+  //cout << "method path: " << _to_str_ext(method_path) << "\n";
+  auto fun_method_ref_status = get_node(method_path);
+  if(!fun_method_ref_status.first) {
+    cerr << "method function not found!" <<   name_fun;
+    return{false, Node::create_error(Error::Type::FunctionNotFound, "method function not found") };
+  }
+
+  Node::Fun method_fun = get<Node::Fun>(fun_method_ref_status.second.value_);
+  //return method_fun(process, node_this, {});
+  //return method_fun(process, node_this, args);
+  auto result_status = method_fun(process, node_this, {});
+  //cout << "result status : " << result_status << "\n";
+  return result_status;
+
+  //return {false, nullptr};
+
 }

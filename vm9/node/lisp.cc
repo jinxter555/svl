@@ -33,7 +33,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::assign: return "assign";
     case Lisp::Op::def: return "def";
     case Lisp::Op::call: return "call";
-    case Lisp::Op::extern_: return "extern";
+    case Lisp::Op::call_extern: return "call_extern";
     case Lisp::Op::send: return "send";
     case Lisp::Op::ret: return "ret";
     case Lisp::Op::cond: return "cond";

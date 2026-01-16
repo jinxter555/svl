@@ -199,23 +199,28 @@ Node::OpStatus LispExpr::map_messages(Node&process, const Node::Vector &list, in
 }
 // process, node this object, and args pass to this object
 Node::OpStatus LispExpr::map_get_keys(Node&process, Node &node, const Node::Vector& args) {
-  MYLOGGER(trace_function, "LispExpr::map_messages(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::map_get_keys(Node&process, const Node& node, const Vector& args)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("node: ") + Node::_to_str(args), SLOG_FUNC_INFO+30);
 
   switch(node.type_) {
   case Node::Type::Map: {
     Node::Vector list_key; 
     auto &map = get<Node::Map>(node.value_);
-    for(const auto& kv : map) list_key.push_back(kv.second->clone());
-    return {true, Node::create(move(list_key))};
-    }
+    for(const auto& kv : map) {
+      if(kv.first == OBJ_INFO) continue;
+      list_key.push_back(Node::create(kv.first));} 
+
+    return {true, Node::create(move(list_key))};}
+
   case Node::Type::Shared: {
     Node::Vector list_key; 
     auto &map_ptr = get<Node::ptr_S>(node.value_);
     auto &map= get<Node::Map>(map_ptr->value_);
-    for(const auto& kv : map) list_key.push_back(kv.second->clone());
-    return {true, Node::create(move(list_key))};
-    }
+    for(const auto& kv : map)  {
+      if(kv.first == OBJ_INFO) continue;
+      list_key.push_back(Node::create(kv.first)); }
+    return {true, Node::create(move(list_key))}; }
   default: 
     return {false, Node::create_error(
     Error::Type::IndexWrongType, 

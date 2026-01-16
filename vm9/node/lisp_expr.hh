@@ -117,6 +117,9 @@ public:
 
   Node::OpStatus call(Node& process, Node& code_node);
   Node::OpStatus call(Node& process, const Node::Vector& code_list, int start=0);
+
+  Node::OpStatus call_extern(Node& process, const Node::Vector& code_list, int start=0);
+  Node::OpStatus call_extern(Node& process, const string&mod, const string&fun ,  Node& node_this, const Node::Vector& args);
   // 
   Node::OpStatus build_parsed_list(Node& node);
   Node::OpStatus build_parsed_vector(Node& node);

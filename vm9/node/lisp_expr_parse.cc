@@ -231,19 +231,16 @@ Node::OpStatus LispExpr::attach_cc_fun(const string&name_mod, const string&name_
   auto location  = cc_path_module;
   location.push_back(name_mod);
   auto mod_loc_ref = get_node(location );
-  if(!mod_loc_ref.first) {
-    cerr << "CC_path_module returned false! !" << mod_loc_ref.second._to_str() << ", create new module\n";
+  if(!mod_loc_ref.first) { // module location does not exist
+    //cerr << "CC_path_module returned false! !" << mod_loc_ref.second._to_str() << ", create new module\n";
     //return {false, mod_loc_ref.second.clone()};
     set_branch(location , Node::create(Node::Type::Map));
   }
-  location.push_back("function");
+  location.push_back(FUNCTION); // add 'function' sub branch as well
   auto modfun_loc = get_branch(location );
 
-  cout << "location: " << _to_str_ext(location) << "\n";
-  if(modfun_loc==nullptr) {
-    cerr << "modfun_loc is nullptr!\n";
+  if(modfun_loc==nullptr) 
     set_branch(location , Node::create(Node::Type::Map));
-  }
 
   modfun_loc = get_branch(location );
   Node::Map nm = {};
@@ -371,7 +368,7 @@ void LispExpr::set_keywords() {
   map_->set("mod", Op::mod); 
   map_->set("def", Op::def); 
   map_->set("call", Op::call);
-  map_->set("extern", Op::extern_);
+  map_->set("call_extern", Op::call_extern);
   map_->set("send", Op::send);
   map_->set("ret", Op::ret);
   map_->set("cond", Op::cond);
