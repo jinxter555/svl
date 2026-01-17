@@ -43,8 +43,27 @@ string LispReader::extract_quoted_string(const string&input, size_t &i) {
     
   }
   return result;
-
 }
+string LispReader::extract_single_quoted_string(const string&input, size_t &i) {
+  string result;
+  bool in_quote = true;
+  bool escaped = false;
+  for(++i; i<input.size(); i++) {
+    char c = input[i];
+    if(escaped) {
+      result += escaped_char(c);
+      escaped = false;
+    } else if(isspace(c)) {
+      in_quote = !in_quote;
+      break;
+    } else {
+      result += c;
+    }
+    
+  }
+  return result;
+}
+
 
 list<Token> LispReader::tokenize(const string& input)  {
   MYLOGGER(trace_function, "LispReader::tokenize(string&input)", __func__, SLOG_FUNC_INFO);
@@ -221,6 +240,14 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
       auto node_ptr = Node::create(esc_str); 
       return {true, move(node_ptr)}; 
     }
+    if(token.value_[0]=='\'') {
+      token.value_.erase(0, 1);
+      string esc_str = raw_to_escaped_string(token.value_);
+      auto node_ptr = Node::create(esc_str); 
+      return {true, move(node_ptr)}; 
+    }
+
+
     
   }
 

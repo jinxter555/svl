@@ -132,10 +132,13 @@ string Node::_to_str() const {
       //cout << "shared to_str()";
       return ptr_s->_to_str();}
     case Type::Raw: {
-      cout << "raw to_str()";
+      //cout << "raw to_str()";
       auto& ptr_r = get<ptr_R>(value_);
       return ptr_r->_to_str();}
-
+    case Type::Unique: {
+      //cout << "raw to_str()";
+      auto& ptr_r = get<ptr_U>(value_);
+      return ptr_r->_to_str();}
     default: { return "_to_str() unknown type " + _to_str(type_); }
   }
   return "_to_str() unknwon type " + _to_str(type_); 

@@ -115,7 +115,7 @@ public:
   Node::OpStatus eval(Node& process, const Node::Vector& code_list);
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 
-  Node::OpStatus call(Node& process, Node& code_node);
+  Node::OpStatus call(Node& process, const Node& code_node);
   Node::OpStatus call(Node& process, const Node::Vector& code_list, int start=0);
 
   Node::OpStatus call_extern(Node& process, const Node::Vector& code_list, int start=0);
@@ -144,6 +144,8 @@ public:
   Node::OpStatus map_messages(Node&process, const Node::Vector &list_kv, int start=0);
   // procdess, node this, arguments..
   static Node::OpStatus map_get_keys(Node&process, Node&map, const Node::Vector& args ={});
+  static Node::OpStatus map_get_value(Node&process, Node&map, const Node::Vector& args ={}); // get value index by key
+  static Node::OpStatus map_set_value(Node&process, Node&map, const Node::Vector& args ={}); // get value index by key
 
   //
   Node::OpStatus build_parsed_def(Node::List& list);
