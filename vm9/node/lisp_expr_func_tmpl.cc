@@ -9,6 +9,7 @@
 #include "scope_logger.hh"
 
 //------------------------------------------------------------------------
+/*
 template <typename T>
 Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
   MYLOGGER(trace_function, "LispExpr::print(Node&env, T&list)", __func__, SLOG_FUNC_INFO);
@@ -30,7 +31,7 @@ Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
     //cout << list << "\n";
   }
 }
-
+*/
 template <typename T>
 Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::builtin_print_n(Node&env, const T&list, size_t)", __func__, SLOG_FUNC_INFO);
@@ -42,8 +43,13 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
       auto &element = list[i];
       auto ee = eval(process, *element);
       if(!ee.first ) return ee;
-      //cout << *element;
-      cout << *ee.second;
+      if(ee.second->type_ == Node::Type::Atom) {  // only works for print :atom, not for print map 
+        auto atom_ref_status = atom_to_str(ee.second->_get_integer());
+        if(!atom_ref_status.first) return {false, atom_ref_status.second.clone()};
+        cout << atom_ref_status.second;
+      } else {
+        cout << *ee.second;
+      }
     }
   } else {
     cout << "builtin_print_n unknown T list\n";

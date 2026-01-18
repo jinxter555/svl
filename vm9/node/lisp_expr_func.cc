@@ -72,7 +72,7 @@ Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, i
   MYLOGGER_MSG(trace_function, string("list_kv: ") + Node::_to_str(list_kv), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
   Node::Map map;
-  auto map_ = make_unique<Node>(Node::Type::Map);
+  auto obj_info = make_unique<Node>(Node::Type::Map);
 
   if(list_kv.empty()) return {true, Node::create(Node::Type::Map)}; // empty map
 
@@ -98,7 +98,11 @@ Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, i
     map[key_ref_status.second._to_str()] = move(value_status.second);
 
   }
-  map[OBJ_INFO] = make_unique<Node>(Node::Type::Map);
+  
+  auto type_atom_ptr = make_unique<Node>();
+  type_atom_ptr->set_atom(str_to_atom("map"));
+  obj_info->set("type",  move(type_atom_ptr));
+  map[OBJ_INFO] = move(obj_info);
 
 
   //cout << "map " << Node::_to_str( map) << "\n";
