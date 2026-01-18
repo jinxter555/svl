@@ -97,6 +97,8 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   attach_cc_fun("Map", "keys", map_get_keys);
   attach_cc_fun("Map", "get", map_get_value);
   attach_cc_fun("Map", "set", map_set_value);
+  attach_cc_fun("Map", "del", map_del_key);
+  attach_cc_fun("Map", "has", map_has_key);
   return attach_module(move(hierarchical_code_status.second));
 
 }

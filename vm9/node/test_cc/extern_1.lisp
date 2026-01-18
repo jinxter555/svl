@@ -19,7 +19,7 @@
       (print "\n")
       (print "m1[k5]: " (call_extern (Map get) m1 ('k5)   ))
       (print "\n")
-      (print "m1[__object_info__]: " (call_extern (Map get) m1 ('__object_info__)) "\n")
+;      (print "m1[__object_info__]: " (call_extern (Map get) m1 ('__object_info__)) "\n")
 ;      (print "m1[__object_info__2]: " (call_extern (Map get) m1 '(__object_info__2)) "\n")
    ;   (call_extern (Map set) m1 '(pi 3.1415))
 
@@ -27,6 +27,11 @@
       ;(call_extern (Map set) m1 '(pi 3.1415))
 
 
+      (print "\n\n" m1 "\n\n")
+      (print (call_extern (Map has) m1 ('k1)) "\n")
+      ;(print (call_extern (Map del) m1 ('k1)) "\n")
+      ((call_extern (Map del) m1 ('k1)) "\n")
+      (print (call_extern (Map has) m1 ('k1)) "\n")
       (print "\n\n" m1 "\n\n")
 
 

@@ -143,6 +143,8 @@ public:
   Node::OpStatus map_create(Node&process, const Node::Vector &list_kv, int start=0);
   Node::OpStatus map_messages(Node&process, const Node::Vector &list_kv, int start=0);
   // procdess, node this, arguments..
+  static Node::OpStatus map_del_key(Node&process, Node&map, const Node::Vector& args ={});
+  static Node::OpStatus map_has_key(Node&process, Node&map, const Node::Vector& args ={});
   static Node::OpStatus map_get_keys(Node&process, Node&map, const Node::Vector& args ={});
   static Node::OpStatus map_get_value(Node&process, Node&map, const Node::Vector& args ={}); // get value index by key
   static Node::OpStatus map_set_value(Node&process, Node&map, const Node::Vector& args ={}); // get value index by key

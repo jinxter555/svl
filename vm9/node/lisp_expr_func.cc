@@ -4,61 +4,7 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-
-
-/*
-Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, int start) {
-  MYLOGGER(trace_function, "LispExpr::car(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO)
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
-  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
-
-  //if(list.empty()) return {false, Node::create_error(Error::Type::EmptyContainer, "Empty List front()!")};
-  if(list.empty()) return {true, Node::create()}; // return null
-  auto &head = list[start];
-  switch(head->type_) {
-  case Node::Type::Identifier: {
-    auto name = get<string>(head->value_);
-
-    auto rv_ref_status = symbol_lookup(process, name  );
-    if(!rv_ref_status.first) {
-      cerr << "Lisp::car error symbol '"  <<   name << "' lookup " << rv_ref_status.second << "\n";
-      return {false, rv_ref_status.second.clone()};
-    }
-    if(rv_ref_status.second.type_==Node::Type::Vector){
-      auto &rlist = get<Node::Vector>(rv_ref_status.second.value_);
-      return {true, rlist[0]->clone()};
-    }
-    return {true, rv_ref_status.second.clone()};
-
-  }
-  case Node::Type::Vector: {
-    auto &rlist = get<Node::Vector>(head->value_);
-    auto rv_status = eval(process, rlist);
-    if(!rv_status.first) {
-      cerr << "Error encounter in lisp::car vector " << rv_status << "\n";
-      return rv_status;
-    }
-    if(rv_status.second->type_== Node::Type::Vector) {
-      if(rv_status.second->empty_container()) return {true, Node::create()};
-      auto rv_front_status = rv_status.second->front();
-      if(!rv_front_status.first) {
-        cerr << "Error encounter in lisp::car vector front " << rv_status << "\n";
-        return {false,  rv_front_status.second.clone()};
-      }
-      return {true, rv_front_status.second.clone()};
-    }
-    return rv_status;
-
-  }
-  default: {
-
-  }}
-  cout << "car last outside switch!\n";
-  return {true, head->clone()};
-
-}
-*/
-
+//------------------------------------------------------------------------
 Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, int start) {
   MYLOGGER(trace_function, "LispExpr::car(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
@@ -244,16 +190,18 @@ Node::OpStatus LispExpr::map_get_keys(Node&process, Node &node, const Node::Vect
   }
 
 }
+//------------------------------------------------------------------------
+// index by key
 Node::OpStatus LispExpr::map_get_value(Node&process, Node &node, const Node::Vector& args) {
   MYLOGGER(trace_function, "LispExpr::map_get_value(Node&process, const Node& node, const Vector& args)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("args: ") + Node::_to_str(args), SLOG_FUNC_INFO+30);
 
-  auto &key = args[0];
+  auto &key_ptr = args[0];
 
-  if(key->type_ != Node::Type::String) 
+  if(key_ptr->type_ != Node::Type::String) 
     return {false, Node::create_error(Error::Type::IndexWrongType, "key is not a string!")};
-  string key_str = key->_to_str();
+  string key_str = key_ptr->_to_str();
 
 
   switch(node.type_) {
@@ -265,6 +213,9 @@ Node::OpStatus LispExpr::map_get_value(Node&process, Node &node, const Node::Vec
   }
   case Node::Type::Shared: {
     auto &map_ptr = get<Node::ptr_S>(node.value_);
+    if(map_ptr->type_!= Node::Type::Map)  
+      return {false, Node::create_error(Error::Type::IndexWrongType, 
+        "map_set_value() shared pointer not pointing to map !")};
     auto &map= get<Node::Map>(map_ptr->value_);
     for(const auto& kv : map)  
       if(kv.first == key_str) return {true, Node::create(kv.second->clone())};
@@ -280,7 +231,7 @@ Node::OpStatus LispExpr::map_get_value(Node&process, Node &node, const Node::Vec
 //------------------------------------------------------------------------
 // no need to eval  args !!!! because ars have already beend evaled by call_extern
 Node::OpStatus LispExpr::map_set_value(Node&process, Node &node, const Node::Vector& args) {
-  MYLOGGER(trace_function, "LispExpr::map_get_value(Node&process, const Node& node, const Vector& args)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::map_set_value(Node&process, const Node& node, const Vector& args)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("args: ") + Node::_to_str(args), SLOG_FUNC_INFO+30);
 
@@ -296,13 +247,17 @@ Node::OpStatus LispExpr::map_set_value(Node&process, Node &node, const Node::Vec
   case Node::Type::Map: {
     auto &map = get<Node::Map>(node.value_);
     map[key_str] = value_ptr->clone();
-    return {true, nullptr};
+    return {true, Node::create(true)};
   }
   case Node::Type::Shared: {
     auto &map_ptr = get<Node::ptr_S>(node.value_);
+    if(map_ptr->type_!= Node::Type::Map)
+      return {false, Node::create_error(Error::Type::IndexWrongType, 
+        "map_set_value() shared pointer not pointing to map !")};
+
     auto &map= get<Node::Map>(map_ptr->value_);
     map[key_str] = value_ptr->clone();
-    return {true, nullptr};
+    return {true, Node::create(true)};
   }
   default: 
     return {false, Node::create_error(
@@ -311,5 +266,67 @@ Node::OpStatus LispExpr::map_set_value(Node&process, Node &node, const Node::Vec
   }
 }
 //------------------------------------------------------------------------
+Node::OpStatus LispExpr::map_del_key(Node&process, Node &node, const Node::Vector& args) {
+  MYLOGGER(trace_function, "LispExpr::map_del_key(Node&process, const Node& node, const Vector& args)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "node: " + node._to_str(), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "args: " + Node::_to_str(args), SLOG_FUNC_INFO+30)
 
+  auto &key_ptr = args[0];
 
+  if(key_ptr->type_ != Node::Type::String) 
+    return {false, Node::create_error(Error::Type::IndexWrongType, "key is not a string!")};
+  string key_str = key_ptr->_to_str();
+
+  switch(node.type_) {
+  case Node::Type::Map: {
+    auto &map = get<Node::Map>(node.value_);
+    Node::Integer s = map.erase(key_str);
+    return {true, Node::create(s)};
+  }
+  case Node::Type::Shared: {
+    auto &map_ptr = get<Node::ptr_S>(node.value_);
+    if(map_ptr->type_!= Node::Type::Map)
+      return {false, Node::create_error(Error::Type::IndexWrongType, 
+        "map_set_value() shared pointer not pointing to map !")};
+
+    auto &map= get<Node::Map>(map_ptr->value_);
+    Node::Integer s = map.erase(key_str);
+    return {true, Node::create(s)};
+  }
+  default: {}}
+
+  return {false, Node::create_error(
+    Error::Type::IndexWrongType, 
+    "map get keys and but type is not map, type: "+  Node::_to_str(node.type_))};
+}
+
+Node::OpStatus LispExpr::map_has_key(Node&process, Node &node, const Node::Vector& args) {
+  MYLOGGER(trace_function, "LispExpr::map_has_key(Node&process, const Node& node, const Vector& args)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "node: " + node._to_str(), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "args: " + Node::_to_str(args), SLOG_FUNC_INFO+30)
+
+  auto &key_ptr = args[0];
+
+  if(key_ptr->type_ != Node::Type::String) 
+    return {false, Node::create_error(Error::Type::IndexWrongType, "key is not a string!")};
+  string key_str = key_ptr->_to_str();
+
+  switch(node.type_) {
+  case Node::Type::Map: {
+    auto &map = get<Node::Map>(node.value_);
+    Node::Integer s = map.erase(key_str);
+    return node.has_key(key_str);
+  }
+  case Node::Type::Shared: {
+    auto &map_ptr = get<Node::ptr_S>(node.value_);
+    if(map_ptr->type_!= Node::Type::Map)
+      return {false, Node::create_error(Error::Type::IndexWrongType, 
+        "map_set_value() shared pointer not pointing to map !")};
+    return map_ptr->has_key(key_str);
+  }
+  default: {}}
+
+  return {false, Node::create_error(
+    Error::Type::IndexWrongType, 
+    "map get keys and but type is not map, type: "+  Node::_to_str(node.type_))};
+}
