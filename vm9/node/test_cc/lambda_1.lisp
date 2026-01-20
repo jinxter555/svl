@@ -1,25 +1,26 @@
 (module Kernel 
   (defun main (x y) my_func_des
     (
-     (assign pi 3.1415)
-     (assign f1 (lambda (z) (print "hello")) )
-     (assign f2 123)
-     (assign f3 (defun abc (x y) (print "what is abc") ))
-     (print "\n\nf3:\n" f3)
-     (p55())
-     (print "\n")
-;     (p55())
-     (print "\n")
-    )
-  )
-  (defun p55 () 
-    (
-     (print "p55\n")
-     (var f4)
-     (assign f4 (defun abc (x y) (print "what is abc") ))
-     (print "\n\nf4:\n" f4)
-     (assign f4b  f4)
-     (print "\n\nf4b:\n" f4b)
+      (assign l1 
+        (lambda  (x y)
+          (
+            (print "x " x "\n")
+            (print "y " y "\n")
+            (print "hello world123\n")
+          )
+        )
+      )
+      (assign l2 "hello")
+;      (print "lambda l1: " l1 "\n")
+
+; this prints out returned map shoudl be evaluated in vector for loop lispeval
+      ( (lambda  (x )
+;          (print "x " x "\n")
+          (print "hello world123\n")
+        )
+       5
+      )
+      (funcall l1 1 "holy shit")
     )
   )
 )

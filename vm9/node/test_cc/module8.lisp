@@ -12,7 +12,8 @@
     (
       (var (z "zzz"))
       (print "hello, p55, 55\n")
-      (print (x))
+      (print "x: " x "\n")
+      (print "(x): " (x) "\n")
       (print "\n")
       (print "-" x "-")
       (print "-" z "-")

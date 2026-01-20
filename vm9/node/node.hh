@@ -134,6 +134,7 @@ public:
 
 
   Type _get_type() const;
+  Node get_type() const;
 
   OpStatus add(unique_ptr<Node> child);
   OpStatus add(const string&key, unique_ptr<Node> child);

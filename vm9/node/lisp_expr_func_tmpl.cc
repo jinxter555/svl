@@ -47,7 +47,7 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
         auto atom_ref_status = atom_to_str(ee.second->_get_integer());
         if(!atom_ref_status.first) return {false, atom_ref_status.second.clone()};
         cout << atom_ref_status.second;
-      } else {
+      } else { // for other nodes
         cout << *ee.second;
       }
     }

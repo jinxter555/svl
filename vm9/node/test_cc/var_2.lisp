@@ -6,7 +6,7 @@
     (assign v1 "what is up")
     (assign v5 "hello v5")
     (assign v_3 "hello v333")
-    (assign v5 "hello v555")
+    ;(assign v5 "hello v555")
     (assign v.4 "hello v.4444")
     (assign v6 :atomic_physics)
     (print v5 "\n")

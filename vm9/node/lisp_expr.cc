@@ -22,6 +22,7 @@ LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , sym_class(str_to_atom("class"))
 , sym_get(str_to_atom("get"))
 , sym_set(str_to_atom("set"))
+, sym_lambda(str_to_atom("lambda"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;
@@ -293,7 +294,7 @@ Node::OpStatusRef  LispExpr::process_create() {
 
 // create a var name list in current scope
 // (var identifer1 (identifier2 value) ...)
-Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, int start)  {
+Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, size_t start)  {
   MYLOGGER(trace_function, "LispExpr::var_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
 
@@ -335,7 +336,7 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
 
 
 // assign to scope immute or var
-Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_list, int start) {
+Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
   auto identifier = var_list[start]->_to_str();

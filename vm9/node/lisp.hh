@@ -17,7 +17,7 @@ public:
   , var, assign
   , car, cdr
   , add, sub, div, mul, mod
-  , def, call, send, ret, call_extern
+  , def, call, send, ret, call_extern, funcall
   , loop, cond, print
   , module, defun, defmacro, alias, lambda
   };

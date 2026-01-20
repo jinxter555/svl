@@ -1,20 +1,19 @@
 (module Kernel 
-  (defun main (x y) my_func_des
+  (defun main (x y) 
     (
     (print (p55 (11111 22222)) "\n")
     (print (p56 ()) "\n\n")
     )
-  )
+  end#defun)
 
 
-  (defun p55 (x y) "my func p55" 
+  (defun p55 (x y) 
     (
     (print x " " y "\n")
-    ;(55555)
-    55555
     )
     (print "hello")
-  )
+  end#defun)
+
   (defun p56 () 
     ("cheese"
      55556 () 55557
@@ -22,5 +21,4 @@
      55558
      )
   )
-
-)
+end.module)

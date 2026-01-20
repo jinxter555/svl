@@ -100,7 +100,7 @@ Node* Node::extend_node_by_key(Map& map,  const string&key, bool create) {
 
 Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool override) {
   MYLOGGER(trace_function, "Node::set(vector& path)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "path: " + _to_str_ext(path), SLOG_FUNC_INFO+30);
 
   Node* node_ptr=this;
   for(auto key : path) {

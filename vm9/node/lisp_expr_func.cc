@@ -5,7 +5,7 @@
 #include "scope_logger.hh"
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, int start) {
+Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::car(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
@@ -26,7 +26,7 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, int start) 
   return {true, Node::create()};
 }
 
-Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, int start) {
+Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::cdr(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
@@ -54,7 +54,7 @@ Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, int start) 
 }
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::literal(const Node::Vector &list, int start) {
+Node::OpStatus LispExpr::literal(const Node::Vector &list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::literal(const Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "start: " + start, SLOG_FUNC_INFO+30);
   Node::Vector list_result;
@@ -67,7 +67,7 @@ Node::OpStatus LispExpr::literal(const Node::Vector &list, int start) {
 //------------------------------------------------------------------------
 // create a map object
 // (map ( (k1 v1) (k2 v2) )) //creates a new map object
-Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, int start) {
+Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, size_t start) {
   MYLOGGER(trace_function, "LispExpr::map_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list_kv: ") + Node::_to_str(list_kv), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
@@ -333,4 +333,45 @@ Node::OpStatus LispExpr::map_has_key(Node&process, Node &node, const Node::Vecto
   return {false, Node::create_error(
     Error::Type::IndexWrongType, 
     "map get keys and but type is not map, type: "+  Node::_to_str(node.type_))};
+}
+
+//
+// (lambda (param_list) (description) (code list))
+// (lambda (param_list) (code list))
+Node::OpStatus LispExpr::lambda_create(Node&process, const Node::Vector &list, size_t start){
+
+  MYLOGGER(trace_function, "LispExpr::lambda(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  size_t s = list.size();
+
+  if(list.size()<3) return {false, Node::create_error(Error::Type::Parse, "lambda requires atleast 2 parameters! " + Node::_to_str(list))};
+
+  Node::Map map={}; 
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+
+  map[_PARAMS] = list[start]->clone();
+
+  if(s==4){ // both description and code
+    map[DESC] = list[start+1]->clone();
+    map[CODE] = list[start+2]->clone();
+  } else if(s==3) { // just code
+    map[CODE] = list[start+1]->clone();
+  }
+  auto type_atom_ptr = make_unique<Node>();
+  type_atom_ptr->set_atom(str_to_atom("lambda"));
+  obj_info->set("type",  move(type_atom_ptr));
+  map[OBJ_INFO] = move(obj_info);
+  
+  return {true, Node::create(move(map))};
+
+}
+
+
+Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t start) {
+  Node::Vector result_list;
+  size_t s = list.size();
+  for(size_t i=start; i<s; i++) 
+    result_list.push_back(list[i]->clone());
+  return move(result_list);
 }

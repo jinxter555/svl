@@ -25,6 +25,7 @@
 #define SCOPES "scopes"
 #define DESC "description"
 #define OBJ_INFO "__object_info__"
+#define TYPE "type"
 
 class LispExpr : public Lang, public Lisp {
 private:
@@ -41,10 +42,13 @@ private:
 
   Node::OpStatus parse_def(const Node::List &list);
 
-  const Node::Integer sym_module, sym_fun, sym_mvar, sym_lvar, sym_class, sym_get, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
+  const Node::Integer sym_module, sym_fun, 
+  sym_mvar, sym_lvar, sym_class, sym_get, 
+  sym_lambda, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
   Node::OpStatus attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list);
+  Node::OpStatus attach_params_args_to_frame(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector args);
 
   
 
@@ -53,6 +57,11 @@ private:
   vector<string> node_mf_to_path(Node&node_,  const vector<string> prefix);
   vector<string> extract_mf(Node&process, Node&node); // extract module function
   vector<string> extract_mf(Node&process, Node::Vector &list); // extract module function
+
+  Node::Vector list_clone_remainder(const Node::Vector &list, size_t start=0); 
+
+
+  vector<string> get_params(const Node::Map&closure);
 
 public: 
   Lisp::Op keyword_to_op(const string &kw); // convert 
@@ -82,8 +91,8 @@ public:
   Node::OpStatus scope_push(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
   Node::OpStatusRef scope_current(Node&process) ; // 
 
-  Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, int start=0) ; // 
-  Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, int start=0) ; // 
+  Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
+  Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
   Node::OpStatusRef var_current(Node&scope) ; // 
   Node::OpStatusRef immute_current(Node&scope) ; // 
 
@@ -96,7 +105,7 @@ public:
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...
   Node::OpStatus parse(Node& tokens); 
-  Node::OpStatus parse_list(Node::List& list);
+  //Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_process();
 
   LispReader& get_reader(); // lisp lexer and parser
@@ -111,14 +120,17 @@ public:
 
   //Node::OpStatus eval(const Node& code, Node& process);
   Node::OpStatus eval(Node& process, const Node& code_node);
-  Node::OpStatus eval(Node& process, const Lisp::Op op, const Node::Vector& code_list, int start=0);
+  Node::OpStatus eval(Node& process, const Lisp::Op op, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus eval(Node& process, const Node::Vector& code_list);
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 
-  Node::OpStatus call(Node& process, const Node& code_node);
-  Node::OpStatus call(Node& process, const Node::Vector& code_list, int start=0);
+  Node::OpStatus call(Node& process, const Node& code_node); // (call (module function) (arg1 arg2 arg3))
+  Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0);
+  Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args
+  Node::OpStatus call_closure(Node& process, const Node::Map & obj_lambda, const Node::Vector& args); // call creates new scope and push args to scope immute
+  Node::OpStatus call_object(Node& process, const Node::Map & obj_lambda, const Node::Vector& args); // call object with Node::Map as primitive type
 
-  Node::OpStatus call_extern(Node& process, const Node::Vector& code_list, int start=0);
+  Node::OpStatus call_extern(Node& process, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus call_extern(Node& process, const string&mod, const string&fun ,  Node& node_this, const Node::Vector& args);
   // 
   Node::OpStatus build_parsed_list(Node& node);
@@ -136,18 +148,22 @@ public:
   //Node::OpStatus build_parsed_func(Node::List& list) ;
 
   // 
-  Node::OpStatus car(Node&process, const Node::Vector &list, int start=0);
-  Node::OpStatus cdr(Node&process, const Node::Vector &list, int start=0);
+  Node::OpStatus car(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus cdr(Node&process, const Node::Vector &list, size_t start=0);
   //
   // (map ( (k1 v1) (k2 v2) )) //creates a new map object
-  Node::OpStatus map_create(Node&process, const Node::Vector &list_kv, int start=0);
-  Node::OpStatus map_messages(Node&process, const Node::Vector &list_kv, int start=0);
+  Node::OpStatus map_create(Node&process, const Node::Vector &list_kv, size_t start=0);
+  Node::OpStatus map_messages(Node&process, const Node::Vector &list_kv, size_t start=0);
   // procdess, node this, arguments..
   static Node::OpStatus map_del_key(Node&process, Node&map, const Node::Vector& args ={});
   static Node::OpStatus map_has_key(Node&process, Node&map, const Node::Vector& args ={});
   static Node::OpStatus map_get_keys(Node&process, Node&map, const Node::Vector& args ={});
   static Node::OpStatus map_get_value(Node&process, Node&map, const Node::Vector& args ={}); // get value index by key
   static Node::OpStatus map_set_value(Node&process, Node&map, const Node::Vector& args ={}); // get value index by key
+  //
+  Node::OpStatus lambda_create(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus lambda_bind_early(Node&process, const Node::Vector &list, size_t start=0); // binding outter scope vars when created
+  
 
   //
   Node::OpStatus build_parsed_def(Node::List& list);
@@ -163,6 +179,6 @@ public:
   template <typename T>
   Node::OpStatus builtin_print_n(Node& process, const T& list, size_t start=0);
 
-  Node::OpStatus literal(const Node::Vector &list, int start=0);
+  Node::OpStatus literal(const Node::Vector &list, size_t start=0);
 
 };

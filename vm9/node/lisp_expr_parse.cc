@@ -76,14 +76,21 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_fun(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-  if(list.size()<3) return {false, Node::create_error(Error::Type::Parse, "defun requires 3 parameters! " + Node::_to_str(list))};
+  if(list.size()<3) return {false, Node::create_error(Error::Type::Parse, "defun requires atleast 3 parameters! " + Node::_to_str(list))};
+  if(list.size()>4) return {false, Node::create_error(Error::Type::Parse, "defun greater than 4 parameters! " + Node::_to_str(list))};
 
+  string name;
   Node::Map map_n={}, map={}; 
-  string name = get<string>(list.front()->value_); list.pop_front(); // function name
+  try { name = get<string>(list.front()->value_); 
+  } catch(...) { 
+    return {false, Node::create_error(Error::Type::Parse, "(defun) name string error.")};
+  }
+  
+  list.pop_front(); // function name
 
   // set func
   {// turn params List to params Vector for speed performance
-  auto status=  build_parsed_vector(*list.front()); 
+  auto status =  build_parsed_vector(*list.front()); 
   if(!status.first) return status;
   map[_PARAMS] = move(status.second); list.pop_front();
   }
@@ -95,7 +102,7 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   {// turn code List to code Vector for speed performance
   auto status=  build_parsed_vector(*list.front()); 
   if(!status.first) return status;
-  map["code"] = move(status.second); list.pop_front();
+  map[CODE] = move(status.second); list.pop_front();
   //cout << "code: list after pop!" << Node::_to_str(list) << "\n";
   }
 
@@ -260,9 +267,18 @@ Node::OpStatus LispExpr::build_parsed_vector(Node& node) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_vector(Node&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
   if(node.type_ != Node::Type::List) {
+    cerr << "build_parsed_vector() error with :"<<  node << ",type: " << Node::_to_str(node.type_) << "\n";
+    return {false, Node::create_error(Error::Type::Parse, "build_parsed_vector()! not vector type:Can't build vector!")};
   }
+
+  try {
   auto &list = get<Node::List>(node.value_);
   return build_parsed_vector(list);
+  } catch(...) { 
+    cerr << "build_parsed_vector() error with list:" <<  node << "\n";
+  }
+  return {false, Node::create_error(Error::Type::Parse, "build_parsed_vector()! not vector type:Can't build vector!")};
+
 }
 
 Node::OpStatus LispExpr::build_parsed_vector(Node::List& list) {
@@ -368,6 +384,7 @@ void LispExpr::set_keywords() {
   map_->set("mod", Op::mod); 
   map_->set("def", Op::def); 
   map_->set("call", Op::call);
+  map_->set("funcall", Op::funcall);
   map_->set("call_extern", Op::call_extern);
   map_->set("send", Op::send);
   map_->set("ret", Op::ret);

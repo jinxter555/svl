@@ -238,6 +238,7 @@ void Node::set(unique_ptr<Node> new_node) {
 }
 
 Node::Type Node::_get_type() const { return type_; }
+Node Node::get_type() const { return type_; }
 
 void Node::set_null() { this->value_ = monostate{}; type_=Type::Null; }
 void Node::set_atom(Integer v)  { *this = Node(v); type_ = Type::Atom; }
