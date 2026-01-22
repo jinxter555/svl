@@ -209,8 +209,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
         cerr << "eval failed! " << *value_status.second << "\n";
         return value_status;
       }
-      if(value_status.second->type_ == Node::Type::Map) {
-        cout << "returned map!\n";
+      if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
+        cout << "returned map or object need to check if t needs to call lambda or closure!\n";
       }
     }
     return eval(process, *code_list[i]);

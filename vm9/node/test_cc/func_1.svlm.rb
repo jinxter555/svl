@@ -1,24 +1,37 @@
-(module Kernel 
-  (defun main (x y) 
-    (
+module Kernel 
+  defun main (x y) 
     (print (p55 (11111 22222)) "\n")
     (print (p56 ()) "\n\n")
-    )
-  end#defun)
+    assign 
+      (x 5)
+      (y [2+x])
+    end.assign
 
+    case(x)
+      (7 do (print "is 7") end)
+    when 7 (print 7) end.when
+    end.case
 
-  (defun p55 (x y) 
-    (
-    (print x " " y "\n")
-    )
-    (print "hello")
-  end#defun)
+    print 
+      "x " x
+      (p55 (11111 22222)) "\n" 
+    end.print
 
-  (defun p56 () 
-    ("cheese"
-     55556 () 55557
-     (print "hello\n")
-     55558
-     )
-  )
-end.module)
+    if [ a > 1 ] then 
+    else 
+    end.if
+
+  end.defun
+
+  defun p55 (x y)  
+    for range(1..10)  
+      do (i) 
+        (print i)
+      end
+    end.for
+  end.defun
+
+  class myclass
+
+  end.class
+end.module

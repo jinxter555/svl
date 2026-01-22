@@ -38,6 +38,12 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::send: return "send";
     case Lisp::Op::ret: return "ret";
     case Lisp::Op::cond: return "cond";
+    case Lisp::Op::loop: return "loop";
+    case Lisp::Op::for_: return "for";
+    case Lisp::Op::do_: return "do";
+    case Lisp::Op::if_: return "if";
+    case Lisp::Op::case_: return "case";
+    case Lisp::Op::when: return "when";
     case Lisp::Op::print: return "print";
     case Lisp::Op::module: return "module";
     case Lisp::Op::defun: return "defun";

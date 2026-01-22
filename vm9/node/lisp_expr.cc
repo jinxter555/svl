@@ -75,9 +75,11 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   // parse tokens, to integers, floats, strings, identifiers, lisp::op_s etc..
   // and returns Node::List 
   auto tokens_interpreted  = reader.parse(tokens_raw_text);  
+  cout << "endlist: " << _to_str_ext(reader.end_list);
+  //exit(1);
 
-  if(!tokens_interpreted .first) {
-    cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string: " << input  << "\n";
+  if(!tokens_interpreted.first) {
+    cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string:\n" << input  << "\n\n";
     cerr << "error: " <<  *tokens_interpreted .second << "\n";
     return  tokens_interpreted ;
   }
@@ -164,6 +166,7 @@ unique_ptr<Node> LispExpr::scope_create() const {
   return Node::create(move(scope));
 }
 
+//push scope to the last scopes
 Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
   MYLOGGER(trace_function, "LispExpr::scope_push(process, scope)", __func__, SLOG_FUNC_INFO);
 

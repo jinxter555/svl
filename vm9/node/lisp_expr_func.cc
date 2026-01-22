@@ -373,5 +373,6 @@ Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t sta
   size_t s = list.size();
   for(size_t i=start; i<s; i++) 
     result_list.push_back(list[i]->clone());
-  return move(result_list);
+  //return move(result_list);
+  return result_list;
 }

@@ -389,6 +389,9 @@ void LispExpr::set_keywords() {
   map_->set("send", Op::send);
   map_->set("ret", Op::ret);
   map_->set("cond", Op::cond);
+  map_->set("loop", Op::loop);
+  map_->set("for", Op::for_);
+  map_->set("do", Op::do_);
   map_->set("print",Op::print);
   map_->set("module",Op::module);
   map_->set("defun", Op::defun);

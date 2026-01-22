@@ -18,7 +18,7 @@ public:
   , car, cdr
   , add, sub, div, mul, mod
   , def, call, send, ret, call_extern, funcall
-  , loop, cond, print
+  , cond, print, loop, for_, do_, if_, case_, when
   , module, defun, defmacro, alias, lambda
   };
   Lisp();

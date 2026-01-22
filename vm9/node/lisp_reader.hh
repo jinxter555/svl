@@ -13,6 +13,7 @@ struct Token {
 class LispExpr;
 
 class LispReader  : public Lisp {
+friend class LispExpr;
 private:
   Node::Integer col_=1;
   Node::Integer line_=1;
@@ -22,6 +23,9 @@ private:
   string extract_quoted_string(const string&input, size_t &i);
   string extract_single_quoted_string(const string&input, size_t &i);
   void to_newline(const string&input, size_t &i);
+
+  vector<string>  end_list;
+  Token token_previous={};
 public:
   LispReader(LispExpr*);
   //void tokenize(const string& input) { }
@@ -32,4 +36,7 @@ public:
   Lisp::Op str_to_op(const string&input);
   static string _to_str(const list<Token>& tokens);
   void reset();
+  bool is_closurable(Lisp::Op op); // if this can be a block of {identifier end}
+  bool is_closurable(const string&token_str) ;
+  bool is_endable(const string&token_str) ;
 };

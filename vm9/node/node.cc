@@ -47,6 +47,10 @@ Node::Node()
   , type_(Type::Null)
   {}
 
+bool Node::is_nil() {
+  return type_ == Type::Null ? true : false;
+}
+
 Node::Node(ptr_S ptr) {value_ = ptr; type_ = Type::Shared;}
 Node::Node(ptr_R ptr) {value_ = ptr; type_ = Type::Raw;}
 Node::Node(ptr_U ptr) {value_ = move(ptr); type_ = Type::Unique;}

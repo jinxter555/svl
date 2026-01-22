@@ -3,8 +3,8 @@
     (
       (assign x (p55 ()))
       (print "x is: " x "\n")
-      (print (cat (p55 ())))
-      (print x)
+      (print (car (p55 ())))
+     ; (print (cat (p55 ())))
 ;      p55
     )
   )

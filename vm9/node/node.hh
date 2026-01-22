@@ -220,6 +220,8 @@ public:
   // list
   static vector<string> list_to_vector_string(const List &list); // for map
 
+  bool is_nil(); 
+
 protected:
 
 
