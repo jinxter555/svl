@@ -3,7 +3,6 @@ module Kernel
     (
       (print "hello, world\n")
       (p55 (55 2))
-      (p56 (56 6))
       (print "\n\n")
     )
   end.defun 
@@ -13,6 +12,7 @@ module Kernel
       (print "hello, p55, 55\n")
       (print "(x): " (x) "\n")
       (print "\n")
+      (p56 (56 6))
     )
   end.defun
 

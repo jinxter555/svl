@@ -64,6 +64,7 @@ Node::OpStatus LispExpr::get_process() {
 }
 
 
+extern ostream& operator<<(ostream& os, list<Token>& l) ;
 
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::build_program(const string& input) { 
@@ -75,8 +76,8 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   // parse tokens, to integers, floats, strings, identifiers, lisp::op_s etc..
   // and returns Node::List 
   auto tokens_interpreted  = reader.parse(tokens_raw_text);  
+  if(tokens_raw_text.size() != 0) cout << "error parsing left over tokens! [" << tokens_raw_text << "]\n";
   cout << "endlist: " << _to_str_ext(reader.end_list);
-  //exit(1);
 
   if(!tokens_interpreted.first) {
     cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string:\n" << input  << "\n\n";

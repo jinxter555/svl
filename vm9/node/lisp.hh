@@ -11,7 +11,7 @@ using namespace  std;
 class Lisp {
 public:
   enum class Op 
-  { kernel, system, root, class_, new_, delete_, clone
+  { kernel, system, root, class_, private_, new_, delete_, clone
   , error, noop
   , identifier, scalar, literal, list, deque, vector, map
   , var, assign

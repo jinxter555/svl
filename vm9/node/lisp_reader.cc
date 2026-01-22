@@ -15,7 +15,6 @@ ostream& operator<<(ostream& os, list<Token>& l) {
   for(auto v: l) {
     cout << v << " ";
   }
-  cout << "\n";
   return os;
 }
 
@@ -162,7 +161,8 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
   string token_str;
   auto endable = tokens.front().value_ ;
 
-  while(tokens.front().value_ != ")") {
+  while(tokens.front().value_ != ")" 
+  && !is_endable( tokens.front().value_)   ) {
 
     auto token_status = parse(tokens); //if(first_loop_run && token.value_!= "(") {
 
@@ -194,11 +194,8 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
 
     } 
     // for endables returns a ')', break out
-    if(token_status.second->is_nil()) { 
-   //   cout << "return token is nil\n";
-   //   cout << "tokens: " <<  tokens << "\n\n";
-      break;
-    }
+    // if(token_status.second->is_nil()) break;
+    
 
 
     list.push_back(move(token_status.second));
@@ -279,11 +276,12 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
     
   }
 
+  /*
   if(is_endable(token.value_) ) {
-   // cout << "is_endable! token: '" <<  token << "' return nil\n";
+    //cout << "is_endable! token: '" <<  token << "' return nil\n";
     tokens.push_front(token);
     return {true, Node::create()};
-  }
+  }*/
 
   // liis_closurable as in begin{}end
   if(is_closurable(token.value_) && token_previous.value_ != "(") { 

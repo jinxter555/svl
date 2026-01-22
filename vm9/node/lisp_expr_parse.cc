@@ -363,6 +363,8 @@ void LispExpr::set_keywords() {
   map_->set("new",   Op::new_);
   map_->set("delete",   Op::delete_);
   map_->set("class",   Op::class_);
+  map_->set("private",   Op::private_);
+  map_->set("new",   Op::new_);
   map_->set("clone",   Op::clone);
   map_->set("error",Op::error);
   map_->set("noop", Op::noop);

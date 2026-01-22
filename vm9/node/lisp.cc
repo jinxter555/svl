@@ -10,6 +10,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::system: return "system";
     case Lisp::Op::root: return "root";
     case Lisp::Op::class_: return "class";
+    case Lisp::Op::private_: return "private";
     case Lisp::Op::new_: return "new";
     case Lisp::Op::delete_: return "delete";
     case Lisp::Op::clone: return "clone";
