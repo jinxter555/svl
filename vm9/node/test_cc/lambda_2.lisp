@@ -21,6 +21,7 @@
         )
        5
       )
+      (print "l1:\n" l1 "\n");
       (print (funcall l1 222222 "holy shit") "\n")
     )
   )

@@ -420,8 +420,9 @@ Node::OpStatus LispExpr::call_lambda(Node& process, const Node::Map & obj_lambda
     cerr << "obj type info error:" <<  type_ref_status.second._to_str() << "\n";
     return {false, type_ref_status.second.clone()};
   }
-  auto type = get<Node::Integer>(type_ref_status.second.value_);
-  if(type == sym_lambda) {
+  //auto type = get<Node::Integer>(type_ref_status.second.value_);
+  auto type = get<Lisp::Type>(type_ref_status.second.value_);
+  if(type == Lisp::Type::lambda) {
     //cout << "call object type == lambda\n";
     return eval(process, *code);
   }

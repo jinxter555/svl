@@ -99,9 +99,10 @@ Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, s
 
   }
   
-  auto type_atom_ptr = make_unique<Node>();
-  type_atom_ptr->set_atom(str_to_atom("map"));
-  obj_info->set("type",  move(type_atom_ptr));
+  //auto type_atom_ptr = make_unique<Node>();
+  //type_atom_ptr->set_atom(str_to_atom("map"));
+  //obj_info->set("type",  move(type_atom_ptr));
+  obj_info->set("type", Lisp::Type::map );
   map[OBJ_INFO] = move(obj_info);
 
 
@@ -109,59 +110,6 @@ Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, s
   return {true, Node::create(move(map))};
 }
 
-// handling messages for map
-/*
-Node::OpStatus LispExpr::map_messages(Node&process, const Node::Vector &list, int start) {
-  MYLOGGER(trace_function, "LispExpr::map_messages(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
-  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
-  auto &head = list[start];
-  auto &args = list[start+1];
-  switch(head->type_) {
-  case Node::Type::Identifier: {
-    auto name_var = head->_to_str();
-    auto const &fun_name_ref_status = args->get_node(0);
-
-    auto value_ref_status = symbol_lookup(process, head->_to_str());
-    if(!value_ref_status.first) {
-      cerr << "error sending message to object" + name_var + "  lookup up failed";
-      return{false, Node::create_error(Error::Type::SymbolNotFound, "error sending message to object" + name_var + "  lookup up failed")};
-    }
-    if(!fun_name_ref_status.first) {
-      cerr << "args.. error sending message: " 
-      +  fun_name_ref_status.second._to_str() 
-      + " to object" + name_var + "  lookup up failed";
-      return{false, Node::create_error(Error::Type::SymbolNotFound, "error sending message: "
-      +  fun_name_ref_status.second._to_str() 
-      + " to object" + name_var + "  lookup up failed:")};
-    }
-    auto method_path = cc_path_module;
-    method_path.push_back(fun_name_ref_status.second._to_str());
-    auto fun_method_ref_status = get_node(method_path);
-    if(!fun_method_ref_status.first) {
-      cerr << "method function not found!" <<   fun_name_ref_status.second._to_str();
-      return{false, Node::create_error(Error::Type::FunctionNotFound, "method function not found") };
-    }
-
-    Node::Fun method_fun = get<Node::Fun>(fun_method_ref_status.second.value_);
-    auto result_status = method_fun(process, value_ref_status.second, {});
-
-
-
-    cout << "Identerier: " <<  head->_to_str() << "\n";
-    cout << "value : " <<  value_ref_status << "\n";
-    cout << "args : " <<  *args << "\n";
-    cout << "funrefstatus: " <<  fun_name_ref_status<< "\n";
-    cout << "resultstat: " <<  result_status <<  "\n";
-
-  }
-  default: {}
-
-  }
-  return {true, nullptr};
-
-}
-  */
 //------------------------------------------------------------------------
 // process, node this object, and args pass to this object
 Node::OpStatus LispExpr::map_get_keys(Node&process, Node &node, const Node::Vector& args) {
@@ -358,9 +306,7 @@ Node::OpStatus LispExpr::lambda_create(Node&process, const Node::Vector &list, s
   } else if(s==3) { // just code
     map[CODE] = list[start+1]->clone();
   }
-  auto type_atom_ptr = make_unique<Node>();
-  type_atom_ptr->set_atom(str_to_atom("lambda"));
-  obj_info->set("type",  move(type_atom_ptr));
+  obj_info->set("type",  Lisp::Type::lambda);
   map[OBJ_INFO] = move(obj_info);
   
   return {true, Node::create(move(map))};
