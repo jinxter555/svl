@@ -48,6 +48,7 @@ private:
 
   Node::Vector list_clone_remainder(const Node::Vector &list, size_t start=0); 
 
+  Node::OpStatus vector_to_object(const Node::Vector&list); // return an object, object_info with type = head aka Lisp::Type or Lisp::Op
 
   vector<string> get_params(const Node::Map&closure);
 

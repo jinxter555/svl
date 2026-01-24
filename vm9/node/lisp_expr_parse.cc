@@ -144,7 +144,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
       module_classes->set(class_name, move(status.second));
       break;
     }
-    default: {}}
+    default: { }}
   }
   module_node->set(FUNCTION, move(module_functions));
   module_node->set(_CLASS, move(module_classes));
@@ -183,7 +183,17 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
     }
     case Lisp::Type::class_: {
     }
-    default: {}}
+    default: {
+      auto &v = status.second;
+      if(status.second->type_==Node::Type::Vector) {
+        auto v2o_status = vector_to_object(status.second->_get_vector_ref()); // vector 2 object
+        if(Lisp::type(*v2o_status.second)==Lisp::Type::var) {
+          class_node->set("var",  move(v2o_status.second) );
+          break;
+        }
+      }
+      cout << "unknown status:"  <<  status << "\n";
+    }}
   }
   class_node->set(FUNCTION, move(class_functions));
   class_node->set(OBJ_INFO, move(obj_info));
@@ -420,6 +430,29 @@ Node::OpStatus LispExpr::build_parsed_map(Node::List& list) {
   return {true, Node::create(move(map))};
 }
 //Node::OpStatus LispExpr::build_parsed_map(Node& node) { }
+
+Node::OpStatus LispExpr::vector_to_object(const Node::Vector&list) {
+  MYLOGGER(trace_function, "LispExpr::vector_to_object(const Node::Vector& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: " + Node::_to_str( list), SLOG_FUNC_INFO+30);
+
+  auto object = make_unique<Node>(Node::Type::Map);
+  auto object_info = make_unique<Node>(Node::Type::Map);
+
+  auto& head = list[0];
+  try {
+    auto t = get<Lisp::Type>(head->value_);
+    object_info->set(TYPE, t);
+  } catch (...) {
+    object_info->set(TYPE, Lisp::Type::nil);
+  }
+
+  size_t s = list.size();
+  for(size_t i=1;  i <s; i++  ) {
+    object->set(list[i]->_to_str(), Node::create());
+  }
+  object->set(OBJ_INFO, move(object_info));
+  return {true, move(object)};
+}
 
 
 //------------------------------------------------------------------------ Lisp Expr Keywords

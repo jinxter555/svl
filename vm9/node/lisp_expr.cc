@@ -261,6 +261,7 @@ Node::OpStatus LispExpr::run_program() {
   // proc1
   auto frame1 = frame_create();
   frame1->set(CURRENT_MODULE, "Kernel");
+  frame1->set(CURRENT_FUNCTION, "Main");
   auto proc_1= process_create();
   frame_push(proc_1.second, move(frame1));
 
