@@ -51,11 +51,8 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
       return build_parsed_fun(list); }
     case Lisp::Op::module: {
       return build_parsed_module(list); }
-    case Lisp::Op::class_: {
-      cout << "class build!\n";
-      //return build_parsed_module(list); 
-      break;
-    }
+    case Lisp::Op::class_: { //cout << "class build!\n";
+      return build_parsed_class(list); }
     case Lisp::Op::root: { return build_parsed_root(list); }
     default: {}
     }
@@ -80,9 +77,8 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   if(list.size()>4) return {false, Node::create_error(Error::Type::Parse, "defun greater than 4 parameters! " + Node::_to_str(list))};
 
   string name;
-  auto fun= make_unique<Node>(Node::Type::Map);
 
-  Node::Map map={}; 
+  Node::Map fun={}; 
   name = list.front()->_to_str();
   //try { name = get<string>(list.front()->value_); } catch(...) { return {false, Node::create_error(Error::Type::Parse, "(defun) name string error.")}; }
   
@@ -92,31 +88,31 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   {// turn params List to params Vector for speed performance
   auto status =  build_parsed_vector(*list.front()); 
   if(!status.first) return status;
-  map[_PARAMS] = move(status.second); list.pop_front();
+  fun[_PARAMS] = move(status.second); list.pop_front();
   }
 
   //cout << "fun size:" <<  list.size() << "\n";
-  if(list.size() == 2) {map[DESC] = move(list.front()); list.pop_front();}
-  else map[DESC] = Node::create();
+  if(list.size() == 2) {fun[DESC] = move(list.front()); list.pop_front();}
+  else fun[DESC] = Node::create();
   
   {// turn code List to code Vector for speed performance
   auto status=  build_parsed_vector(*list.front()); 
   if(!status.first) return status;
-  map[CODE] = move(status.second); list.pop_front();
+  fun[CODE] = move(status.second); list.pop_front();
   //cout << "code: list after pop!" << Node::_to_str(list) << "\n";
   }
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
   obj_info->set(TYPE,  Node::create(Lisp::Type::defun));
-  map[OBJ_INFO] = move(obj_info);
-  map["name"] = Node::create(name);
-  fun->set(name, Node::create(move(map)));
 
-  return {true, move(fun)};
+  fun[OBJ_INFO] = move(obj_info);
+  fun["name"] = Node::create(name);
+
+  return {true, Node::create(move(fun))};
 
 }
 //-------------------------------- parse module
-// (module Main (defun main ) (defun f1 ) (defun f2))
+// (module Main (defun main ) (defun f1 ) (defun f2) (class end.class)) 
 Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_module(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
@@ -124,31 +120,80 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   vector<string> keys={};
 
   auto module_functions=make_unique<Node>(Node::Type::Map);
-  auto module_branch=make_unique<Node>(Node::Type::Map);
+  auto module_classes=make_unique<Node>(Node::Type::Map);
+  auto module_node=make_unique<Node>(Node::Type::Map);
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
   obj_info->set(TYPE,  Node::create(Lisp::Type::module));
 
-  string name = get<string>(list.front()->value_); list.pop_front(); // module name
-
-  keys.push_back(name);
-  auto keys_obj_info = keys;
-  keys_obj_info.push_back(OBJ_INFO);
-  //module_branch->set(keys, move(obj_info), true);
-  keys.push_back("function");
+  string module_name = get<string>(list.front()->value_); list.pop_front(); // module name
 
   for(auto& ele: list) {  
-    auto status_fun = parse(*ele); // parse (defun ...)
-    if(!status_fun.first) return status_fun;
-    module_functions->merge(move(status_fun.second));
+    auto status = parse(*ele); // parse (defun ...) (class ...)
+    if(!status.first) return status;
+
+    switch(Lisp::type(*status.second)){
+    case Lisp::Type::defun: {
+      auto fun_name = (*status.second)["name"].second._to_str();
+      module_functions->set(fun_name, move(status.second));
+      continue;
+    }
+    case Lisp::Type::class_: {
+      auto class_name = (*status.second)["name"].second._to_str();
+      cout << "class name: " << class_name << "\n";
+      module_classes->set(class_name, move(status.second));
+      break;
+    }
+    default: {}}
   }
-  module_branch->set(keys, move(module_functions), true);
-  module_branch->set(keys_obj_info, move(obj_info), true);
+  module_node->set(FUNCTION, move(module_functions));
+  module_node->set(_CLASS, move(module_classes));
+  module_node->set(OBJ_INFO, move(obj_info));
+  module_node->set("name", module_name);
+
+  return {true, move(module_node)};
+}
+
+//-------------------------------- parse class
+// (class Car (defun start) (defun drive) (defun f2) ) 
+Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_class(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  vector<string> keys={};
+
+  auto class_functions=make_unique<Node>(Node::Type::Map);
+  auto class_node=make_unique<Node>(Node::Type::Map);
+
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+  obj_info->set(TYPE,  Node::create(Lisp::Type::class_));
+
+  string module_name = get<string>(list.front()->value_); list.pop_front(); // module name
+
+  for(auto& ele: list) {  
+    auto status = parse(*ele); // parse (defun ...) (class ...)
+
+    if(!status.first) return status;
+
+    switch(Lisp::type(*status.second)){
+    case Lisp::Type::defun: {
+      auto fun_name = (*status.second)["name"].second._to_str();
+      class_functions->set(fun_name, move(status.second));
+      continue;
+    }
+    case Lisp::Type::class_: {
+    }
+    default: {}}
+  }
+  class_node->set(FUNCTION, move(class_functions));
+  class_node->set(OBJ_INFO, move(obj_info));
+  class_node->set("name", module_name);
+
+  //cout << "module_node:" << *module_node << "\n";
+  return {true, move(class_node)};
+}
 
 
-  return {true, move(module_branch)};
-
- }
 
 //-------------------------------- parse root
 // (root :set (path,..) value )
@@ -225,7 +270,18 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
 Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
   auto mod_loc = get_branch(lisp_path_module);
-  return mod_loc->merge(move(module));
+  auto name_ref_status  = module->get_node(NAME);
+
+  if(!name_ref_status.first) {
+    cerr << "error getting module name!\n";
+    return {false, name_ref_status.second.clone()};
+  }
+  auto module_name = name_ref_status.second._to_str();
+  //cout << "module name: " << module_name << "\n";
+
+
+  //return mod_loc->merge(move(module));
+  return mod_loc->set(module_name, move(module));
   //cout << "mod_loc: " << *mod_loc << "\n\n";
   //return {false, Node::create(true)};
 }

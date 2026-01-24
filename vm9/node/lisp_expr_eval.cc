@@ -162,10 +162,19 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::lambda:    return lambda_create(process, code_list, start);
   case Lisp::Op::map:   return map_create(process, code_list, start);
   case Lisp::Op::send:   {
-    cout << "sendng message in eval!\n";
-    //return map_messages(process, code_list, start );
+    cout << "sendng message in eval!\n"; //return map_messages(process, code_list, start );
     return {true, nullptr};
   }
+  case Lisp::Op::class_:   {
+    cout << "class in eval!\n"; //return map_messages(process, code_list, start );
+    return {true, nullptr};
+  }
+  case Lisp::Op::private_:   {
+    cout << "class in eval!\n"; //return map_messages(process, code_list, start );
+    return {true, nullptr};
+  }
+
+
   case Lisp::Op::call_extern: { return call_extern(process, code_list, start ); }
   case Lisp::Op::defun:   {
     cout << "defun in eval!\n";

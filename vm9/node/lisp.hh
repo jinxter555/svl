@@ -4,27 +4,35 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <unordered_map>
 
 
 using namespace  std;
 
+class Node;
+using Map = unordered_map<string, unique_ptr<Node>>;
+
+
+
 class Lisp {
 public:
   enum class Op 
-  { root, kernel, system
+  { root, nil, kernel, system, branch, namespace_
   , class_, private_, new_, delete_, clone
   , error, noop
   , identifier, scalar, literal, list, deque, vector, map, object
   , var, assign
   , car, cdr
   , add, sub, div, mul, mod
-  , def, call, send, ret, call_extern, funcall
+  , def, call, send, ret, call_extern, funcall, curry, pipe
   , cond, print, loop, for_, do_, if_, case_, when
   , module, defun, defmacro, alias, lambda
   };
   using Type=Op;
   Lisp();
   static string _to_str(Lisp::Op op);
+  static Type type(const Node& node);
+  static Type type(const Map& m);
 };
 
 #endif

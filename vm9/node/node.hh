@@ -24,6 +24,7 @@ class Node {
   friend class LispReader;
   friend class Kernel;
   friend class ostream;
+  friend class Lisp;
 public:
 
   

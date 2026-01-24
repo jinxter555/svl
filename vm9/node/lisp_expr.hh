@@ -2,6 +2,7 @@
 #include "lang.hh"
 #include "lisp.hh"
 #include "lisp_reader.hh"
+#include "defs.hh"
 
 /*
  * Env: current_process, parent_process, 
@@ -11,21 +12,6 @@
  * control_flow_state = ret, loop
  * 
  */
-#define VAR "var"
-#define IMMUTE "immute"
-#define LVAR "lvar"
-#define MVAR "Mvar"
-#define NAME_SPACE "name_space"
-#define CURRENT_MODULE "current_module"
-#define CURRENT_FUNCTION "current_function"
-#define FUNCTION "function"
-#define CODE "code"
-#define _PARAMS "params"
-#define ARGS "args"
-#define SCOPES "scopes"
-#define DESC "description"
-#define OBJ_INFO "__object_info__"
-#define TYPE "type"
 
 class LispExpr : public Lang, public Lisp {
 private:
@@ -147,6 +133,7 @@ public:
 
   Node::OpStatus build_parsed_fun(Node::List& list); // (fun_name (param_list)(code list))
   Node::OpStatus build_parsed_module(Node::List& list); // (fun_name (param_list)(code list))
+  Node::OpStatus build_parsed_class(Node::List& list); // (fun_name (param_list)(code list))
   Node::OpStatus build_parsed_root(Node::List& list); // (fun_name (param_list)(code list))
   //Node::OpStatus build_parsed_func(Node::List& list) ;
 

@@ -1,14 +1,17 @@
 #include "lisp.hh"
 #include "node.hh"
+#include "defs.hh"
+#include <iostream>
 
 
 Lisp::Lisp(){}
 
 string Lisp::_to_str(Lisp::Op op) {
   switch (op) {
+    case Lisp::Op::root: return "root";
+    case Lisp::Op::nil: return "nil";
     case Lisp::Op::kernel: return "kernel";
     case Lisp::Op::system: return "system";
-    case Lisp::Op::root: return "root";
     case Lisp::Op::class_: return "class";
     case Lisp::Op::private_: return "private";
     case Lisp::Op::new_: return "new";
@@ -23,6 +26,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::deque: return "deque";
     case Lisp::Op::vector: return "vector";
     case Lisp::Op::map: return "map";
+    case Lisp::Op::object: return "object";
     case Lisp::Op::car: return "car";
     case Lisp::Op::cdr: return "cdr";
     case Lisp::Op::add: return "add";
@@ -53,4 +57,26 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::lambda: return "lambda";
   }
   return "Unknown LispOp";
+}
+
+
+Lisp::Type Lisp::type(const Node& node) {
+  try {
+   auto &m= get<Node::Map>(node.value_);
+   return type(m);
+  } catch(...){
+    return Lisp::Type::nil;
+  }
+
+}
+Lisp::Type Lisp::type(const Node::Map& map_) {
+  try {
+    auto &obj_info = map_.at(OBJ_INFO);
+    auto type_ref_status = obj_info->get_node(TYPE);
+    if(!type_ref_status.first) return Lisp::Type::nil;
+    auto t = get<Lisp::Type>(type_ref_status.second.value_);
+    return t;
+  } catch(...) {
+    return Lisp::Type::nil;
+  }
 }
