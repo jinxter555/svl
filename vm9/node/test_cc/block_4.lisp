@@ -1,4 +1,6 @@
 module Kernel 
+  (var v1 (v2 123))
+
   defun main (x y) "my func des" 
     (
       (print "hello, world\n")

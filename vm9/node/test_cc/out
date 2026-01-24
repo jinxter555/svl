@@ -1,7 +1,11 @@
-12345, 3.14
+hello, world
 hello, p55, 55
-11111
-22222
+(x): 55
+
+hello, p56, 56
+56
+
+
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -78,26 +82,72 @@ print recursive:
        - __object_info__ (Type: Map): { (Map, size=1) 
         - type (Type: LispOp): module
       }
-       - function (Type: Map): { (Map, size=2) 
+       - function (Type: Map): { (Map, size=3) 
+        - p56 (Type: Map): { (Map, size=5) 
+         - name (Type: String): "p56"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+        }
+         - code (Type: Vector): Vector[(size=3) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, p56, 56
+"
+         ]
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: Vector]: Vector[(size=1) 
+            - [0, Type: Identifier]: "x"
+          ]
+         ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
+"
+         ]
+        ]
+         - description (Type: String): "my func p56"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+        ]
+       }
         - p55 (Type: Map): { (Map, size=5) 
          - name (Type: String): "p55"
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): defun
         }
-         - code (Type: Vector): Vector[(size=2) 
+         - code (Type: Vector): Vector[(size=5) 
           - [0, Type: Vector]: Vector[(size=2) 
            - [0, Type: LispOp]: print
            - [1, Type: String]: "hello, p55, 55
 "
          ]
-          - [1, Type: Vector]: Vector[(size=5) 
+          - [1, Type: Vector]: Vector[(size=4) 
            - [0, Type: LispOp]: print
-           - [1, Type: Identifier]: "x"
-           - [2, Type: String]: "
+           - [1, Type: String]: "(x): "
+           - [2, Type: Vector]: Vector[(size=1) 
+            - [0, Type: Identifier]: "x"
+          ]
+           - [3, Type: String]: "
 "
-           - [3, Type: Identifier]: "y"
-           - [4, Type: String]: "
+         ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
 "
+         ]
+          - [3, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: assign
+           - [1, Type: Identifier]: "t1"
+           - [2, Type: String]: "t1 robot"
+         ]
+          - [4, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "p56"
+           - [1, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Integer]: 56
+            - [1, Type: Integer]: 6
+          ]
          ]
         ]
          - description (Type: String): "my func p55"
@@ -112,43 +162,26 @@ print recursive:
           - type (Type: LispOp): defun
         }
          - code (Type: Vector): Vector[(size=3) 
-          - [0, Type: Vector]: Vector[(size=6) 
-           - [0, Type: LispOp]: var
-           - [1, Type: Identifier]: "v1"
-           - [2, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Identifier]: "v2"
-            - [1, Type: Integer]: 12345
-          ]
-           - [3, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Identifier]: "pi"
-            - [1, Type: Float]: 3.14
-          ]
-           - [4, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Identifier]: "s1"
-            - [1, Type: String]: "hello"
-          ]
-           - [5, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Identifier]: "s2"
-            - [1, Type: String]: "world"
-          ]
-         ]
-          - [1, Type: Vector]: Vector[(size=5) 
+          - [0, Type: Vector]: Vector[(size=2) 
            - [0, Type: LispOp]: print
-           - [1, Type: Identifier]: "v2"
-           - [2, Type: String]: ", "
-           - [3, Type: Identifier]: "pi"
-           - [4, Type: String]: "
+           - [1, Type: String]: "hello, world
 "
          ]
-          - [2, Type: Vector]: Vector[(size=2) 
+          - [1, Type: Vector]: Vector[(size=2) 
            - [0, Type: Identifier]: "p55"
            - [1, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Integer]: 11111
-            - [1, Type: Integer]: 22222
+            - [0, Type: Integer]: 55
+            - [1, Type: Integer]: 2
           ]
          ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
+
+"
+         ]
         ]
-         - description (Type: Identifier): "my_func_des"
+         - description (Type: String): "my func des"
          - params (Type: Vector): Vector[(size=2) 
           - [0, Type: Identifier]: "x"
           - [1, Type: Identifier]: "y"
@@ -189,7 +222,7 @@ print recursive:
      - pid (Type: Integer): 0
    }
     - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=2) 
+     - frames (Type: Vector): Vector[(size=3) 
       - [0, Type: Map]: { (Map, size=3) 
        - current_function (Type: String): "Main"
        - current_module (Type: String): "Kernel"
@@ -197,22 +230,34 @@ print recursive:
         - [0, Type: Map]: { (Map, size=2) 
          - immute (Type: Map): { (Map, size=0) 
         }
-         - var (Type: Map): { (Map, size=5) 
-          - s2 (Type: String): "world"
-          - s1 (Type: String): "hello"
-          - v2 (Type: Integer): 12345
-          - pi (Type: Float): 3.14
-          - v1 (Type: Null): Null
+         - var (Type: Map): { (Map, size=0) 
         }
        }
       ]
      }
       - [1, Type: Map]: { (Map, size=4) 
        - args (Type: Map): { (Map, size=2) 
-        - y (Type: Integer): 22222
-        - x (Type: Integer): 11111
+        - y (Type: Integer): 2
+        - x (Type: Integer): 55
       }
        - current_function (Type: String): "p55"
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=2) 
+         - immute (Type: Map): { (Map, size=1) 
+          - t1 (Type: String): "t1 robot"
+        }
+         - var (Type: Map): { (Map, size=0) 
+        }
+       }
+      ]
+     }
+      - [2, Type: Map]: { (Map, size=4) 
+       - args (Type: Map): { (Map, size=2) 
+        - y (Type: Integer): 6
+        - x (Type: Integer): 56
+      }
+       - current_function (Type: String): "p56"
        - current_module (Type: String): "Kernel"
        - scopes (Type: Vector): Vector[(size=1) 
         - [0, Type: Map]: { (Map, size=2) 

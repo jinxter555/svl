@@ -28,8 +28,7 @@ private:
 
   Node::OpStatus parse_def(const Node::List &list);
 
-  const Node::Integer sym_module, sym_fun, 
-  sym_mvar, sym_lvar, sym_class, sym_get, 
+  const Node::Integer sym_module, sym_fun, sym_class, sym_get, 
   sym_lambda, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();

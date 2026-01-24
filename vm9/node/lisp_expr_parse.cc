@@ -183,21 +183,21 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
     }
     case Lisp::Type::class_: {
     }
-    default: {
-      auto &v = status.second;
+    default: { // assign class attributes here like  (var )
       if(status.second->type_==Node::Type::Vector) {
+        auto head = status.second->front().second._to_str();
         auto v2o_status = vector_to_object(status.second->_get_vector_ref()); // vector 2 object
-        if(Lisp::type(*v2o_status.second)==Lisp::Type::var) {
-          class_node->set("var",  move(v2o_status.second) );
-          break;
-        }
+        class_node->set(head,  move(v2o_status.second) );
+
+      } else {
+        cerr << "unknown class attribute not vector!\n";
+        return {false, Node::create_error(Error::Type::Parse, "unknown class attribute:" )};
       }
-      cout << "unknown status:"  <<  status << "\n";
     }}
   }
   class_node->set(FUNCTION, move(class_functions));
   class_node->set(OBJ_INFO, move(obj_info));
-  class_node->set("name", module_name);
+  class_node->set(NAME, module_name);
 
   //cout << "module_node:" << *module_node << "\n";
   return {true, move(class_node)};
@@ -440,17 +440,22 @@ Node::OpStatus LispExpr::vector_to_object(const Node::Vector&list) {
 
   auto& head = list[0];
   try {
-    auto t = get<Lisp::Type>(head->value_);
-    object_info->set(TYPE, t);
+    auto lisp_type = get<Lisp::Type>(head->value_);
+    if(lisp_type==Lisp::Type::var) {
+      cout << "need to assign vars differently!\n";
+    }
+    object_info->set(TYPE, lisp_type);
   } catch (...) {
     object_info->set(TYPE, Lisp::Type::nil);
   }
-
+/*
   size_t s = list.size();
   for(size_t i=1;  i <s; i++  ) {
     object->set(list[i]->_to_str(), Node::create());
   }
+*/
   object->set(OBJ_INFO, move(object_info));
+  object->set(VECTOR, Node::clone(list));
   return {true, move(object)};
 }
 

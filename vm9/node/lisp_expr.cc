@@ -17,8 +17,6 @@ const vector<string> LispExpr::cc_path_module= {UNIVERSE, "Lang", "CC", "Module"
 LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , sym_module(str_to_atom("module"))
 , sym_fun(str_to_atom("fun"))
-, sym_mvar(str_to_atom("mvar"))
-, sym_lvar(str_to_atom("lvar"))
 , sym_class(str_to_atom("class"))
 , sym_get(str_to_atom("get"))
 , sym_set(str_to_atom("set"))

@@ -2,9 +2,8 @@
 
 #define VAR "var"
 #define IMMUTE "immute"
-#define LVAR "lvar"
-#define MVAR "Mvar"
 #define NAME "name"
+#define VECTOR "vector"
 #define NAME_SPACE "name_space"
 #define CURRENT_MODULE "current_module"
 #define CURRENT_FUNCTION "current_function"

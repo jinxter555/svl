@@ -1,7 +1,8 @@
 module Kernel 
 
   class Map
-    (var size length)
+    (var size (length 123) )
+    (error err (wrong 123) )
     defun mp1 (x)  
     (
      (print "hello class mp1()\n")
