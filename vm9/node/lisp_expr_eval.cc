@@ -238,7 +238,13 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     for(i=0; i<code_list.size()-1; i++) {
       auto value_status = eval(process, *code_list[i]);
       if(!value_status.first) {
-        cerr << "eval failed! " << *value_status.second << "\n";
+        auto frame_ref_status = frame_current(process);
+        if(frame_ref_status.first) {
+          auto current_module = frame_ref_status.second[CURRENT_MODULE].second._to_str();
+          auto current_function = frame_ref_status.second[CURRENT_FUNCTION].second._to_str();
+          cout << "In Module.Function: " << current_module << "." << current_function <<"\n";
+        }
+        cerr << "eval failed! " << *value_status.second << "\n" << *code_list[i] <<"\n";
         return value_status;
       }
       if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure

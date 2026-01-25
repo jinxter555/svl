@@ -390,6 +390,12 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
 
   }
 
+  if(!scope_vars_ref_status.second.m_has_key(nested_name[0])){
+    //cerr << "identifier " << identifier  <<" can not be reassigned\n";
+    cerr << "Identifier: " << nested_name[0] <<" is not a variable. Object and Maps have to be variables to be re-assigned\n";
+    return {false, nullptr};
+  }
+
   //return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
   auto rv_ref_status = symbol_lookup(process, identifier );
   if(!rv_ref_status.first) {
@@ -398,6 +404,6 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   }
   //cout << "value_status : " << value_status << "\n";
   rv_ref_status.second = move(value_status.second);
-  return {true, Node::create()};
+  return {true, Node::create(true)};
 
 }

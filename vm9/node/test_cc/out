@@ -1,12 +1,10 @@
-hello, world
-hello, p55, 55
-(x): 55
+m1a:{"__object_info__": {"type": map}, "k2": world, "k1": hello, }
 
-hello, p56, 56
-56
+m1.k1: hello, 
 
+m1.k2: world
 
-Lisp Interpreter
+NullLisp Interpreter
 print recursive:
 { (Map, size=1) 
   - universe (Type: Map): { (Map, size=2) 
@@ -161,22 +159,102 @@ print recursive:
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): defun
         }
-         - code (Type: Vector): Vector[(size=3) 
+         - code (Type: Vector): Vector[(size=12) 
           - [0, Type: Vector]: Vector[(size=2) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "hello, world
-"
+           - [0, Type: LispOp]: var
+           - [1, Type: Identifier]: "m1"
          ]
-          - [1, Type: Vector]: Vector[(size=2) 
-           - [0, Type: Identifier]: "p55"
-           - [1, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Integer]: 55
-            - [1, Type: Integer]: 2
+          - [1, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: assign
+           - [1, Type: Identifier]: "m1"
+           - [2, Type: Vector]: Vector[(size=3) 
+            - [0, Type: LispOp]: map
+            - [1, Type: Vector]: Vector[(size=2) 
+             - [0, Type: Identifier]: "k1"
+             - [1, Type: String]: "hello, "
+           ]
+            - [2, Type: Vector]: Vector[(size=2) 
+             - [0, Type: Identifier]: "k2"
+             - [1, Type: String]: "world"
+           ]
           ]
          ]
-          - [2, Type: Vector]: Vector[(size=2) 
+          - [2, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: assign
+           - [1, Type: Identifier]: "m2"
+           - [2, Type: Vector]: Vector[(size=3) 
+            - [0, Type: LispOp]: map
+            - [1, Type: Vector]: Vector[(size=2) 
+             - [0, Type: Identifier]: "k1"
+             - [1, Type: String]: "hello, "
+           ]
+            - [2, Type: Vector]: Vector[(size=2) 
+             - [0, Type: Identifier]: "k2"
+             - [1, Type: String]: "world"
+           ]
+          ]
+         ]
+          - [3, Type: Vector]: Vector[(size=4) 
            - [0, Type: LispOp]: print
-           - [1, Type: String]: "
+           - [1, Type: String]: "m1a:"
+           - [2, Type: Identifier]: "m1"
+           - [3, Type: String]: "
+
+"
+         ]
+          - [4, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "m1.k1: "
+           - [2, Type: Identifier]: "m1.k1"
+           - [3, Type: String]: "
+
+"
+         ]
+          - [5, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "m1.k2: "
+           - [2, Type: Identifier]: "m1.k2"
+           - [3, Type: String]: "
+
+"
+         ]
+          - [6, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: assign
+           - [1, Type: Identifier]: "m1.k1"
+           - [2, Type: String]: "what is up "
+         ]
+          - [7, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: assign
+           - [1, Type: Identifier]: "m3.k1"
+           - [2, Type: String]: "hola"
+         ]
+          - [8, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "m1b:"
+           - [2, Type: Identifier]: "m1"
+           - [3, Type: String]: "
+
+"
+         ]
+          - [9, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "m1.k1: "
+           - [2, Type: Identifier]: "m1.k1"
+           - [3, Type: String]: "
+
+"
+         ]
+          - [10, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "m1.k2: "
+           - [2, Type: Identifier]: "m1.k2"
+           - [3, Type: String]: "
+
+"
+         ]
+          - [11, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, world
 
 "
          ]
@@ -191,13 +269,11 @@ print recursive:
      }
     }
    }
-    - Atoms (Type: Map): { (Map, size=8) 
+    - Atoms (Type: Map): { (Map, size=6) 
      - 4625761978203795338 (Type: String): "set"
      - -319359290386476595 (Type: String): "lambda"
      - -4705652595650921993 (Type: String): "get"
      - 3211040718132763761 (Type: String): "class"
-     - 1325213333779622127 (Type: String): "lvar"
-     - 7765881685828984094 (Type: String): "mvar"
      - -2331651408838895954 (Type: String): "fun"
      - -1154038927901484491 (Type: String): "module"
    }
@@ -222,48 +298,17 @@ print recursive:
      - pid (Type: Integer): 0
    }
     - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=3) 
+     - frames (Type: Vector): Vector[(size=1) 
       - [0, Type: Map]: { (Map, size=3) 
        - current_function (Type: String): "Main"
        - current_module (Type: String): "Kernel"
        - scopes (Type: Vector): Vector[(size=1) 
         - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=0) 
-        }
-         - var (Type: Map): { (Map, size=0) 
-        }
-       }
-      ]
-     }
-      - [1, Type: Map]: { (Map, size=4) 
-       - args (Type: Map): { (Map, size=2) 
-        - y (Type: Integer): 2
-        - x (Type: Integer): 55
-      }
-       - current_function (Type: String): "p55"
-       - current_module (Type: String): "Kernel"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=2) 
          - immute (Type: Map): { (Map, size=1) 
-          - t1 (Type: String): "t1 robot"
+          - m2 (Type: SharedPtr): shared_ptr*:{"__object_info__": {"type": map}, "k2": world, "k1": hello, }
         }
-         - var (Type: Map): { (Map, size=0) 
-        }
-       }
-      ]
-     }
-      - [2, Type: Map]: { (Map, size=4) 
-       - args (Type: Map): { (Map, size=2) 
-        - y (Type: Integer): 6
-        - x (Type: Integer): 56
-      }
-       - current_function (Type: String): "p56"
-       - current_module (Type: String): "Kernel"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=0) 
-        }
-         - var (Type: Map): { (Map, size=0) 
+         - var (Type: Map): { (Map, size=1) 
+          - m1 (Type: SharedPtr): shared_ptr*:{"__object_info__": {"type": map}, "k2": world, "k1": what is up }
         }
        }
       ]
