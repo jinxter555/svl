@@ -32,8 +32,7 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name ) {
     cerr << "var[] lookup failed!" <<  scope_vars_ref_status.second._to_str() << "\n";
     return scope_vars_ref_status;
   }
-  //cout  <<"scope var: " << scope_vars_ref_status << "\n";
-  //return scope_vars_ref_status.second[name];
+
   auto nested_name = split_string(name, ".");
 
   if(nested_name.size()==1)
@@ -60,13 +59,14 @@ Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
     cerr << "immute[] lookup failed!" <<  scope_immute_ref_status.second._to_str() << "\n";
     return scope_immute_ref_status;
   }
-  //cout  <<"scope immute: " << scope_immute_ref_status << "\n";
-  auto nested_name = split_string_list(name, ".");
+
+  auto nested_name = split_string(name, ".");
+
+
   auto immute_ref_value = scope_immute_ref_status.second[name];
   if(nested_name.size()==1)
     return immute_ref_value;
   
-  nested_name.pop_front();
   return scope_immute_ref_status.second[name];
 }
 

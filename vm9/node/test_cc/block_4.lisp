@@ -14,12 +14,19 @@ module Kernel
         (k2 "world")
       ))
 
-       (print "m1:" m1 "\n\n")
+      (print "m1a:" m1 "\n\n")
       (print "m1.k1: " m1.k1 "\n\n")
       (print "m1.k2: " m1.k2 "\n\n")
-      (print "hello, world\n")
-      (p55 (55 2))
-      (p55 (55 2))
+
+      (assign m1.k1 "what is up ")
+
+      (print "m1b:" m1 "\n\n")
+      (print "m1.k1: " m1.k1 "\n\n")
+      (print "m1.k2: " m1.k2 "\n\n")
+
+      (print "hello, world\n\n")
+     ; (p55 (55 2))
+     ; (p55 (55 2))
     )
   end.defun 
 

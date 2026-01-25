@@ -1,4 +1,5 @@
 #include "lisp_expr.hh"
+#include "my_helpers.hh"
 #include <iostream>
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -371,17 +372,32 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
     return {false, scope_immute_ref_status.second.clone()};
 
 
-  if(!scope_vars_ref_status.second.m_has_key(identifier)){
-    if(!scope_immute_ref_status.second.m_has_key(identifier)) 
-      //return scope_immute_ref_status.second.set(identifier,  move(value_status.second));
-      return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
-    else  {
-      cerr << "identifier " << identifier  <<" can not be reassigned\n";
-      return {false, nullptr};
+  // cout << "identifier " << identifier << "\n";
+
+  auto nested_name = split_string(identifier, ".");
+
+  
+  if(nested_name.size() == 1) {   // assign non nested  map scalar value
+    if(!scope_vars_ref_status.second.m_has_key(identifier)){
+      if(!scope_immute_ref_status.second.m_has_key(identifier))  // doesn't exist and assign only once
+        return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
+      else  {
+        cerr << "identifier " << identifier  <<" can not be reassigned\n";
+        return {false, nullptr};
+      }
     }
+    return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
+
   }
 
   //return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
-  return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
+  auto rv_ref_status = symbol_lookup(process, identifier );
+  if(!rv_ref_status.first) {
+    cerr << "assign map key error!" << rv_ref_status.second._to_str() << "\n";
+    return {false, rv_ref_status.second.clone()};
+  }
+  //cout << "value_status : " << value_status << "\n";
+  rv_ref_status.second = move(value_status.second);
+  return {true, Node::create()};
 
 }
