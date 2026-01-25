@@ -16,6 +16,25 @@ split_string(const std::string& istr, const std::string& delimiter) {
     return result;
 }
 
+std::list<std::string> 
+split_string_list(const std::string& istr, const std::string& delimiter) {
+    std::list<std::string> result;
+    std::string str = istr;
+    size_t pos = 0;
+
+    while ((pos = str.find(delimiter)) != std::string::npos) {
+        result.push_back(str.substr(0, pos));
+        str.erase(0, pos + delimiter.length());
+    }
+    // Add the last remaining substring
+    result.push_back(str);
+
+    return result;
+}
+
+
+
+
 std::string trim(const std::string& str, const std::string& whitespace ){
     const auto strBegin = str.find_first_not_of(whitespace);
     if (strBegin == std::string::npos)

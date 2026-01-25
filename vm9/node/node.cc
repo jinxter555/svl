@@ -851,3 +851,7 @@ unique_ptr<Node> Node::ptr_USU(const Node &node) {
   const auto sptr = get<ptr_S>(node.value_);
   return make_unique<Node>(sptr);
 }
+
+Node::ptr_S Node::_get_ptr_s() {
+  return get<ptr_S>(value_);
+}

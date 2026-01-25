@@ -181,6 +181,7 @@ public:
   string _get_str() const;
   Map& _get_map_ref() ;
   Vector& _get_vector_ref() ;
+  ptr_S _get_ptr_s();
 
   // for list and map
   Integer size_container() const;

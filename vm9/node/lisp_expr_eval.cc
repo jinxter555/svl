@@ -1,5 +1,6 @@
 #include <iostream>
 #include "lisp_expr.hh"
+#include "my_helpers.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -32,7 +33,22 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name ) {
     return scope_vars_ref_status;
   }
   //cout  <<"scope var: " << scope_vars_ref_status << "\n";
-  return scope_vars_ref_status.second[name];
+  //return scope_vars_ref_status.second[name];
+  auto nested_name = split_string(name, ".");
+
+  if(nested_name.size()==1)
+    return scope_vars_ref_status.second[name];
+
+  // this returns a shared ptr to a map
+  auto shared_ptr_ref_status = scope_vars_ref_status.second[nested_name[0]];
+
+  if(!shared_ptr_ref_status.first) {
+    cerr << "varlookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
+    return shared_ptr_ref_status;
+  }
+  nested_name.erase(nested_name.begin());
+  return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+
 }
 
 Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
@@ -45,6 +61,12 @@ Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
     return scope_immute_ref_status;
   }
   //cout  <<"scope immute: " << scope_immute_ref_status << "\n";
+  auto nested_name = split_string_list(name, ".");
+  auto immute_ref_value = scope_immute_ref_status.second[name];
+  if(nested_name.size()==1)
+    return immute_ref_value;
+  
+  nested_name.pop_front();
   return scope_immute_ref_status.second[name];
 }
 
@@ -82,6 +104,7 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
   
     auto immute_ref = immute_lookup(scope_ref_status.second, name);
     if(immute_ref.first) return immute_ref;
+
   }
 
 

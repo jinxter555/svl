@@ -130,6 +130,7 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
   MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);
 
   if(type_ != Type::Map){
+    cerr << "Node::get_node(path) not Type::Map!\n"; 
     return {false, Error::ref(Error::Type::IndexWrongType, 
     "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(type_))};
   }
