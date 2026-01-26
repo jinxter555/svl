@@ -59,6 +59,7 @@ public:
 
   Node();
   Node(Value v);
+  Node(Value v, Type t);
   Node(ptr_S ptr);
   Node(ptr_R ptr);
   Node(ptr_U ptr);
@@ -69,6 +70,7 @@ public:
 
   static unique_ptr<Node> create();
   static unique_ptr<Node> create(Value v);
+  static unique_ptr<Node> create(Value v, Type t);
   static unique_ptr<Node> create(Type t);
 
   static unique_ptr<Node> create_error(Error::Type type, const string& msg);

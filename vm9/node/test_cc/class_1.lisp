@@ -5,6 +5,9 @@ module Kernel
     def Map(x)  
      (print "hello class mp1()\n")
     end.def
+    def size()  
+     (print "hello class mp1()\n")
+    end.def
 
   end.class
 

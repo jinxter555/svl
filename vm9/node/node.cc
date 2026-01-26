@@ -16,6 +16,7 @@ Node node_error;
 
 unique_ptr<Node> Node::create() { return make_unique<Node>(); }
 unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
+unique_ptr<Node> Node::create(Value v, Type t) { return make_unique<Node>(move(v), t); }
 unique_ptr<Node> Node::create(Type t) { 
   switch(t) {
   case Type::Map: {
@@ -55,6 +56,8 @@ Node::Node(ptr_S ptr) {value_ = ptr; type_ = Type::Shared;}
 Node::Node(ptr_R ptr) {value_ = ptr; type_ = Type::Raw;}
 Node::Node(ptr_U ptr) {value_ = move(ptr); type_ = Type::Unique;}
 Node::Node(Fun f) {value_ = move(f); type_ = Type::Fun;}
+
+Node::Node(Value v , Type t) : value_(move(v)), type_(t) {}
 
 Node::Node(Value v)
   : value_(move(v)) {

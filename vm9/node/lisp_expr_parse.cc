@@ -200,6 +200,13 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   return {true, move(module_node)};
 }
 
+//-------------------------------- attach 'this'  var to class method
+Node::OpStatus LispExpr::attach_this_to_arguments(Node::Vector& list){
+  //this_var.set_identifier();
+   list.insert(list.begin(), Node::create("this", Node::Type::Identifier)); 
+   //list.insert(list.begin(), Node::create("wew")); 
+   return {true, nullptr};
+}
 //-------------------------------- parse class
 // (class Car (defun start) (defun drive) (defun f2) ) 
 Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
@@ -223,7 +230,8 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
 
     switch(Lisp::type(*status.second)){
     case Lisp::Type::defun: {
-      auto fun_name = (*status.second)["name"].second._to_str();
+      auto fun_name = (*status.second)[NAME].second._to_str();
+      attach_this_to_arguments((*status.second)[_PARAMS].second._get_vector_ref());
       class_functions->set(fun_name, move(status.second));
       continue;
     }

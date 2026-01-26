@@ -112,22 +112,29 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
   auto object_name = list[start]->_to_str();
-  auto object = symbol_lookup(process, object_name);
+  auto object_ref_status = symbol_lookup(process, object_name);
+
+  if(!object_ref_status.first) {
+    cerr << "Can't lookup object'"  << object_name <<"', error:"  << object_ref_status.second._to_str() << "\n";
+    return {false, object_ref_status.second.clone()};
+
+  }
 
   auto params = list_clone_remainder(list, start+1);
 
-
-  //cout << "object: " << *object << "\n";
-  //cout << "params: " << Node::_to_str( params) << "\n";
-
   auto message_status = eval(process, params);
-
 
   if(!message_status.first) {
     cerr << "send_object_Message(...) eval error : "  << message_status.second->_to_str() << "\n";
     return message_status;
   }
-  cout << "object: " << object << "\n";
+
+  auto method_name = message_status.second->get_node(0).second._get_integer();
+
+  cout << "method name atom i:" << method_name << "\n";
+  cout << "method name atom s:" << atom_to_str( method_name) << "\n";
+
+  cout << "object: " << object_ref_status << "\n";
   cout << "message status: " << message_status << "\n";
   return message_status;
 

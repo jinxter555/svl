@@ -17,5 +17,29 @@ module Kernel
     print m1 "\n\n"
     send m1 (:Map 555)
     send m1 ((method1) 555)
+
+    for (1 10) 
+      do (i) 
+        print i
+      end
+    end.for
+
+    for i :in (range 1..15)
+
+    end.for
+
+    for :range (1..3) i
+      print i
+    end.for
+
+    for :key (map) (k) 
+    end.for
+
+    for :pair (map) (k v)
+    end.for
+
+
+
   end.def
+
 end.module

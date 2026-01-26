@@ -36,6 +36,7 @@ private:
   Node::OpStatus attach_params_args_to_frame(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector &&args);
   //Node::OpStatus attach_params_args_to_scope_vars(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector &&args);
   Node::OpStatus attach_params_args_to_scope_vars(Node&process, const vector<string>& params, Node::Vector &&args);
+  Node::OpStatus attach_this_to_arguments(Node::Vector& list); // attach 'this' variable to a class method 
 
   
 
@@ -117,6 +118,10 @@ public:
 
   Node::OpStatus call(Node& process, const Node& code_node); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0);
+
+  Node::OpStatus call(Node& process, const Node::Vector& mfc, const Node::Vector& params); // 
+  Node::OpStatus call_eval(Node& process, const Node::Vector& code, const Node::Vector& params);
+
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args
   Node::OpStatus call_lambda(Node& process, const Node::Map & obj_lambda, Node::Vector&& args); // call creates new scope and push args to scope immute
   Node::OpStatus call_closure(Node& process, const Node::Map & obj_closure, Node::Vector&& args); // call creates new scope and push args to scope immute
@@ -139,6 +144,7 @@ public:
   Node::OpStatus build_parsed_class(Node::List& list); // (fun_name (param_list)(code list))
   Node::OpStatus build_parsed_root(Node::List& list); // (fun_name (param_list)(code list))
   //Node::OpStatus build_parsed_func(Node::List& list) ;
+
 
   // 
   Node::OpStatus car(Node&process, const Node::Vector &list, size_t start=0);
