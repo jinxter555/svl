@@ -84,6 +84,9 @@ public:
   Node::OpStatusRef var_current(Node&scope) ; // 
   Node::OpStatusRef immute_current(Node&scope) ; // 
 
+  // class
+  Node::OpStatusRef get_class(deque<string> mfc) ; //  module class ,  1
+
   Node::OpStatusRef arg_lookup(Node&process, const string&name ) ; // 
   // var lookup should pass frame 
   Node::OpStatusRef var_lookup(Node&scope, const string&name ) ; //  should use
@@ -143,7 +146,8 @@ public:
   //
   // (map ( (k1 v1) (k2 v2) )) //creates a new map object
   Node::OpStatus map_create(Node&process, const Node::Vector &list_kv, size_t start=0);
-  Node::OpStatus map_messages(Node&process, const Node::Vector &list_kv, size_t start=0);
+  Node::OpStatus object_create(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus send_object_message(Node&process, const Node::Vector &list, size_t start=0);
   // procdess, node this, arguments..
   static Node::OpStatus map_del_key(Node&process, Node&map, const Node::Vector& args ={});
   static Node::OpStatus map_has_key(Node&process, Node&map, const Node::Vector& args ={});

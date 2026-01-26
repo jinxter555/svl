@@ -16,7 +16,6 @@
 using namespace std;
 
 
-string  _to_str_ext(const vector<string>& keys) ;
 
 class Node {
   friend class Tree;
@@ -99,6 +98,7 @@ public:
   // --- Overloaded Set Methods (Container Element Modification/Replacement) ---    
   OpStatus set(size_t index, unique_ptr<Node> child);                              
   OpStatus set(const string& key, unique_ptr<Node> child);                    
+  OpStatus set(const string& key, ptr_R child);                    
  
   // Convenience Overloads for Atomic Types (Delegates)                             
   OpStatus set(size_t index, Integer v);                                                    

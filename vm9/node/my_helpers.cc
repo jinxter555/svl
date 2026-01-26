@@ -31,6 +31,21 @@ split_string_list(const std::string& istr, const std::string& delimiter) {
 
     return result;
 }
+std::deque<std::string> 
+split_string_deque(const std::string& istr, const std::string& delimiter) {
+    std::deque<std::string> result;
+    std::string str = istr;
+    size_t pos = 0;
+
+    while ((pos = str.find(delimiter)) != std::string::npos) {
+        result.push_back(str.substr(0, pos));
+        str.erase(0, pos + delimiter.length());
+    }
+    // Add the last remaining substring
+    result.push_back(str);
+
+    return result;
+}
 
 
 
@@ -181,3 +196,34 @@ std::string extractClassName(const std::string& prettyFunction) {
     size_t end = colons - begin;
     return prettyFunction.substr(begin, end);
 }
+
+string  _to_str_ext(const vector<string>& keys) {
+  string v="["; size_t i=0, s=keys.size();
+  if(s==0) return "[]";
+  for(; i<s-1; i++) {
+    v = v+ keys[i] + ", ";
+  }
+  return v+keys[i]+"]";
+}
+
+string  _to_str_ext(const deque<string>& keys) {
+  string v="["; size_t i=0, s=keys.size();
+  if(s==0) return "[]";
+  for(; i<s-1; i++) {
+    v = v+ keys[i] + ", ";
+  }
+  return v+keys[i]+"]";
+}
+
+
+
+string  _to_str_ext(const list<string>& keys) {
+  string v="["; size_t i=0, s=keys.size();
+  if(s==0) return "[]";
+  for(auto key : keys ) {
+    if(i++==s-1) break;
+    v = v+ key + ", ";
+  }
+  return v+keys.back()+"]";
+}
+

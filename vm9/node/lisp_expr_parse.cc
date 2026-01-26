@@ -45,8 +45,7 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
       return build_parsed_list(list); }
     case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
       return build_parsed_vector(list);}
-    case Lisp::Op::def: {// cout << "case parse def\n";
-      return build_parsed_def(list); }
+    case Lisp::Op::def: { return build_parsed_def(list); }
     case Lisp::Op::defun: {
       return build_parsed_fun(list); }
     case Lisp::Op::module: {
@@ -111,6 +110,53 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   return {true, Node::create(move(fun))};
 
 }
+
+//-------------------------------- parse fun
+// (def name (param_list) (code list))
+// def fun (x,y) ... end.def
+// return map as function
+// return -> fun_name -> {code,params,object_info}
+Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_def(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+
+  string name;
+
+  Node::Map fun={}; 
+  name = list.front()->_to_str();
+  //try { name = get<string>(list.front()->value_); } catch(...) { return {false, Node::create_error(Error::Type::Parse, "(defun) name string error.")}; }
+  
+  list.pop_front(); // function name
+
+  // set func
+  {// turn params List to params Vector for speed performance
+  auto status =  build_parsed_vector(*list.front()); 
+  if(!status.first) return status;
+  fun[_PARAMS] = move(status.second); list.pop_front();
+  }
+
+  {// turn code List to code Vector for speed performance
+  //auto status=  build_parsed_vector(*list.front()); 
+  auto status=  build_parsed_vector(list); 
+  if(!status.first) return status;
+  fun[CODE] = move(status.second); list.pop_front();
+  //cout << "code: list after pop!" << Node::_to_str(list) << "\n";
+  }
+
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+  obj_info->set(TYPE,  Node::create(Lisp::Type::defun));
+
+  fun[OBJ_INFO] = move(obj_info);
+  fun["name"] = Node::create(name);
+
+  return {true, Node::create(move(fun))};
+}
+
+
+
+
+
 //-------------------------------- parse module
 // (module Main (defun main ) (defun f1 ) (defun f2) (class end.class)) 
 Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
@@ -254,25 +300,6 @@ Node::OpStatus LispExpr::builtin_add(Node& env, const T& list) {
   }
 }
 
-
-//-------------------------------- parse def
-Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
-  MYLOGGER(trace_function, "LispExpr::build_parsed_def(Node::List& list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
-
-  auto def_type_ptr = move(list.front()); //cout << "head_status: " <<  head_status << "\n";
-  list.pop_front();
-  auto def_type = get<Node::Integer>(def_type_ptr->value_);
-
-  if(def_type ==  sym_module) {
-    cout << "def module\n";
-
-  } else if(def_type == sym_fun) {
-    cout << "def fun\n";
-
-  }
-  return {true, Node::create(1)};
-}
 
 //------------------------------------------------------------------------
 // attach module to 'Lisp' Language tree
@@ -442,7 +469,7 @@ Node::OpStatus LispExpr::vector_to_object(const Node::Vector&list) {
   try {
     auto lisp_type = get<Lisp::Type>(head->value_);
     if(lisp_type==Lisp::Type::var) {
-      cout << "need to assign vars differently!\n";
+      cout << "need to assign vars differently because  in a class init object value (var (length 3.14159))!\n";
     }
     object_info->set(TYPE, lisp_type);
   } catch (...) {

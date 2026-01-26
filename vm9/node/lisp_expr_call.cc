@@ -1,5 +1,6 @@
 #include <iostream>
 #include "lisp_expr.hh"
+#include "my_helpers.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -409,7 +410,6 @@ Node::OpStatus LispExpr::call_lambda(Node& process, const Node::Map & obj_lambda
     << op_status.second->_to_str() << "\n";
     return op_status;
   }
-
 
   frame_push(process, move(frame));
   const auto &obj_info = obj_lambda.at(OBJ_INFO);

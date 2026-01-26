@@ -9,6 +9,7 @@
 #define CURRENT_FUNCTION "current_function"
 #define FUNCTION "function"
 #define _CLASS "class"
+#define CLASS_PTR "class_ptr"
 #define CODE "code"
 #define _PARAMS "params"
 #define ARGS "args"

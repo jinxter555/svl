@@ -1,7 +1,8 @@
-(module Kernel 
-  (defun main (x y) "my func des" 
-     (( print "hello\n")
-      (11 22) 
-     )
-  )
-)
+module Kernel 
+  def main (x y) 
+    (var (v1 "hola mundo"))
+    ( print "hello\n" )
+    ( print "world\n" )
+    ( print v1 "\n")
+  end.def
+end.module

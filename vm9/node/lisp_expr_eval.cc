@@ -184,8 +184,13 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::cdr:   return cdr(process, code_list, start);
   case Lisp::Op::lambda:    return lambda_create(process, code_list, start);
   case Lisp::Op::map:   return map_create(process, code_list, start);
+  case Lisp::Op::new_:   { 
+    return object_create(process, code_list, start);
+  }
+
   case Lisp::Op::send:   {
     cout << "sendng message in eval!\n"; //return map_messages(process, code_list, start );
+    return send_object_message(process, code_list, start);
     return {true, nullptr};
   }
   case Lisp::Op::class_:   {

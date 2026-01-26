@@ -1,5 +1,6 @@
 #include <iostream>
 #include "lisp_expr.hh"
+#include "my_helpers.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -63,6 +64,98 @@ Node::OpStatus LispExpr::literal(const Node::Vector &list, size_t start) {
     list_result.push_back(list[i]->clone());
   return {true, Node::create(move(list_result))};
 }
+//------------------------------------------------------------------------
+// create a map object
+// (new ClassName (param1 param2 ... ) ) //creates a new map object
+//
+Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::object_create(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+  auto class_full_name = list[start]->_to_str();
+  auto cfnv = split_string_deque(class_full_name, "."); // class full name vector module.class or name space. mdoule . class
+
+  Node::Map map;
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+  obj_info->set(TYPE, Lisp::Type::object );
+
+
+  if(cfnv.size() == 1) {
+    auto current_module = frame_current(process).second[CURRENT_MODULE].second._to_str();
+    cfnv.push_front(current_module);
+  }
+
+  auto class_ref_status  = get_class(cfnv);
+  auto class_ptr  = &class_ref_status.second;
+  if(!class_ref_status.first) {
+    cerr << "Can't create an object for class:'"  << _to_str_ext(cfnv) <<"', error:"  << class_ref_status.second._to_str() << "\n";
+    return {false, class_ref_status.second.clone()};
+  }
+  obj_info->set(_CLASS, _to_str_ext(cfnv));
+
+//  cout << "class ref status: " << class_ref_status << "\n";
+ //cout << "need to call class constructor: " << cfnv.back()  << "\n";
+ vector<string> constructor_path = {FUNCTION, cfnv.back()};
+
+ //cout << "need to call class constructor: " <<  class_ptr->get_node(constructor_path)  << "\n";
+
+  obj_info->set(CLASS_PTR, &class_ref_status.second);
+  map[OBJ_INFO] = move(obj_info);
+  return {true, Node::create(move(map))};
+}
+//------------------------------------------------------------------------
+// create a map object
+// (send object_variable (method param1 param2 ... ) ) //creates a new map object
+//
+Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::send_message(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+  auto object_name = list[start]->_to_str();
+  auto object = symbol_lookup(process, object_name);
+
+  auto params = list_clone_remainder(list, start+1);
+
+
+  //cout << "object: " << *object << "\n";
+  //cout << "params: " << Node::_to_str( params) << "\n";
+
+  auto message_status = eval(process, params);
+
+
+  if(!message_status.first) {
+    cerr << "send_object_Message(...) eval error : "  << message_status.second->_to_str() << "\n";
+    return message_status;
+  }
+  cout << "object: " << object << "\n";
+  cout << "message status: " << message_status << "\n";
+  return message_status;
+
+}
+
+
+//------------------------------------------------------------------------
+// 2 parmas module.class
+// 3 parmas namespace.module.class // to be worked on
+
+Node::OpStatusRef LispExpr::get_class(deque<string> mc) {
+  MYLOGGER(trace_function, "LispExpr::get_class(list<string>mfc)", __func__, SLOG_FUNC_INFO);
+  string mc_str = _to_str_ext(mc);
+  MYLOGGER_MSG(trace_function, "mfc: " + mc_str  , SLOG_FUNC_INFO+30);
+  auto path = lisp_path_module;
+  path.push_back(mc[0]);
+  path.push_back(_CLASS);
+  path.push_back(mc[1]); //cout << "getclass: path " << _to_str_ext(path) << "\n";
+  auto node_ref_status = get_node(path);
+  if(!node_ref_status.first)  {
+    cerr << "Looking up class '"  << mc_str <<"' not found: "  << node_ref_status.second._to_str() << "\n";
+    return node_ref_status;
+  }
+  return node_ref_status;
+
+
+}
+
 
 //------------------------------------------------------------------------
 // create a map object
@@ -265,8 +358,8 @@ Node::OpStatus LispExpr::map_has_key(Node&process, Node &node, const Node::Vecto
 
   switch(node.type_) {
   case Node::Type::Map: {
-    auto &map = get<Node::Map>(node.value_);
-    Node::Integer s = map.erase(key_str);
+    //auto &map = get<Node::Map>(node.value_);
+    //Node::Integer s = map.erase(key_str);
     return node.has_key(key_str);
   }
   case Node::Type::Shared: {

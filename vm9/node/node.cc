@@ -273,6 +273,16 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   return {true, create(true)};
 }
 
+Node::OpStatus Node::set(const string&key, ptr_R child) {
+  if (type_ != Type::Map) {
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
+  }        
+  Map& map= get<Map>(value_);
+  map[key] = Node::create(child);
+  return {true, create(true)};
+}
+
+
 
 //Node::OpStatus Node::set(size_t index, Integer v) { return set(index, Node::create(Value(v))); }
 Node::OpStatus Node::set(size_t index, Integer v) { return set(index, create(v)); }
@@ -816,16 +826,6 @@ bool Node::empty_container() const {
 }
 
 //------------------------------------------------------------------------
-
- // conver to  unique pointer -> unique pointer(shared pointer)
- // it's a shared ptr being wrapped in a unqiue ptr
- // for object reference passing 
-unique_ptr<Node> Node::ptr_US(unique_ptr<Node> node) {
-  MYLOGGER(trace_function, "Node::ptr_US(unique_ptr<Node>node)", __func__, SLOG_FUNC_INFO);
-
-  Node::ptr_S s_ptr_node = move(node);
-  return make_unique<Node>(s_ptr_node);
-}
 // convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
 unique_ptr<Node> Node::container_obj_to_US(unique_ptr<Node> node) {
   switch(node->type_) {
@@ -840,18 +840,31 @@ unique_ptr<Node> Node::container_obj_to_US(unique_ptr<Node> node) {
   return node;
 }
 
+//------------------------------------------------------------------------
+ // conver to  unique pointer -> unique pointer(shared pointer)
+ // it's a shared ptr being wrapped in a unqiue ptr
+ // for object reference passing 
+unique_ptr<Node> Node::ptr_US(unique_ptr<Node> node) {
+  MYLOGGER(trace_function, "Node::ptr_US(unique_ptr<Node>node)", __func__, SLOG_FUNC_INFO);
+  Node::ptr_S s_ptr_node = move(node);
+  return make_unique<Node>(s_ptr_node);
+}
+
+//------------------------------------------------------------------------
 // make a clone of unique shared without recursive cloning.
 unique_ptr<Node> Node::ptr_USU(const unique_ptr<Node> &node) {
   MYLOGGER(trace_function, "Node::ptr_USU(const unique_ptr<Node>&node)", __func__, SLOG_FUNC_INFO);
   const auto sptr = get<ptr_S>(node->value_);
   return make_unique<Node>(sptr);
 }
+//------------------------------------------------------------------------
 unique_ptr<Node> Node::ptr_USU(const Node &node) {
   MYLOGGER(trace_function, "Node::ptr_USU(const Node& node)", __func__, SLOG_FUNC_INFO);
   const auto sptr = get<ptr_S>(node.value_);
   return make_unique<Node>(sptr);
 }
 
+//------------------------------------------------------------------------
 Node::ptr_S Node::_get_ptr_s() {
   return get<ptr_S>(value_);
 }

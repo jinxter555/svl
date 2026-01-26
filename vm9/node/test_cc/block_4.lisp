@@ -27,7 +27,7 @@ module Kernel
 
       (assign m1.k1 "what is up ")
 
-      (assign m3.k1 "hola")
+;      (assign m3.k1 "hola")
       ; (assign m2 "hola")
 
       (print "m1b:" m1 "\n\n")

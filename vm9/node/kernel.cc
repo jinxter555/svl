@@ -1,5 +1,6 @@
 #include "kernel.hh"
 #include "tree.hh"
+#include "my_helpers.hh"
 #include <iostream>
 
 #define SLOG_DEBUG_TRACE_FUNC
