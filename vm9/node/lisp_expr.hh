@@ -119,8 +119,8 @@ public:
   Node::OpStatus call(Node& process, const Node& code_node); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0);
 
-  Node::OpStatus call(Node& process, const Node::Vector& mfc, const Node::Vector& params); // 
-  Node::OpStatus call_eval(Node& process, const Node::Vector& code, const Node::Vector& params);
+  Node::OpStatus call(Node& process, const Node::Vector& mcf, const Node::Vector& params); // 
+  Node::OpStatus call_eval(Node& process, const Node& fun, const Node::Vector& params);
 
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args
   Node::OpStatus call_lambda(Node& process, const Node::Map & obj_lambda, Node::Vector&& args); // call creates new scope and push args to scope immute

@@ -1,5 +1,6 @@
-module Kernel 
+%%module  kernel
 
+module Kernel 
   class Map
     (var size (length 123) )
     def Map(x)  
@@ -24,21 +25,25 @@ module Kernel
       end
     end.for
 
-    for i :in (range 1..15)
-
-    end.for
-
-    for :range (1..3) i
+    for (1..3) (i)
       print i
     end.for
 
-    for :key (map) (k) 
+    for (map) (k v) 
     end.for
 
-    for :pair (map) (k v)
+    for (map)
+      do (k v) 
+      end
     end.for
 
+    while [infix] do
+    end.while
 
+    repeat
+      print i
+    until [infix] 
+    end.repeat
 
   end.def
 

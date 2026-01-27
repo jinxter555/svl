@@ -105,7 +105,7 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
 }
 //------------------------------------------------------------------------
 // create a map object
-// (send object_variable (method param1 param2 ... ) ) //creates a new map object
+// (send object_variable (method arg1 arg2... ) ) //creates a new map object
 //
 Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::send_message(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
@@ -120,25 +120,33 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
 
   }
 
-  auto params = list_clone_remainder(list, start+1);
+  auto argv = list_clone_remainder(list, start+1);
 
-  auto message_status = eval(process, params);
+  auto message_status = eval(process, argv);
 
   if(!message_status.first) {
     cerr << "send_object_Message(...) eval error : "  << message_status.second->_to_str() << "\n";
     return message_status;
   }
 
-  auto method_name = message_status.second->get_node(0).second._get_integer();
+  auto method_name_i = message_status.second->get_node(0).second._get_integer();
+  auto method_name = atom_to_str( method_name_i).second._to_str() ;
 
-  cout << "method name atom i:" << method_name << "\n";
-  cout << "method name atom s:" << atom_to_str( method_name) << "\n";
+  auto &argv_list = message_status.second->_get_vector_ref();
+  argv_list.erase(argv_list.begin());
+
+  cout << "method name atom s:" <<  method_name << "\n";
 
   cout << "object: " << object_ref_status << "\n";
-  cout << "message status: " << message_status << "\n";
+  cout << "message status: " << message_status << "\n\n";
+ cout << "object.Map: " << object_ref_status.second.method(method_name) << "\n";
+
+
+
   return message_status;
 
 }
+
 
 
 //------------------------------------------------------------------------

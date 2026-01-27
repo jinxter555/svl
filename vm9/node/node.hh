@@ -121,6 +121,9 @@ public:
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(size_t i);
+  //
+  OpStatusRef get_node_with_ptr(const string&key);
+  OpStatusRef get_node_with_ptr(const vector<string>&path);
 
   OpStatus merge(unique_ptr<Node> n, bool override=false);
   OpStatus merge(Map &m, bool override=false);
@@ -133,6 +136,8 @@ public:
   static unique_ptr<Node> ptr_USU(const Node& node); // make a clone of unique shared without recursive cloning.
   static unique_ptr<Node>  container_obj_to_US(unique_ptr<Node>); // convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
   
+  //---- lisp object methods
+  OpStatusRef method(const string&fun); // returns fun method if node is an  object of LispExpr  class
   //----
 
 

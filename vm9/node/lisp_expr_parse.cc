@@ -181,6 +181,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
     switch(Lisp::type(*status.second)){
     case Lisp::Type::defun: {
       auto fun_name = (*status.second)["name"].second._to_str();
+      //status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault // get raw pointer from 
       module_functions->set(fun_name, move(status.second));
       continue;
     }

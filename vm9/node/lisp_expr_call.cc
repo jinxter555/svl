@@ -241,6 +241,9 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   // function path 
 
   func_path.push_back(mf_vector[0]); // push module
+  auto module_ref_status = get_node(func_path);
+
+
   func_path.push_back(FUNCTION);    // push module."function".
 
   func_path.push_back(mf_vector[1]); // module."function".func_name
@@ -253,6 +256,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   auto frame = frame_create();
   frame->set(CURRENT_MODULE, mf_vector[0]);
   frame->set(CURRENT_FUNCTION, mf_vector[1]);
+  frame->set(CURRENT_MODULE_PTR, &module_ref_status.second); 
 
   // argument set up
   const auto &argv_node_ptr=  code_list[start+1];
@@ -298,6 +302,31 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   */
 }
 
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::call(Node& process, const Node::Vector& mcf, const Node::Vector& params) {
+  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& mcf, const Node::vector&params)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("mcf: ") + Node::_to_str(mcf), SLOG_FUNC_INFO+30);
+
+
+  auto frame_status_ref = frame_current(process);
+  if(!frame_status_ref.first) return {false, frame_status_ref.second.clone()};
+
+
+  // find out if it's object call or module function call
+
+  auto frame = frame_create();
+//  frame->set(CURRENT_MODULE, mf_vector[0]);
+//  frame->set(CURRENT_FUNCTION, mf_vector[1]);
+//  frame->set(CURRENT_MODULE_PTR, &module_ref_status.second); 
+
+}
+
+// grab code from code
+Node::OpStatus LispExpr::call_eval(Node& process, const Node& fun, const Node::Vector& params) {
+
+}
+
+//------------------------------------------------------------------------
 // code_list = (call_extern (module function) this_node_var& (arg1 arg2 arg3))
 Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::call_extern(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
