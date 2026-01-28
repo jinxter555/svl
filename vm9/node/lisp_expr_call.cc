@@ -161,10 +161,13 @@ Node::OpStatus LispExpr::attach_params_args_to_frame(unique_ptr<Node>& frame, co
 
 //------------------------------------------------------------------------
 
-Node::OpStatus   LispExpr::frame_create_params_args(const vector<string>& params, Node::Vector &&arg_list) {
+Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_list) {
   MYLOGGER(trace_function, "LispExpr::frame_create_params_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "params: " + _to_str_ext(params), SLOG_FUNC_INFO+30);
+  //MYLOGGER_MSG(trace_function,  "params: " + _to_str_ext(params), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "arg_list: " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
+
+
+  auto const params = get_params(fun._get_map_ref());
 
   if(arg_list.size() != params.size())
     return {false, Node::create_error(Error::Type::InvalidOperation,  
@@ -176,6 +179,47 @@ Node::OpStatus   LispExpr::frame_create_params_args(const vector<string>& params
   }
   auto frame = frame_create();
   frame->set(ARGS, Node::create(move(args)));
+
+
+  // frame need to set current module ptr current 
+  auto fun_name = fun.get_node_with_ptr(NAME).second._to_str();
+  frame->set(CURRENT_FUNCTION, fun_name); 
+  frame->set(CURRENT_FUNCTION_PTR, &fun); 
+
+  if(fun.m_has_key(CLASS_PTR)) {
+    auto &class_node = fun.get_node(CLASS_PTR).second;
+    auto &module_node = class_node.get_node_with_ptr(MODULE_PTR).second;
+    auto class_name = class_node.get_node_with_ptr(NAME).second._to_str();
+    auto module_name = module_node.get_node_with_ptr(NAME).second._to_str();
+
+    cout << "fun parent class name :" << class_node.get_node_with_ptr(NAME) <<  "\n";
+    cout << "fun parent class :" << class_node <<  " is an object!";
+    cout << "module :" << module_node<<  "\n\n";
+
+
+    frame->set(CURRENT_CLASS, class_name); 
+    frame->set(CURRENT_CLASS_PTR, &class_node); 
+
+    frame->set(CURRENT_MODULE, module_name); 
+    frame->set(CURRENT_MODULE_PTR, &module_node); 
+
+  } else if(fun.m_has_key(MODULE_PTR)) {
+    //auto fun_name = fun.get_node_with_ptr(NAME).second._to_str();
+    auto &module_node = fun.get_node_with_ptr(MODULE_PTR).second;
+    auto module_name = module_node.get_node_with_ptr(NAME).second._to_str();
+
+    frame->set(CURRENT_MODULE, module_name); 
+    frame->set(CURRENT_MODULE_PTR, &module_node); 
+
+  }else {
+    cerr << "fun has no class_ptr or module_ptr!\n";
+    return {false, nullptr};
+  }
+
+  //frame->set(CURRENT_MODULE, mf_vector[0]);
+  //frame->set(CURRENT_FUNCTION, mf_vector[1]);
+  //frame->set(CURRENT_MODULE_PTR, &module_ref_status.second); 
+
 
   //return {true, move(frame)};
   return {true, move(frame)};
@@ -334,22 +378,23 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
   MYLOGGER_MSG(trace_function, "argv_vector: " + Node::_to_str(argv_vector), SLOG_FUNC_INFO+30);
 
 
-//  auto const params_status_ref = fun.get_node(_PARAMS);
-  auto const params = get_params(fun._get_map_ref());
-
-
-  /*
-  if(!params_status_ref.first) {
-    cerr << "call() param not found in function!";
-    return {false, params_status_ref.second.clone()};
+  auto frame_status = frame_create_fun_args(fun, move(argv_vector));
+  if(!frame_status.first) {
+    cerr << "can't frame_create_params!\n";
+    return frame_status;
   }
-*/
 
-//  cout << "fun params: " << params_status_ref<< "\n";
-  auto frame_status = frame_create_params_args(params, move(argv_vector));
-  cout << "frame status: " <<  frame_status << "\n";
+  frame_push(process, move(frame_status.second));
+  auto scope = scope_create();
+  auto scope_status =  scope_push(process, move(scope));
 
-  return {false, nullptr};
+  auto code_list_status = fun.get_node(CODE);
+  if(!code_list_status.first) {
+    cerr << "call(process, fun, argv) error!" +  code_list_status.second._to_str() +"\n";
+    return {false, code_list_status.second.clone()};
+  }
+
+  return eval(process, code_list_status.second);
 
 }
 
@@ -369,6 +414,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& mcf, const Node
 //  frame->set(CURRENT_MODULE, mf_vector[0]);
 //  frame->set(CURRENT_FUNCTION, mf_vector[1]);
 //  frame->set(CURRENT_MODULE_PTR, &module_ref_status.second); 
+return {false, nullptr};
 
 }
 

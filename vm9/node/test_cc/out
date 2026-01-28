@@ -1,8 +1,26 @@
 need to assign vars differently because  in a class init object value (var (length 3.14159))!
-class name: Map
 hello, world
 sendng message in eval!
-frame status: true: value: {"args": {"x": 555, "this": {"__object_info__": {"class": [Kernel, Map], "class_ptr":--*ptr--, "type": object}}}, "scopes": Vector[]}, type: Map
+fun parent class name :true: value: Dict, type: String
+fun parent class :{"module_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": class}, "function": {"area": {"class_ptr":--*ptr--, "name": area, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello class Dict::area ()
+], Vector[print, area is: , a, 
+]], "params": Vector[this, a]}, "Dict": {"class_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": defun}, "code": Vector[Vector[print, 
+
+hello class constructor Dict()
+
+], Vector[print, x is: , x, 
+]], "params": Vector[this, x]}}, "var": {"vector": Vector[var, size, Vector[length, 123]], "__object_info__": {"type": var}}} is an object!module :{"name": Kernel, "class": {"Dict": {"module_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": class}, "function": {"area": {"class_ptr":--*ptr--, "name": area, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello class Dict::area ()
+], Vector[print, area is: , a, 
+]], "params": Vector[this, a]}, "Dict": {"class_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": defun}, "code": Vector[Vector[print, 
+
+hello class constructor Dict()
+
+], Vector[print, x is: , x, 
+]], "params": Vector[this, x]}}, "var": {"vector": Vector[var, size, Vector[length, 123]], "__object_info__": {"type": var}}}}, "__object_info__": {"type": module}, "function": {"main": {"module_ptr":--*ptr--, "name": main, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello, world
+], Vector[assign, m1, Vector[new, Dict]], Vector[assign, x1, 999], Vector[assign, method1, Vector[-6069950558054903948]], Vector[send, m1, Vector[-7414127320222414444, 999]]], "params": Vector[x, y]}}}
+
+hello class Dict::area ()
+area is: 999
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -75,8 +93,9 @@ print recursive:
       - Kernel (Type: Map): { (Map, size=4) 
        - name (Type: String): "Kernel"
        - class (Type: Map): { (Map, size=1) 
-        - Map (Type: Map): { (Map, size=4) 
-         - name (Type: String): "Map"
+        - Dict (Type: Map): { (Map, size=5) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "Dict"
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): class
         }
@@ -87,27 +106,45 @@ print recursive:
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): defun
           }
-           - code (Type: Vector): Vector[(size=1) 
+           - code (Type: Vector): Vector[(size=2) 
             - [0, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: print
-             - [1, Type: String]: "hello class mp1()
+             - [1, Type: String]: "hello class Dict::area ()
+"
+           ]
+            - [1, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "area is: "
+             - [2, Type: Identifier]: "a"
+             - [3, Type: String]: "
 "
            ]
           ]
-           - params (Type: Vector): Vector[(size=1) 
+           - params (Type: Vector): Vector[(size=2) 
             - [0, Type: Identifier]: "this"
+            - [1, Type: Identifier]: "a"
           ]
          }
-          - Map (Type: Map): { (Map, size=5) 
+          - Dict (Type: Map): { (Map, size=5) 
            - class_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "Map"
+           - name (Type: String): "Dict"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): defun
           }
-           - code (Type: Vector): Vector[(size=1) 
+           - code (Type: Vector): Vector[(size=2) 
             - [0, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: print
-             - [1, Type: String]: "hello class constructor Map()
+             - [1, Type: String]: "
+
+hello class constructor Dict()
+
+"
+           ]
+            - [1, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "x is: "
+             - [2, Type: Identifier]: "x"
+             - [3, Type: String]: "
 "
            ]
           ]
@@ -153,7 +190,7 @@ print recursive:
            - [1, Type: Identifier]: "m1"
            - [2, Type: Vector]: Vector[(size=2) 
             - [0, Type: LispOp]: new
-            - [1, Type: Identifier]: "Map"
+            - [1, Type: Identifier]: "Dict"
           ]
          ]
           - [2, Type: Vector]: Vector[(size=3) 
@@ -165,15 +202,15 @@ print recursive:
            - [0, Type: LispOp]: assign
            - [1, Type: Identifier]: "method1"
            - [2, Type: Vector]: Vector[(size=1) 
-            - [0, Type: Atom]: 5660448449078954436
+            - [0, Type: Atom]: -6069950558054903948
           ]
          ]
           - [4, Type: Vector]: Vector[(size=3) 
            - [0, Type: LispOp]: send
            - [1, Type: Identifier]: "m1"
            - [2, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Atom]: 5660448449078954436
-            - [1, Type: Integer]: 555
+            - [0, Type: Atom]: -7414127320222414444
+            - [1, Type: Integer]: 999
           ]
          ]
         ]
@@ -186,9 +223,10 @@ print recursive:
      }
     }
    }
-    - Atoms (Type: Map): { (Map, size=7) 
-     - 5660448449078954436 (Type: String): "Map"
+    - Atoms (Type: Map): { (Map, size=8) 
+     - -7414127320222414444 (Type: String): "area"
      - 4625761978203795338 (Type: String): "set"
+     - -6069950558054903948 (Type: String): "Dict"
      - -319359290386476595 (Type: String): "lambda"
      - -4705652595650921993 (Type: String): "get"
      - 3211040718132763761 (Type: String): "class"
@@ -216,16 +254,38 @@ print recursive:
      - pid (Type: Integer): 0
    }
     - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=1) 
+     - frames (Type: Vector): Vector[(size=2) 
       - [0, Type: Map]: { (Map, size=3) 
        - current_function (Type: String): "Main"
        - current_module (Type: String): "Kernel"
        - scopes (Type: Vector): Vector[(size=1) 
         - [0, Type: Map]: { (Map, size=2) 
          - immute (Type: Map): { (Map, size=3) 
-          - method1 (Type: SharedPtr): shared_ptr*:Vector[5660448449078954436]
+          - method1 (Type: SharedPtr): shared_ptr*:Vector[-6069950558054903948]
           - x1 (Type: Integer): 999
-          - m1 (Type: SharedPtr): shared_ptr*:{"__object_info__": {"class": [Kernel, Map], "class_ptr":--*ptr--, "type": object}}
+          - m1 (Type: SharedPtr): shared_ptr*:{"__object_info__": {"class": [Kernel, Dict], "class_ptr":--*ptr--, "type": object}}
+        }
+         - var (Type: Map): { (Map, size=0) 
+        }
+       }
+      ]
+     }
+      - [1, Type: Map]: { (Map, size=8) 
+       - current_module_ptr (Type: RawPtr): ###*ptr##
+       - current_module (Type: String): "Kernel"
+       - current_class_ptr (Type: RawPtr): ###*ptr##
+       - current_function_ptr (Type: RawPtr): raw*:{"class_ptr":--*ptr--, "name": area, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello class Dict::area ()
+], Vector[print, area is: , a, 
+]], "params": Vector[this, a]}
+       - current_function (Type: String): "area"
+       - args (Type: Map): { (Map, size=2) 
+        - a (Type: Integer): 999
+        - this (Type: SharedPtr): shared_ptr*:{"__object_info__": {"class": [Kernel, Dict], "class_ptr":--*ptr--, "type": object}}
+      }
+       - current_class (Type: String): "Dict"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=2) 
+         - immute (Type: Map): { (Map, size=0) 
         }
          - var (Type: Map): { (Map, size=0) 
         }

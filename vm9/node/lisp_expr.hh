@@ -78,7 +78,8 @@ public:
 
   unique_ptr<Node> frame_create() const ; // create a frame 
 
-  Node::OpStatus   frame_create_params_args(const vector<string>& params, Node::Vector &&args);
+  //Node::OpStatus   frame_create_params_args(const vector<string>& params, Node::Vector &&args);
+  Node::OpStatus   frame_create_fun_args(Node&fun, Node::Vector &&args);
 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
   Node::OpStatusRef frame_current(Node&process) ; // 
