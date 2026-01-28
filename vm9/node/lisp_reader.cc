@@ -313,6 +313,81 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   return {true, move(node_ptr)};
 }
 
+//------------------------------------------------------------------------ pre tokenize string
+string LispReader::tokenize_preprocess(const string& input) {
+  return (
+    tokenize_preprocess_multiline_parenthesis(
+      tokenize_preprocess_multiline(input)
+    )
+  );
+}
+
+
+string LispReader::tokenize_preprocess_multiline(const string& input) {
+
+  istringstream stream(input); // Wrap the string in an input string stream
+  string line_current, line_result;
+  bool multi_line = false;
+
+  while (getline(stream, line_current)) {
+    if(multi_line) { // multi line begins
+
+      if(line_current.back() == '\\') { 
+        line_current.pop_back(); // get rid multi line character
+        multi_line = true;
+      } else {
+        multi_line = false;
+        line_current += "\n";
+      }
+      line_result += line_current;
+      continue;
+    }
+
+    if(line_current.back() == '\\') {
+      line_current.pop_back();
+      multi_line = true;
+    } else {
+      multi_line = false;
+      line_current += "\n";
+
+    }
+
+    line_result += line_current;
+  }
+
+  return line_result;
+}
+
+string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input) {
+  istringstream stream(input); // Wrap the string in an input string stream
+
+  string line_current, line_result;
+
+  while (getline(stream, line_current)) {
+    auto line = trim(line_current);
+    if(line == "") continue;
+    auto line_vector = split_string(line, " ");
+
+    if(line_vector.front() == ";") continue;
+
+    if(is_closurable(line_vector.front()) || is_endable(line_vector.back()) )  {
+      line_result += line + "\n";
+      continue;
+    }
+
+    if(line.front() == '(' && line.back() ==')'){ // ( blah blah blah )
+      line_result += line + "\n";
+    } else if(line.front() != '('  && line.back() == ')') { // fx(123)
+      line_result += "(" + line + ")" + "\n"; // needs to count (, ), all in stack order
+    } else
+      line_result += "(" + line + ")" + "\n";
+
+
+  }
+  return line_result;
+}
+
+
 
 //------------------------------------------------------------------------ 
 
@@ -362,3 +437,4 @@ bool LispReader::is_endable(const string&token_str) {
   auto op = lisp->keyword_to_op(op_str); // Lisp::Op
   return is_closurable(op);
 }
+

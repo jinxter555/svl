@@ -1,301 +1,37 @@
-need to assign vars differently because  in a class init object value (var (length 3.14159))!
+preprocess token str:
+module Kernel
+def main (x y)
+(print "hello, world\n\n")
+(p55 (55 2))
+end.defun
+defun p55 (x y) "my func p55"
+(
+(print "hello, p55, 55\n")
+(print "(x): " (x) "\n")
+(print "\n")
+(assign t1  "t1 robot")
+(p56 (56 6))
+)
+end.defun
+defun p56 (x y) "my func p56"
+(
+(print "hello, p56, 56\n")
+(print (x))
+(print "\n")
+)
+end.defun
+def p57 (x y)
+(print "hello, p56, 56\n")
+(print (x))
+(print "\n")
+end.def
+end.module
+
+
 hello, world
-sendng message in eval!
-fun parent class name :true: value: Dict, type: String
-fun parent class :{"module_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": class}, "function": {"area": {"class_ptr":--*ptr--, "name": area, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello class Dict::area ()
-], Vector[print, area is: , a, 
-]], "params": Vector[this, a]}, "Dict": {"class_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": defun}, "code": Vector[Vector[print, 
 
-hello class constructor Dict()
+hello, p55, 55
+(x): 55
 
-], Vector[print, x is: , x, 
-]], "params": Vector[this, x]}}, "var": {"vector": Vector[var, size, Vector[length, 123]], "__object_info__": {"type": var}}} is an object!module :{"name": Kernel, "class": {"Dict": {"module_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": class}, "function": {"area": {"class_ptr":--*ptr--, "name": area, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello class Dict::area ()
-], Vector[print, area is: , a, 
-]], "params": Vector[this, a]}, "Dict": {"class_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": defun}, "code": Vector[Vector[print, 
-
-hello class constructor Dict()
-
-], Vector[print, x is: , x, 
-]], "params": Vector[this, x]}}, "var": {"vector": Vector[var, size, Vector[length, 123]], "__object_info__": {"type": var}}}}, "__object_info__": {"type": module}, "function": {"main": {"module_ptr":--*ptr--, "name": main, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello, world
-], Vector[assign, m1, Vector[new, Dict]], Vector[assign, x1, 999], Vector[assign, method1, Vector[-6069950558054903948]], Vector[send, m1, Vector[-7414127320222414444, 999]]], "params": Vector[x, y]}}}
-
-hello class Dict::area ()
-area is: 999
-Lisp Interpreter
-print recursive:
-{ (Map, size=1) 
-  - universe (Type: Map): { (Map, size=2) 
-   - Lang (Type: Map): { (Map, size=3) 
-    - CC (Type: Map): { (Map, size=1) 
-     - Module (Type: Map): { (Map, size=1) 
-      - Map (Type: Map): { (Map, size=1) 
-       - function (Type: Map): { (Map, size=5) 
-        - has (Type: Function): Fun*:
-        - del (Type: Function): Fun*:
-        - set (Type: Function): Fun*:
-        - get (Type: Function): Fun*:
-        - keys (Type: Function): Fun*:
-      }
-     }
-    }
-   }
-    - Lisp (Type: Map): { (Map, size=2) 
-     - Keyword (Type: Map): { (Map, size=47) 
-      - % (Type: LispOp): mod
-      - / (Type: LispOp): div
-      - * (Type: LispOp): mul
-      - - (Type: LispOp): sub
-      - + (Type: LispOp): add
-      - lambda (Type: LispOp): lambda
-      - defmacro (Type: LispOp): defmacro
-      - defun (Type: LispOp): defun
-      - module (Type: LispOp): module
-      - do (Type: LispOp): do
-      - for (Type: LispOp): for
-      - loop (Type: LispOp): loop
-      - send (Type: LispOp): send
-      - call_extern (Type: LispOp): call_extern
-      - identifier (Type: LispOp): identifier
-      - class (Type: LispOp): class
-      - noop (Type: LispOp): noop
-      - private (Type: LispOp): private
-      - delete (Type: LispOp): delete
-      - error (Type: LispOp): error
-      - cond (Type: LispOp): cond
-      - mul (Type: LispOp): mul
-      - new (Type: LispOp): new
-      - ret (Type: LispOp): ret
-      - system (Type: LispOp): system
-      - clone (Type: LispOp): clone
-      - def (Type: LispOp): def
-      - root (Type: LispOp): root
-      - add (Type: LispOp): add
-      - alias (Type: LispOp): alias
-      - kernel (Type: LispOp): kernel
-      - call (Type: LispOp): call
-      - list (Type: LispOp): list
-      - vector (Type: LispOp): vector
-      - deque (Type: LispOp): deque
-      - literal (Type: LispOp): literal
-      - assign (Type: LispOp): assign
-      - cdr (Type: LispOp): cdr
-      - var (Type: LispOp): var
-      - funcall (Type: LispOp): funcall
-      - scalar (Type: LispOp): scalar
-      - car (Type: LispOp): car
-      - sub (Type: LispOp): sub
-      - map (Type: LispOp): map
-      - div (Type: LispOp): div
-      - print (Type: LispOp): print
-      - mod (Type: LispOp): mod
-    }
-     - Module (Type: Map): { (Map, size=1) 
-      - Kernel (Type: Map): { (Map, size=4) 
-       - name (Type: String): "Kernel"
-       - class (Type: Map): { (Map, size=1) 
-        - Dict (Type: Map): { (Map, size=5) 
-         - module_ptr (Type: RawPtr): ==*ptr==
-         - name (Type: String): "Dict"
-         - __object_info__ (Type: Map): { (Map, size=1) 
-          - type (Type: LispOp): class
-        }
-         - function (Type: Map): { (Map, size=2) 
-          - area (Type: Map): { (Map, size=5) 
-           - class_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "area"
-           - __object_info__ (Type: Map): { (Map, size=1) 
-            - type (Type: LispOp): defun
-          }
-           - code (Type: Vector): Vector[(size=2) 
-            - [0, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "hello class Dict::area ()
-"
-           ]
-            - [1, Type: Vector]: Vector[(size=4) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "area is: "
-             - [2, Type: Identifier]: "a"
-             - [3, Type: String]: "
-"
-           ]
-          ]
-           - params (Type: Vector): Vector[(size=2) 
-            - [0, Type: Identifier]: "this"
-            - [1, Type: Identifier]: "a"
-          ]
-         }
-          - Dict (Type: Map): { (Map, size=5) 
-           - class_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "Dict"
-           - __object_info__ (Type: Map): { (Map, size=1) 
-            - type (Type: LispOp): defun
-          }
-           - code (Type: Vector): Vector[(size=2) 
-            - [0, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "
-
-hello class constructor Dict()
-
-"
-           ]
-            - [1, Type: Vector]: Vector[(size=4) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "x is: "
-             - [2, Type: Identifier]: "x"
-             - [3, Type: String]: "
-"
-           ]
-          ]
-           - params (Type: Vector): Vector[(size=2) 
-            - [0, Type: Identifier]: "this"
-            - [1, Type: Identifier]: "x"
-          ]
-         }
-        }
-         - var (Type: Map): { (Map, size=2) 
-          - vector (Type: Vector): Vector[(size=3) 
-           - [0, Type: LispOp]: var
-           - [1, Type: Identifier]: "size"
-           - [2, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Identifier]: "length"
-            - [1, Type: Integer]: 123
-          ]
-         ]
-          - __object_info__ (Type: Map): { (Map, size=1) 
-           - type (Type: LispOp): var
-         }
-        }
-       }
-      }
-       - __object_info__ (Type: Map): { (Map, size=1) 
-        - type (Type: LispOp): module
-      }
-       - function (Type: Map): { (Map, size=1) 
-        - main (Type: Map): { (Map, size=5) 
-         - module_ptr (Type: RawPtr): ==*ptr==
-         - name (Type: String): "main"
-         - __object_info__ (Type: Map): { (Map, size=1) 
-          - type (Type: LispOp): defun
-        }
-         - code (Type: Vector): Vector[(size=5) 
-          - [0, Type: Vector]: Vector[(size=2) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "hello, world
-"
-         ]
-          - [1, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "m1"
-           - [2, Type: Vector]: Vector[(size=2) 
-            - [0, Type: LispOp]: new
-            - [1, Type: Identifier]: "Dict"
-          ]
-         ]
-          - [2, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "x1"
-           - [2, Type: Integer]: 999
-         ]
-          - [3, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: assign
-           - [1, Type: Identifier]: "method1"
-           - [2, Type: Vector]: Vector[(size=1) 
-            - [0, Type: Atom]: -6069950558054903948
-          ]
-         ]
-          - [4, Type: Vector]: Vector[(size=3) 
-           - [0, Type: LispOp]: send
-           - [1, Type: Identifier]: "m1"
-           - [2, Type: Vector]: Vector[(size=2) 
-            - [0, Type: Atom]: -7414127320222414444
-            - [1, Type: Integer]: 999
-          ]
-         ]
-        ]
-         - params (Type: Vector): Vector[(size=2) 
-          - [0, Type: Identifier]: "x"
-          - [1, Type: Identifier]: "y"
-        ]
-       }
-      }
-     }
-    }
-   }
-    - Atoms (Type: Map): { (Map, size=8) 
-     - -7414127320222414444 (Type: String): "area"
-     - 4625761978203795338 (Type: String): "set"
-     - -6069950558054903948 (Type: String): "Dict"
-     - -319359290386476595 (Type: String): "lambda"
-     - -4705652595650921993 (Type: String): "get"
-     - 3211040718132763761 (Type: String): "class"
-     - -2331651408838895954 (Type: String): "fun"
-     - -1154038927901484491 (Type: String): "module"
-   }
-  }
-   - Process (Type: Vector): Vector[(size=2) 
-    - [0, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=1) 
-      - [0, Type: Map]: { (Map, size=3) 
-       - Pi (Type: Float): 3.14
-       - current_module (Type: String): "Kernel"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=0) 
-        }
-         - var (Type: Map): { (Map, size=0) 
-        }
-       }
-      ]
-     }
-    ]
-     - state (Type: ProcessState): init
-     - pid (Type: Integer): 0
-   }
-    - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=2) 
-      - [0, Type: Map]: { (Map, size=3) 
-       - current_function (Type: String): "Main"
-       - current_module (Type: String): "Kernel"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=3) 
-          - method1 (Type: SharedPtr): shared_ptr*:Vector[-6069950558054903948]
-          - x1 (Type: Integer): 999
-          - m1 (Type: SharedPtr): shared_ptr*:{"__object_info__": {"class": [Kernel, Dict], "class_ptr":--*ptr--, "type": object}}
-        }
-         - var (Type: Map): { (Map, size=0) 
-        }
-       }
-      ]
-     }
-      - [1, Type: Map]: { (Map, size=8) 
-       - current_module_ptr (Type: RawPtr): ###*ptr##
-       - current_module (Type: String): "Kernel"
-       - current_class_ptr (Type: RawPtr): ###*ptr##
-       - current_function_ptr (Type: RawPtr): raw*:{"class_ptr":--*ptr--, "name": area, "__object_info__": {"type": defun}, "code": Vector[Vector[print, hello class Dict::area ()
-], Vector[print, area is: , a, 
-]], "params": Vector[this, a]}
-       - current_function (Type: String): "area"
-       - args (Type: Map): { (Map, size=2) 
-        - a (Type: Integer): 999
-        - this (Type: SharedPtr): shared_ptr*:{"__object_info__": {"class": [Kernel, Dict], "class_ptr":--*ptr--, "type": object}}
-      }
-       - current_class (Type: String): "Dict"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=2) 
-         - immute (Type: Map): { (Map, size=0) 
-        }
-         - var (Type: Map): { (Map, size=0) 
-        }
-       }
-      ]
-     }
-    ]
-     - state (Type: ProcessState): init
-     - pid (Type: Integer): 1
-   }
-  ]
- }
-}
+hello, p56, 56
+56

@@ -1,8 +1,6 @@
 module Kernel 
   ;(var v1 (v2 123))
-  assign 
-    (v1 = [1 + 2])
-  end.assign
+  ;
 
   defun main (x y) "my func des" 
     (

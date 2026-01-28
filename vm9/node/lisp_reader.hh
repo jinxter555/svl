@@ -28,8 +28,10 @@ private:
   Token token_previous={};
 public:
   LispReader(LispExpr*);
-  //void tokenize(const string& input) { }
-  //vector<Token> tokenize(const string& input);  // turn everything in to a stream of tokens
+  string tokenize_preprocess(const string& input);
+  string tokenize_preprocess_multiline(const string& input) ;
+  string tokenize_preprocess_multiline_parenthesis(const string& input) ;
+
   list<Token> tokenize(const string& input);  // turn everything in to a stream of tokens
   Node::OpStatus parse(list<Token>& tokens);  // turn everything in to stream of node
   Node::OpStatus parse_sequence(list<Token>& tokens);  // turn everything in to stream of node

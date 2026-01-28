@@ -45,6 +45,40 @@ module Kernel
     until [infix] 
     end.repeat
 
-  end.def
+    case x
+    when (> x 5) 
+      print "x is > 5"
+    end.when
+    when (< x 3) 
+      print "x is < 3"
+    end.when
+    end.case
 
+    case x
+    (> x 5) ( print ) 
+    (< x 3) ( print ) 
+    end.case
+
+    case x
+    [x > 5] do print end.do
+    [x < 3] do print end.do
+    end.case
+
+    case x
+    [x > 5] (print )
+    [x < 3] (print )
+    end.ase
+
+    case x
+    (:ok, v) (print )
+    [x < 3] (print )
+    end.ase
+
+    case x
+    (1) (print)
+    [> 5] (print )
+    [< 3] (print )
+    end.case
+
+  end.def
 end.module
