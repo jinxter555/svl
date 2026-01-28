@@ -181,7 +181,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
     switch(Lisp::type(*status.second)){
     case Lisp::Type::defun: {
       auto fun_name = (*status.second)["name"].second._to_str();
-      //status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault // get raw pointer from 
+      status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault when print recursive// get raw pointer from 
       module_functions->set(fun_name, move(status.second));
       continue;
     }
@@ -233,6 +233,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
     case Lisp::Type::defun: {
       auto fun_name = (*status.second)[NAME].second._to_str();
       attach_this_to_arguments((*status.second)[_PARAMS].second._get_vector_ref());
+      status.second->set(CLASS_PTR, class_node.get()); // recursive will segfault, check to_str and print recursive
       class_functions->set(fun_name, move(status.second));
       continue;
     }

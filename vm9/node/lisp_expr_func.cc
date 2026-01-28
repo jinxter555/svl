@@ -86,7 +86,6 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   }
 
   auto class_ref_status  = get_class(cfnv);
-  auto class_ptr  = &class_ref_status.second;
   if(!class_ref_status.first) {
     cerr << "Can't create an object for class:'"  << _to_str_ext(cfnv) <<"', error:"  << class_ref_status.second._to_str() << "\n";
     return {false, class_ref_status.second.clone()};
@@ -111,17 +110,36 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
   MYLOGGER(trace_function, "LispExpr::send_message(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
   auto object_name = list[start]->_to_str();
   auto object_ref_status = symbol_lookup(process, object_name);
+
 
   if(!object_ref_status.first) {
     cerr << "Can't lookup object'"  << object_name <<"', error:"  << object_ref_status.second._to_str() << "\n";
     return {false, object_ref_status.second.clone()};
 
   }
+  auto &object = object_ref_status.second;
+  auto fun_ref_status
+    =object.get_node_with_ptr(OBJ_INFO)
+    .second.get_node_with_ptr(CLASS_PTR)
+    .second.get_node_with_ptr(FUNCTION);
+
+
+   auto object_uptr = Node::ptr_USU(object);
+
+
+  if(!fun_ref_status.first) {
+    cerr << "in send_object_Message(...) error looking up methods fun_ref_status: "  << fun_ref_status.second << "\n";
+    return {false, fun_ref_status.second.clone()};
+  }
+
+  //cout << "object : type" << Node::_to_str( object.type_) << "\n";
+  //cout << "object_ptr : type" << Node::_to_str( object_ptr->type_) << "\n";
+  //cout << "class_ptr " << class_ptr << "\n";
 
   auto argv = list_clone_remainder(list, start+1);
-
   auto message_status = eval(process, argv);
 
   if(!message_status.first) {
@@ -129,21 +147,26 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
     return message_status;
   }
 
+  //message_status.second->set(0, move(object_uptr));
+  //message_status.second->set(0, 123l);
+
   auto method_name_i = message_status.second->get_node(0).second._get_integer();
   auto method_name = atom_to_str( method_name_i).second._to_str() ;
+  auto method_fun = fun_ref_status.second.get_node(method_name);
 
-  auto &argv_list = message_status.second->_get_vector_ref();
-  argv_list.erase(argv_list.begin());
+  message_status.second->set(0, move(object_uptr));
 
-  cout << "method name atom s:" <<  method_name << "\n";
+  //auto &argv_list = message_status.second->_get_vector_ref();
+  //argv_list.erase(argv_list.begin());
 
-  cout << "object: " << object_ref_status << "\n";
-  cout << "message status: " << message_status << "\n\n";
- cout << "object.Map: " << object_ref_status.second.method(method_name) << "\n";
+//  cout << "method name atom s:" <<  method_name << "\n";
+//  cout << "method fun:" <<  method_fun<< "\n";
+  //cout << "message status:" <<  *message_status.second << "\n";
 
 
+  return call(process, method_fun.second, move(message_status.second->_get_vector_ref()));
 
-  return message_status;
+  //return message_status;
 
 }
 

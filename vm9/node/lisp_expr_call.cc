@@ -160,6 +160,28 @@ Node::OpStatus LispExpr::attach_params_args_to_frame(unique_ptr<Node>& frame, co
 }
 
 //------------------------------------------------------------------------
+
+Node::OpStatus   LispExpr::frame_create_params_args(const vector<string>& params, Node::Vector &&arg_list) {
+  MYLOGGER(trace_function, "LispExpr::frame_create_params_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "params: " + _to_str_ext(params), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "arg_list: " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
+
+  if(arg_list.size() != params.size())
+    return {false, Node::create_error(Error::Type::InvalidOperation,  
+      "frame_create_params_args() different size of params and args")};
+  Node::Map args;
+  size_t s =  params.size();
+  for(size_t i=0; i <s; i++) {
+    args[params[i]] = move(arg_list[i]);
+  }
+  auto frame = frame_create();
+  frame->set(ARGS, Node::create(move(args)));
+
+  //return {true, move(frame)};
+  return {true, move(frame)};
+}
+
+//------------------------------------------------------------------------
 // call to closure blocks .. (for range(1..10) (do (i) ..))
 //   ie. attach range value to var i with new scope
 ///
@@ -253,7 +275,9 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   params_path.push_back(_PARAMS);    // module."function".func_name."params"
   
 
+
   auto frame = frame_create();
+
   frame->set(CURRENT_MODULE, mf_vector[0]);
   frame->set(CURRENT_FUNCTION, mf_vector[1]);
   frame->set(CURRENT_MODULE_PTR, &module_ref_status.second); 
@@ -303,6 +327,33 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 }
 
 //------------------------------------------------------------------------
+// grab code from code
+Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vector) {
+  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& fun, Node::vector&&argv_vector)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "fun: " + fun._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "argv_vector: " + Node::_to_str(argv_vector), SLOG_FUNC_INFO+30);
+
+
+//  auto const params_status_ref = fun.get_node(_PARAMS);
+  auto const params = get_params(fun._get_map_ref());
+
+
+  /*
+  if(!params_status_ref.first) {
+    cerr << "call() param not found in function!";
+    return {false, params_status_ref.second.clone()};
+  }
+*/
+
+//  cout << "fun params: " << params_status_ref<< "\n";
+  auto frame_status = frame_create_params_args(params, move(argv_vector));
+  cout << "frame status: " <<  frame_status << "\n";
+
+  return {false, nullptr};
+
+}
+
+
 Node::OpStatus LispExpr::call(Node& process, const Node::Vector& mcf, const Node::Vector& params) {
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& mcf, const Node::vector&params)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("mcf: ") + Node::_to_str(mcf), SLOG_FUNC_INFO+30);
@@ -321,10 +372,6 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& mcf, const Node
 
 }
 
-// grab code from code
-Node::OpStatus LispExpr::call_eval(Node& process, const Node& fun, const Node::Vector& params) {
-
-}
 
 //------------------------------------------------------------------------
 // code_list = (call_extern (module function) this_node_var& (arg1 arg2 arg3))

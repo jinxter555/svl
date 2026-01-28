@@ -4,6 +4,7 @@
 #include <cmath>
 #include <type_traits>
 #include "node.hh"
+#include "defs.hh"
 #include "lisp.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -649,8 +650,12 @@ void Node::print_value_recursive(const Node& node, int depth) {
     } else if constexpr (is_same_v<T, Map>) {
       cout << "{ (Map, size=" << arg.size() << ") " << endl;
       for(const auto&[key, child_ptr] : arg) {
+
         indent(); 
         cout << "  - " << key << " (Type: " << Node::_to_str(child_ptr->type_) << "): ";
+        if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr==\n"; continue; }
+        if(key == CURRENT_MODULE_PTR || key == CURRENT_CLASS_PTR) { cout << "###*ptr##\n"; continue; }
+
         print_value_recursive(*child_ptr.get(), depth+1);
         cout << "\n";
       }

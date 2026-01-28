@@ -5,6 +5,7 @@
 #include <type_traits>
 #include "node.hh"
 #include "lisp.hh"
+#include "defs.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -145,7 +146,10 @@ string Node::_to_str(const Map&map) {
   string outstr;
 
   for (auto const& [key, val] : map) {
-    outstr = q + key + q  + colon + " " + val->_to_str();
+    if(key == MODULE_PTR || key == CLASS_PTR) {
+      outstr = q + key + q  + colon + "--*ptr--";
+    } else 
+      outstr = q + key + q  + colon + " " + val->_to_str();
     kv_paires.push_back(outstr);
   }
 
