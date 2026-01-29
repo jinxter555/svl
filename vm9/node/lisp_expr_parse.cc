@@ -531,6 +531,9 @@ void LispExpr::set_keywords() {
   map_->set("def", Op::def); 
   map_->set("call", Op::call);
   map_->set("funcall", Op::funcall);
+  map_->set("curry", Op::curry);
+  map_->set("pipe", Op::pipe);
+  map_->set("eval", Op::eval);
   map_->set("call_extern", Op::call_extern);
   map_->set("send", Op::send);
   map_->set("ret", Op::ret);

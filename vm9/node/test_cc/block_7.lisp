@@ -2,6 +2,8 @@ module Kernel
   def main (x y) 
       assign t1  "t1 robot"
       print "hello, world from main()\n\n"
+      eval end.eval 
+      
       loop 
 ;        print t1
 ;        print 1 " "

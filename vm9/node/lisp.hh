@@ -24,7 +24,7 @@ public:
   , var, assign
   , car, cdr
   , add, sub, div, mul, mod, read, readline
-  , call, send, ret, call_extern, funcall, curry, pipe
+  , call, send, ret, call_extern, funcall, curry, pipe, eval
   , cond, print, loop, for_, do_, if_, case_, when
   , module, def, defun, defmacro, alias, lambda
   };

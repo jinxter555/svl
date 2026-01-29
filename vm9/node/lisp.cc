@@ -39,6 +39,9 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::def: return "def";
     case Lisp::Op::call: return "call";
     case Lisp::Op::funcall: return "funcall";
+    case Lisp::Op::curry: return "curry";
+    case Lisp::Op::pipe: return "pipe";
+    case Lisp::Op::eval: return "eval";
     case Lisp::Op::call_extern: return "call_extern";
     case Lisp::Op::send: return "send";
     case Lisp::Op::ret: return "ret";
