@@ -117,6 +117,10 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 
 
 //------------------------------------------------------------------------
+Node::OpStatus LispExpr::eval(Node& process, const string& nput) {
+}
+//------------------------------------------------------------------------
+
 // eval node 
 Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node&code_node)", __func__, SLOG_FUNC_INFO);
@@ -178,6 +182,32 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::literal: return literal(code_list, start);
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
+  case Lisp::Op::read:   {
+    string input;
+
+    cout << "> "; getline(cin , input);
+    auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> raw text tokens
+//    cout << "token list: " << LispReader::_to_str( token_list) << "\n";
+    //auto &code_list_list =  reader.parse(token_list).second->_get_list_ref();
+    auto parsed_tokens_status =  reader.parse(token_list);
+    if(!parsed_tokens_status.first) {
+      cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
+      return parsed_tokens_status;
+    }
+ //   cout << "parsed token status : " << parsed_tokens_status << "\n";
+    auto &token_list_list = parsed_tokens_status.second->_get_list_ref();
+
+  //  cout << "list: " << Node::_to_str( token_list_list) << "\n";
+    auto code_vector_list = list_2_vector(move(token_list_list));
+  //  cout << "vecotr list: " << Node::_to_str( code_vector_list) << "\n";
+    // need std::list to vector
+    //cout <<  eval(process, code_vector_list);
+    return eval(process, code_vector_list);
+    //cout << "code list: '" << code_list << "'\n\n";
+
+    return {true, Node::create(input)};
+  }
+  case Lisp::Op::loop:   return loop_forever(process,code_list,start );
   case Lisp::Op::funcall:   return funcall(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 
   case Lisp::Op::car:   return car(process, code_list, start);

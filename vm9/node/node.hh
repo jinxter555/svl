@@ -188,6 +188,7 @@ public:
   string _get_str() const;
   Map& _get_map_ref() ;
   Vector& _get_vector_ref() ;
+  List& _get_list_ref() ;
   ptr_S _get_ptr_s();
 
   // for list and map

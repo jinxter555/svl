@@ -453,3 +453,23 @@ Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t sta
   //return move(result_list);
   return result_list;
 }
+
+Node::OpStatus LispExpr::loop_forever(Node& process, const Node::Vector& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::loop_forever(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
+  size_t s= list.size();
+  while(1) {
+    for(size_t i=start; i < s; i++) {
+      auto &node = list[i];
+      eval(process, *node);
+    }
+  }
+}
+Node::Vector LispExpr::list_2_vector(Node::List &&list) {
+  Node::Vector new_list;
+  for(auto &ele : list) {
+    new_list.push_back(move(ele));
+  }
+  return new_list;
+}

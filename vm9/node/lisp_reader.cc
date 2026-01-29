@@ -378,7 +378,7 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     if(line.front() == '(' && line.back() ==')'){ // ( blah blah blah )
       line_result += line + "\n";
     } else if(line.front() != '('  && line.back() == ')') { // fx(123)
-      line_result += "(" + line + ")" + "\n"; // needs to count (, ), all in stack order
+      line_result += "(" + line + ")" + "\n"; // needs to count all of (, ), in stack order
     } else
       line_result += "(" + line + ")" + "\n";
 
@@ -404,6 +404,7 @@ bool LispReader::is_closurable(Lisp::Op op) {
   switch(op) {
   case Lisp::Op::class_:
   case Lisp::Op::module:
+  case Lisp::Op::loop:
   case Lisp::Op::for_:
   case Lisp::Op::do_:
   case Lisp::Op::if_:

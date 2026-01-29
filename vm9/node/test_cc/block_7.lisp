@@ -1,12 +1,17 @@
 module Kernel 
   def main (x y) 
-(
+      assign t1  "t1 robot"
       print "hello, world from main()\n\n"
+      loop 
+;        print t1
+;        print 1 " "
+;        print 2 "\n"
+        read
+      end.loop
       p55 (55 55555)
       p55 (55 2)
       p57 (77 7777777)
-      )
-  end.defun 
+  end.def
 
   defun p55 (x y) "my func p55" 
     (

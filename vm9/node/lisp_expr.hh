@@ -51,6 +51,7 @@ private:
   vector<string> extract_mf(Node&process, Node::Vector &list); // extract module function
 
   Node::Vector list_clone_remainder(const Node::Vector &list, size_t start=0); 
+  Node::Vector list_2_vector(Node::List &&list); 
 
   Node::OpStatus vector_to_object(const Node::Vector&list); // return an object, object_info with type = head aka Lisp::Type or Lisp::Op
 
@@ -120,9 +121,12 @@ public:
 
   //Node::OpStatus eval(const Node& code, Node& process);
   Node::OpStatus eval(Node& process, const Node& code_node);
+  Node::OpStatus eval(Node& process, const string& input);
   Node::OpStatus eval(Node& process, const Lisp::Op op, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus eval(Node& process, const Node::Vector& code_list);
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
+
+  Node::OpStatus loop_forever(Node& process, const Node::Vector& code_list, size_t start=0);
 
   Node::OpStatus call(Node& process, const Node& code_node); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0);

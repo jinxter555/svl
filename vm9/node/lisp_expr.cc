@@ -73,7 +73,7 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   //cout << "preprocess token str:\n" <<  reader.tokenize_preprocess( input) << "\n\n";
   //auto token_list = reader.tokenize(input); // list<Token> raw text tokens
   auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> raw text tokens
-  reader.tokenize_preprocess( input); // list<Token> raw text tokens
+//  reader.tokenize_preprocess( input); // list<Token> raw text tokens
 
   // parse tokens, to integers, floats, strings, identifiers, lisp::op_s etc..
   // and returns Node::List 

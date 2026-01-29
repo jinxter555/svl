@@ -544,6 +544,8 @@ void LispExpr::set_keywords() {
   map_->set("defmacro", Op::defmacro);
   map_->set("alias", Op::alias);
   map_->set("lambda", Op::lambda);
+  map_->set("read", Op::read);
+  map_->set("readline", Op::readline);
 
   map_->set("+", Op::add);
   map_->set("-", Op::sub);

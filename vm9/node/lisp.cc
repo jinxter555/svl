@@ -55,6 +55,9 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::defmacro: return "defmacro";
     case Lisp::Op::alias: return "alias";
     case Lisp::Op::lambda: return "lambda";
+    case Lisp::Op::read: return "read";
+    case Lisp::Op::readline: return "readline";
+    default: {}
   }
   return "Unknown LispOp";
 }
