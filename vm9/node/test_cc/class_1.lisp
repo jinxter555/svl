@@ -23,6 +23,9 @@ module Kernel
     assign x1 999
 ;    (assign method1 (:Dict))
    (send m1 :area 999 3.14)
+  loop
+    read
+  end.loop
   ;  send m1 :area x1 3.1415
   ;  send m1 :area x1 
 

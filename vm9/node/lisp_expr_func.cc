@@ -116,7 +116,7 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
 
 
   if(!object_ref_status.first) {
-    cerr << "Can't lookup object'"  << object_name <<"', error:"  << object_ref_status.second._to_str() << "\n";
+    cerr << "Can't lookup object '"  << object_name <<"', error:"  << object_ref_status.second._to_str() << "\n";
     return {false, object_ref_status.second.clone()};
 
   }
@@ -466,12 +466,37 @@ Node::OpStatus LispExpr::loop_forever(Node& process, const Node::Vector& list, s
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
   size_t s= list.size();
   while(1) {
+    //cout << "forever loop:\n";
     for(size_t i=start; i < s; i++) {
       auto &node = list[i];
       eval(process, *node);
     }
   }
 }
+Node::OpStatus LispExpr::read_input() {
+  MYLOGGER(trace_function, "LispExpr::read_input()", __func__, SLOG_FUNC_INFO);
+  string input;
+
+  cout << "> "; getline(cin , input);
+  //cout << "input: '"  << input << "'\n";
+  if(input=="") return { true, Node::create()};
+  if(input=="exit") {
+    exit(1) ;
+  }
+  auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> 
+  auto parsed_tokens_status =  reader.parse(token_list); // parse 
+  if(!parsed_tokens_status.first) {
+    cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
+    return parsed_tokens_status;
+  }
+
+  auto tokens = Node::create(move(parsed_tokens_status.second->_get_list_ref())); // this extra step maybe uncessary in future
+  auto input_code_status = parse(*tokens);
+
+  //cout <<"from 'read' after tokenizing, input_code_status: " << input_code_status << "\n";
+  return input_code_status;
+}
+
 Node::Vector LispExpr::list_2_vector(Node::List &&list) {
   Node::Vector new_list;
   new_list.reserve(list.size());

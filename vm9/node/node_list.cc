@@ -28,3 +28,24 @@ Node::OpStatusRef Node::get_node(size_t index) {
   //return {true, *rv};
   return {true, *v[index]};
 }
+
+//------------------------------------------------------------------------
+Node::OpStatusRef Node::get_node_with_ptr(size_t index) {
+  MYLOGGER(trace_function, "Node::get_node_with_ptr(string& key)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "index: " + to_string(index), SLOG_FUNC_INFO+30);
+
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->get_node(index); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->get_node(index); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->get_node(index); }
+  default: {}
+  }
+  return get_node(index);
+
+}

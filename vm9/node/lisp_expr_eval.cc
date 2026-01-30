@@ -147,6 +147,9 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     return {true, code_node.clone()};
   }
     
+  case Node::Type::List: { // object, lambda, 
+    cout << "code node list\n";
+  }
 
   //case Node::Type::Shared: { cout << "shared ptr!\n"; }
   default: {}}
@@ -161,7 +164,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 // lisp op head
 Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op op_head, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("lisp::op: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("Lisp::Op:: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
 
@@ -172,32 +175,31 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::literal: return literal(code_list, start);
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
-  case Lisp::Op::eval:     return eval(process, code_list, start); 
+  case Lisp::Op::eval:     return eval_eval(process, code_list, start);
+  /*
+  { // requires 2 evals aka nested evals
 
+    MYLOGGER_MSG(trace_function, "Lisp::Op::eval: start " + to_string(start) + ", code_list " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
 
-  case Lisp::Op::read:   {
-    string input;
-
-    cout << "> "; getline(cin , input);
-    if(input=="") {
-      cout << "hello!\n";
-      exit(1) ;
-      return { true, Node::create(input)};
+  //  cout << "\nLisp::Op::eval: code_list:" + Node::_to_str(code_list) << "\n";
+    auto evaled_stat1 = eval(process, code_list, start); 
+    if(!evaled_stat1.first) {
+      cerr << "something is wrong with eval('code...') :" << Node::_to_str(code_list) << "\n";
+      return evaled_stat1;
     }
-
-    auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> raw text tokens
-
-    auto parsed_tokens_status =  reader.parse(token_list);
-    if(!parsed_tokens_status.first) {
-      cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
-      return parsed_tokens_status;
+    auto inner_ref_status = evaled_stat1.second->get_node_with_ptr(0);
+    //cout << "evaled stat1 " <<  evaled_stat1 << "\n";
+    //cout << "inner ref  " <<  inner_ref_status << "\n";
+    auto evaled_stat2 = eval(process, inner_ref_status.second); 
+    if(!evaled_stat2.first) {
+      cerr << "something is wrong with code returned by  eval('code...') :" << evaled_stat2.second->_to_str() << "\n";
     }
-    auto &token_list_list = parsed_tokens_status.second->_get_list_ref();
-//    token_list_list.push_front(Node::create(Lisp::Op::eval));
-
-    auto code_vector_list = list_2_vector(move(token_list_list));
-    return eval(process, code_vector_list);
+    //cout << "evaluated stat2: " <<  evaled_stat2<< "\n";
+    return evaled_stat2;
   }
+*/
+
+  case Lisp::Op::read:   return read_input();
   case Lisp::Op::loop:   return loop_forever(process,code_list,start );
   case Lisp::Op::funcall:   return funcall(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 
@@ -228,8 +230,40 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     cout << "defun in eval!\n";
     return {true, nullptr};
   }
-  default:{}}
-  cerr << "unknown command()!: " + Lisp::_to_str(op_head) + "\n"; 
+
+  case Lisp::Op::add:   {
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) + *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::mul:   {
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) * *(second_status.second);
+    return {true, result.clone()};
+  }
+
+
+  default:{}
+  }
+  cerr << "unknown op()!: " + Lisp::_to_str(op_head) + "\n"; 
   return {false, Node::create_error(Error::Type::Unknown, "Unknown Lisp::Op command")};
 }
 
@@ -304,4 +338,23 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
     result_list.push_back(move(value_status.second));
   }
   return  {true, Node::create(move(result_list))};
+}
+
+Node::OpStatus LispExpr::eval_eval(Node& process, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::eval_eval(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "Lisp::Op::eval: start " + to_string(start) + ", code_list " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+
+//  cout << "\nLisp::Op::eval: code_list:" + Node::_to_str(code_list) << "\n";
+  auto evaled_stat1 = eval(process, code_list, start); 
+  if(!evaled_stat1.first) {
+    cerr << "something is wrong with eval('code...') :" << Node::_to_str(code_list) << "\n";
+    return evaled_stat1;
+  }
+  auto inner_ref_status = evaled_stat1.second->get_node_with_ptr(0);
+  auto evaled_stat2 = eval(process, inner_ref_status.second); 
+  if(!evaled_stat2.first) {
+    cerr << "something is wrong with code returned by  eval('code...') :" << evaled_stat2.second->_to_str() << "\n";
+  }
+  //cout << "evaluated stat2: " <<  evaled_stat2<< "\n";
+  return evaled_stat2;
 }

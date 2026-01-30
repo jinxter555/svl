@@ -7,12 +7,12 @@ module Kernel
         (print 123 "\n")
 
       
-;      loop 
-;        print t1
+      loop 
+        print t1
 ;        print 1 " "
 ;        print 2 "\n"
-;        read
-;      end.loop
+        read
+      end.loop
       p55 (55 55555)
       p55 (55 2)
       p57 (77 7777777)

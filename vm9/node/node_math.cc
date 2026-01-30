@@ -1,4 +1,5 @@
 #include "node.hh"
+#include <iostream>
 
 
 //------------------------------------------------------------------------
@@ -22,6 +23,24 @@ Node Node::operator+(const Node &other) const {
   }, value_, other.value_);
 }
 
+
+Node Node::operator-(const Node &other) const {
+  return visit([&](auto&& lhs, auto&& rhs) -> Node {
+    using L = decay_t<decltype(lhs)>;
+    using R = decay_t<decltype(rhs)>;
+
+    if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
+      if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
+        return Node(static_cast<Integer>(lhs - rhs));
+      else
+        return Node(static_cast<Float>(lhs) - static_cast<Float>(rhs));
+    } else {
+      return Node(Error{Error::Type::InvalidOperation, "Unsupported types for subtraction"});
+    }
+
+  }, value_, other.value_);
+}
+
 Node Node::operator*(const Node &other) const {
   return visit([&](auto&& lhs, auto&& rhs) -> Node {
     using L = decay_t<decltype(lhs)>;
@@ -29,7 +48,7 @@ Node Node::operator*(const Node &other) const {
 
     if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
       if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs + rhs));
+        return Node(static_cast<Integer>(lhs * rhs));
       else
         return Node(static_cast<Float>(lhs) * static_cast<Float>(rhs));
     } else {
@@ -38,6 +57,14 @@ Node Node::operator*(const Node &other) const {
 
   }, value_, other.value_);
 }
+
+
+
+
+
+
+
+
 
 Node Node::operator/(const Node &other) const {
 

@@ -383,11 +383,18 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     } else
       line_result += "(" + line + ")" + "\n";
 */
-    if( isalpha( line.front()) && line.back() == ')'){ // ( blah blah blah )
+    if( isalpha( line.front()) && line.back() == ')'){ // op1 (op2 arg1 ... )
       line_result += "(" + line + ")"+"\n";
       continue;
     }
-    if(line.front() != '(' && line.back() != ')'){ // ( blah blah blah )
+
+    if(  line.front() != '(' && line.back() == ')'){ // op1 (op2 arg1 ... ) where op1 = '+' '-'
+      line_result += "(" + line + ")"+"\n";
+      continue;
+    }
+
+
+    if(line.front() != '(' && line.back() != ')'){ //  blah blah blah 
       //cout << "line.front: " << line.front() << " " << line <<" \n";
       line_result += "(" + line + ")"+"\n";
     } else

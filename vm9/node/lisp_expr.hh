@@ -105,7 +105,9 @@ public:
 
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...
+  Node::OpStatus read_input(); 
   Node::OpStatus parse(Node& tokens); 
+
   //Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_process();
 
@@ -124,6 +126,8 @@ public:
   Node::OpStatus eval(Node& process, const Lisp::Op op, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus eval(Node& process, const Node::Vector& code_list);
   Node::OpStatus eval(Node& process, const Node::Vector& code_list, size_t start);
+  Node::OpStatus eval_eval(Node& process, const Node::Vector& code_list, size_t start);
+
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 
   Node::OpStatus loop_forever(Node& process, const Node::Vector& code_list, size_t start=0);

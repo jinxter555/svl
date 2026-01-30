@@ -124,6 +124,7 @@ public:
   //
   OpStatusRef get_node_with_ptr(const string&key);
   OpStatusRef get_node_with_ptr(const vector<string>&path);
+  OpStatusRef get_node_with_ptr(size_t i);
 
   OpStatus merge(unique_ptr<Node> n, bool override=false);
   OpStatus merge(Map &m, bool override=false);
@@ -212,7 +213,7 @@ public:
 
   //
   Node operator +(const Node& other) const;
-  //Node operator -(const Node& other) const;
+  Node operator -(const Node& other) const;
   Node operator *(const Node& other) const;
   Node operator /(const Node& other) const;
 
