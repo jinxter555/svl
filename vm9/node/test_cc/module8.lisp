@@ -18,7 +18,7 @@
       (print "-" x "-")
       (print "-" z "-")
       (print "\n")
-    ;  (p56 (66 2))
+      (p56 (66 2))
     )
   )
   (defun p56 (x y) "my func p56" 

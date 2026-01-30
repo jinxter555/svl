@@ -131,7 +131,8 @@ public:
   Node::OpStatus call(Node& process, const Node& code_node); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0);
 
-  Node::OpStatus call(Node& process, const Node::Vector& mcf, const Node::Vector& params); // 
+  //Node::OpStatus call(Node& process, const Node::Vector& path, const Node::Vector& arg_list); // 
+  Node::OpStatus call(Node& process, const vector<string>& path, const Node::Vector& argv_list); // 
   Node::OpStatus call(Node& process, Node& fun, Node::Vector&& params);
 
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args

@@ -168,20 +168,6 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   switch(op_head){
 
   case Lisp::Op::vector:  return eval(process, code_list, start); 
-
-  /*
-  {
-
-    cout << "lisp::op:  nested vector code! start: " << start <<"\n";
-    size_t s=code_list.size()-1, i; 
-    for(i=start; i<s; i++) {
-      auto evaled_status =  eval(process, *code_list[i]);
-      if(!evaled_status.first) return evaled_status;
-    }
-    return  eval(process, *code_list[i]);
-  }
-*/
-
   case Lisp::Op::print: return builtin_print_n(process, code_list, start);
   case Lisp::Op::literal: return literal(code_list, start);
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
@@ -224,9 +210,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   }
 
   case Lisp::Op::send:   {
-    cout << "sendng message in eval!\n"; //return map_messages(process, code_list, start );
+    cout << "sending message in eval!\n"; //return map_messages(process, code_list, start );
     return send_object_message(process, code_list, start);
-    return {true, nullptr};
   }
   case Lisp::Op::class_:   {
     cout << "class in eval!\n"; //return map_messages(process, code_list, start );
