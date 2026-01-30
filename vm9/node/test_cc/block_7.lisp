@@ -1,15 +1,18 @@
 module Kernel 
   def main (x y) 
-      assign t1  "t1 robot"
+      (assign t1  "t1 robot")
+
       print "hello, world from main()\n\n"
-      eval end.eval 
+        (print t1  "\n")
+        (print 123 "\n")
+
       
-      loop 
+;      loop 
 ;        print t1
 ;        print 1 " "
 ;        print 2 "\n"
-        read
-      end.loop
+;        read
+;      end.loop
       p55 (55 55555)
       p55 (55 2)
       p57 (77 7777777)

@@ -117,16 +117,13 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::eval(Node& process, const string& nput) {
-}
-//------------------------------------------------------------------------
 
 // eval node 
 Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node&code_node)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
 
-  if(code_node.empty_container())  return{true, Node::create(Node::Type::Vector)}; 
+//  if(code_node.empty_container())  return{true, Node::create(Node::Type::Vector)}; 
 
   switch(code_node.type_) {
   case Node::Type::Vector: {
@@ -153,6 +150,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 
   //case Node::Type::Shared: { cout << "shared ptr!\n"; }
   default: {}}
+
   return {true, code_node.clone()};
 
   //return {true, Node::create_error(Error::Type::Unknown, "Unknown error should not reach!")};
@@ -162,54 +160,57 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 //------------------------------------------------------------------------
 // lisp op head
 Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node::Vector& code_list, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op op_head, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("lisp::op: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
 
   switch(op_head){
-  case Lisp::Op::vector:  {
-    //cout << "lisp::op:  nested vector code! start: " << start <<"\n";
-    size_t s=code_list.size()-1, i; 
 
+  case Lisp::Op::vector:  return eval(process, code_list, start); 
+
+  /*
+  {
+
+    cout << "lisp::op:  nested vector code! start: " << start <<"\n";
+    size_t s=code_list.size()-1, i; 
     for(i=start; i<s; i++) {
       auto evaled_status =  eval(process, *code_list[i]);
       if(!evaled_status.first) return evaled_status;
     }
     return  eval(process, *code_list[i]);
-
   }
+*/
+
   case Lisp::Op::print: return builtin_print_n(process, code_list, start);
   case Lisp::Op::literal: return literal(code_list, start);
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
-  case Lisp::Op::eval:   {
-    cout << "eval!\n";
-    return {true, Node::create()};
-  }
+  case Lisp::Op::eval:     return eval(process, code_list, start); 
+
+
   case Lisp::Op::read:   {
     string input;
 
     cout << "> "; getline(cin , input);
+    if(input=="") {
+      cout << "hello!\n";
+      exit(1) ;
+      return { true, Node::create(input)};
+    }
+
     auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> raw text tokens
-//    cout << "token list: " << LispReader::_to_str( token_list) << "\n";
-    //auto &code_list_list =  reader.parse(token_list).second->_get_list_ref();
+
     auto parsed_tokens_status =  reader.parse(token_list);
     if(!parsed_tokens_status.first) {
       cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
       return parsed_tokens_status;
     }
- //   cout << "parsed token status : " << parsed_tokens_status << "\n";
     auto &token_list_list = parsed_tokens_status.second->_get_list_ref();
+//    token_list_list.push_front(Node::create(Lisp::Op::eval));
 
-  //  cout << "list: " << Node::_to_str( token_list_list) << "\n";
     auto code_vector_list = list_2_vector(move(token_list_list));
-  //  cout << "vecotr list: " << Node::_to_str( code_vector_list) << "\n";
-    // need std::list to vector
-    //cout <<  eval(process, code_vector_list);
     return eval(process, code_vector_list);
-    //cout << "code list: '" << code_list << "'\n\n";
-
-    return {true, Node::create(input)};
   }
   case Lisp::Op::loop:   return loop_forever(process,code_list,start );
   case Lisp::Op::funcall:   return funcall(process, code_list, start); 
@@ -248,6 +249,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 }
 
 //------------------------------------------------------------------------
+// usally init eval with vector [lisp:op arg1 arg2.. ]
+//
 Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
@@ -258,9 +261,9 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   switch(code_list[0]->type_) {
 
   case Node::Type::LispOp: {
-    Lisp::Op op_head = get<Lisp::Op>(code_list[0]->value_);
-    // skip the first element that's op_head
+    Lisp::Op op_head = get<Lisp::Op>(code_list[0]->value_); // skip the first element that's op_head
     return eval(process, op_head, code_list, 1); }
+
 
   case Node::Type::Identifier: { //    cerr << "code_list.size : " <<  code_list.size() << "\n";
     auto s = code_list.size() ;
@@ -269,44 +272,51 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     } else if(s > 1) { // function lookup // cout << "identifier s>1!\n";
       return call(process, code_list);
     }
-    return {false, Node::create_error(Error::Type::Unknown, "Unknown error in Identifier")};
+    return {false, Node::create_error(Error::Type::Unknown, "Unknown error in Identifier :'" + code_list[0]->_to_str() + "'")};
   }
 
-  case Node::Type::Vector: { // normally this is the code list block and return last element
-    size_t i;
-    for(i=0; i<code_list.size()-1; i++) {
-      auto value_status = eval(process, *code_list[i]);
-      if(!value_status.first) {
-        auto frame_ref_status = frame_current(process);
-        if(frame_ref_status.first) {
-          auto current_module = frame_ref_status.second[CURRENT_MODULE].second._to_str();
-          auto current_function = frame_ref_status.second[CURRENT_FUNCTION].second._to_str();
-          cout << "In Module.Function: " << current_module << "." << current_function <<"\n";
-        }
-        cerr << "eval failed! " << *value_status.second << "\n" << *code_list[i] <<"\n";
-        return value_status;
-      }
-      if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
-        cout << "returned map or object need to check if t needs to call lambda or closure!\n";
-      }
-    }
-    return eval(process, *code_list[i]);
-  }
+  case Node::Type::Vector: 
+    return eval(process, code_list, 0);
 
   // scalars here int, float string, etc
-  default: { //cout << "eval default! type: " << Node::_to_str(code_list[0]->type_) << "\n";
-    Node::Vector rlist;
-    size_t s=code_list.size();
-    rlist.reserve(s);
-    for(size_t i=0; i<s; i++) {
-      auto evaled_status =  eval(process, *code_list[i]);
-      if(!evaled_status.first) return evaled_status;
-      rlist.push_back(move(evaled_status.second));
-    }
-    return  {true, Node::create(move(rlist))};
+  default: { 
+    return eval(process, code_list, 0);
+
+
   }}
 
   // code should not reach here
   cerr << "code should not reach here!\n";
   return {true, Node::create()};
+}
+
+
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
+
+  Node::Vector result_list;
+  size_t s=code_list.size();
+  result_list.reserve(s);
+
+  for(size_t i=start; i<s; i++) { // return last eval,  size -1 
+    auto value_status = eval(process, *code_list[i]);
+    if(!value_status.first) {
+      auto frame_ref_status = frame_current(process);
+      if(frame_ref_status.first) { // get frame and find out where eval failed.
+        auto current_module = frame_ref_status.second[CURRENT_MODULE].second._to_str();
+        auto current_function = frame_ref_status.second[CURRENT_FUNCTION].second._to_str();
+        cout << "In Module.Function: " << current_module << "." << current_function <<"\n";
+      }
+      cerr << "eval failed! " << *value_status.second << "\n" << *code_list[i] <<"\n";
+      return value_status;
+    }
+    if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
+      cout << "returned map or object need to check if t needs to call lambda or closure!\n";
+    }
+    result_list.push_back(move(value_status.second));
+  }
+  return  {true, Node::create(move(result_list))};
 }

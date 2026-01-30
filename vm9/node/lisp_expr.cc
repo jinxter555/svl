@@ -71,7 +71,7 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
 
   //cout << "preprocess token str:\n" <<  reader.tokenize_preprocess( input) << "\n\n";
-  //auto token_list = reader.tokenize(input); // list<Token> raw text tokens
+//  auto token_list = reader.tokenize(input); // list<Token> raw text tokens
   auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> raw text tokens
 //  reader.tokenize_preprocess( input); // list<Token> raw text tokens
 

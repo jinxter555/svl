@@ -315,11 +315,11 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
 
 //------------------------------------------------------------------------ pre tokenize string
 string LispReader::tokenize_preprocess(const string& input) {
-  return (
+  auto input_paren = 
     tokenize_preprocess_multiline_parenthesis(
-      tokenize_preprocess_multiline(input)
-    )
-  );
+      tokenize_preprocess_multiline(input));
+  //cout << "after putting ():\n" << input_paren <<"\n\n";
+  return input_paren;
 }
 
 
@@ -375,15 +375,28 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
       continue;
     }
 
+    /*
     if(line.front() == '(' && line.back() ==')'){ // ( blah blah blah )
       line_result += line + "\n";
     } else if(line.front() != '('  && line.back() == ')') { // fx(123)
       line_result += "(" + line + ")" + "\n"; // needs to count all of (, ), in stack order
     } else
       line_result += "(" + line + ")" + "\n";
+*/
+    if( isalpha( line.front()) && line.back() == ')'){ // ( blah blah blah )
+      line_result += "(" + line + ")"+"\n";
+      continue;
+    }
+    if(line.front() != '(' && line.back() != ')'){ // ( blah blah blah )
+      //cout << "line.front: " << line.front() << " " << line <<" \n";
+      line_result += "(" + line + ")"+"\n";
+    } else
+      line_result +=  line +"\n";
 
 
   }
+
+  //cout << "\nline result:\n" << line_result << "\n";
   return line_result;
 }
 
