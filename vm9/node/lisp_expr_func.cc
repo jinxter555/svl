@@ -478,11 +478,11 @@ Node::OpStatus LispExpr::read_input() {
   string input;
 
   cout << "> "; getline(cin , input);
+
   //cout << "input: '"  << input << "'\n";
+  if(cin.eof() || input == "exit") { cout << "\n"; exit(0); }
   if(input=="") return { true, Node::create()};
-  if(input=="exit") {
-    exit(1) ;
-  }
+
   auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> 
   auto parsed_tokens_status =  reader.parse(token_list); // parse 
   if(!parsed_tokens_status.first) {
