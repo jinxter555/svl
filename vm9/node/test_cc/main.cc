@@ -19,13 +19,6 @@
 
 
 
-//extern char** AssemblerInteractive_command_completion(const char *text, int start, int end) ;
-
-//void setup_readline_autocomplete(LangPrompt *lp);
-//void asm_setup_readline_autocomplete();
-//PromptSwitch p_run(LangPrompt *lp, const Commandline& cml) ;
-//PromptSwitch p_run_init(LangPrompt *lp, const Commandline& cml) ;
-
 
 int main(int argc, char *argv[]) {
 

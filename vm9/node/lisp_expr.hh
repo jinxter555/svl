@@ -15,6 +15,7 @@
 class Interactive;
 
 class LispExpr : public Lang, public Lisp {
+  friend class Interactive;
 private:
   Interactive *interface; // interface with command line, repl prompt, 
   LispReader reader;

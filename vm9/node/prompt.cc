@@ -57,11 +57,11 @@ string LangPrompt::read() {
   char *input;
   std::string input_str;
   input = readline(prompt_string.c_str());
+  add_history(input);
   history.push_back(input);
   input_str = input; 
+  if(input ==nullptr) return "";
   free(input);
-//  save_history();
-
   return input_str;
 
 }

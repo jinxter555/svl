@@ -232,6 +232,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   }
 
   case Lisp::Op::add:   {
+    cout << "add!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
+    if(code_list.size() < 3) {
+      cerr << "error add :\n";
+      return  {false, Node::create_error(Error::Type::InvalidOperation, "add op needs at least 3 params") };
+    }
     auto first_status = eval(process, *code_list[start]);
     auto second_status = eval(process, *code_list[start+1]);
     if(!first_status.first ){

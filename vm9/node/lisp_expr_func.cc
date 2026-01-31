@@ -483,12 +483,11 @@ Node::OpStatus LispExpr::read_input() {
   MYLOGGER(trace_function, "LispExpr::read_input()", __func__, SLOG_FUNC_INFO);
   string input;
 
-  input = interface->read();
+  try { input = interface->read(); } catch(...) { forever=false; return {true, Node::create()}; }
   
   //cout << "> "; getline(cin , input);
 
-  if(cin.eof() || input == "exit") { 
-    cout << "\n"; 
+  if(input == "exit") { 
     forever = false; 
     return {true, Node::create() };
   }

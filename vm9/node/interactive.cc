@@ -24,6 +24,20 @@ void Interactive::accept_prompt(const std::string &line) {
   MYLOGGER(trace_function, "Interactive::accept_prompt(const string& line)", __func__, SLOG_FUNC_INFO);
   cout << " in interactive:: accept prompt!\n";
   cout << "you have entered: " << line <<"\n";
+
+  auto token_list = lang.reader.tokenize( lang.reader.tokenize_preprocess( line)); // list<Token> 
+  auto parsed_tokens_status =  lang.reader.parse(token_list); // parse 
+  if(!parsed_tokens_status.first) {
+    cerr << "error parsing string token: !"  << parsed_tokens_status.second->_to_str() <<" \n";
+    //return parsed_tokens_status;
+  }
+
+  auto tokens = Node::create(move(parsed_tokens_status.second->_get_list_ref())); // this extra step maybe uncessary in future
+  auto input_code_status = lang.parse(*tokens);
+  if(input_code_status.first) {
+    //lang. kernel eval?
+  }
+
 //  parse_prompt(line);
 }
 
