@@ -7,6 +7,8 @@
 #include "node.hh"
 
 
+using namespace std;
+
 enum class PromptSwitch {
   exit,
   begin,
@@ -14,35 +16,22 @@ enum class PromptSwitch {
   svlm,
 };
 
-class Prompt {
-  friend class PromptInteractive;
-private:
+
+class LangPrompt {
+
   std::string history_filename, prompt_string;
   std::vector<std::string> history;
-public:
-  Prompt(const std::string &fn, const std::string &ps) 
-    : history_filename(fn), prompt_string(ps) {}
-  virtual void accept_prompt(const std::string &) = 0;
-};
 
-class LangPrompt : public Prompt {
 public:
-  // virtual void accept_prompt(const std::string &) = 0;
+  virtual void accept_prompt(const std::string &) = 0;
   LangPrompt(const std::string&hf, const std::string&ps)
-    : Prompt(hf, ps) {};
+    : history_filename( hf), prompt_string( ps) {};
   virtual void parse(const std::string &line) = 0; // parse readline line
-  virtual void interact(const std::string &line) = 0; // parse readline line
   virtual Node::OpStatus load(const std::string &filename) = 0; // load files from command line
   virtual void run_program(const std::string& line) = 0; // load files from command line
-};
 
-class PromptInteractive {
-public:
-  static void save_history(Prompt&);
-  static void load_history(Prompt&);
-  static PromptSwitch ready(Prompt&); // ready for user readline input
+  void save_history();
+  void load_history();
+  PromptSwitch ready(); // ready for user readline input
 
 };
-
-extern PromptInteractive myprompt;
-extern LangPrompt *lang_it;

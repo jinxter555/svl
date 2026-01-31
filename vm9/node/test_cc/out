@@ -1,11 +1,2 @@
-after putting ():
-(module Kernel
-(defun main (x y) my_func_des
-(
-(print "hello, world1\n")
-)
-)
-)
-
-
-hello, world1
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc

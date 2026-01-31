@@ -18,13 +18,16 @@ module Kernel
   end.class
 
   def main (x y)
-  ;  (print "hello, world\n")
-(    assign m1 (new Dict))
-    assign x1 999
+    ;  (print "hello, world\n")
+  (assign m1 (new Dict))
+    (assign x1 999)
 ;    (assign method1 (:Dict))
    (send m1 :area 999 3.14)
+    (print "hello, world1\n")
+    (assign x1 999)
+  (print x1)
   loop
-    read
+    print (eval (read)) "\n"
   end.loop
   ;  send m1 :area x1 3.1415
   ;  send m1 :area x1 

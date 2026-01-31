@@ -75,6 +75,10 @@ void Commandline::run(Interactive* interactive) {
   if(opt_run) {
     interactive->run_program();
   }
+  if(opt_interactive) {
+    cout << "interact with interactive lang!\n";
+    interactive->ready();
+  }
   // tree structure print after build and run to show frames
   if(opt_print) interactive->print();
 }

@@ -383,27 +383,30 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     } else
       line_result += "(" + line + ")" + "\n";
 */
+
     if( isalpha( line.front()) && line.back() == ')'){ // op1 (op2 arg1 ... )
       line_result += "(" + line + ")"+"\n";
       continue;
     }
 
-    if(  line.front() != '(' && line.back() == ')'){ // op1 (op2 arg1 ... ) where op1 = '+' '-'
+    // op1 (op2 arg1 ... ) where op1 = '+' '-' and prevent single ')' line
+    if(  line.front() != '(' && line.back() == ')' && line != ")"){ 
       line_result += "(" + line + ")"+"\n";
       continue;
     }
 
-
     if(line.front() != '(' && line.back() != ')'){ //  blah blah blah 
       //cout << "line.front: " << line.front() << " " << line <<" \n";
       line_result += "(" + line + ")"+"\n";
-    } else
-      line_result +=  line +"\n";
+ //     cout << "added (...) to " << line_result << "\n";
+      continue;
+    } 
+    line_result +=  line +"\n";
 
 
   }
 
-  //cout << "\nline result:\n" << line_result << "\n";
+//  cout << "\nline result:\n" << line_result << "\n";
   return line_result;
 }
 

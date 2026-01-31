@@ -23,7 +23,6 @@
 
 //void setup_readline_autocomplete(LangPrompt *lp);
 //void asm_setup_readline_autocomplete();
-//void svlm_setup_readline_autocomplete();
 //PromptSwitch p_run(LangPrompt *lp, const Commandline& cml) ;
 //PromptSwitch p_run_init(LangPrompt *lp, const Commandline& cml) ;
 
@@ -32,7 +31,6 @@ int main(int argc, char *argv[]) {
 
 
 
-  //log_output.open("svlm.log", std::ios::out);
   trace_function.open("trace.log", std::ios::out);
   ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
  //ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
@@ -40,11 +38,10 @@ int main(int argc, char *argv[]) {
 
   Error::init();
 
-  Interactive lang_it(".svlm_history", "svlm> ");
+  Interactive lang_iteractive(".loosh_history", "loosh> ");
   Commandline cml(argc, argv);
-  lang_it.interact(cml);
+  lang_iteractive.interact(cml);
   //cout << "\n"; lang_it.print(); cout << "\n";
-  //lang_it.interact(cml);
 
 
 
