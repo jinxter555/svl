@@ -460,18 +460,23 @@ Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t sta
   return result_list;
 }
 
+
+bool LispExpr::forever = true;
+
 Node::OpStatus LispExpr::loop_forever(Node& process, const Node::Vector& list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::loop_forever(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
   size_t s= list.size();
-  while(1) {
+  while(forever) {
     //cout << "forever loop:\n";
     for(size_t i=start; i < s; i++) {
       auto &node = list[i];
       eval(process, *node);
     }
   }
+  //return {true, Node::create()};
+  return {true, Node::create(false)};
 }
 Node::OpStatus LispExpr::read_input() {
   MYLOGGER(trace_function, "LispExpr::read_input()", __func__, SLOG_FUNC_INFO);
@@ -480,7 +485,11 @@ Node::OpStatus LispExpr::read_input() {
   cout << "> "; getline(cin , input);
 
   //cout << "input: '"  << input << "'\n";
-  if(cin.eof() || input == "exit") { cout << "\n"; exit(0); }
+  if(cin.eof() || input == "exit") { 
+    cout << "\n"; 
+    forever = false; 
+    return {true, Node::create() };
+  }
   if(input=="") return { true, Node::create()};
 
   auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> 

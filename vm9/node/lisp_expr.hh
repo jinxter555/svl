@@ -23,6 +23,7 @@ private:
   static const vector<string> lisp_lang_atoms; 
   static const vector<string> cc_path; 
   static const vector<string> cc_path_module; 
+  static bool forever ;
  // static const vector<string> lisp_process; 
   unique_ptr<Node> env_ptr;
 
