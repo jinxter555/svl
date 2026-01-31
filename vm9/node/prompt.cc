@@ -52,3 +52,22 @@ PromptSwitch LangPrompt::ready() {
   }
   return PromptSwitch::exit;
 }
+
+string LangPrompt::read() {
+  char *input;
+  std::string input_str;
+  input = readline(prompt_string.c_str());
+  history.push_back(input);
+  input_str = input; 
+  free(input);
+//  save_history();
+
+  return input_str;
+
+}
+
+void LangPrompt::pop_last_exit_history() {
+  if(history.back() == "exit") {
+    history.pop_back();
+  }
+}

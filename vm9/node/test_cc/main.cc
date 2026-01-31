@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
   Interactive lang_iteractive(".loosh_history", "loosh> ");
   Commandline cml(argc, argv);
   lang_iteractive.interact(cml);
+  lang_iteractive.pop_last_exit_history();
+  lang_iteractive.save_history();
   //cout << "\n"; lang_it.print(); cout << "\n";
 
 

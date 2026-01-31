@@ -1,6 +1,7 @@
 #include <iostream>
 #include "lisp_expr.hh"
 #include "my_helpers.hh"
+#include "interactive.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -482,14 +483,16 @@ Node::OpStatus LispExpr::read_input() {
   MYLOGGER(trace_function, "LispExpr::read_input()", __func__, SLOG_FUNC_INFO);
   string input;
 
-  cout << "> "; getline(cin , input);
+  input = interface->read();
+  
+  //cout << "> "; getline(cin , input);
 
-  //cout << "input: '"  << input << "'\n";
   if(cin.eof() || input == "exit") { 
     cout << "\n"; 
     forever = false; 
     return {true, Node::create() };
   }
+
   if(input=="") return { true, Node::create()};
 
   auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> 

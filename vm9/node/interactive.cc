@@ -13,6 +13,7 @@ Interactive::Interactive(const std::string& hf , const std::string&ps)
 : LangPrompt(hf, ps) 
 {
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
+  lang.set_interface(this);
 
 //  init_command_functions();
   
@@ -22,10 +23,15 @@ Interactive::Interactive(const std::string& hf , const std::string&ps)
 void Interactive::accept_prompt(const std::string &line) {
   MYLOGGER(trace_function, "Interactive::accept_prompt(const string& line)", __func__, SLOG_FUNC_INFO);
   cout << " in interactive:: accept prompt!\n";
+  cout << "you have entered: " << line <<"\n";
 //  parse_prompt(line);
 }
+
 PromptSwitch Interactive::ready() { 
   return LangPrompt::ready();
+}
+string Interactive::read() { 
+  return LangPrompt::read();
 }
 
 void Interactive::parse_prompt(const std::string &line) {

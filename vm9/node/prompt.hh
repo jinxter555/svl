@@ -32,6 +32,8 @@ public:
 
   void save_history();
   void load_history();
+  void pop_last_exit_history(); // remove exit
   PromptSwitch ready(); // ready for user readline input
+  string read(); // ready for user readline input
 
 };

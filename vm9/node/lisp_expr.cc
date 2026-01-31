@@ -1,5 +1,6 @@
 #include "lisp_expr.hh"
 #include "my_helpers.hh"
+#include "interactive.hh"
 #include <iostream>
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -42,6 +43,10 @@ void LispExpr::bootstrap() {
 
 }
 
+void LispExpr::set_interface(Interactive *intf) {
+  interface=intf;
+  interface->load_history();
+}
 
 //Node::Integer  LispExpr::str_to_atom(const string& input) { return Lang::str_to_atom(input);}
 //Node::OpStatus LispExpr::atom_to_str(Node::Integer v) { return Lang::atom_to_str(v); }

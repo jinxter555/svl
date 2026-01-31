@@ -8,6 +8,8 @@
 #include "commandline.hh"
 #include "lisp_expr.hh"
 
+//class LispExpr;
+
 
 
 class Interactive : public LangPrompt {
@@ -27,6 +29,7 @@ public:
 
 
   PromptSwitch ready(); // ready for user readline input
+  string read(); // ready for user readline input
 
 
 
@@ -40,7 +43,4 @@ public:
 
   void print();
 
-
 };
-//extern SvlmInteractive svlm_it;
-extern Interactive *svlm_it_ptr;

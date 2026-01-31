@@ -12,9 +12,11 @@
  * control_flow_state = ret, loop
  * 
  */
+class Interactive;
 
 class LispExpr : public Lang, public Lisp {
 private:
+  Interactive *interface; // interface with command line, repl prompt, 
   LispReader reader;
   static const vector<string> lisp_path; 
   static const vector<string> lisp_path_module; 
@@ -63,6 +65,7 @@ public:
 
   //enum class Keywords {def, call, ret, list, identifier};
   LispExpr();
+  void set_interface(Interactive *);
   void bootstrap() override;
 
   Node::OpStatusRef process_create();
