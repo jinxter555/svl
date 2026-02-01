@@ -389,7 +389,12 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
     return {false, code_list_status.second.clone()};
   }
 
-  return eval(process, code_list_status.second);
+  //return eval(process, code_list_status.second);
+  auto evaled_status = eval(process, code_list_status.second);
+  frame_pop(process);
+  return evaled_status;
+
+
 
 }
 

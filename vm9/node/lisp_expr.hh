@@ -88,6 +88,7 @@ public:
   Node::OpStatus   frame_create_fun_args(Node&fun, Node::Vector &&args);
 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
+  Node::OpStatus frame_pop(Node&process);
   Node::OpStatusRef frame_current(Node&process) ; // 
 
   unique_ptr<Node> scope_create() const ; // create a scope 
@@ -120,6 +121,8 @@ public:
 
   //Node::Integer str_to_atom(const string& input);
   //Node::OpStatus atom_to_str(Node::Integer v);
+
+  Node::OpStatus root_manifest(Node& process, const Node::Vector& code_list, size_t start);
 
 
   //vector<Token> tokenize(const string& input) ;

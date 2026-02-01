@@ -170,6 +170,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 
   switch(op_head){
 
+  case Lisp::Op::root:  return root_manifest(process, code_list, start); 
   case Lisp::Op::vector:  return eval(process, code_list, start); 
   case Lisp::Op::print: return builtin_print_n(process, code_list, start);
   case Lisp::Op::literal: return literal(code_list, start);
@@ -321,7 +322,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
   MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
 
-  Node::Vector result_list;
+  Node::Vector result_list, result_list2;
   size_t s=code_list.size();
   result_list.reserve(s);
 

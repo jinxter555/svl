@@ -516,3 +516,28 @@ Node::Vector LispExpr::list_2_vector(Node::List &&list) {
   }
   return new_list;
 }
+
+// (root (..))
+Node::OpStatus LispExpr::root_manifest(Node& process, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::root_manifest(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
+  cout << "root mani!\n";
+  vector<string> path;
+  size_t i, s =code_list.size();
+  for(size_t i=start; i<s; i++) {
+    path.push_back(code_list[i]->_to_str());
+  }
+   cout  << "root path '" << _to_str_ext( path) << "' \n";
+  auto node_status_ref = get_node(path);
+   cout  << "node status1 '" << node_status_ref << "' \n\n";
+
+  if(!node_status_ref.first) {
+    cerr << "root path '" << _to_str_ext( path) << "' not found\n";
+    return {false, Node::create_error(Error::Type::KeyNotFound, "Path: '"  + _to_str_ext( path) + "' not found")};
+  }
+   cout  << "node status2 '" << node_status_ref << "' \n\n";
+  return {true, node_status_ref.second.clone() };
+
+  return {true, Node::create()};
+}

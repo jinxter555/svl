@@ -52,7 +52,7 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
       return build_parsed_module(list); }
     case Lisp::Op::class_: { //cout << "class build!\n";
       return build_parsed_class(list); }
-    case Lisp::Op::root: { return build_parsed_root(list); }
+    //case Lisp::Op::root: { return build_parsed_root(list); }
     default: {}
     }
   } 
