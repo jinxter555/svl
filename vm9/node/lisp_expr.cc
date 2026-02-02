@@ -350,6 +350,7 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
     auto const &ele = var_list[i];
     switch(ele->type_) {
     case Node::Type::Identifier: {
+      if(ele->_to_str() =="this") break;
       scope_vars_status.second.set(ele->_to_str(),  make_unique<Node>());
       break; }
     case Node::Type::Vector: {
@@ -421,7 +422,7 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
 
   if(!scope_vars_ref_status.second.m_has_key(nested_name[0])){
     //cerr << "identifier " << identifier  <<" can not be reassigned\n";
-    cerr << "Identifier: " << nested_name[0] <<" is not a variable. Object and Maps have to be variables to be re-assigned\n";
+    cerr << "Identifier: '" << nested_name[0] <<"' is not a variable. Object and Maps have to be variables to be re-assigned\n";
     return {false, nullptr};
   }
 

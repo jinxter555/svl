@@ -3,13 +3,15 @@ module Kernel
   class Dict
     (var size (length 123) )
     def Dict(x)  
-      print "\n\nhello class constructor Dict()\n"
+      (var this)
+      (var that)
+      (var those)
+      print "hello class constructor Dict()\n"
       (print "arg x: " x "\n")
 
-      loop
-        print (eval (read)) "\n"
+      loop 
+        print (eval (read)) "\n" 
       end.loop
-
     end.def
 
     def area(a pi)  
@@ -33,9 +35,7 @@ module Kernel
     (print "hello, world1\n")
     print "x1: " x1 "\n"
 
-    loop
-      print (eval (read)) "\n"
-    end.loop
+    ; loop print (eval (read)) "\n" end.loop
 
   end.def
 

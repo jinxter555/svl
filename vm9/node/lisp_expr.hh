@@ -45,6 +45,7 @@ private:
   //Node::OpStatus attach_params_args_to_scope_vars(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector &&args);
   Node::OpStatus attach_params_args_to_scope_vars(Node&process, const vector<string>& params, Node::Vector &&args);
   Node::OpStatus attach_this_to_arguments(Node::Vector& list_args); // attach 'this' variable to a class method 
+  Node::OpStatus attach_this_to_var(Node::Vector& list_args); // attach 'this' variable to a class method 
 
   
 

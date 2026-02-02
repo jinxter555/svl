@@ -210,6 +210,15 @@ Node::OpStatus LispExpr::attach_this_to_arguments(Node::Vector& list){
    //list.insert(list.begin(), Node::create("wew")); 
    return {true, nullptr};
 }
+//-------------------------------- attach 'this'  var to class method
+Node::OpStatus LispExpr::attach_this_to_var(Node::Vector& list){
+  //this_var.set_identifier();
+   list.insert(list.begin(), Node::create("this", Node::Type::Identifier)); 
+   //list.insert(list.begin(), Node::create("wew")); 
+   return {true, nullptr};
+}
+
+
 //-------------------------------- parse class
 // (class Car (defun start) (defun drive) (defun f2) ) 
 Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
@@ -235,7 +244,10 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
     switch(Lisp::type(*status.second)){
     case Lisp::Type::defun: {
       auto fun_name = (*status.second)[NAME].second._to_str();
+    //  auto &code_list = (*status.second)[CODE].second._get_vector_ref();
+      //cout << "defun code list:" << code_list << "\n";
       attach_this_to_arguments((*status.second)[_PARAMS].second._get_vector_ref());
+   //   attach_this_to_var(code_list); // pre-prend (var this) to a class method, hopeflly only private in future
       class_functions->set(fun_name, move(status.second));
       continue;
     }
@@ -482,7 +494,11 @@ Node::OpStatus LispExpr::vector_to_object(const Node::Vector&list) {
   try {
     auto lisp_type = get<Lisp::Type>(head->value_);
     if(lisp_type==Lisp::Type::var) {
-      cout << "need to assign vars differently because  in a class init object value (var (length 3.14159))!\n";
+      //cout << "need to assign vars differently because  in a class init object value (var (length 3.14159))!\n";
+      //object->set(OBJ_INFO, move(object_info));
+      //object->set(VECTOR, Node::clone(list));
+      return {true, Node::clone(list)};
+
     }
     object_info->set(TYPE, lisp_type);
   } catch (...) {

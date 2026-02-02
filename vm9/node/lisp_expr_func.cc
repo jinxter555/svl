@@ -109,6 +109,15 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   //auto constructor_ref_status = class_ref_status.second.get_node(constructor_path);
 
   auto constructor_ref_status = class_ref_status.second.get_node({FUNCTION, cfnv.back()});
+  auto var_ref_status = class_ref_status.second.get_node(VAR); // get class variables  
+
+  if(!var_ref_status.first) {
+    cerr << "no class var found: " << var_ref_status << "\n";
+    return {false, var_ref_status.second.clone()};
+  }
+  cout << "class vars: " <<  var_ref_status << "\n";
+  // inject vars into contructor 
+
 
   //cout << "constructor: " << constructor_ref_status.second << "\n\n";
 
