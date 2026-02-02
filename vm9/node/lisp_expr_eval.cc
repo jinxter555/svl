@@ -19,7 +19,23 @@ Node::OpStatusRef LispExpr::arg_lookup(Node&process, const string&name ) {
   if(!frame_ref_back_status.first) return frame_ref_back_status;
   auto arg_ref_status = frame_ref_back_status.second[ARGS];
   if(!arg_ref_status.first) return arg_ref_status;
-  return arg_ref_status.second[name];
+
+  auto nested_name = split_string(name, ".");
+
+  if(nested_name.size()==1) {
+    return arg_ref_status.second[name];
+  }
+
+  auto shared_ptr_ref_status = arg_ref_status.second[nested_name[0]];
+
+  if(!shared_ptr_ref_status.first) {
+    //cerr << "var_lookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
+    return shared_ptr_ref_status;
+  }
+
+  nested_name.erase(nested_name.begin());
+  return shared_ptr_ref_status.second._get_ptr_s()->get_node_with_ptr(nested_name);
+
 }
 
 //------------------------------------------------------------------------

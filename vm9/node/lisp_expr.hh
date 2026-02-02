@@ -47,6 +47,8 @@ private:
   Node::OpStatus attach_this_to_arguments(Node::Vector& list_args); // attach 'this' variable to a class method 
   Node::OpStatus attach_this_to_var(Node::Vector& list_args); // attach 'this' variable to a class method 
 
+  Node::OpStatus attach_class_vars_to_object(Node&process, Node&object, Node::Vector& list_args); // attach 'this' variable to a class method 
+
   
 
 

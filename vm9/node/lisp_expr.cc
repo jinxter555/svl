@@ -287,6 +287,7 @@ Node::OpStatus LispExpr::run_program() {
   auto frame1 = frame_create();
   frame1->set(CURRENT_MODULE, "Kernel");
   frame1->set(CURRENT_FUNCTION, "Main");
+  frame1->set(ARGS, Node::create(Node::Type::Map)); // empty args for now
   auto proc_1= process_create();
   frame_push(proc_1.second, move(frame1));
 
@@ -401,6 +402,12 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   if(!scope_immute_ref_status.first)  
     return {false, scope_immute_ref_status.second.clone()};
 
+  auto frame_ref_back_status = frame_current(process);
+  if(!frame_ref_back_status.first) return {false, frame_ref_back_status.second.clone()};
+  auto scope_args_ref_status = frame_ref_back_status.second[ARGS];
+  if(!scope_args_ref_status.first)   {
+    return {false, scope_args_ref_status.second.clone()};
+  }
 
   // cout << "identifier " << identifier << "\n";
 
@@ -420,7 +427,10 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
 
   }
 
-  if(!scope_vars_ref_status.second.m_has_key(nested_name[0])){
+  //   !scope_args_ref_status.second.m_has_key(nested_name[0])){
+  // need to change to allow args
+  if(!scope_vars_ref_status.second.m_has_key(nested_name[0]) &&
+      !scope_args_ref_status.second.m_has_key(nested_name[0])){
     //cerr << "identifier " << identifier  <<" can not be reassigned\n";
     cerr << "Identifier: '" << nested_name[0] <<"' is not a variable. Object and Maps have to be variables to be re-assigned\n";
     return {false, nullptr};

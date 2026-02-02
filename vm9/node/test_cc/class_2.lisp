@@ -1,13 +1,15 @@
 module Kernel 
 
   class Dict
-    (var size (length 123) )
+    (var size (length 124) )
     def Dict(x)  
-      (var this)
-      (var that)
-      (var those)
+      (var (that 555))
       print "hello class constructor Dict()\n"
-      (print "arg x: " x "\n")
+      ;(print "arg x: " x "\n")
+      ;print this
+      ;(assign this.length 55555)
+      ;print this
+
 
       loop 
         print (eval (read)) "\n" 
@@ -29,11 +31,11 @@ module Kernel
   def main (x y)
 
     (assign x1 999)
-    assign m1 (new Dict "hello diction")
+    assign m1 (new Dict "hello dictionary")
     ; (send m1 :Dict "my dictionary")
-    (send m1 :area 999 3.14)
-    (print "hello, world1\n")
-    print "x1: " x1 "\n"
+    ;(send m1 :area 999 3.14)
+    ;(print "hello, world1\n")
+    ;print "x1: " x1 "\n"
 
     ; loop print (eval (read)) "\n" end.loop
 

@@ -65,6 +65,27 @@ Node::OpStatus LispExpr::literal(const Node::Vector &list, size_t start) {
     list_result.push_back(list[i]->clone());
   return {true, Node::create(move(list_result))};
 }
+Node::OpStatus LispExpr::attach_class_vars_to_object(Node&process, Node&object, Node::Vector& var_list){
+  size_t s = var_list.size();
+  for(size_t i=1; i<s; i++) { // skip i = 0, (var ..) 
+    auto const &ele = var_list[i];
+    switch(ele->type_) {
+    case Node::Type::Identifier: {
+      if(ele->_to_str() =="this") {cerr << "you can't do that with 'this' in class\n"; break;}
+      object.set(ele->_to_str(),  make_unique<Node>());
+      break; }
+    case Node::Type::Vector: {
+      auto v_name_ref_1 = (*ele)[0];
+      auto v_var_ref_1 = (*ele)[1];
+      auto v = eval(process, v_var_ref_1.second);
+      if(!v.first) return v;
+      object.set(v_name_ref_1.second._to_str(),  move(v.second));
+      break; }
+    default: return {false, Node::create_error(Error::Type::Unknown, "Unknown var error")}; }
+  }
+  return {true, Node::create(true)};
+}
+
 //------------------------------------------------------------------------
 // create a map object
 // (new ClassName (param1 param2 ... ) ) //creates a new map object
@@ -103,20 +124,24 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   obj_info->set(CLASS_PTR, &class_ref_status.second);
   object->set(OBJ_INFO, move(obj_info));
 
+
+  auto var_ref_status = class_ref_status.second.get_node(VAR); // get class variables  
+  if(!var_ref_status.first) {
+    cerr << "no class var found: " << var_ref_status << "\n";
+    return {false, var_ref_status.second.clone()};
+  }
+  cout << "class vars: " <<  var_ref_status << "\n";
+  attach_class_vars_to_object(process, *object, var_ref_status.second._get_vector_ref());
+  // inject vars into contructor 
+
+
   auto shared_object_call = Node::container_obj_to_US(move(object));
   auto shared_object_ret = Node::ptr_USU(shared_object_call);
 
   //auto constructor_ref_status = class_ref_status.second.get_node(constructor_path);
 
   auto constructor_ref_status = class_ref_status.second.get_node({FUNCTION, cfnv.back()});
-  auto var_ref_status = class_ref_status.second.get_node(VAR); // get class variables  
 
-  if(!var_ref_status.first) {
-    cerr << "no class var found: " << var_ref_status << "\n";
-    return {false, var_ref_status.second.clone()};
-  }
-  cout << "class vars: " <<  var_ref_status << "\n";
-  // inject vars into contructor 
 
 
   //cout << "constructor: " << constructor_ref_status.second << "\n\n";
