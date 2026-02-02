@@ -76,8 +76,9 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   auto class_full_name = list[start]->_to_str();
   auto cfnv = split_string_deque(class_full_name, "."); // class full name vector module.class or name space. mdoule . class
 
-  Node::Map map;
-  auto obj_info = make_unique<Node>(Node::Type::Map);
+  auto object = Node::create(Node::Type::Map);
+  auto obj_info = Node::create(Node::Type::Map);
+
   obj_info->set(TYPE, Lisp::Type::object );
 
 
@@ -95,17 +96,44 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
 
 //  cout << "class ref status: " << class_ref_status << "\n";
  //cout << "need to call class constructor: " << cfnv.back()  << "\n";
- vector<string> constructor_path = {FUNCTION, cfnv.back()};
+ //vector<string> constructor_path = {FUNCTION, cfnv.back()};
 
  //cout << "need to call class constructor: " <<  class_ptr->get_node(constructor_path)  << "\n";
 
   obj_info->set(CLASS_PTR, &class_ref_status.second);
-  map[OBJ_INFO] = move(obj_info);
-  return {true, Node::create(move(map))};
+  object->set(OBJ_INFO, move(obj_info));
+
+  auto shared_object_call = Node::container_obj_to_US(move(object));
+  auto shared_object_ret = Node::ptr_USU(shared_object_call);
+
+  //auto constructor_ref_status = class_ref_status.second.get_node(constructor_path);
+
+  auto constructor_ref_status = class_ref_status.second.get_node({FUNCTION, cfnv.back()});
+
+  //cout << "constructor: " << constructor_ref_status.second << "\n\n";
+
+  auto argv_status = eval(process, list, start + 1); // get all the argv
+  if(!argv_status.first) {
+    cerr  << "Ojbect construct parameters errors: " <<  argv_status.second->_to_str() << "\n";
+    return argv_status;
+  }
+
+  auto &argv_list_vector = argv_status.second->_get_vector_ref();
+
+  argv_list_vector.insert(argv_list_vector.begin(), Node::ptr_US( move(shared_object_call)));
+
+  // cout << "argv_status : " << argv_status << "\n";
+
+  call(process, constructor_ref_status.second, move(argv_list_vector));
+  return {true, move(shared_object_ret)};
 }
+
+
+
 //------------------------------------------------------------------------
 // create a map object
 // (send object_variable (method arg1 arg2... ) ) //creates a new map object
+// (send object_variable method (arg1 arg2...  ) //creates a new map object
 //
 Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::send_object_message(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
@@ -114,7 +142,6 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
 
   auto object_name = list[start]->_to_str();
   auto object_ref_status = symbol_lookup(process, object_name);
-
 
   if(!object_ref_status.first) {
     cerr << "Can't lookup object '"  << object_name <<"', error:"  << object_ref_status.second._to_str() << "\n";
@@ -128,9 +155,7 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
     .second.get_node_with_ptr(CLASS_PTR)
     .second.get_node_with_ptr(FUNCTION);
 
-
-   auto object_uptr = Node::ptr_USU(object);
-
+  auto object_uptr = Node::ptr_USU(object);
 
   if(!fun_ref_status.first) {
     cerr << "in send_object_Message(...) error looking up methods fun_ref_status: "  << fun_ref_status.second << "\n";
@@ -141,39 +166,19 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
   //cout << "object_ptr : type" << Node::_to_str( object_ptr->type_) << "\n";
   //cout << "class_ptr " << class_ptr << "\n";
 
-  auto argv = list_clone_remainder(list, start+1);
-  auto message_status = eval(process, argv); // this returns a vector
+  auto method_name = atom_to_str(list[start+1]->_get_integer()).second._to_str();
+  auto argv_list = eval(process, list, start+1); // this returns a vector
+
+ // cout << "method_name: " <<  method_name << "\n";
+ // cout << "1 argv_list: " <<  argv_list<< "\n";
+
+  argv_list.second->set(0, move(object_uptr)); // 0, was the :method name, and change it to object ptr 
 
 
-  if(!message_status.first) {
-    cerr << "send_object_Message(...) eval error : "  << message_status.second->_to_str() << "\n";
-    return message_status;
-  }
 
-  //message_status.second->set(0, move(object_uptr));
-  //message_status.second->set(0, 123l);
-
-  auto method_name_i = message_status.second->get_node(0).second._get_integer();
-
-  auto method_name = atom_to_str( method_name_i).second._to_str() ;
   auto method_fun = fun_ref_status.second.get_node(method_name);
 
-
-
-
-  message_status.second->set(0, move(object_uptr)); // swap the :method for 'this' var
-
-  //auto &argv_list = message_status.second->_get_vector_ref();
-  //argv_list.erase(argv_list.begin());
-
-//  cout << "method name atom s:" <<  method_name << "\n";
-//  cout << "method fun:" <<  method_fun<< "\n";
-//  cout << "message status:" <<  *message_status.second << "\n";
-
-
-  return call(process, method_fun.second, move(message_status.second->_get_vector_ref()));
-
-  //return message_status;
+  return call(process, method_fun.second, move(argv_list.second->_get_vector_ref()));
 
 }
 
@@ -476,8 +481,10 @@ Node::OpStatus LispExpr::loop_forever(Node& process, const Node::Vector& list, s
       eval(process, *node);
     }
   }
-  //return {true, Node::create()};
-  return {true, Node::create(false)};
+  forever=true;
+  return {true, Node::create()};
+  //return {true, Node::create(false)};
+  //return {true, nullptr};
 }
 Node::OpStatus LispExpr::read_input() {
   MYLOGGER(trace_function, "LispExpr::read_input()", __func__, SLOG_FUNC_INFO);

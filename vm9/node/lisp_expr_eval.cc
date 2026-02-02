@@ -35,14 +35,15 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name ) {
 
   auto nested_name = split_string(name, ".");
 
-  if(nested_name.size()==1)
+  if(nested_name.size()==1) {
     return scope_vars_ref_status.second[name];
+  }
 
   // this returns a shared ptr to a map
   auto shared_ptr_ref_status = scope_vars_ref_status.second[nested_name[0]];
 
   if(!shared_ptr_ref_status.first) {
-    cerr << "varlookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
+    //cerr << "var_lookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
     return shared_ptr_ref_status;
   }
   nested_name.erase(nested_name.begin());
@@ -63,11 +64,20 @@ Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
   auto nested_name = split_string(name, ".");
 
 
-  auto immute_ref_value = scope_immute_ref_status.second[name];
+  //auto immute_ref_value = scope_immute_ref_status.second[name];
   if(nested_name.size()==1)
-    return immute_ref_value;
-  
-  return scope_immute_ref_status.second[name];
+    return scope_immute_ref_status.second[name];
+   // return immute_ref_value;
+
+  auto shared_ptr_ref_status = scope_immute_ref_status.second[nested_name[0]];
+
+  if(!shared_ptr_ref_status.first) {
+    //cerr << "immute_lookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
+    return shared_ptr_ref_status;
+  }
+  nested_name.erase(nested_name.begin());
+  return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+  //return scope_immute_ref_status.second[name];
 }
 
 
@@ -212,10 +222,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     return object_create(process, code_list, start);
   }
 
-  case Lisp::Op::send:   {
-    cout << "sending message in eval!\n"; //return map_messages(process, code_list, start );
-    return send_object_message(process, code_list, start);
-  }
+  case Lisp::Op::send:    return send_object_message(process, code_list, start); 
   case Lisp::Op::class_:   {
     cout << "class in eval!\n"; //return map_messages(process, code_list, start );
     return {true, nullptr};

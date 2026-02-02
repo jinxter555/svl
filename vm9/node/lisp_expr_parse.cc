@@ -140,7 +140,8 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
   //auto status=  build_parsed_vector(*list.front()); 
   auto status=  build_parsed_vector(list); 
   if(!status.first) return status;
-  fun[CODE] = move(status.second); list.pop_front();
+  fun[CODE] = move(status.second); 
+  if(!list.empty()) list.pop_front();
   //cout << "code: list after pop!" << Node::_to_str(list) << "\n";
   }
 
@@ -382,6 +383,7 @@ Node::OpStatus LispExpr::attach_cc_fun(const string&name_mod, const string&name_
 Node::OpStatus LispExpr::build_parsed_vector(Node& node) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_vector(Node&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node: ") + node._to_str(), SLOG_FUNC_INFO+30);
+
   if(node.type_ != Node::Type::List) {
     cerr << "build_parsed_vector() error with '"<<  node << "',type: " << Node::_to_str(node.type_) << "\n";
     return {false, Node::create_error(Error::Type::Parse, "build_parsed_vector()! not vector type:Can't build vector!")};

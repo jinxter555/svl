@@ -369,6 +369,9 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
 Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
+
+  if(var_list.size() < 3) return  {false, Node::create_error(Error::Type::Parse, "assign has less than 3 parameters!") };
+
   auto identifier = var_list[start]->_to_str();
   auto &value_expr = var_list[start+1];
   auto value_status = eval(process, *value_expr);

@@ -365,6 +365,14 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
 
   while (getline(stream, line_current)) {
     auto line = trim(line_current);
+
+
+    // ignore all comments
+    size_t comment_pos = line.find(";");
+    if (comment_pos != std::string::npos) {
+        line.erase(comment_pos);
+    }
+
     if(line == "") continue;
     auto line_vector = split_string(line, " ");
 
@@ -384,21 +392,27 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
       line_result += "(" + line + ")" + "\n";
 */
 
-    if( isalpha( line.front()) && line.back() == ')'){ // op1 (op2 arg1 ... )
-      line_result += "(" + line + ")"+"\n";
-      continue;
-    }
+ //   if( isalpha( line.front()) && line.back() == ')'){ // op1 (op2 arg1 ... )
+ //     line_result += "(" + line + ")"+"\n";
+ //     continue;
+ //   }
 
     // op1 (op2 arg1 ... ) where op1 = '+' '-' and prevent single ')' line
-    if(  line.front() != '(' && line.back() == ')' && line != ")"){ 
+    //if(  line.front() != '(' && line.back() == ')' && line != ")"){ 
+
+
+
+    // op1 (op2 arg1 ... ),  
+    // NO: keyword ) , keyword
+
+
+    if(  line.front() != '(' && line.back() == ')' && is_complete_parenthesis(line)){ 
       line_result += "(" + line + ")"+"\n";
       continue;
     }
 
     if(line.front() != '(' && line.back() != ')'){ //  blah blah blah 
-      //cout << "line.front: " << line.front() << " " << line <<" \n";
       line_result += "(" + line + ")"+"\n";
- //     cout << "added (...) to " << line_result << "\n";
       continue;
     } 
     line_result +=  line +"\n";
@@ -465,3 +479,21 @@ bool LispReader::is_endable(const string&token_str) {
   return is_closurable(op);
 }
 
+
+bool LispReader::is_complete_parenthesis(const string& input) {
+  vector<char> plist;
+  size_t s=input.size();
+  for(size_t i=0; i<s; i++) {
+    char c = input[i];
+    if(input[i] == '(') {
+      plist.push_back(c);
+    }
+    if(input[i] == ')') {
+      if(plist.empty()) return false;
+      plist.pop_back();
+    }
+  }
+  if(plist.size() != 0)
+    return false;
+  return true;
+}

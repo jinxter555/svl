@@ -16,7 +16,6 @@
 using namespace std;
 
 
-
 class Node {
   friend class Tree;
   friend class LispExpr;
@@ -249,3 +248,5 @@ ostream& operator<<(ostream& os, const Node::OpStatus& s) ;
 ostream& operator<<(ostream& os, const Node::OpStatusRef& s) ;
 
 extern Node null_node;
+
+extern unordered_map<Node::Integer , string> Atoms;

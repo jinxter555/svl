@@ -1,2 +1,59 @@
-terminate called after throwing an instance of 'std::bad_alloc'
-  what():  std::bad_alloc
+to newline input: 'module Kernel
+class Dict
+(var size (length 123) )
+def Dict(w1 w2 w3)
+(print "\n\nhello class constructor Dict()\n")
+end.def
+def area(a pi)
+(print "\nhello class Dict::area ()\n")
+(print "area is: " a "\n")
+(print "pi: " pi "\n")
+end.def
+end.class
+def main (x y)
+(assign x1 999)
+(assign m1 (new Dict "ship building" "world1" "trade"))
+(assign v1 ((1) (2 3) (4 5)))
+(print "1v1: " v1 "\n\n")
+(;assign m1 (new Dict "ship building" "world1" "trade"))
+;assign m1 (new Dict "ship building" "world1" (* 5 6) ))
+(print "2v1: " v1 "\n\n")
+end.def
+end.module
+'
+before newline i391
+after newline i444
+to newline input: 'module Kernel
+class Dict
+(var size (length 123) )
+def Dict(w1 w2 w3)
+(print "\n\nhello class constructor Dict()\n")
+end.def
+def area(a pi)
+(print "\nhello class Dict::area ()\n")
+(print "area is: " a "\n")
+(print "pi: " pi "\n")
+end.def
+end.class
+def main (x y)
+(assign x1 999)
+(assign m1 (new Dict "ship building" "world1" "trade"))
+(assign v1 ((1) (2 3) (4 5)))
+(print "1v1: " v1 "\n\n")
+(;assign m1 (new Dict "ship building" "world1" "trade"))
+;assign m1 (new Dict "ship building" "world1" (* 5 6) ))
+(print "2v1: " v1 "\n\n")
+end.def
+end.module
+'
+before newline i447
+after newline i501
+error parsing left over tokens! [end.module ]
+need to assign vars differently because  in a class init object value (var (length 3.14159))!
+constructor: {"class_ptr":--*ptr--, "name": Dict, "__object_info__": {"type": defun}, "code": Vector[Vector[print, 
+
+hello class constructor Dict()
+]], "params": Vector[this, w1, w2, w3]}
+argv_status : true: value: Vector[ship building, world1, trade], type: Vector
+1v1: Vector[Vector[1], Vector[2, 3], Vector[4, 5]]
+

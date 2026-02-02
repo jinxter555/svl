@@ -1,7 +1,7 @@
 (module Kernel 
   (defun main (x y) my_func_des
     (
-;     (var m1)
+     (var m1)
       (assign m1 
       (map  \
             (k1 123) \

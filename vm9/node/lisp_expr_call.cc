@@ -148,7 +148,12 @@ Node::OpStatus LispExpr::attach_params_args_to_frame(unique_ptr<Node>& frame, co
 
   if(arg_list.size() != params.size())
     return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "attach_params_args_to_frame() different size of params and args")};
+      "attach_params_args_to_frame() different size of params: "  
+      + to_string( params.size()) 
+      + " "  + _to_str_ext(params)
+      + " and args: "  + to_string(arg_list.size())
+      + " " + Node::_to_str(arg_list)
+    )};
   size_t s =  params.size();
 
   Node::Map args;
@@ -171,7 +176,12 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
 
   if(arg_list.size() != params.size())
     return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "frame_create_params_args() different size of params and args")};
+      "frame_create_params_args() different size of params: "
+      + to_string( params.size()) 
+      + " "  + _to_str_ext(params)
+      + " and args: "  + to_string(arg_list.size())
+      + " " + Node::_to_str(arg_list)
+    )};
   Node::Map args;
   size_t s =  params.size();
   for(size_t i=0; i <s; i++) {
@@ -375,7 +385,7 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
 
   auto frame_status = frame_create_fun_args(fun, move(argv_vector));
   if(!frame_status.first) {
-    cerr << "can't frame_create_params!\n";
+    cerr << "call(process, fun, argv vector) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
     return frame_status;
   }
 

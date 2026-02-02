@@ -1,3 +1,4 @@
+#include "node.hh"
 #include "lang.hh"
 #include <iostream>
 
@@ -19,6 +20,7 @@ Node::Integer Lang::str_to_atom(const string& input) {
   //cout << "atoms map \n";
   //cout << "atoms map \n"<< *atoms << "\n";
   atoms->set(to_string(hash_value), input);
+  Atoms[hash_value] = input;
 
   //atoms->print(); cout << *atoms << "\n\n";
 

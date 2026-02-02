@@ -13,6 +13,7 @@
 Node null_node(Node::Type::Null);
 Node node_null(Node::Type::Null);
 Node node_error;
+unordered_map<Node::Integer , string> Atoms;
 
 
 unique_ptr<Node> Node::create() { return make_unique<Node>(); }
@@ -853,11 +854,15 @@ unique_ptr<Node> Node::container_obj_to_US(unique_ptr<Node> node) {
  // conver to  unique pointer -> unique pointer(shared pointer)
  // it's a shared ptr being wrapped in a unqiue ptr
  // for object reference passing 
+ // this is for the above container obj_to_US
 unique_ptr<Node> Node::ptr_US(unique_ptr<Node> node) {
   MYLOGGER(trace_function, "Node::ptr_US(unique_ptr<Node>node)", __func__, SLOG_FUNC_INFO);
-  Node::ptr_S s_ptr_node = move(node);
+  //Node::ptr_S s_ptr_node = move(node);
+  shared_ptr<Node> s_ptr_node = move(node);
   return make_unique<Node>(s_ptr_node);
 }
+
+
 
 //------------------------------------------------------------------------
 // make a clone of unique shared without recursive cloning.

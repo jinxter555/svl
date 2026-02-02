@@ -37,6 +37,7 @@ public:
   Node::OpStatus parse_sequence(list<Token>& tokens);  // turn everything in to stream of node
   Lisp::Op str_to_op(const string&input);
   static string _to_str(const list<Token>& tokens);
+  static bool is_complete_parenthesis(const string& input); // (...) internal contains all complete pairs of ()
   void reset();
   bool is_closurable(Lisp::Op op); // if this can be a block of {identifier end}
   bool is_closurable(const string&token_str) ;

@@ -8,10 +8,11 @@
       (p55 (55 2))
       (print "\n\n")
       loop
-        print (car (eval (read))) "\n"
+        print (eval (read)) "\n"
       end.loop
     )
   )
+;        print (car (eval (read))) "\n"
   (defun p55 (x y) "my func p55" 
     (
       (var (z "zzz"))
