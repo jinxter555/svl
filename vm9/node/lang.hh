@@ -7,6 +7,7 @@ class Lang : public Kernel {
 protected:
   static const vector<string> atoms_key ; 
   std::hash<string> hasher;
+  static unordered_map<Node::Integer , string> Atoms;
 public:
   Lang();
 

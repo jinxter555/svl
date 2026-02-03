@@ -81,7 +81,7 @@ string Node::_to_str() const {
       return "[Error: " + Error::_to_str(err.type_) + "] " + err.message_;}
     case Type::Atom: { // { //extern Node::OpStatus Lang::atom_to_str(Node::Integer v) ; }
       Integer num = get<Integer>(value_);
-      return Lang::atom_to_str(num); 
+      return ":" + Lang::atom_to_str(num); 
       break;
     }
 

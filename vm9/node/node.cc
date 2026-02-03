@@ -13,7 +13,7 @@
 Node null_node(Node::Type::Null);
 Node node_null(Node::Type::Null);
 Node node_error;
-unordered_map<Node::Integer , string> Atoms;
+//unordered_map<Node::Integer , string> Atoms;
 
 
 unique_ptr<Node> Node::create() { return make_unique<Node>(); }
@@ -160,6 +160,8 @@ unique_ptr<Node> Node::clone(const Map& map) {
 
   Map cloned_map;
   for(const auto& [key, child_ptr] : map) {
+    if(key == CLASS_PTR) continue;      // prevent recursive cloning since class function contain  ptr to class itself
+    if(key == MODULE_PTR) continue;
     cloned_map.try_emplace(key, child_ptr->clone());
   }
   return create(move(cloned_map));

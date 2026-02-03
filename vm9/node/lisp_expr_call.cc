@@ -5,7 +5,6 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-#include "lisp_expr_func_tmpl.cc"
 
 
 //------------------------------------------------------------------------
