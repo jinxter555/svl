@@ -6,6 +6,7 @@
 #include "node.hh"
 #include "lisp.hh"
 #include "defs.hh"
+#include "lang.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -78,7 +79,12 @@ string Node::_to_str() const {
     case Type::Error: {
       Error  err = get<Error>(value_);
       return "[Error: " + Error::_to_str(err.type_) + "] " + err.message_;}
-    case Type::Atom: // { //extern Node::OpStatus Lang::atom_to_str(Node::Integer v) ; }
+    case Type::Atom: { // { //extern Node::OpStatus Lang::atom_to_str(Node::Integer v) ; }
+      Integer num = get<Integer>(value_);
+      return Lang::atom_to_str(num); 
+      break;
+    }
+
     case Type::Integer: {
       Integer num = get<Integer>(value_);
       return to_string(num); }

@@ -36,9 +36,10 @@ Node& Error::ref(Error::Type t) { return *list[size_t(t)]; }
 Node& Error::ref(Error::Type t, const string& msg) { 
   MYLOGGER(trace_function, "Error::ref(Type::" + _to_str(t)  + ")", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "errmsg: " + msg, SLOG_FUNC_INFO);
-
+ // cerr << "Error Message: " << msg << "\n";
   return *list[size_t(t)]; 
 } 
+
 string Error::_to_str(Type type) {
   switch(type) {
     case Type::DivideByZero:     return "DivideByZero";

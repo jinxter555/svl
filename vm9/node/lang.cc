@@ -26,9 +26,11 @@ Node::Integer Lang::str_to_atom(const string& input) {
 
   return hash_value;
 }
-Node::OpStatusRef Lang::atom_to_str(Node::Integer v) {
-  auto atoms = get_branch(atoms_key);
-  return (*atoms)[to_string(v)];
+//Node::OpStatusRef Lang::atom_to_str(Node::Integer v) {
+string Lang::atom_to_str(Node::Integer v) {
+  //auto atoms = get_branch(atoms_key);
+  return Atoms[v];
+  // return (*atoms)[to_string(v)];
 }
 
 

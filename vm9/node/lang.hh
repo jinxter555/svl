@@ -11,6 +11,7 @@ public:
   Lang();
 
   Node::Integer str_to_atom(const string& input);
-  Node::OpStatusRef atom_to_str(Node::Integer v);
+  //Node::OpStatusRef atom_to_str(Node::Integer v);
+  static string atom_to_str(Node::Integer v);
   void bootstrap() override;
 };

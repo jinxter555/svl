@@ -130,7 +130,6 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
     cerr << "no class var found: " << var_ref_status << "\n";
     return {false, var_ref_status.second.clone()};
   }
-  cout << "class vars: " <<  var_ref_status << "\n";
   attach_class_vars_to_object(process, *object, var_ref_status.second._get_vector_ref());
   // inject vars into contructor 
 
@@ -200,7 +199,8 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
   //cout << "object_ptr : type" << Node::_to_str( object_ptr->type_) << "\n";
   //cout << "class_ptr " << class_ptr << "\n";
 
-  auto method_name = atom_to_str(list[start+1]->_get_integer()).second._to_str();
+  //auto method_name = atom_to_str(list[start+1]->_get_integer()).second._to_str();
+  auto method_name = atom_to_str(list[start+1]->_get_integer());
   auto argv_list = eval(process, list, start+1); // this returns a vector
 
  // cout << "method_name: " <<  method_name << "\n";

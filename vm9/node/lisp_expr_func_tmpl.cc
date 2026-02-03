@@ -46,9 +46,7 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
 
       switch(ee.second->type_){
       case Node::Type::Atom: {  // only works for print :atom, not for print map 
-        auto atom_ref_status = atom_to_str(ee.second->_get_integer());
-        if(!atom_ref_status.first) return {false, atom_ref_status.second.clone()};
-        cout << atom_ref_status.second;
+        cout << atom_to_str(ee.second->_get_integer());
       }
       case Node::Type::Null: {  // only works for print :atom, not for print map 
         continue;
