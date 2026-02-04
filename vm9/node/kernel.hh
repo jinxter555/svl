@@ -3,15 +3,11 @@
 
 #pragma once
 //#include "node.hh"
+#include "defs.hh"
 #include "tree.hh"
 
 #include <functional>
 #include <string>
-#define UNIVERSE "universe"
-#define PID "pid"
-//#define CFS "control_flow_state"
-#define FRAMES "frames"
-#define STATE "state"
 
 
 class Kernel : public Tree {

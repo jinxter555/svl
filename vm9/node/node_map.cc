@@ -211,7 +211,7 @@ Node::OpStatusRef Node::get_node_with_ptr(const vector<string>&path) {
     return sptr->get_node(path); }
   default: {}
   }
-  return get_node_with_ptr(path);
+  return get_node(path);
 
 }
 //------------------------------------------------------------------------

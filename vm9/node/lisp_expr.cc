@@ -289,6 +289,8 @@ Node::OpStatus LispExpr::run_program() {
   frame1->set(CURRENT_FUNCTION, "Main");
   frame1->set(ARGS, Node::create(Node::Type::Map)); // empty args for now
   auto proc_1= process_create();
+  //frame1->set(CURRENT_PROCESS_PTR, proc_1.second->pid(PID));
+  frame1->set(PID, Kernel::pid(proc_1.second));
   frame_push(proc_1.second, move(frame1));
 
   scope = scope_create();

@@ -257,22 +257,29 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
       token.value_.erase(0, 1);
       auto v = lisp->str_to_atom(token.value_); //auto node_ptr = Node::create(atom);
       auto node_ptr = Node::create(v); node_ptr->set_atom();
-
       return {true, move(node_ptr)}; 
     }
-    // " quoted string with 
+    // " quoted srepeat with 
     if(token.value_[0]=='"') {
       token.value_.erase(0, 1);
       string esc_str = raw_to_escaped_string(token.value_);
-      auto node_ptr = Node::create(esc_str); 
-      return {true, move(node_ptr)}; 
+      return {true, Node::create(esc_str)}; 
+
     }
+
     if(token.value_[0]=='\'') {
       token.value_.erase(0, 1);
       string esc_str = raw_to_escaped_string(token.value_);
-      auto node_ptr = Node::create(esc_str); 
-      return {true, move(node_ptr)}; 
+      return {true, Node::create(esc_str)}; 
     }
+    if(token.value_=="true") {
+      return {true, Node::create(true)}; 
+    }
+    if(token.value_=="false") {
+      return {true, Node::create(false)}; 
+    }
+
+
     
   }
 
@@ -442,6 +449,8 @@ bool LispReader::is_closurable(Lisp::Op op) {
   case Lisp::Op::class_:
   case Lisp::Op::module:
   case Lisp::Op::loop:
+  case Lisp::Op::while_:
+  case Lisp::Op::repeat:
   case Lisp::Op::for_:
   case Lisp::Op::do_:
   case Lisp::Op::if_:

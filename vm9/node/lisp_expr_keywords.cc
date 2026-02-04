@@ -44,6 +44,8 @@ void LispExpr::set_keywords() {
   map_->set("ret", Op::ret);
   map_->set("cond", Op::cond);
   map_->set("loop", Op::loop);
+  map_->set("while", Op::while_);
+  map_->set("repeat", Op::repeat);
   map_->set("for", Op::for_);
   map_->set("do", Op::do_);
   map_->set("print",Op::print);

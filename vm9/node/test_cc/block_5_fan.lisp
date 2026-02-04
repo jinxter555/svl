@@ -6,6 +6,8 @@ module Kernel
     def Map(x)  
      (print "hello class mp1()\n")
     end.def
+infi
+   
 
   end.class
 
@@ -37,12 +39,18 @@ module Kernel
       end
     end.for
 
-    while [infix] do
+    while [] do
     end.while
+
+    if (true)
+      print "true"
+    :else
+      print "not true"
+    end.if
 
     repeat
       print i
-    until [infix] 
+    until [] 
     end.repeat
 
     case x
@@ -55,8 +63,8 @@ module Kernel
     end.case
 
     case x
-    (> x 5) ( print ) 
-    (< x 3) ( print ) 
+    (> 5) ( print ) 
+    (< 3) ( print ) 
     end.case
 
     case x

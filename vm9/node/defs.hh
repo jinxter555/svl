@@ -1,7 +1,12 @@
 #pragma once
-
+// 
 // CURRENT_ is use by frame stack
 
+#define UNIVERSE "universe"
+#define PID "pid"
+//#define CFS "control_flow_state"
+#define FRAMES "frames"
+#define STATE "state"
 
 #define VAR "var"
 #define IMMUTE "immute"
@@ -26,6 +31,10 @@
 #define CURRENT_CLASS "current_class"
 #define CURRENT_CLASS_PTR "current_class_ptr"
 
+#define CURRENT_PROCESS_PID "current_process_ptr"
+#define CURRENT_PROCESS_PTR "current_process_ptr"
+
+#define PARENT "parent"
 #define CODE "code"
 #define _PARAMS "params"
 #define ARGS "args"

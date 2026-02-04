@@ -490,6 +490,28 @@ Node::OpStatus LispExpr::lambda_create(Node&process, const Node::Vector &list, s
 
 }
 
+// (do (param_list) (code list))
+Node::OpStatus LispExpr::closure_create(Node&process, const Node::Vector &list, size_t start){
+  MYLOGGER(trace_function, "LispExpr::closure_create(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+
+  size_t s = list.size();
+
+  if(list.size()<2) return {false, Node::create_error(Error::Type::Parse, "closure do() blcok requires atleast 2 parameters! " + Node::_to_str(list))};
+
+  Node::Map map={}; 
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+
+  map[_PARAMS] = list[start]->clone();
+  map[CODE] =  Node::create(list_clone_remainder(list, start+1));
+  obj_info->set("type",  Lisp::Type::do_);
+  map[OBJ_INFO] = move(obj_info);
+  
+  return {true, Node::create(move(map))};
+
+}
+
+
 
 Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t start) {
   Node::Vector result_list;

@@ -191,6 +191,8 @@ public:
   //
   Node::OpStatus lambda_create(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus lambda_bind_early(Node&process, const Node::Vector &list, size_t start=0); // binding outter scope vars when created
+  //
+  Node::OpStatus closure_create(Node&process, const Node::Vector &list, size_t start=0);
   
 
   //

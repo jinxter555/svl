@@ -82,7 +82,6 @@ string Node::_to_str() const {
     case Type::Atom: { // { //extern Node::OpStatus Lang::atom_to_str(Node::Integer v) ; }
       Integer num = get<Integer>(value_);
       return ":" + Lang::atom_to_str(num); 
-      break;
     }
 
     case Type::Integer: {
