@@ -228,6 +228,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 
   case Lisp::Op::read:   return read_input();
   case Lisp::Op::loop:   return loop_forever(process,code_list,start );
+  case Lisp::Op::while_:   return while_(process, code_list, start );
   case Lisp::Op::funcall:   return funcall(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 
   case Lisp::Op::car:   return car(process, code_list, start);
@@ -275,6 +276,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     auto result = *(first_status.second) + *(second_status.second);
     return {true, result.clone()};
   }
+
   case Lisp::Op::mul:   {
     auto first_status = eval(process, *code_list[start]);
     auto second_status = eval(process, *code_list[start+1]);
@@ -287,6 +289,21 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
       return  second_status;
     }
     auto result = *(first_status.second) * *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::eq:   {
+    cout << "eq!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) == *(second_status.second);
     return {true, result.clone()};
   }
 

@@ -728,6 +728,7 @@ Node::OpStatus Node::list_add() const {
   }, value_);
 }
 
+/*
 void Node::print_value(const Value& v, int depth) {
   visit([&](auto&& arg) {
     using T = decay_t<decltype(arg)>;
@@ -783,7 +784,7 @@ void Node::print_value(const Value& v, int depth) {
     }
   }, v);
 }
-
+*/
 Node::OpStatus Node::size() const {
   return visit([&](auto&& arg) -> OpStatus {
     using T = decay_t<decltype(arg)>;

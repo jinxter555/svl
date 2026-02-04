@@ -313,8 +313,17 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   func_path.push_back(FUNCTION);    // push module."function".
 
   func_path.push_back(mf_vector[1]); // module."function".func_name
-  const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
+
+  try { // mod.fun ( arg1 arg2 arg3 ...)
+    const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
+    return call(process, func_path, argv_vector);
+  } catch(...) {}
+  // mod.fun arg1 arg2 arg3 ...
+
+  const auto &argv_vector =  list_clone_remainder(code_list, start + 1);
   return call(process, func_path, argv_vector);
+
+  return {false, Node::create()};
 
 
   /*
@@ -420,7 +429,8 @@ Node::OpStatus LispExpr::call(Node& process, const vector<string>& path, const N
     return {false, fun_ref_status.second.clone()};
   }
 
-  auto  args_status = eval(process, argv_list); // this returns a vector
+  //auto  args_status = eval(process, argv_list); // this returns a vector
+  auto  args_status = eval(process, argv_list, 0); // this returns a vector
 
   if(!args_status.first) {
     cerr << " call() error eval argv_list: " << _to_str_ext( path ) + ": " + Node::_to_str(argv_list) + args_status.second->_to_str() <<"\n";

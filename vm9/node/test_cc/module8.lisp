@@ -19,6 +19,7 @@
       (print "hello, p55, 55\n")
       (print "x: " x "\n")
       (print "(x): " (x) "\n")
+      (print "(y): " (y) "\n")
       (print "\n")
       (print "-" x "-")
       (print "-" z "-")

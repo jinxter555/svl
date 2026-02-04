@@ -23,7 +23,8 @@ public:
   , identifier, scalar, literal, list, deque, vector, map, object
   , var, assign
   , car, cdr
-  , add, sub, div, mul, mod, read, readline
+  , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq
+  , read, readline
   , call, send, ret, call_extern, funcall, curry, pipe, eval
   , cond, print, loop, while_, repeat, for_, do_, if_, case_, when
   , module, def, defun, defmacro, alias, lambda

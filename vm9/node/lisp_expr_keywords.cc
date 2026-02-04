@@ -62,6 +62,14 @@ void LispExpr::set_keywords() {
   map_->set("*", Op::mul);
   map_->set("/", Op::div);
   map_->set("%", Op::mod);
+
+  map_->set("<", Op::lt);
+  map_->set(">", Op::gt);
+  map_->set("<=", Op::lteq);
+  map_->set(">=", Op::gteq);
+  map_->set("==", Op::eq);
+  map_->set("=", Op::assign);
+
   set_branch(lisp_path_keyword, move(map_));
 }
 
