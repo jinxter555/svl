@@ -24,6 +24,7 @@
       (print "-" x "-")
       (print "-" z "-")
       (print "\n")
+    ;  print (root) "\n"
     ;  (p56 (66 2))
     )
   )

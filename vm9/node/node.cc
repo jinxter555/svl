@@ -665,7 +665,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
         cout << "\n";
       }
       indent();
-      cout << "}";
+      cout << " }";
     } else if constexpr (is_same_v<T, ptr_S>) {
       cout << "shared_ptr*:" << *arg;
     } else if constexpr (is_same_v<T, ptr_R>) {

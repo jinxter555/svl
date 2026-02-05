@@ -5,9 +5,9 @@ module Kernel
     def Dict(w1 w2 w3)  
       ; print "\n\nhello class constructor Dict()\n"
       print "w1: " w1 "\n"
-      loop
-        print ( eval (read)) "\n"
-      end.loop
+      ;loop
+      ;  print ( eval (read)) "\n"
+      ;end.loop
     end.def
 
     def area(a pi)  
@@ -37,6 +37,9 @@ module Kernel
 ;    print "x1: " x1 "\n"  
 
   ;  print "v1: " v1 "\n\n"
+      loop
+        print ( eval (read)) "\n"
+      end.loop
 
   end.def
 

@@ -12,6 +12,7 @@
 // helper function 
 // (call (module function) (arg1 arg2 arg3))
 // returns a full path of [universe prefix, ..., module function,  code]
+/*
 vector<string> LispExpr::node_mf_to_path(Node&node_mf,  const vector<string> prefix) {
   MYLOGGER(trace_function, "LispExpr::node_mf_to_path(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
   //MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
@@ -26,15 +27,14 @@ vector<string> LispExpr::node_mf_to_path(Node&node_mf,  const vector<string> pre
   auto f = node_mf[1].second._to_str();
   path.push_back(f);
   return path;
-
 }
-
+*/
 
 // (call (module function) (arg1 arg2 arg3))
 //       (module function )
 // (identifer (x y z ...))
 //        (module, function) = identifier
-// returns {module, function}
+// returns (module, function)
 vector<string> LispExpr::extract_mf(Node& process, Node&node_mf) {
   MYLOGGER(trace_function, "LispExpr::extract_mf(Node&process, const Node& node_mf)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("node_mf: ") + node_mf._to_str(), SLOG_FUNC_INFO+30);
@@ -42,10 +42,20 @@ vector<string> LispExpr::extract_mf(Node& process, Node&node_mf) {
   switch(node_mf.type_) {
   case Node::Type::Identifier: {
     Node::Vector list;
+
     auto mf = node_mf._get_str();
-    list.push_back(Node::create(mf));
-    //cout << "identifier mf: "  << mf << " \n";
-    return extract_mf(process, list); }
+    auto mf_full_name =  split_string(mf ,"."); // is it in form of module.fuction  with a dot?
+
+    if(mf_full_name.size() == 1 ) { 
+      list.push_back(Node::create(mf));
+      return extract_mf(process, list);  // get module name from frame
+    } else {
+      cout << "extract mf calling full name: " << _to_str_ext(mf_full_name) << "\n";
+      // need to check object 
+      return mf_full_name;
+    }
+  }
+
   case  Node::Type::Vector:{
     auto &list = node_mf._get_vector_ref();
     return extract_mf(process, list); }
@@ -57,16 +67,11 @@ vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
   MYLOGGER(trace_function, "LispExpr::extract_mf(Node&process, const Node& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-
-  
-  // call (func)  no module specified
+  // call (func)  no module specified use frame to get module info
   if(list.size() == 1 ) {
     //cout << "extract mf size 1\n";
     auto f = list[0]->_to_str();
 
-    //.second._to_str();
-
-    //auto frames_status = process.get_node(FRAMES);
     auto frames_status = process[FRAMES];
     if(!frames_status.first) { 
       cerr << " frames[] not found: " << frames_status.second._to_str() << "\n";
@@ -104,6 +109,7 @@ vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
 //------------------------------------------------------------------------
 // call to module functions
 //
+/*
 Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list) {
   MYLOGGER(trace_function, "LispExpr::attach_argument_to_frame(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("param_path: ") + _to_str_ext(params_path), SLOG_FUNC_INFO+30);
@@ -134,8 +140,8 @@ Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, cons
   }
   frame->set(ARGS, Node::create(move(args)));
   return {true, nullptr};
-
 }
+*/
 
 //------------------------------------------------------------------------
 // call to lambda anonymous functions
@@ -299,20 +305,17 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 
   }
  */ 
- const auto &mf_node_ptr=  code_list[start];
-
-  auto mf_vector = extract_mf(process, *mf_node_ptr);
-  //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
   auto func_path = lisp_path_module;
 
+ const auto &mf_node_ptr=  code_list[start];
+  auto mf_vector = extract_mf(process, *mf_node_ptr);
+  //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
 
-  func_path.push_back(mf_vector[0]); // push module
-  //auto module_ref_status = get_node(func_path);
 
-
-  func_path.push_back(FUNCTION);    // push module."function".
-
+  func_path.push_back(mf_vector[0]); // push module name
+  func_path.push_back(FUNCTION);    //  push module."function".
   func_path.push_back(mf_vector[1]); // module."function".func_name
+
 
   try { // mod.fun ( arg1 arg2 arg3 ...)
     const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
@@ -325,62 +328,6 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 
   return {false, Node::create()};
 
-
-  /*
-  auto call_path = func_path;
-  auto params_path = func_path;
-  call_path.push_back(CODE);         // module."function".func_name."code"
-  params_path.push_back(_PARAMS);    // module."function".func_name."params"
-  
-
-
-  auto frame = frame_create();
-
-  frame->set(CURRENT_MODULE, mf_vector[0]);
-  frame->set(CURRENT_FUNCTION, mf_vector[1]);
-  frame->set(CURRENT_MODULE_PTR, &module_ref_status.second); 
-
-  // argument set up
-  const auto &argv_node_ptr=  code_list[start+1];
-  //cout << "*argv_node_ptr : " << *argv_node_ptr<< "\n";
-  auto argv_list  = eval(process, *argv_node_ptr);
-  if(!argv_list.first) return argv_list;
-  //cout << "argv_list status: " << argv_list << "\n";
-  //frame->set(LVAR, move(argv_list.second));
-  auto aatf_status =  attach_arguments_to_frame(frame, params_path, move(argv_list.second));
-  if(!aatf_status.first) return aatf_status;
-
-
-
-  //
-  frame_push(process, move(frame));
-  auto scope = scope_create();
-  auto scope_status =  scope_push(process, move(scope));
-  if(!scope_status.first) {
-    cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
-    
-  }
-
-
-
-
-  Node::OpStatusRef code_list_status = get_node(call_path);
-
-  if(!code_list_status.first)  {
-    cerr << _to_str_ext(call_path) << " path not found!\n";
-    return  {false, Node::create_error(
-      Error::Type::KeyNotFound, 
-      "LispExpr::call(Node& process, Node::Vector& code_list) path node not found: " + _to_str_ext(call_path))};
-  }
-
-  return eval(process, code_list_status.second);
-
-
-  //vector<string> code_path_list =  LispExpr::lisp_path_module;
-  //auto call_path = move(node_mf_to_path(mf.second, lisp_path_module));
-
-  //code_path_list.insert(code_path_list.end(), mf_list.begin(), mf_list.end());
-  */
 }
 
 //------------------------------------------------------------------------
@@ -417,6 +364,7 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
 }
 
 
+// call process, vector [ full path name ] [params]
 //Node::OpStatus LispExpr::call(Node& process, const Node::Vector& path, const Node::Vector& params) {
 Node::OpStatus LispExpr::call(Node& process, const vector<string>& path, const Node::Vector& argv_list) {
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& path, const Node::vector&params)", __func__, SLOG_FUNC_INFO);

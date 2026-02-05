@@ -36,7 +36,7 @@ private:
   sym_lambda, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
-  Node::OpStatus attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list);
+  //Node::OpStatus attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list);
   Node::OpStatus attach_params_args_to_frame(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector &&args);
 
 
@@ -53,7 +53,7 @@ private:
 
 
   // (call (module function)(...))  the module function to vector  path with prefix
-  vector<string> node_mf_to_path(Node&node_,  const vector<string> prefix);
+  //vector<string> node_mf_to_path(Node&node_,  const vector<string> prefix);
   vector<string> extract_mf(Node&process, Node&node); // extract module function
   vector<string> extract_mf(Node&process, Node::Vector &list); // extract module function
 
@@ -147,11 +147,10 @@ public:
 
   Node::OpStatus if_(Node& process, const Node::Vector& code_list, size_t start=0);
 
-  Node::OpStatus call(Node& process, const Node& code_node); // (call (module function) (arg1 arg2 arg3))
-  Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0);
-
-  //Node::OpStatus call(Node& process, const Node::Vector& path, const Node::Vector& arg_list); // 
+  Node::OpStatus call(Node& process, const Node& code_node); 
+  Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const vector<string>& path, const Node::Vector& argv_list); // 
+
   Node::OpStatus call(Node& process, Node& fun, Node::Vector&& params);
 
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args
