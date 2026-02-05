@@ -145,6 +145,8 @@ public:
   Node::OpStatus loop_forever(Node& process, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus while_(Node& process, const Node::Vector& code_list, size_t start=0);
 
+  Node::OpStatus if_(Node& process, const Node::Vector& code_list, size_t start=0);
+
   Node::OpStatus call(Node& process, const Node& code_node); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0);
 

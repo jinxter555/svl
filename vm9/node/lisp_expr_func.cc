@@ -490,6 +490,7 @@ Node::OpStatus LispExpr::lambda_create(Node&process, const Node::Vector &list, s
 
 }
 
+//------------------------------------------------------------------------
 // (do (param_list) (code list))
 Node::OpStatus LispExpr::closure_create(Node&process, const Node::Vector &list, size_t start){
   MYLOGGER(trace_function, "LispExpr::closure_create(Node::List& list)", __func__, SLOG_FUNC_INFO);
@@ -512,28 +513,24 @@ Node::OpStatus LispExpr::closure_create(Node&process, const Node::Vector &list, 
 }
 
 
-
+//------------------------------------------------------------------------
 Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t start) {
   Node::Vector result_list;
   size_t s = list.size();
   for(size_t i=start; i<s; i++) 
     result_list.push_back(list[i]->clone());
-  //return move(result_list);
   return result_list;
 }
 
 
-
-
+//------------------------------------------------------------------------
 bool LispExpr::forever = true;
-
 Node::OpStatus LispExpr::loop_forever(Node& process, const Node::Vector& list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::loop_forever(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
   size_t s= list.size();
   while(forever) {
-    //cout << "forever loop:\n";
     for(size_t i=start; i < s; i++) {
       auto &node = list[i];
       eval(process, *node);
@@ -541,9 +538,9 @@ Node::OpStatus LispExpr::loop_forever(Node& process, const Node::Vector& list, s
   }
   forever=true;
   return {true, Node::create()};
-  //return {true, Node::create(false)};
-  //return {true, nullptr};
 }
+
+//------------------------------------------------------------------------
 
 // (while (condition) (...))
 Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& list, size_t start) {
@@ -559,7 +556,6 @@ Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& list, size_t 
   bool condition=condtion_status.second->_get_bool();
 
   while(condition) {
-    //cout << "forever loop:\n";
     for(size_t i=start+1; i < s; i++) {
       auto &node = list[i];
       eval(process, *node);
@@ -569,11 +565,57 @@ Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& list, size_t 
   }
 
   return {true, Node::create()};
-  //return {true, Node::create(false)};
-  //return {true, nullptr};
+}
+
+//------------------------------------------------------------------------
+//   0   1           2                  3
+// (if (condition) (first_block...) (else_block...))
+Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::if(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
+
+  size_t s= list.size(); bool condition;
+  auto condtion_status =  eval(process, *list[start]);
+  if(!condtion_status.first) {
+    return {false, Node::create_error(Error::Type::Unknown, 
+      "Unknown error in while loop!" + condtion_status.second->_to_str())};
+  }
+
+  try { condition=condtion_status.second->_get_bool(); } catch(...) {
+    cerr << "Error: if condition eval.  something went wrong maybe ()";
+    return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+  }
+
+  if(condition) {
+
+    if(s>=3) {
+    auto &first_block = list[start+1];
+    if(first_block->type_ != Node::Type::Vector) {
+      cerr << "something is up for the first if block ";
+      return {false, Node::create_error(Error::Type::Parse, "If eval first block error!")};
+    }
+    return eval(process, *first_block);
+    }
+
+  } else {
+    if(s==4) {
+
+    auto &else_block = list[start+2];
+    if(else_block->type_ != Node::Type::Vector) {
+      cerr << "something is up for the first if block ";
+      return {false, Node::create_error(Error::Type::Parse, "If eval else block error!")};
+    }
+    return eval(process, *else_block);
+  }
+  }
+  return {true, Node::create()};
+
 }
 
 
+
+//------------------------------------------------------------------------
 
 
 
