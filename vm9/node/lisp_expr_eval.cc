@@ -203,29 +203,6 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
   case Lisp::Op::eval:     return eval_eval(process, code_list, start);
-  /*
-  { // requires 2 evals aka nested evals
-
-    MYLOGGER_MSG(trace_function, "Lisp::Op::eval: start " + to_string(start) + ", code_list " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
-
-  //  cout << "\nLisp::Op::eval: code_list:" + Node::_to_str(code_list) << "\n";
-    auto evaled_stat1 = eval(process, code_list, start); 
-    if(!evaled_stat1.first) {
-      cerr << "something is wrong with eval('code...') :" << Node::_to_str(code_list) << "\n";
-      return evaled_stat1;
-    }
-    auto inner_ref_status = evaled_stat1.second->get_node_with_ptr(0);
-    //cout << "evaled stat1 " <<  evaled_stat1 << "\n";
-    //cout << "inner ref  " <<  inner_ref_status << "\n";
-    auto evaled_stat2 = eval(process, inner_ref_status.second); 
-    if(!evaled_stat2.first) {
-      cerr << "something is wrong with code returned by  eval('code...') :" << evaled_stat2.second->_to_str() << "\n";
-    }
-    //cout << "evaluated stat2: " <<  evaled_stat2<< "\n";
-    return evaled_stat2;
-  }
-*/
-
   case Lisp::Op::read:   return read_input();
   case Lisp::Op::loop:   return loop_forever(process,code_list,start );
   case Lisp::Op::while_:   return while_(process, code_list, start );
@@ -236,9 +213,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::lambda:    return lambda_create(process, code_list, start);
   case Lisp::Op::do_:    return closure_create(process, code_list, start);
   case Lisp::Op::map:   return map_create(process, code_list, start);
-  case Lisp::Op::new_:   { 
-    return object_create(process, code_list, start);
-  }
+  case Lisp::Op::new_:  return object_create(process, code_list, start);
 
   case Lisp::Op::send:    return send_object_message(process, code_list, start); 
   case Lisp::Op::class_:   {
@@ -246,17 +221,28 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     return {true, nullptr};
   }
   case Lisp::Op::private_:   {
-    cout << "class in eval!\n"; //return map_messages(process, code_list, start );
+    cout << "private in eval!\n"; //return map_messages(process, code_list, start );
     return {true, nullptr};
   }
-
 
   case Lisp::Op::call_extern: { return call_extern(process, code_list, start ); }
   case Lisp::Op::defun:   {
     cout << "defun in eval!\n";
     return {true, nullptr};
   }
+  default:{ return  eval_math(process, op_head, code_list, start); }
+  } 
+  cerr << "unknown op()!: " + Lisp::_to_str(op_head) + "\n"; 
+  return {false, Node::create_error(Error::Type::Unknown, "Unknown Lisp::Op command")};
+}
 
+Node::OpStatus LispExpr::eval_math(Node& process, const Lisp::Op op_head, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::eval_math(Node&process, Lisp::Op op_head, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("Lisp::Op:: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
+
+  switch(op_head){
   case Lisp::Op::add:   {
     cout << "add!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
     if(code_list.size() < 3) {
@@ -291,8 +277,9 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     auto result = *(first_status.second) * *(second_status.second);
     return {true, result.clone()};
   }
+
   case Lisp::Op::eq:   {
-    cout << "eq!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
+//    cout << "eq!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
     auto first_status = eval(process, *code_list[start]);
     auto second_status = eval(process, *code_list[start+1]);
     if(!first_status.first ){
@@ -307,13 +294,112 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     return {true, result.clone()};
   }
 
+  case Lisp::Op::lt:   {
+    //cout << "lt!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) < *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::gt:   {
+    //cout << "gt!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) > *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::gteq:   {
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) >= *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::lteq:   {
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) <= *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::and_:   {
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) && *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::or_:   {
+    auto first_status = eval(process, *code_list[start]);
+    auto second_status = eval(process, *code_list[start+1]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    if(!second_status.first ){
+      cerr << "error add second operand:" << second_status << "\n";
+      return  second_status;
+    }
+    auto result = *(first_status.second) || *(second_status.second);
+    return {true, result.clone()};
+  }
+  case Lisp::Op::not_:   {
+    auto first_status = eval(process, *code_list[start]);
+    if(!first_status.first ){
+      cerr << "error add first operand:" << first_status << "\n";
+      return  first_status;
+    }
+    auto result = ! (*(first_status.second) );
+    return {true, result.clone()};
+  }
+
+
+
+
 
   default:{}
   }
   cerr << "unknown op()!: " + Lisp::_to_str(op_head) + "\n"; 
   return {false, Node::create_error(Error::Type::Unknown, "Unknown Lisp::Op command")};
-}
 
+}
 //------------------------------------------------------------------------
 // usally init eval with vector [lisp:op arg1 arg2.. ]
 //

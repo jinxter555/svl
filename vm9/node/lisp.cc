@@ -29,11 +29,22 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::object: return "object";
     case Lisp::Op::car: return "car";
     case Lisp::Op::cdr: return "cdr";
+
     case Lisp::Op::add: return "add";
     case Lisp::Op::sub: return "sub";
     case Lisp::Op::mul: return "mul";
     case Lisp::Op::div: return "div";
     case Lisp::Op::mod: return "mod";
+
+    case Lisp::Op::eq: return "eq";
+    case Lisp::Op::lt: return "lt";
+    case Lisp::Op::gt: return "gt";
+    case Lisp::Op::gteq: return "gteq";
+    case Lisp::Op::lteq: return "lteq";
+    case Lisp::Op::and_: return "and";
+    case Lisp::Op::or_: return "or";
+    case Lisp::Op::not_: return "not";
+
     case Lisp::Op::var: return "var";
     case Lisp::Op::assign: return "assign";
     case Lisp::Op::def: return "def";

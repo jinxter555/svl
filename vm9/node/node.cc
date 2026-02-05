@@ -186,6 +186,7 @@ unique_ptr<Node> Node::clone() const {
       is_same_v<T, string> || is_same_v<T, Lisp::Op> || is_same_v<T, ProcState> || is_same_v<T, ControlFlow>) {
       //return Node::create(Value(arg));
       auto node_ptr = create(arg);
+      node_ptr->type_ = type_;
       if(type_ == Type::Identifier) node_ptr->set_identifier();
       if(type_ == Type::Atom) node_ptr->set_atom();
       return node_ptr;

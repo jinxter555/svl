@@ -84,9 +84,9 @@ Node Node::operator>(const Node &other) const {
 
     if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
       if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs > rhs));
+        return Node(static_cast<Integer>(lhs)  > static_cast<Integer>(rhs), Type::Bool);
       else
-        return Node(static_cast<Float>(lhs) > static_cast<Float>(rhs));
+        return Node(static_cast<Float>(lhs) > static_cast<Float>(rhs), Type::Bool);
     } else {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for > op"});
     }
@@ -101,9 +101,9 @@ Node Node::operator<(const Node &other) const {
 
     if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
       if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs < rhs));
+        return Node(static_cast<Integer>(lhs) < static_cast<Integer>(rhs), Type::Bool);
       else
-        return Node(static_cast<Float>(lhs) < static_cast<Float>(rhs));
+        return Node(static_cast<Float>(lhs) < static_cast<Float>(rhs), Type::Bool);
     } else {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for < op"});
     }
@@ -118,15 +118,37 @@ Node Node::operator==(const Node &other) const {
 
     if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
       if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs == rhs));
+        return Node(static_cast<Integer>(lhs) == static_cast<Integer>(rhs), Type::Bool);
       else
-        return Node(static_cast<Float>(lhs) == static_cast<Float>(rhs));
+        return Node(static_cast<Float>(lhs) == static_cast<Float>(rhs), Type::Bool);
     } else {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for == op"});
     }
 
   }, value_, other.value_);
 }
+
+Node Node::operator!=(const Node &other) const {
+  return visit([&](auto&& lhs, auto&& rhs) -> Node {
+    using L = decay_t<decltype(lhs)>;
+    using R = decay_t<decltype(rhs)>;
+
+    if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
+      if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
+        return Node(static_cast<Integer>(lhs) != static_cast<Integer>(rhs), Type::Bool);
+      else
+        return Node(static_cast<Float>(lhs) != static_cast<Float>(rhs), Type::Bool);
+    } else {
+      return Node(Error{Error::Type::InvalidOperation, "Unsupported types for != op"});
+    }
+
+  }, value_, other.value_);
+}
+
+
+
+
+
 
 Node Node::operator<=(const Node &other) const {
   return visit([&](auto&& lhs, auto&& rhs) -> Node {
@@ -135,9 +157,9 @@ Node Node::operator<=(const Node &other) const {
 
     if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
       if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs <= rhs));
+        return Node(static_cast<Integer>(lhs) <= static_cast<Integer>(rhs), Type::Bool);
       else
-        return Node(static_cast<Float>(lhs) <= static_cast<Float>(rhs));
+        return Node(static_cast<Float>(lhs) <= static_cast<Float>(rhs), Type::Bool);
     } else {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for <= op"});
     }
@@ -152,12 +174,35 @@ Node Node::operator>=(const Node &other) const {
 
     if constexpr (is_arithmetic_v<L> &&  is_arithmetic_v<R>) {
       if constexpr (is_same_v<L, Integer> &&  is_same_v<R, Integer>)
-        return Node(static_cast<Integer>(lhs >= rhs));
+        return Node(static_cast<Integer>(lhs) >= static_cast<Integer>(rhs), Type::Bool);
       else
-        return Node(static_cast<Float>(lhs) >= static_cast<Float>(rhs));
+        return Node(static_cast<Float>(lhs) >= static_cast<Float>(rhs), Type::Bool);
     } else {
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for >= op"});
     }
 
   }, value_, other.value_);
+}
+
+
+// bools 
+
+Node Node::operator&&(const Node &other) const {
+  if(type_!= Type::Bool || other.type_ != Type::Bool)
+    return Node(Error{Error::Type::InvalidOperation, "not Bool type for && op"});
+  bool r = get<bool>(value_) && get<bool>(other.value_);
+  return Node(r, Type::Bool);
+}
+
+Node Node::operator||(const Node &other) const {
+  if(type_!= Type::Bool || other.type_ != Type::Bool)
+   return Node(Error{Error::Type::InvalidOperation, "not Bool type for || op"});
+  bool r = get<bool>(value_) || get<bool>(other.value_);
+  return Node(r, Type::Bool);
+}
+Node Node::operator!() const {
+  if(type_!= Type::Bool )
+   return Node(Error{Error::Type::InvalidOperation, "not Bool type for !(op)"});
+  bool r = get<bool>(value_) ;
+  return Node(!r, Type::Bool);
 }

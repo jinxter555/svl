@@ -221,6 +221,11 @@ public:
   Node operator >=(const Node& other) const;
   Node operator <=(const Node& other) const;
   Node operator ==(const Node& other) const;
+  Node operator !=(const Node& other) const;
+  //
+  Node operator &&(const Node& other) const;
+  Node operator ||(const Node& other) const;
+  Node operator !() const;
 
   OpStatus list_add() const;
   //OpStatus list_mul(size_t start=0) const;
