@@ -75,16 +75,13 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   MYLOGGER(trace_function, "LispExpr::build_program(const string&input)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
 
-  //cout << "preprocess token str:\n" <<  reader.tokenize_preprocess( input) << "\n\n";
-//  auto token_list = reader.tokenize(input); // list<Token> raw text tokens
   auto token_list = reader.tokenize( reader.tokenize_preprocess( input)); // list<Token> raw text tokens
-//  reader.tokenize_preprocess( input); // list<Token> raw text tokens
 
-  // parse tokens, to integers, floats, strings, identifiers, lisp::op_s etc..
-  // and returns Node::List 
+  Node::OpStatus op_status;
+
+  do{
   auto tokens_interpreted  = reader.parse(token_list);  
-  if(token_list.size() != 0) cout << "error parsing left over tokens! [" << token_list<< "]\n";
-  //cout << "endlist: " << _to_str_ext(reader.end_list);
+  //if(token_list.size() != 0) cout << "error parsing left over tokens! [" << token_list<< "]\n";
 
   if(!tokens_interpreted.first) {
     cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string:\n" << input  << "\n\n";
@@ -92,17 +89,19 @@ Node::OpStatus LispExpr::build_program(const string& input) {
     return  tokens_interpreted ;
   }
 
-  // builds the interpreter tree, as in modules and function hierarchy
   auto hierarchical_code_status =  parse(*tokens_interpreted.second); 
 
   if(!hierarchical_code_status.first) {
     cerr << "parse build interpreter error!" <<  hierarchical_code_status.second->_to_str() <<"\n";
     return hierarchical_code_status;
   }
+  op_status = attach_module(move(hierarchical_code_status.second));
+
+  } while(token_list.size()!=0) ;
+
 
   Node::Fun f;
   f = map_get_keys;
-  //auto f = map_get_keys;
 
   //attach_cc_fun("map_get_keys", map_get_keys);
   attach_cc_fun("Map", "keys", map_get_keys);
@@ -110,8 +109,8 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   attach_cc_fun("Map", "set", map_set_value);
   attach_cc_fun("Map", "del", map_del_key);
   attach_cc_fun("Map", "has", map_has_key);
-  return attach_module(move(hierarchical_code_status.second));
 
+  return op_status;
 }
 
 //------------------------------------------------------------------------

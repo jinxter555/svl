@@ -1,17 +1,197 @@
-hello, world
-hello, p55, 55
-x: 5555
-(x): 5555
-(y): 2
-
--5555--zzz-
-
-hello, p55, 55
-x: 55
-(x): 55
-(y): 2
-
--55--zzz-
-
-
-[?2004hloosh> ^C[?2004l
+hello, world1
+hello, world2
+Lisp Interpreter
+print recursive:
+{ (Map, size=1) 
+  - universe (Type: Map): { (Map, size=2) 
+   - Lang (Type: Map): { (Map, size=2) 
+    - CC (Type: Map): { (Map, size=1) 
+     - Module (Type: Map): { (Map, size=1) 
+      - Map (Type: Map): { (Map, size=1) 
+       - function (Type: Map): { (Map, size=5) 
+        - has (Type: Function): Fun*:
+        - del (Type: Function): Fun*:
+        - set (Type: Function): Fun*:
+        - get (Type: Function): Fun*:
+        - keys (Type: Function): Fun*:
+       }
+      }
+     }
+    }
+    - Lisp (Type: Map): { (Map, size=2) 
+     - Keyword (Type: Map): { (Map, size=64) 
+      - or (Type: LispOp): or
+      - not (Type: LispOp): not
+      - if (Type: LispOp): if
+      - = (Type: LispOp): assign
+      - mod (Type: LispOp): mod
+      - div (Type: LispOp): div
+      - map (Type: LispOp): map
+      - scalar (Type: LispOp): scalar
+      - funcall (Type: LispOp): funcall
+      - sub (Type: LispOp): sub
+      - readline (Type: LispOp): readline
+      - assign (Type: LispOp): assign
+      - and (Type: LispOp): and
+      - literal (Type: LispOp): literal
+      - list (Type: LispOp): list
+      - var (Type: LispOp): var
+      - deque (Type: LispOp): deque
+      - < (Type: LispOp): lt
+      - kernel (Type: LispOp): kernel
+      - alias (Type: LispOp): alias
+      - add (Type: LispOp): add
+      - def (Type: LispOp): def
+      - clone (Type: LispOp): clone
+      - repeat (Type: LispOp): repeat
+      - system (Type: LispOp): system
+      - ret (Type: LispOp): ret
+      - new (Type: LispOp): new
+      - cond (Type: LispOp): cond
+      - call (Type: LispOp): call
+      - error (Type: LispOp): error
+      - car (Type: LispOp): car
+      - mul (Type: LispOp): mul
+      - delete (Type: LispOp): delete
+      - private (Type: LispOp): private
+      - class (Type: LispOp): class
+      - identifier (Type: LispOp): identifier
+      - curry (Type: LispOp): curry
+      - pipe (Type: LispOp): pipe
+      - lambda (Type: LispOp): lambda
+      - eval (Type: LispOp): eval
+      - call_extern (Type: LispOp): call_extern
+      - while (Type: LispOp): while
+      - read (Type: LispOp): read
+      - send (Type: LispOp): send
+      - loop (Type: LispOp): loop
+      - noop (Type: LispOp): noop
+      - for (Type: LispOp): for
+      - do (Type: LispOp): do
+      - module (Type: LispOp): module
+      - cdr (Type: LispOp): cdr
+      - defun (Type: LispOp): defun
+      - defmacro (Type: LispOp): defmacro
+      - + (Type: LispOp): add
+      - - (Type: LispOp): sub
+      - * (Type: LispOp): mul
+      - print (Type: LispOp): print
+      - / (Type: LispOp): div
+      - vector (Type: LispOp): vector
+      - >= (Type: LispOp): gteq
+      - == (Type: LispOp): eq
+      - root (Type: LispOp): root
+      - % (Type: LispOp): mod
+      - > (Type: LispOp): gt
+      - <= (Type: LispOp): lteq
+     }
+     - Module (Type: Map): { (Map, size=2) 
+      - Main (Type: Map): { (Map, size=4) 
+       - name (Type: String): "Main"
+       - class (Type: Map): { (Map, size=0) 
+       }
+       - __object_info__ (Type: Map): { (Map, size=1) 
+        - type (Type: LispOp): module
+       }
+       - function (Type: Map): { (Map, size=1) 
+        - main2 (Type: Map): { (Map, size=6) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "main2"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=1) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, world2
+"
+         ]
+        ]
+         - description (Type: Identifier): "my_func_des"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+        ]
+        }
+       }
+      }
+      - Kernel (Type: Map): { (Map, size=4) 
+       - name (Type: String): "Kernel"
+       - class (Type: Map): { (Map, size=0) 
+       }
+       - __object_info__ (Type: Map): { (Map, size=1) 
+        - type (Type: LispOp): module
+       }
+       - function (Type: Map): { (Map, size=1) 
+        - main (Type: Map): { (Map, size=6) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "main"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=2) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, world1
+"
+         ]
+          - [1, Type: Vector]: Vector[(size=3) 
+           - [0, Type: Identifier]: "Main.main2"
+           - [1, Type: Integer]: 1
+           - [2, Type: Integer]: 2
+         ]
+        ]
+         - description (Type: Identifier): "my_func_des"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+        ]
+        }
+       }
+      }
+     }
+    }
+   }
+   - Process (Type: Vector): Vector[(size=2) 
+    - [0, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=1) 
+      - [0, Type: Map]: { (Map, size=3) 
+       - Pi (Type: Float): 3.14
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=2) 
+         - immute (Type: Map): { (Map, size=0) 
+         }
+         - var (Type: Map): { (Map, size=0) 
+         }
+        }
+      ]
+      }
+    ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 0
+    }
+    - [1, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=1) 
+      - [0, Type: Map]: { (Map, size=5) 
+       - pid (Type: Integer): 1
+       - args (Type: Map): { (Map, size=0) 
+       }
+       - current_function (Type: String): "Main"
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=2) 
+         - immute (Type: Map): { (Map, size=0) 
+         }
+         - var (Type: Map): { (Map, size=0) 
+         }
+        }
+      ]
+      }
+    ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 1
+    }
+  ]
+  }
+ }
