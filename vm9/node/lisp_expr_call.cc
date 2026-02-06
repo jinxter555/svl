@@ -1,6 +1,7 @@
 #include <iostream>
 #include "lisp_expr.hh"
 #include "my_helpers.hh"
+#include "defs.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -50,9 +51,6 @@ vector<string> LispExpr::extract_mf(Node& process, Node&node_mf) {
       list.push_back(Node::create(mf));
       return extract_mf(process, list);  // get module name from frame
     } else {
-      cout << "extract mf calling full name: " << _to_str_ext(mf_full_name) << "\n";
-      // need to check object ..
-
       return mf_full_name;
     }
   }
@@ -298,80 +296,77 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node::Vector& code_list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_node: ") + Node::_to_str( code_list) + " start:" + to_string(start), SLOG_FUNC_INFO+30);
 
-/*
-  if(code_list.size() != 3 && start !=0) {
-    cerr << "code list size! 3\n";
-    return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "Can't call module_function != (call (module function)(...))\n")};
+  const auto &mf_list_pair =  code_list[start];
+  auto mf_vector = extract_mf(process, *mf_list_pair); //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
 
-  }
- */ 
-  auto func_path = lisp_path_module;
-
-  const auto &mf_node_ptr=  code_list[start];
-
-
-  auto mf_vector = extract_mf(process, *mf_node_ptr); //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
-
-  auto  object_ref = symbol_lookup(process, mf_vector[0]); // this might be an object call?
+  // call object?
+  auto object_ref = symbol_lookup(process, mf_vector[0]); // this might be an object call?
   if(object_ref.first) {
-      cout << "call () function with object info:" << object_ref<< "\n";
+    const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
+    return call_object(process, object_ref.second, mf_vector[1], argv_vector);
   }
 
-
-
-  func_path.push_back(mf_vector[0]); // push module name
-
-
-  func_path.push_back(FUNCTION);    //  push module."function".
-  func_path.push_back(mf_vector[1]); // module."function".func_name
+  // module funtion call
+  auto fun_path = lisp_path_module;
+  fun_path.push_back(mf_vector[0]); // push module name
+  fun_path.push_back(FUNCTION);    //  push module."function".
+  fun_path.push_back(mf_vector[1]); // module."function".func_name
 
 
   try { // mod.fun ( arg1 arg2 arg3 ...)
     const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
-    return call(process, func_path, argv_vector);
+    return call(process, fun_path, argv_vector);
   } catch(...) {}
-  // mod.fun arg1 arg2 arg3 ...
 
+  // mod.fun arg1 arg2 arg3 ...
   const auto &argv_vector =  list_clone_remainder(code_list, start + 1);
-  return call(process, func_path, argv_vector);
+
+  return call(process, fun_path, argv_vector);
 
   return {false, Node::create()};
+}
+
+Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string method_name, const Node::Vector& argv_list) {
+  MYLOGGER(trace_function, "LispExpr::call_object(Node&process, const Node& fun, Node::vector&&argv_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "object: " + object._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "argv_list: " + Node::_to_str(argv_list), SLOG_FUNC_INFO+30);
+
+  try {
+    auto fun_ref_status
+    =object.get_node_with_ptr(OBJ_INFO)
+    .second.get_node_with_ptr(CLASS_PTR)
+    .second.get_node_with_ptr(FUNCTION);
+
+//    cout << "fun ref status :" << fun_ref_status << "\n";
+    auto  argvs_status = eval(process, argv_list, 0); // this returns a vector
+    if(!argvs_status.first) {
+      cerr << " call_object() error eval argv_list: " << Node::_to_str(argv_list) + argvs_status.second->_to_str() <<"\n";
+      return argvs_status;
+    }
+
+    auto object_uptr = Node::ptr_USU(object); // this object
+    argvs_status.second->push_front(move(object_uptr));
+    auto method_fun_ref = fun_ref_status.second.get_node(method_name);
+
+    if(!method_fun_ref.first) {
+      string msg = "send object message() method '" + method_name +  "' not found!";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::FunctionNotFound, msg)};
+    }
+
+    return call(process, method_fun_ref.second, move(argvs_status.second->_get_vector_ref()));
+
+
+  } catch(...) {
+      string msg = "call_object() calling not Not class object!";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::SymbolNotFound,  msg)};
+
+  }
+  return {true, Node::create()};
 
 }
 
-//------------------------------------------------------------------------
-// grab code from code
-Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vector) {
-  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& fun, Node::vector&&argv_vector)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "fun: " + fun._to_str(), SLOG_FUNC_INFO+30);
-  MYLOGGER_MSG(trace_function, "argv_vector: " + Node::_to_str(argv_vector), SLOG_FUNC_INFO+30);
-
-
-  auto frame_status = frame_create_fun_args(fun, move(argv_vector));
-  if(!frame_status.first) {
-    cerr << "call(process, fun, argv vector) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
-    return frame_status;
-  }
-
-  frame_push(process, move(frame_status.second));
-  auto scope = scope_create();
-  auto scope_status =  scope_push(process, move(scope));
-
-  auto code_list_status = fun.get_node(CODE);
-  if(!code_list_status.first) {
-    cerr << "call(process, fun, argv) error!" +  code_list_status.second._to_str() +"\n";
-    return {false, code_list_status.second.clone()};
-  }
-
-  //return eval(process, code_list_status.second);
-  auto evaled_status = eval(process, code_list_status.second);
-  frame_pop(process);
-  return evaled_status;
-
-
-
-}
 
 
 // call process, vector [ full path name ] [params]
@@ -401,6 +396,31 @@ Node::OpStatus LispExpr::call(Node& process, const vector<string>& path, const N
 
 }
 
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vector) {
+  MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& fun, Node::vector&&argv_vector)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "fun: " + fun._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "argv_vector: " + Node::_to_str(argv_vector), SLOG_FUNC_INFO+30);
+
+  auto frame_status = frame_create_fun_args(fun, move(argv_vector));
+  if(!frame_status.first) {
+    cerr << "call(process, fun, argv vector) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
+    return frame_status;
+  }
+  frame_push(process, move(frame_status.second));
+  auto scope = scope_create();
+  auto scope_status =  scope_push(process, move(scope));
+
+  auto code_list_status = fun.get_node(CODE);
+  if(!code_list_status.first) {
+    cerr << "call(process, fun, argv) error!" +  code_list_status.second._to_str() +"\n";
+    return {false, code_list_status.second.clone()};
+  }
+  //return eval(process, code_list_status.second);
+  auto evaled_status = eval(process, code_list_status.second);
+  frame_pop(process);
+  return evaled_status;
+}
 
 
 //------------------------------------------------------------------------ funcall var
