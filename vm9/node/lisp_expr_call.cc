@@ -51,7 +51,8 @@ vector<string> LispExpr::extract_mf(Node& process, Node&node_mf) {
       return extract_mf(process, list);  // get module name from frame
     } else {
       cout << "extract mf calling full name: " << _to_str_ext(mf_full_name) << "\n";
-      // need to check object 
+      // need to check object ..
+
       return mf_full_name;
     }
   }
@@ -307,12 +308,21 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
  */ 
   auto func_path = lisp_path_module;
 
- const auto &mf_node_ptr=  code_list[start];
-  auto mf_vector = extract_mf(process, *mf_node_ptr);
-  //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
+  const auto &mf_node_ptr=  code_list[start];
+
+
+  auto mf_vector = extract_mf(process, *mf_node_ptr); //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
+
+  auto  object_ref = symbol_lookup(process, mf_vector[0]); // this might be an object call?
+  if(object_ref.first) {
+      cout << "call () function with object info:" << object_ref<< "\n";
+  }
+
 
 
   func_path.push_back(mf_vector[0]); // push module name
+
+
   func_path.push_back(FUNCTION);    //  push module."function".
   func_path.push_back(mf_vector[1]); // module."function".func_name
 

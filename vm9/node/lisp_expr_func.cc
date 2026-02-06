@@ -200,8 +200,19 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
   //cout << "class_ptr " << class_ptr << "\n";
 
   //auto method_name = atom_to_str(list[start+1]->_get_integer()).second._to_str();
-  auto method_name = atom_to_str(list[start+1]->_get_integer());
-  auto argv_list = eval(process, list, start+1); // this returns a vector
+  auto method_eval_status = eval(process, *list[start+1]);
+  if(!method_eval_status.first) {
+    cerr << "send object message() error with method name!\n";
+    return {false, Node::create_error(Error::Type::Parse, "send object message() error with method name")};
+  }
+
+  auto method_name = atom_to_str(method_eval_status.second->_get_integer());
+  auto argv_list = eval(process, list, start+1); // start+1 gets replace with this pointer. this returns a vector
+  if(!argv_list.first){
+    cerr << "send object message() argument eval failed !\n";
+    return {false, Node::create_error(Error::Type::Parse, "send object message() argument eval failed !")};
+  }
+
 
  // cout << "method_name: " <<  method_name << "\n";
  // cout << "1 argv_list: " <<  argv_list<< "\n";
@@ -210,9 +221,14 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
 
 
 
-  auto method_fun = fun_ref_status.second.get_node(method_name);
+  auto method_fun_ref = fun_ref_status.second.get_node(method_name);
+  if(!method_fun_ref.first) {
+    string msg = "send object message() method '" + method_name +  "' not found!";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::FunctionNotFound, msg)};
+  }
 
-  return call(process, method_fun.second, move(argv_list.second->_get_vector_ref()));
+  return call(process, method_fun_ref.second, move(argv_list.second->_get_vector_ref()));
 
 }
 
