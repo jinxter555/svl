@@ -195,11 +195,7 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
     return {false, fun_ref_status.second.clone()};
   }
 
-  //cout << "object : type" << Node::_to_str( object.type_) << "\n";
-  //cout << "object_ptr : type" << Node::_to_str( object_ptr->type_) << "\n";
-  //cout << "class_ptr " << class_ptr << "\n";
 
-  //auto method_name = atom_to_str(list[start+1]->_get_integer()).second._to_str();
   auto method_eval_status = eval(process, *list[start+1]);
   if(!method_eval_status.first) {
     cerr << "send object message() error with method name!\n";
@@ -213,13 +209,7 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
     return {false, Node::create_error(Error::Type::Parse, "send object message() argument eval failed !")};
   }
 
-
- // cout << "method_name: " <<  method_name << "\n";
- // cout << "1 argv_list: " <<  argv_list<< "\n";
-
   argv_list.second->set(0, move(object_uptr)); // 0, was the :method name, and change it to object ptr 
-
-
 
   auto method_fun_ref = fun_ref_status.second.get_node(method_name);
   if(!method_fun_ref.first) {

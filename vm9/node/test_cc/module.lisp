@@ -5,3 +5,10 @@
     )
   )
 )
+(module Main 
+  (defun main2 (x y) my_func_des
+    (
+    (print "hello, world2\n")
+    )
+  )
+)

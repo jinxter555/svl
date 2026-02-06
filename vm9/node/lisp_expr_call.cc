@@ -8,29 +8,6 @@
 
 
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-// helper function 
-// (call (module function) (arg1 arg2 arg3))
-// returns a full path of [universe prefix, ..., module function,  code]
-/*
-vector<string> LispExpr::node_mf_to_path(Node&node_mf,  const vector<string> prefix) {
-  MYLOGGER(trace_function, "LispExpr::node_mf_to_path(Node&process, const Node& code_list)", __func__, SLOG_FUNC_INFO);
-  //MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
-
-  vector<string> path = prefix;
-  if(node_mf.type_ != Node::Type::Vector)
-    return {};
-  
-  auto m = node_mf[0].second._to_str();
-  path.push_back(m);
-  path.push_back(FUNCTION);
-  auto f = node_mf[1].second._to_str();
-  path.push_back(f);
-  return path;
-}
-*/
-
 // (call (module function) (arg1 arg2 arg3))
 //       (module function )
 // (identifer (x y z ...))
@@ -299,10 +276,15 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   const auto &mf_list_pair =  code_list[start];
   auto mf_vector = extract_mf(process, *mf_list_pair); //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
 
+  // might need to fix this later on because it might be inconsistent but less parethesis
   // call object?
   auto object_ref = symbol_lookup(process, mf_vector[0]); // this might be an object call?
   if(object_ref.first) {
-    const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
+    try {
+      const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
+      return call_object(process, object_ref.second, mf_vector[1], argv_vector);
+    } catch(...) {}
+    const auto &argv_vector =  list_clone_remainder(code_list, start + 1);
     return call_object(process, object_ref.second, mf_vector[1], argv_vector);
   }
 
