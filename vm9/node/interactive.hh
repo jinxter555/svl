@@ -24,7 +24,8 @@ public:
   Node::OpStatus load(const std::string &filename) override; // load files from command line
   void reload(const string &filename); // reload file
 
-  Node::OpStatus build_program(const string& input); // create module structure 
+  Node::OpStatus build_program(); // create module structure 
+  Node::OpStatus build_file_str(const string& input); // create module structure 
   void run_program(const std::string &l="") override;
 
 

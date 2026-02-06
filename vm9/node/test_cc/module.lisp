@@ -3,6 +3,9 @@
     (
       (print "hello, world1\n")
       (Main.main 1 2)
+      loop
+        print (eval (read)) "\n"
+      end.loop
     )
   )
 )
@@ -18,6 +21,6 @@
 module Hello
   def p ()
    print "Hola, world\n"
-   Main.main 1 2
+   ;Main.main 1 2
   end.def
 end.module

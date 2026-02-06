@@ -1,5 +1,8 @@
 hello, world1
-hello, world2
+x: 1, y: 2
+wie ghets dir!
+[?2004hloosh> exit
+[?2004l
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -94,20 +97,28 @@ print recursive:
         - type (Type: LispOp): module
        }
        - function (Type: Map): { (Map, size=1) 
-        - main2 (Type: Map): { (Map, size=6) 
+        - main (Type: Map): { (Map, size=5) 
          - module_ptr (Type: RawPtr): ==*ptr==
-         - name (Type: String): "main2"
+         - name (Type: String): "main"
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): defun
          }
-         - code (Type: Vector): Vector[(size=1) 
-          - [0, Type: Vector]: Vector[(size=2) 
+         - code (Type: Vector): Vector[(size=2) 
+          - [0, Type: Vector]: Vector[(size=6) 
            - [0, Type: LispOp]: print
-           - [1, Type: String]: "hello, world2
+           - [1, Type: String]: "x: "
+           - [2, Type: Identifier]: "x"
+           - [3, Type: String]: ", y: "
+           - [4, Type: Identifier]: "y"
+           - [5, Type: String]: "
+"
+         ]
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "wie ghets dir!
 "
          ]
         ]
-         - description (Type: Identifier): "my_func_des"
          - params (Type: Vector): Vector[(size=2) 
           - [0, Type: Identifier]: "x"
           - [1, Type: Identifier]: "y"
@@ -129,16 +140,30 @@ print recursive:
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): defun
          }
-         - code (Type: Vector): Vector[(size=2) 
+         - code (Type: Vector): Vector[(size=3) 
           - [0, Type: Vector]: Vector[(size=2) 
            - [0, Type: LispOp]: print
            - [1, Type: String]: "hello, world1
 "
          ]
           - [1, Type: Vector]: Vector[(size=3) 
-           - [0, Type: Identifier]: "Main.main2"
+           - [0, Type: Identifier]: "Main.main"
            - [1, Type: Integer]: 1
            - [2, Type: Integer]: 2
+         ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: loop
+           - [1, Type: Vector]: Vector[(size=3) 
+            - [0, Type: LispOp]: print
+            - [1, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: eval
+             - [1, Type: Vector]: Vector[(size=1) 
+              - [0, Type: LispOp]: read
+            ]
+           ]
+            - [2, Type: String]: "
+"
+          ]
          ]
         ]
          - description (Type: Identifier): "my_func_des"

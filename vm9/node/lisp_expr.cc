@@ -71,7 +71,7 @@ Node::OpStatus LispExpr::get_process() {
 extern ostream& operator<<(ostream& os, list<Token>& l) ;
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::build_program(const string& input) { 
+Node::OpStatus LispExpr::build_file_str(const string& input) { 
   MYLOGGER(trace_function, "LispExpr::build_program(const string&input)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("input: ") + input, SLOG_FUNC_INFO+30);
 
@@ -80,26 +80,30 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   Node::OpStatus op_status;
 
   do{
-  auto tokens_interpreted  = reader.parse(token_list);  
-  //if(token_list.size() != 0) cout << "error parsing left over tokens! [" << token_list<< "]\n";
-
-  if(!tokens_interpreted.first) {
-    cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string:\n" << input  << "\n\n";
-    cerr << "error: " <<  *tokens_interpreted .second << "\n";
-    return  tokens_interpreted ;
-  }
-
-  auto hierarchical_code_status =  parse(*tokens_interpreted.second); 
-
-  if(!hierarchical_code_status.first) {
-    cerr << "parse build interpreter error!" <<  hierarchical_code_status.second->_to_str() <<"\n";
-    return hierarchical_code_status;
-  }
-  op_status = attach_module(move(hierarchical_code_status.second));
+    auto tokens_interpreted  = reader.parse(token_list);  
+    //if(token_list.size() != 0) cout << "error parsing left over tokens! [" << token_list<< "]\n";
+  
+    if(!tokens_interpreted.first) {
+      cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string:\n" << input  << "\n\n";
+      cerr << "error: " <<  *tokens_interpreted .second << "\n";
+      return  tokens_interpreted ;
+    }
+  
+    auto hierarchical_code_status =  parse(*tokens_interpreted.second); 
+  
+    if(!hierarchical_code_status.first) {
+      cerr << "parse build interpreter error!" <<  hierarchical_code_status.second->_to_str() <<"\n";
+      return hierarchical_code_status;
+    }
+    op_status = attach_module(move(hierarchical_code_status.second));
 
   } while(token_list.size()!=0) ;
 
 
+  return op_status;
+}
+
+void LispExpr::attach_cc_extern() {
   Node::Fun f;
   f = map_get_keys;
 
@@ -110,7 +114,6 @@ Node::OpStatus LispExpr::build_program(const string& input) {
   attach_cc_fun("Map", "del", map_del_key);
   attach_cc_fun("Map", "has", map_has_key);
 
-  return op_status;
 }
 
 //------------------------------------------------------------------------
@@ -241,6 +244,14 @@ Node::OpStatusRef LispExpr::scope_current(Node&process)  {
 }
 
 
+//------------------------------------------------------------------------
+// post process  after all lisp files all loaded
+//
+Node::OpStatus LispExpr::build_program() { 
+  MYLOGGER(trace_function, "LispExpr::build_program()", __func__, SLOG_FUNC_INFO);
+  attach_cc_extern();
+  return {true, Node::create()};
+}
 
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::run_program() { 

@@ -106,10 +106,18 @@ void Interactive::run_program(const std::string &l) {
   lang.run_program();
 
 }
-Node::OpStatus Interactive::build_program(const std::string &source) {
+Node::OpStatus Interactive::build_program() {
   MYLOGGER(trace_function , "Interactive::build_program()" , __func__, SLOG_FUNC_INFO);
-  return lang.build_program(source);
+  return lang.build_program();
 }
+
+Node::OpStatus Interactive::build_file_str(const std::string &source) {
+  MYLOGGER(trace_function , "Interactive::build_program()" , __func__, SLOG_FUNC_INFO);
+  auto op_status = lang.build_file_str(source);
+  return op_status;
+}
+
+
 void Interactive::print() {
   MYLOGGER(trace_function , "Interactive::print()" ,  __CLASS_NAME__ + "::" +  __func__, SLOG_FUNC_INFO);
   lang.print();

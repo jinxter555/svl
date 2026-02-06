@@ -68,10 +68,12 @@ void Commandline::printout() {
 }
 
 void Commandline::run(Interactive* interactive) {
-
   if(opt_file){
     load_files(interactive, infile_name);
   }
+
+  interactive->build_program(); // LispExpr post process
+
   if(opt_run) {
     interactive->run_program();
   }
@@ -79,7 +81,6 @@ void Commandline::run(Interactive* interactive) {
     cout << "interact with interactive lang!\n";
     interactive->ready();
   }
-  // tree structure print after build and run to show frames
   if(opt_print) interactive->print();
 }
 
@@ -93,22 +94,16 @@ void Commandline::load_files(Interactive *interactive, const string& file_str) {
       exit(1); 
     }
 
-    //Node::print_value_recursive(*load_status.second); cout << "\n";
-
     auto source_status = (*load_status.second)["source_str"];
     if(!source_status.first) {
       cerr << "map source[] status error" << source_status << "\n";
       return;
     }
-    //cout << "getstr:" << source_status.second->_get_str() << "\n";
-    auto build_status  = interactive->build_program( source_status.second._get_str());
+    auto build_status  = interactive->build_file_str( source_status.second._get_str());
     if(!build_status.first) {
-      cerr << "build error status error: " << build_status << "\n";
+      cerr << "lang build file str()  error status error: " << build_status << "\n";
       exit(1);
-      //return ;
     }
-
-    //interactive->print();
-
   }
+
 }

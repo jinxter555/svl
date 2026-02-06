@@ -76,10 +76,14 @@ public:
   //LispExpr(Node::Value v) : Tree() {}
   //LispExpr(vector<Node::ValueSimple> v) : Tree() {}
   
-  Node::OpStatus build_program(const string& input); // create module structure 
   Node::OpStatus run_program(); // create module structure 
+  Node::OpStatus build_program(); // create module structure 
+  Node::OpStatus build_file_str(const string& input); // create module structure 
 
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
+
+  void attach_cc_extern();
+
   Node::OpStatus attach_cc_fun(const string&name, const Node::Fun& f);// create module structure 
   Node::OpStatus attach_cc_fun(const string&name_mod, const string&name_fun, const Node::Fun& f);// create module structure 
   Node::OpStatus attach_cc_fun(const vector<string>&name, const Node::Fun& f);// 

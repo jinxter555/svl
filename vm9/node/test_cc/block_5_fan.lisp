@@ -12,6 +12,8 @@ infi
   end.class
 
   def main (x y)
+    (type {main :int,  x:string y: :string})
+
     print "hello, world\n"
     assign m1 (new Map)
     assign method1 (:Map)
