@@ -48,4 +48,21 @@
     8
   end.def
 
+  def l2 ()
+    7 9
+  end.def
+
+  def l3 ()
+    1 2 3
+    4 5 6 7 
+
+    8 9
+  end.def
+
+  def l4 ()
+    print 
+    print 
+    print 
+  end.def
+
 )

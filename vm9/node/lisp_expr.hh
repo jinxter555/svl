@@ -203,6 +203,9 @@ public:
   //
   Node::OpStatus closure_create(Node&process, const Node::Vector &list, size_t start=0);
   
+  Node::OpStatus literal(const Node::Vector &list, size_t start=0);
+  Node::OpStatus quote(const Node::Vector &list, size_t start=0);
+  Node::OpStatus unquote(const Node::Vector &list, size_t start=0);
 
   //
   Node::OpStatus build_parsed_def(Node::List& list);
@@ -214,10 +217,15 @@ public:
   template <typename T>
   Node::OpStatus builtin_add(Node& process, const T& list);
   template <typename T>
-  Node::OpStatus builtin_print(Node& process, const T& list);
+  Node::OpStatus builtin_sub(Node& process, const T& list);
+  template <typename T>
+  Node::OpStatus builtin_mul(Node& process, const T& list);
+  template <typename T>
+  Node::OpStatus builtin_div(Node& process, const T& list);
+
+
   template <typename T>
   Node::OpStatus builtin_print_n(Node& process, const T& list, size_t start=0);
 
-  Node::OpStatus literal(const Node::Vector &list, size_t start=0);
 
 };
