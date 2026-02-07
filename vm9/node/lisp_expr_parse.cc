@@ -352,26 +352,6 @@ Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
   return {true, Node::create()};
 
 }
-
-//------------------------------------------------------------------------
-//Node::OpStatus LispExpr::builtin_add(Node &env, const Node::List& list, size_t start) {
-template <typename T>
-Node::OpStatus LispExpr::builtin_add(Node& env, const T& list) {
-  unique_ptr<Node> result = make_unique<Node>(0);
-  if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
-    for(auto& element : list) { 
-      if(element.first) {
-        auto& ev = element.second->eval(env);
-        if(ev.first) *result = *result + *ev.second;
-      }
-    }
-    return {false, move(result)};
-  } else {
-    return {false, Node::create()};
-  }
-}
-
-
 //------------------------------------------------------------------------
 // attach module to 'Lisp' Language tree
 //

@@ -37,8 +37,15 @@
       (print "\n")
     )
   )
+
   defmacro mymac ()
     assign x 1
     print "my mac1\n"
   end.defmacro
+
+  def l1 ()
+    5
+    8
+  end.def
+
 )

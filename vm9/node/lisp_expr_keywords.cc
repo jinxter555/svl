@@ -20,6 +20,8 @@ void LispExpr::set_keywords() {
   map_->set("identifier", Op::identifier);
   map_->set("scalar", Op::scalar);
   map_->set("literal", Op::literal);
+  map_->set("quote", Op::quote);
+  map_->set("unquote", Op::unquote);
   map_->set("list", Op::list);
   map_->set("vector", Op::vector);
   map_->set("deque", Op::deque);

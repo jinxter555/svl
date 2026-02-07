@@ -6,6 +6,7 @@ Node::OpStatus LispExpr::eval_math(Node& process, const Lisp::Op op_head, const 
 
   switch(op_head){
   case Lisp::Op::add:   {
+    /*
     cout << "add!!!"  <<  Node::_to_str(code_list) << "size : " << code_list.size() << " start:"  << start << "\n";
     if(code_list.size() < 3) {
       cerr << "error add :\n";
@@ -22,7 +23,10 @@ Node::OpStatus LispExpr::eval_math(Node& process, const Lisp::Op op_head, const 
       return  second_status;
     }
     auto result = *(first_status.second) + *(second_status.second);
-    return {true, result.clone()};
+*/
+    auto add_list = list_clone_remainder(code_list, start);
+    return builtin_add(process, add_list);
+    //return {true, result.clone()};
   }
 
   case Lisp::Op::mul:   {
@@ -162,3 +166,27 @@ Node::OpStatus LispExpr::eval_math(Node& process, const Lisp::Op op_head, const 
   return {false, Node::create_error(Error::Type::Unknown, "Unknown Lisp::Op command")};
 
 }
+
+//------------------------------------------------------------------------
+//Node::OpStatus LispExpr::builtin_add(Node &env, const Node::List& list, size_t start) {
+template <typename T>
+Node::OpStatus LispExpr::builtin_add(Node& process, const T& list) {
+  unique_ptr<Node> result = make_unique<Node>(0);
+  if constexpr (is_same_v<T, Node::Vector> || is_same_v<T, Node::DeQue>||  is_same_v<T, Node::List>) {
+    for(auto& element : list) { 
+      auto ev_status = eval(process, *element);
+
+      if(!ev_status.first) {
+          cerr << "builtin_add eval() error: " << ev_status.second->_to_str() << "\n";
+          return ev_status;
+      }
+      if(ev_status.first) *result = *result + *ev_status.second;
+    }
+    return {true, move(result)};
+
+  } 
+
+  return {false, Node::create()};
+}
+
+

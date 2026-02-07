@@ -160,7 +160,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     auto name = get<string>(code_node.value_);
     auto rv_ref_status = symbol_lookup(process, name  );
     if(!rv_ref_status.first) {
-      cerr << "Identifier: " << name << " not found!" << rv_ref_status.second._to_str() << "\n";
+      cerr << "Identifier: '" << name << "' not found!" << rv_ref_status.second._to_str() << "\n";
       return {false, rv_ref_status.second.clone()};
     }
     if(rv_ref_status.second.type_ == Node::Type::Shared) 
