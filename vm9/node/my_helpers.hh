@@ -25,4 +25,6 @@ string  _to_str_ext(const vector<string>& keys) ;
 string  _to_str_ext(const list<string>& keys) ;
 string  _to_str_ext(const deque<string>& keys) ;
 
+string join_str(const vector<std::string>& elements, const string& delimiter=" ");
+
 #define __CLASS_NAME__ extractClassName(__PRETTY_FUNCTION__)

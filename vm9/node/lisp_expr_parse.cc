@@ -46,8 +46,8 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
       return build_parsed_vector(list);}
     case Lisp::Op::def: { return build_parsed_def(list); }
-    case Lisp::Op::defun: {
-      return build_parsed_fun(list); }
+    case Lisp::Op::defun: { return build_parsed_fun(list); }
+    case Lisp::Op::defmacro: { return build_parsed_macro(list); }
     case Lisp::Op::module: {
       return build_parsed_module(list); }
     case Lisp::Op::class_: { //cout << "class build!\n";
@@ -111,6 +111,7 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
 
 }
 
+
 //-------------------------------- parse fun
 // (def name (param_list) (code list))
 // def fun (x,y) ... end.def
@@ -120,10 +121,10 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_def(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
-
   string name;
-
   Node::Map fun={}; 
+  if(list.empty()) return {false, Node::create_error(Error::Type::Parse, "def empty list to get fun name.")};
+
   name = list.front()->_to_str();
   //try { name = get<string>(list.front()->value_); } catch(...) { return {false, Node::create_error(Error::Type::Parse, "(defun) name string error.")}; }
   
@@ -154,6 +155,43 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
   return {true, Node::create(move(fun))};
 }
 
+//-------------------------------- parse macro
+// (defmacro (param_list) (code list))
+// def fun (x,y) ... end.def
+// return map as function
+// return -> fun_name -> {code,params,object_info}
+
+Node::OpStatus LispExpr::build_parsed_macro(Node::List& cclist) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_def(Node::List& cclist)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, "list: " + Node::_to_str(cclist), SLOG_FUNC_INFO+30)
+
+  string name;
+
+  Node::Map macro={}; 
+  if(cclist.empty()) return {false, Node::create_error(Error::Type::Parse, "defmacro empty cclist to get macro name.")};
+  name = cclist.front()->_to_str();
+
+  cclist.pop_front(); // function name
+
+  {// Parameter block
+  auto status =  build_parsed_vector(*cclist.front()); 
+  if(!status.first) return status;
+  macro[_PARAMS] = move(status.second); cclist.pop_front();
+  }
+
+  {
+  auto status=  build_parsed_vector(cclist); 
+  if(!status.first) return status;
+  macro[CODE] = move(status.second); 
+  if(!cclist.empty()) cclist.pop_front();
+  }
+
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+  obj_info->set(TYPE,  Node::create(Lisp::Type::defmacro));
+  macro[OBJ_INFO] = move(obj_info);
+  macro["name"] = Node::create(name);
+  return {true, Node::create(move(macro))};
+}
 
 
 
@@ -168,6 +206,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
 
   auto module_functions=make_unique<Node>(Node::Type::Map);
   auto module_classes=make_unique<Node>(Node::Type::Map);
+  auto module_macros=make_unique<Node>(Node::Type::Map);
   auto module_node=make_unique<Node>(Node::Type::Map);
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
@@ -187,6 +226,13 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
       module_functions->set(fun_name, move(status.second));
       continue;
     }
+    case Lisp::Type::defmacro: {
+      auto mac_name = (*status.second)["name"].second._to_str();
+      //status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault when print recursive// get raw pointer from 
+      module_macros->set(mac_name, move(status.second));
+      continue;
+    }
+
     case Lisp::Type::class_: {
       auto class_name = (*status.second)["name"].second._to_str();
       //cout << "class name: " << class_name << "\n";
@@ -196,6 +242,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
     default: { }}
   }
   module_node->set(FUNCTION, move(module_functions));
+  module_node->set(MACRO, move(module_macros));
   module_node->set(_CLASS, move(module_classes));
   module_node->set(OBJ_INFO, move(obj_info));
   module_node->set(NAME, module_name);

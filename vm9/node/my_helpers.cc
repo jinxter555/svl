@@ -227,3 +227,15 @@ string  _to_str_ext(const list<string>& keys) {
   return v+keys.back()+"]";
 }
 
+
+
+string join_str(const vector<std::string>& elements, const string& delimiter) {
+    stringstream ss;
+    for (size_t i = 0; i < elements.size(); ++i) {
+        ss << elements[i];
+        if (i < elements.size() - 1) {
+            ss << delimiter;
+        }
+    }
+    return ss.str();
+}

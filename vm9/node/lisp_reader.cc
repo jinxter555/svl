@@ -161,8 +161,8 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
   string token_str;
   auto endable = tokens.front().value_ ;
 
-  while(tokens.front().value_ != ")" 
-  && !is_endable( tokens.front().value_)   ) {
+  while(tokens.front().value_ != ")" ) {
+
 
     auto token_status = parse(tokens); //if(first_loop_run && token.value_!= "(") {
 
@@ -291,19 +291,14 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   }*/
 
   // liis_closurable as in begin{}end
+  /*
   if(is_closurable(token.value_) && token_previous.value_ != "(") { 
-    // add (closure identifier ) -> tokens
-///*
-  //  cout << "is_closurable! token: '" <<  token << "', token_previous: '" << token_previous << "' \n";
     tokens.push_front(token);
-  //  cout << "tokens: " <<  tokens << "\n";
     end_list.push_back(token.value_); 
     token_previous.value_ = "(";
     return parse_sequence(tokens);
-
-//*/
   }
-
+*/
 
 
   // lisp identifier 
@@ -326,6 +321,7 @@ string LispReader::tokenize_preprocess(const string& input) {
     tokenize_preprocess_multiline_parenthesis(
       tokenize_preprocess_multiline(input));
   //cout << "after putting ():\n" << input_paren <<"\n\n";
+
   return input_paren;
 }
 
@@ -374,6 +370,7 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     auto line = trim(line_current);
 
 
+
     // ignore all comments
     size_t comment_pos = line.find(";");
     if (comment_pos != std::string::npos) {
@@ -385,12 +382,24 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
 
     if(line_vector.front() == ";") continue;
 
+    if(is_closurable(line_vector.front())) {
+      //cout << "line is closurable " <<  line_vector[0] <<  " " <<line_vector.back() << "\n";
+      line_result += "(" + join_str(line_vector) + "\n";
+      end_list.push_back(line_vector[0]); 
+      continue;
+    }
+    if(is_endable( line_vector.back()) )  {
+      line_result += ")\n";
+      continue;
+    }
+
+
+    /*
     if(is_closurable(line_vector.front()) || is_endable(line_vector.back()) )  {
       line_result += line + "\n";
       continue;
     }
 
-    /*
     if(line.front() == '(' && line.back() ==')'){ // ( blah blah blah )
       line_result += line + "\n";
     } else if(line.front() != '('  && line.back() == ')') { // fx(123)
@@ -456,6 +465,7 @@ bool LispReader::is_closurable(Lisp::Op op) {
   case Lisp::Op::if_:
   case Lisp::Op::def:
   case Lisp::Op::defun:
+  case Lisp::Op::defmacro:
   case Lisp::Op::pipe:
   case Lisp::Op::curry:
   case Lisp::Op::eval:

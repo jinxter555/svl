@@ -83,6 +83,8 @@ Node::OpStatus LispExpr::build_file_str(const string& input) {
     auto tokens_interpreted  = reader.parse(token_list);  
     //if(token_list.size() != 0) cout << "error parsing left over tokens! [" << token_list<< "]\n";
   
+//    cout << "reader.endlist: " << _to_str_ext(reader.end_list) << "\n";
+
     if(!tokens_interpreted.first) {
       cerr << "building_program: Reader.tokenize() and Reader.parser(): parse error for input string:\n" << input  << "\n\n";
       cerr << "error: " <<  *tokens_interpreted .second << "\n";

@@ -636,11 +636,11 @@ void Node::print_value_recursive(const Node& node, int depth) {
     } else if constexpr (is_same_v<T, List>) {
       cout << "List["; 
       for(auto &e : arg) cout << *e <<","; 
-      cout << "]";
+      cout << " ]";
     } else if constexpr (is_same_v<T, DeQue>) {
       cout << "DeQue["; 
       for(auto &e : arg) cout << *e <<","; 
-      cout << "]";
+      cout << " ]";
     } 
     else if constexpr (is_same_v<T, Vector>) {
       cout << "Vector[(size=" << arg.size() << ") " << endl;
@@ -651,7 +651,7 @@ void Node::print_value_recursive(const Node& node, int depth) {
         cout << "\n";
       }
       indent(); 
-      cout << "]";
+      cout << " ]";
     } else if constexpr (is_same_v<T, Map>) {
       cout << "{ (Map, size=" << arg.size() << ") " << endl;
       for(const auto&[key, child_ptr] : arg) {

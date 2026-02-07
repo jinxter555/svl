@@ -21,6 +21,7 @@
 #define CURRENT_MODULE_PTR "current_module_ptr"
 
 #define FUNCTION "function"
+#define MACRO "macro"
 
 #define CURRENT_FUNCTION "current_function"
 #define CURRENT_FUNCTION_PTR "current_function_ptr"

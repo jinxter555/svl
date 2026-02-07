@@ -174,10 +174,11 @@ public:
   Node::OpStatus build_parsed_deque(Node::List& list);
   Node::OpStatus build_parsed_map(Node::List& list); // ((k1 v1)(k2 v2)...)
 
-  Node::OpStatus build_parsed_fun(Node::List& list); // (fun_name (param_list)(code list))
-  Node::OpStatus build_parsed_module(Node::List& list); // (fun_name (param_list)(code list))
-  Node::OpStatus build_parsed_class(Node::List& list); // (fun_name (param_list)(code list))
-  Node::OpStatus build_parsed_root(Node::List& list); // (fun_name (param_list)(code list))
+  Node::OpStatus build_parsed_fun(Node::List& cc_list); // (fun_name (param_list)(code list))
+  Node::OpStatus build_parsed_macro(Node::List& cc_list); // (fun_name (param_list)(code list))
+  Node::OpStatus build_parsed_module(Node::List& cclist); // (fun_name (param_list)(code list))
+  Node::OpStatus build_parsed_class(Node::List& cclist); // (fun_name (param_list)(code list))
+  Node::OpStatus build_parsed_root(Node::List& cclist); // (fun_name (param_list)(code list))
   //Node::OpStatus build_parsed_func(Node::List& list) ;
 
 
