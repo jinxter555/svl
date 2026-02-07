@@ -4,8 +4,10 @@
     print (literal (eval 456)) "\n"
     (print '(eval 123 456) "\n")
     print "\n"
+
     loop
       print (eval (read)) "\n"
     end.loop
+
   end.def
 )

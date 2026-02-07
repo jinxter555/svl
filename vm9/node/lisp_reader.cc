@@ -389,6 +389,17 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
       continue;
     }
     if(is_endable( line_vector.back()) )  {
+      auto line_back_vector = split_string(line_vector.back(), ".");
+      auto back = end_list.back();
+
+      if(back != line_back_vector.back()) {
+        cout << "endlist " << _to_str_ext(end_list) << "\n";
+        cout << "error with parsing closing token! '" << back <<"' \n";
+        exit(1);
+      }  
+      end_list.pop_back();
+
+
       line_result += ")\n";
       continue;
     }
