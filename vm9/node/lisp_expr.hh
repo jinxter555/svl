@@ -155,7 +155,10 @@ public:
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const vector<string>& path, const Node::Vector& argv_list); // 
 
+  Node::OpStatus call_macro(Node& process, const vector<string>&path , const Node::Vector& argv_list);
+
   Node::OpStatus call(Node& process, Node& fun, Node::Vector&& params);
+
 
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args
   Node::OpStatus call_lambda(Node& process, const Node::Map & obj_lambda, Node::Vector&& args); // call creates new scope and push args to scope immute
@@ -204,8 +207,8 @@ public:
   Node::OpStatus closure_create(Node&process, const Node::Vector &list, size_t start=0);
   
   Node::OpStatus literal(const Node::Vector &list, size_t start=0);
-  Node::OpStatus quote(const Node::Vector &list, size_t start=0);
-  Node::OpStatus unquote(const Node::Vector &list, size_t start=0);
+  Node::OpStatus quote(Node&process, Node::Vector &list, size_t start=0);
+  Node::OpStatus unquote(Node&process, const Node::Vector &list, size_t start=0);
 
   //
   Node::OpStatus build_parsed_def(Node::List& list);

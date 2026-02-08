@@ -70,7 +70,7 @@ string Node::_to_str() const {
   MYLOGGER_MSG(trace_function, string("type: ") + _to_str(type_), SLOG_TO_STR+30);
 
   switch(type_) {
-    case Type::Null: return "Null";
+    case Type::Null: return "nil";
     case Type::Bool: {
       bool b = get<bool>(value_);
       if(b== true) return "true";

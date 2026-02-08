@@ -2,6 +2,13 @@
   (defun main (x y) "my func des" 
     (
       (var (x "xxx"))
+
+      print 1 \
+      2 \
+      3 \
+      4 \
+      5
+
       (print "hello, world\n")
       (call (Kernel p55) (5555 2))
       (print "\n")
@@ -38,8 +45,8 @@
     )
   )
 
-  defmacro mymac ()
-    assign x 1
+  defmacro mymac (mx my)
+    assign y 1
     print "my mac1\n"
   end.defmacro
 
@@ -55,7 +62,6 @@
   def l3 ()
     1 2 3
     4 5 6 7 
-
     8 9
   end.def
 

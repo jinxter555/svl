@@ -82,42 +82,6 @@ vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
   return {};
 }
 
-//------------------------------------------------------------------------
-// call to module functions
-//
-/*
-Node::OpStatus LispExpr::attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list) {
-  MYLOGGER(trace_function, "LispExpr::attach_argument_to_frame(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("param_path: ") + _to_str_ext(params_path), SLOG_FUNC_INFO+30);
-  MYLOGGER_MSG(trace_function, string("arg_list: ") + arg_list->_to_str(), SLOG_FUNC_INFO+30);
-
-  Node::OpStatusRef params_list_status = get_node(params_path);
-  if(!params_list_status.first) {
-    return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "attach_arguments_to_frame() error looking up param path '" + _to_str_ext(params_path) + "' \n")};
-  }
-  size_t s =  params_list_status.second.size_container();
-
-  if(params_list_status.second.size_container() != arg_list->size_container()) {
-    //cout << "param size:" << params_list_status.second.size_container() << "\n";
-    //cout << "arg size:" << arg_list->size_container() << "\n";
-    return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "Can't create arguments list for " + _to_str_ext(params_path) + " size() are different")};
-  }
-
-  Node::Map args;
-  auto &params_vector = params_list_status.second._get_vector_ref();
-  auto &arg_vector = arg_list->_get_vector_ref();
-  //cout << "attach to frame!" << arg_list->_to_str() << "\n";
-  for(size_t i=0; i <s; i++) {
-    auto param_name = params_vector[i]->_to_str();
-
-    args[param_name] = move(arg_vector[i]);
-  }
-  frame->set(ARGS, Node::create(move(args)));
-  return {true, nullptr};
-}
-*/
 
 //------------------------------------------------------------------------
 // call to lambda anonymous functions
@@ -291,21 +255,55 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   // module funtion call
   auto fun_path = lisp_path_module;
   fun_path.push_back(mf_vector[0]); // push module name
+
+  auto mac_path = fun_path; // just copy to the macro
+  mac_path.push_back(MACRO);
+
   fun_path.push_back(FUNCTION);    //  push module."function".
   fun_path.push_back(mf_vector[1]); // module."function".func_name
+
+  mac_path.push_back(mf_vector[1]); // try macro 
 
 
   try { // mod.fun ( arg1 arg2 arg3 ...)
     const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
-    return call(process, fun_path, argv_vector);
+
+    auto fun_exist = get_node(fun_path);
+    if(fun_exist.first) {
+      auto call_fun_status = call(process, fun_path, argv_vector);
+      if(call_fun_status.first) return call_fun_status;
+
+    }
+
+    auto mac_exist = get_node(mac_path);
+    if(mac_exist.first) {
+      auto call_mac_status = call_macro(process, mac_path, argv_vector);
+      if(call_mac_status.first) return call_mac_status;
+    }
+    
+
   } catch(...) {}
 
   // mod.fun arg1 arg2 arg3 ...
   const auto &argv_vector =  list_clone_remainder(code_list, start + 1);
 
-  return call(process, fun_path, argv_vector);
+  auto fun_exist = get_node(fun_path);
+  if(fun_exist.first) {
+    auto call_fun_status = call(process, fun_path, argv_vector);
+    if(call_fun_status.first) return call_fun_status;
+  }
 
-  return {false, Node::create()};
+    // try macro
+  auto mac_exist = get_node(mac_path);
+  if(mac_exist.first) {
+    auto call_mac_status = call_macro(process, mac_path, argv_vector);
+    if(call_mac_status.first) return call_mac_status;
+  }
+
+  //return call_fun_status; // return fun status for now
+
+
+  return {false, Node::create_error(Error::Type::KeyNotFound, "Either function or macro symbol '" + mf_vector[1] + "' not found!\n")};
 }
 
 Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string method_name, const Node::Vector& argv_list) {
@@ -360,7 +358,7 @@ Node::OpStatus LispExpr::call(Node& process, const vector<string>& path, const N
 
   auto fun_ref_status = get_node(path);
   if(!fun_ref_status.first) {
-    cerr << "error loking up fun path: " << _to_str_ext( path ) + "," + fun_ref_status.second._to_str() <<"\n";
+    cerr << "error looking up fun path: " << _to_str_ext( path ) + "," + fun_ref_status.second._to_str() <<"\n";
     return {false, fun_ref_status.second.clone()};
   }
 
@@ -376,6 +374,36 @@ Node::OpStatus LispExpr::call(Node& process, const vector<string>& path, const N
 
   return call(process, fun_ref_status.second, move(argv));
 
+}
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::call_macro(Node& process, const vector<string>& path, const Node::Vector& argv_list) {
+  MYLOGGER(trace_function, "LispExpr::call_macro(Node&process, const Node& fun, Node::vector&&argv_vector)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "argv_vector: " + Node::_to_str(argv_list), SLOG_FUNC_INFO+30);
+
+  cout <<  "call macro!";
+  auto mac_ref_status = get_node(path);
+  if(!mac_ref_status.first) {
+    cerr << "error looking up macro path: " << _to_str_ext( path ) + "," + mac_ref_status.second._to_str() <<"\n";
+    return {false, mac_ref_status.second.clone()};
+  }
+  auto frame_status = frame_create_fun_args(mac_ref_status.second, move(Node::clone(argv_list)->_get_vector_ref()));
+  if(!frame_status.first) {
+    cerr << "call_mac(process, path, argv list) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
+    return frame_status;
+  }
+  frame_push(process, move(frame_status.second));
+  auto scope = scope_create();
+  auto scope_status =  scope_push(process, move(scope));
+
+  auto code_list_status = mac_ref_status.second.get_node(CODE);
+  if(!code_list_status.first) {
+    cerr << "call_mac(process, path, argv_list) error!" +  code_list_status.second._to_str() +"\n";
+    return {false, code_list_status.second.clone()};
+  }
+  auto evaled_status = eval(process, code_list_status.second);
+  frame_pop(process);
+  return evaled_status;
 }
 
 //------------------------------------------------------------------------

@@ -65,6 +65,67 @@ Node::OpStatus LispExpr::literal(const Node::Vector &list, size_t start) {
     list_result.push_back(list[i]->clone());
   return {true, Node::create(move(list_result))};
 }
+//------------------------------------------------------------------------
+// modifiy code list for unquotes
+Node::OpStatus LispExpr::quote(Node&process, Node::Vector &code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::quote(const Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + start, SLOG_FUNC_INFO+30);
+  size_t s=code_list.size();
+  for(size_t i=start; i<s; i++) {
+    switch(code_list[i]->type_) {
+    case Node::Type::Vector: {
+      auto &inner_vec = code_list[i]->_get_vector_ref(); // skip the first element that's op_head
+      auto inner_status= quote(process, inner_vec, 0);
+      if(!inner_status.first) { return inner_status; }
+      break;
+    }
+    case Node::Type::LispOp: {
+
+      Lisp::Op op_head = get<Lisp::Op>(code_list[i]->value_); // skip the first element that's op_head
+      if(op_head == Lisp::Op::unquote) {
+        //cout << "in quote( unquote() )\n";
+        auto uq_status = unquote(process, code_list, i+1);
+        if(!uq_status.first) {
+          cerr << "in quote( unquote(..) ) error:" << uq_status.second->_to_str() << "\n";
+          return uq_status;
+        }
+        code_list[i] = Node::create(Lisp::Op::noop);
+        code_list[i+1] = move(uq_status.second);
+      }
+
+      break;
+    }
+    default: {}}
+  }
+
+    //list_result.push_back(list[i]->clone());
+
+  return {true, Node::create(true)};
+}
+//------------------------------------------------------------------------
+// (unquote symbol)
+Node::OpStatus LispExpr::unquote(Node&process, const Node::Vector &list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::unquote(const Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "start: " + start, SLOG_FUNC_INFO+30);
+
+
+  auto name = list[start]->_to_str();
+  auto rv_ref_status = symbol_lookup(process, name  );
+
+  cout << "unquoting ' " << name << "'\n";
+  cout << "rv_ref_status ' " << name << "'\n";
+
+  if(!rv_ref_status.first) {
+    cerr << "unquote Identifier: '" << name << "' not found!" << rv_ref_status.second._to_str() << "\n";
+    return {false, rv_ref_status.second.clone()};
+  }
+  if(rv_ref_status.second.type_ == Node::Type::Shared) 
+    return {true, Node::ptr_USU(rv_ref_status.second)}; // clone a uniqu ptr to shared ptr without  recursive clone
+  return {true, rv_ref_status.second.clone()};
+}
+
+//------------------------------------------------------------------------
 Node::OpStatus LispExpr::attach_class_vars_to_object(Node&process, Node&object, Node::Vector& var_list){
   size_t s = var_list.size();
   for(size_t i=1; i<s; i++) { // skip i = 0, (var ..) 

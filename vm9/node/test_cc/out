@@ -1,6 +1,19 @@
-hello, world1
-x: 1, y: 2
-wie ghets dir!
+12345hello, world
+hello, p55, 55
+x: 5555
+(x): 5555
+(y): 2
+
+-5555--zzz-
+
+hello, p55, 55
+x: 55
+(x): 55
+(y): 2
+
+-55--zzz-
+
+
 [?2004hloosh> exit
 [?2004l
 Lisp Interpreter
@@ -22,7 +35,7 @@ print recursive:
      }
     }
     - Lisp (Type: Map): { (Map, size=2) 
-     - Keyword (Type: Map): { (Map, size=64) 
+     - Keyword (Type: Map): { (Map, size=66) 
       - or (Type: LispOp): or
       - not (Type: LispOp): not
       - if (Type: LispOp): if
@@ -31,12 +44,13 @@ print recursive:
       - div (Type: LispOp): div
       - map (Type: LispOp): map
       - scalar (Type: LispOp): scalar
-      - funcall (Type: LispOp): funcall
-      - sub (Type: LispOp): sub
-      - readline (Type: LispOp): readline
+      - quote (Type: LispOp): quote
       - assign (Type: LispOp): assign
       - and (Type: LispOp): and
       - literal (Type: LispOp): literal
+      - == (Type: LispOp): eq
+      - >= (Type: LispOp): gteq
+      - vector (Type: LispOp): vector
       - list (Type: LispOp): list
       - var (Type: LispOp): var
       - deque (Type: LispOp): deque
@@ -44,6 +58,9 @@ print recursive:
       - kernel (Type: LispOp): kernel
       - alias (Type: LispOp): alias
       - add (Type: LispOp): add
+      - % (Type: LispOp): mod
+      - root (Type: LispOp): root
+      - unquote (Type: LispOp): unquote
       - def (Type: LispOp): def
       - clone (Type: LispOp): clone
       - repeat (Type: LispOp): repeat
@@ -60,6 +77,9 @@ print recursive:
       - class (Type: LispOp): class
       - identifier (Type: LispOp): identifier
       - curry (Type: LispOp): curry
+      - funcall (Type: LispOp): funcall
+      - sub (Type: LispOp): sub
+      - readline (Type: LispOp): readline
       - pipe (Type: LispOp): pipe
       - lambda (Type: LispOp): lambda
       - eval (Type: LispOp): eval
@@ -80,78 +100,292 @@ print recursive:
       - * (Type: LispOp): mul
       - print (Type: LispOp): print
       - / (Type: LispOp): div
-      - vector (Type: LispOp): vector
-      - >= (Type: LispOp): gteq
-      - == (Type: LispOp): eq
-      - root (Type: LispOp): root
-      - % (Type: LispOp): mod
       - > (Type: LispOp): gt
       - <= (Type: LispOp): lteq
      }
-     - Module (Type: Map): { (Map, size=2) 
-      - Main (Type: Map): { (Map, size=4) 
-       - name (Type: String): "Main"
+     - Module (Type: Map): { (Map, size=1) 
+      - Kernel (Type: Map): { (Map, size=5) 
+       - name (Type: String): "Kernel"
        - class (Type: Map): { (Map, size=0) 
+       }
+       - macro (Type: Map): { (Map, size=1) 
+        - mymac (Type: Map): { (Map, size=5) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "mymac"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defmacro
+         }
+         - code (Type: Vector): Vector[(size=2) 
+          - [0, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: assign
+           - [1, Type: Identifier]: "y"
+           - [2, Type: Integer]: 1
+          ]
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "my mac1
+"
+          ]
+         ]
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "mx"
+          - [1, Type: Identifier]: "my"
+         ]
+        }
        }
        - __object_info__ (Type: Map): { (Map, size=1) 
         - type (Type: LispOp): module
        }
-       - function (Type: Map): { (Map, size=1) 
-        - main (Type: Map): { (Map, size=5) 
+       - function (Type: Map): { (Map, size=7) 
+        - l3 (Type: Map): { (Map, size=5) 
          - module_ptr (Type: RawPtr): ==*ptr==
-         - name (Type: String): "main"
+         - name (Type: String): "l3"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=3) 
+          - [0, Type: Vector]: Vector[(size=3) 
+           - [0, Type: Integer]: 1
+           - [1, Type: Integer]: 2
+           - [2, Type: Integer]: 3
+          ]
+          - [1, Type: Vector]: Vector[(size=4) 
+           - [0, Type: Integer]: 4
+           - [1, Type: Integer]: 5
+           - [2, Type: Integer]: 6
+           - [3, Type: Integer]: 7
+          ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Integer]: 8
+           - [1, Type: Integer]: 9
+          ]
+         ]
+         - params (Type: Vector): Vector[(size=0) 
+         ]
+        }
+        - l2 (Type: Map): { (Map, size=5) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "l2"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=1) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Integer]: 7
+           - [1, Type: Integer]: 9
+          ]
+         ]
+         - params (Type: Vector): Vector[(size=0) 
+         ]
+        }
+        - l1 (Type: Map): { (Map, size=5) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "l1"
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): defun
          }
          - code (Type: Vector): Vector[(size=2) 
-          - [0, Type: Vector]: Vector[(size=6) 
-           - [0, Type: LispOp]: print
-           - [1, Type: String]: "x: "
-           - [2, Type: Identifier]: "x"
-           - [3, Type: String]: ", y: "
-           - [4, Type: Identifier]: "y"
-           - [5, Type: String]: "
-"
+          - [0, Type: Vector]: Vector[(size=1) 
+           - [0, Type: Integer]: 5
+          ]
+          - [1, Type: Vector]: Vector[(size=1) 
+           - [0, Type: Integer]: 8
+          ]
          ]
+         - params (Type: Vector): Vector[(size=0) 
+         ]
+        }
+        - p56 (Type: Map): { (Map, size=6) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "p56"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=5) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, p56, 56
+"
+          ]
           - [1, Type: Vector]: Vector[(size=2) 
            - [0, Type: LispOp]: print
-           - [1, Type: String]: "wie ghets dir!
+           - [1, Type: Vector]: Vector[(size=1) 
+            - [0, Type: Identifier]: "x"
+           ]
+          ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
 "
+          ]
+          - [3, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "-"
+           - [2, Type: Identifier]: "x"
+           - [3, Type: String]: "-"
+          ]
+          - [4, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
+"
+          ]
          ]
-        ]
+         - description (Type: String): "my func p56"
          - params (Type: Vector): Vector[(size=2) 
           - [0, Type: Identifier]: "x"
           - [1, Type: Identifier]: "y"
-        ]
+         ]
         }
-       }
-      }
-      - Kernel (Type: Map): { (Map, size=4) 
-       - name (Type: String): "Kernel"
-       - class (Type: Map): { (Map, size=0) 
-       }
-       - __object_info__ (Type: Map): { (Map, size=1) 
-        - type (Type: LispOp): module
-       }
-       - function (Type: Map): { (Map, size=1) 
+        - p55 (Type: Map): { (Map, size=6) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "p55"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=9) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: var
+           - [1, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "z"
+            - [1, Type: String]: "zzz"
+           ]
+          ]
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, p55, 55
+"
+          ]
+          - [2, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "x: "
+           - [2, Type: Identifier]: "x"
+           - [3, Type: String]: "
+"
+          ]
+          - [3, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "(x): "
+           - [2, Type: Vector]: Vector[(size=1) 
+            - [0, Type: Identifier]: "x"
+           ]
+           - [3, Type: String]: "
+"
+          ]
+          - [4, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "(y): "
+           - [2, Type: Vector]: Vector[(size=1) 
+            - [0, Type: Identifier]: "y"
+           ]
+           - [3, Type: String]: "
+"
+          ]
+          - [5, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
+"
+          ]
+          - [6, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "-"
+           - [2, Type: Identifier]: "x"
+           - [3, Type: String]: "-"
+          ]
+          - [7, Type: Vector]: Vector[(size=4) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "-"
+           - [2, Type: Identifier]: "z"
+           - [3, Type: String]: "-"
+          ]
+          - [8, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
+"
+          ]
+         ]
+         - description (Type: String): "my func p55"
+         - params (Type: Vector): Vector[(size=2) 
+          - [0, Type: Identifier]: "x"
+          - [1, Type: Identifier]: "y"
+         ]
+        }
+        - l4 (Type: Map): { (Map, size=5) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "l4"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=3) 
+          - [0, Type: Vector]: Vector[(size=1) 
+           - [0, Type: LispOp]: print
+          ]
+          - [1, Type: Vector]: Vector[(size=1) 
+           - [0, Type: LispOp]: print
+          ]
+          - [2, Type: Vector]: Vector[(size=1) 
+           - [0, Type: LispOp]: print
+          ]
+         ]
+         - params (Type: Vector): Vector[(size=0) 
+         ]
+        }
         - main (Type: Map): { (Map, size=6) 
          - module_ptr (Type: RawPtr): ==*ptr==
          - name (Type: String): "main"
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): defun
          }
-         - code (Type: Vector): Vector[(size=3) 
+         - code (Type: Vector): Vector[(size=8) 
           - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: var
+           - [1, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "x"
+            - [1, Type: String]: "xxx"
+           ]
+          ]
+          - [1, Type: Vector]: Vector[(size=6) 
            - [0, Type: LispOp]: print
-           - [1, Type: String]: "hello, world1
-"
-         ]
-          - [1, Type: Vector]: Vector[(size=3) 
-           - [0, Type: Identifier]: "Main.main"
            - [1, Type: Integer]: 1
            - [2, Type: Integer]: 2
-         ]
+           - [3, Type: Integer]: 3
+           - [4, Type: Integer]: 4
+           - [5, Type: Integer]: 5
+          ]
           - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "hello, world
+"
+          ]
+          - [3, Type: Vector]: Vector[(size=3) 
+           - [0, Type: LispOp]: call
+           - [1, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Identifier]: "Kernel"
+            - [1, Type: Identifier]: "p55"
+           ]
+           - [2, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Integer]: 5555
+            - [1, Type: Integer]: 2
+           ]
+          ]
+          - [4, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
+"
+          ]
+          - [5, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "p55"
+           - [1, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Integer]: 55
+            - [1, Type: Integer]: 2
+           ]
+          ]
+          - [6, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "
+
+"
+          ]
+          - [7, Type: Vector]: Vector[(size=2) 
            - [0, Type: LispOp]: loop
            - [1, Type: Vector]: Vector[(size=3) 
             - [0, Type: LispOp]: print
@@ -159,18 +393,18 @@ print recursive:
              - [0, Type: LispOp]: eval
              - [1, Type: Vector]: Vector[(size=1) 
               - [0, Type: LispOp]: read
+             ]
             ]
-           ]
             - [2, Type: String]: "
 "
+           ]
           ]
          ]
-        ]
-         - description (Type: Identifier): "my_func_des"
+         - description (Type: String): "my func des"
          - params (Type: Vector): Vector[(size=2) 
           - [0, Type: Identifier]: "x"
           - [1, Type: Identifier]: "y"
-        ]
+         ]
         }
        }
       }
@@ -190,9 +424,9 @@ print recursive:
          - var (Type: Map): { (Map, size=0) 
          }
         }
-      ]
+       ]
       }
-    ]
+     ]
      - state (Type: ProcessState): init
      - pid (Type: Integer): 0
     }
@@ -208,15 +442,16 @@ print recursive:
         - [0, Type: Map]: { (Map, size=2) 
          - immute (Type: Map): { (Map, size=0) 
          }
-         - var (Type: Map): { (Map, size=0) 
+         - var (Type: Map): { (Map, size=1) 
+          - x (Type: String): "xxx"
          }
         }
-      ]
+       ]
       }
-    ]
+     ]
      - state (Type: ProcessState): init
      - pid (Type: Integer): 1
     }
-  ]
+   ]
   }
  }
