@@ -2,9 +2,10 @@ module Kernel
   (defun main (x y) "my func des" 
     (
 
-      (var a)
       print "Macros!\n"
-      mymac 2 2
+      mymac 1 2
+      assign mvalue 55555
+      mymac mvalue 33
 
       loop
         print (eval (read)) "\n"
@@ -13,11 +14,15 @@ module Kernel
   )
 
   defmacro mymac (mx my)
+
     quote
-      print 1 (car (unquote mx))  " " (car (unquote my))  "\n"
+      print ((unquote mx) " " my " ")
+      print 1 2 3
     end.quote
+
     quote
-      print 2 (car (unquote mx))  " " (car (unquote my))  "\n"
+      print 4 5 10
+      print ((unquote mx) " " my " ")
     end.quote
 
   end.defmacro

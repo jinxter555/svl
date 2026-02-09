@@ -18,5 +18,21 @@ vector<string> LispExpr::get_params(const Node::Map&closure) {
   for(const auto&ele : params ) 
     result_list.push_back(ele->_to_str());
   
-  return move(result_list);
+  return result_list;
+}
+Node::OpStatus LispExpr::builtin_print_r(Node& process, const Node::Vector& cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::builtin_print_r(Node&process, const Node::Vector& cc_vec, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "cc_vector: " + Node::_to_str(cc_vec), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + start, SLOG_FUNC_INFO+30);
+  size_t s=cc_vec.size();
+  for(size_t i = start;  i<s; i++) {
+    //Node::print_value_recursive(*cc_vec[i]);
+
+    auto ee_status = eval(process, *cc_vec[i]);
+    if(!ee_status.first)
+      return ee_status;
+   // Node::print_value_recursive(*ee_status.second);
+   ee_status.second->print();
+  }
+  return {true, Node::create()};
 }

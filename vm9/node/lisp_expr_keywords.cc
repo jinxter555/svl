@@ -52,6 +52,7 @@ void LispExpr::set_keywords() {
   map_->set("for", Op::for_);
   map_->set("do", Op::do_);
   map_->set("print",Op::print);
+  map_->set("printr",Op::printr);
   map_->set("module",Op::module);
   map_->set("defun", Op::defun);
   map_->set("defmacro", Op::defmacro);

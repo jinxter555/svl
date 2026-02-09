@@ -207,7 +207,7 @@ public:
   Node::OpStatus closure_create(Node&process, const Node::Vector &list, size_t start=0);
   
   Node::OpStatus literal(const Node::Vector &list, size_t start=0);
-  Node::OpStatus quote(Node&process, Node::Vector &list, size_t start=0);
+  Node::OpStatus quote(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus unquote(Node&process, const Node::Vector &list, size_t start=0);
 
   //
@@ -229,6 +229,6 @@ public:
 
   template <typename T>
   Node::OpStatus builtin_print_n(Node& process, const T& list, size_t start=0);
-
+  Node::OpStatus builtin_print_r(Node& process, const Node::Vector& cc_vec, size_t start=0);
 
 };

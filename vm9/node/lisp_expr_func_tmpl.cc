@@ -46,6 +46,7 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
 
       switch(ee.second->type_){
       case Node::Type::Null: {  
+        cout << "nil";
         continue;
       }
       default: { // for other nodes

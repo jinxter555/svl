@@ -68,6 +68,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::case_: return "case";
     case Lisp::Op::when: return "when";
     case Lisp::Op::print: return "print";
+    case Lisp::Op::printr: return "printr";
     case Lisp::Op::module: return "module";
     case Lisp::Op::defun: return "defun";
     case Lisp::Op::defmacro: return "defmacro";

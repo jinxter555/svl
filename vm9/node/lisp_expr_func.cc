@@ -25,7 +25,14 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t star
     if(plist.size()==0) return {true, Node::create()};
     return {true, move(plist[0])};
   }
-  return {true, Node::create()};
+  if(rv_status.second->type_==Node::Type::Shared) {
+    auto s_ptr = get<Node::ptr_S>(rv_status.second->value_);
+    return car(process, s_ptr->_get_vector_ref(), 0);
+  }
+
+  //return {true, Node::create()};
+  //cout << "car rv_status: " << rv_status << "\n";
+  return rv_status;
 }
 
 Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, size_t start) {
@@ -67,17 +74,25 @@ Node::OpStatus LispExpr::literal(const Node::Vector &list, size_t start) {
 }
 //------------------------------------------------------------------------
 // modifiy code list for unquotes
-Node::OpStatus LispExpr::quote(Node&process, Node::Vector &code_list, size_t start) {
+Node::OpStatus LispExpr::quote(Node&process, const Node::Vector &code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::quote(const Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + start, SLOG_FUNC_INFO+30);
+
   size_t s=code_list.size();
+  Node::Vector result_cc_vec;
+  result_cc_vec.reserve(s);
+
   for(size_t i=start; i<s; i++) {
     switch(code_list[i]->type_) {
     case Node::Type::Vector: {
+      //cout << "innner quote: " << code_list[i]->_to_str() << "\n\n";
+
       auto &inner_vec = code_list[i]->_get_vector_ref(); // skip the first element that's op_head
       auto inner_status= quote(process, inner_vec, 0);
       if(!inner_status.first) { return inner_status; }
+      result_cc_vec.push_back(move(inner_status.second));
+
       break;
     }
     case Node::Type::LispOp: {
@@ -86,22 +101,30 @@ Node::OpStatus LispExpr::quote(Node&process, Node::Vector &code_list, size_t sta
       if(op_head == Lisp::Op::unquote) {
         //cout << "in quote( unquote() )\n";
         auto uq_status = unquote(process, code_list, i+1);
+        i++; // skip to the next token 
+
         if(!uq_status.first) {
           cerr << "in quote( unquote(..) ) error:" << uq_status.second->_to_str() << "\n";
           return uq_status;
         }
-        code_list[i] = Node::create(Lisp::Op::noop);
-        code_list[i+1] = move(uq_status.second);
+        //cout << "uunquotted status "  <<  uq_status << "\n";
+        //result_cc_vec.push_back(move(uq_status.second));
+        //result_cc_vec.push_back(uq_status.second->clone());
+        //result_cc_vec.push_back(Node::create(888));
+        result_cc_vec.push_back(move(uq_status.second));
+      } else {
+        result_cc_vec.push_back(code_list[i]->clone());
       }
-
       break;
     }
-    default: {}}
+    default: {
+      result_cc_vec.push_back(code_list[i]->clone());
+    }}
   }
 
     //list_result.push_back(list[i]->clone());
 
-  return {true, Node::create(true)};
+  return {true, Node::create(move(result_cc_vec))};
 }
 //------------------------------------------------------------------------
 // (unquote symbol)
@@ -111,10 +134,10 @@ Node::OpStatus LispExpr::unquote(Node&process, const Node::Vector &list, size_t 
 
 
   auto name = list[start]->_to_str();
-  auto rv_ref_status = symbol_lookup(process, name  );
+  auto rv_ref_status = symbol_lookup(process, name);
 
   cout << "unquoting ' " << name << "'\n";
-  cout << "rv_ref_status ' " << name << "'\n";
+  cout << "rv_ref_status: " << rv_ref_status << "\n";
 
   if(!rv_ref_status.first) {
     cerr << "unquote Identifier: '" << name << "' not found!" << rv_ref_status.second._to_str() << "\n";
@@ -123,6 +146,7 @@ Node::OpStatus LispExpr::unquote(Node&process, const Node::Vector &list, size_t 
   if(rv_ref_status.second.type_ == Node::Type::Shared) 
     return {true, Node::ptr_USU(rv_ref_status.second)}; // clone a uniqu ptr to shared ptr without  recursive clone
   return {true, rv_ref_status.second.clone()};
+
 }
 
 //------------------------------------------------------------------------

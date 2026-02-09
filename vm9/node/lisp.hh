@@ -26,7 +26,7 @@ public:
   , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, and_, or_, not_
   , read, readline
   , call, send, ret, call_extern, funcall, curry, pipe, eval
-  , cond, print, loop, while_, repeat, for_, do_, if_, case_, when
+  , cond, print, printr, loop, while_, repeat, for_, do_, if_, case_, when
   , module, def, defun, defmacro, alias, lambda
   };
   using Type=Op;

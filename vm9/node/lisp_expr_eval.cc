@@ -105,6 +105,7 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
   MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
+  if(name=="nil") return {true, null_node};
 
   auto frame_ref_status = frame_current(process);
   if(!frame_ref_status.first) return frame_ref_status;
@@ -176,13 +177,16 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   case Node::Type::List: { // object, lambda, 
     cout << "code node list\n";
   }
+  case Node::Type::Shared: { // object, lambda, 
+    cout << "code node Shared\n";
+    auto s_ptr = get<Node::ptr_S>(code_node.value_);
+    return eval(process, *s_ptr);
+  }
 
-  //case Node::Type::Shared: { cout << "shared ptr!\n"; }
-  default: {}}
+  default: {
+  }}
 
   return {true, code_node.clone()};
-
-  //return {true, Node::create_error(Error::Type::Unknown, "Unknown error should not reach!")};
 
 }
 
@@ -200,6 +204,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::root:  return root_manifest(process, code_list, start); 
   case Lisp::Op::vector:  return eval(process, code_list, start); 
   case Lisp::Op::print: return builtin_print_n(process, code_list, start);
+  case Lisp::Op::printr: return builtin_print_r(process, code_list, start);
   case Lisp::Op::literal: return literal(code_list, start);
   case Lisp::Op::unquote: return unquote(process, code_list, start);
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
@@ -221,15 +226,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::if_:    {
     return if_(process, code_list, start );
   }
-  case Lisp::Op::quote: { 
-    auto cl = Node::clone(code_list); 
-    auto qstatus = quote(process, cl->_get_vector_ref(), start); 
-    if(!qstatus.first) {
-      cerr << "quote error!\n";
-      return qstatus;
-    }
-    return {true, move(cl)};
-  }
+  case Lisp::Op::quote: { return quote(process, code_list, start); }
 
 
 
@@ -263,7 +260,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
 
   //cout << "code_list size " << code_list.size() << "\n"; cout << "code_list str " << Node::_to_str(code_list) << "\n";
-  if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
+  //if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
+  if(code_list.empty()) return{true, Node::create()};
 
   switch(code_list[0]->type_) {
 
@@ -331,6 +329,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
 
 Node::OpStatus LispExpr::eval_eval(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::eval_eval(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "Lisp::Op::eval: start " + to_string(start) + ", code_list " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
 
   if(code_list.empty()) return {true, Node::create()};

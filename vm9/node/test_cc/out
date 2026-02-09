@@ -15,7 +15,7 @@ x: 55
 
 
 [?2004hloosh> exit
-[?2004l
+[?2004lnil
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -35,15 +35,17 @@ print recursive:
      }
     }
     - Lisp (Type: Map): { (Map, size=2) 
-     - Keyword (Type: Map): { (Map, size=66) 
+     - Keyword (Type: Map): { (Map, size=68) 
       - or (Type: LispOp): or
       - not (Type: LispOp): not
       - if (Type: LispOp): if
       - = (Type: LispOp): assign
+      - <= (Type: LispOp): lteq
+      - > (Type: LispOp): gt
       - mod (Type: LispOp): mod
-      - div (Type: LispOp): div
-      - map (Type: LispOp): map
       - scalar (Type: LispOp): scalar
+      - map (Type: LispOp): map
+      - div (Type: LispOp): div
       - quote (Type: LispOp): quote
       - assign (Type: LispOp): assign
       - and (Type: LispOp): and
@@ -58,12 +60,9 @@ print recursive:
       - kernel (Type: LispOp): kernel
       - alias (Type: LispOp): alias
       - add (Type: LispOp): add
+      - nil (Type: LispOp): nil
       - % (Type: LispOp): mod
       - root (Type: LispOp): root
-      - unquote (Type: LispOp): unquote
-      - def (Type: LispOp): def
-      - clone (Type: LispOp): clone
-      - repeat (Type: LispOp): repeat
       - system (Type: LispOp): system
       - ret (Type: LispOp): ret
       - new (Type: LispOp): new
@@ -73,7 +72,12 @@ print recursive:
       - car (Type: LispOp): car
       - mul (Type: LispOp): mul
       - delete (Type: LispOp): delete
+      - printr (Type: LispOp): printr
       - private (Type: LispOp): private
+      - clone (Type: LispOp): clone
+      - unquote (Type: LispOp): unquote
+      - def (Type: LispOp): def
+      - repeat (Type: LispOp): repeat
       - class (Type: LispOp): class
       - identifier (Type: LispOp): identifier
       - curry (Type: LispOp): curry
@@ -100,8 +104,6 @@ print recursive:
       - * (Type: LispOp): mul
       - print (Type: LispOp): print
       - / (Type: LispOp): div
-      - > (Type: LispOp): gt
-      - <= (Type: LispOp): lteq
      }
      - Module (Type: Map): { (Map, size=1) 
       - Kernel (Type: Map): { (Map, size=5) 
