@@ -332,8 +332,8 @@ Node::OpStatusRef LispExpr::get_class(deque<string> mc) {
 //------------------------------------------------------------------------
 // create a map object
 // (map ( (k1 v1) (k2 v2) )) //creates a new map object
-Node::OpStatus LispExpr::map_create(Node&process, const Node::Vector &list_kv, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::map_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus LispExpr::hash_create(Node&process, const Node::Vector &list_kv, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::hash_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list_kv: ") + Node::_to_str(list_kv), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
   Node::Map map;

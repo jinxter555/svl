@@ -32,8 +32,8 @@ private:
 
   Node::OpStatus parse_def(const Node::List &list);
 
-  const Node::Integer sym_module, sym_fun, sym_class, sym_get, 
-  sym_lambda, sym_set; // internal lisp hashed symbol values  (def :symbol ... )
+  const Node::Integer atom_module, atom_fun, atom_class, atom_get, atom_ok, atom_error,
+  atom_lambda, atom_set; // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
   //Node::OpStatus attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list);
@@ -163,7 +163,7 @@ public:
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args
   Node::OpStatus call_lambda(Node& process, const Node::Map & obj_lambda, Node::Vector&& args); // call creates new scope and push args to scope immute
   Node::OpStatus call_closure(Node& process, const Node::Map & obj_closure, Node::Vector&& args); // call creates new scope and push args to scope immute
-  Node::OpStatus call_object(Node& process, const Node::Map & obj, const Node::Vector& args); // call object with Node::Map as primitive type
+//  Node::OpStatus call_object(Node& process, const Node::Map & obj, const Node::Vector& args); // call object with Node::Map as primitive type
 
   Node::OpStatus call_extern(Node& process, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus call_extern(Node& process, const string&mod, const string&fun ,  Node& node_this, const Node::Vector& args);
@@ -190,10 +190,11 @@ public:
   Node::OpStatus cdr(Node&process, const Node::Vector &list, size_t start=0);
   //
   // (map ( (k1 v1) (k2 v2) )) //creates a new map object
-  Node::OpStatus map_create(Node&process, const Node::Vector &list_kv, size_t start=0);
+  Node::OpStatus hash_create(Node&process, const Node::Vector &list_kv, size_t start=0);
   Node::OpStatus object_create(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus send_object_message(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus call_object(Node&Process, Node& object, const string method_fun, const Node::Vector&argv_list);
+
   // procdess, node this, arguments..
   static Node::OpStatus map_del_key(Node&process, Node&map, const Node::Vector& args ={});
   static Node::OpStatus map_has_key(Node&process, Node&map, const Node::Vector& args ={});

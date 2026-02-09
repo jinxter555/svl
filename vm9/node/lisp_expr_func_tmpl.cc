@@ -58,6 +58,6 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
     cout << "builtin_print_n unknown T list\n";
 
   }
-  return {true, Node::create()};
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
 }
 #endif

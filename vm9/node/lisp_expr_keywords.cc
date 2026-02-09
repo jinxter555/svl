@@ -26,11 +26,12 @@ void LispExpr::set_keywords() {
   map_->set("list", Op::list);
   map_->set("vector", Op::vector);
   map_->set("deque", Op::deque);
-  map_->set("map", Op::map);
+  map_->set("hash", Op::hash);
   map_->set("var", Op::var);
   map_->set("assign", Op::assign);
   map_->set("car", Op::car);
   map_->set("cdr", Op::cdr);
+  map_->set("map", Op::map);
   map_->set("add", Op::add);
   map_->set("sub", Op::sub); 
   map_->set("mul", Op::mul);

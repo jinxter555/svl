@@ -219,7 +219,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::cdr:   return cdr(process, code_list, start);
   case Lisp::Op::lambda:    return lambda_create(process, code_list, start);
   case Lisp::Op::do_:    return closure_create(process, code_list, start);
-  case Lisp::Op::map:   return map_create(process, code_list, start);
+  case Lisp::Op::hash:   return hash_create(process, code_list, start);
   case Lisp::Op::new_:  return object_create(process, code_list, start);
 
   case Lisp::Op::send:    return send_object_message(process, code_list, start); 
@@ -301,7 +301,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
   MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
 
-  if(code_list.empty()) return {true, Node::create()};
+  //if(code_list.empty()) return {true, Node::create()};
 
   Node::Vector result_list, result_list2;
   size_t s=code_list.size();
@@ -332,7 +332,7 @@ Node::OpStatus LispExpr::eval_eval(Node& process, const Node::Vector& code_list,
   MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "Lisp::Op::eval: start " + to_string(start) + ", code_list " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
 
-  if(code_list.empty()) return {true, Node::create()};
+  // if(code_list.empty()) return {true, Node::create()};
 //  cout << "\nLisp::Op::eval: code_list:" + Node::_to_str(code_list) << "\n";
   auto evaled_stat1 = eval(process, code_list, start); 
   if(!evaled_stat1.first) {

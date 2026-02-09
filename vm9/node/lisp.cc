@@ -27,10 +27,12 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::list: return "list";
     case Lisp::Op::deque: return "deque";
     case Lisp::Op::vector: return "vector";
-    case Lisp::Op::map: return "map";
+    case Lisp::Op::hash: return "hash";
     case Lisp::Op::object: return "object";
+
     case Lisp::Op::car: return "car";
     case Lisp::Op::cdr: return "cdr";
+    case Lisp::Op::map: return "map";
 
     case Lisp::Op::add: return "add";
     case Lisp::Op::sub: return "sub";

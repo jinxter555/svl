@@ -17,12 +17,14 @@ const vector<string> LispExpr::cc_path_module= {UNIVERSE, "Lang", "CC", "Module"
 //const vector<string> LispExpr::lisp_process = {UNIVERSE, "Process"};
 
 LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
-, sym_module(str_to_atom("module"))
-, sym_fun(str_to_atom("fun"))
-, sym_class(str_to_atom("class"))
-, sym_get(str_to_atom("get"))
-, sym_set(str_to_atom("set"))
-, sym_lambda(str_to_atom("lambda"))
+, atom_module(str_to_atom("module"))
+, atom_fun(str_to_atom("fun"))
+, atom_class(str_to_atom("class"))
+, atom_get(str_to_atom("get"))
+, atom_set(str_to_atom("set"))
+, atom_ok(str_to_atom("ok"))
+, atom_error(str_to_atom("error"))
+, atom_lambda(str_to_atom("lambda"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;
