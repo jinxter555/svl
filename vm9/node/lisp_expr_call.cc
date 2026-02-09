@@ -381,7 +381,6 @@ Node::OpStatus LispExpr::call_macro(Node& process, const vector<string>& path, c
   MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "argv_vector: " + Node::_to_str(argv_list), SLOG_FUNC_INFO+30);
 
-  cout <<  "call macro!";
   auto mac_ref_status = get_node(path);
   if(!mac_ref_status.first) {
     cerr << "error looking up macro path: " << _to_str_ext( path ) + "," + mac_ref_status.second._to_str() <<"\n";
@@ -403,7 +402,14 @@ Node::OpStatus LispExpr::call_macro(Node& process, const vector<string>& path, c
   }
   auto evaled_status = eval(process, code_list_status.second);
   frame_pop(process);
-  return evaled_status;
+
+  if(!evaled_status.first) {
+    cerr << "call_macro() failed:" << evaled_status.second->_to_str() << "\n";
+    return evaled_status;
+  }
+  return eval(process, *evaled_status.second);
+
+  //return evaled_status;
 }
 
 //------------------------------------------------------------------------

@@ -107,11 +107,8 @@ Node::OpStatus LispExpr::quote(Node&process, const Node::Vector &code_list, size
           cerr << "in quote( unquote(..) ) error:" << uq_status.second->_to_str() << "\n";
           return uq_status;
         }
-        //cout << "uunquotted status "  <<  uq_status << "\n";
         //result_cc_vec.push_back(move(uq_status.second));
-        //result_cc_vec.push_back(uq_status.second->clone());
-        //result_cc_vec.push_back(Node::create(888));
-        result_cc_vec.push_back(move(uq_status.second));
+        return uq_status;
       } else {
         result_cc_vec.push_back(code_list[i]->clone());
       }
@@ -136,8 +133,8 @@ Node::OpStatus LispExpr::unquote(Node&process, const Node::Vector &list, size_t 
   auto name = list[start]->_to_str();
   auto rv_ref_status = symbol_lookup(process, name);
 
-  cout << "unquoting ' " << name << "'\n";
-  cout << "rv_ref_status: " << rv_ref_status << "\n";
+  //cout << "unquoting ' " << name << "'\n";
+  //cout << "rv_ref_status: " << rv_ref_status << "\n";
 
   if(!rv_ref_status.first) {
     cerr << "unquote Identifier: '" << name << "' not found!" << rv_ref_status.second._to_str() << "\n";
@@ -232,7 +229,7 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
 
   auto argv_status = eval(process, list, start + 1); // get all the argv
   if(!argv_status.first) {
-    cerr  << "Ojbect construct parameters errors: " <<  argv_status.second->_to_str() << "\n";
+    cerr  << "Object construct parameters errors: " <<  argv_status.second->_to_str() << "\n";
     return argv_status;
   }
 
