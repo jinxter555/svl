@@ -436,6 +436,11 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
 
 }
 
+//
+// = (a b c) (1 2 3)
+// = (:ok b c) (:ok 2 3)  good assign
+// = (:ok b c) (:error 2 3)  no assign
+//
 Node::OpStatus LispExpr::assign_match(Node&process, const Node::Vector& var_list, const Node::Vector& value_list) {
   MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
@@ -469,8 +474,9 @@ Node::OpStatus LispExpr::assign_match(Node&process, const Node::Vector& var_list
     } else { // this is comparision 
       auto bv = *lhs != *value_status.second;
       if( bv._get_bool()) {
-        cout << *lhs << " != " << *value_status.second << "\n";
-        return {false, Node::create_error(Error::Type::NotEqual, "assign comparison not equal!")};
+        //cout << *lhs << " != " << *value_status.second << "\n";
+        //return {false, Node::create_error(Error::Type::NotEqual, "assign comparison not equal!")};
+        return {true, Node::create(false)}; // operation is good but assign comparision false
       }
     }
   }
@@ -501,7 +507,8 @@ Node::OpStatus LispExpr::assign_match(Node&process, const Node::Vector& var_list
     }
   }
 
-  return {true, Node::create(atom_ok, Node::Type::Atom)};
+  //return {true, Node::create(atom_ok, Node::Type::Atom)};
+  return {true, Node::create(true)};
 }
 
 Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, unique_ptr<Node> value_ptr) {
