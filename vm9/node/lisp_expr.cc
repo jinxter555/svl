@@ -383,18 +383,102 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
 }
 
 
+// (assign identifier value)
+// (assign (var_list) (value_list) )  // have to match
 // assign to scope immute or var
+//
 Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
 
   if(var_list.size() < 3) return  {false, Node::create_error(Error::Type::Parse, "assign has less than 3 parameters!") };
 
+  if(var_list[start]->type_ == Node::Type::Vector) {
+    if(var_list[start+1]->type_ != Node::Type::Vector) {
+      return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: values should a list")};
+    }
+    return assign_match(process, var_list[start]->_get_vector_ref(), var_list[start+1]->_get_vector_ref());
+  }
+
   auto identifier = var_list[start]->_to_str();
   auto &value_expr = var_list[start+1];
   auto value_status = eval(process, *value_expr);
   if(!value_status.first) return value_status;
   //cout << "ret value : " << value_status << "\n";
+  return assign_attach(process, identifier, move(value_status.second));
+
+}
+
+Node::OpStatus LispExpr::assign_match(Node&process, const Node::Vector& var_list, const Node::Vector& value_list) {
+  MYLOGGER(trace_function, "LispExpr::assign_attach(process, var_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("value_list: ") + Node::_to_str(value_list), SLOG_FUNC_INFO+30);
+
+  size_t var_size = var_list.size(), value_size = value_list.size(), assign_upto;
+  if(var_size > value_size) return { false, Node::create_error(Error::Type::Parse, "left hand variable side is > right hand value size") };
+
+  if(var_size < value_size) {
+    assign_upto = var_size -1;
+  } else assign_upto = var_size;
+
+  //for(size_t i=0; i<var_s; i++) {
+  for(size_t i=0; i<assign_upto; i++) {
+    auto &lhs = var_list[i];
+    auto identifier = lhs->_to_str();
+    auto value_status = eval(process, *value_list[i]);
+    if(!value_status.first) {
+      cerr << "assign match() eval error:" << value_status.second->_to_str() << "\n";
+      return value_status;
+    }
+    // if lhs == identifier, assignment
+    if(lhs->type_ == Node::Type::Identifier) {
+
+      auto assign_status = assign_attach(process, identifier, move(value_status.second));
+      if(!assign_status.first) {
+        cerr << "assign match() assign error:" << assign_status.second->_to_str() << "\n";
+        return assign_status;
+      }
+    } else { // this is comparision 
+      auto bv = *lhs != *value_status.second;
+      if( bv._get_bool()) {
+        cout << *lhs << " != " << *value_status.second << "\n";
+        return {false, Node::create_error(Error::Type::NotEqual, "assign comparison not equal!")};
+      }
+    }
+  }
+  // check the rest of the right hand side list
+  // and assign it if the last left hand side element has an '*'
+  if(var_size < value_size) {
+    auto &lhs = var_list.back();
+    auto identifier = lhs->_to_str();
+    if(identifier.front() == '*') { // assign all 
+      identifier.erase(0, 1); // remove '*'
+      Node::Vector result_vec;
+      for(size_t i=var_size -1; i<value_size; i++) {
+        auto value_status = eval(process, *value_list[i]);
+        if(!value_status.first) {
+          cerr << "assign match() eval error:" << value_status.second->_to_str() << "\n";
+          return value_status;
+        }
+        result_vec.push_back(move(value_status.second));
+      }
+      auto assign_status = assign_attach(process, identifier, Node::create(move(result_vec)));
+
+      if(!assign_status.first) {
+        cerr << "assign match() assign error:" << assign_status.second->_to_str() << "\n";
+        return assign_status;
+      }
+    } else {
+      return { false, Node::create_error(Error::Type::NotEqual, "left hand variable side is < right hand value size") };
+    }
+  }
+
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
+}
+
+Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, unique_ptr<Node> value_ptr) {
+
+  //auto &value_ptr = value_status.second;
 
   //Node m1=make_shared<Node>(1);
 
@@ -433,13 +517,13 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   if(nested_name.size() == 1) {   // assign non nested  map scalar value
     if(!scope_vars_ref_status.second.m_has_key(identifier)){
       if(!scope_immute_ref_status.second.m_has_key(identifier))  // doesn't exist and assign only once
-        return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
+        return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
       else  {
-        cerr << "identifier " << identifier  <<" can not be reassigned\n";
+        cerr << "identifier '" << identifier <<"' can not be reassigned\n";
         return {false, nullptr};
       }
     }
-    return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_status.second)));
+    return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
 
   }
 
@@ -459,7 +543,7 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
     return {false, rv_ref_status.second.clone()};
   }
   //cout << "value_status : " << value_status << "\n";
-  rv_ref_status.second = move(value_status.second);
+  rv_ref_status.second = move(value_ptr);
   return {true, Node::create(true)};
 
 }

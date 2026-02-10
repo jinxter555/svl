@@ -55,6 +55,8 @@ string Error::_to_str(Type type) {
     case Type::Incomplete:       return "Incomplete";
     case Type::System:       return "System";
     case Type::Parse:       return "Parse";
+    case Type::NotEqual:       return "NotEqual";
+    case Type::Eval:       return "Eval";
     case Type::User:       return "User";
     case Type::Unknown:       return "Unknown";
   }

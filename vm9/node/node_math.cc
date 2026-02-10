@@ -137,6 +137,8 @@ Node Node::operator==(const Node &other) const {
 }
 
 Node Node::operator!=(const Node &other) const {
+  return ! (*this == other);
+  /*
   return visit([&](auto&& lhs, auto&& rhs) -> Node {
     using L = decay_t<decltype(lhs)>;
     using R = decay_t<decltype(rhs)>;
@@ -151,6 +153,7 @@ Node Node::operator!=(const Node &other) const {
     }
 
   }, value_, other.value_);
+*/
 }
 
 

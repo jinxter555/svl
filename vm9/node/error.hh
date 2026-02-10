@@ -27,6 +27,8 @@ public:
     System,
     Parse,
     User,
+    NotEqual,
+    Eval,
     Unknown,
   };
 
