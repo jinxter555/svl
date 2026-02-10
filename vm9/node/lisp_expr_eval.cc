@@ -220,6 +220,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::lambda:    return lambda_create(process, code_list, start);
   case Lisp::Op::do_:    return closure_create(process, code_list, start);
   case Lisp::Op::hash:   return hash_create(process, code_list, start);
+  case Lisp::Op::ihash:   return ihash_create(process, code_list, start);
   case Lisp::Op::new_:  return object_create(process, code_list, start);
 
   case Lisp::Op::send:    return send_object_message(process, code_list, start); 

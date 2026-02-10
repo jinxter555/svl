@@ -21,6 +21,10 @@ unique_ptr<Node> Node::create(Value v) { return make_unique<Node>(move(v)); }
 unique_ptr<Node> Node::create(Value v, Type t) { return make_unique<Node>(move(v), t); }
 unique_ptr<Node> Node::create(Type t) { 
   switch(t) {
+  case Type::IMap: {
+    Node::IMap im;
+    return make_unique<Node>(move(im));
+  }
   case Type::Map: {
     Node::Map m;
     return make_unique<Node>(move(m));
@@ -79,6 +83,7 @@ Node::Node(Value v)
     else if constexpr (is_same_v<U, Vector>) return Type::Vector;
     else if constexpr (is_same_v<U, DeQue>) return Type::DeQue;
     else if constexpr (is_same_v<U, Map>) return Type::Map;
+    else if constexpr (is_same_v<U, IMap>) return Type::IMap;
     else if constexpr (is_same_v<U, ptr_R>) return Type::Raw;
     else if constexpr (is_same_v<U, ptr_S>) return Type::Shared;
     else if constexpr (is_same_v<U, ptr_U>) return Type::Unique;
@@ -101,6 +106,11 @@ Node::Node(Type t)
     Map nm={};
     value_ = move(nm);
     break;}
+  case Type::IMap: { 
+    IMap nm={};
+    value_ = move(nm);
+    break;}
+
   case Type::List: { 
     List l={};
     value_ = move(l);
@@ -167,6 +177,19 @@ unique_ptr<Node> Node::clone(const Map& map) {
   return create(move(cloned_map));
 }
 
+unique_ptr<Node> Node::clone(const IMap& map) {
+  MYLOGGER(trace_function, "Node::clone(const IMap&map)", __func__, SLOG_NODE_OP);
+
+  IMap cloned_map;
+  for(const auto& [key, child_ptr] : map) {
+    cloned_map.try_emplace(key, child_ptr->clone());
+  }
+  return create(move(cloned_map));
+}
+
+
+
+
 unique_ptr<Node> Node::clone() const {
   MYLOGGER(trace_function, "Node::clone()", __func__, SLOG_NODE_OP);
 
@@ -202,6 +225,9 @@ unique_ptr<Node> Node::clone() const {
       return clone(arg);
     }
     else if constexpr(is_same_v<T, Map>) {
+      return clone(arg);
+    }
+    else if constexpr(is_same_v<T, IMap>) {
       return clone(arg);
     }
     else if constexpr(is_same_v<T, ptr_S>) {
@@ -241,6 +267,7 @@ void Node::set(ControlFlow v)  { *this = Node(v); }
 void Node::set(const string& v) { *this = Node(v); }
 void Node::set(List v) { *this = Node(Value(move(v))); }
 void Node::set(Map v) { *this = Node(Value(move(v))); }
+void Node::set(IMap v) { *this = Node(Value(move(v))); }
 void Node::set(unique_ptr<Node> new_node) {
   if(!new_node) {
     set_null();
@@ -281,6 +308,19 @@ Node::OpStatus Node::set(const string&key, unique_ptr<Node> child) {
   map[key] = move(child);
   return {true, create(true)};
 }
+
+//
+// set_imap for Integer, Atom IMap
+//
+Node::OpStatus Node::set_imap(Integer key, unique_ptr<Node> child) {
+  if (type_ != Type::Map) {
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
+  }        
+  IMap& map= get<IMap>(value_);
+  map[key] = move(child);
+  return {true, create(true)};
+}
+
 
 Node::OpStatus Node::set(const string&key, ptr_R child) {
   if (type_ != Type::Map) {
@@ -386,6 +426,16 @@ Node::OpStatus Node::delete_key(const string &key) {
   Map& map = get<Map>(value_);
   if(map.erase(key)==0)
     return {false, create_error(Error::Type::InvalidOperation,  "Key '" + key + "' not found in map.")};
+  return {true, nullptr};
+}
+
+Node::OpStatus Node::delete_key(Integer key) {
+  if(type_ != Type::IMap)
+    return {false, create_error(Error::Type::InvalidOperation, "Cannot delete key on a non-Map node.")};
+
+  IMap& map = get<IMap>(value_);
+  if(map.erase(key)==0)
+    return {false, create_error(Error::Type::InvalidOperation,  "Key '" + to_string( key) + "' not found in map.")};
   return {true, nullptr};
 }
 

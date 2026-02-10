@@ -31,7 +31,7 @@ public:
 
   enum class Type { 
     Null, Bool, Error, Integer, Float, String, 
-    Identifier, List, Map, Vector, DeQue, LispOp, ProcState, 
+    Identifier, List, Map, IMap, Vector, DeQue, LispOp, ProcState, 
     ControlFlow, Atom, Shared, Raw, Unique, Fun };
 
   using Integer = long; using Float = double;
@@ -47,8 +47,9 @@ public:
   using ProgramList = List; // program build list type
   //
   using Map = unordered_map<string, unique_ptr<Node>>;
+  using IMap = unordered_map<Integer, unique_ptr<Node>>;
   using Fun = function<OpStatus(Node&, Node&, const Vector& list)>; // process, this, arguments
-  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow, ptr_S, ptr_R, ptr_U, Fun>;
+  using Value = variant<monostate, bool, Error, Integer, Float, string, List, Vector, DeQue, Map, Lisp::Op, ProcState, ControlFlow, ptr_S, ptr_R, ptr_U, Fun, IMap>;
   using ValueSimple = variant<monostate, bool,  Error, Lisp::Op, ProcState, ControlFlow, Integer, Float, string>;
 
   using OpStatusRef = pair<bool, Node&>;
@@ -79,6 +80,7 @@ public:
   static unique_ptr<Node> clone(const Vector& list) ;
   static unique_ptr<Node> clone(const DeQue& list) ;
   static unique_ptr<Node> clone(const Map& map) ;
+  static unique_ptr<Node> clone(const IMap& imap) ;
   static unique_ptr<Node> clone(const Fun& fun) ;
 
   void set(Integer v);
@@ -89,6 +91,7 @@ public:
   void set(const string& v);
   void set(List v);
   void set(Map v);
+  void set(IMap v);
   void set(unique_ptr<Node> new_node);
   void set_atom(Integer v);
   void set_atom();
@@ -100,6 +103,7 @@ public:
   OpStatus set(size_t index, unique_ptr<Node> child);                              
   OpStatus set(const string& key, unique_ptr<Node> child);                    
   OpStatus set(const string& key, ptr_R child);                    
+  OpStatus set_imap(Integer k, unique_ptr<Node> child);                    
  
   // Convenience Overloads for Atomic Types (Delegates)                             
   OpStatus set(size_t index, Integer v);                                                    
@@ -148,6 +152,7 @@ public:
   OpStatus add(const string&key, unique_ptr<Node> child);
 
   OpStatus delete_key(const string &key);
+  OpStatus delete_key(Integer key);
 
   /**
    * @brief Removes the last element from a List node (equivalent to std::vector::pop_back).
@@ -201,6 +206,7 @@ public:
 
 
   static string _to_str(const Map&m) ;
+  static string _to_str(const IMap&m) ;
   static string _to_str(const Vector&l) ;
   static string _to_str(const List&l) ;
   static string _to_str(const DeQue&l) ;

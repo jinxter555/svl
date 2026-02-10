@@ -346,34 +346,72 @@ Node::OpStatus LispExpr::hash_create(Node&process, const Node::Vector &list_kv, 
     auto &kv_pair = list_kv[i];
     auto const &key_ref_status  = kv_pair->get_node(0);
     if(!key_ref_status.first) {
-      cerr << "map create, key,  error! "  <<  key_ref_status.second << "\n";
+      cerr << "hash create, key,  error! "  <<  key_ref_status.second << "\n";
       return {false, key_ref_status.second.clone()};
     }
 
     auto const &value_ref_status = kv_pair->get_node(1);
     if(!value_ref_status.first) {
-      cerr << "map create, value, error! "  <<  value_ref_status.second << "\n";
+      cerr << "hash create, value, error! "  <<  value_ref_status.second << "\n";
       return {false, value_ref_status.second.clone()};
     }
     auto value_status = eval(process, value_ref_status.second);
     if(!value_status.first) {
-      cerr << "map create key,value eval pair error! "  <<  value_status << "\n";
+      cerr << "hash create key,value eval pair error! "  <<  value_status << "\n";
       return value_status;
     }
     map[key_ref_status.second._to_str()] = move(value_status.second);
 
   }
   
-  //auto type_atom_ptr = make_unique<Node>();
-  //type_atom_ptr->set_atom(str_to_atom("map"));
-  //obj_info->set("type",  move(type_atom_ptr));
-  obj_info->set("type", Lisp::Type::map );
+  obj_info->set("type", Lisp::Type::hash );
   map[OBJ_INFO] = move(obj_info);
 
-
-  //cout << "map " << Node::_to_str( map) << "\n";
   return {true, Node::create(move(map))};
 }
+
+Node::OpStatus LispExpr::ihash_create(Node&process, const Node::Vector &list_kv, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::hash_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list_kv: ") + Node::_to_str(list_kv), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+  Node::IMap map;
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+
+  if(list_kv.empty()) return {true, Node::create(Node::Type::Map)}; // empty map
+
+  size_t  s = list_kv.size();
+  for(size_t i=start; i<s; i++) {
+    auto &kv_pair = list_kv[i];
+    auto const &key_ref_status  = kv_pair->get_node(0);
+    if(!key_ref_status.first) {
+      cerr << "hash create, key,  error! "  <<  key_ref_status.second << "\n";
+      return {false, key_ref_status.second.clone()};
+    }
+
+    auto const &value_ref_status = kv_pair->get_node(1);
+    if(!value_ref_status.first) {
+      cerr << "hash create, value, error! "  <<  value_ref_status.second << "\n";
+      return {false, value_ref_status.second.clone()};
+    }
+    auto value_status = eval(process, value_ref_status.second);
+    if(!value_status.first) {
+      cerr << "hash create key,value eval pair error! "  <<  value_status << "\n";
+      return value_status;
+    }
+    try {
+    map[key_ref_status.second._get_integer()] = move(value_status.second);
+    } catch(...) {
+      cerr << "hash key error! "  <<  key_ref_status.second._to_str() << "\n";
+      return {false, key_ref_status.second.clone()};
+    }
+
+  }
+  
+  obj_info->set("type", Lisp::Type::ihash );
+  map[Lang::str_to_atom( OBJ_INFO)] = move(obj_info);
+  return {true, Node::create(move(map))};
+}
+
 
 //------------------------------------------------------------------------
 // process, node this object, and args pass to this object
@@ -586,7 +624,7 @@ Node::OpStatus LispExpr::closure_create(Node&process, const Node::Vector &list, 
 
   size_t s = list.size();
 
-  if(list.size()<2) return {false, Node::create_error(Error::Type::Parse, "closure do() blcok requires atleast 2 parameters! " + Node::_to_str(list))};
+  if(s<2) return {false, Node::create_error(Error::Type::Parse, "closure do() blcok requires atleast 2 parameters! " + Node::_to_str(list))};
 
   Node::Map map={}; 
   auto obj_info = make_unique<Node>(Node::Type::Map);
@@ -752,7 +790,8 @@ Node::OpStatus LispExpr::root_manifest(Node& process, const Node::Vector& code_l
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
   cout << "root mani!\n";
   vector<string> path;
-  size_t i, s =code_list.size();
+  size_t s =code_list.size();
+
   for(size_t i=start; i<s; i++) {
     path.push_back(code_list[i]->_to_str());
   }

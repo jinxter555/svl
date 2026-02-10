@@ -331,7 +331,7 @@ Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
 
   try {
     auto root_sym_op = get<Node::Integer>(list.front()->value_); list.pop_front(); // root op symbol 
-    if(root_sym_op == sym_set) {
+    if(root_sym_op == atom_set) {
       auto path_list = move(get<Node::List>(list.front()->value_));  list.pop_front();
       auto value = move(list.front());  list.pop_front();
 
@@ -339,7 +339,7 @@ Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
       return set(path_vec_str, move(value), true);
       //return {true, Node::create(true)};
 
-    } else if(root_sym_op== sym_get){
+    } else if(root_sym_op== atom_get){
       auto path_list = move(get<Node::List>(list.front()->value_));  list.pop_front();
       auto path_vec_str = Node::list_to_vector_string(path_list);
       auto node_ref = get_node(path_vec_str);

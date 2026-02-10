@@ -28,6 +28,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::deque: return "deque";
     case Lisp::Op::vector: return "vector";
     case Lisp::Op::hash: return "hash";
+    case Lisp::Op::ihash: return "ihash";
     case Lisp::Op::object: return "object";
 
     case Lisp::Op::car: return "car";

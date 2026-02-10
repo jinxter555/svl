@@ -26,6 +26,7 @@ string Node::_to_str(Type type) {
     case Type::Vector: return "Vector";
     case Type::DeQue: return "DeQue";
     case Type::Map: return "Map";
+    case Type::IMap: return "IMap";
     case Type::Atom: return "Atom";
     case Type::LispOp: return "LispOp";
     case Type::ProcState: return "ProcessState";
@@ -123,6 +124,9 @@ string Node::_to_str() const {
     case Type::Map: {
       auto& map = get<Map>(value_);
       return _to_str(map);}
+    case Type::IMap: {
+      auto& map = get<IMap>(value_);
+      return _to_str(map);}
     case Type::Shared: {
       auto& ptr_s = get<ptr_S>(value_);
       //cout << "shared to_str()";
@@ -166,6 +170,39 @@ string Node::_to_str(const Map&map) {
   outstr = outstr + kv_paires[i] + "}";
   return (outstr);
 }
+
+string Node::_to_str(const IMap&map) {
+  MYLOGGER(trace_function, "Node::_to_str(const Map&map)", __func__, SLOG_TO_STR);
+
+  if(map.empty()) return "{}";
+
+  vector<string> kv_paires ;
+  string colon(":");
+  string q("\"");
+  string outstr;
+
+  for (auto const& [key, val] : map) {
+      //outstr = q + Lang::atom_to_str( key) + q  + colon + " " + val->_to_str();
+      auto atom_key_str = Lang::atom_to_str_imap(key);
+      if(atom_key_str.back() == 'i')
+        outstr =  atom_key_str  + " " + val->_to_str();
+      else
+        outstr =  ":" + atom_key_str   + "  " + val->_to_str();
+
+    kv_paires.push_back(outstr);
+  }
+
+  outstr="{";
+  int i, s = kv_paires.size();
+  for(i=0; i<s-1; i++) {
+    outstr = outstr + kv_paires[i] + ", ";
+  }
+  outstr = outstr + kv_paires[i] + "}";
+  return (outstr);
+}
+
+
+
 
 string Node::_to_str(const Vector&list) {
   MYLOGGER(trace_function, "Node::_to_str(const Vector&list)", __func__, SLOG_TO_STR);

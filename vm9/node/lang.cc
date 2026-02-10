@@ -30,9 +30,12 @@ Node::Integer Lang::str_to_atom(const string& input) {
 }
 //Node::OpStatusRef Lang::atom_to_str(Node::Integer v) {
 string Lang::atom_to_str(Node::Integer v) {
-  //auto atoms = get_branch(atoms_key);
   return Atoms[v];
-  // return (*atoms)[to_string(v)];
+}
+string Lang::atom_to_str_imap(Node::Integer v) {
+  if (auto it = Atoms.find(v); it != Atoms.end()) 
+    return Atoms[v];
+  return  to_string(v)+"i";
 }
 
 

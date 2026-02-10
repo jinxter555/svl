@@ -20,7 +20,7 @@ public:
   { root, nil, kernel, system, branch, namespace_
   , class_, private_, new_, delete_, clone
   , error, noop
-  , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, object
+  , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
   , var, assign
   , car, cdr, map
   , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, and_, or_, not_

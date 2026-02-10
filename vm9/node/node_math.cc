@@ -122,6 +122,12 @@ Node Node::operator==(const Node &other) const {
       else
         return Node(static_cast<Float>(lhs) == static_cast<Float>(rhs), Type::Bool);
     } else {
+      if constexpr (is_same_v<L, string> &&  is_same_v<R, string>) {
+        return Node(static_cast<string>(lhs) == static_cast<string>(rhs), Type::Bool);
+      }
+
+
+
       cerr << "this: " << _to_str() << ", other: " << other._to_str() << "\n";
       cerr << "this.type: " << Node::_to_str(type_) << ", other.type: " << Node::_to_str(other.type_) << "\n";
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for == op"});
