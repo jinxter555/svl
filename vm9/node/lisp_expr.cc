@@ -394,8 +394,40 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   if(var_list.size() < 3) return  {false, Node::create_error(Error::Type::Parse, "assign has less than 3 parameters!") };
 
   if(var_list[start]->type_ == Node::Type::Vector) {
+
+
+    if(var_list[start+1]->type_ == Node::Type::Identifier) {
+      /*
+      auto rhs_value_status  = eval(process, *var_list[start+1]);
+      if(!rhs_value_status.first) {
+        return rhs_value_status;
+      }
+      if(rhs_value_status.second->type_ == Node::Type::Shared )  {
+        auto sptr = get<Node::ptr_S>(rhs_value_status.second->value_);
+        if(sptr->type_ != Node::Type::Vector)
+          return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: right hand side is not a list")};
+      }*/
+      auto identifier_rhs = var_list[start+1]->_to_str();
+      auto rhs_value_ref_status = symbol_lookup(process, identifier_rhs);
+      //cout << "1rhs value ref status: " << rhs_value_ref_status  << "\n";
+    
+      if(!rhs_value_ref_status.first) 
+        return {false, rhs_value_ref_status.second.clone()};
+
+      if( rhs_value_ref_status.second.type_ != Node::Type::Shared )  {
+        return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: right hand side is not a list")};
+      }
+      if( rhs_value_ref_status.second._get_ptr_s()->type_ != Node::Type::Vector )  {
+        return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: right hand side is not a list")};
+      }
+
+
+      return assign_match(process, var_list[start]->_get_vector_ref(), rhs_value_ref_status.second._get_ptr_s()->_get_vector_ref());
+
+    }
+
     if(var_list[start+1]->type_ != Node::Type::Vector) {
-      return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: values should a list")};
+      return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: values should be a list")};
     }
     return assign_match(process, var_list[start]->_get_vector_ref(), var_list[start+1]->_get_vector_ref());
   }
