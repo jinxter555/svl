@@ -432,6 +432,7 @@ Node::OpStatus LispExpr::assign_match(Node&process, const Node::Vector& var_list
     }
     // if lhs == identifier, assignment
     if(lhs->type_ == Node::Type::Identifier) {
+      if (identifier=="_") continue;
 
       auto assign_status = assign_attach(process, identifier, move(value_status.second));
       if(!assign_status.first) {
