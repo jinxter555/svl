@@ -423,6 +423,11 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   }
 
   auto identifier = var_list[start]->_to_str();
+  if(var_list[start]->type_ != Node::Type::Identifier) {
+    auto errmsg = "can't assign to a non identifier variable '" + identifier + "'";
+    cerr << errmsg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, errmsg)};
+  }
   auto &value_expr = var_list[start+1];
   auto value_status = eval(process, *value_expr);
   if(!value_status.first) return value_status;

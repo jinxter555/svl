@@ -42,6 +42,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::mod: return "mod";
 
     case Lisp::Op::eq: return "eq";
+    case Lisp::Op::neq: return "neq";
     case Lisp::Op::lt: return "lt";
     case Lisp::Op::gt: return "gt";
     case Lisp::Op::gteq: return "gteq";

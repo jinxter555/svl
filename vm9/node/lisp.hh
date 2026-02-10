@@ -23,7 +23,7 @@ public:
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
   , var, assign
   , car, cdr, map
-  , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, and_, or_, not_
+  , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_
   , read, readline
   , call, send, ret, call_extern, funcall, curry, pipe, eval
   , cond, print, printr, loop, while_, repeat, for_, do_, if_, case_, when

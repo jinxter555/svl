@@ -74,6 +74,7 @@ void LispExpr::set_keywords() {
   map_->set("<=", Op::lteq);
   map_->set(">=", Op::gteq);
   map_->set("==", Op::eq);
+  map_->set("!=", Op::neq);
   map_->set("=", Op::assign);
   map_->set("if", Op::if_);
   map_->set("not", Op::not_);
