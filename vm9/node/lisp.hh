@@ -27,7 +27,7 @@ public:
   , read, readline
   , call, send, ret, call_extern, funcall, curry, pipe, eval
   , cond, print, printr, loop, while_, repeat, for_, do_, if_, case_, when
-  , module, def, defun, defmacro, alias, lambda
+  , module, def, defun, defmacro, alias, lambda, faz
   };
   using Type=Op;
   Lisp();

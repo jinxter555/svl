@@ -219,6 +219,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::cdr:   return cdr(process, code_list, start);
   case Lisp::Op::lambda:    return lambda_create(process, code_list, start);
   case Lisp::Op::do_:    return closure_create(process, code_list, start);
+  case Lisp::Op::faz:    return faz(process, code_list, start);
+
   case Lisp::Op::hash:   return hash_create(process, code_list, start);
   case Lisp::Op::ihash:   return ihash_create(process, code_list, start);
   case Lisp::Op::new_:  return object_create(process, code_list, start);
@@ -320,8 +322,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
       cerr << "eval failed! " << *value_status.second << "\n" << *code_list[i] <<"\n";
       return value_status;
     }
+
     if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
-      cout << "returned map or object need to check if t needs to call lambda or closure!\n";
+
+      //cout << "returned map or object need to check if t needs to call lambda or closure!\n";
+
     }
     result_list.push_back(move(value_status.second));
   }

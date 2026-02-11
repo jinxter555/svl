@@ -9,12 +9,25 @@
       4 \
       5
 
-      (print "hello, world\n")
-      ;(call (Kernel p55) (5555 2))
-      ;call :modfun Kernel.p55 (5555 2)
-      (print "\n")
-      (p55 (55 2))
-      (print "\n\n")
+      print (
+             6
+             )
+      (print
+        7
+        )
+
+      print (8 \
+             )
+
+
+      faz (555
+      do (i) 
+        print "closure 1 \n"
+        print "closure 22 \n"
+        print "i: " i "\n\n"
+      end.do
+      )
+
       loop
         print (eval (read)) "\n"
       end.loop

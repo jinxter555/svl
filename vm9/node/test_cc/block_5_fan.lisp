@@ -89,6 +89,9 @@ infi
     [> 5] (print )
     [< 3] (print )
     end.case
+    
+    if[ (x y z) (2 3 4) ]
+    endif
 
   end.def
 

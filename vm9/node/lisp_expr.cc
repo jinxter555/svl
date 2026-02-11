@@ -25,6 +25,7 @@ LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , atom_ok(str_to_atom("ok"))
 , atom_error(str_to_atom("error"))
 , atom_lambda(str_to_atom("lambda"))
+, atom_closure(str_to_atom("closure"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;

@@ -32,8 +32,9 @@ private:
 
   Node::OpStatus parse_def(const Node::List &list);
 
-  const Node::Integer atom_module, atom_fun, atom_class, atom_get, atom_ok, atom_error,
-  atom_lambda, atom_set; // internal lisp hashed symbol values  (def :symbol ... )
+  const Node::Integer atom_module, atom_fun, atom_class, atom_get, atom_set, atom_ok, atom_error,
+  atom_lambda, atom_closure;
+  // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
   //Node::OpStatus attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list);
@@ -155,6 +156,7 @@ public:
 
   Node::OpStatus call(Node& process, const Node& code_node); 
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
+  Node::OpStatus faz(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const vector<string>& path, const Node::Vector& argv_list); // 
 
   Node::OpStatus call_macro(Node& process, const vector<string>&path , const Node::Vector& argv_list);

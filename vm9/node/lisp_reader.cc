@@ -405,45 +405,17 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     }
 
 
-    /*
-    if(is_closurable(line_vector.front()) || is_endable(line_vector.back()) )  {
-      line_result += line + "\n";
-      continue;
-    }
-
-    if(line.front() == '(' && line.back() ==')'){ // ( blah blah blah )
-      line_result += line + "\n";
-    } else if(line.front() != '('  && line.back() == ')') { // fx(123)
-      line_result += "(" + line + ")" + "\n"; // needs to count all of (, ), in stack order
-    } else
-      line_result += "(" + line + ")" + "\n";
-*/
-
- //   if( isalpha( line.front()) && line.back() == ')'){ // op1 (op2 arg1 ... )
- //     line_result += "(" + line + ")"+"\n";
- //     continue;
- //   }
-
-    // op1 (op2 arg1 ... ) where op1 = '+' '-' and prevent single ')' line
-    //if(  line.front() != '(' && line.back() == ')' && line != ")"){ 
-
-
-
-    // op1 (op2 arg1 ... ),  
-    // NO: keyword ) , keyword
-
-
-    if(  line.front() != '(' && line.back() == ')' && is_complete_parenthesis(line)){ 
+    if(line.front() != '(' && line.back() == ')' && is_complete_parenthesis(line)){ 
       line_result += "(" + line + ")"+"\n";
       continue;
     }
 
-    if(line.front() != '(' && line.back() != ')'){ //  blah blah blah 
+    if(line.front() != '(' && line.back() != ')'){ //   lispfun arg1 arg2 ...
       line_result += "(" + line + ")"+"\n";
       continue;
     } 
-    line_result +=  line +"\n";
 
+    line_result +=  line +"\n";
 
   }
 

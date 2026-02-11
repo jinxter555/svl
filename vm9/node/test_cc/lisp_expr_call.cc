@@ -538,7 +538,6 @@ Node::OpStatus LispExpr::call_lambda(Node& process, const Node::Map & obj_lambda
 //
 Node::OpStatus LispExpr::call_closure(Node& process, const Node::Map & obj_closure, Node::Vector&& args) {
   MYLOGGER(trace_function, "LispExpr::call_closure(Node&process, Node::Map&obj_closure, Node::Vector&& args)", __func__, SLOG_FUNC_INFO)
-  MYLOGGER_MSG(trace_function, "closure:" + Node::_to_str(obj_closure), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, "args:" + Node::_to_str(args), SLOG_FUNC_INFO+30)
 
   /*
@@ -547,20 +546,11 @@ Node::OpStatus LispExpr::call_closure(Node& process, const Node::Map & obj_closu
     cerr << "call_closure() scope current error!\n" ;
     return {false, Node::create_error(Error::Type::Unknown,  "call_closure() scope current error!" + scope_ref_status.second._to_str())};
   }*/
-
   auto params = move(get_params(obj_closure));
   attach_params_args_to_scope_vars(process, params, move(args));
 
-  try {
-//    cout << "closure trying eval code\n";
-    auto &code_list = obj_closure.at(CODE);
-    return eval(process, *code_list);
-  } catch(...) {
-    cerr << "closure eval code failed\n";
-  }
 
-
-  return {false, Node::create_error(Error::Type::Unknown,  "call __object_info__.type != closure. ")};
+  return {false, Node::create_error(Error::Type::Unknown,  "call __object_info__.type != closure. but call_closure()!")};
 
 }
 
@@ -624,34 +614,5 @@ Node::OpStatus LispExpr::call_extern(Node& process, const string&name_mod, const
   auto result_status = method_fun(process, node_this, args);
   //cout << "result status : " << result_status << "\n";
   return result_status;
-
-}
-
-//
-// (faz 1 (do ))
-//
-Node::OpStatus LispExpr::faz(Node& process, const Node::Vector& code_list, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::faz(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
-  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
-  cout << "faz\n";
-  auto status = eval(process, code_list, start);
-  if(!status.first) {
-    cout << "faz eval failed " << status.second->_to_str() << "\n";
-    return status;
-  }
-  auto &ev_list =status.second->_get_vector_ref();
-  auto &arg = ev_list[0];
-  auto &closure = ev_list[1];
-
-
-  cout << "faz status " << status << "\n\n";
-  cout << "arg:" << *arg << "\n";
-  cout << "closure:" << *closure << "\n";
-
-  call_closure(process, closure->_get_map_ref(), move(arg->_get_vector_ref()) );
-
-
-  return {true, Node::create(true)};
 
 }

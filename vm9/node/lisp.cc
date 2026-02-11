@@ -68,6 +68,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::repeat: return "repeat";
     case Lisp::Op::for_: return "for";
     case Lisp::Op::do_: return "do";
+    case Lisp::Op::faz: return "faz";
     case Lisp::Op::if_: return "if";
     case Lisp::Op::case_: return "case";
     case Lisp::Op::when: return "when";
