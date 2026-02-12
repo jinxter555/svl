@@ -25,7 +25,7 @@ private:
   void to_newline(const string&input, size_t &i);
 
   vector<string>  end_list;
-  Token token_previous={};
+  //Token token_previous={};
 public:
   LispReader(LispExpr*);
   string tokenize_preprocess(const string& input);

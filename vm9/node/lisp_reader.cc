@@ -202,7 +202,7 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
   }
 
 
-  token_previous.value_ = ")";
+  //token_previous.value_ = ")";
   tokens.pop_front(); // remove ')' token
   return {true, Node::create(move(list))};
 
@@ -230,7 +230,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   }
 
   if(token.value_ == "(") {
-    token_previous.value_ = "(";
+    //token_previous.value_ = "(";
     return parse_sequence(tokens);
 
   } else if(token.value_==")") {
@@ -272,6 +272,15 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
       string esc_str = raw_to_escaped_string(token.value_);
       return {true, Node::create(esc_str)}; 
     }
+
+    if(token.value_[0]=='@') {
+      token.value_.erase(0, 1);
+      string esc_str = "this." + token.value_;
+      return {true, Node::create(esc_str, Node::Type::Identifier)}; 
+    }
+
+
+
     if(token.value_=="true") {
       return {true, Node::create(true)}; 
     }
@@ -308,7 +317,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
   token_previous.line_= token.line_;
   token_previous.value_ = token.value_;
 */
-  token_previous.value_ = token.value_;
+  //token_previous.value_ = token.value_;
 
   auto node_ptr = Node::create(token.value_); 
   node_ptr->set_identifier();

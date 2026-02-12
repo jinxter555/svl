@@ -91,7 +91,7 @@ public:
 
   //Node::OpStatus   frame_create_params_args(const vector<string>& params, Node::Vector &&args);
   Node::OpStatus   frame_create_fun_args(Node&fun, Node::Vector &&args);
-  Node::OpStatus   frame_create_fun_args_lambda(Node&fun, Node::Vector &&args);
+  Node::OpStatus   frame_create_fun_args_lambda(Node &process, Node&fun, Node::Vector &&args);
 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
   Node::OpStatus frame_pop(Node&process);

@@ -150,12 +150,18 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
 }
 
 //------------------------------------------------------------------------
-Node::OpStatus   LispExpr::frame_create_fun_args_lambda(Node& fun, Node::Vector &&arg_list) {
-  MYLOGGER(trace_function, "LispExpr::frame_fun_params_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus   LispExpr::frame_create_fun_args_lambda(Node&process, Node& fun, Node::Vector &&arg_list) {
+  MYLOGGER(trace_function, "LispExpr::frame_fun_params_args(process, frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "arg_list: " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
 
 
   auto frame = frame_create();
+  auto base_frame_ref_status = frame_current(process); // frame at creation
+  if(!base_frame_ref_status.first) {
+    auto msg = "frame_create_fun_args_lambda() Can't get parent frame";
+    cerr << msg;
+    return  {false, Node::create_error(Error::Type::Unknown, base_frame_ref_status.second._to_str() + msg)};
+  }
 
   auto params = move(get_params(fun._get_map_ref()));
   auto scope_status = scope_params_args(params, move(arg_list));
@@ -168,8 +174,9 @@ Node::OpStatus   LispExpr::frame_create_fun_args_lambda(Node& fun, Node::Vector 
 
 
   frame->set(CURRENT_FUNCTION, "lambda"); 
-
   frame->set(CURRENT_FUNCTION_PTR, &fun); 
+  frame->set(BASE_FRAME, base_frame_ref_status.second.clone()); 
+
   return {true, move(frame)};
 }
 
@@ -484,7 +491,7 @@ Node::OpStatus LispExpr::call_lambda(Node& process, Node& obj_lambda, Node::Vect
 
   // why frame is need because args to be stored in scope inside frame
 
-  auto frame_status = frame_create_fun_args_lambda(obj_lambda, move(Node::clone(args_vec_cc)->_get_vector_ref()));
+  auto frame_status = frame_create_fun_args_lambda(process, obj_lambda, move(Node::clone(args_vec_cc)->_get_vector_ref()));
   if(!frame_status.first) {
     cerr << "call_lambda(process, path, argv list) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
     return frame_status;

@@ -1,6 +1,9 @@
 #include "prompt.hh"
 #include <cstring>
 
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 
 void LangPrompt::save_history() {
   std::ofstream outfile(history_filename);
@@ -34,6 +37,7 @@ void LangPrompt::load_history() {
 
 // ready for user readline input
 PromptSwitch LangPrompt::ready() {
+  MYLOGGER(trace_function , "LangPrompt::ready()" , __func__, SLOG_FUNC_INFO);
   char *input;
   std::string input_str;
   // history.clear();
@@ -43,8 +47,9 @@ PromptSwitch LangPrompt::ready() {
     if(strcmp(input, "")==0)  continue; 
     add_history(input);
     history.push_back(input);
-    input_str = input; 
-    free(input);
+    //input_str = input; 
+    input_str.assign(input); 
+    if(input!=nullptr) free(input);
     if(input_str == "exit") return PromptSwitch::exit;
     if(input_str == "!asm") return PromptSwitch::vasm;
     if(input_str == "!svlm") return PromptSwitch::svlm;
@@ -54,6 +59,7 @@ PromptSwitch LangPrompt::ready() {
 }
 
 string LangPrompt::read() {
+  MYLOGGER(trace_function , "LangPrompt::read()" , __func__, SLOG_FUNC_INFO);
   char *input;
   std::string input_str;
   input = readline(prompt_string.c_str());

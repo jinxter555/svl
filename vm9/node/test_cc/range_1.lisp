@@ -1,22 +1,39 @@
 module Kernel 
   class Range
-    (var state fin step state)
+    (var begin fin step state)
 
     def Range(start fin step)  
       ; assign needs to return a value
-      assign this.state start
-      assign this.fin fin
-      assign this.step  step
+      assign @begin start
+      assign @state start
+      assign @fin fin
+      assign @step  step
 
     end.def
 
     def init()  
+      assign @state @begin
+      (:ok @state)
     end.def
 
     def next ()
-      assign this.state (+ this.state this.step)
+      assign @state (+ @state @step)
+      if 
+        (> @state @fin)
+        (:error nil)
+        (:ok @state)
+      end.if
+
+      if 
+        (== @state @fin)
+        (:end @fin)
+      end.if
+
+
       ;print "i am in next(v): \n"
-      
+    end.def
+    def end ()
+      assign @state @begin
     end.def
 
   end.class
@@ -25,7 +42,7 @@ module Kernel
 
     (assign x1 999)
     assign r1 (new Range 1 5 1)
-    send r1 :next 
+    ;send r1 :next 
 
       loop
         print (eval (read)) "\n"

@@ -4,7 +4,7 @@ module Kernel
 
       (var a)
       print "Macros!\n"
-      mymac 2 2
+      mymac 555 666
 
       loop
         print (eval (read)) "\n"
@@ -16,10 +16,10 @@ module Kernel
     print "hello, world\n"
     assign v1 9999
     quote
-      print "q 1: " (unquote mx)  " " (unquote my) (unquote v1) "\n"
+      print "q 1: " (unquote mx)  " " (unquote my) " " (unquote v1) "\n"
     end.quote
     quote
-      print "q 2: " (unquote mx)  " " (unquote my) (unquote v1) "\n"
+      print "q 2: " (unquote mx)  " " (unquote my) " " (unquote v1) "\n"
     end.quote
 
   end.defmacro

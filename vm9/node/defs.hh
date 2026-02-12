@@ -43,3 +43,4 @@
 #define DESC "description"
 #define OBJ_INFO "__object_info__"
 #define TYPE "type"
+#define BASE_FRAME "base_frame"

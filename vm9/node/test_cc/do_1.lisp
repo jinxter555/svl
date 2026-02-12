@@ -20,11 +20,12 @@
              )
 
 
-      faz (555
-      do (i) 
+      faz (555 666
+      do (i j z) 
         print "closure 1 \n"
         print "closure 22 \n"
         print "i: " i "\n\n"
+        print "j: " j "\n\n"
       end.do
       )
       p55 555 666
