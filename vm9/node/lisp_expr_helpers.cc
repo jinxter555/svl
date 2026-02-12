@@ -8,17 +8,22 @@
 
 
 //------------------------------------------------------------------------
-vector<string> LispExpr::get_params(const Node::Map&closure) {
+// get parameters of caller, as in fun, lambda, macro, closure
+//
+vector<string> LispExpr::get_params(const Node::Map&caller) {
   MYLOGGER(trace_function, "LispExpr::get_params(Node::Map&closure)", __func__, SLOG_FUNC_INFO);
   vector<string> result_list;
 
-  const auto &params_ptr= closure.at(_PARAMS);
-  auto &params = params_ptr->_get_vector_ref();
+  try {
+    const auto &params_ptr= caller.at(_PARAMS);
+    auto &params = params_ptr->_get_vector_ref();
+    for(const auto&ele : params ) 
+      result_list.push_back(ele->_to_str());
+    return result_list;
+  }catch(...) {
+    return {};
+  }
 
-  for(const auto&ele : params ) 
-    result_list.push_back(ele->_to_str());
-  
-  return result_list;
 }
 Node::OpStatus LispExpr::builtin_print_r(Node& process, const Node::Vector& cc_vec, size_t start) {
   MYLOGGER(trace_function, "LispExpr::builtin_print_r(Node&process, const Node::Vector& cc_vec, start)", __func__, SLOG_FUNC_INFO);

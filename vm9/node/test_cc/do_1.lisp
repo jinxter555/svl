@@ -27,10 +27,8 @@
         print "i: " i "\n\n"
       end.do
       )
+      p55 555 666
 
-      loop
-        print (eval (read)) "\n"
-      end.loop
     )
   )
 ;        print (car (eval (read))) "\n"
@@ -45,6 +43,11 @@
       (print "-" x "-")
       (print "-" z "-")
       (print "\n")
+
+      loop
+        print (eval (read)) "\n"
+      end.loop
+
     ;  print (root) "\n"
     ;  (p56 (66 2))
     )

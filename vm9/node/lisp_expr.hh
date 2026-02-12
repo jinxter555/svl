@@ -37,16 +37,13 @@ private:
   // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
-  //Node::OpStatus attach_arguments_to_frame(unique_ptr<Node>& frame, const vector<string>& params_path, unique_ptr<Node> arg_list);
-  Node::OpStatus attach_params_args_to_frame(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector &&args);
 
 
 
 
-  //Node::OpStatus attach_params_args_to_scope_vars(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector &&args);
-  Node::OpStatus attach_params_args_to_scope_vars(Node&process, const vector<string>& params, Node::Vector &&args);
+  Node::OpStatus scope_params_args(const vector<string>& params, Node::Vector &&args); // create new scope with params and args
+
   Node::OpStatus attach_this_to_arguments(Node::Vector& list_args); // attach 'this' variable to a class method 
-  Node::OpStatus attach_this_to_var(Node::Vector& list_args); // attach 'this' variable to a class method 
 
   Node::OpStatus attach_class_vars_to_object(Node&process, Node&object, Node::Vector& list_args); // attach 'this' variable to a class method 
 
@@ -63,7 +60,7 @@ private:
 
   Node::OpStatus vector_to_object(const Node::Vector&list); // return an object, object_info with type = head aka Lisp::Type or Lisp::Op
 
-  vector<string> get_params(const Node::Map&closure);
+  vector<string> get_params(const Node::Map&caller);
 
 public: 
   Lisp::Op keyword_to_op(const string &kw); // convert 
@@ -94,13 +91,15 @@ public:
 
   //Node::OpStatus   frame_create_params_args(const vector<string>& params, Node::Vector &&args);
   Node::OpStatus   frame_create_fun_args(Node&fun, Node::Vector &&args);
+  Node::OpStatus   frame_create_fun_args_lambda(Node&fun, Node::Vector &&args);
 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
   Node::OpStatus frame_pop(Node&process);
   Node::OpStatusRef frame_current(Node&process) ; // 
 
   unique_ptr<Node> scope_create() const ; // create a scope 
-  Node::OpStatus scope_push(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
+  Node::OpStatus scope_push_process(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
+  Node::OpStatus scope_push_frame(Node&frame, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
   Node::OpStatusRef scope_current(Node&process) ; // 
 
   Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
@@ -113,8 +112,8 @@ public:
   // class
   Node::OpStatusRef get_class(deque<string> mfc) ; //  module class ,  1
 
-  Node::OpStatusRef arg_lookup(Node&process, const string&name ) ; // 
   // var lookup should pass frame 
+  Node::OpStatusRef arg_lookup(Node&scope, const string&name ) ; // 
   Node::OpStatusRef var_lookup(Node&scope, const string&name ) ; //  should use
   Node::OpStatusRef immute_lookup(Node&scope, const string&name ) ; //  should use
   Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
@@ -165,7 +164,10 @@ public:
 
 
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args
-  Node::OpStatus call_lambda(Node& process, const Node::Map & obj_lambda, Node::Vector&& args); // call creates new scope and push args to scope immute
+  //Node::OpStatus call_lambda(Node& process, const Node::Map & obj_lambda, Node::Vector&& args); // call creates new scope and push args to scope immute
+
+  Node::OpStatus call_lambda(Node& process, Node& obj_lambda, Node::Vector&& args); // call creates new scope and push args to scope immute
+
   Node::OpStatus call_closure(Node& process, const Node::Map & obj_closure, Node::Vector&& args); // call creates new scope and push args to scope immute
 //  Node::OpStatus call_object(Node& process, const Node::Map & obj, const Node::Vector& args); // call object with Node::Map as primitive type
 

@@ -196,29 +196,38 @@ unique_ptr<Node> LispExpr::scope_create() const {
   Node::Map scope={}; //Node::Map lvar={};
   scope[VAR] = Node::create(Node::Type::Map);
   scope[IMMUTE] = Node::create(Node::Type::Map);
+  scope[ARGS] = Node::create(Node::Type::Map);
   return Node::create(move(scope));
 }
 
 //push scope to the last scopes
-Node::OpStatus LispExpr::scope_push(Node&process, unique_ptr<Node>scope) {
-  MYLOGGER(trace_function, "LispExpr::scope_push(process, scope)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus LispExpr::scope_push_process(Node&process, unique_ptr<Node>scope) {
+  MYLOGGER(trace_function, "LispExpr::scope_push_process(process, scope)", __func__, SLOG_FUNC_INFO);
 
-  auto last_frame_ref_status = frame_current(process);
+  auto frame_ref_status = frame_current(process);
 
-  if(!last_frame_ref_status.first) {
+  if(!frame_ref_status.first) {
     return {false, Node::create_error(Error::Type::Unknown, "Can't get last frame aka back()")};
   }
+  return scope_push_frame(frame_ref_status.second, move(scope));
+}
 
-  auto scopes_status = last_frame_ref_status.second.get_node(SCOPES);
+Node::OpStatus LispExpr::scope_push_frame(Node&frame, unique_ptr<Node>scope) {
+  MYLOGGER(trace_function, "LispExpr::scope_push_frame(frame, scope)", __func__, SLOG_FUNC_INFO);
+  auto scopes_status = frame.get_node(SCOPES);
+
   if(!scopes_status.first) {
-    cerr << "scope_push() scope_status: " << scopes_status << "\n";
+    cerr << "scope_push_frame() scope_status: " << scopes_status << "\n";
     return {false, Node::create_error(Error::Type::Unknown, "Can't get scopes")};
   }
-
   scopes_status.second.push_back(move(scope));
-  return {true, Node::create(true)};
 
+  return {true, Node::create(true)};
+  
 }
+
+
+
 
 Node::OpStatusRef LispExpr::scope_current(Node&process)  {
   MYLOGGER(trace_function, "LispExpr::scope_current(Node& process)", __func__, SLOG_FUNC_INFO);
@@ -284,7 +293,7 @@ Node::OpStatus LispExpr::run_program() {
   frame->set("Pi", 3.1415);
   frame_push(proc_0.second, move(frame));
   scope = scope_create();
-  scope_status =  scope_push(proc_0.second, move(scope));
+  scope_status =  scope_push_process(proc_0.second, move(scope));
   if(!scope_status.first) {
     cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
   }
@@ -309,7 +318,7 @@ Node::OpStatus LispExpr::run_program() {
   frame_push(proc_1.second, move(frame1));
 
   scope = scope_create();
-  scope_status =  scope_push(proc_1.second, move(scope));
+  scope_status =  scope_push_process(proc_1.second, move(scope));
   if(!scope_status.first) {
     cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
   }
@@ -358,8 +367,9 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
     return {false, scope_ref_status.second.clone()};
   }
   auto scope_vars_status = scope_ref_status.second.get_node(VAR);
-  if(!scope_vars_status.first)  
+  if(!scope_vars_status.first)   {
     return {false, scope_vars_status.second.clone()};
+  }
 
 
   //cout << "current pid : " << Kernel::pid(process) << "\n";;
@@ -367,10 +377,6 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
   for(size_t i=start; i<s; i++) {
     auto const &ele = var_list[i];
     switch(ele->type_) {
-    case Node::Type::Identifier: {
-      if(ele->_to_str() =="this") break;
-      scope_vars_status.second.set(ele->_to_str(),  make_unique<Node>());
-      break; }
     case Node::Type::Vector: {
       auto v_name_ref_1 = (*ele)[0];
       auto v_var_ref_1 = (*ele)[1];
@@ -378,6 +384,10 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
       if(!v.first) return v;
       scope_vars_status.second.set(v_name_ref_1.second._to_str(),  move(v.second));
       break; }
+    case Node::Type::Identifier: {
+      scope_vars_status.second.set(ele->_to_str(),  Node::create());
+      break;
+    }
     default: return {false, Node::create_error(Error::Type::Unknown, "Unknown var error")}; }
   }
   return {true, Node::create(true)};
@@ -538,10 +548,12 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
   if(!scope_immute_ref_status.first)  
     return {false, scope_immute_ref_status.second.clone()};
 
-  auto frame_ref_back_status = frame_current(process);
-  if(!frame_ref_back_status.first) return {false, frame_ref_back_status.second.clone()};
-  auto scope_args_ref_status = frame_ref_back_status.second[ARGS];
+
+  auto scope_args_ref_status = scope_ref_status.second.get_node(ARGS);
+
   if(!scope_args_ref_status.first)   {
+    cout << "scope ref status " <<  scope_ref_status.second << "\n";
+    cout << "scope args ref not found!\n";
     return {false, scope_args_ref_status.second.clone()};
   }
 

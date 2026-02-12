@@ -11,16 +11,18 @@ module Kernel
       ;print this
 
 
-      loop 
-        print (eval (read)) "\n" 
-      end.loop
     end.def
 
     def area(a pi)  
+      var name (value 555)
+      assign name "area of planet earth"
       print "\nhello class Dict::area ()\n"
       print "area is: " a "\n"
       print "pi: " pi "\n"
-      assign name "area"
+      + 1 2 3
+      loop 
+        print (eval (read)) "\n" 
+      end.loop
 
 
 ;      (print this "\n")
@@ -33,11 +35,12 @@ module Kernel
     (assign x1 999)
     assign m1 (new Dict "hello dictionary")
     ; (send m1 :Dict "my dictionary")
-    ;(send m1 :area 999 3.14)
+    (send m1 :area 999 3.14)
     ;(print "hello, world1\n")
-    ;print "x1: " x1 "\n"
+    print "x1: " x1 "\n"
+    print "m1: " m1 "\n"
 
-    ; loop print (eval (read)) "\n" end.loop
+     ;loop print (eval (read)) "\n" end.loop
 
   end.def
 

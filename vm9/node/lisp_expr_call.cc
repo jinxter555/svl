@@ -84,61 +84,35 @@ vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
 
 
 //------------------------------------------------------------------------
-// call to lambda anonymous functions
-//
-Node::OpStatus LispExpr::attach_params_args_to_frame(unique_ptr<Node>& frame, const vector<string>& params, Node::Vector &&arg_list) {
-  MYLOGGER(trace_function, "LispExpr::attach_params_args_to_frame(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("param_path: ") + _to_str_ext(params), SLOG_FUNC_INFO+30);
-  MYLOGGER_MSG(trace_function, string("arg_list: ") + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
-
-  if(arg_list.size() != params.size())
-    return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "attach_params_args_to_frame() different size of params: "  
-      + to_string( params.size()) 
-      + " "  + _to_str_ext(params)
-      + " and args: "  + to_string(arg_list.size())
-      + " " + Node::_to_str(arg_list)
-    )};
-  size_t s =  params.size();
-
-  Node::Map args;
-  for(size_t i=0; i <s; i++) {
-    args[params[i]] = move(arg_list[i]);
-  }
-  frame->set(ARGS, Node::create(move(args)));
-  return {true, nullptr};
-}
-
-//------------------------------------------------------------------------
 
 Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_list) {
-  MYLOGGER(trace_function, "LispExpr::frame_create_params_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
-  //MYLOGGER_MSG(trace_function,  "params: " + _to_str_ext(params), SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, "LispExpr::frame_fun_params_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "arg_list: " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
 
 
-  auto const params = get_params(fun._get_map_ref());
-
-  if(arg_list.size() != params.size())
-    return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "frame_create_params_args() different size of params: "
-      + to_string( params.size()) 
-      + " "  + _to_str_ext(params)
-      + " and args: "  + to_string(arg_list.size())
-      + " " + Node::_to_str(arg_list)
-    )};
-  Node::Map args;
-  size_t s =  params.size();
-  for(size_t i=0; i <s; i++) {
-    args[params[i]] = move(arg_list[i]);
-  }
   auto frame = frame_create();
-  frame->set(ARGS, Node::create(move(args)));
+
+  auto params = move(get_params(fun._get_map_ref()));
+  auto scope_status = scope_params_args(params, move(arg_list));
+
+  if(!scope_status.first) {
+    cerr << "error creating scope in frame_create_fun_args!\n";
+    return scope_status;
+  }
+  scope_push_frame(*frame, move(scope_status.second));
+
 
 
   // frame need to set current module ptr current 
-  auto fun_name = fun.get_node_with_ptr(NAME).second._to_str();
-  frame->set(CURRENT_FUNCTION, fun_name); 
+  // lambda fun name doesn't exist
+  //
+  try {
+    auto fun_name = fun.get_node_with_ptr(NAME).second._to_str();
+    frame->set(CURRENT_FUNCTION, fun_name); 
+  } catch(...) {
+    frame->set(CURRENT_FUNCTION, "lambda"); 
+  }
+
   frame->set(CURRENT_FUNCTION_PTR, &fun); 
 
   if(fun.m_has_key(CLASS_PTR)) {
@@ -176,44 +150,54 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
 }
 
 //------------------------------------------------------------------------
-// call to closure blocks .. (for range(1..10) (do (i) ..))
-//   ie. attach range value to var i with new scope
-///
-Node::OpStatus LispExpr::attach_params_args_to_scope_vars(Node& process, const vector<string>& params, Node::Vector &&arg_list) {
-  MYLOGGER(trace_function, "LispExpr::attach_params_args_to_scope_vars(Node&process, Vector&params, Vector&arg_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("param_path: ") + _to_str_ext(params), SLOG_FUNC_INFO+30);
-  MYLOGGER_MSG(trace_function, string("arg_list: ") + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
+Node::OpStatus   LispExpr::frame_create_fun_args_lambda(Node& fun, Node::Vector &&arg_list) {
+  MYLOGGER(trace_function, "LispExpr::frame_fun_params_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "arg_list: " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
 
-  auto frame_ref_status=frame_current(process);
-  if(!frame_ref_status.first) {
-    cerr << "attach_params_args_scope_vars() current frame not found in process!\n";
-    return {false, Node::create_error(Error::Type::KeyNotFound,  
-      "attach_params_args_scope_vars()  current_frame not found in process")};
-  }
 
-  auto scopes_ref_status = frame_ref_status.second.get_node(SCOPES);
-  if(!scopes_ref_status.first) {
-    cerr << "attach_params_args_scope_vars() [SCOPES] not found in frame!\n";
-    return {false, Node::create_error(Error::Type::KeyNotFound,  
-      "attach_params_args_scope_vars() [SCOPES] not found in frame")};
+  auto frame = frame_create();
+
+  auto params = move(get_params(fun._get_map_ref()));
+  auto scope_status = scope_params_args(params, move(arg_list));
+
+  if(!scope_status.first) {
+    cerr << "error creating scope in frame_create_fun_args!\n";
+    return scope_status;
   }
-  if(arg_list.size() != params.size())
+  scope_push_frame(*frame, move(scope_status.second));
+
+
+  frame->set(CURRENT_FUNCTION, "lambda"); 
+
+  frame->set(CURRENT_FUNCTION_PTR, &fun); 
+  return {true, move(frame)};
+}
+
+//------------------------------------------------------------------------
+// creates a new scope with params and arguments
+//
+Node::OpStatus LispExpr::scope_params_args(const vector<string>& params, Node::Vector &&args_cc_vec) {
+  MYLOGGER(trace_function, "LispExpr::scope_params_args(Node&process, Vector&params, Vector&arg_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "params: " + _to_str_ext(params), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "args_cc_vec: " + Node::_to_str(args_cc_vec), SLOG_FUNC_INFO+30);
+
+
+  if(args_cc_vec.size() != params.size())
     return {false, Node::create_error(Error::Type::InvalidOperation,  
-      "attach_params_args_to_frame() different size of params and args")};
+      "scope_params_args() different size, between params " +_to_str_ext(params) +
+      " and args: " + Node::_to_str(args_cc_vec))};
   
     
   size_t s =  params.size();
   auto scope = scope_create();
-  auto var_ref_status = scope->get_node(VAR);
-  auto &var_list = var_ref_status.second;
-  for(size_t i=0; i <s; i++) {
-    var_list.set(params[i],  move(arg_list[i]));
+  Node::Map args;
+
+  for(size_t i=0; i<s; i++) {
+    args[params[i]] =  move(args_cc_vec[i]);
   }
-  scope_push(process, move(scope));
+  scope->set(ARGS,  Node::create(move(args)));
   
-
-
-  return {true, nullptr};
+  return {true, move(scope)};
 }
 
 //------------------------------------------------------------------------
@@ -307,8 +291,9 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 }
 
 Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string method_name, const Node::Vector& argv_list) {
-  MYLOGGER(trace_function, "LispExpr::call_object(Node&process, const Node& fun, Node::vector&&argv_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::call_object(Node&process, const Node& fun, method_name, Node::vector&&argv_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "object: " + object._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "method: " + method_name, SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "argv_list: " + Node::_to_str(argv_list), SLOG_FUNC_INFO+30);
 
   try {
@@ -392,8 +377,7 @@ Node::OpStatus LispExpr::call_macro(Node& process, const vector<string>& path, c
     return frame_status;
   }
   frame_push(process, move(frame_status.second));
-  auto scope = scope_create();
-  auto scope_status =  scope_push(process, move(scope));
+
 
   auto code_list_status = mac_ref_status.second.get_node(CODE);
   if(!code_list_status.first) {
@@ -409,7 +393,6 @@ Node::OpStatus LispExpr::call_macro(Node& process, const vector<string>& path, c
   }
   return eval(process, *evaled_status.second);
 
-  //return evaled_status;
 }
 
 //------------------------------------------------------------------------
@@ -419,13 +402,14 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
   MYLOGGER_MSG(trace_function, "argv_vector: " + Node::_to_str(argv_vector), SLOG_FUNC_INFO+30);
 
   auto frame_status = frame_create_fun_args(fun, move(argv_vector));
+
+  //cout << "\ncall(proc, fun, argv) frame status:" << frame_status << "\n\n";
+
   if(!frame_status.first) {
     cerr << "call(process, fun, argv vector) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
     return frame_status;
   }
   frame_push(process, move(frame_status.second));
-  auto scope = scope_create();
-  auto scope_status =  scope_push(process, move(scope));
 
   auto code_list_status = fun.get_node(CODE);
   if(!code_list_status.first) {
@@ -434,6 +418,8 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
   }
   //return eval(process, code_list_status.second);
   auto evaled_status = eval(process, code_list_status.second);
+
+
   frame_pop(process);
   return evaled_status;
 }
@@ -463,10 +449,10 @@ Node::OpStatus LispExpr::funcall(Node& process, const Node::Vector& code_list, s
 
   auto args = list_clone_remainder(code_list, start+1);
 
+
   switch(obj_ref_status.second.type_){
   case  Node::Type::Map: {
-    auto &obj_lambda = get<Node::Map>(obj_ref_status.second.value_);
-    return call_lambda(process, obj_lambda, move(args) );
+    return call_lambda(process, obj_ref_status.second, move(args) );
   }
   case  Node::Type::Shared: {
 
@@ -476,11 +462,8 @@ Node::OpStatus LispExpr::funcall(Node& process, const Node::Vector& code_list, s
       return {false, Node::create_error(Error::Type::Parse, 
         "funcall() fun_var identifier lookup failed shareptr object ! " + s_ptr->_to_str())};
     }
-    //cout << "shared obj type: " << Node::_to_str( s_ptr->_get_type()) << "\n";
-    //cout << "shared obj : " << *s_ptr << "\n";
-    //cout << "get params from obj : " << _to_str_ext( get_params(s_ptr->_get_map_ref()))  << "\n";
 
-    return call_lambda(process, s_ptr->_get_map_ref(), move(args) );
+    return call_lambda(process, *s_ptr, move(args) );
   }
   default: 
     cerr << "funcall() fun_var lookup up failed " << fun_var_ptr->_to_str() << " is not a Node::Type::Map primitive\n";
@@ -494,39 +477,34 @@ Node::OpStatus LispExpr::funcall(Node& process, const Node::Vector& code_list, s
 //
 // args must be a && that cloned from parent function
 //
-Node::OpStatus LispExpr::call_lambda(Node& process, const Node::Map & obj_lambda, Node::Vector&& args) {
+Node::OpStatus LispExpr::call_lambda(Node& process, Node& obj_lambda, Node::Vector&& args_vec_cc) {
   MYLOGGER(trace_function, "LispExpr::call_lambda(Node&process, Node::Map&obj_lambda, Node::Vector&& args)", __func__, SLOG_FUNC_INFO)
-  MYLOGGER_MSG(trace_function, "args:" + Node::_to_str(args), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "args:" + Node::_to_str(args_vec_cc), SLOG_FUNC_INFO+30)
 
 
-  // why frame is need because args to be stored in frame
-  auto frame = frame_create();
-  auto params = move(get_params(obj_lambda));
+  // why frame is need because args to be stored in scope inside frame
 
-  //auto op_status = attach_params_args_to_frame(frame, move(params), move(args) );
-  auto op_status = attach_params_args_to_frame(frame, params, move(args) );
-  if(!op_status.first) {
-    cerr 
-    << "LispExpr::call_lambda(): error params and args " 
-    << op_status.second->_to_str() << "\n";
-    return op_status;
+  auto frame_status = frame_create_fun_args_lambda(obj_lambda, move(Node::clone(args_vec_cc)->_get_vector_ref()));
+  if(!frame_status.first) {
+    cerr << "call_lambda(process, path, argv list) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
+    return frame_status;
   }
+  frame_push(process, move(frame_status.second));
 
-  frame_push(process, move(frame));
-  const auto &obj_info = obj_lambda.at(OBJ_INFO);
-  auto type_ref_status = obj_info->get_node(TYPE);
+  try {
+    const auto &type_ref_status = obj_lambda.get_node(OBJ_INFO).second.get_node(TYPE);
+    const auto &code = obj_lambda.get_node(CODE).second;
+    if(!type_ref_status.first) {
+      cerr << "obj type info error:" <<  type_ref_status.second._to_str() << "\n";
+      return {false, type_ref_status.second.clone()};
+    }
+    auto type = get<Lisp::Type>(type_ref_status.second.value_);
+    if(type == Lisp::Type::lambda) {
+      //cout << "call object type == lambda\n";
+      return eval(process, code);
+    }
+  } catch(...) {}
 
-  const auto &code = obj_lambda.at(CODE);
-  if(!type_ref_status.first) {
-    cerr << "obj type info error:" <<  type_ref_status.second._to_str() << "\n";
-    return {false, type_ref_status.second.clone()};
-  }
-  //auto type = get<Node::Integer>(type_ref_status.second.value_);
-  auto type = get<Lisp::Type>(type_ref_status.second.value_);
-  if(type == Lisp::Type::lambda) {
-    //cout << "call object type == lambda\n";
-    return eval(process, *code);
-  }
   cerr << "call __object_info__.type != lambda. but call_lambda()!\n";
   return {false, Node::create_error(Error::Type::Unknown,  "call __object_info__.type != lambda. but call_lambda()!")};
 
@@ -536,20 +514,19 @@ Node::OpStatus LispExpr::call_lambda(Node& process, const Node::Map & obj_lambda
 // call to closure blocks .. (for range(1..10) (do (i) ..))
 //   ie. attach range value to var i with new scope
 //
-Node::OpStatus LispExpr::call_closure(Node& process, const Node::Map & obj_closure, Node::Vector&& args) {
-  MYLOGGER(trace_function, "LispExpr::call_closure(Node&process, Node::Map&obj_closure, Node::Vector&& args)", __func__, SLOG_FUNC_INFO)
+Node::OpStatus LispExpr::call_closure(Node& process, const Node::Map & obj_closure, Node::Vector&& args_cc_vec) {
+  MYLOGGER(trace_function, "LispExpr::call_closure(Node&process, Node::Map&obj_closure, Node::Vector&& args_cc_vec)", __func__, SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, "closure:" + Node::_to_str(obj_closure), SLOG_FUNC_INFO+30)
-  MYLOGGER_MSG(trace_function, "args:" + Node::_to_str(args), SLOG_FUNC_INFO+30)
-
-  /*
-  auto scope_ref_status = scope_current(process);
-  if(!scope_ref_status.first)  {
-    cerr << "call_closure() scope current error!\n" ;
-    return {false, Node::create_error(Error::Type::Unknown,  "call_closure() scope current error!" + scope_ref_status.second._to_str())};
-  }*/
+  MYLOGGER_MSG(trace_function, "args_cc_vec:" + Node::_to_str(args_cc_vec), SLOG_FUNC_INFO+30)
 
   auto params = move(get_params(obj_closure));
-  attach_params_args_to_scope_vars(process, params, move(args));
+  auto scope_status = scope_params_args(params, move(args_cc_vec));
+
+  if(!scope_status.first) {
+    cerr << "call_closure() param and args error: " <<  scope_status.second->_to_str() <<"\n";
+    return scope_status;
+  }
+  scope_push_process(process, move(scope_status.second));
 
   try {
 //    cout << "closure trying eval code\n";

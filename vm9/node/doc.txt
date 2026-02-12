@@ -1,0 +1,13 @@
+
+frame_current(process)
+frame_push(frame)
+frame_pop()
+
+
+scope_current_process(process)
+scope_current_frame(frame)
+
+scope_push_process(process, scope)
+scope_push_frame(frame, scope)
+scope_pop
+

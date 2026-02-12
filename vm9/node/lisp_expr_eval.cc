@@ -11,14 +11,20 @@
 
 //------------------------------------------------------------------------
 // symbol lookup 
-Node::OpStatusRef LispExpr::arg_lookup(Node&process, const string&name ) {
-  MYLOGGER(trace_function, "LispExpr::arg_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
+Node::OpStatusRef LispExpr::arg_lookup(Node&scope, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::arg_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
-  auto frame_ref_back_status = frame_current(process);
-  if(!frame_ref_back_status.first) return frame_ref_back_status;
-  auto arg_ref_status = frame_ref_back_status.second[ARGS];
+//  cout << "scope:" << scope << "\n";
+//  cout << "arg_lookup !" << name<< "\n\n";
+
+//  auto frame_ref_back_status = frame_current(process);
+
+//  if(!frame_ref_back_status.first) return frame_ref_back_status;
+  auto arg_ref_status  = scope.get_node(ARGS);
   if(!arg_ref_status.first) return arg_ref_status;
+
+//  cout << "arg_ref_status !"  << arg_ref_status <<"\n";
 
   auto nested_name = split_string(name, ".");
 
@@ -132,12 +138,13 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
     auto immute_ref = immute_lookup(scope_ref_status.second, name);
     if(immute_ref.first) return immute_ref;
 
+    auto arg_ref = arg_lookup(scope_ref_status.second, name);
+    if(arg_ref.first) return arg_ref;
+
   }
 
 
 
-  auto arg_ref = arg_lookup(process, name);
-  if(arg_ref.first) return arg_ref;
 
   return {false, Error::ref(Error::Type::SymbolNotFound)};
 }
