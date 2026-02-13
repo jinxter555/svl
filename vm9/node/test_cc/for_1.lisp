@@ -1,37 +1,80 @@
-(module Kernel 
-  (defun range (x y) 
-    (
-    (map (start x) (end y))
-    )
-  )
+module Kernel 
+  class Range
+    (var begin fin step state)
 
-  (defun main (x y) my_func_des
-    (
-      (assign l1 
-        (lambda  (x y)
-          (
-            (print "x " x "\n")
-            (print "y " y "\n")
-            (print "hello world l1 123\n")
-            (x)
-          )
-        )
+    def Range(start fin step)  
+      ; assign needs to return a value
+      = @begin start
+      = @state start
+      = @fin fin
+      = @step  step
+
+    end.def
+
+    def init()  
+      = @state @begin
+      (:ok @state)
+    end.def
+
+    ; return statement needed
+    def next ()
+      = @state (+ @state @step)
+      print "next: " @state "\n"
+
+      if (== @state @fin)
+        return (:end @fin)
+      end.if
+
+      if (> @state @fin)
+        return (:error nil)
+        return (:ok @state)
+      end.if
+
+      ;print "i am in next(v): \n"
+    end.def
+
+    def end ()
+      assign @state @begin
+    end.def
+
+  end.class
+
+  defmacro forloop ( it cblock )
+    quote
+           ; (unquote cblock) 
+      var rv
+      = rv (send r1 :next)
+
+      = rv (3 4)
+
+
+
+      faz (rv
+      ;faz ( 5555 666
+      do (i j)
+        print "i: " i  "\n"
+        print "j: " j  "\n"
+      end.do 
       )
-      (assign l2 "hello")
-;      (print "lambda l1: " l1 "\n")
+      
 
-; this prints out returned map shoudl be evaluated in vector for loop lispeval
-      ( (lambda  (x )
-;          (print "x " x "\n")
-          (print "hello world anonymous 123\n")
-        )
-       5
-      )
-      (print (funcall l1 222222 "holy shit") "\n")
-;       (print (range 1 10) "\n")
-      ;(print (map (start 1) (end 10)))
-    )
-  )
+    end.quote
 
 
-)
+  end.defmacro
+
+  def main (x y)
+    var i forever
+    = r1 (new Range 1 13 3)
+    ;send r1 :next 
+
+    forloop r1 (print "hello\n")
+
+
+
+      loop
+        print (eval (read)) "\n"
+      end.loop
+  end.def
+
+end.module

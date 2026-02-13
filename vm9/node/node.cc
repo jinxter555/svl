@@ -247,11 +247,45 @@ unique_ptr<Node> Node::clone() const {
 
 // _get
 bool Node::_get_bool() const { return get<bool>(value_); }
+Lisp::Op Node::_get_lisp_op() const { return get<Lisp::Op>(value_); }
 Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
 Node::Float Node::_get_float() const { return get<Float>(value_); }
 string Node::_get_str() const { return _to_str(); }
-Node::Map& Node::_get_map_ref() { return get<Map>(value_); }
-Node::Vector& Node::_get_vector_ref() { return get<Vector>(value_); }
+Node::Map& Node::_get_map_ref() { 
+
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->_get_map_ref(); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->_get_map_ref(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->_get_map_ref(); }
+  default: {}
+  }
+  
+  return get<Map>(value_); 
+
+}
+
+Node::Vector& Node::_get_vector_ref() { 
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->_get_vector_ref(); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->_get_vector_ref(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->_get_vector_ref(); }
+  default: {}
+  }
+  return get<Vector>(value_); 
+}
+
 Node::List& Node::_get_list_ref() { return get<List>(value_); }
 
 // eval list

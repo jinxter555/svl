@@ -616,7 +616,7 @@ Node::OpStatus LispExpr::call_extern(Node& process, const string&name_mod, const
 }
 
 //
-// (faz 1 (do ))
+// (faz 1 2 3 (do ))
 //
 Node::OpStatus LispExpr::faz(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::faz(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
@@ -628,16 +628,30 @@ Node::OpStatus LispExpr::faz(Node& process, const Node::Vector& code_list, size_
     cout << "faz eval failed " << status.second->_to_str() << "\n";
     return status;
   }
+
+  auto closure_status = status.second->pop_back(); 
+  //cout << "closure:" << *closure_status.second << "\n";
+
+
   auto &ev_list =status.second->_get_vector_ref();
+  //auto &arg =status.second->_get_vector_ref();
   auto &arg = ev_list[0];
-  auto &closure = ev_list[1];
+
+  if(!closure_status.first) {
+    cerr << "faz() can't get closure\n";
+    return closure_status;
+  }
 
 
-  cout << "faz status " << status << "\n\n";
-  cout << "arg:" << *arg << "\n";
-  cout << "closure:" << *closure << "\n";
+  cout << "ev_list: " <<  Node::_to_str( ev_list) << "\n";
+  cout << "arg: " <<  *arg << "\n";
+//  cout << "closure:" << *closure_status.second << "\n";
 
-  call_closure(process, closure->_get_map_ref(), move(arg->_get_vector_ref()) );
+  cout << "arg get vec type: "  << Node::_to_str( arg->type_) << "\n";
+  cout << "arg get vec: "  << Node::_to_str( arg->_get_vector_ref()) << "\n";
+
+  call_closure(process, closure_status.second->_get_map_ref(), move(arg->_get_vector_ref()) );
+  //call_closure(process, closure_status.second->_get_map_ref(), move(arg));
 
 
   return {true, Node::create(true)};

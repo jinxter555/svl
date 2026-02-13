@@ -189,6 +189,7 @@ public:
   // _get
   Integer _get_integer() const;
   Float _get_float() const;
+  Lisp::Op _get_lisp_op() const;
   bool _get_bool() const;
   string _get_str() const;
   Map& _get_map_ref() ;

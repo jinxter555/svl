@@ -220,6 +220,7 @@ public:
 
   // handle control flow object
   Node::ControlFlow handle_cf_object(Node&process, Node::Vector &result_list, const Node::Map& object);
+  Node::ControlFlow handle_cf_object_return(Node&process, Node::Vector &result_list, const Node::Map& object);
   
   //
   Node::OpStatus lisp_object_return(Node&process, const Node::Vector &code_list, size_t start=0);

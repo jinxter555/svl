@@ -838,7 +838,8 @@ Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &co
   return {true, Node::create(move(map))};
 
 }
- Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_list, const Node::Map& object) {
+
+Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_list, const Node::Map& object) {
   MYLOGGER(trace_function, "LispExpr::handle_cf_object(Node&process, Node::Vector& result_list, Node::Map& object)", __func__, SLOG_FUNC_INFO);
 
    //cout << "returned map or object need to check if t needs to call lambda or closure!\n";
@@ -846,11 +847,17 @@ Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &co
 
    try {
     auto &object_info = object.at(OBJ_INFO);
-    auto &type = object_info->get_node(TYPE).second;
-    auto &return_value = object.at(RET_VALUE);
-    //cout << "return value " << *return_value;
-    result_list.push_back(return_value->clone());
-    return Node::ControlFlow::cf_return;
+    auto type = object_info->get_node(TYPE).second._get_lisp_op();
+
+    switch(type) {
+    case Lisp::Op::return_: {
+      auto &return_value = object.at(RET_VALUE);
+      //cout << "return value " << *return_value;
+      result_list.push_back(return_value->clone());
+      return Node::ControlFlow::cf_return;
+    }
+    default: {}
+    }
 
    } catch(...) {
     // not an object just a map
@@ -860,3 +867,6 @@ Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &co
   return Node::ControlFlow::cf_run;
 
  }
+Node::ControlFlow LispExpr::handle_cf_object_return(Node&process, Node::Vector&result_list, const Node::Map& object) {
+  return Node::ControlFlow::cf_return;
+}

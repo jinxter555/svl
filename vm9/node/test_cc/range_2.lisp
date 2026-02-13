@@ -39,10 +39,34 @@ module Kernel
 
   end.class
 
+  defmacro forloop ( it cblock )
+    quote
+      var (forever true)
+      = i (send (unquote it) :init)
+      (faz  i unquote(cblock))
+    end.quote
+  end.defmacro
+
   def main (x y)
+    var i forever
     = x1 999
     = r1 (new Range 1 13 3)
     ;send r1 :next 
+
+    = forever true
+    = i (send r1 :init)
+    print i "\n"
+    while (forever)
+      = i (send r1 :next)
+      if (= (:end v) i)
+      (
+        = forever  false
+        print i "\n"
+      )
+      ( print i "\n")
+      end.if
+    end.while
+
 
       loop
         print (eval (read)) "\n"
