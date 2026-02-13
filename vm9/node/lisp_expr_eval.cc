@@ -220,7 +220,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::eval:     return eval_eval(process, code_list, start);
   case Lisp::Op::read:   return read_input();
   case Lisp::Op::loop:   return loop_forever(process,code_list,start );
+
   case Lisp::Op::while_:   return while_(process, code_list, start );
+  case Lisp::Op::return_:   return lisp_object_return(process, code_list, start );
+
   case Lisp::Op::funcall:   return funcall(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 
   case Lisp::Op::car:   return car(process, code_list, start);
@@ -318,7 +321,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
 
   //if(code_list.empty()) return {true, Node::create()};
 
-  Node::Vector result_list, result_list2;
+  Node::Vector result_list; //, result_list2;
   size_t s=code_list.size();
   result_list.reserve(s);
 
@@ -337,9 +340,13 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
       return value_status;
     }
 
+    // return is an object 
     if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
-
-      //cout << "returned map or object need to check if t needs to call lambda or closure!\n";
+      switch(handle_cf_object(process, result_list, value_status.second->_get_map_ref())) {
+      case Node::ControlFlow::cf_run: { break;}
+      case Node::ControlFlow::cf_return:{ return  {true, Node::create(move(result_list))}; }
+      default: {}
+      }
 
     }
     result_list.push_back(move(value_status.second));

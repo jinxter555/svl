@@ -814,3 +814,49 @@ Node::OpStatus LispExpr::root_manifest(Node& process, const Node::Vector& code_l
 
   return {true, Node::create()};
 }
+
+Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::lisp_object_return(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+
+  //cout << "return!\n";
+
+  Node::Map map={}; 
+  auto ret_status = eval(process, *code_list[start]);
+  if(!ret_status.first) {
+    cout << "Can't eval return value!\n";
+    return ret_status;
+  }
+  map[RET_VALUE] = move(ret_status.second);
+
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+  obj_info->set(TYPE,  Lisp::Type::return_);
+  map[OBJ_INFO] = move(obj_info);
+  
+  return {true, Node::create(move(map))};
+
+}
+ Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_list, const Node::Map& object) {
+  MYLOGGER(trace_function, "LispExpr::handle_cf_object(Node&process, Node::Vector& result_list, Node::Map& object)", __func__, SLOG_FUNC_INFO);
+
+   //cout << "returned map or object need to check if t needs to call lambda or closure!\n";
+   //cout << "return object : " <<  Node::_to_str(object) << "\n";
+
+   try {
+    auto &object_info = object.at(OBJ_INFO);
+    auto &type = object_info->get_node(TYPE).second;
+    auto &return_value = object.at(RET_VALUE);
+    //cout << "return value " << *return_value;
+    result_list.push_back(return_value->clone());
+    return Node::ControlFlow::cf_return;
+
+   } catch(...) {
+    // not an object just a map
+    return Node::ControlFlow::cf_run;
+
+   }
+  return Node::ControlFlow::cf_run;
+
+ }

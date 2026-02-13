@@ -44,3 +44,5 @@
 #define OBJ_INFO "__object_info__"
 #define TYPE "type"
 #define BASE_FRAME "base_frame"
+
+#define RET_VALUE "return_value"

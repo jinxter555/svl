@@ -19,18 +19,19 @@ module Kernel
     ; return statement needed
     def next ()
       = @state (+ @state @step)
-      print @state "\n"
+      print "next: " @state "\n"
       if 
         (> @state @fin)
-        (:error nil)
-        ((:ok @state)
-         )
+        return (:error nil)
+        return (:ok @state)
+         
       end.if
 
       if 
         (>= @state @fin)
         (:end @fin)
       end.if
+
 
 
       ;print "i am in next(v): \n"

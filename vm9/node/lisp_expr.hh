@@ -218,6 +218,13 @@ public:
   Node::OpStatus quote(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus unquote(Node&process, const Node::Vector &list, size_t start=0);
 
+  // handle control flow object
+  Node::ControlFlow handle_cf_object(Node&process, Node::Vector &result_list, const Node::Map& object);
+  
+  //
+  Node::OpStatus lisp_object_return(Node&process, const Node::Vector &code_list, size_t start=0);
+  
+
   //
   Node::OpStatus build_parsed_def(Node::List& list);
   
