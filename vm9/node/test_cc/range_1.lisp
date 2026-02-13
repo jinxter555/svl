@@ -4,24 +4,27 @@ module Kernel
 
     def Range(start fin step)  
       ; assign needs to return a value
-      assign @begin start
-      assign @state start
-      assign @fin fin
-      assign @step  step
+      = @begin start
+      = @state start
+      = @fin fin
+      = @step  step
 
     end.def
 
     def init()  
-      assign @state @begin
+      = @state @begin
       (:ok @state)
     end.def
 
+    ; return statement needed
     def next ()
-      assign @state (+ @state @step)
+      = @state (+ @state @step)
+      print @state "\n"
       if 
         (> @state @fin)
         (:error nil)
-        (:ok @state)
+        ((:ok @state)
+         )
       end.if
 
       if 
@@ -47,8 +50,6 @@ module Kernel
       loop
         print (eval (read)) "\n"
       end.loop
-
-
   end.def
 
 end.module

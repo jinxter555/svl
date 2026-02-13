@@ -428,6 +428,10 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
 
 
   frame_pop(process);
+  if(!evaled_status.first) return evaled_status;
+
+  return {true, evaled_status.second->back().second.clone()};
+
   return evaled_status;
 }
 

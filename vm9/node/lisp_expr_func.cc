@@ -63,15 +63,21 @@ Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, size_t star
 }
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::literal(const Node::Vector &list, size_t start) {
+Node::OpStatus LispExpr::literal(const Node::Vector &list_cc_vec, size_t start) {
   MYLOGGER(trace_function, "LispExpr::literal(const Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "start: " + start, SLOG_FUNC_INFO+30);
   Node::Vector list_result;
-  size_t s=list.size();
-  for(size_t i=start; i<s; i++) 
-    list_result.push_back(list[i]->clone());
+  size_t s=list_cc_vec.size();
+  for(size_t i=start; i<s; i++)  {
+    auto op = keyword_to_op(list_cc_vec[i]->_to_str()); // Lisp::Op
+    if(op != Lisp::Op::scalar)   // identifier or scalar
+      list_result.push_back(Node::create(op));
+    else
+      list_result.push_back(list_cc_vec[i]->clone());
+  }
   return {true, Node::create(move(list_result))};
 }
+
 //------------------------------------------------------------------------
 // modifiy code list for unquotes
 Node::OpStatus LispExpr::quote(Node&process, const Node::Vector &code_list, size_t start) {

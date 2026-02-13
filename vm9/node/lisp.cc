@@ -59,12 +59,17 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::curry: return "curry";
     case Lisp::Op::pipe: return "pipe";
     case Lisp::Op::eval: return "eval";
+
     case Lisp::Op::call_extern: return "call_extern";
     case Lisp::Op::send: return "send";
     case Lisp::Op::ret: return "ret";
     case Lisp::Op::cond: return "cond";
     case Lisp::Op::loop: return "loop";
     case Lisp::Op::while_: return "while";
+    case Lisp::Op::return_: return "return";
+    case Lisp::Op::break_: return "break";
+    case Lisp::Op::continue_: return "continue";
+
     case Lisp::Op::repeat: return "repeat";
     case Lisp::Op::for_: return "for";
     case Lisp::Op::do_: return "do";

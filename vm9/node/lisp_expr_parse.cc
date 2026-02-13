@@ -257,14 +257,6 @@ Node::OpStatus LispExpr::attach_this_to_arguments(Node::Vector& list){
    //list.insert(list.begin(), Node::create("wew")); 
    return {true, nullptr};
 }
-//-------------------------------- attach 'this'  var to class method
-Node::OpStatus LispExpr::attach_this_to_var(Node::Vector& list){
-  //this_var.set_identifier();
-   list.insert(list.begin(), Node::create("this", Node::Type::Identifier)); 
-   //list.insert(list.begin(), Node::create("wew")); 
-   return {true, nullptr};
-}
-
 
 //-------------------------------- parse class
 // (class Car (defun start) (defun drive) (defun f2) ) 

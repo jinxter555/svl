@@ -185,7 +185,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     cout << "code node list\n";
   }
   case Node::Type::Shared: { // object, lambda, 
-    cout << "code node Shared\n";
+    MYLOGGER_MSG(trace_function, string("Shared code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
+    //cout << "code node Shared\n";
     auto s_ptr = get<Node::ptr_S>(code_node.value_);
     return eval(process, *s_ptr);
   }
@@ -268,6 +269,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("code_list[0]->type_: ") + Node::_to_str(code_list[0]->type_), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("code_list[0]->value_: ") + code_list[0]->_to_str(), SLOG_FUNC_INFO+30);
 
   //cout << "code_list size " << code_list.size() << "\n"; cout << "code_list str " << Node::_to_str(code_list) << "\n";
   //if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
@@ -295,6 +298,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
 
   // scalars here int, float string, etc
   default: { 
+    MYLOGGER_MSG(trace_function, string("code_list type ") + Node::_to_str(code_list[0]->type_), SLOG_FUNC_INFO+30);
+
     return eval(process, code_list, 0);
 
   }}
@@ -356,6 +361,9 @@ Node::OpStatus LispExpr::eval_eval(Node& process, const Node::Vector& code_list,
   auto evaled_stat2 = eval(process, inner_ref_status.second); 
   if(!evaled_stat2.first) {
     cerr << "something is wrong with code returned by  eval('code...') :" << evaled_stat2.second->_to_str() << "\n";
+    cerr << "inner  :" << inner_ref_status << "\n";
+
+
   }
   //cout << "evaluated stat2: " <<  evaled_stat2<< "\n";
   return evaled_stat2;

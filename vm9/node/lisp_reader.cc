@@ -181,6 +181,7 @@ Node::OpStatus LispReader::parse_sequence(list<Token>& tokens) {
 
         token_str = get<string>(token_status.second->value_);
         auto op = lisp->keyword_to_op(token_str); // Lisp::Op
+        //MYLOGGER_MSG(trace_function, string("op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);
 
         if(op != Lisp::Op::scalar)  { // identifier or scalar
           MYLOGGER_MSG(trace_function, string("Lisp::Op: ") + Lisp::_to_str(op), SLOG_FUNC_INFO+30);
@@ -461,7 +462,7 @@ bool LispReader::is_closurable(Lisp::Op op) {
   case Lisp::Op::quote:
   case Lisp::Op::pipe:
   case Lisp::Op::curry:
-  case Lisp::Op::eval:
+  //case Lisp::Op::eval:
     return true;
   default: {}}
   return false;
