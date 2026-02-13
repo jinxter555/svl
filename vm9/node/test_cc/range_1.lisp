@@ -28,7 +28,7 @@ module Kernel
       end.if
 
       if 
-        (== @state @fin)
+        (>= @state @fin)
         (:end @fin)
       end.if
 

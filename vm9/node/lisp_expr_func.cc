@@ -272,9 +272,9 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
 
   auto &object = object_ref_status.second;
   auto fun_ref_status
-    =object.get_node_with_ptr(OBJ_INFO)
-    .second.get_node_with_ptr(CLASS_PTR)
-    .second.get_node_with_ptr(FUNCTION);
+    =object.get_node(OBJ_INFO)
+    .second.get_node(CLASS_PTR)
+    .second.get_node(FUNCTION);
 
   auto object_uptr = Node::ptr_USU(object);
 

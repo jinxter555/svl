@@ -107,7 +107,7 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   // lambda fun name doesn't exist
   //
   try {
-    auto fun_name = fun.get_node_with_ptr(NAME).second._to_str();
+    auto fun_name = fun.get_node(NAME).second._to_str();
     frame->set(CURRENT_FUNCTION, fun_name); 
   } catch(...) {
     frame->set(CURRENT_FUNCTION, "lambda"); 
@@ -117,9 +117,9 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
 
   if(fun.m_has_key(CLASS_PTR)) {
     auto &class_node = fun.get_node(CLASS_PTR).second;
-    auto &module_node = class_node.get_node_with_ptr(MODULE_PTR).second;
-    auto class_name = class_node.get_node_with_ptr(NAME).second._to_str();
-    auto module_name = module_node.get_node_with_ptr(NAME).second._to_str();
+    auto &module_node = class_node.get_node(MODULE_PTR).second;
+    auto class_name = class_node.get_node(NAME).second._to_str();
+    auto module_name = module_node.get_node(NAME).second._to_str();
 
     //cout << "fun parent class name :" << class_node.get_node_with_ptr(NAME) <<  "\n";
     //cout << "fun parent class :" << class_node <<  " is an object!";
@@ -133,8 +133,8 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
     frame->set(CURRENT_MODULE_PTR, &module_node); 
 
   } else if(fun.m_has_key(MODULE_PTR)) {
-    auto &module_node = fun.get_node_with_ptr(MODULE_PTR).second;
-    auto module_name = module_node.get_node_with_ptr(NAME).second._to_str();
+    auto &module_node = fun.get_node(MODULE_PTR).second;
+    auto module_name = module_node.get_node(NAME).second._to_str();
 
     frame->set(CURRENT_MODULE, module_name); 
     frame->set(CURRENT_MODULE_PTR, &module_node); 
@@ -305,9 +305,9 @@ Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string m
 
   try {
     auto fun_ref_status
-    =object.get_node_with_ptr(OBJ_INFO)
-    .second.get_node_with_ptr(CLASS_PTR)
-    .second.get_node_with_ptr(FUNCTION);
+    =object.get_node(OBJ_INFO)
+    .second.get_node(CLASS_PTR)
+    .second.get_node(FUNCTION);
 
 //    cout << "fun ref status :" << fun_ref_status << "\n";
     auto  argvs_status = eval(process, argv_list, 0); // this returns a vector

@@ -40,7 +40,7 @@ Node::OpStatusRef LispExpr::arg_lookup(Node&scope, const string&name ) {
   }
 
   nested_name.erase(nested_name.begin());
-  return shared_ptr_ref_status.second._get_ptr_s()->get_node_with_ptr(nested_name);
+  return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
 
 }
 
@@ -328,8 +328,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
       auto frame_ref_status = frame_current(process);
       if(frame_ref_status.first) { // get frame and find out where eval failed.
         auto current_module = frame_ref_status.second[CURRENT_MODULE].second._to_str();
+        auto current_class = frame_ref_status.second[CURRENT_CLASS].second._to_str();
         auto current_function = frame_ref_status.second[CURRENT_FUNCTION].second._to_str();
-        cout << "In Module.Function: " << current_module << "." << current_function <<"\n";
+        cout << "In Module:" << current_module << ", Class "<<   current_class<<  "\n";
+        cout << "Function or method: " << current_function <<"\n";
       }
       cerr << "eval failed! " << *value_status.second << "\n" << *code_list[i] <<"\n";
       return value_status;
@@ -357,7 +359,7 @@ Node::OpStatus LispExpr::eval_eval(Node& process, const Node::Vector& code_list,
     cerr << "something is wrong with eval('code...') :" << Node::_to_str(code_list) << "\n";
     return evaled_stat1;
   }
-  auto inner_ref_status = evaled_stat1.second->get_node_with_ptr(0);
+  auto inner_ref_status = evaled_stat1.second->get_node(0);
   auto evaled_stat2 = eval(process, inner_ref_status.second); 
   if(!evaled_stat2.first) {
     cerr << "something is wrong with code returned by  eval('code...') :" << evaled_stat2.second->_to_str() << "\n";

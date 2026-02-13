@@ -19,6 +19,18 @@ Node::OpStatusRef Node::get_node(size_t index) {
 
   //cout << "get_node value:  " << _to_str() << "\n";
   //cout << "get_node type: " << _to_str(type_) << "\n";
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->get_node(index); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->get_node(index); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->get_node(index); }
+  default: {}
+  }
 
   if(type_ != Type::Vector) return {false, null_node};
 
@@ -29,6 +41,7 @@ Node::OpStatusRef Node::get_node(size_t index) {
   return {true, *v[index]};
 }
 
+/*
 //------------------------------------------------------------------------
 Node::OpStatusRef Node::get_node_with_ptr(size_t index) {
   MYLOGGER(trace_function, "Node::get_node_with_ptr(string& key)", __func__, SLOG_FUNC_INFO);
@@ -46,6 +59,7 @@ Node::OpStatusRef Node::get_node_with_ptr(size_t index) {
     return sptr->get_node(index); }
   default: {}
   }
+
   return get_node(index);
 
-}
+}*/

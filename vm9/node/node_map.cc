@@ -131,6 +131,19 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
   MYLOGGER(trace_function, "Node::get_node(vector& path)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);
 
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->get_node(path); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->get_node(path); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->get_node(path); }
+  default: {}
+  }
+
   if(type_ != Type::Map){
     cerr << "Node::get_node(path) not Type::Map!\n"; 
     return {false, Error::ref(Error::Type::IndexWrongType, 
@@ -162,6 +175,20 @@ Node::OpStatusRef Node::get_node(const string&key) {
   MYLOGGER(trace_function, "Node::get_node(string& key)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("key: ") + key, SLOG_FUNC_INFO+30);
 
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->get_node(key); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->get_node(key); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->get_node(key); }
+  default: {}
+  }
+
+
   if(type_ != Type::Map){
     return {false, Error::ref(Error::Type::IndexWrongType, 
     "get_node(string&key) only works Map nodes. Current type: " + _to_str(type_))};
@@ -176,6 +203,7 @@ Node::OpStatusRef Node::get_node(const string&key) {
   return {true, *it->second.get()};
 }
 
+/*
 //------------------------------------------------------------------------
 Node::OpStatusRef Node::get_node_with_ptr(const string&key) {
   MYLOGGER(trace_function, "Node::get_node_with_ptr(string& key)", __func__, SLOG_FUNC_INFO);
@@ -193,6 +221,8 @@ Node::OpStatusRef Node::get_node_with_ptr(const string&key) {
     return sptr->get_node(key); }
   default: {}
   }
+
+
   return get_node(key);
 
 }
@@ -212,8 +242,10 @@ Node::OpStatusRef Node::get_node_with_ptr(const vector<string>&path) {
   default: {}
   }
   return get_node(path);
-
 }
+*/
+
+
 //------------------------------------------------------------------------
 Node::OpStatusRef Node::method(const string&fun) {
   MYLOGGER(trace_function, "Node::method(string& fun)", __func__, SLOG_FUNC_INFO)
@@ -221,13 +253,14 @@ Node::OpStatusRef Node::method(const string&fun) {
   MYLOGGER_MSG(trace_function, "node.type: " + Node::_to_str(type_) , SLOG_FUNC_INFO+30)
 
 
-  auto obj_info_ref_status = get_node_with_ptr(OBJ_INFO);
+  //auto obj_info_ref_status = get_node_with_ptr(OBJ_INFO);
+  auto obj_info_ref_status = get_node(OBJ_INFO);
   if(!obj_info_ref_status.first) {
     cerr << "Not a LispExpr object !\n";
     return obj_info_ref_status;
   }
   auto &class_ptr = obj_info_ref_status.second.get_node(CLASS_PTR).second;
   // vector<string> path = {FUNCTION, fun};
-  return class_ptr.get_node_with_ptr({FUNCTION, fun});
+  return class_ptr.get_node({FUNCTION, fun});
 
 }
