@@ -19,7 +19,7 @@ module Kernel
     ; return statement needed
     def next ()
       = @state (+ @state @step)
-      print "next: " @state "\n"
+      ; print "next: " @state "\n"
 
       if (== @state @fin)
         return (:end @fin)
@@ -42,20 +42,41 @@ module Kernel
   defmacro forloop ( it cblock )
     quote
            ; (unquote cblock) 
-      var rv
-      = rv (send r1 :next)
-
-      = rv (3 4)
+      var rv u (forever true)
+      = rv (send (unquote it)  :init)
 
 
+  
+    ;  (faz (rv)
+    ;       do (:ok i)
+    ;        print i
+    ;        print "what is up\n"
+    ;       end.do
+    ;   )
 
-      faz (rv
-      ;faz ( 5555 666
-      do (i j)
-        print "i: " i  "\n"
-        print "j: " j  "\n"
-      end.do 
-      )
+      while (forever)
+        faz (rv) (unquote cblock)
+        
+
+        = rv (send (unquote it)  :next)
+
+        if (= (:end u) rv)
+         ( print "end\n"
+          = forever false
+         )
+        end.if
+
+        if (= (:error _) (rv))
+        (
+          print "error\n"
+          = forever false
+        )
+        end.if
+
+        ;print "rv: " rv "\n"
+
+      end.while
+      
       
 
     end.quote
@@ -68,7 +89,13 @@ module Kernel
     = r1 (new Range 1 13 3)
     ;send r1 :next 
 
-    forloop r1 (print "hello\n")
+    (forloop r1 
+      do (:ok i)
+            print i ": what is up\n"
+      end.do
+    )
+  
+  
 
 
 
