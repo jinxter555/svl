@@ -371,6 +371,8 @@ string LispReader::tokenize_preprocess_multiline(const string& input) {
   return line_result;
 }
 
+
+
 string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input) {
   istringstream stream(input); // Wrap the string in an input string stream
 
@@ -388,7 +390,8 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     }
 
     if(line == "") continue;
-    auto line_vector = split_string(line, " ");
+    //auto line_vector = split_string(line, " ");
+    auto line_vector = tokenize_pre(line);
 
     if(line_vector.front() == ";") continue;
 
@@ -509,4 +512,23 @@ bool LispReader::is_complete_parenthesis(const string& input) {
   if(plist.size() != 0)
     return false;
   return true;
+}
+
+
+
+vector<string> LispReader::tokenize_pre(const string& input) {
+  vector<string> tokens;
+  string token;
+  for (char c : input) {
+      if (isspace(c)) {
+          if (!token.empty()) tokens.push_back(token), token.clear();
+      } else if (c == '(' || c == ')') {
+          if (!token.empty()) tokens.push_back(token), token.clear();
+          tokens.push_back(string(1, c));
+      } else {
+          token += c;
+      }
+  }
+  if (!token.empty()) tokens.push_back(token);
+  return tokens;
 }

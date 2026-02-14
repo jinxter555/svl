@@ -120,6 +120,15 @@ Node::OpStatus LispExpr::quote(Node&process, const Node::Vector &code_list, size
       }
       break;
     }
+    case Node::Type::Identifier: { // check if it is 'identifier#'
+      auto id_name = code_list[i]->_to_str();
+      if(id_name.back() == '~') {
+        auto unique_name = Lang::unqiue_name(id_name);
+        result_cc_vec.push_back(Node::create(unique_name, Node::Type::Identifier));
+        break;
+      }
+    }
+
     default: {
       result_cc_vec.push_back(code_list[i]->clone());
     }}
@@ -169,7 +178,7 @@ Node::OpStatus LispExpr::attach_class_vars_to_object(Node&process, Node&object, 
       if(!v.first) return v;
       object.set(v_name_ref_1.second._to_str(),  move(v.second));
       break; }
-    default: return {false, Node::create_error(Error::Type::Unknown, "Unknown var error")}; }
+    default: return {false, Node::create_error(Error::Type::Unknown, "attach class var to object() Unknown var error")}; }
   }
   return {true, Node::create(true)};
 }

@@ -5,6 +5,7 @@
 const vector<string> Lang::atoms_key = {UNIVERSE, "Lang", "Atoms"};
 
 unordered_map<Node::Integer , string> Lang::Atoms;
+std::hash<string> Lang::hasher;
 
 Lang::Lang() : Kernel() {
   //Node::Map map;
@@ -14,21 +15,10 @@ Lang::Lang() : Kernel() {
 //------------------------------------------------------------------------
 Node::Integer Lang::str_to_atom(const string& input) {
   Node::Integer hash_value = hasher(input);
-  //auto atoms = get_branch(atoms_key);
-
-  //if(atoms==nullptr) throw std::runtime_error("Lang: atoms map is nullptr\n");
-  
-  //cout << "hash is " <<  hash_value << "  \n";
-  //cout << "atoms map \n";
-  //cout << "atoms map \n"<< *atoms << "\n";
-  //atoms->set(to_string(hash_value), input);
   Atoms[hash_value] = input;
-
-  //atoms->print(); cout << *atoms << "\n\n";
-
   return hash_value;
 }
-//Node::OpStatusRef Lang::atom_to_str(Node::Integer v) {
+
 string Lang::atom_to_str(Node::Integer v) {
   return Atoms[v];
 }
@@ -38,5 +28,9 @@ string Lang::atom_to_str_imap(Node::Integer v) {
   return  to_string(v)+"i";
 }
 
+string Lang::unqiue_name(const string& input) {
+  unsigned long hash_value = hasher(input);
+  return input + to_string(hash_value);
+}
 
 void Lang::bootstrap() {}

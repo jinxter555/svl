@@ -33,6 +33,7 @@ public:
   string tokenize_preprocess_multiline_parenthesis(const string& input) ;
 
   list<Token> tokenize(const string& input);  // turn everything in to a stream of tokens
+  vector<string> tokenize_pre(const string& input);  // turn everything in to a stream of tokens
   Node::OpStatus parse(list<Token>& tokens);  // turn everything in to stream of node
   Node::OpStatus parse_sequence(list<Token>& tokens);  // turn everything in to stream of node
   Lisp::Op str_to_op(const string&input);

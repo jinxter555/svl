@@ -54,7 +54,7 @@ module Kernel
     ;       end.do
     ;   )
 
-      while (forever)
+      while(forever)
         faz (rv) (unquote cblock)
         
 
@@ -91,13 +91,10 @@ module Kernel
 
     (forloop r1 
       do (:ok i)
-            print i ": what is up\n"
+        print i ": what is up\n"
       end.do
     )
   
-  
-
-
 
       loop
         print (eval (read)) "\n"

@@ -16,6 +16,7 @@ module Kernel
     print "hello, world\n"
     assign v1 9999
     quote
+      (var temp#)
       print "q 1: " (unquote mx)  " " (unquote my) " " (unquote v1) "\n"
     end.quote
     quote

@@ -19,13 +19,17 @@ module Kernel
       print "\nhello class Dict::area ()\n"
       print "area is: " a "\n"
       print "pi: " pi "\n"
-      + 1 2 3
+      = b (+ 1 2 3)
       loop 
         print (eval (read)) "\n" 
       end.loop
 
 
 ;      (print this "\n")
+    end.def
+
+    def m1 ()
+      print "method m1"
     end.def
 
   end.class
@@ -40,8 +44,14 @@ module Kernel
     print "x1: " x1 "\n"
     print "m1: " m1 "\n"
 
-     ;loop print (eval (read)) "\n" end.loop
+   ;  loop 
+   ;     print (eval (read)) "\n" 
+   ; end.loop
 
+  end.def
+
+  def f1 ()
+    print "main f1\n"
   end.def
 
 end.module
