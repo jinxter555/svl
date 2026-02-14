@@ -737,6 +737,13 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
       return {false, Node::create_error(Error::Type::Parse, "If eval first block error!")};
     }
     return eval(process, *first_block);
+   // auto evaled_status = eval(process, *first_block);
+   // cout << "if evaled_status " << evaled_status << "\n";
+    //return evaled_status;
+    //if(!evaled_status.first) return evaled_status;
+    //return {true, evaled_status.second->back().second.clone()};
+
+
     }
 
   } else {
@@ -748,6 +755,11 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
       return {false, Node::create_error(Error::Type::Parse, "If eval else block error!")};
     }
     return eval(process, *else_block);
+    //auto evaled_status =  eval(process, *else_block);
+    //cout << "if evaled_status " << evaled_status << "\n";
+    //return evaled_status;
+    //if(!evaled_status.first) return evaled_status;
+    //return {true, evaled_status.second->back().second.clone()};
   }
   }
   return {true, Node::create()};
@@ -831,6 +843,11 @@ Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &co
 
 
   //cout << "return!\n";
+  if(code_list.size() < 2) {
+    auto msg = "return requires something to return. try return :ok!";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg) };
+  }
 
   Node::Map map={}; 
   auto ret_status = eval(process, *code_list[start]);

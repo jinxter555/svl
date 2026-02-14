@@ -55,6 +55,7 @@ string LispReader::extract_quoted_string(const string&input, size_t &i) {
   }
   return result;
 }
+
 string LispReader::extract_single_quoted_string(const string&input, size_t &i) {
   string result;
   bool in_quote = true;
@@ -274,6 +275,8 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
       return {true, Node::create(esc_str)}; 
     }
 
+
+
     if(token.value_[0]=='@') {
       token.value_.erase(0, 1);
       string esc_str = "this." + token.value_;
@@ -367,6 +370,7 @@ string LispReader::tokenize_preprocess_multiline(const string& input) {
 
     line_result += line_current;
   }
+  convert_to_infix(line_result);
 
   return line_result;
 }

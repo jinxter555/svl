@@ -89,6 +89,10 @@ module Kernel
     = r1 (new Range 1 13 3)
     ;send r1 :next 
 
+    if [ true == true]
+      print "true == true\n"
+    end.if
+
     (forloop r1 
       do (:ok i)
         print i ": what is up\n"
@@ -99,6 +103,12 @@ module Kernel
       loop
         print (eval (read)) "\n"
       end.loop
+  end.def
+
+  def f1 ()
+    print "f1\n"
+    return :ok
+    return
   end.def
 
 end.module

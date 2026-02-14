@@ -1,0 +1,147 @@
+#include <iostream>
+#include <cstring>
+#include "lisp_reader.hh"
+#include "lisp_expr.hh"
+#include "my_helpers.hh"
+
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stack>
+#include <cctype>
+
+using namespace std;
+
+// Updated Tokenizer to handle \( ... ) as a single literal token
+vector<string> tokenize_infix(string infix) {
+  vector<string> tokens;
+  for (int i = 0; i < infix.length(); i++) {
+    if (isspace(infix[i])) continue;
+
+    // Handle Escape Character \( ... )
+    if (infix[i] == '\\' && i + 1 < infix.length() && infix[i+1] == '(') {
+      string literal = "(";
+      int bracketCount = 1;
+      i += 2; // Move past '\('
+      while (i < infix.length() && bracketCount > 0) {
+          if (infix[i] == '(') bracketCount++;
+          if (infix[i] == ')') bracketCount--;
+          literal += infix[i++];
+      }
+      tokens.push_back(literal); // Push the whole inner expression as one token
+      i--; // Adjust for outer loop increment
+    } 
+    else if (isalnum(infix[i]) || infix[i]=='.') {
+        string current;
+        while (i < infix.length() && (isalnum(infix[i]) || infix[i]=='.')) {
+            current += infix[i++];
+        }
+        tokens.push_back(current);
+        i--;
+    } 
+    else {
+      string op;
+      while (i < infix.length() ) {
+        if(isalnum(infix[i]) || isspace(infix[i])) { i--; break;}
+        op += infix[i++];
+      }
+      tokens.push_back(op);
+    }
+  }
+  return tokens;
+}
+
+int precedence(string op) {
+  if (op == "==" || op == "!=") return 1;
+  if (op == "<=" || op == ">=") return 1;
+  if (op == "<" || op == ">") return 1;
+  if (op == "+" || op == "-") return 2;
+  if (op == "*" || op == "/" || op == "%") return 3;
+  if (op == "^") return 4;
+  return 0;
+}
+
+
+string infixToLispPrefix(string infix) {
+  vector<string> tokens = tokenize_infix(infix);
+  stack<string> operands;
+  stack<string> operators;
+
+  auto processOp = [&]() {
+      if (operands.size() < 2) return; 
+      string op = operators.top(); operators.pop();
+      string op2 = operands.top(); operands.pop();
+      string op1 = operands.top(); operands.pop();
+      operands.push("(" + op + " " + op1 + " " + op2 + ")");
+  };
+
+  for (const string& token : tokens) {
+    // If it's an operand OR an escaped literal (starts with '(')
+    if (isalnum(token[0]) || (token.size() > 1 && token[0] == '(')) {
+        operands.push(token);
+    } else if (token == "(") {
+        operators.push(token);
+    } else if (token == ")") {
+        while (!operators.empty() && operators.top() != "(") {
+            processOp();
+        }
+        if (!operators.empty()) operators.pop();
+    } else {
+        while (!operators.empty() && operators.top() != "(" && 
+               precedence(operators.top()) >= precedence(token)) {
+            processOp();
+        }
+        operators.push(token);
+    }
+  }
+
+  while (!operators.empty()) processOp();
+  return operands.empty() ? "" : operands.top();
+}
+
+
+
+vector<string> find_bracketed_strings(const std::string& input) {
+    // R"(\[([^\]]*)\])"
+    // \[ matches the literal [
+    // ([^\]]*) captures any characters that are NOT ]
+    // \] matches the literal ]
+    std::regex bracket_regex(R"(\[([^\]]*)\])");
+    std::smatch matches;
+    vector<string> result;
+
+    auto search_start = input.cbegin();
+    while (std::regex_search(search_start, input.cend(), matches, bracket_regex)) {
+        // matches[1] contains the captured group (inner string)
+        result.push_back(matches[1].str());
+        // Move to the next part of the string
+        search_start = matches.suffix().first;
+    }
+    return result;
+}
+
+
+std::string replace_bracketed_string(std::string input, const std::string& replacement) {
+    // R"(\[[^\]]*\])"
+    // \[      -> Literal opening bracket
+    // [^\]]*  -> Matches any character except a closing bracket (non-greedy)
+    // \]      -> Literal closing bracket
+    std::regex bracket_regex(R"(\[[^\]]*\])");
+
+    // regex_replace returns a new string with all matches substituted
+    return std::regex_replace(input, bracket_regex, replacement, std::regex_constants::format_first_only);
+}
+
+
+void LispReader::convert_to_infix(string& infix_input) {
+  auto bracket_strings  = find_bracketed_strings(infix_input);
+
+  string input = infix_input;
+
+  for(auto infix_str : bracket_strings) {
+    auto lisp_prefix_str =  infixToLispPrefix(infix_str);
+    input  = replace_bracketed_string(input, lisp_prefix_str);
+  }
+  infix_input = input;
+}

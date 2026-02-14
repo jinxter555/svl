@@ -32,6 +32,8 @@ public:
   string tokenize_preprocess_multiline(const string& input) ;
   string tokenize_preprocess_multiline_parenthesis(const string& input) ;
 
+  void convert_to_infix(string&); // convert string to infix
+
   list<Token> tokenize(const string& input);  // turn everything in to a stream of tokens
   vector<string> tokenize_pre(const string& input);  // turn everything in to a stream of tokens
   Node::OpStatus parse(list<Token>& tokens);  // turn everything in to stream of node
