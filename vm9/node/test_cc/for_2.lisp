@@ -21,7 +21,7 @@ module Kernel
       = @state (+ @state @step)
       ; print "next: " @state "\n"
 
-      if (== @state @fin)
+      if [@state == @fin]
         return (:end @fin)
       end.if
 
@@ -106,7 +106,7 @@ module Kernel
   end.def
 
   def f1 ()
-    print "f1\n"
+    print "here in f1\n"
     return :ok
     return
   end.def

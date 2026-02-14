@@ -13,6 +13,16 @@
 
 using namespace std;
 
+bool sym_lang(char c) {
+  switch(c) {
+  case '@' : return true;
+  case '~' : return true;
+  default: return false;
+  }
+  return false;
+} 
+
+
 // Updated Tokenizer to handle \( ... ) as a single literal token
 vector<string> tokenize_infix(string infix) {
   vector<string> tokens;
@@ -32,9 +42,9 @@ vector<string> tokenize_infix(string infix) {
       tokens.push_back(literal); // Push the whole inner expression as one token
       i--; // Adjust for outer loop increment
     } 
-    else if (isalnum(infix[i]) || infix[i]=='.') {
+    else if (isalnum(infix[i]) || infix[i]=='.' || sym_lang(infix[i])) {
         string current;
-        while (i < infix.length() && (isalnum(infix[i]) || infix[i]=='.')) {
+        while (i < infix.length() && (isalnum(infix[i]) || infix[i]=='.' || sym_lang(infix[i]))) {
             current += infix[i++];
         }
         tokens.push_back(current);
@@ -43,7 +53,7 @@ vector<string> tokenize_infix(string infix) {
     else {
       string op;
       while (i < infix.length() ) {
-        if(isalnum(infix[i]) || isspace(infix[i])) { i--; break;}
+        if(isalnum(infix[i]) || isspace(infix[i]) ) { i--; break;}
         op += infix[i++];
       }
       tokens.push_back(op);
@@ -78,7 +88,7 @@ string infixToLispPrefix(string infix) {
 
   for (const string& token : tokens) {
     // If it's an operand OR an escaped literal (starts with '(')
-    if (isalnum(token[0]) || (token.size() > 1 && token[0] == '(')) {
+    if (isalnum(token[0]) || sym_lang(token[0]) || (token.size() > 1 && token[0] == '(')) {
         operands.push(token);
     } else if (token == "(") {
         operators.push(token);
