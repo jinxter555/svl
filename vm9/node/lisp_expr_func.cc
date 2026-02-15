@@ -682,27 +682,47 @@ Node::OpStatus LispExpr::loop_forever(Node& process, const Node::Vector& list, s
 }
 
 //------------------------------------------------------------------------
-
 // (while (condition) (...))
-Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& list, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::loop_forever(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
+//    (condition) with '()' prefix returns a vector
+//    [condition] with '[]' infix returns a scalar
+//        need to check if it's scalar or vector 
+
+Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::while_(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
-  size_t s= list.size();
-  auto condtion_status =  eval(process, *list[start]);
-  if(!condtion_status.first) {
+  size_t s= code_list.size();
+  bool condition;
+
+  auto condition_status =  eval(process, *code_list[start]);
+
+  if(!condition_status.first) {
     return {false, Node::create_error(Error::Type::Unknown, 
-      "Unknown error in while loop!" + condtion_status.second->_to_str())};
+      "Unknown error in while loop!" + condition_status.second->_to_str())};
   }
-  bool condition=condtion_status.second->_get_bool();
+  if(condition_status.second->type_ == Node::Type::Vector) {
+    auto condition_status_inner = car(process, condition_status.second->_get_vector_ref(), 0);
+    condition=condition_status_inner.second->_get_bool();
+  } else
+    condition=condition_status.second->_get_bool();
 
   while(condition) {
     for(size_t i=start+1; i < s; i++) {
-      auto &node = list[i];
+      auto &node = code_list[i];
       eval(process, *node);
     }
-    auto condtion_status =  eval(process, *list[start]);
-    condition=condtion_status.second->_get_bool();
+    auto condtion_status =  eval(process, *code_list[start]);
+
+    if(!condition_status.first) {
+      return {false, Node::create_error(Error::Type::Unknown, 
+        "Unknown error in while loop!" + condition_status.second->_to_str())};
+    }
+    if(condition_status.second->type_ == Node::Type::Vector) {
+      auto condition_status_inner = car(process, condition_status.second->_get_vector_ref(), 0);
+      condition=condition_status_inner.second->_get_bool();
+    } else
+      condition=condition_status.second->_get_bool();
+
   }
 
   return {true, Node::create()};

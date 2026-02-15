@@ -641,6 +641,8 @@ Node::OpStatus LispExpr::faz(Node& process, const Node::Vector& code_list, size_
   //auto &arg =status.second->_get_vector_ref();
   auto &arg = ev_list[0];
 
+  // need to check if it's actually a closure
+
   if(!closure_status.first) {
     cerr << "faz() can't get closure\n";
     return closure_status;

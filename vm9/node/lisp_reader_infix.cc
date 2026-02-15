@@ -26,7 +26,7 @@ bool sym_lang(char c) {
 // Updated Tokenizer to handle \( ... ) as a single literal token
 vector<string> tokenize_infix(string infix) {
   vector<string> tokens;
-  for (int i = 0; i < infix.length(); i++) {
+  for (size_t i = 0; i < infix.length(); i++) {
     if (isspace(infix[i])) continue;
 
     // Handle Escape Character \( ... )

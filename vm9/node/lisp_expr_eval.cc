@@ -271,13 +271,14 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 //
 Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
+ // if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
   if(code_list.empty()) return{true, Node::create()};
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
  // MYLOGGER_MSG(trace_function, "code_list[0]->type_: " + Node::_to_str(code_list[5]->type_) + ", code_list[0]->value_: " + code_list[0]->_to_str(), SLOG_FUNC_INFO+30)
 
   //cout << "code_list size " << code_list.size() << "\n"; cout << "code_list str " << Node::_to_str(code_list) << "\n";
-  //if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
-  if(code_list.empty()) return{true, Node::create()};
+ // if(code_list.empty()) return{true, Node::create(Node::Type::Vector)};
+//  if(code_list.empty()) return{true, Node::create()};
 
   switch(code_list[0]->type_) {
 

@@ -37,6 +37,11 @@ module Kernel
       assign @state @begin
     end.def
 
+    def enter ()
+      (loop(print (eval (read)) "\n"))
+    end.def
+  
+
   end.class
 
   defmacro forloop ( it cblock )
@@ -84,6 +89,18 @@ module Kernel
 
   end.defmacro
 
+
+  def repl()
+    
+    while (true)
+
+      (print (eval (read)) "\n")
+      print "hello\n"
+
+    end.while
+
+  end.def
+
   def main (x y)
     ;var i 
     = r1 (new Range 1 13 3)
@@ -98,11 +115,22 @@ module Kernel
         print i ": what is up\n"
       end.do
     )
+
+    send r1 :init
+
+    = r2 (new Range 1 20 5)
+    send r2 :init
+    (forloop r1
+      (do (:ok i)
+        (print i ": what is up2\n")
+       )
+    )
   
 
-      loop
-        print (eval (read)) "\n"
-      end.loop
+   ; (print (eval (read)) "\n")
+    repl()
+   ;(repl())
+
   end.def
 
   def f1 ()
