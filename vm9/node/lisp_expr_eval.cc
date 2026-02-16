@@ -223,6 +223,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 
   case Lisp::Op::while_:   return while_(process, code_list, start );
   case Lisp::Op::return_:   return lisp_object_return(process, code_list, start );
+  case Lisp::Op::exit_:   {forever=false; return {true, Node::create() };};
 
   case Lisp::Op::funcall:   return funcall(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 
@@ -345,11 +346,16 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
     if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
       switch(handle_cf_object(process, result_list, value_status.second->_get_map_ref())) {
       case Node::ControlFlow::cf_run: { break;}
-      case Node::ControlFlow::cf_return:{ return  {true, Node::create(move(result_list))}; }
+      case Node::ControlFlow::cf_return:{ 
+        //return  {true, Node::create(move(result_list))}; 
+        cout << "return value_status " << *value_status.second<< "\n";
+        return  {true, move(value_status.second)};
+      }
       default: {}
       }
-
     }
+
+
     result_list.push_back(move(value_status.second));
   }
   return  {true, Node::create(move(result_list))};

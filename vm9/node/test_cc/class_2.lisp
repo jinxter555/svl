@@ -13,11 +13,11 @@ module Kernel
 
     end.def
 
-    def area(a pi)  
+    def area(a1 pi)  
       var name (value 555)
       assign name "area of planet earth"
       print "\nhello class Dict::area ()\n"
-      print "area is: " a "\n"
+      print "area is: " a1 "\n"
       print "pi: " pi "\n"
       = b (+ 1 2 3)
       loop 

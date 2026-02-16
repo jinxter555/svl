@@ -219,7 +219,8 @@ public:
   Node::OpStatus unquote(Node&process, const Node::Vector &list, size_t start=0);
 
   // handle control flow object
-  Node::ControlFlow handle_cf_object(Node&process, Node::Vector &result_list, const Node::Map& object);
+  Node::ControlFlow handle_cf_object(Node&process, Node::Vector &result_list, const Node::Map& object); // handles (return ... :ok )
+  Node::ControlFlow handle_cf_object(Node&process, const Node::Map& object); // just returns
   Node::ControlFlow handle_cf_object_return(Node&process, Node::Vector &result_list, const Node::Map& object);
   
   //

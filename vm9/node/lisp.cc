@@ -67,6 +67,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::loop: return "loop";
     case Lisp::Op::while_: return "while";
     case Lisp::Op::return_: return "return";
+    case Lisp::Op::exit_: return "exit_";
     case Lisp::Op::break_: return "break";
     case Lisp::Op::continue_: return "continue";
 

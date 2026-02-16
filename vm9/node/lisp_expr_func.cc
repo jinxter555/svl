@@ -14,7 +14,9 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t star
 
   if(list.empty()) return {true, Node::create()}; // return null
 
+
   auto &head = list[start];
+  // auto rv_status = eval(process, *head);
   auto rv_status = eval(process, *head);
   if(!rv_status.first) {
     cerr << "Error encounter in lisp::car eval" << rv_status << "\n";
@@ -23,6 +25,7 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t star
   if(rv_status.second->type_==Node::Type::Vector) {
     auto &plist = get<Node::Vector>(rv_status.second->value_);
     if(plist.size()==0) return {true, Node::create()};
+  cout << "car v rv_status: " << rv_status << "\n";
     return {true, move(plist[0])};
   }
   if(rv_status.second->type_==Node::Type::Shared) {
@@ -707,10 +710,24 @@ Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& code_list, si
     condition=condition_status.second->_get_bool();
 
   while(condition) {
+
     for(size_t i=start+1; i < s; i++) {
       auto &node = code_list[i];
-      eval(process, *node);
+      auto value_status = eval(process, *node);
+      // return is an object 
+      if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
+        switch(handle_cf_object(process, value_status.second->_get_map_ref())) {
+        case Node::ControlFlow::cf_run: { break;}
+        case Node::ControlFlow::cf_return:{ 
+          //return  {true, Node::create(move(result_list))}; 
+          cout << "return value_status " << *value_status.second<< "\n";
+          return  {true, move(value_status.second)};
+        }
+        default: {}
+        }
+      }
     }
+
     auto condtion_status =  eval(process, *code_list[start]);
 
     if(!condition_status.first) {
@@ -739,7 +756,7 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
   size_t s= list.size(); bool condition;
   auto condition_status =  eval(process, *list[start]);
 
-  cout << "condition status: " << condition_status << "\n";
+  //cout << "condition status: " << condition_status << "\n";
 
 
   if(!condition_status.first) {
@@ -896,7 +913,7 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_l
     switch(type) {
     case Lisp::Op::return_: {
       auto &return_value = object.at(RET_VALUE);
-      //cout << "return value " << *return_value;
+      //cout << "return value " << *return_value << "\n";
       result_list.push_back(return_value->clone());
       return Node::ControlFlow::cf_return;
     }
@@ -911,6 +928,30 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_l
   return Node::ControlFlow::cf_run;
 
  }
+
+Node::ControlFlow LispExpr::handle_cf_object(Node&process, const Node::Map& object) {
+  MYLOGGER(trace_function, "LispExpr::handle_cf_object(Node&process, Node::Map& object)", __func__, SLOG_FUNC_INFO);
+   try {
+    auto &object_info = object.at(OBJ_INFO);
+    auto type = object_info->get_node(TYPE).second._get_lisp_op();
+
+    switch(type) {
+    case Lisp::Op::return_: {
+      auto &return_value = object.at(RET_VALUE);
+      //cout << "return value " << *return_value << "\n";
+      return Node::ControlFlow::cf_return;
+    }
+    default: {}
+    }
+
+   } catch(...) {
+    // not an cf object just a map
+    return Node::ControlFlow::cf_run;
+   }
+   return Node::ControlFlow::cf_run;
+}
+
+
 Node::ControlFlow LispExpr::handle_cf_object_return(Node&process, Node::Vector&result_list, const Node::Map& object) {
   return Node::ControlFlow::cf_return;
 }

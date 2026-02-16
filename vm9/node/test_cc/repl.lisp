@@ -1,34 +1,27 @@
 module Kernel 
 
   def repl ()
-    var input
 
-    ;while [true]
-
-     [input = \(car (read))]
-      print "input: " input "\n"
-
-      if [ input == "exit"]
-      (
-        print "equal\n"
-        return :ok
-      )
-      end.if
-
-      print "continue!\n"
-
-
+    loop
+      print (eval (read)) "\n"
+    end.loop
   end.def
+
+
 
 
   def main (x y)
     print "hello main\n"
     repl()
+    f1()
+    print "goodbye main\n"
+
+
   end.def
 
   def f1 ()
     print "here in f1\n"
-    return :ok
+    ;return :ok
   end.def
 
 end.module
