@@ -430,9 +430,13 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
   frame_pop(process);
   if(!evaled_status.first) return evaled_status;
 
-  return {true, evaled_status.second->back().second.clone()};
+  //cout << "cal fun : eval status " << evaled_status << "\n";
 
-  return evaled_status;
+  // return {true, evaled_status.second->back().second.clone()};
+  //return cf_object_to_OpStatus(process, evaled_status.second->clone());
+  return cf_object_to_OpStatus(process, move(evaled_status.second));
+
+  //return evaled_status;
 }
 
 

@@ -348,7 +348,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
       case Node::ControlFlow::cf_run: { break;}
       case Node::ControlFlow::cf_return:{ 
         //return  {true, Node::create(move(result_list))}; 
-        cout << "return value_status " << *value_status.second<< "\n";
+        //cout << "return value_status " << *value_status.second<< "\n";
         return  {true, move(value_status.second)};
       }
       default: {}

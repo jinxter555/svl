@@ -720,7 +720,7 @@ Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& code_list, si
         case Node::ControlFlow::cf_run: { break;}
         case Node::ControlFlow::cf_return:{ 
           //return  {true, Node::create(move(result_list))}; 
-          cout << "return value_status " << *value_status.second<< "\n";
+          //cout << "return value_status " << *value_status.second<< "\n";
           return  {true, move(value_status.second)};
         }
         default: {}
@@ -728,7 +728,9 @@ Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& code_list, si
       }
     }
 
-    auto condtion_status =  eval(process, *code_list[start]);
+    auto condition_status =  eval(process, *code_list[start]);
+
+    //cout << "in while condition_status " <<  condition_status << "\n";
 
     if(!condition_status.first) {
       return {false, Node::create_error(Error::Type::Unknown, 
@@ -937,7 +939,7 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, const Node::Map& obje
 
     switch(type) {
     case Lisp::Op::return_: {
-      auto &return_value = object.at(RET_VALUE);
+      //auto &return_value = object.at(RET_VALUE);
       //cout << "return value " << *return_value << "\n";
       return Node::ControlFlow::cf_return;
     }
@@ -951,6 +953,38 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, const Node::Map& obje
    return Node::ControlFlow::cf_run;
 }
 
+
+Node::OpStatus LispExpr::cf_object_to_OpStatus(Node&process, unique_ptr<Node>object_ptr) {
+  MYLOGGER(trace_function, "LispExpr::cf_object_to_OpStatus(Node&process, Node::Map& object)", __func__, SLOG_FUNC_INFO);
+  if(object_ptr->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
+   try {
+    //cout << "object_ptr " << *object_ptr << "\n";
+    auto object_info_ref = object_ptr->get_node(OBJ_INFO);
+     if(!object_info_ref.first) {
+      cerr << "Cf_Object_to_opstatus () object error ";
+
+      return {false, object_info_ref.second.clone() };
+     }
+
+
+    auto type = object_info_ref.second.get_node(TYPE).second._get_lisp_op();
+
+    switch(type) {
+    case Lisp::Op::return_: {
+      auto return_value_ref = object_ptr->get_node(RET_VALUE);
+      //cout << "return value " << *return_value << "\n";
+      return {true, return_value_ref.second.clone()};
+    }
+    default: {}
+    }
+
+   } catch(...) {
+    // not an cf object just a map
+   return {true, object_ptr->back().second.clone()};
+   }
+  }
+   return {true, object_ptr->back().second.clone()};
+}
 
 Node::ControlFlow LispExpr::handle_cf_object_return(Node&process, Node::Vector&result_list, const Node::Map& object) {
   return Node::ControlFlow::cf_return;

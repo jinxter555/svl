@@ -470,7 +470,15 @@ Node::OpStatus LispExpr::assign_match(Node&process, const Node::Vector& var_list
   for(size_t i=0; i<assign_upto; i++) {
     auto &lhs = var_list[i];
     auto identifier = lhs->_to_str();
+    if(value_list[i] == nullptr) { 
+      auto msg =  "Maybe wrong input for assign match var_list " + Node::_to_str(var_list)  + ", value_list " + Node::_to_str(value_list);
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::Unknown,  msg)};
+
+
+    }
     auto value_status = eval(process, *value_list[i]);
+
     if(!value_status.first) {
       cerr << "assign match() eval error:" << value_status.second->_to_str() << "\n";
       return value_status;

@@ -222,6 +222,8 @@ public:
   Node::ControlFlow handle_cf_object(Node&process, Node::Vector &result_list, const Node::Map& object); // handles (return ... :ok )
   Node::ControlFlow handle_cf_object(Node&process, const Node::Map& object); // just returns
   Node::ControlFlow handle_cf_object_return(Node&process, Node::Vector &result_list, const Node::Map& object);
+
+  Node::OpStatus cf_object_to_OpStatus(Node&process, unique_ptr<Node> object_ptr); // if returns object  or just regular optstauts
   
   //
   Node::OpStatus lisp_object_return(Node&process, const Node::Vector &code_list, size_t start=0);

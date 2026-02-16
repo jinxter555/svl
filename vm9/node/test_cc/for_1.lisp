@@ -21,7 +21,7 @@ module Kernel
       = @state (+ @state @step)
       ; print "next: " @state "\n"
 
-      if (== @state @fin)
+      if (>= @state @fin)
         return (:end @fin)
       end.if
 
@@ -41,52 +41,49 @@ module Kernel
 
   defmacro forloop ( it cblock )
     quote
-           ; (unquote cblock) 
-      var rv u (forever true)
+      var rv u (forever~ true)
       = rv (send (unquote it)  :init)
-
-
   
-    ;  (faz (rv)
-    ;       do (:ok i)
-    ;        print i
-    ;        print "what is up\n"
-    ;       end.do
-    ;   )
-
-      while(forever)
-        faz (rv) (unquote cblock)
+      ;faz (rv) (unquote cblock)
+      while(forever~)
+        ;= rv (send (unquote it)  :next)
         
 
-        = rv (send (unquote it)  :next)
-
-        if (= (:end u) rv)
+        if (= (:end _) rv)
          ( print "end\n"
-          = forever false
+          = forever~ false
          )
         end.if
 
-        if (= (:error _) (rv))
+        if (= (:error _) rv)
         (
           print "error\n"
-          = forever false
+          = forever~ false
         )
         end.if
 
-        ;print "rv: " rv "\n"
+
+        faz (rv) (unquote cblock)
+        = rv (send (unquote it)  :next)
+        ;faz (rv2) (unquote cblock)
+        ; faz (rv) (unquote cblock)
+
+      
 
       end.while
       
       
 
     end.quote
+    return :ok
 
 
   end.defmacro
 
   def main (x y)
     var i forever
-    = r1 (new Range 1 13 3)
+    = r1 (new Range 1 5 3)
+
     ;send r1 :next 
 
     (forloop r1 
@@ -94,6 +91,8 @@ module Kernel
         print i ": what is up\n"
       end.do
     )
+
+   (loop (print (eval (read)) "\n"))
   
 
   end.def

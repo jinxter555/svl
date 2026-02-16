@@ -1,10 +1,96 @@
-scope:{"frames": Vector[{"pid": 1, "args": {}, "current_function": Main, "current_module": Kernel, "scopes": Vector[{"immute": {}, "var": {}}]}], "state": init, "pid": 1}
-arg_lookup !Kernel
-
-value:scope:{"frames": Vector[{"pid": 1, "args": {}, "current_function": Main, "current_module": Kernel, "scopes": Vector[{"immute": {}, "var": {}}]}, {"current_module_ptr": {"name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"p55": {"module_ptr":--*ptr--, "name": p55, "__object_info__": {"type": defun}, "code": Vector[Vector[print, value:, value, p55 hello]], "params": Vector[value]}, "main": {"module_ptr":--*ptr--, "name": main, "__object_info__": {"type": defun}, "code": Vector[Vector[p55, 88888888]], "params": Vector[x, y]}}}, "current_module": Kernel, "current_function_ptr": {"module_ptr":--*ptr--, "name": p55, "__object_info__": {"type": defun}, "code": Vector[Vector[print, value:, value, p55 hello]], "params": Vector[value]}, "current_function": p55, "scopes": Vector[{"args": {"value": 88888888}, "immute": {}, "var": {}}]}], "state": init, "pid": 1}
-arg_lookup !value
-
-In Module.Function: Kernel.p55
-[Error: SymbolNotFound] Vector[print, value:, value, p55 hello]In Module.Function: Kernel.Main
-[Error: KeyNotFound] Either function or macro symbol 'p55' not found!
-Vector[p55, 88888888]
+1: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+4: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+in while condition_status true: value: true, type: Bool
+nil: what is up
+assign_match() error value_list is nullptr
+assign_match() error value_list is nullptr
+Logger Error: Program has reach max level:13000 !
