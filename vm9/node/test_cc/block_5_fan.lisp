@@ -74,15 +74,17 @@ infi
     [x < 3] do print end.do
     end.case
 
-    case x
+    cond 
     [x > 5] (print )
     [x < 3] (print )
-    end.ase
+    end.cond
+
 
     case x
-    (:ok, v) (print )
-    [x < 3] (print )
-    end.ase
+    (:ok v)     (print)
+    (:error v)  
+    end.case
+
 
     case x
     (1) (print)
@@ -93,7 +95,16 @@ infi
     if[ (x y z) (2 3 4) ]
     endif
 
+    if [ true ]
+      p1()
+      p2()
+    :else
+      p3()
+      p4()
+    end.if
+
   end.def
+
 
 
 end.module

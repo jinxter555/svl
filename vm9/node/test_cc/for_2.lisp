@@ -38,6 +38,7 @@ module Kernel
     end.def
 
     def enter ()
+      print "this: " this "\n"
       (loop(print (eval (read)) "\n"))
     end.def
   
@@ -127,8 +128,8 @@ module Kernel
     )
   
 
-   ; (print (eval (read)) "\n")
-    repl()
+   (loop  (print (eval (read)) "\n"))
+   ; repl()
    ;(repl())
 
   end.def

@@ -155,7 +155,7 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 // eval node 
 Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node&code_node)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "code_node: " + code_node._to_str(), SLOG_FUNC_INFO+30);
 
 //  if(code_node.empty_container())  return{true, Node::create(Node::Type::Vector)}; 
 
@@ -182,7 +182,9 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   }
     
   case Node::Type::List: { // object, lambda, 
-    cout << "code node list\n";
+    cout << "code node list: " << code_node._to_str()  << "\n";
+
+    break;
   }
   case Node::Type::Shared: { // object, lambda, 
     MYLOGGER_MSG(trace_function, string("Shared code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
@@ -238,9 +240,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::new_:  return object_create(process, code_list, start);
 
   case Lisp::Op::send:    return send_object_message(process, code_list, start); 
-  case Lisp::Op::if_:    {
-    return if_(process, code_list, start );
-  }
+  case Lisp::Op::if_:    { return if_(process, code_list, start ); }
+  case Lisp::Op::iif:    { return if_(process, code_list, start ); }
   case Lisp::Op::quote: { return quote(process, code_list, start); }
 
 

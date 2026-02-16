@@ -1,13 +1,14 @@
 module Kernel 
   def main (x y) 
-    var forever (t true)
+    var forever (t )
     assign t1  "t1 robot"
-    assign forever true
 
-    if(t) 
-    ;if[1==1]
-      print "forever: " forever "\n"
-    end.if
+    = forever true
+    = t false
+    iif ( t )
+      (print "forever: " forever "\n" )
+      (print "sometimes, forever " forever "\n" )
+    end.iif
 
   end.def
 

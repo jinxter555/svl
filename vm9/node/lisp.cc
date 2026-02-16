@@ -76,6 +76,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::do_: return "do";
     case Lisp::Op::faz: return "faz";
     case Lisp::Op::if_: return "if";
+    case Lisp::Op::iif: return "iif";
     case Lisp::Op::case_: return "case";
     case Lisp::Op::when: return "when";
     case Lisp::Op::print: return "print";

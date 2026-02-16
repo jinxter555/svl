@@ -46,6 +46,7 @@ Node::OpStatus LispExpr::parse(Node& tokens) {
     case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
       return build_parsed_vector(list);}
     case Lisp::Op::def: { return build_parsed_def(list); }
+    case Lisp::Op::if_: { return build_parsed_if(list); }
     case Lisp::Op::defun: { return build_parsed_fun(list); }
     case Lisp::Op::defmacro: { return build_parsed_macro(list); }
     case Lisp::Op::module: {
@@ -534,3 +535,51 @@ Node::OpStatus LispExpr::vector_to_object(const Node::Vector&list) {
   return {true, move(object)};
 }
 
+
+//-------------------------------- iif
+Node::OpStatus LispExpr::build_parsed_if(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_iif(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "Node::List& list : " + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  Node::Vector if_vl, block_vl;
+
+  if_vl.reserve(list.size());
+  block_vl.reserve(list.size());
+
+  // first block
+  if(list.empty()) {
+    return {false, Node::create_error(Error::Type::Parse, "parse: if error!")};
+  }
+
+  { // condition block
+    auto status_parsed = parse(*list.front());
+    if(!status_parsed.first) return status_parsed;
+    if_vl.push_back(Node::create(Lisp::Op::if_));
+//    cout << "condition: status_parsed" << status_parsed << "\n";
+    if_vl.push_back(move(status_parsed.second));
+    list.pop_front();
+  }
+
+
+  for(auto& ele: list) {
+    auto status_parsed = parse(*ele);
+    if(!status_parsed.first) return status_parsed;
+
+    auto back_status_ref = status_parsed.second->back();
+    if(back_status_ref.second.type_ == Node::Type::Atom &&
+       back_status_ref.second._get_integer() == atom_else) {
+
+      //cout << "build iif, block:  " << Node::_to_str(block_vl) << "\n";
+      if_vl.push_back(Node::create(move(block_vl))); // push the first block
+      block_vl.clear();
+      continue;
+    }
+    block_vl.push_back(move(status_parsed.second));
+  }
+  if_vl.push_back(Node::create(move(block_vl)));
+
+  //cout << "if_vl:  " << Node::_to_str(if_vl) << "\n\n";
+
+
+
+  return {true, Node::create(move(if_vl))};
+}

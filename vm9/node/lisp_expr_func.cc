@@ -751,9 +751,10 @@ Node::OpStatus LispExpr::while_(Node& process, const Node::Vector& code_list, si
 //   0   1           2                  3
 // (if (condition) (first_block...) (else_block...))
 Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::if(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
-  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
+  MYLOGGER(trace_function, "LispExpr::if_(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "num of blocks: " + to_string(list.size()),  SLOG_FUNC_INFO+30)
 
   size_t s= list.size(); bool condition;
   auto condition_status =  eval(process, *list[start]);
@@ -780,26 +781,23 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
   }
 
   if(condition) {
-
     if(s>=3) {
-    auto &first_block = list[start+1];
-    if(first_block->type_ != Node::Type::Vector) {
-      cerr << "something is up for the first if block ";
-      return {false, Node::create_error(Error::Type::Parse, "If eval first block error!")};
-    }
-    return eval(process, *first_block);
-    }
-
+      auto &first_block = list[start+1];
+      if(first_block->type_ != Node::Type::Vector) {
+        cerr << "something is up for the first if block ";
+        return {false, Node::create_error(Error::Type::Parse, "If eval first block error!")};
+      }
+      return eval(process, *first_block);
+      }
   } else {
     if(s==4) {
-
-    auto &else_block = list[start+2];
-    if(else_block->type_ != Node::Type::Vector) {
-      cerr << "something is up for the first if block ";
-      return {false, Node::create_error(Error::Type::Parse, "If eval else block error!")};
+      auto &else_block = list[start+2];
+      if(else_block->type_ != Node::Type::Vector) {
+        cerr << "something is up for the first if block ";
+        return {false, Node::create_error(Error::Type::Parse, "If eval else block error!")};
+      }
+      return eval(process, *else_block);
     }
-    return eval(process, *else_block);
-  }
   }
   return {true, Node::create()};
 

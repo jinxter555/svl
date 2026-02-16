@@ -75,7 +75,6 @@ module Kernel
       
 
     end.quote
-    return :ok
 
 
   end.defmacro

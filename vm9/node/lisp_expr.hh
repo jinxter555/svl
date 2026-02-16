@@ -33,7 +33,7 @@ private:
   Node::OpStatus parse_def(const Node::List &list);
 
   const Node::Integer atom_module, atom_fun, atom_class, atom_get, atom_set, atom_ok, atom_error,
-  atom_lambda, atom_closure;
+  atom_lambda, atom_closure, atom_else;
   // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
@@ -231,6 +231,7 @@ public:
 
   //
   Node::OpStatus build_parsed_def(Node::List& list);
+  Node::OpStatus build_parsed_if(Node::List& list);
   
   //template <typename T>
   //Node::OpStatus builtin_add_n(Node& process, const T& list, size_t start=0); 
