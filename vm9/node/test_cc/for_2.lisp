@@ -21,7 +21,7 @@ module Kernel
       = @state (+ @state @step)
       ; print "next: " @state "\n"
 
-      if [@state == @fin]
+      if[@state == @fin]
         return (:end @fin)
       end.if
 

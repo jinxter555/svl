@@ -112,6 +112,21 @@ Node Node::operator<(const Node &other) const {
 }
 
 Node Node::operator==(const Node &other) const {
+
+  /*
+  switch(type_) {
+  case Type::Shared: {
+    cout << "shared type ==!";
+    auto sptr = get<ptr_S>(value_);
+    return *sptr == other;}
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return *sptr == other;}
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return *sptr == other; }}
+*/
+
   return visit([&](auto&& lhs, auto&& rhs) -> Node {
     using L = decay_t<decltype(lhs)>;
     using R = decay_t<decltype(rhs)>;

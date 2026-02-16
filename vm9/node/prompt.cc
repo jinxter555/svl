@@ -50,7 +50,10 @@ PromptSwitch LangPrompt::ready() {
     //input_str = input; 
     input_str.assign(input); 
     if(input!=nullptr) free(input);
-    if(input_str == "exit") return PromptSwitch::exit;
+    if(input_str == "exit") {
+        cout << "ready exit!\n";
+      return PromptSwitch::exit;
+    }
     if(input_str == "!asm") return PromptSwitch::vasm;
     if(input_str == "!svlm") return PromptSwitch::svlm;
     accept_prompt(input_str);
@@ -73,7 +76,5 @@ string LangPrompt::read() {
 }
 
 void LangPrompt::pop_last_exit_history() {
-  if(history.back() == "exit") {
-    history.pop_back();
-  }
+  if(history.back() == "exit") { history.pop_back(); }
 }

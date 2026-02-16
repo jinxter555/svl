@@ -1,31 +1,29 @@
 module Kernel 
+
   def repl ()
-    ;var (i 0)
-    ;print "hello\n"
-    while (true)
-    ;while [ true ]
-      print "hello2\n"
-    end.while
+    var input
+
+    ;while [true]
+
+     [input = \(car (read))]
+      print "input: " input "\n"
+
+      if [ input == "exit"]
+      (
+        print "equal\n"
+        return :ok
+      )
+      end.if
+
+      print "continue!\n"
+
+
   end.def
 
-  def repl2 ()
-    var (i 0)
-    while [i < 10]
-      print "i " i "\n";
-      [i = i+1]
-    end.while
-  end.def
 
   def main (x y)
- ;   repl()
-;    repl2()
-
-    while (true)
-    ;while [ true ]
-      print "hello2\n"
-    end.while
-
-
+    print "hello main\n"
+    repl()
   end.def
 
   def f1 ()

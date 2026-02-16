@@ -25,7 +25,7 @@ module Kernel
         return (:end @fin)
       end.if
 
-      if (> @state @fin)
+      if(> @state @fin)
         return (:error nil)
         return (:ok @state)
       end.if
@@ -96,9 +96,6 @@ module Kernel
     )
   
 
-      loop
-        print (eval (read)) "\n"
-      end.loop
   end.def
 
 end.module

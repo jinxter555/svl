@@ -5,11 +5,10 @@
 #include "my_helpers.hh"
 
 
-#include <iostream>
-#include <vector>
-#include <string>
 #include <stack>
-#include <cctype>
+
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
 
 using namespace std;
 
@@ -17,6 +16,7 @@ bool sym_lang(char c) {
   switch(c) {
   case '@' : return true;
   case '~' : return true;
+  case '"' : return true;
   default: return false;
   }
   return false;
@@ -47,13 +47,14 @@ vector<string> tokenize_infix(string infix) {
         while (i < infix.length() && (isalnum(infix[i]) || infix[i]=='.' || sym_lang(infix[i]))) {
             current += infix[i++];
         }
+        //cout << "current: " << current << "\n";
         tokens.push_back(current);
         i--;
     } 
     else {
       string op;
       while (i < infix.length() ) {
-        if(isalnum(infix[i]) || isspace(infix[i]) ) { i--; break;}
+        if(isalnum(infix[i]) || isspace(infix[i]) || sym_lang(infix[i])) { i--; break;}
         op += infix[i++];
       }
       tokens.push_back(op);
@@ -145,6 +146,9 @@ std::string replace_bracketed_string(std::string input, const std::string& repla
 
 
 void LispReader::convert_to_infix(string& infix_input) {
+  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op op_head, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "Infix_input " + infix_input , SLOG_FUNC_INFO+30);
+
   auto bracket_strings  = find_bracketed_strings(infix_input);
 
   string input = infix_input;

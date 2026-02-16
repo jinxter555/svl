@@ -737,15 +737,27 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
 
   size_t s= list.size(); bool condition;
-  auto condtion_status =  eval(process, *list[start]);
-  if(!condtion_status.first) {
+  auto condition_status =  eval(process, *list[start]);
+
+  cout << "condition status: " << condition_status << "\n";
+
+
+  if(!condition_status.first) {
     return {false, Node::create_error(Error::Type::Unknown, 
-      "Unknown error in while loop!" + condtion_status.second->_to_str())};
+      "Unknown error in while loop!" + condition_status.second->_to_str())};
   }
 
-  try { condition=condtion_status.second->_get_bool(); } catch(...) {
-    cerr << "Error: if condition eval.  something went wrong maybe ()";
-    return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+  try { condition=condition_status.second->_get_bool(); } catch(...) {
+    //cerr << "Error: if condition eval.  something went wrong maybe ()";
+    //return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+
+    auto condition_status_inner = car(process, condition_status.second->_get_vector_ref(), 0);
+    try {
+      condition=condition_status_inner.second->_get_bool();
+    } catch(...) {
+      cerr << "Error: if condition eval.  something went wrong maybe ()";
+      return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+    }
   }
 
   if(condition) {
@@ -757,13 +769,6 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
       return {false, Node::create_error(Error::Type::Parse, "If eval first block error!")};
     }
     return eval(process, *first_block);
-   // auto evaled_status = eval(process, *first_block);
-   // cout << "if evaled_status " << evaled_status << "\n";
-    //return evaled_status;
-    //if(!evaled_status.first) return evaled_status;
-    //return {true, evaled_status.second->back().second.clone()};
-
-
     }
 
   } else {
@@ -775,11 +780,6 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
       return {false, Node::create_error(Error::Type::Parse, "If eval else block error!")};
     }
     return eval(process, *else_block);
-    //auto evaled_status =  eval(process, *else_block);
-    //cout << "if evaled_status " << evaled_status << "\n";
-    //return evaled_status;
-    //if(!evaled_status.first) return evaled_status;
-    //return {true, evaled_status.second->back().second.clone()};
   }
   }
   return {true, Node::create()};
@@ -800,10 +800,7 @@ Node::OpStatus LispExpr::read_input() {
   
   //cout << "> "; getline(cin , input);
 
-  if(input == "exit") { 
-    forever = false; 
-    return {true, Node::create() };
-  }
+  //if(input == "exit") { forever = false; return {true, Node::create() }; }
 
   if(input=="") return { true, Node::create()};
 
@@ -820,6 +817,7 @@ Node::OpStatus LispExpr::read_input() {
   //cout <<"from 'read' after tokenizing, input_code_status: " << input_code_status << "\n";
   return input_code_status;
 }
+
 
 Node::Vector LispExpr::list_2_vector(Node::List &&list) {
   Node::Vector new_list;
