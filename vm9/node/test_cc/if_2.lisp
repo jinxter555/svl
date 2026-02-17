@@ -13,6 +13,10 @@ module Kernel
 
     print "myif "   "\n"
 
+    My.Mod1.p1()
+    System.Io.File.open()
+    
+
   end.def
 
   def myif() 
@@ -31,4 +35,16 @@ module Kernel
   end.def
 
 
+end.module
+
+module My.Mod1
+  def p1 ()
+      print "p1\n"
+  end.def
+end.module
+
+module System.Io.File
+  def open()
+    print "opening a file!\n"
+  end.def
 end.module

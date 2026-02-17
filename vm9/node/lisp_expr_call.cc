@@ -28,7 +28,12 @@ vector<string> LispExpr::extract_mf(Node& process, Node&node_mf) {
       list.push_back(Node::create(mf));
       return extract_mf(process, list);  // get module name from frame
     } else {
-      return mf_full_name;
+      auto f = mf_full_name.back();
+      mf_full_name.pop_back();
+      auto m = join_str(mf_full_name, ".");
+      //return mf_full_name;
+      //cout << "m: " << m << ", f: " <<f << "\n";
+      return {m, f};
     }
   }
 
