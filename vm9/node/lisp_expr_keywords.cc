@@ -83,6 +83,8 @@ void LispExpr::set_keywords() {
   map_->set("=", Op::assign);
   map_->set("if", Op::if_);
   map_->set("iif", Op::iif);
+  map_->set("case", Op::case_);
+  map_->set("match", Op::match);
   map_->set("not", Op::not_);
   map_->set("and", Op::and_);
   map_->set("or", Op::or_);

@@ -989,8 +989,6 @@ Node::ControlFlow LispExpr::handle_cf_object_return(Node&process, Node::Vector&r
 }
 
 //------------------------------------------------------------------------
-//   0   1           2                  3
-// (if (condition) (first_block...) (else_block...))
 Node::OpStatus LispExpr::cond(Node& process, const Node::Vector& list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::cond(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list), SLOG_FUNC_INFO+30)
@@ -1016,6 +1014,63 @@ Node::OpStatus LispExpr::cond(Node& process, const Node::Vector& list, size_t st
         return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
       }
     }
+
+    if(condition) {
+      return eval(process, *block);
+    }
+
+  }
+
+  return  {true, Node::create()};
+}
+
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::cond(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+
+
+//  cout << "list: " << Node::_to_str( list )<< "\n";
+
+  size_t s=list.size(); bool condition;
+  auto &rhs  = list[start];
+
+  for(size_t i=start+1; i<s; i+=2) {
+    Node::Vector assign_code_list;
+    assign_code_list.reserve(s);
+    string head_str="";
+
+    
+    auto &lhs = list[i];
+    auto &block = list[i+1];
+    assign_code_list.push_back(Node::create(Lisp::Op::assign));
+    assign_code_list.push_back(lhs->clone());
+    assign_code_list.push_back(rhs->clone());
+    //cout << "= " << *lhs << " "  << *rhs << "-->" << *block << "\n";
+    try {
+      auto  &lhs_head = lhs->_get_vector_ref()[0];
+      head_str = lhs_head->_to_str();
+    } catch(...) {head_str ="";}
+
+
+    if(head_str == "_"){
+      condition = true;
+    } else {
+      auto  condition_status =  assign_attach(process, assign_code_list, 1);
+
+      try { condition=condition_status.second->_get_bool(); } catch(...) {
+        try {
+          auto condition_status_inner = car(process, condition_status.second->_get_vector_ref(), 0);
+          condition=condition_status_inner.second->_get_bool();
+          
+        } catch(...) {
+          cerr << "Error: if condition eval.  something went wrong maybe ()";
+          return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+        }
+      }
+  }
 
     if(condition) {
       return eval(process, *block);

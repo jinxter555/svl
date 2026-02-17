@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/test_cc/main.out",
-      "args": ["-r", "-f",  "while_3.lisp"],
+      "args": ["-r", "-f",  "match_1.lisp"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}/test_cc/",
       "environment": [],

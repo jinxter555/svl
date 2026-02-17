@@ -63,7 +63,6 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::call_extern: return "call_extern";
     case Lisp::Op::send: return "send";
     case Lisp::Op::ret: return "ret";
-    case Lisp::Op::cond: return "cond";
     case Lisp::Op::loop: return "loop";
     case Lisp::Op::while_: return "while";
     case Lisp::Op::return_: return "return";
@@ -77,7 +76,9 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::faz: return "faz";
     case Lisp::Op::if_: return "if";
     case Lisp::Op::iif: return "iif";
+    case Lisp::Op::cond: return "cond";
     case Lisp::Op::case_: return "case";
+    case Lisp::Op::match: return "match";
     case Lisp::Op::when: return "when";
     case Lisp::Op::print: return "print";
     case Lisp::Op::printr: return "printr";
