@@ -247,6 +247,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::iif:    { return if_(process, code_list, start ); }
   case Lisp::Op::cond:    { return cond(process, code_list, start ); }
   case Lisp::Op::match:    { return match(process, code_list, start ); }
+  case Lisp::Op::case_:    { return case_(process, code_list, start ); }
   case Lisp::Op::quote: { return quote(process, code_list, start); }
   case Lisp::Op::error: { 
     return {false, Node::create_error(Error::Type::Eval, "Got an (error)") };

@@ -88,6 +88,7 @@ Node Node::operator>(const Node &other) const {
       else
         return Node(static_cast<Float>(lhs) > static_cast<Float>(rhs), Type::Bool);
     } else {
+      return Node::create(false);
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for > op"});
     }
 
@@ -105,6 +106,7 @@ Node Node::operator<(const Node &other) const {
       else
         return Node(static_cast<Float>(lhs) < static_cast<Float>(rhs), Type::Bool);
     } else {
+      return Node::create(false);
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for < op"});
     }
 
@@ -141,7 +143,7 @@ Node Node::operator==(const Node &other) const {
         return Node(static_cast<string>(lhs) == static_cast<string>(rhs), Type::Bool);
       }
 
-
+      return Node::create(false);
 
       cerr << "this: " << _to_str() << ", other: " << other._to_str() << "\n";
       cerr << "this.type: " << Node::_to_str(type_) << ", other.type: " << Node::_to_str(other.type_) << "\n";
@@ -187,6 +189,7 @@ Node Node::operator<=(const Node &other) const {
       else
         return Node(static_cast<Float>(lhs) <= static_cast<Float>(rhs), Type::Bool);
     } else {
+      return Node::create(false);
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for <= op"});
     }
 
@@ -204,6 +207,7 @@ Node Node::operator>=(const Node &other) const {
       else
         return Node(static_cast<Float>(lhs) >= static_cast<Float>(rhs), Type::Bool);
     } else {
+      return Node::create(false);
       return Node(Error{Error::Type::InvalidOperation, "Unsupported types for >= op"});
     }
 

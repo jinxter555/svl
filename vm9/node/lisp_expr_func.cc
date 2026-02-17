@@ -14,6 +14,45 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t star
 
   if(list.empty()) return {true, Node::create()}; // return null
 
+  auto ev_list_status = eval(process, list, start);
+  if(!ev_list_status.first) {
+    cerr << "Error encounter in lisp::car eval list" << ev_list_status << "\n";
+    return ev_list_status;
+  }
+
+
+  auto &head = ev_list_status.second->front().second;
+  // auto rv_status = eval(process, *head);
+  auto rv_status = eval(process, head);
+  if(!rv_status.first) {
+    cerr << "Error encounter in lisp::car eval" << rv_status << "\n";
+    return rv_status;
+  }
+  if(rv_status.second->type_==Node::Type::Vector) {
+    auto &plist = get<Node::Vector>(rv_status.second->value_);
+    if(plist.size()==0) return {true, Node::create()};
+  cout << "car v rv_status: " << rv_status << "\n";
+    return {true, move(plist[0])};
+  }
+  if(rv_status.second->type_==Node::Type::Shared) {
+    auto s_ptr = get<Node::ptr_S>(rv_status.second->value_);
+    return car(process, s_ptr->_get_vector_ref(), 0);
+  }
+
+  //return {true, Node::create()};
+  //cout << "car rv_status: " << rv_status << "\n";
+  return rv_status;
+}
+
+
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::car_eval_head(Node&process, const Node::Vector &list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::car(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30)
+
+  if(list.empty()) return {true, Node::create()}; // return null
+
 
   auto &head = list[start];
   // auto rv_status = eval(process, *head);
@@ -37,6 +76,8 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t star
   //cout << "car rv_status: " << rv_status << "\n";
   return rv_status;
 }
+
+//------------------------------------------------------------------------
 
 Node::OpStatus LispExpr::cdr(Node&process, const Node::Vector &list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::cdr(Node&process, Node::Vector&list)", __func__, SLOG_FUNC_INFO);
@@ -1030,10 +1071,6 @@ Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t s
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
 
-
-
-//  cout << "list: " << Node::_to_str( list )<< "\n";
-
   size_t s=list.size(); bool condition;
   auto &rhs  = list[start];
 
@@ -1042,7 +1079,6 @@ Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t s
     assign_code_list.reserve(s);
     string head_str="";
 
-    
     auto &lhs = list[i];
     auto &block = list[i+1];
     assign_code_list.push_back(Node::create(Lisp::Op::assign));
@@ -1052,8 +1088,7 @@ Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t s
     try {
       auto  &lhs_head = lhs->_get_vector_ref()[0];
       head_str = lhs_head->_to_str();
-    } catch(...) {head_str ="";}
-
+    } catch(...) {}
 
     if(head_str == "_"){
       condition = true;
@@ -1070,13 +1105,71 @@ Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t s
           return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
         }
       }
-  }
+    }
 
     if(condition) {
       return eval(process, *block);
     }
+  }
+  return  {true, Node::create()};
+}
 
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::case_(Node& process, const Node::Vector& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::case(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  size_t s=list.size(); bool condition;
+  // auto &rhs  = list[start];
+  auto rhs_status  = eval(process, *list[start]);
+
+  if(!rhs_status.first) {
+    auto msg = "case (x): x evaled to error";
+    cerr << msg  << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
   }
 
+  auto &rhs = rhs_status.second;
+
+
+  for(size_t i=start+1; i<s; i+=2) {
+    Node::Vector case_code_list;
+    case_code_list.reserve(s);
+
+    string head_str="";
+
+
+    auto &lhs= list[i]->_get_vector_ref()[0];
+
+    auto &block = list[i+1];
+
+    case_code_list.push_back(Node::create(Lisp::Op::eq));
+    case_code_list.push_back(lhs->clone());
+    case_code_list.push_back(rhs->clone());
+
+    head_str = lhs->_to_str();
+
+    if(head_str == "_"){
+      condition = true;
+    } else {
+      auto  condition_status =  eval(process, Lisp::Op::eq,  case_code_list, 1);
+
+      try { condition=condition_status.second->_get_bool(); } catch(...) {
+        try {
+          auto condition_status_inner = car(process, condition_status.second->_get_vector_ref(), 0);
+          condition=condition_status_inner.second->_get_bool();
+          
+        } catch(...) {
+          cerr << "Error: if condition eval.  something went wrong maybe ()";
+          return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+        }
+      }
+    }
+
+    if(condition) {
+      return eval(process, *block);
+    }
+  }
   return  {true, Node::create()};
 }

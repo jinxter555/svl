@@ -154,6 +154,7 @@ public:
   Node::OpStatus if_(Node& process, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus cond(Node& process, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus match(Node& process, const Node::Vector& code_list, size_t start=0);
+  Node::OpStatus case_(Node& process, const Node::Vector& code_list, size_t start=0);
 
   Node::OpStatus call(Node& process, const Node& code_node); 
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
@@ -194,6 +195,7 @@ public:
 
 
   // 
+  Node::OpStatus car_eval_head(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus car(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus cdr(Node&process, const Node::Vector &list, size_t start=0);
   //

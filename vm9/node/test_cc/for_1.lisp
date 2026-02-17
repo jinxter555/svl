@@ -19,16 +19,16 @@ module Kernel
     ; return statement needed
     def next ()
       = @state (+ @state @step)
-      ; print "next: " @state "\n"
+       ;print "in next, state= " @state "\n"
 
-      if (>= @state @fin)
+      iif (>= @state @fin)
         return (:end @fin)
-      end.if
+      end.iif
 
-      if(> @state @fin)
+      iif(> @state @fin)
         return (:error nil)
         return (:ok @state)
-      end.if
+      end.iif
 
       ;print "i am in next(v): \n"
     end.def
@@ -49,18 +49,18 @@ module Kernel
         ;= rv (send (unquote it)  :next)
         
 
-        if (= (:end _) rv)
+        iif (= (:end _) rv)
          ( print "end\n"
           = forever~ false
          )
-        end.if
+        end.iif
 
-        if (= (:error _) rv)
+        iif (= (:error _) rv)
         (
           print "error\n"
           = forever~ false
         )
-        end.if
+        end.iif
 
 
         faz (rv) (unquote cblock)
@@ -71,9 +71,8 @@ module Kernel
       
 
       end.while
-      
-      
 
+      (:ok)
     end.quote
 
 
@@ -81,7 +80,7 @@ module Kernel
 
   def main (x y)
     var i forever
-    = r1 (new Range 1 5 3)
+    = r1 (new Range 1 6 3)
 
     ;send r1 :next 
 

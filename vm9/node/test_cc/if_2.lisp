@@ -17,7 +17,7 @@ module Kernel
 
   def myif() 
 
-    if [true]
+    if [ true == false ]
       print (+ 1 2 3) "\n"
       print "hello\n"
       print "hola\n"
