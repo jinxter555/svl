@@ -152,6 +152,7 @@ public:
   Node::OpStatus while_(Node& process, const Node::Vector& code_list, size_t start=0);
 
   Node::OpStatus if_(Node& process, const Node::Vector& code_list, size_t start=0);
+  Node::OpStatus cond(Node& process, const Node::Vector& code_list, size_t start=0);
 
   Node::OpStatus call(Node& process, const Node& code_node); 
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))

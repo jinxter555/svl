@@ -464,6 +464,7 @@ bool LispReader::is_closurable(Lisp::Op op) {
   case Lisp::Op::do_:
   case Lisp::Op::if_:
   case Lisp::Op::iif:
+  case Lisp::Op::cond:
   case Lisp::Op::def:
   case Lisp::Op::defun:
   case Lisp::Op::defmacro:

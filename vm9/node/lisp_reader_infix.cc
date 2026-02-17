@@ -60,6 +60,11 @@ vector<string> tokenize_infix(string infix) {
       tokens.push_back(op);
     }
   }
+  if(tokens.size() < 3) {
+   auto msg = "infix tokens need to be than 2 parameters  in froms [a op b]: but got [" + infix + "]";
+    cerr << msg << "\n";
+    return {"(", "error", ")"};
+  }
   return tokens;
 }
 

@@ -987,3 +987,41 @@ Node::OpStatus LispExpr::cf_object_to_OpStatus(Node&process, unique_ptr<Node>obj
 Node::ControlFlow LispExpr::handle_cf_object_return(Node&process, Node::Vector&result_list, const Node::Map& object) {
   return Node::ControlFlow::cf_return;
 }
+
+//------------------------------------------------------------------------
+//   0   1           2                  3
+// (if (condition) (first_block...) (else_block...))
+Node::OpStatus LispExpr::cond(Node& process, const Node::Vector& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::cond(Node& process, const Vector, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  size_t s=list.size(); bool condition;
+  for(size_t i=start; i<s; i+=2) {
+    
+    auto &cond = list[i];
+    auto &block = list[i+1];
+
+    auto condition_status =  eval(process, *cond);
+
+    try { condition=condition_status.second->_get_bool(); } catch(...) {
+      //cerr << "Error: if condition eval.  something went wrong maybe ()";
+      //return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+      try {
+        auto condition_status_inner = car(process, condition_status.second->_get_vector_ref(), 0);
+        condition=condition_status_inner.second->_get_bool();
+        
+      } catch(...) {
+        cerr << "Error: if condition eval.  something went wrong maybe ()";
+        return{false, Node::create_error(Error::Type::Parse, "Error: if condition eval.  something went wrong maybe ()")};
+      }
+    }
+
+    if(condition) {
+      return eval(process, *block);
+    }
+
+  }
+
+  return  {true, Node::create()};
+}

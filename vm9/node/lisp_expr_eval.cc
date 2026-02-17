@@ -205,6 +205,9 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op op_head, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("Lisp::Op:: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
+
+//  if(op_head == Lisp::Op::error) { return {false, Node::create_error(Error::Type::Eval, "Got an evail error") };}
+
   MYLOGGER_MSG(trace_function, string("code_list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
 
@@ -242,7 +245,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::send:    return send_object_message(process, code_list, start); 
   case Lisp::Op::if_:    { return if_(process, code_list, start ); }
   case Lisp::Op::iif:    { return if_(process, code_list, start ); }
+  case Lisp::Op::cond:    { return cond(process, code_list, start ); }
   case Lisp::Op::quote: { return quote(process, code_list, start); }
+  case Lisp::Op::error: { 
+    return {false, Node::create_error(Error::Type::Eval, "Got an evail error") };
+  }
 
 
 

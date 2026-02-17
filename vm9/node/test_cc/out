@@ -1,4 +1,13 @@
-iif: Vector[iif, Vector[t], Vector[print, forever: , forever, 
-], Vector[print, sometimes, forever , forever, 
-]]
-forever: false
+cond:
+
+list: Vector[cond, Vector[eq, 1, 1], Vector[print, what is up1], Vector[eq, 2, 1], Vector[print, what is up2], Vector[eq, 3, 1], Vector[print, what is up2], Vector[true], Vector[print, what is up], Vector[3, Vector[print, what is up]], Vector[463, Vector[print, what is up]]]
+i: 1
+cond: Vector[eq, 1, 1]-->  Vector[print, what is up1]
+i: 3
+cond: Vector[eq, 2, 1]-->  Vector[print, what is up2]
+i: 5
+cond: Vector[eq, 3, 1]-->  Vector[print, what is up2]
+i: 7
+cond: Vector[true]-->  Vector[print, what is up]
+i: 9
+cond: Vector[3, Vector[print, what is up]]-->  Vector[463, Vector[print, what is up]]
