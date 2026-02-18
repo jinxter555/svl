@@ -565,14 +565,21 @@ Node::OpStatus LispExpr::call_closure(Node& process, const Node::Map & obj_closu
 // code_list = (call_extern (module function) this_node_var& (arg1 arg2 arg3))
 Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::call_extern(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "list.size: " + to_string(code_list.size()), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
+  if(code_list.size() < 4) {
+    auto msg= "call extern() requires 4 arguments ()";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
 
   auto &modfun = code_list[start];
   auto mod_ref_status= modfun->get_node(0);
   auto fun_ref_status= modfun->get_node(1);
-  auto &node_this = code_list[start+1];
-  auto &node_arg = code_list[start+2];
+  auto &object = code_list[start+1];
+  auto &object_args = code_list[start+2];
 
   if(!mod_ref_status.first || !fun_ref_status.first)  {
     cerr << "LispExpr::call_extern() error getting module and function: !"  
@@ -582,29 +589,44 @@ Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_lis
     return {false, fun_ref_status.second.clone()};
   }
 
-  auto node_this_status = eval(process, *node_this);
+  auto node_this_status = eval(process, *object);
+
+
   if(!node_this_status.first) {
     cerr << "3rd argument aka node this failed to eval!\n";
     return node_this_status;
   }
-  auto node_arg_status = eval(process, *node_arg);
-  if(!node_arg_status.first) {
-    cerr << "call_extern() error, can't eval arg list!\n";
-    cerr << "node_arg_status.second " <<  node_arg_status.second->_to_str() << "\n";
-     return node_arg_status;
+
+
+  auto object_arg_status = eval(process, *object_args);
+  if(!object_arg_status.first  ) {
+    cerr << "call_extern() error, can't eval object arg list! object arguments:\n" 
+          <<  object_arg_status.second->_to_str() << "\n";
+     return object_arg_status;
   }
 
-  return call_extern(process, 
-    mod_ref_status.second._to_str(), 
-    fun_ref_status.second._to_str(), 
-    *node_this_status.second, node_arg_status.second->_get_vector_ref());
+  try {
+    return call_extern(process, 
+      mod_ref_status.second._to_str(), 
+      fun_ref_status.second._to_str(), 
+      *node_this_status.second, object_arg_status.second->_get_vector_ref());
+
+  } catch(...) { // object_arg_status returned a 'nil' empty {}
+    return call_extern(process,  
+      mod_ref_status.second._to_str(), 
+      fun_ref_status.second._to_str(), 
+      *node_this_status.second, {});
+
+  }
 
 }
 
 
 //------------------------------------------------------------------------ call extern
 Node::OpStatus LispExpr::call_extern(Node& process, const string&name_mod, const string&name_fun, Node& node_this, const Node::Vector& args) {
-  MYLOGGER(trace_function, "LispExpr::call_extern(Node&process, Node& node_this, Node::Vector&args)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::call_extern(Node&process, string&name_mod, string&name_fun, Node&node_this, , Node::Vector&args)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "mod: " + name_mod + " fun: " + name_fun, SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "node_this" + node_this._to_str(), SLOG_FUNC_INFO + 30);
 
   auto method_path = cc_path_module;
   method_path.push_back(name_mod);
