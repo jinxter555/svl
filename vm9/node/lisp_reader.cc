@@ -278,6 +278,7 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
 
 
     if(token.value_[0]=='@') {
+      if(token.value_.size() == 1 ) return {true, Node::create("this", Node::Type::Identifier)}; 
       token.value_.erase(0, 1);
       string esc_str = "this." + token.value_;
       return {true, Node::create(esc_str, Node::Type::Identifier)}; 

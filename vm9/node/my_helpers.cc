@@ -239,3 +239,14 @@ string join_str(const vector<std::string>& elements, const string& delimiter) {
     }
     return ss.str();
 }
+
+string join_str(const deque<std::string>& elements, const string& delimiter) {
+    stringstream ss;
+    for (size_t i = 0; i < elements.size(); ++i) {
+        ss << elements[i];
+        if (i < elements.size() - 1) {
+            ss << delimiter;
+        }
+    }
+    return ss.str();
+}

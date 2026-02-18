@@ -2,6 +2,10 @@ forever: false
 world
 mundo
 myif 
+m: My.Mod1, f: p1
+p1
+m: System.Io, f: p1
+system io p1
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -102,7 +106,82 @@ print recursive:
       - defun (Type: LispOp): defun
       - defmacro (Type: LispOp): defmacro
      }
-     - Module (Type: Map): { (Map, size=2) 
+     - Module (Type: Map): { (Map, size=3) 
+      - System.Io (Type: Map): { (Map, size=5) 
+       - name (Type: String): "System.Io"
+       - class (Type: Map): { (Map, size=1) 
+        - File (Type: Map): { (Map, size=5) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "File"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): class
+         }
+         - function (Type: Map): { (Map, size=2) 
+          - open (Type: Map): { (Map, size=5) 
+           - class_ptr (Type: RawPtr): ==*ptr==
+           - name (Type: String): "open"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): defun
+           }
+           - code (Type: Vector): Vector[(size=1) 
+            - [0, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "opening a file!
+"
+            ]
+           ]
+           - params (Type: Vector): Vector[(size=1) 
+            - [0, Type: Identifier]: "this"
+           ]
+          }
+          - File (Type: Map): { (Map, size=5) 
+           - class_ptr (Type: RawPtr): ==*ptr==
+           - name (Type: String): "File"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): defun
+           }
+           - code (Type: Vector): Vector[(size=1) 
+            - [0, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "file init!
+"
+            ]
+           ]
+           - params (Type: Vector): Vector[(size=1) 
+            - [0, Type: Identifier]: "this"
+           ]
+          }
+         }
+         - var (Type: Vector): Vector[(size=2) 
+          - [0, Type: LispOp]: var
+          - [1, Type: Identifier]: "file_name"
+         ]
+        }
+       }
+       - macro (Type: Map): { (Map, size=0) 
+       }
+       - __object_info__ (Type: Map): { (Map, size=1) 
+        - type (Type: LispOp): module
+       }
+       - function (Type: Map): { (Map, size=1) 
+        - p1 (Type: Map): { (Map, size=5) 
+         - module_ptr (Type: RawPtr): ==*ptr==
+         - name (Type: String): "p1"
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): defun
+         }
+         - code (Type: Vector): Vector[(size=1) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: LispOp]: print
+           - [1, Type: String]: "system io p1
+"
+          ]
+         ]
+         - params (Type: Vector): Vector[(size=0) 
+         ]
+        }
+       }
+      }
       - My.Mod1 (Type: Map): { (Map, size=5) 
        - name (Type: String): "My.Mod1"
        - class (Type: Map): { (Map, size=0) 
@@ -209,7 +288,7 @@ print recursive:
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): defun
          }
-         - code (Type: Vector): Vector[(size=6) 
+         - code (Type: Vector): Vector[(size=8) 
           - [0, Type: Vector]: Vector[(size=3) 
            - [0, Type: LispOp]: var
            - [1, Type: Identifier]: "forever"
@@ -258,6 +337,16 @@ print recursive:
            - [1, Type: String]: "myif "
            - [2, Type: String]: "
 "
+          ]
+          - [6, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "My.Mod1.p1"
+           - [1, Type: Vector]: Vector[(size=0) 
+           ]
+          ]
+          - [7, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "System.Io.p1"
+           - [1, Type: Vector]: Vector[(size=0) 
+           ]
           ]
          ]
          - params (Type: Vector): Vector[(size=2) 

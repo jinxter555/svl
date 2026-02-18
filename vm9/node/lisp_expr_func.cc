@@ -367,16 +367,27 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
 
 //------------------------------------------------------------------------
 // 2 parmas module.class
-// 3 parmas namespace.module.class // to be worked on
+// 3 parmas module.class // to be worked on
 
 Node::OpStatusRef LispExpr::get_class(deque<string> mc) {
   MYLOGGER(trace_function, "LispExpr::get_class(list<string>mfc)", __func__, SLOG_FUNC_INFO);
   string mc_str = _to_str_ext(mc);
   MYLOGGER_MSG(trace_function, "mfc: " + mc_str  , SLOG_FUNC_INFO+30);
   auto path = lisp_path_module;
-  path.push_back(mc[0]);
+
+
+  // class name string
+  auto class_name = mc.back();
+  mc.pop_back();
+
+  path.push_back(join_str(mc, "."));
   path.push_back(_CLASS);
-  path.push_back(mc[1]); //cout << "getclass: path " << _to_str_ext(path) << "\n";
+
+  path.push_back(class_name); 
+  cout << "getclass: path " << _to_str_ext(path) << "\n";
+
+
+
   auto node_ref_status = get_node(path);
   if(!node_ref_status.first)  {
     cerr << "Looking up class '"  << mc_str <<"' not found: "  << node_ref_status.second._to_str() << "\n";
