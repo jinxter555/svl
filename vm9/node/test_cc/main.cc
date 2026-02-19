@@ -14,9 +14,15 @@
 #include "../scope_logger.hh"
 #include "../error.hh"
 
+#include "../io_file.hh"
 
 
+// init some static vars 
+void init() {
+  File::init();
+  Error::init();
 
+}
 
 
 
@@ -29,7 +35,7 @@ int main(int argc, char *argv[]) {
  //ScopeLogger::set_current_verbose_level(SLOG_TO_STR+31);
   MYLOGGER(trace_function, "int main(int, char*[])", __func__, SLOG_FUNC_INFO);
 
-  Error::init();
+  init();
 
   Interactive lang_iteractive(".loosh_history", "loosh> ");
   Commandline cml(argc, argv);

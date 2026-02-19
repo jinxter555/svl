@@ -1,6 +1,7 @@
 #include "lisp_expr.hh"
 #include "my_helpers.hh"
 #include "interactive.hh"
+#include "io_file.hh"
 #include <iostream>
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -97,13 +98,13 @@ Node::OpStatus LispExpr::build_file_str(const string& input) {
       return  tokens_interpreted ;
     }
   
-    auto hierarchical_code_status =  parse(*tokens_interpreted.second); 
+    auto mod_code_status =  parse(*tokens_interpreted.second); 
   
-    if(!hierarchical_code_status.first) {
-      cerr << "parse build interpreter error!" <<  hierarchical_code_status.second->_to_str() <<"\n";
-      return hierarchical_code_status;
+    if(!mod_code_status.first) {
+      cerr << "parse build interpreter error!" <<  mod_code_status.second->_to_str() <<"\n";
+      return mod_code_status;
     }
-    op_status = attach_module(move(hierarchical_code_status.second));
+    op_status = attach_module(move(mod_code_status.second));
 
   } while(token_list.size()!=0) ;
 
@@ -121,6 +122,7 @@ void LispExpr::attach_cc_extern() {
   attach_cc_fun("Map", "set", map_set_value);
   attach_cc_fun("Map", "del", map_del_key);
   attach_cc_fun("Map", "has", map_has_key);
+  attach_cc_fun("System.Io.File", "apply", File::apply);
 
 }
 

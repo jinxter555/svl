@@ -348,10 +348,10 @@ Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
 //------------------------------------------------------------------------
 // attach module to 'Lisp' Language tree
 //
-Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
+Node::OpStatus LispExpr::attach_module(unique_ptr<Node> mod_ptr) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
   auto mod_loc = get_branch(lisp_path_module);
-  auto name_ref_status  = module->get_node(NAME);
+  auto name_ref_status  = mod_ptr->get_node(NAME);
 
   if(!name_ref_status.first) {
     cerr << "error getting module name!\n";
@@ -362,7 +362,7 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> module) {
 
 
   //return mod_loc->merge(move(module));
-  return mod_loc->set(module_name, move(module));
+  return mod_loc->set(module_name, move(mod_ptr));
   //cout << "mod_loc: " << *mod_loc << "\n\n";
   //return {false, Node::create(true)};
 }

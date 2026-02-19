@@ -578,7 +578,7 @@ Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_lis
   auto &modfun = code_list[start];
   auto mod_ref_status= modfun->get_node(0);
   auto fun_ref_status= modfun->get_node(1);
-  auto &object = code_list[start+1];
+  auto &object_identifier = code_list[start+1];
   auto &object_args = code_list[start+2];
 
   if(!mod_ref_status.first || !fun_ref_status.first)  {
@@ -589,14 +589,12 @@ Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_lis
     return {false, fun_ref_status.second.clone()};
   }
 
-  auto node_this_status = eval(process, *object);
+  auto object_this_status = eval(process, *object_identifier);
 
-
-  if(!node_this_status.first) {
+  if(!object_this_status.first) {
     cerr << "3rd argument aka node this failed to eval!\n";
-    return node_this_status;
+    return object_this_status;
   }
-
 
   auto object_arg_status = eval(process, *object_args);
   if(!object_arg_status.first  ) {
@@ -609,13 +607,13 @@ Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_lis
     return call_extern(process, 
       mod_ref_status.second._to_str(), 
       fun_ref_status.second._to_str(), 
-      *node_this_status.second, object_arg_status.second->_get_vector_ref());
+      *object_this_status.second, object_arg_status.second->_get_vector_ref());
 
   } catch(...) { // object_arg_status returned a 'nil' empty {}
     return call_extern(process,  
       mod_ref_status.second._to_str(), 
       fun_ref_status.second._to_str(), 
-      *node_this_status.second, {});
+      *object_this_status.second, {});
 
   }
 

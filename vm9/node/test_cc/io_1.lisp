@@ -12,6 +12,11 @@ module Kernel
     My.Mod1.p1()
     = f1 (new System.Io.File)
     System.Io.p1()
+
+
+    loop
+      (print(eval (read)) "\n")
+    end.loop
     
 
   end.def

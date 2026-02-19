@@ -9,7 +9,11 @@
             (k2 456)
             (k3 456)
             ))
+      = keys (call_extern (Map keys) m1 (2))
+      print keys "\n"
+
       loop
+          
         (print(eval (read)) "\n")
       end.loop
     )
