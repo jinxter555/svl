@@ -59,7 +59,7 @@ Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node:
   MYLOGGER(trace_function, "File::apply(Node&process, Node& object, const Vector& args)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "args: " + Node::_to_str(args), SLOG_FUNC_INFO+30);
 
-  cout << "args: " << Node::_to_str(args) << "\n";
+  //cout << "args: " << Node::_to_str(args) << "\n";
   //return {true, Node::create()};
   Node::Integer  id;
 
@@ -78,7 +78,7 @@ Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node:
     if(args.size() < 2) return {false, Node::create_error(Error::Type::Parse, "need filename")};
     auto filename = args[1]->_to_str();
 
-    cout << "opening " << filename << "\n";
+    //cout << "opening " << filename << "\n";
     auto file_obj = make_shared<File>();
     file_objects.push_back(file_obj);
 

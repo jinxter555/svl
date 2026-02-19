@@ -143,7 +143,7 @@ public:
   Node::OpStatus eval(Node& process, const Lisp::Op op, const Node::Vector& code_list, size_t start=0);
   inline Node::OpStatus eval_math(Node& process, const Lisp::Op op, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus eval(Node& process, const Node::Vector& code_list); // this figures what to do
-  Node::OpStatus eval(Node& process, const Node::Vector& code_list, size_t start); // eval each as an element node
+  Node::OpStatus eval(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count=0); // eval each as an element node
   Node::OpStatus eval_eval(Node& process, const Node::Vector& code_list, size_t start);
 
   //Node::OpStatus eval_list(Node& process, const Node::List& list);

@@ -13,9 +13,14 @@ module Kernel
     = f1 (new System.Io.File)
     ;System.Io.p1()
 
+    f1.open("t.txt")
+
+    while[ \(f1.eof()) == false  ]
+      print (f1.getline ()) "\n"
+    end.while
 
     loop
-      (print(eval (read)) "\n")
+      print(eval (read)) "\n"
     end.loop
     
 
@@ -47,6 +52,10 @@ module System.Io
 
     def close()
      call_extern (System.Io.File apply) this (:close)
+    end.def
+
+    def eof()
+     call_extern (System.Io.File apply) this (:eof)
     end.def
 
 

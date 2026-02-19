@@ -384,7 +384,7 @@ Node::OpStatusRef LispExpr::get_class(deque<string> mc) {
   path.push_back(_CLASS);
 
   path.push_back(class_name); 
-  cout << "getclass: path " << _to_str_ext(path) << "\n";
+  //cout << "getclass: path " << _to_str_ext(path) << "\n";
 
 
 

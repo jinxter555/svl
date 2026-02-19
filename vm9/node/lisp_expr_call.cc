@@ -315,14 +315,18 @@ Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string m
     .second.get_node(FUNCTION);
 
 //    cout << "fun ref status :" << fun_ref_status << "\n";
-    auto  argvs_status = eval(process, argv_list, 0); // this returns a vector
+    // auto  argvs_status = eval(process, argv_list, 0); // this returns a vector
+    auto  argvs_status = eval(process, argv_list, 0, 1); // this returns a vector
     if(!argvs_status.first) {
       cerr << " call_object() error eval argv_list: " << Node::_to_str(argv_list) + argvs_status.second->_to_str() <<"\n";
       return argvs_status;
     }
 
     auto object_uptr = Node::ptr_USU(object); // this object
-    argvs_status.second->push_front(move(object_uptr));
+
+    // argvs_status.second->push_front(move(object_uptr));
+    argvs_status.second->_get_vector_ref()[0] = move(object_uptr);
+
     auto method_fun_ref = fun_ref_status.second.get_node(method_name);
 
     if(!method_fun_ref.first) {

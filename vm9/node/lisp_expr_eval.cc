@@ -326,7 +326,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
 
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size_t start) {
+Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count) {
   MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
@@ -335,7 +335,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
 
   Node::Vector result_list; //, result_list2;
   size_t s=code_list.size();
-  result_list.reserve(s);
+  result_list.reserve(s+front_insert_count);
+
+  // create a list of prepend object for front replacement
+  for(size_t i=0; i<front_insert_count; i++) { result_list.push_back(Node::create()); }
+
 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
     auto value_status = eval(process, *code_list[i]);
