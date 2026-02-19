@@ -42,6 +42,8 @@
 #define SCOPES "scopes"
 #define DESC "description"
 #define OBJ_INFO "__object_info__"
+#define CC_OBJ_ID "__cc_obj_id__"
+
 #define TYPE "type"
 #define BASE_FRAME "base_frame"
 

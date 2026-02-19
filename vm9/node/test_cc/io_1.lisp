@@ -9,9 +9,9 @@ module Kernel
       (print "sometimes, forever " forever "\n" )
     end.iif
 
-    My.Mod1.p1()
+    ;My.Mod1.p1()
     = f1 (new System.Io.File)
-    System.Io.p1()
+    ;System.Io.p1()
 
 
     loop
@@ -31,20 +31,25 @@ end.module
 
 module System.Io
   class File
-    var file_name
+    var file_name 
 
     def File()
-      print "file init!\n"
+      print "System.Io.File() init!\n"
     end.def
   
-    def open()
-      print "opening a file!\n"
+    def open(fn)
+     call_extern (System.Io.File apply) this (:open fn)
     end.def
+
+    def getline()
+     call_extern (System.Io.File apply) this (:getline)
+    end.def
+
+    def close()
+     call_extern (System.Io.File apply) this (:close)
+    end.def
+
+
   end.class
-
-  def p1()
-    print "system io p1\n"
-  end.def
-
 
 end.module
