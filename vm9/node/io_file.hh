@@ -1,3 +1,4 @@
+#pragma once
 #include "node.hh"
 #include <fstream>
 #include <vector>
@@ -13,7 +14,7 @@ public:
   bool eof();
 
   static Node::OpStatus apply(Node&process, Node &node, const Node::Vector& args) ;
-  static Node::OpStatus apply(Node&process, Node::Map &object, const Node::Vector& args) ;
+  static Node::OpStatus apply_obj(Node&process, Node::Map &object, const Node::Vector& args) ;
   static void init();
   //Node::OpStatus attach(Node &class_node, const Node::Vector& args) ;
 private:

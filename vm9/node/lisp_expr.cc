@@ -122,6 +122,7 @@ void LispExpr::attach_cc_extern() {
   attach_cc_fun("Map", "set", map_set_value);
   attach_cc_fun("Map", "del", map_del_key);
   attach_cc_fun("Map", "has", map_has_key);
+  //attach_cc_fun("System.Io.File", "apply", File::apply);
   attach_cc_fun("System.Io.File", "apply", File::apply);
 
 }

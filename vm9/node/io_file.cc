@@ -46,7 +46,7 @@ Node::OpStatus File::apply(Node&process, Node &object_node, const Node::Vector& 
 
   try {
     auto &object =object_node._get_map_ref();
-    return apply(process, object, args);
+    return apply_obj(process, object, args);
   } catch(...) {
     //auto msg = "1File object is not a Node::Map!";
     auto msg = "File object is not a Node::Map or applying method not successful!";
@@ -55,7 +55,7 @@ Node::OpStatus File::apply(Node&process, Node &object_node, const Node::Vector& 
   }
 
 }
-Node::OpStatus File::apply(Node&process, Node::Map &lisp_object, const Node::Vector& args) {
+Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node::Vector& args) {
   MYLOGGER(trace_function, "File::apply(Node&process, Node& object, const Vector& args)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "args: " + Node::_to_str(args), SLOG_FUNC_INFO+30);
 
