@@ -881,7 +881,7 @@ Node::OpStatus LispExpr::read_input() {
   }
 
   auto tokens = Node::create(move(parsed_tokens_status.second->_get_list_ref())); // this extra step maybe uncessary in future
-  auto input_code_status = parse(*tokens);
+  auto input_code_status = parse_build(*tokens);
 
   //cout <<"from 'read' after tokenizing, input_code_status: " << input_code_status << "\n";
   return input_code_status;

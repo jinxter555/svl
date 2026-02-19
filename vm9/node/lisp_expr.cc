@@ -98,7 +98,7 @@ Node::OpStatus LispExpr::build_file_str(const string& input) {
       return  tokens_interpreted ;
     }
   
-    auto mod_code_status =  parse(*tokens_interpreted.second); 
+    auto mod_code_status =  parse_build(*tokens_interpreted.second); 
   
     if(!mod_code_status.first) {
       cerr << "parse build interpreter error!" <<  mod_code_status.second->_to_str() <<"\n";

@@ -121,7 +121,7 @@ public:
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...
   Node::OpStatus read_input(); 
-  Node::OpStatus parse(Node& tokens); 
+  Node::OpStatus parse_build(Node& tokens); 
 
   //Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_process();

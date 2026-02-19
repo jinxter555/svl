@@ -18,7 +18,7 @@ class Lisp {
 public:
   enum class Op 
   { root, nil, kernel, system, branch, namespace_
-  , class_, private_, new_, delete_, clone
+  , class_, private_, new_, delete_, clone, use
   , error, noop
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
   , var, assign

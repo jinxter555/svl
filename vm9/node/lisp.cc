@@ -17,6 +17,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::new_: return "new";
     case Lisp::Op::delete_: return "delete";
     case Lisp::Op::clone: return "clone";
+    case Lisp::Op::use: return "use";
     case Lisp::Op::error: return "error";
     case Lisp::Op::noop: return "noop";
     case Lisp::Op::identifier: return "identifier";

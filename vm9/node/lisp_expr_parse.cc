@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------ build and parse interpreter 
 
 // tokens: double linked list of tokens
-Node::OpStatus LispExpr::parse(Node& tokens) {
+Node::OpStatus LispExpr::parse_build(Node& tokens) {
   MYLOGGER(trace_function, "LispExpr::parse(Node&tokens)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("tokens: ") + tokens._to_str(), SLOG_FUNC_INFO+30);
   //cout << "parse tokens: " <<  tokens << "\n\n";
@@ -216,7 +216,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   string module_name = get<string>(list.front()->value_); list.pop_front(); // module name
 
   for(auto& ele: list) {  
-    auto status = parse(*ele); // parse (defun ...) (class ...)
+    auto status = parse_build(*ele); // parse (defun ...) (class ...)
     if(!status.first) return status;
     status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault when print recursive// get raw pointer from 
 
@@ -274,7 +274,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
   string class_name = get<string>(list.front()->value_); list.pop_front(); // class name
 
   for(auto& ele: list) {  
-    auto status = parse(*ele); // parse (defun ...) (class ...)
+    auto status = parse_build(*ele); // parse (defun ...) (class ...)
 
     if(!status.first) return status;
     status.second->set(CLASS_PTR, class_node.get()); // recursive will segfault, check to_str and print recursive
@@ -438,7 +438,7 @@ Node::OpStatus LispExpr::build_parsed_vector(Node::List& list) {
   for(auto& ele: list) {
     if(ele->type_ == Node::Type::List) { // nested parsing
       MYLOGGER_MSG(trace_function, string("build nested list: ") + ele->_to_str(), SLOG_FUNC_INFO+30);
-      auto status_parsed = parse(*ele);
+      auto status_parsed = parse_build(*ele);
       if(!status_parsed.first) return status_parsed;
       MYLOGGER_MSG(trace_function, string("returned list type: ") + Node::_to_str(status_parsed.second->type_), SLOG_FUNC_INFO+30);
       vl.push_back(move(status_parsed.second));
@@ -464,7 +464,7 @@ Node::OpStatus LispExpr::build_parsed_list(Node::List& list) {
   for(auto& ele: list) {
     if(ele->type_ == Node::Type::List) { // nested parsing
       MYLOGGER_MSG(trace_function, string("build nested list: ") + ele->_to_str(), SLOG_FUNC_INFO+30);
-      auto status_parsed = parse(*ele);
+      auto status_parsed = parse_build(*ele);
       if(!status_parsed.first) return status_parsed;
       MYLOGGER_MSG(trace_function, string("returned list type: ") + Node::_to_str(status_parsed.second->type_), SLOG_FUNC_INFO+30);
       dl.push_back(move(status_parsed.second));
@@ -549,7 +549,7 @@ Node::OpStatus LispExpr::build_parsed_if(Node::List& list) {
   }
 
   { // condition block
-    auto status_parsed = parse(*list.front());
+    auto status_parsed = parse_build(*list.front());
     if(!status_parsed.first) return status_parsed;
     if_vl.push_back(Node::create(Lisp::Op::if_));
 //    cout << "condition: status_parsed" << status_parsed << "\n";
@@ -559,7 +559,7 @@ Node::OpStatus LispExpr::build_parsed_if(Node::List& list) {
 
 
   for(auto& ele: list) {
-    auto status_parsed = parse(*ele);
+    auto status_parsed = parse_build(*ele);
     if(!status_parsed.first) return status_parsed;
 
     auto back_status_ref = status_parsed.second->back();
