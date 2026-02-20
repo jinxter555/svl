@@ -115,7 +115,7 @@ list<Token> LispReader::tokenize(const string& input)  {
       token.value_ = "\"" + move(extract_quoted_string(input, i));
       tokens.push_back(token);
       token_begin = true;
-    } else if(c == ';') {
+    } else if(c == '#') {
       token_begin = true;
       if(!token_str.empty()) {
         token.value_ = move(token_str);
@@ -389,7 +389,7 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
 
 
     // ignore all comments
-    size_t comment_pos = line.find(";");
+    size_t comment_pos = line.find("#");
     if (comment_pos != std::string::npos) {
         line.erase(comment_pos);
     }
@@ -398,7 +398,7 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
     //auto line_vector = split_string(line, " ");
     auto line_vector = tokenize_pre(line);
 
-    if(line_vector.front() == ";") continue;
+    if(line_vector.front() == "#") continue;
 
     if(is_closurable(line_vector.front())) {
       //cout << "line is closurable " <<  line_vector[0] <<  " " <<line_vector.back() << "\n";

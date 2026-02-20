@@ -1,3 +1,6 @@
+#!./main.out
+
+# this is a test
 module Kernel 
   def main (x y) 
     var forever (t true)
@@ -9,9 +12,7 @@ module Kernel
       (print "sometimes, forever " forever "\n" )
     end.iif
 
-    ;My.Mod1.p1()
     = f1 (new System.Io.File)
-    ;System.Io.p1()
 
     f1.open("t.txt")
 

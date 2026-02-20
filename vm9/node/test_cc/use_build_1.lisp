@@ -1,3 +1,4 @@
+#!./main.out 
 use :namespace Heart.Of.Space
 
 module Kernel 
