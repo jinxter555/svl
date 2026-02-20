@@ -21,13 +21,14 @@ public:
   , class_, private_, new_, delete_, clone, use
   , error, noop
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
+  , atom, integer_, float_, number, string_, cc_vec, cc_list, cc_deque, cc_map
   , var, assign
   , car, cdr, map
   , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_
   , read, readline
   , call, send, ret, call_extern, funcall, curry, pipe
   , cond, print, printr, loop, eval, while_, return_, exit_, continue_, break_, repeat, for_, do_, if_, iif, case_, match, when
-  , module, def, defun, defmacro, alias, lambda, faz
+  , module_, def, defun, defmacro, alias, lambda, faz
   };
   using Type=Op;
   Lisp();

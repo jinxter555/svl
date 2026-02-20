@@ -3,6 +3,9 @@
 #include "commandline.hh"
 #include "my_helpers.hh"
 
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 struct option Commandline::long_options[] = {
   {"inputfile", required_argument, NULL, 'f'},
   {"lang", required_argument, NULL, 'l'},
@@ -27,8 +30,9 @@ Commandline::Commandline(int argc, char* argv[]) {
     }
   }
   for(; optind < argc; optind++){      
-    infile_name += std::string(" ") + std::string(argv[optind]);  
+    infile_name += " " + string(argv[optind]);  
     opt_file=true;
+    opt_run=true;
   } 
 
 }
@@ -86,7 +90,9 @@ void Commandline::run(Interactive* interactive) {
 
 // build with mulitple source lisp files
 void Commandline::load_files(Interactive *interactive, const string& file_str) {
-  auto files = split_string(file_str, " ");
+  MYLOGGER(trace_function , "Commandline::load_files(" + file_str + ")", __func__, SLOG_FUNC_INFO);
+
+  auto files = split_string(trim(file_str), " ");
   for(auto file : files) {
     auto load_status = interactive->load(file);
     if(!load_status.first) { 

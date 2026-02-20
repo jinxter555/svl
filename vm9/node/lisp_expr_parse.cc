@@ -40,6 +40,7 @@ Node::OpStatus LispExpr::parse_build(Node& tokens) {
 
     switch(op_head) {
     //case Lisp::Op::print:  { return {true, Node::create(Lisp::Op::print)};}
+    case Lisp::Op::use:  { return use_at_parse_build(list); }
     case Lisp::Op::deque:  { return build_parsed_deque(list); }
     case Lisp::Op::list:  { 
       return build_parsed_list(list); }
@@ -47,9 +48,9 @@ Node::OpStatus LispExpr::parse_build(Node& tokens) {
       return build_parsed_vector(list);}
     case Lisp::Op::def: { return build_parsed_def(list); }
     case Lisp::Op::if_: { return build_parsed_if(list); }
-    case Lisp::Op::defun: { return build_parsed_fun(list); }
+ //   case Lisp::Op::defun: { return build_parsed_fun(list); }
     case Lisp::Op::defmacro: { return build_parsed_macro(list); }
-    case Lisp::Op::module: {
+    case Lisp::Op::module_: {
       return build_parsed_module(list); }
     case Lisp::Op::class_: { //cout << "class build!\n";
       return build_parsed_class(list); }
@@ -211,7 +212,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   auto module_node=make_unique<Node>(Node::Type::Map);
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::module));
+  obj_info->set(TYPE,  Node::create(Lisp::Type::module_));
 
   string module_name = get<string>(list.front()->value_); list.pop_front(); // module name
 
@@ -580,4 +581,10 @@ Node::OpStatus LispExpr::build_parsed_if(Node::List& list) {
 
 
   return {true, Node::create(move(if_vl))};
+}
+
+Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
+  MYLOGGER(trace_function, "LispExpr::use(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "Node::List& list : " + Node::_to_str(cc_list), SLOG_FUNC_INFO+30);
+  return {true, Node::create()};
 }

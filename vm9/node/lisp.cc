@@ -31,6 +31,10 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::hash: return "hash";
     case Lisp::Op::ihash: return "ihash";
     case Lisp::Op::object: return "object";
+    case Lisp::Op::integer_: return "integer";
+    case Lisp::Op::float_: return "float";
+    case Lisp::Op::number: return "number";
+    case Lisp::Op::string_: return "string";
 
     case Lisp::Op::car: return "car";
     case Lisp::Op::cdr: return "cdr";
@@ -83,7 +87,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::when: return "when";
     case Lisp::Op::print: return "print";
     case Lisp::Op::printr: return "printr";
-    case Lisp::Op::module: return "module";
+    case Lisp::Op::module_: return "module";
     case Lisp::Op::defun: return "defun";
     case Lisp::Op::defmacro: return "defmacro";
     case Lisp::Op::alias: return "alias";

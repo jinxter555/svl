@@ -457,7 +457,7 @@ bool LispReader::is_closurable(const string&token_str) {
 bool LispReader::is_closurable(Lisp::Op op) {
   switch(op) {
   case Lisp::Op::class_:
-  case Lisp::Op::module:
+  case Lisp::Op::module_:
   case Lisp::Op::loop:
   case Lisp::Op::while_:
   case Lisp::Op::repeat:

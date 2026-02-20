@@ -888,7 +888,7 @@ Node::OpStatus LispExpr::read_input() {
 }
 
 
-Node::Vector LispExpr::list_2_vector(Node::List &&list) {
+Node::Vector LispExpr::list_to_vector(Node::List &&list) {
   Node::Vector new_list;
   new_list.reserve(list.size());
   for(auto &ele : list) {

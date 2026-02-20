@@ -1,5 +1,5 @@
 (module Kernel 
-  (defun main (x y) "my func des" 
+  (def main (x y) "my func des" 
     (
       (var (x "xxx"))
 
@@ -21,7 +21,7 @@
     )
   )
 ;        print (car (eval (read))) "\n"
-  (defun p55 (x y) "my func p55" 
+  (def p55 (x y) "my func p55" 
     (
       (var (z "zzz"))
       (print "hello, p55, 55\n")
@@ -36,7 +36,7 @@
     ;  (p56 (66 2))
     )
   )
-  (defun p56 (x y) "my func p56" 
+  (def p56 (x y) "my func p56" 
     (
       (print "hello, p56, 56\n")
       (print (x))

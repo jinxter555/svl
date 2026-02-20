@@ -14,8 +14,9 @@ void LispExpr::set_keywords() {
   map_->set("delete",   Op::delete_);
   map_->set("class",   Op::class_);
   map_->set("private",   Op::private_);
-  map_->set("new",   Op::new_);
-  map_->set("clone",   Op::clone);
+  map_->set("new", Op::new_);
+  map_->set("clone", Op::clone);
+  map_->set("use", Op::use);
   map_->set("error",Op::error);
   map_->set("noop", Op::noop);
   map_->set("identifier", Op::identifier);
@@ -60,7 +61,7 @@ void LispExpr::set_keywords() {
   map_->set("faz", Op::faz);
   map_->set("print",Op::print);
   map_->set("printr",Op::printr);
-  map_->set("module",Op::module);
+  map_->set("module",Op::module_);
   map_->set("defun", Op::defun);
   map_->set("defmacro", Op::defmacro);
   map_->set("alias", Op::alias);

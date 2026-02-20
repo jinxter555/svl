@@ -1,5 +1,5 @@
 module Kernel 
-  (defun main (x y) "my func des" 
+  (def main (x y) "my func des" 
     (
 
       (var a)

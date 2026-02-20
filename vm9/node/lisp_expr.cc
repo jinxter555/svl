@@ -20,6 +20,7 @@ const vector<string> LispExpr::cc_path_module= {UNIVERSE, "Lang", "CC", "Module"
 LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , atom_module(str_to_atom("module"))
 , atom_fun(str_to_atom("fun"))
+, atom_def(str_to_atom("def"))
 , atom_class(str_to_atom("class"))
 , atom_get(str_to_atom("get"))
 , atom_set(str_to_atom("set"))
@@ -28,11 +29,21 @@ LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , atom_lambda(str_to_atom("lambda"))
 , atom_closure(str_to_atom("closure"))
 , atom_else(str_to_atom("else"))
+, atom_atom(str_to_atom("atom"))
+, atom_integer(str_to_atom("integer"))
+, atom_float(str_to_atom("float"))
+, atom_string(str_to_atom("string"))
+, atom_cc_vec(str_to_atom("cc_vec"))
+, atom_cc_list(str_to_atom("cc_list"))
+, atom_cc_deque(str_to_atom("cc_deque"))
+, atom_cc_map(str_to_atom("cc_map"))
+, atom_object(str_to_atom("object"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
   Node::Map map_module;
   //set_branch(lisp_path_module, Node::create(move(map_module)));
   //set_branch(lisp_path_module, Node::create(move(map_module)));
+
   set_branch(lisp_path_module, Node::create(Node::Type::Map));
   set_branch(cc_path_module, Node::create(Node::Type::Map));
   bootstrap();
@@ -104,7 +115,12 @@ Node::OpStatus LispExpr::build_file_str(const string& input) {
       cerr << "parse build interpreter error!" <<  mod_code_status.second->_to_str() <<"\n";
       return mod_code_status;
     }
-    op_status = attach_module(move(mod_code_status.second));
+
+    if(type_of(*mod_code_status.second) == Lisp::Op::module_)  {
+      op_status = attach_module(move(mod_code_status.second));
+     //cout << "it is a module!\n";
+    }
+    //  op_status = attach_module(move(mod_code_status.second));
 
   } while(token_list.size()!=0) ;
 
@@ -608,4 +624,81 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
   rv_ref_status.second = move(value_ptr);
   return {true, Node::create(true)};
 
+}
+
+
+Node::Integer LispExpr::type_of_lisp_obj(Node&node) {
+  switch(node.type_) {
+  case Node::Type::Atom: return atom_atom;
+  case Node::Type::Integer: return atom_integer;
+  case Node::Type::String: return atom_string;
+  case Node::Type::Float: return atom_float;
+  case Node::Type::Vector: return atom_cc_vec;
+  case Node::Type::List: return atom_cc_list;
+  case Node::Type::DeQue: return atom_cc_deque;
+  case Node::Type::Map: {
+    auto &m = get<Node::Map>(node.value_);
+    return type_of_lisp_obj_by_map(m);
+  }
+  default: return 0;
+  }
+}
+
+Node::Integer LispExpr::type_of_lisp_obj_by_map(Node::Map&map) {
+  const auto &type_ref_status = map.at(OBJ_INFO)->get_node(TYPE);
+  if(!type_ref_status.first) {
+    return atom_cc_map;
+  }
+  auto lisp_obj_type = get<Lisp::Type>(type_ref_status.second.value_);
+  switch(lisp_obj_type){
+  case Lisp::Type::lambda: return atom_lambda;
+  case Lisp::Type::module_: return atom_module;
+  case Lisp::Type::def:    return atom_def;
+  case Lisp::Type::class_:    return atom_class;
+  case Lisp::Type::object:    return atom_object;
+  default: return 0;
+  }
+}
+
+Lisp::Op  LispExpr::type_of(Node&node) {
+  MYLOGGER(trace_function, "LispExpr::type_of(Node& node)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, "node.type:" + Node::_to_str(node.type_), SLOG_FUNC_INFO+30)
+
+  switch(node.type_) {
+  case Node::Type::Atom: return Lisp::Op::atom;
+  case Node::Type::Integer: return Lisp::Op::integer_;
+  case Node::Type::String: return Lisp::Op::string_;
+  case Node::Type::Float: return Lisp::Op::float_;
+  case Node::Type::Vector: return Lisp::Op::vector;
+  case Node::Type::List: return Lisp::Op::list;
+  case Node::Type::DeQue: return Lisp::Op::deque;
+  case Node::Type::Map: {
+    auto &m = get<Node::Map>(node.value_);
+    return type_of_by_map(m);
+  }
+  default: return Lisp::Op::nil;
+  }
+}
+
+Lisp::Op LispExpr::type_of_by_map(Node::Map&map) {
+  MYLOGGER(trace_function, "LispExpr::type_of(Node::Map& map)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, "map: " + Node::_to_str(map), SLOG_FUNC_INFO+30)
+  try {
+    const auto &type_ref_status = map.at(OBJ_INFO)->get_node(TYPE);
+    auto lisp_obj_type = get<Lisp::Type>(type_ref_status.second.value_);
+    MYLOGGER_MSG(trace_function, "lisp::Op:: " + Lisp::_to_str(lisp_obj_type), SLOG_FUNC_INFO+30)
+    return lisp_obj_type;
+  } catch(...) {
+    return Lisp::Type::cc_map;
+  }
+
+  /*
+  switch(lisp_obj_type){
+  case Lisp::Type::lambda: return Lisp::Op::lambda;
+  case Lisp::Type::module_: return Lisp::Op::module_;
+  case Lisp::Type::def:    return Lisp::Op::def;
+  case Lisp::Type::class_:    return  Lisp::Op::class_;
+  case Lisp::Type::object:    return  Lisp::Op::object;
+  default: return Lisp::Op::nil;
+  }*/
 }

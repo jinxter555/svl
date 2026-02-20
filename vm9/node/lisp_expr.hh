@@ -19,6 +19,8 @@ class LispExpr : public Lang, public Lisp {
 private:
   Interactive *interface; // interface with command line, repl prompt, 
   LispReader reader;
+  string build_namespace;
+
   static const vector<string> lisp_path; 
   static const vector<string> lisp_path_module; 
   static const vector<string> lisp_path_keyword; 
@@ -28,12 +30,12 @@ private:
   static const vector<string> cc_path_module; 
   static bool forever ;
  // static const vector<string> lisp_process; 
-  unique_ptr<Node> env_ptr;
 
-  Node::OpStatus parse_def(const Node::List &list);
+  //Node::OpStatus parse_def(const Node::List &list);
 
-  const Node::Integer atom_module, atom_fun, atom_class, atom_get, atom_set, atom_ok, atom_error,
-  atom_lambda, atom_closure, atom_else;
+  const Node::Integer atom_module, atom_fun, atom_def, atom_class, atom_get, atom_set, atom_ok, atom_error,
+  atom_lambda, atom_closure, atom_else,
+  atom_atom, atom_integer, atom_float, atom_string, atom_cc_vec, atom_cc_list, atom_cc_deque, atom_cc_map, atom_object;
   // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
@@ -56,7 +58,7 @@ private:
   vector<string> extract_mf(Node&process, Node::Vector &list); // extract module function
 
   Node::Vector list_clone_remainder(const Node::Vector &list, size_t start=0); 
-  Node::Vector list_2_vector(Node::List &&list); 
+  Node::Vector list_to_vector(Node::List &&list); 
 
   Node::OpStatus vector_to_object(const Node::Vector&list); // return an object, object_info with type = head aka Lisp::Type or Lisp::Op
 
@@ -192,6 +194,16 @@ public:
   Node::OpStatus build_parsed_class(Node::List& cclist); // (fun_name (param_list)(code list))
   Node::OpStatus build_parsed_root(Node::List& cclist); // (fun_name (param_list)(code list))
   //Node::OpStatus build_parsed_func(Node::List& list) ;
+
+  Node::OpStatus use_at_parse_build(Node::List& cc_list);
+  Node::OpStatus use_at_run(Node&process, const Node::Vector &cc_vec, size_t start=0);
+
+
+  Node::Integer type_of_lisp_obj(Node&node);
+  Node::Integer type_of_lisp_obj_by_map(Node::Map&obj);
+  Lisp::Op      type_of(Node&node);
+  Lisp::Op      type_of_by_map(Node::Map&obj);
+
 
 
   // 
