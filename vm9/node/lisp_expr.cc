@@ -333,6 +333,7 @@ Node::OpStatus LispExpr::run_program() {
   auto frame1 = frame_create();
   frame1->set(CURRENT_MODULE, "Kernel");
   frame1->set(CURRENT_FUNCTION, "Main");
+  frame1->set(NAMESPACE, build_namespace);
   frame1->set(ARGS, Node::create(Node::Type::Map)); // empty args for now
   auto proc_1= process_create();
   //frame1->set(CURRENT_PROCESS_PTR, proc_1.second->pid(PID));
@@ -703,10 +704,25 @@ Lisp::Op LispExpr::type_of_by_map(Node::Map&map) {
   }*/
 }
 vector<string> LispExpr::namespace_module_path() {
+  auto ns_m_path = lisp_path;
+  ns_m_path.push_back(NAMESPACE);
+  ns_m_path.push_back(build_namespace);
+  ns_m_path.push_back(_MODULE);
+  return ns_m_path;
+}
+vector<string> LispExpr::namespace_module_path(Node&process) {
+  string current_namespace;
+  try {
+    current_namespace = frame_current(process).second.get_node(NAMESPACE).second._to_str();
+  } catch(...) {
+    cerr << "namespace_module_path(process) frame error";
+    return {};
+  }
 
-    auto ns_m_path = lisp_path;
-    ns_m_path.push_back(NAMESPACE);
-    ns_m_path.push_back(build_namespace);
-    ns_m_path.push_back(_MODULE);
-    return ns_m_path;
+
+  auto ns_m_path = lisp_path;
+  ns_m_path.push_back(NAMESPACE);
+  ns_m_path.push_back(current_namespace);
+  ns_m_path.push_back(_MODULE);
+  return ns_m_path;
 }

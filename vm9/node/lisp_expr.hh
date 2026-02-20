@@ -81,6 +81,7 @@ public:
   Node::OpStatus build_file_str(const string& input); // create module structure 
 
   vector<string> namespace_module_path();
+  vector<string> namespace_module_path(Node&process);
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
 
 

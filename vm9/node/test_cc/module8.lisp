@@ -10,8 +10,6 @@
       5
 
       (print "hello, world\n")
-      ;(call (Kernel p55) (5555 2))
-      ;call :modfun Kernel.p55 (5555 2)
       (print "\n")
       (p55 (55 2))
       (print "\n\n")
@@ -20,7 +18,6 @@
       end.loop
     )
   )
-;        print (car (eval (read))) "\n"
   (def p55 (x y) "my func p55" 
     (
       (var (z "zzz"))
@@ -32,8 +29,6 @@
       (print "-" x "-")
       (print "-" z "-")
       (print "\n")
-    ;  print (root) "\n"
-    ;  (p56 (66 2))
     )
   )
   (def p56 (x y) "my func p56" 

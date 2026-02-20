@@ -119,6 +119,7 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   }
 
   frame->set(CURRENT_FUNCTION_PTR, &fun); 
+  frame->set(NAMESPACE, fun.get_node(NAMESPACE).second._to_str()); 
 
   if(fun.m_has_key(CLASS_PTR)) {
     auto &class_node = fun.get_node(CLASS_PTR).second;
@@ -250,7 +251,8 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 
   // module funtion call
   //auto fun_path = lisp_path_module;
-  auto fun_path = namespace_module_path();
+  //auto fun_path = namespace_module_path();
+  auto fun_path = namespace_module_path(process);
   fun_path.push_back(mf_vector[0]); // push module name
 
   auto mac_path = fun_path; // just copy to the macro
