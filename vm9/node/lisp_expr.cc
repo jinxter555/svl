@@ -38,13 +38,12 @@ LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , atom_cc_deque(str_to_atom("cc_deque"))
 , atom_cc_map(str_to_atom("cc_map"))
 , atom_object(str_to_atom("object"))
+, atom_namespace(str_to_atom("namespace"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
-  Node::Map map_module;
-  //set_branch(lisp_path_module, Node::create(move(map_module)));
-  //set_branch(lisp_path_module, Node::create(move(map_module)));
 
-  set_branch(lisp_path_module, Node::create(Node::Type::Map));
+  //set_branch(lisp_path_module, Node::create(Node::Type::Map));
+  set_branch(namespace_module_path(), Node::create(Node::Type::Map));
   set_branch(cc_path_module, Node::create(Node::Type::Map));
   bootstrap();
 
@@ -294,7 +293,8 @@ Node::OpStatus LispExpr::run_program() {
   MYLOGGER(trace_function, "LispExpr::run_program()", __func__, SLOG_FUNC_INFO);
 
 
-  vector<string> kernel_path=  LispExpr::lisp_path_module;
+  //vector<string> kernel_path=  LispExpr::lisp_path_module;
+  vector<string> kernel_path=  namespace_module_path();
   //vector<string> code_path = {"Main", "function", "main", "code"};
   vector<string> code_path = {"Kernel", FUNCTION, "main", "code"};
 
@@ -682,7 +682,7 @@ Lisp::Op  LispExpr::type_of(Node&node) {
 
 Lisp::Op LispExpr::type_of_by_map(Node::Map&map) {
   MYLOGGER(trace_function, "LispExpr::type_of(Node::Map& map)", __func__, SLOG_FUNC_INFO)
-  MYLOGGER_MSG(trace_function, "map: " + Node::_to_str(map), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "map: " + Node::_to_str(map), SLOG_FUNC_INFO+32)
   try {
     const auto &type_ref_status = map.at(OBJ_INFO)->get_node(TYPE);
     auto lisp_obj_type = get<Lisp::Type>(type_ref_status.second.value_);
@@ -701,4 +701,12 @@ Lisp::Op LispExpr::type_of_by_map(Node::Map&map) {
   case Lisp::Type::object:    return  Lisp::Op::object;
   default: return Lisp::Op::nil;
   }*/
+}
+vector<string> LispExpr::namespace_module_path() {
+
+    auto ns_m_path = lisp_path;
+    ns_m_path.push_back(NAMESPACE);
+    ns_m_path.push_back(build_namespace);
+    ns_m_path.push_back(_MODULE);
+    return ns_m_path;
 }

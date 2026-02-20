@@ -39,22 +39,17 @@ Node::OpStatus LispExpr::parse_build(Node& tokens) {
     MYLOGGER_MSG(trace_function, string("LispOp: ") + Lisp::_to_str(op_head), SLOG_FUNC_INFO+30);
 
     switch(op_head) {
-    //case Lisp::Op::print:  { return {true, Node::create(Lisp::Op::print)};}
     case Lisp::Op::use:  { return use_at_parse_build(list); }
     case Lisp::Op::deque:  { return build_parsed_deque(list); }
-    case Lisp::Op::list:  { 
-      return build_parsed_list(list); }
-    case Lisp::Op::vector:  { //cout << "parsing vector: " <<  tokens << "\n";
-      return build_parsed_vector(list);}
+    case Lisp::Op::list:  { return build_parsed_list(list); }
+    case Lisp::Op::vector:  { return build_parsed_vector(list);}
     case Lisp::Op::def: { return build_parsed_def(list); }
     case Lisp::Op::if_: { return build_parsed_if(list); }
- //   case Lisp::Op::defun: { return build_parsed_fun(list); }
     case Lisp::Op::defmacro: { return build_parsed_macro(list); }
-    case Lisp::Op::module_: {
-      return build_parsed_module(list); }
-    case Lisp::Op::class_: { //cout << "class build!\n";
-      return build_parsed_class(list); }
-    //case Lisp::Op::root: { return build_parsed_root(list); }
+    case Lisp::Op::module_: { return build_parsed_module(list); }
+    case Lisp::Op::class_: { return build_parsed_class(list); }
+ // case Lisp::Op::root: { return build_parsed_root(list); }
+ // case Lisp::Op::defun: { return build_parsed_fun(list); }
     default: {}
     }
   } 
@@ -149,10 +144,11 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
   }
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::defun));
+  obj_info->set(TYPE,  Node::create(Lisp::Type::def));
 
   fun[OBJ_INFO] = move(obj_info);
-  fun["name"] = Node::create(name);
+  fun[NAME] = Node::create(name);
+  fun[NAMESPACE] = Node::create(build_namespace);
 
   return {true, Node::create(move(fun))};
 }
@@ -164,7 +160,7 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
 // return -> fun_name -> {code,params,object_info}
 
 Node::OpStatus LispExpr::build_parsed_macro(Node::List& cclist) {
-  MYLOGGER(trace_function, "LispExpr::build_parsed_def(Node::List& cclist)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER(trace_function, "LispExpr::build_parsed_macro(Node::List& cclist)", __func__, SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, "list: " + Node::_to_str(cclist), SLOG_FUNC_INFO+30)
 
   string name;
@@ -191,7 +187,8 @@ Node::OpStatus LispExpr::build_parsed_macro(Node::List& cclist) {
   auto obj_info = make_unique<Node>(Node::Type::Map);
   obj_info->set(TYPE,  Node::create(Lisp::Type::defmacro));
   macro[OBJ_INFO] = move(obj_info);
-  macro["name"] = Node::create(name);
+  macro[NAME] = Node::create(name);
+  macro[NAMESPACE] = Node::create(build_namespace);
   return {true, Node::create(move(macro))};
 }
 
@@ -222,7 +219,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
     status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault when print recursive// get raw pointer from 
 
     switch(Lisp::type(*status.second)){
-    case Lisp::Type::defun: {
+    case Lisp::Type::def: {
       auto fun_name = (*status.second)["name"].second._to_str();
       //status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault when print recursive// get raw pointer from 
       module_functions->set(fun_name, move(status.second));
@@ -248,6 +245,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   module_node->set(_CLASS, move(module_classes));
   module_node->set(OBJ_INFO, move(obj_info));
   module_node->set(NAME, module_name);
+  module_node->set(NAMESPACE,  Node::create(build_namespace));
 
   return {true, move(module_node)};
 }
@@ -281,7 +279,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
     status.second->set(CLASS_PTR, class_node.get()); // recursive will segfault, check to_str and print recursive
 
     switch(Lisp::type(*status.second)){
-    case Lisp::Type::defun: {
+    case Lisp::Type::def: {
       auto fun_name = (*status.second)[NAME].second._to_str();
     //  auto &code_list = (*status.second)[CODE].second._get_vector_ref();
       //cout << "defun code list:" << code_list << "\n";
@@ -307,6 +305,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
   class_node->set(FUNCTION, move(class_functions));
   class_node->set(OBJ_INFO, move(obj_info));
   class_node->set(NAME, class_name);
+  class_node->set(NAMESPACE,  Node::create(build_namespace));
 
   //cout << "module_node:" << *module_node << "\n";
   return {true, move(class_node)};
@@ -349,7 +348,8 @@ Node::OpStatus LispExpr::build_parsed_root(Node::List& list) {
 //
 Node::OpStatus LispExpr::attach_module(unique_ptr<Node> mod_ptr) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
-  auto mod_loc = get_branch(lisp_path_module);
+  //auto mod_loc = get_branch(lisp_path_module);
+  auto mod_loc = get_branch(namespace_module_path());
   auto name_ref_status  = mod_ptr->get_node(NAME);
 
   if(!name_ref_status.first) {
@@ -586,5 +586,19 @@ Node::OpStatus LispExpr::build_parsed_if(Node::List& list) {
 Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
   MYLOGGER(trace_function, "LispExpr::use(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "Node::List& list : " + Node::_to_str(cc_list), SLOG_FUNC_INFO+30);
-  return {true, Node::create()};
+
+  //cout << "namespace: " << Node::_to_str( cc_list) << "\n";
+  auto cmd_option = move(cc_list.front()); cc_list.pop_front();
+
+  //return {true, Node::create()};
+  if(cmd_option->_get_integer() == atom_namespace) {
+    auto ns = move(cc_list.front()); 
+    build_namespace = ns->_to_str();
+    set_branch(namespace_module_path(), Node::create(Node::Type::Map));
+    //cout << "namespace: " << build_namespace << "\n";
+
+  }
+
+
+  return {true, Node::create(true)};
 }

@@ -249,7 +249,8 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   }
 
   // module funtion call
-  auto fun_path = lisp_path_module;
+  //auto fun_path = lisp_path_module;
+  auto fun_path = namespace_module_path();
   fun_path.push_back(mf_vector[0]); // push module name
 
   auto mac_path = fun_path; // just copy to the macro

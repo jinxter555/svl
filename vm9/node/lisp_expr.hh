@@ -19,7 +19,7 @@ class LispExpr : public Lang, public Lisp {
 private:
   Interactive *interface; // interface with command line, repl prompt, 
   LispReader reader;
-  string build_namespace;
+  string build_namespace="Main";
 
   static const vector<string> lisp_path; 
   static const vector<string> lisp_path_module; 
@@ -35,7 +35,7 @@ private:
 
   const Node::Integer atom_module, atom_fun, atom_def, atom_class, atom_get, atom_set, atom_ok, atom_error,
   atom_lambda, atom_closure, atom_else,
-  atom_atom, atom_integer, atom_float, atom_string, atom_cc_vec, atom_cc_list, atom_cc_deque, atom_cc_map, atom_object;
+  atom_atom, atom_integer, atom_float, atom_string, atom_cc_vec, atom_cc_list, atom_cc_deque, atom_cc_map, atom_object, atom_namespace;
   // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
@@ -80,7 +80,9 @@ public:
   Node::OpStatus build_program(); // create module structure 
   Node::OpStatus build_file_str(const string& input); // create module structure 
 
+  vector<string> namespace_module_path();
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
+
 
   void attach_cc_extern();
 

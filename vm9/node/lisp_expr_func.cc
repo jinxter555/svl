@@ -373,7 +373,8 @@ Node::OpStatusRef LispExpr::get_class(deque<string> mc) {
   MYLOGGER(trace_function, "LispExpr::get_class(list<string>mfc)", __func__, SLOG_FUNC_INFO);
   string mc_str = _to_str_ext(mc);
   MYLOGGER_MSG(trace_function, "mfc: " + mc_str  , SLOG_FUNC_INFO+30);
-  auto path = lisp_path_module;
+  //auto path = lisp_path_module;
+  auto path = namespace_module_path();
 
 
   // class name string

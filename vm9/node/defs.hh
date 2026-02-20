@@ -12,7 +12,7 @@
 #define IMMUTE "immute"
 #define NAME "name"
 #define VECTOR "vector"
-#define NAME_SPACE "name_space"
+#define NAMESPACE "namespace"
 
 #define _MODULE "module"
 #define MODULE_PTR "module_ptr"
