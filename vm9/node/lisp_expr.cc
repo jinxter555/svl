@@ -813,3 +813,47 @@ vector<string> LispExpr::full_path_class(Node&process, const string class_name) 
   return class_path;
 
 }
+
+// format of fun (...)
+// format of Module.fun (...)
+// format of Module.A.B.fun (...)
+// format of NameSpace::Module.fun (...)
+vector<string> LispExpr::full_path_fun(Node&process, const string fun_name) {
+  auto ns_list  = split_string(fun_name, "::");
+  vector<string> ns_path, module_path, fun_path;
+  string module_fun_part_name, module_name, fun_part_name;
+
+  if(ns_list.size() > 1) {
+    ns_path = namespace_module_path(ns_list[0]); 
+    module_fun_part_name = ns_list[1];
+  } else { // get namespace from stack frame of the process
+    ns_path = namespace_module_path(process);
+    module_fun_part_name = ns_list[0];
+  }
+
+  auto module_fun_list = split_string(module_fun_part_name, ".");
+
+  fun_path = ns_path;
+  if(module_fun_list.size() > 1) {
+    cout << "module name specified here!\n";
+    fun_part_name = module_fun_list.back();
+    module_fun_list.pop_back();
+    module_name = join_str(module_fun_list, ".");
+    fun_path.push_back(_MODULE);
+    fun_path.push_back(module_name);
+    fun_path.push_back(FUNCTION);
+    fun_path.push_back(fun_part_name);
+
+  } else { // module name not specified, then use module name from stack from
+    cout << "module name not specified!\n";
+    fun_part_name =  module_fun_list.back();
+    module_fun_list.pop_back();
+    fun_path = namespace_module_path(process);
+    fun_path.push_back(FUNCTION);
+    fun_path.push_back(fun_part_name);
+  }
+  cout << "fun_name: " << fun_name << "\n";
+  cout << "fun_path: " << join_str(fun_path, "--") << "\n";
+  return fun_path;
+
+}
