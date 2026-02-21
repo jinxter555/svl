@@ -116,6 +116,7 @@ Node::OpStatus LispExpr::build_file_str(const string& input) {
     }
 
     if(type_of(*mod_code_status.second) == Lisp::Op::module_)  {
+
       op_status = attach_module(move(mod_code_status.second));
      //cout << "it is a module!\n";
     }
@@ -123,6 +124,8 @@ Node::OpStatus LispExpr::build_file_str(const string& input) {
 
   } while(token_list.size()!=0) ;
 
+  build_namespace.clear();
+  build_namespace.push_back(build_namespace_default);
 
   return op_status;
 }
@@ -333,7 +336,7 @@ Node::OpStatus LispExpr::run_program() {
   auto frame1 = frame_create();
   frame1->set(CURRENT_MODULE, "Kernel");
   frame1->set(CURRENT_FUNCTION, "Main");
-  frame1->set(NAMESPACE, build_namespace);
+  frame1->set(NAMESPACE, build_namespace.back());
   frame1->set(ARGS, Node::create(Node::Type::Map)); // empty args for now
   auto proc_1= process_create();
   //frame1->set(CURRENT_PROCESS_PTR, proc_1.second->pid(PID));
@@ -706,23 +709,107 @@ Lisp::Op LispExpr::type_of_by_map(Node::Map&map) {
 vector<string> LispExpr::namespace_module_path() {
   auto ns_m_path = lisp_path;
   ns_m_path.push_back(NAMESPACE);
-  ns_m_path.push_back(build_namespace);
+
+  //cout << "build namespace back()"<<  build_namespace.back() << "\n";
+  ns_m_path.push_back(build_namespace.back());
   ns_m_path.push_back(_MODULE);
   return ns_m_path;
 }
+vector<string> LispExpr::namespace_module_path(string ns) {
+  auto ns_m_path = lisp_path;
+  ns_m_path.push_back(NAMESPACE);
+  ns_m_path.push_back(ns);
+  ns_m_path.push_back(_MODULE);
+  return ns_m_path;
+}
+
+
 vector<string> LispExpr::namespace_module_path(Node&process) {
-  string current_namespace;
+  string current_namespace, current_module;
   try {
     current_namespace = frame_current(process).second.get_node(NAMESPACE).second._to_str();
   } catch(...) {
     cerr << "namespace_module_path(process) frame error";
     return {};
   }
-
+  try {
+    current_module = frame_current(process).second.get_node(CURRENT_MODULE).second._to_str();
+  } catch(...) {
+    cerr << "namespace_module_path(process) getting 'CURRENT_MODULE', frame error";
+  }
 
   auto ns_m_path = lisp_path;
   ns_m_path.push_back(NAMESPACE);
   ns_m_path.push_back(current_namespace);
   ns_m_path.push_back(_MODULE);
+  ns_m_path.push_back(current_module);
   return ns_m_path;
+}
+
+
+// this in the format of Namespace::Module
+vector<string> LispExpr::full_path_module(Node&process, const string module_name) {
+  vector<string> mod_path;
+
+  auto ns_list  = split_string(module_name, "::");
+
+  if(ns_list.size() > 1) {
+    mod_path = namespace_module_path(ns_list[0]); 
+    auto m =  ns_list[1];
+    mod_path.push_back(m);
+  } else {
+    mod_path = namespace_module_path(process);
+    mod_path.push_back(ns_list[0]);
+  }
+  cout << "module_name: " << module_name << "\n";
+  cout << "mod_path: " << join_str(mod_path, "--") << "\n";
+  return mod_path;
+
+}
+
+// format of Module.Class
+// format of NameSpace::Module.Class
+// e.g.  (new Class)
+// e.g.  (new Module.Class)
+// e.g.  (new NameSpace::Module.Class(...))
+vector<string> LispExpr::full_path_class(Node&process, const string class_name) {
+  auto ns_list  = split_string(class_name, "::");
+  vector<string> ns_path, module_path, class_path;
+  string module_class_part_name, module_name, class_part_name;
+
+  if(ns_list.size() > 1) {
+    ns_path = namespace_module_path(ns_list[0]); 
+    module_class_part_name = ns_list[1];
+  } else { // get namespace from stack frame of the process
+    ns_path = namespace_module_path(process);
+    module_class_part_name = ns_list[0];
+  }
+
+  auto module_class_list = split_string(module_class_part_name, ".");
+
+  class_path = ns_path;
+  if(module_class_list.size() > 1) {
+    cout << "module name specified here!\n";
+    class_part_name = module_class_list.back();
+    module_class_list.pop_back();
+    module_name = join_str(module_class_list, ".");
+    class_path.push_back(_MODULE);
+    class_path.push_back(module_name);
+    class_path.push_back(_CLASS);
+    class_path.push_back(class_part_name);
+
+  } else { // module name not specified, then use module name from stack from
+    cout << "module name not specified!\n";
+    class_part_name =  module_class_list.back();
+    module_class_list.pop_back();
+    class_path = namespace_module_path(process);
+    class_path.push_back(_CLASS);
+    class_path.push_back(class_part_name);
+
+  }
+
+  cout << "class_name: " << class_name << "\n";
+  cout << "class_path: " << join_str(class_path, "--") << "\n";
+  return class_path;
+
 }

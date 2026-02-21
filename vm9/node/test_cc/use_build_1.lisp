@@ -11,8 +11,13 @@ module Kernel
   end.def
 
   def p55(value)
+    print "Heart of Space name space!\n"
     print "p55 hello\n" 
-    print "x value:" value "\n"
+    print "x value:" value "\n\n"
+    loop
+      print (eval (read)) "\n"
+    end.loop
+
   end.def
 
 end.module

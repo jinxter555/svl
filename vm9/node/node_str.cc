@@ -155,7 +155,8 @@ string Node::_to_str(const Map&map) {
   string outstr;
 
   for (auto const& [key, val] : map) {
-    if(key == MODULE_PTR || key == CLASS_PTR) {
+    if(key == MODULE_PTR || key == CLASS_PTR  || key == CURRENT_CLASS_PTR
+      || key == CURRENT_MODULE_PTR || key == CURRENT_FUNCTION_PTR) {
       outstr = q + key + q  + colon + "--*ptr--";
     } else 
       outstr = q + key + q  + colon + " " + val->_to_str();

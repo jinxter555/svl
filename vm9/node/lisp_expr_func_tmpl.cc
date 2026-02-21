@@ -49,6 +49,16 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
         cout << "nil";
         continue;
       }
+      case Node::Type::Atom: {  
+        //cout << "current frame:\n";
+        Node::Integer atom = get<Node::Integer>(ee.second->value_);
+        if(atom == Lang::str_to_atom("current_frame")) {
+          auto current_frame = frame_current(process);
+          cout << current_frame << "\n\n";
+        }
+
+        continue;
+      }
       default: { // for other nodes
         cout << *ee.second;
       }}

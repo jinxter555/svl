@@ -60,11 +60,6 @@ vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
     }
     auto last_frame_status = frames_status.second.back();
     if(!last_frame_status.first)  { 
-      /*
-      cout << "process: " << process << "\n";
-      cout << "pid: " << process[PID] << "\n";
-      cout << "frames: " << frames_status.second << "\n";
-      */
       cerr << " last frame not found: " << last_frame_status.second._to_str() << "\n";
       return {};
     }
@@ -230,16 +225,22 @@ Node::OpStatus LispExpr::call(Node& process, const Node& code_node) {
 
 
 // code_list = (call (module function) (arg1 arg2 arg3))
+// object.method(...)
+// Module.fun(...)
+// Namespace::Module.fun(...)
+
 Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node::Vector& code_list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("code_node: ") + Node::_to_str( code_list) + " start:" + to_string(start), SLOG_FUNC_INFO+30);
 
+  vector<string> fun_path;
   const auto &mf_list_pair =  code_list[start];
   auto mf_vector = extract_mf(process, *mf_list_pair); //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
 
   // might need to fix this later on because it might be inconsistent but less parethesis
   // call object?
   auto object_ref = symbol_lookup(process, mf_vector[0]); // this might be an object call?
+  auto vl = full_path_module(process, mf_vector[0]);
   if(object_ref.first) {
     try {
       const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
@@ -249,11 +250,21 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
     return call_object(process, object_ref.second, mf_vector[1], argv_vector);
   }
 
-  // module funtion call
-  //auto fun_path = lisp_path_module;
-  //auto fun_path = namespace_module_path();
-  auto fun_path = namespace_module_path(process);
-  fun_path.push_back(mf_vector[0]); // push module name
+  // this might be a cross name space call
+  auto ns_call_list  = split_string(mf_vector[0], "::");
+
+  if(ns_call_list.size() > 1) {
+
+    fun_path = namespace_module_path(ns_call_list[0]); 
+    auto m =  ns_call_list[1];
+    auto f = mf_vector[1];
+    fun_path.push_back(m);
+
+  } else {
+    fun_path = namespace_module_path(process);
+    fun_path.push_back(mf_vector[0]); // push module name
+  }
+
 
   auto mac_path = fun_path; // just copy to the macro
   mac_path.push_back(MACRO);

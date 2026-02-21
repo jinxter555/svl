@@ -19,7 +19,9 @@ class LispExpr : public Lang, public Lisp {
 private:
   Interactive *interface; // interface with command line, repl prompt, 
   LispReader reader;
-  string build_namespace="Main";
+  string build_namespace_default ="Main";
+  vector<string> build_namespace ={ build_namespace_default };
+  //vector<string> build_namespace ={ };
 
   static const vector<string> lisp_path; 
   static const vector<string> lisp_path_module; 
@@ -82,6 +84,11 @@ public:
 
   vector<string> namespace_module_path();
   vector<string> namespace_module_path(Node&process);
+  vector<string> namespace_module_path(string ns);
+  vector<string> full_path_module(Node&process, const string module_name) ;
+  vector<string> full_path_class(Node&process, const string module_name) ;
+  vector<string> full_path_fun(Node&process, const string module_name) ;
+
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
 
 

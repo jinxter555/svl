@@ -148,7 +148,7 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
 
   fun[OBJ_INFO] = move(obj_info);
   fun[NAME] = Node::create(name);
-  fun[NAMESPACE] = Node::create(build_namespace);
+  fun[NAMESPACE] = Node::create(build_namespace.back());
 
   return {true, Node::create(move(fun))};
 }
@@ -188,7 +188,7 @@ Node::OpStatus LispExpr::build_parsed_macro(Node::List& cclist) {
   obj_info->set(TYPE,  Node::create(Lisp::Type::defmacro));
   macro[OBJ_INFO] = move(obj_info);
   macro[NAME] = Node::create(name);
-  macro[NAMESPACE] = Node::create(build_namespace);
+  macro[NAMESPACE] = Node::create(build_namespace.back());
   return {true, Node::create(move(macro))};
 }
 
@@ -245,7 +245,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   module_node->set(_CLASS, move(module_classes));
   module_node->set(OBJ_INFO, move(obj_info));
   module_node->set(NAME, module_name);
-  module_node->set(NAMESPACE,  Node::create(build_namespace));
+  module_node->set(NAMESPACE,  Node::create(build_namespace.back()));
 
   return {true, move(module_node)};
 }
@@ -305,7 +305,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
   class_node->set(FUNCTION, move(class_functions));
   class_node->set(OBJ_INFO, move(obj_info));
   class_node->set(NAME, class_name);
-  class_node->set(NAMESPACE,  Node::create(build_namespace));
+  class_node->set(NAMESPACE,  Node::create(build_namespace.back()));
 
   //cout << "module_node:" << *module_node << "\n";
   return {true, move(class_node)};
@@ -593,7 +593,7 @@ Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
   //return {true, Node::create()};
   if(cmd_option->_get_integer() == atom_namespace) {
     auto ns = move(cc_list.front()); 
-    build_namespace = ns->_to_str();
+    build_namespace.push_back(  ns->_to_str());
     set_branch(namespace_module_path(), Node::create(Node::Type::Map));
     //cout << "namespace: " << build_namespace << "\n";
 
