@@ -42,6 +42,7 @@ Node::OpStatus LispExpr::parse_build(Node& tokens) {
     case Lisp::Op::use:  { return use_at_parse_build(list); }
     case Lisp::Op::deque:  { return build_parsed_deque(list); }
     case Lisp::Op::list:  { return build_parsed_list(list); }
+    case Lisp::Op::pipe:  { return build_parsed_pipe(list); }
     case Lisp::Op::vector:  { return build_parsed_vector(list);}
     case Lisp::Op::def: { return build_parsed_def(list); }
     case Lisp::Op::if_: { return build_parsed_if(list); }
@@ -430,6 +431,9 @@ Node::OpStatus LispExpr::build_parsed_vector(Node& node) {
 
 }
 
+
+
+
 Node::OpStatus LispExpr::build_parsed_vector(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_vector(Node::List&list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
@@ -449,6 +453,55 @@ Node::OpStatus LispExpr::build_parsed_vector(Node::List& list) {
   }
   return {true, Node::create(move(vl))};
 }
+
+//-------------------------------- pipe
+Node::OpStatus LispExpr::build_parsed_pipe(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_list(Node::List&list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  Node::List result_list ={};
+
+  if(list.empty()) return {true, Node::create(move(result_list))};
+
+  auto ele= move(list.front());
+  list.pop_front();
+  result_list.push_back(move(ele));
+  
+
+  //cout << "1 result: " << Node::_to_str(result_list) << "\n";
+  
+  for(auto& ele_line: list) {
+    if(ele_line->type_ == Node::Type::List) { // nested parsing
+
+      auto &ele_list = get<Node::List>(ele_line->value_);
+      auto ele_list_front = move(ele_list.front());
+
+      ele_list.pop_front();
+
+      //ele_list.push_front(Node::create(move(result_list)));
+      ele_list.splice(ele_list.begin(), result_list, result_list.begin(), result_list.end());
+
+      //cout << "ele_list : " << Node::_to_str(ele_list) << "\n";
+      ele_list.push_front(Node::create(move(ele_list_front)));
+      
+      
+
+      result_list.push_back(Node::create(move(ele_list)));
+
+     // cout << "1m result: " << Node::_to_str(result_list) << "\n";
+
+    } else {
+      auto msg = "in Pipe(), each statement line needs to be a list";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::Parse, msg)};
+    }
+  }
+  //cout << "2 result: " << Node::_to_str(result_list) << "\n";
+  result_list.push_front(Node::create(Lisp::Op::eval));
+  return  build_parsed_vector( result_list);
+  //return {true, Node::create(move(result_list))};
+
+}
+
 
 //-------------------------------- list
 Node::OpStatus LispExpr::build_parsed_list(Node& node) {
@@ -584,7 +637,7 @@ Node::OpStatus LispExpr::build_parsed_if(Node::List& list) {
 }
 
 Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
-  MYLOGGER(trace_function, "LispExpr::use(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::use_at_parse_build(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "Node::List& list : " + Node::_to_str(cc_list), SLOG_FUNC_INFO+30);
 
   //cout << "namespace: " << Node::_to_str( cc_list) << "\n";

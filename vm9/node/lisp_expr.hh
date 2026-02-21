@@ -194,6 +194,7 @@ public:
   Node::OpStatus build_parsed_deque(Node& node);
   // 
   Node::OpStatus build_parsed_list(Node::List& list);
+  Node::OpStatus build_parsed_pipe(Node::List& list);
   Node::OpStatus build_parsed_vector(Node::List& list);
   Node::OpStatus build_parsed_deque(Node::List& list);
   Node::OpStatus build_parsed_map(Node::List& list); // ((k1 v1)(k2 v2)...)
