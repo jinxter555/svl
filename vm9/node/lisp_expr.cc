@@ -761,8 +761,8 @@ vector<string> LispExpr::full_path_module(Node&process, const string module_name
     mod_path = namespace_module_path(process);
     mod_path.push_back(ns_list[0]);
   }
-  cout << "module_name: " << module_name << "\n";
-  cout << "mod_path: " << join_str(mod_path, "--") << "\n";
+  //cout << "module_name: " << module_name << "\n";
+  //cout << "mod_path: " << join_str(mod_path, "--") << "\n";
   return mod_path;
 
 }
@@ -789,7 +789,7 @@ vector<string> LispExpr::full_path_class(Node&process, const string class_name) 
 
   class_path = ns_path;
   if(module_class_list.size() > 1) {
-    cout << "module name specified here!\n";
+    //cout << "module name specified here!\n";
     class_part_name = module_class_list.back();
     module_class_list.pop_back();
     module_name = join_str(module_class_list, ".");
@@ -799,7 +799,7 @@ vector<string> LispExpr::full_path_class(Node&process, const string class_name) 
     class_path.push_back(class_part_name);
 
   } else { // module name not specified, then use module name from stack from
-    cout << "module name not specified!\n";
+    //cout << "module name not specified!\n";
     class_part_name =  module_class_list.back();
     module_class_list.pop_back();
     class_path = namespace_module_path(process);
@@ -808,8 +808,8 @@ vector<string> LispExpr::full_path_class(Node&process, const string class_name) 
 
   }
 
-  cout << "class_name: " << class_name << "\n";
-  cout << "class_path: " << join_str(class_path, "--") << "\n";
+//  cout << "class_name: " << class_name << "\n";
+ // cout << "class_path: " << join_str(class_path, "--") << "\n";
   return class_path;
 
 }
@@ -835,7 +835,7 @@ vector<string> LispExpr::full_path_fun(Node&process, const string fun_name) {
 
   fun_path = ns_path;
   if(module_fun_list.size() > 1) {
-    cout << "module name specified here!\n";
+//    cout << "module name specified here!\n";
     fun_part_name = module_fun_list.back();
     module_fun_list.pop_back();
     module_name = join_str(module_fun_list, ".");
@@ -845,15 +845,15 @@ vector<string> LispExpr::full_path_fun(Node&process, const string fun_name) {
     fun_path.push_back(fun_part_name);
 
   } else { // module name not specified, then use module name from stack from
-    cout << "module name not specified!\n";
+ //   cout << "module name not specified!\n";
     fun_part_name =  module_fun_list.back();
     module_fun_list.pop_back();
     fun_path = namespace_module_path(process);
     fun_path.push_back(FUNCTION);
     fun_path.push_back(fun_part_name);
   }
-  cout << "fun_name: " << fun_name << "\n";
-  cout << "fun_path: " << join_str(fun_path, "--") << "\n";
+  //cout << "fun_name: " << fun_name << "\n";
+  //cout << "fun_path: " << join_str(fun_path, "--") << "\n";
   return fun_path;
 
 }

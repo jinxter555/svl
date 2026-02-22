@@ -1,12 +1,12 @@
 module Kernel 
 
   class Dict
+
     (var size (length 124) )
-    def Dict(x)  
+
+    def init(x)  
       (var (that 555))
-      print "hello class constructor Dict()\n"
-
-
+      print "hello class constructor Dict.init()\n"
     end.def
 
     def area(a1 pi)  

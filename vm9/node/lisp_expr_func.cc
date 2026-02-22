@@ -237,7 +237,7 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
   string current_module;
   auto class_full_name = list[start]->_to_str();
-  auto cfnv = split_string_deque(class_full_name, "."); // class full name vector module.class . mdoule . class
+//  auto cfnv = split_string_deque(class_full_name, "."); // class full name vector module.class . mdoule . class
 
   auto object = Node::create(Node::Type::Map);
   auto obj_info = Node::create(Node::Type::Map);
@@ -245,19 +245,23 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   obj_info->set(TYPE, Lisp::Type::object );
 
 
+  /*
   if(cfnv.size() == 1) {
     current_module = frame_current(process).second[CURRENT_MODULE].second._to_str();
     cfnv.push_front(current_module);
   }
+*/
 
-  auto cv = full_path_class(process, class_full_name);
+  auto cfp = full_path_class(process, class_full_name);
+  //auto class_ref_status  = get_class(cfnv);
+  auto class_ref_status  = get_node(cfp);
 
-  auto class_ref_status  = get_class(cfnv);
   if(!class_ref_status.first) {
-    cerr << "Can't create an object for class:'"  << _to_str_ext(cfnv) <<"', error:"  << class_ref_status.second._to_str() << "\n";
+    cerr << "Can't create an object for class:'"  << class_full_name <<"', error:"  << class_ref_status.second._to_str() << "\n";
     return {false, class_ref_status.second.clone()};
   }
-  obj_info->set(_CLASS, _to_str_ext(cfnv));
+  //obj_info->set(_CLASS, _to_str_ext(cfnv));
+  obj_info->set(_CLASS, class_full_name);
 
 //  cout << "class ref status: " << class_ref_status << "\n";
  //cout << "need to call class constructor: " << cfnv.back()  << "\n";
@@ -283,7 +287,9 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
 
   //auto constructor_ref_status = class_ref_status.second.get_node(constructor_path);
 
-  auto constructor_ref_status = class_ref_status.second.get_node({FUNCTION, cfnv.back()});
+  //auto constructor_ref_status = class_ref_status.second.get_node({FUNCTION, cfnv.back()});
+  vector<string> constructor_name = {FUNCTION, "init"};
+  auto constructor_ref_status = class_ref_status.second.get_node(constructor_name);
 
 
 
