@@ -2,7 +2,7 @@ module Kernel
   class Dict
     (var size (length 123) w )
 
-    def init(w1 w2 w3)  
+    def initialize(w1 w2 w3)  
       print "w1: " w1 "\n"
       = @w w1
 

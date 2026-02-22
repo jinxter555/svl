@@ -1,7 +1,3 @@
-hello world
-hola mundo, halo welt
-p55 hello
-x value:88888888
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -108,12 +104,12 @@ print recursive:
       - defun (Type: LispOp): defun
       - defmacro (Type: LispOp): defmacro
      }
-     - namespace (Type: Map): { (Map, size=2) 
-      - Heart.Of.Space (Type: Map): { (Map, size=1) 
-       - module (Type: Map): { (Map, size=1) 
-        - Kernel (Type: Map): { (Map, size=6) 
-         - namespace (Type: String): "Heart.Of.Space"
-         - name (Type: String): "Kernel"
+     - namespace (Type: Map): { (Map, size=1) 
+      - Main (Type: Map): { (Map, size=1) 
+       - module (Type: Map): { (Map, size=3) 
+        - Hello (Type: Map): { (Map, size=6) 
+         - namespace (Type: String): "Main"
+         - name (Type: String): "Hello"
          - class (Type: Map): { (Map, size=0) 
          }
          - macro (Type: Map): { (Map, size=0) 
@@ -121,218 +117,35 @@ print recursive:
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): module
          }
-         - function (Type: Map): { (Map, size=2) 
-          - p55 (Type: Map): { (Map, size=6) 
+         - function (Type: Map): { (Map, size=1) 
+          - p (Type: Map): { (Map, size=6) 
            - module_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "p55"
+           - name (Type: String): "p"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
-           - namespace (Type: String): "Heart.Of.Space"
+           - namespace (Type: String): "Main"
            - code (Type: Vector): Vector[(size=2) 
             - [0, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: print
-             - [1, Type: String]: "p55 hello
+             - [1, Type: String]: "Hola, world
 "
             ]
-            - [1, Type: Vector]: Vector[(size=4) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "x value:"
-             - [2, Type: Identifier]: "value"
-             - [3, Type: String]: "
-"
+            - [1, Type: Vector]: Vector[(size=3) 
+             - [0, Type: Identifier]: ";Main.main"
+             - [1, Type: Integer]: 1
+             - [2, Type: Integer]: 2
             ]
            ]
-           - params (Type: Vector): Vector[(size=1) 
-            - [0, Type: Identifier]: "value"
-           ]
-          }
-          - main (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "main"
-           - __object_info__ (Type: Map): { (Map, size=1) 
-            - type (Type: LispOp): def
-           }
-           - namespace (Type: String): "Heart.Of.Space"
-           - code (Type: Vector): Vector[(size=5) 
-            - [0, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: var
-             - [1, Type: Vector]: Vector[(size=2) 
-              - [0, Type: Identifier]: "v1"
-              - [1, Type: String]: "hola mundo"
-             ]
-             - [2, Type: Vector]: Vector[(size=2) 
-              - [0, Type: Identifier]: "v2"
-              - [1, Type: String]: "halo welt"
-             ]
-            ]
-            - [1, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "hello "
-            ]
-            - [2, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "world
-"
-            ]
-            - [3, Type: Vector]: Vector[(size=5) 
-             - [0, Type: LispOp]: print
-             - [1, Type: Identifier]: "v1"
-             - [2, Type: String]: ", "
-             - [3, Type: Identifier]: "v2"
-             - [4, Type: String]: "
-"
-            ]
-            - [4, Type: Vector]: Vector[(size=2) 
-             - [0, Type: Identifier]: "p55"
-             - [1, Type: Integer]: 88888888
-            ]
-           ]
-           - params (Type: Vector): Vector[(size=2) 
-            - [0, Type: Identifier]: "x"
-            - [1, Type: Identifier]: "y"
+           - params (Type: Vector): Vector[(size=0) 
            ]
           }
          }
         }
-       }
-      }
-      - Main (Type: Map): { (Map, size=1) 
-       - module (Type: Map): { (Map, size=3) 
-        - System.Io (Type: Map): { (Map, size=6) 
+        - Main (Type: Map): { (Map, size=6) 
          - namespace (Type: String): "Main"
-         - name (Type: String): "System.Io"
-         - class (Type: Map): { (Map, size=1) 
-          - File (Type: Map): { (Map, size=6) 
-           - namespace (Type: String): "Main"
-           - module_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "File"
-           - __object_info__ (Type: Map): { (Map, size=1) 
-            - type (Type: LispOp): class
-           }
-           - function (Type: Map): { (Map, size=5) 
-            - eof (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr==
-             - name (Type: String): "eof"
-             - __object_info__ (Type: Map): { (Map, size=1) 
-              - type (Type: LispOp): def
-             }
-             - namespace (Type: String): "Main"
-             - code (Type: Vector): Vector[(size=1) 
-              - [0, Type: Vector]: Vector[(size=4) 
-               - [0, Type: LispOp]: call_extern
-               - [1, Type: Vector]: Vector[(size=2) 
-                - [0, Type: Identifier]: "System.Io.File"
-                - [1, Type: Identifier]: "apply"
-               ]
-               - [2, Type: Identifier]: "this"
-               - [3, Type: Vector]: Vector[(size=1) 
-                - [0, Type: Atom]: -6962064900723833800
-               ]
-              ]
-             ]
-             - params (Type: Vector): Vector[(size=1) 
-              - [0, Type: Identifier]: "this"
-             ]
-            }
-            - close (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr==
-             - name (Type: String): "close"
-             - __object_info__ (Type: Map): { (Map, size=1) 
-              - type (Type: LispOp): def
-             }
-             - namespace (Type: String): "Main"
-             - code (Type: Vector): Vector[(size=1) 
-              - [0, Type: Vector]: Vector[(size=4) 
-               - [0, Type: LispOp]: call_extern
-               - [1, Type: Vector]: Vector[(size=2) 
-                - [0, Type: Identifier]: "System.Io.File"
-                - [1, Type: Identifier]: "apply"
-               ]
-               - [2, Type: Identifier]: "this"
-               - [3, Type: Vector]: Vector[(size=1) 
-                - [0, Type: Atom]: 2476404327169094589
-               ]
-              ]
-             ]
-             - params (Type: Vector): Vector[(size=1) 
-              - [0, Type: Identifier]: "this"
-             ]
-            }
-            - getline (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr==
-             - name (Type: String): "getline"
-             - __object_info__ (Type: Map): { (Map, size=1) 
-              - type (Type: LispOp): def
-             }
-             - namespace (Type: String): "Main"
-             - code (Type: Vector): Vector[(size=1) 
-              - [0, Type: Vector]: Vector[(size=4) 
-               - [0, Type: LispOp]: call_extern
-               - [1, Type: Vector]: Vector[(size=2) 
-                - [0, Type: Identifier]: "System.Io.File"
-                - [1, Type: Identifier]: "apply"
-               ]
-               - [2, Type: Identifier]: "this"
-               - [3, Type: Vector]: Vector[(size=1) 
-                - [0, Type: Atom]: 3681652201514268864
-               ]
-              ]
-             ]
-             - params (Type: Vector): Vector[(size=1) 
-              - [0, Type: Identifier]: "this"
-             ]
-            }
-            - open (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr==
-             - name (Type: String): "open"
-             - __object_info__ (Type: Map): { (Map, size=1) 
-              - type (Type: LispOp): def
-             }
-             - namespace (Type: String): "Main"
-             - code (Type: Vector): Vector[(size=1) 
-              - [0, Type: Vector]: Vector[(size=4) 
-               - [0, Type: LispOp]: call_extern
-               - [1, Type: Vector]: Vector[(size=2) 
-                - [0, Type: Identifier]: "System.Io.File"
-                - [1, Type: Identifier]: "apply"
-               ]
-               - [2, Type: Identifier]: "this"
-               - [3, Type: Vector]: Vector[(size=2) 
-                - [0, Type: Atom]: 2579477866126346825
-                - [1, Type: Identifier]: "fn"
-               ]
-              ]
-             ]
-             - params (Type: Vector): Vector[(size=2) 
-              - [0, Type: Identifier]: "this"
-              - [1, Type: Identifier]: "fn"
-             ]
-            }
-            - File (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr==
-             - name (Type: String): "File"
-             - __object_info__ (Type: Map): { (Map, size=1) 
-              - type (Type: LispOp): def
-             }
-             - namespace (Type: String): "Main"
-             - code (Type: Vector): Vector[(size=1) 
-              - [0, Type: Vector]: Vector[(size=2) 
-               - [0, Type: LispOp]: print
-               - [1, Type: String]: "System.Io.File() init!
-"
-              ]
-             ]
-             - params (Type: Vector): Vector[(size=1) 
-              - [0, Type: Identifier]: "this"
-             ]
-            }
-           }
-           - var (Type: Vector): Vector[(size=2) 
-            - [0, Type: LispOp]: var
-            - [1, Type: Identifier]: "file_name"
-           ]
-          }
+         - name (Type: String): "Main"
+         - class (Type: Map): { (Map, size=0) 
          }
          - macro (Type: Map): { (Map, size=0) 
          }
@@ -342,36 +155,6 @@ print recursive:
          - function (Type: Map): { (Map, size=0) 
          }
         }
-        - My.Mod1 (Type: Map): { (Map, size=6) 
-         - namespace (Type: String): "Main"
-         - name (Type: String): "My.Mod1"
-         - class (Type: Map): { (Map, size=0) 
-         }
-         - macro (Type: Map): { (Map, size=0) 
-         }
-         - __object_info__ (Type: Map): { (Map, size=1) 
-          - type (Type: LispOp): module
-         }
-         - function (Type: Map): { (Map, size=1) 
-          - p1 (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "p1"
-           - __object_info__ (Type: Map): { (Map, size=1) 
-            - type (Type: LispOp): def
-           }
-           - namespace (Type: String): "Main"
-           - code (Type: Vector): Vector[(size=1) 
-            - [0, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: print
-             - [1, Type: String]: "p1
-"
-            ]
-           ]
-           - params (Type: Vector): Vector[(size=0) 
-           ]
-          }
-         }
-        }
         - Kernel (Type: Map): { (Map, size=6) 
          - namespace (Type: String): "Main"
          - name (Type: String): "Kernel"
@@ -382,109 +165,7 @@ print recursive:
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): module
          }
-         - function (Type: Map): { (Map, size=1) 
-          - main (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr==
-           - name (Type: String): "main"
-           - __object_info__ (Type: Map): { (Map, size=1) 
-            - type (Type: LispOp): def
-           }
-           - namespace (Type: String): "Main"
-           - code (Type: Vector): Vector[(size=8) 
-            - [0, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: var
-             - [1, Type: Identifier]: "forever"
-             - [2, Type: Vector]: Vector[(size=2) 
-              - [0, Type: Identifier]: "t"
-              - [1, Type: Bool]: bool: 1
-             ]
-            ]
-            - [1, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: assign
-             - [1, Type: Identifier]: "t1"
-             - [2, Type: String]: "t1 robot"
-            ]
-            - [2, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: assign
-             - [1, Type: Identifier]: "forever"
-             - [2, Type: Bool]: bool: 0
-            ]
-            - [3, Type: Vector]: Vector[(size=4) 
-             - [0, Type: LispOp]: iif
-             - [1, Type: Vector]: Vector[(size=1) 
-              - [0, Type: Identifier]: "t"
-             ]
-             - [2, Type: Vector]: Vector[(size=4) 
-              - [0, Type: LispOp]: print
-              - [1, Type: String]: "forever: "
-              - [2, Type: Identifier]: "forever"
-              - [3, Type: String]: "
-"
-             ]
-             - [3, Type: Vector]: Vector[(size=4) 
-              - [0, Type: LispOp]: print
-              - [1, Type: String]: "sometimes, forever "
-              - [2, Type: Identifier]: "forever"
-              - [3, Type: String]: "
-"
-             ]
-            ]
-            - [4, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: assign
-             - [1, Type: Identifier]: "f1"
-             - [2, Type: Vector]: Vector[(size=2) 
-              - [0, Type: LispOp]: new
-              - [1, Type: Identifier]: "System.Io.File"
-             ]
-            ]
-            - [5, Type: Vector]: Vector[(size=2) 
-             - [0, Type: Identifier]: "f1.open"
-             - [1, Type: Vector]: Vector[(size=1) 
-              - [0, Type: String]: "t.txt"
-             ]
-            ]
-            - [6, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: while
-             - [1, Type: Vector]: Vector[(size=3) 
-              - [0, Type: LispOp]: eq
-              - [1, Type: Vector]: Vector[(size=2) 
-               - [0, Type: Identifier]: "f1.eof"
-               - [1, Type: Vector]: Vector[(size=0) 
-               ]
-              ]
-              - [2, Type: Bool]: bool: 0
-             ]
-             - [2, Type: Vector]: Vector[(size=3) 
-              - [0, Type: LispOp]: print
-              - [1, Type: Vector]: Vector[(size=2) 
-               - [0, Type: Identifier]: "f1.getline"
-               - [1, Type: Vector]: Vector[(size=0) 
-               ]
-              ]
-              - [2, Type: String]: "
-"
-             ]
-            ]
-            - [7, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: loop
-             - [1, Type: Vector]: Vector[(size=3) 
-              - [0, Type: LispOp]: print
-              - [1, Type: Vector]: Vector[(size=2) 
-               - [0, Type: LispOp]: eval
-               - [1, Type: Vector]: Vector[(size=1) 
-                - [0, Type: LispOp]: read
-               ]
-              ]
-              - [2, Type: String]: "
-"
-             ]
-            ]
-           ]
-           - params (Type: Vector): Vector[(size=2) 
-            - [0, Type: Identifier]: "x"
-            - [1, Type: Identifier]: "y"
-           ]
-          }
+         - function (Type: Map): { (Map, size=0) 
          }
         }
        }
@@ -492,7 +173,7 @@ print recursive:
      }
     }
    }
-   - Process (Type: Vector): Vector[(size=2) 
+   - Process (Type: Vector): Vector[(size=1) 
     - [0, Type: Map]: { (Map, size=3) 
      - frames (Type: Vector): Vector[(size=1) 
       - [0, Type: Map]: { (Map, size=3) 
@@ -512,31 +193,6 @@ print recursive:
      ]
      - state (Type: ProcessState): init
      - pid (Type: Integer): 0
-    }
-    - [1, Type: Map]: { (Map, size=3) 
-     - frames (Type: Vector): Vector[(size=1) 
-      - [0, Type: Map]: { (Map, size=5) 
-       - pid (Type: Integer): 1
-       - args (Type: Map): { (Map, size=0) 
-       }
-       - current_function (Type: String): "Main"
-       - current_module (Type: String): "Kernel"
-       - scopes (Type: Vector): Vector[(size=1) 
-        - [0, Type: Map]: { (Map, size=3) 
-         - args (Type: Map): { (Map, size=0) 
-         }
-         - immute (Type: Map): { (Map, size=0) 
-         }
-         - var (Type: Map): { (Map, size=2) 
-          - v2 (Type: String): "halo welt"
-          - v1 (Type: String): "hola mundo"
-         }
-        }
-       ]
-      }
-     ]
-     - state (Type: ProcessState): init
-     - pid (Type: Integer): 1
     }
    ]
   }

@@ -124,6 +124,7 @@ public:
   OpStatusRef get_node(const string&key);
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(size_t i);
+  bool has_node(const vector<string>&path);
   //
   //OpStatusRef get_node_with_ptr(const string&key);
   //OpStatusRef get_node_with_ptr(const vector<string>&path);

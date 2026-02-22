@@ -1,6 +1,6 @@
 #!./main.out
 
-use :namespace Main
+# use :namespace Main
 
 # this is a test
 module Kernel 
@@ -41,7 +41,7 @@ module System.Io
   class File
     var file_name 
 
-    def File()
+    def initialize()
       print "System.Io.File() init!\n"
     end.def
   

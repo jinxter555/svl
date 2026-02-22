@@ -127,6 +127,17 @@ Node::OpStatus Node::set(const vector<string>&path, unique_ptr<Node>child, bool 
   return {true, Node::create(true)};
 }
 
+bool Node::has_node(const vector<string>&path){
+  try {
+    auto status  = get_node(path);
+    if(!status.first) return false;
+    return true;
+  } catch(...) {
+
+    return false;
+  }
+}
+
 Node::OpStatusRef Node::get_node(const vector<string>&path) {
   MYLOGGER(trace_function, "Node::get_node(vector& path)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("path: ") + _to_str_ext(path), SLOG_FUNC_INFO+30);

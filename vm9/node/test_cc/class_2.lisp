@@ -4,7 +4,7 @@ module Kernel
 
     (var size (length 124) )
 
-    def init(x)  
+    def initialize(x)  
       (var (that 555))
       print "hello class constructor Dict.init()\n"
     end.def

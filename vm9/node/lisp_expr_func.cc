@@ -237,37 +237,20 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
   string current_module;
   auto class_full_name = list[start]->_to_str();
-//  auto cfnv = split_string_deque(class_full_name, "."); // class full name vector module.class . mdoule . class
 
   auto object = Node::create(Node::Type::Map);
   auto obj_info = Node::create(Node::Type::Map);
 
   obj_info->set(TYPE, Lisp::Type::object );
 
-
-  /*
-  if(cfnv.size() == 1) {
-    current_module = frame_current(process).second[CURRENT_MODULE].second._to_str();
-    cfnv.push_front(current_module);
-  }
-*/
-
-  auto cfp = full_path_class(process, class_full_name);
-  //auto class_ref_status  = get_class(cfnv);
+  auto cfp = full_path_class(process, class_full_name); 
   auto class_ref_status  = get_node(cfp);
 
   if(!class_ref_status.first) {
     cerr << "Can't create an object for class:'"  << class_full_name <<"', error:"  << class_ref_status.second._to_str() << "\n";
     return {false, class_ref_status.second.clone()};
   }
-  //obj_info->set(_CLASS, _to_str_ext(cfnv));
   obj_info->set(_CLASS, class_full_name);
-
-//  cout << "class ref status: " << class_ref_status << "\n";
- //cout << "need to call class constructor: " << cfnv.back()  << "\n";
- //vector<string> constructor_path = {FUNCTION, cfnv.back()};
-
- //cout << "need to call class constructor: " <<  class_ptr->get_node(constructor_path)  << "\n";
 
   obj_info->set(CLASS_PTR, &class_ref_status.second);
   object->set(OBJ_INFO, move(obj_info));
@@ -281,34 +264,33 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   attach_class_vars_to_object(process, *object, var_ref_status.second._get_vector_ref());
   // inject vars into contructor 
 
-
   auto shared_object_call = Node::container_obj_to_US(move(object));
   auto shared_object_ret = Node::ptr_USU(shared_object_call);
 
-  //auto constructor_ref_status = class_ref_status.second.get_node(constructor_path);
+  vector<string> constructor_name = {FUNCTION, INITIALIZE};
 
-  //auto constructor_ref_status = class_ref_status.second.get_node({FUNCTION, cfnv.back()});
-  vector<string> constructor_name = {FUNCTION, "init"};
-  auto constructor_ref_status = class_ref_status.second.get_node(constructor_name);
+  try {
+    auto constructor_ref_status = class_ref_status.second.get_node(constructor_name);
+  
+    auto argv_status = eval(process, list, start + 1, 1); // get all the argv and create a spot at vector[0] for 'this' object
+    if(!argv_status.first) {
+      cerr  << "Object construct parameters errors: " <<  argv_status.second->_to_str() << "\n";
+      return argv_status;
+    }
+    auto &argv_list_vector = argv_status.second->_get_vector_ref();
+  
+    //argv_list_vector.insert(argv_list_vector.begin(), Node::ptr_US( move(shared_object_call)));
+    //argv_list_vector[0] = Node::ptr_US( move(shared_object_call));
+    argv_list_vector[0] = move(shared_object_call);
+  
+    call(process, constructor_ref_status.second, move(argv_list_vector));
+    return {true, move(shared_object_ret)};
 
-
-
-  //cout << "constructor: " << constructor_ref_status.second << "\n\n";
-
-  auto argv_status = eval(process, list, start + 1); // get all the argv
-  if(!argv_status.first) {
-    cerr  << "Object construct parameters errors: " <<  argv_status.second->_to_str() << "\n";
-    return argv_status;
+  } catch(...) {
+    auto msg = "constructor method: initialize() doesn't exist!";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
   }
 
-  auto &argv_list_vector = argv_status.second->_get_vector_ref();
-
-  argv_list_vector.insert(argv_list_vector.begin(), Node::ptr_US( move(shared_object_call)));
-
-  // cout << "argv_status : " << argv_status << "\n";
-
-  call(process, constructor_ref_status.second, move(argv_list_vector));
-  return {true, move(shared_object_ret)};
 }
 
 
@@ -378,6 +360,7 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
 // 2 parmas module.class
 // 3 parmas module.class // to be worked on
 
+/*
 Node::OpStatusRef LispExpr::get_class(deque<string> mc) {
   MYLOGGER(trace_function, "LispExpr::get_class(list<string>mfc)", __func__, SLOG_FUNC_INFO);
   string mc_str = _to_str_ext(mc);
@@ -407,7 +390,7 @@ Node::OpStatusRef LispExpr::get_class(deque<string> mc) {
 
 
 }
-
+*/
 
 //------------------------------------------------------------------------
 // create a map object

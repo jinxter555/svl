@@ -742,7 +742,6 @@ vector<string> LispExpr::namespace_module_path(Node&process) {
   ns_m_path.push_back(NAMESPACE);
   ns_m_path.push_back(current_namespace);
   ns_m_path.push_back(_MODULE);
-  ns_m_path.push_back(current_module);
   return ns_m_path;
 }
 
@@ -756,10 +755,10 @@ vector<string> LispExpr::full_path_module(Node&process, const string module_name
   if(ns_list.size() > 1) {
     mod_path = namespace_module_path(ns_list[0]); 
     auto m =  ns_list[1];
-    mod_path.push_back(m);
+  //  mod_path.push_back(m);
   } else {
     mod_path = namespace_module_path(process);
-    mod_path.push_back(ns_list[0]);
+   // mod_path.push_back(ns_list[0]);
   }
   //cout << "module_name: " << module_name << "\n";
   //cout << "mod_path: " << join_str(mod_path, "--") << "\n";
@@ -793,7 +792,6 @@ vector<string> LispExpr::full_path_class(Node&process, const string class_name) 
     class_part_name = module_class_list.back();
     module_class_list.pop_back();
     module_name = join_str(module_class_list, ".");
-    class_path.push_back(_MODULE);
     class_path.push_back(module_name);
     class_path.push_back(_CLASS);
     class_path.push_back(class_part_name);
@@ -839,7 +837,6 @@ vector<string> LispExpr::full_path_fun(Node&process, const string fun_name) {
     fun_part_name = module_fun_list.back();
     module_fun_list.pop_back();
     module_name = join_str(module_fun_list, ".");
-    fun_path.push_back(_MODULE);
     fun_path.push_back(module_name);
     fun_path.push_back(FUNCTION);
     fun_path.push_back(fun_part_name);

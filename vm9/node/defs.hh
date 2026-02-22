@@ -48,3 +48,5 @@
 #define BASE_FRAME "base_frame"
 
 #define RET_VALUE "return_value"
+#define INITIALIZE "initialize"
+#define FINALIZE "finalize"
