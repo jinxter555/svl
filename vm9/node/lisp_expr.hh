@@ -90,6 +90,7 @@ public:
   vector<string> full_path_fun(Node&process, const string module_name) ;
 
   Node::OpStatus attach_module(unique_ptr<Node> m);// create module structure 
+  string get_module_name(Node&process);
 
 
   void attach_cc_extern();
@@ -107,6 +108,7 @@ public:
 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
   Node::OpStatus frame_pop(Node&process);
+  Node::OpStatusRef frame_finalize(Node::OpStatusRef&frame_ref_status);
   Node::OpStatusRef frame_current(Node&process) ; // 
 
   unique_ptr<Node> scope_create() const ; // create a scope 

@@ -187,9 +187,45 @@ Node::OpStatus LispExpr::frame_pop(Node&process) {
   auto frames_status_ref = process.get_node(FRAMES);
   if(!frames_status_ref.first)
     return {false, Node::create_error(Error::Type::Unknown, "Can't get frames[] ")};
-  //auto frame = frames_status_ref.second.back();
+  auto back_frame = frames_status_ref.second.back();
+
+  frame_finalize(back_frame);
+
 
   return frames_status_ref.second.pop_back();
+
+}
+Node::OpStatusRef LispExpr::frame_finalize(Node::OpStatusRef& frame_ref_status){
+  if(!frame_ref_status.first) return frame_ref_status;
+
+  auto scopes_ref_status = frame_ref_status.second[SCOPES];
+
+  if(!scopes_ref_status.first) return scopes_ref_status;
+  Node::Integer s = scopes_ref_status.second.size_container() ;
+
+  //cout << "symbol lookup size: " << s << "\n";
+
+  for(Node::Integer i=s-1; i>=0; i--) {
+    //auto scope_ref_status = scope_current(process);
+    //cout << "symbol lookup i: " << i << "\n";
+    auto scope_ref_status = scopes_ref_status.second[i];
+    if(!scope_ref_status.first) {
+      cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
+      return scope_ref_status;
+    }
+    cout << "scope [" << i << "]" << scope_ref_status << "\n";
+  
+    //auto var_ref = var_lookup(scope_ref_status.second, name);
+    //if(var_ref.first) return var_ref;
+  
+    //auto immute_ref = immute_lookup(scope_ref_status.second, name);
+    //if(immute_ref.first) return immute_ref;
+
+    //auto arg_ref = arg_lookup(scope_ref_status.second, name);
+    //if(arg_ref.first) return arg_ref;
+  }
+  return {true, null_node};
+
 
 }
 
@@ -745,6 +781,17 @@ vector<string> LispExpr::namespace_module_path(Node&process) {
   return ns_m_path;
 }
 
+string LispExpr::get_module_name(Node&process) {
+  string current_module;
+  try {
+    current_module = frame_current(process).second.get_node(CURRENT_MODULE).second._to_str();
+    return current_module;
+  } catch(...) {
+    cerr << "module_name(process) getting 'CURRENT_MODULE', frame error";
+    return "";
+  }
+}
+
 
 // this in the format of Namespace::Module
 vector<string> LispExpr::full_path_module(Node&process, const string module_name) {
@@ -788,7 +835,7 @@ vector<string> LispExpr::full_path_class(Node&process, const string class_name) 
 
   class_path = ns_path;
   if(module_class_list.size() > 1) {
-    //cout << "module name specified here!\n";
+   // cout << "module name specified here!\n";
     class_part_name = module_class_list.back();
     module_class_list.pop_back();
     module_name = join_str(module_class_list, ".");
@@ -797,17 +844,18 @@ vector<string> LispExpr::full_path_class(Node&process, const string class_name) 
     class_path.push_back(class_part_name);
 
   } else { // module name not specified, then use module name from stack from
-    //cout << "module name not specified!\n";
+   // cout << "module name not specified!\n";
     class_part_name =  module_class_list.back();
     module_class_list.pop_back();
     class_path = namespace_module_path(process);
+    class_path.push_back(get_module_name(process));
     class_path.push_back(_CLASS);
     class_path.push_back(class_part_name);
 
   }
 
-//  cout << "class_name: " << class_name << "\n";
- // cout << "class_path: " << join_str(class_path, "--") << "\n";
+  //cout << "class_name: " << class_name << "\n";
+  //cout << "class_path: " << join_str(class_path, "--") << "\n";
   return class_path;
 
 }

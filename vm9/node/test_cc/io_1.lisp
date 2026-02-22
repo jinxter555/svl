@@ -1,6 +1,6 @@
 #!./main.out
 
-# use :namespace Main
+use :namespace Main
 
 # this is a test
 module Kernel 
