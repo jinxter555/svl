@@ -189,46 +189,73 @@ Node::OpStatus LispExpr::frame_pop(Node&process) {
     return {false, Node::create_error(Error::Type::Unknown, "Can't get frames[] ")};
   auto back_frame = frames_status_ref.second.back();
 
-  frame_finalize(back_frame);
+  frame_finalize(process, back_frame.second);
 
 
   return frames_status_ref.second.pop_back();
-
 }
-Node::OpStatusRef LispExpr::frame_finalize(Node::OpStatusRef& frame_ref_status){
-  if(!frame_ref_status.first) return frame_ref_status;
 
-  auto scopes_ref_status = frame_ref_status.second[SCOPES];
 
-  if(!scopes_ref_status.first) return scopes_ref_status;
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::frame_finalize(Node&process, Node& frame){
+  MYLOGGER(trace_function, "LispExpr::frame_finalize(Node&process, Node::OpReStatus)", __func__, SLOG_FUNC_INFO);
+
+  auto scopes_ref_status = frame[SCOPES];
+
+  if(!scopes_ref_status.first) return {false, scopes_ref_status.second.clone()};
   Node::Integer s = scopes_ref_status.second.size_container() ;
 
-  //cout << "symbol lookup size: " << s << "\n";
-
   for(Node::Integer i=s-1; i>=0; i--) {
-    //auto scope_ref_status = scope_current(process);
-    //cout << "symbol lookup i: " << i << "\n";
     auto scope_ref_status = scopes_ref_status.second[i];
     if(!scope_ref_status.first) {
       cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
-      return scope_ref_status;
+      return {false, scope_ref_status.second.clone()};
     }
-    cout << "scope [" << i << "]" << scope_ref_status << "\n";
+    //cout << "finalize(): scope [" << i << "]" << scope_ref_status << "\n";
+    scope_finalize(process, scope_ref_status.second);
   
-    //auto var_ref = var_lookup(scope_ref_status.second, name);
-    //if(var_ref.first) return var_ref;
-  
-    //auto immute_ref = immute_lookup(scope_ref_status.second, name);
-    //if(immute_ref.first) return immute_ref;
-
-    //auto arg_ref = arg_lookup(scope_ref_status.second, name);
-    //if(arg_ref.first) return arg_ref;
   }
-  return {true, null_node};
-
-
+  return {true, Node::create()};
 }
 
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::scope_finalize(Node&process, Node& scope){
+  MYLOGGER(trace_function, "LispExpr::scope_finalize(Node&process, Node::OpReStatus)", __func__, SLOG_FUNC_INFO);
+  auto var_ref = scope[VAR];
+  if(!var_ref.first) {
+    auto msg ="scope_finalize(): Can't find 'var' in scope reference ";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::KeyNotFound, msg)};
+  }
+  //cout << "scope_finalize: \n";
+  auto &var_map = get<Node::Map>(var_ref.second.value_);
+  for(auto &ele : var_map ) {
+    //cout << "ele: " << ele->_to_str() << "\n";
+  //  cout << "ele.first: " << ele.first << "\n";
+  //  cout << "ele.second.type: " << Node::_to_str( ele.second->type_) << "\n";
+    if(Lisp::type(*ele.second)==Lisp::Type::object) {
+    //  cout << "need to call finalize() clean up\n";
+      //cout << "ele.second.type in lispe: " << Lisp::_to_str( Lisp::type(*ele.second)) << "\n\n";
+      call_object(process, *ele.second, FINALIZE, {});
+    }
+  }
+  auto immute_ref = scope[IMMUTE];
+  auto &immute_map = get<Node::Map>(immute_ref.second.value_);
+  for(auto &ele : immute_map ) {
+    //cout << "ele: " << ele->_to_str() << "\n";
+   // cout << "immute ele.first: " << ele.first << "\n";
+    //cout << "ele.second.type: " << Node::_to_str( ele.second->type_) << "\n";
+    if(Lisp::type(*ele.second)==Lisp::Type::object) {
+    //  cout << "need to call finalize() clean up\n";
+      //cout << "ele.second.type in lispe: " << Lisp::_to_str( Lisp::type(*ele.second)) << "\n\n";
+      call_object(process, *ele.second, FINALIZE, {});
+    }
+  }
+
+  return {true, Node::create()};
+}
+
+//------------------------------------------------------------------------
 
 
 

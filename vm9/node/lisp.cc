@@ -101,6 +101,20 @@ string Lisp::_to_str(Lisp::Op op) {
 
 
 Lisp::Type Lisp::type(const Node& node) {
+  switch(node.type_) {
+  case Node::Type::Shared: {
+    auto sptr = get<Node::ptr_S>(node.value_);
+    return type(*sptr); }
+  case Node::Type::Raw: {
+    auto sptr = get<Node::ptr_R>(node.value_);
+    return type(*sptr); }
+  case Node::Type::Unique:  {
+    auto &sptr = get<Node::ptr_U>(node.value_);
+    return type(*sptr); }
+  default: {}
+  }
+
+
   try {
    auto &m= get<Node::Map>(node.value_);
    return type(m);

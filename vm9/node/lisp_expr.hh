@@ -108,8 +108,10 @@ public:
 
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
   Node::OpStatus frame_pop(Node&process);
-  Node::OpStatusRef frame_finalize(Node::OpStatusRef&frame_ref_status);
   Node::OpStatusRef frame_current(Node&process) ; // 
+  Node::OpStatus frame_finalize(Node&process, Node&frame); // goes through all the scope of the frame
+  Node::OpStatus scope_finalize(Node&process, Node&scope); // goes through all the vars of each scope, both immut and var
+
 
   unique_ptr<Node> scope_create() const ; // create a scope 
   Node::OpStatus scope_push_process(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
