@@ -220,7 +220,7 @@ Node::OpStatus LispExpr::frame_finalize(Node&process, Node& frame){
 
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::scope_finalize(Node&process, Node& scope){
-  MYLOGGER(trace_function, "LispExpr::scope_finalize(Node&process, Node::OpReStatus)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::scope_finalize(Node&process, Node&scope)", __func__, SLOG_FUNC_INFO);
   auto var_ref = scope[VAR];
   if(!var_ref.first) {
     auto msg ="scope_finalize(): Can't find 'var' in scope reference ";
@@ -230,25 +230,15 @@ Node::OpStatus LispExpr::scope_finalize(Node&process, Node& scope){
   //cout << "scope_finalize: \n";
   auto &var_map = get<Node::Map>(var_ref.second.value_);
   for(auto &ele : var_map ) {
-    //cout << "ele: " << ele->_to_str() << "\n";
-  //  cout << "ele.first: " << ele.first << "\n";
-  //  cout << "ele.second.type: " << Node::_to_str( ele.second->type_) << "\n";
     if(Lisp::type(*ele.second)==Lisp::Type::object) {
-    //  cout << "need to call finalize() clean up\n";
-      //cout << "ele.second.type in lispe: " << Lisp::_to_str( Lisp::type(*ele.second)) << "\n\n";
-      call_object(process, *ele.second, FINALIZE, {});
+      object_finalize(process, *ele.second );
     }
   }
   auto immute_ref = scope[IMMUTE];
   auto &immute_map = get<Node::Map>(immute_ref.second.value_);
   for(auto &ele : immute_map ) {
-    //cout << "ele: " << ele->_to_str() << "\n";
-   // cout << "immute ele.first: " << ele.first << "\n";
-    //cout << "ele.second.type: " << Node::_to_str( ele.second->type_) << "\n";
     if(Lisp::type(*ele.second)==Lisp::Type::object) {
-    //  cout << "need to call finalize() clean up\n";
-      //cout << "ele.second.type in lispe: " << Lisp::_to_str( Lisp::type(*ele.second)) << "\n\n";
-      call_object(process, *ele.second, FINALIZE, {});
+      object_finalize(process, *ele.second );
     }
   }
 
@@ -256,6 +246,41 @@ Node::OpStatus LispExpr::scope_finalize(Node&process, Node& scope){
 }
 
 //------------------------------------------------------------------------
+Node::OpStatus LispExpr::object_finalize(Node&process, Node& object){
+  MYLOGGER(trace_function, "LispExpr::object_finalize(Node&process, Node::OpReStatus)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "object: " + object._to_str(), SLOG_FUNC_INFO);
+
+  //cout << "In object_finalize(): got object: "  <<  object._to_str() << " \n\n";
+
+
+  if(Lisp::type(object)!=Lisp::Type::object) {
+    return {true, Node::create()};
+  }
+
+  for(auto &ele : object._get_map_ref() ) {
+
+   if(Lisp::type(*ele.second)!=Lisp::Type::object) continue;
+   if(ele.first == OBJ_INFO) continue;
+   if(ele.first == CLASS_PTR ) continue;
+
+   //cout << "ele.key: " << ele.first << "\n";
+   //cout << "ele.value: " << *ele.second << "\n\n";
+
+    if(Lisp::type(*ele.second)==Lisp::Type::object) { // container nested object
+    //  cout << "it's an object vars, recursive call!\n " ;
+    //  cout << "ele.second.type " << Node::_to_str( ele.second->type_) << "\n";
+
+      auto sptr = Node::ptr_US(move(ele.second));
+      object_finalize(process, *sptr);
+    }
+  }
+
+  //cout << "2 object_finalize(): object: "  <<  object._to_str() << " \n\n";
+
+  call_object(process, object, FINALIZE, {});
+  return {true, Node::create()};
+
+}
 
 
 

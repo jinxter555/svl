@@ -1,8 +1,42 @@
-w1: ship building
-finalize(): scope [0]true: value: {"args": {"w3": trade, "w2": world1, "w1": ship building, "this": {"w": ship building, "length": 123, "size": nil, "__object_info__": {"class": Dict, "class_ptr":--*ptr--, "type": object}}}, "immute": {}, "var": {}}, type: Map
-w1: webster 
-finalize(): scope [0]true: value: {"args": {"w3": affairs, "w2": global, "w1": webster , "this": {"w": webster , "length": 123, "size": nil, "__object_info__": {"class": Dict, "class_ptr":--*ptr--, "type": object}}}, "immute": {}, "var": {}}, type: Map
-{"w": webster , "length": 123, "size": 5555, "__object_info__": {"class": Dict, "class_ptr":--*ptr--, "type": object}}
-finalize(): scope [0]true: value: {"args": {}, "immute": {}, "var": {"i1": 111111, "m2": {"w": webster , "length": 123, "size": 5555, "__object_info__": {"class": Dict, "class_ptr":--*ptr--, "type": object}}}}, type: Map
+f1
+Dict init:  webster11  
+car init
+1 object_finalize(): object: {"w": webster11  , "length": 123, "c1": {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}}, "size": nil, "__object_info__": {"class": Dict, "class_ptr":--*ptr--, "type": object}} 
+
+ele.first: w
+Lisp::type(ele.second)): nil
+ele.second: webster11  
+
+ele.first: length
+Lisp::type(ele.second)): nil
+ele.second: 123
+
+ele.first: c1
+Lisp::type(ele.second)): object
+ele.second: {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}}
+
+hello, world!
+1 ele.second: {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}}
+
+1 object_finalize(): object: {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}} 
+
+ele.first: car_type
+Lisp::type(ele.second)): nil
+ele.second: 123
+
+ele.first: __object_info__
+Lisp::type(ele.second)): nil
+ele.second: {"class": Car, "class_ptr":--*ptr--, "type": object}
+
+ele.first: size
+Lisp::type(ele.second)): nil
+ele.second: nil
+
+ele.first: __object_info__
+Lisp::type(ele.second)): nil
+ele.second: {"class": Dict, "class_ptr":--*ptr--, "type": object}
+
+webster11   Dict finalize destructor!
+
 [?2004hloosh> exit
 [?2004lnil

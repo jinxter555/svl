@@ -111,6 +111,7 @@ public:
   Node::OpStatusRef frame_current(Node&process) ; // 
   Node::OpStatus frame_finalize(Node&process, Node&frame); // goes through all the scope of the frame
   Node::OpStatus scope_finalize(Node&process, Node&scope); // goes through all the vars of each scope, both immut and var
+  Node::OpStatus object_finalize(Node&process, Node&scope); // goes through all the vars of each scope, both immut and var
 
 
   unique_ptr<Node> scope_create() const ; // create a scope 

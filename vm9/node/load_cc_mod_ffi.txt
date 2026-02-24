@@ -1,0 +1,280 @@
+c++ interpreter lang wrapper ffi
+When interfacing C++ with interpreted languages via FFI (Foreign Function Interface), the primary challenge is that
+C++ lacks a standardized Application Binary Interface (ABI). To bridge this gap, you typically use a C wrapper as a "common denominator" since almost all FFIs support the stable C ABI. 
+1. The Wrapper Strategy (Manual)
+To expose C++ code to an FFI, you must wrap C++ classes and methods in extern "C" functions to prevent name mangling. 
+
+    Opaque Pointers: Represent C++ objects as void* or incomplete types in C.
+    Flattening: Create a C function for every constructor, destructor, and method you need to call.
+    Example: A Foo::bar() method becomes a C function int foo_bar(Foo* self). 
+
+2. Automated Tools & Generators
+If your codebase is large, manual wrapping is inefficient. Several tools automate the generation of these bindings: 
+
+    SWIG (Simplified Wrapper and Interface Generator): A widely used tool that reads C++ headers and generates wrappers for dozens of languages like Python, Ruby, and Java.
+    ffigen (Dart/Flutter): Specifically for Dart, it uses LLVM to parse headers and generate FFI bindings.
+    c2ffi: A Clang-based tool that converts C/C++ headers into JSON metadata, making it easier to build custom language-specific bindings.
+    DragonFFI: A C++-based FFI library that uses Clang/LLVM to allow JIT-style calling of C functions directly. 
+
+3. Language-Specific FFI Implementations
+Different interpreters have their own built-in FFI mechanisms for calling these wrapped libraries: 
+
+    Python: Uses CFFI or ctypes. For deeper C++ integration, tools like CLIF are preferred.
+    JavaScript (Bun/Deno): Bun FFI and Deno FFI offer high-performance access to native libraries with minimal overhead.
+    Lua: LuaJIT FFI allows direct interaction with C constructs and is known for very low overhead.
+    Dart: Uses the dart:ffi library to call native C APIs directly from Dart code. 
+
+Are you looking to wrap a specific C++ library, or are you building a new interpreter and need to implement its FFI layer?
+
+    C Wrappers for C++ Libraries and Interoperability
+    Jun 28, 2022 — One of the main advantages of the C language is the the possibility of calling libraries written in C from other programming langu...
+    GitHub
+    Migrate existing C++ library to dart FFI · Issue #244 - GitHub
+    Jun 21, 2022 — Activity * dcharkes commented. dcharkes. on Jun 21, 2022 · edited by dcharkes. Collaborator. Unfortunately, C++ does not have a st...
+    GitHub
+    PerlFFI/FFI-Platypus-Lang-CPP: Documentation and ... - GitHub
+    You can write these wrapper functions right in your C++ code using the "extern "C"" trick: class Foo { public: int bar() { return ...
+    GitHub
+
+Show all
+show me a ffi example in c++
+To call C++ from an interpreted language (like Python, JavaScript, or Lua), you must create a
+C-compatible wrapper. This is because C++ "mangles" function names and lacks a stable ABI, while C provides a universal interface that all FFI libraries understand. 
+1. The C++ Implementation
+First, define your C++ logic. We use extern "C" to tell the compiler not to mangle the names of the wrapper functions. 
+cpp
+
+// libexample.cpp
+#include <iostream>
+#include <string>
+
+// Internal C++ Class
+class Greeter {
+public:
+    void say_hello(const std::string& name) {
+        std::cout << "Hello, " << name << " from C++!" << std::endl;
+    }
+};
+
+// C Wrapper Functions
+extern "C" {
+    // Factory function: returns an "opaque pointer" to the C++ object
+    Greeter* greeter_new() { 
+        return new Greeter(); 
+    }
+
+    // Wrapper for a class method
+    void greeter_say_hello(Greeter* self, const char* name) {
+        self->say_hello(std::string(name));
+    }
+
+    // Cleanup function: essential to prevent memory leaks
+    void greeter_free(Greeter* self) { 
+        delete self; 
+    }
+}
+
+Use code with caution.
+ 
+2. Compilation
+Compile this into a shared library (.so on Linux/macOS, .dll on Windows). 
+bash
+
+# On Linux/macOS
+g++ -shared -fPIC -o libexample.so libexample.cpp
+
+Use code with caution.
+3. The FFI Call (Python Example)
+Using Python's ctypes, you load the library and map the types. 
+python
+
+import ctypes
+
+# 1. Load the library
+lib = ctypes.CDLL("./libexample.so")
+
+# 2. Define function signatures (important for type safety)
+lib.greeter_new.restype = ctypes.c_void_p
+lib.greeter_say_hello.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+lib.greeter_free.argtypes = [ctypes.c_void_p]
+
+# 3. Use the C++ object through the wrapper
+obj = lib.greeter_new()
+lib.greeter_say_hello(obj, b"World")
+
+# 4. Clean up
+lib.greeter_free(obj)
+
+Use code with caution.
+ 
+Best Practices for C++ FFI 
+
+    Opaque Pointers: Always treat C++ object pointers as void* or c_void_p in the host language to avoid exposing internal memory layouts.
+    Memory Management: C++ memory is not managed by the interpreter's Garbage Collector. You must provide a "free" or "delete" function in your wrapper to prevent leaks.
+    Error Handling: C++ exceptions cannot cross the FFI boundary safely. Wrap your calls in try-catch blocks and return error codes or status enums to the interpreter. 
+
+Would you like to see how this example looks using a modern generator like SWIG or pybind11 to automate the process?
+
+    How to Call C(.c) / C++(.cpp) Functions From Python(.py)
+    Oct 2, 2022 — hello everyone welcome back to my channel and today I'm going to teach you how you can call the C plus functions. from the python ...
+    YouTube·Mr Ai
+    18m
+    Can Python call C++ DLL libraries compiled using extern "C ...
+    Sep 1, 2020 — If non-POD-classes are used (for example std::vector or std::string ) in interfaces or the API isn't wrapped in extern "C" then th...
+    Stack Overflow
+    How to use C++ classes with ctypes? - python - Stack Overflow
+    Oct 23, 2009 — It's one solution of many so it has its own trade offs, but I will present it for the benefit of those who aren't familiar with th...
+    Stack Overflow
+
+Show all
+if i write my owner interpreter language does that mean I have to write my owner FFI wrapper?
+Yes, if you write your own interpreter, you must implement the
+FFI mechanism that allows your language's runtime to talk to the machine's hardware. However, you do not have to write everything from scratch. 
+There are two main parts to "writing an FFI" for your own language: 
+1. The FFI Infrastructure (The "Engine")
+You need a way to load libraries and call functions with the correct Calling Convention (e.g., how arguments are placed in CPU registers). 
+
+    Don't write this yourself: Use libffi. It is a portable library that handles the assembly-level complexity of calling functions across different CPUs and OSs.
+    The Glue Code: You still need to write code in your interpreter that uses libffi to take a function name (like "add") and arguments from your script, convert them to C types, and execute the call. 
+
+2. The Language Bindings (The "Wrappers")
+Even with a working FFI engine, you generally have two choices for how users of your language interact with external code: 
+
+    Dynamic/Internal FFI: You provide a syntax in your language (like Python’s ctypes or Lua’s ffi.cdef) so users can define the C function signatures directly in your script.
+    Extension/External FFI: You require users to write a small "bridge" in C/C++ that follows a specific API you've designed for your interpreter (like the Python C API). 
+
+Summary of Tasks
+Task 	Do you have to write it?	Tool to use
+Library Loading	Yes (wrapper around dlopen or LoadLibrary)	Native OS APIs
+Calling Convention	No (Too complex/Platform specific)	libffi
+Type Marshalling	Yes (e.g., converting your "String" object to char*)	Your Interpreter Logic
+C++ Support	Yes (C++ requires a C wrapper or specialized parser)	SWIG or Clang
+Proactive Follow-up: Are you writing your interpreter in C++ itself, or another language? This determines which FFI libraries you can easily integrate. 
+
+    Foreign function interfaces : r/Compilers - Reddit
+    Jun 9, 2025 — There can be several languages involved: * Your language. * The language it is implemented in (either compiler or interpreter) * T...
+    Reddit
+    Implementing an FFI : r/ProgrammingLanguages - Reddit
+    May 3, 2020 — MegaIng. • 6y ago. Then depends one how your language works. In general, you want to allow the user to define special methods whic...
+    Reddit
+    How to expose FFI to interpreted language? - Reddit
+    Oct 12, 2024 — Libffi has basically done all that work for you - many architectures supported out of the box with a common API, and with reasonab...
+    Reddit
+
+Show all
+does libffi load libraries?
+No,
+libffi does not load libraries. It is strictly an engine for calling functions once they are already in memory. 
+To build a complete FFI for your interpreter, you need two distinct layers: 
+1. The Loader (System-Specific)
+This part finds the .so or .dll file on disk and maps it into your process's memory. You use the operating system's native "dynamic linker" API for this:
+
+    Linux/macOS: Use dlopen() to load the library and dlsym() to get a pointer to a specific function.
+    Windows: Use LoadLibrary() and GetProcAddress(). 
+
+2. The Invoker (libffi)
+Once dlsym gives you a function pointer, your interpreter still doesn't know how to call it because it doesn't know the Calling Convention (e.g., should the first argument go in the RDI register or on the stack?). 
+
+    libffi handles this "glue" work. It takes your raw function pointer and a description of the arguments (a "CIF" or Call Interface), then handles the assembly-level details to actually execute the call. 
+
+Summary: How they work together
+
+    Your Interpreter: Calls dlopen("libmath.so") to get a handle.
+    Your Interpreter: Calls dlsym(handle, "add") to get the memory address of the add function.
+    libffi: Takes that address, prepares the CPU registers with your interpreter's variables, and jumps to the code. 
+
+Proactive Follow-up: Would you like to see a minimal C++ snippet that uses dlopen and libffi together to call a function by name?
+
+    Flexible runtime interface to shared libraries with libffi
+    Mar 4, 2013 — The shared library is loaded as before. dlopen and dlsym are used. The result of dlsym is just placed in a void*, since we don't k...
+    Eli Bendersky
+    libffi - sourceware.org
+    FFI stands for Foreign Function Interface. A foreign function interface is the popular name for the interface that allows code wri...
+    sourceware.org
+    Libffi - Wikipedia
+    libffi. ... libffi is a foreign function interface library. It provides a C programming language interface for calling natively co...
+    Wikipedia
+
+Show all
+yes
+To build a custom FFI for your interpreter, you combine the OS-level
+loader (dlopen) with the machine-level invoker (libffi). 
+1. The Target Library (To be called)
+First, ensure your C++ code is wrapped in extern "C" so its symbol name is predictable. 
+cpp
+
+// math_lib.cpp
+extern "C" int add(int a, int b) {
+    return a + b;
+}
+// Compile with: g++ -shared -fPIC -o libmath.so math_lib.cpp
+
+Use code with caution.
+2. The Interpreter's FFI Engine
+This snippet uses dlopen to load the file into memory and libffi to execute the function. 
+cpp
+
+#include <iostream>
+#include <dlfcn.h>   // For dlopen/dlsym
+#include <ffi.h>     // For ffi_call
+
+int main() {
+    // --- PART 1: LOAD THE LIBRARY (The Loader) ---
+    void* handle = dlopen("./libmath.so", RTLD_LAZY);
+    if (!handle) {
+        std::cerr << "Cannot open library: " << dlerror() << std::endl;
+        return 1;
+    }
+
+    // Find the memory address of the "add" function
+    void* fn_ptr = dlsym(handle, "add");
+    if (!fn_ptr) {
+        std::cerr << "Cannot find symbol 'add': " << dlerror() << std::endl;
+        return 1;
+    }
+
+    // --- PART 2: CALL THE FUNCTION (The Invoker) ---
+    ffi_cif cif;
+    ffi_type *args[2];
+    void *values[2];
+    int arg1 = 10, arg2 = 20, result;
+
+    // Describe the function signature to libffi
+    args[0] = &ffi_type_sint; // First arg is an int
+    args[1] = &ffi_type_sint; // Second arg is an int
+    values[0] = &arg1;
+    values[1] = &arg2;
+
+    // Initialize the "Call Interface" (CIF)
+    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_sint, args) == FFI_OK) {
+        // Execute the call dynamically
+        ffi_call(&cif, FFI_FN(fn_ptr), &result, values);
+        std::cout << "Result of add(10, 20): " << result << std::endl;
+    }
+
+    dlclose(handle);
+    return 0;
+}
+
+Use code with caution.
+Key Takeaways
+
+    dlopen locates the library and maps it into your process's address space.
+    dlsym retrieves the raw memory address (pointer) of the function you want to call.
+    libffi handles the assembly-level "glue." It ensures your arg1 and arg2 are placed in the specific CPU registers required by the system's Calling Convention (ABI).
+    Type Mapping: In a real interpreter, you would have a map converting your language's types (e.g., MyInt) to libffi types (e.g., &ffi_type_sint). 
+
+Proactive Follow-up: Would you like to see how to handle structs or custom types in this setup, as they require more complex libffi definitions?
+
+    Simple Example (libffi: the portable foreign function interface ...
+    #include #include int main() { ffi_cif cif; ffi_type *args[1]; void *values[1]; char *s; ffi_arg rc; /* Initialize the argument in...
+    greenend.org.uk
+    dlsym for so linking : r/cpp_questions - Reddit
+    Apr 1, 2023 — call dlopen with the proper arguments to open the dynamic library file you are interested in. If this returns null, you aren't pro...
+    Reddit
+    Flexible runtime interface to shared libraries with libffi
+    Mar 4, 2013 — libffi was designed to solve precisely the problem described above - provide a means to call a function from a shared object, whil...
+    Eli Bendersky
+
+Show all
+

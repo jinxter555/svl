@@ -121,14 +121,19 @@ Lisp::Type Lisp::type(const Node& node) {
   } catch(...){
     return Lisp::Type::nil;
   }
+  return Lisp::Type::nil;
 
 }
 Lisp::Type Lisp::type(const Node::Map& map_) {
+  //cout << "lisp::type::map(): " <<  Node::_to_str(map_) << "\n\n";
   try {
     auto &obj_info = map_.at(OBJ_INFO);
+    //cout << "obj_info: " <<  *obj_info << "\n";
     auto type_ref_status = obj_info->get_node(TYPE);
     if(!type_ref_status.first) return Lisp::Type::nil;
     auto t = get<Lisp::Type>(type_ref_status.second.value_);
+    //cout << "type_ref_status : " <<  type_ref_status << "\n";
+    //cout << "t: " << _to_str(t) << "\n";
     return t;
   } catch(...) {
     return Lisp::Type::nil;
