@@ -188,8 +188,6 @@ unique_ptr<Node> Node::clone(const IMap& map) {
 }
 
 
-
-
 unique_ptr<Node> Node::clone() const {
   MYLOGGER(trace_function, "Node::clone()", __func__, SLOG_NODE_OP);
 
@@ -212,6 +210,7 @@ unique_ptr<Node> Node::clone() const {
       node_ptr->type_ = type_;
       if(type_ == Type::Identifier) node_ptr->set_identifier();
       if(type_ == Type::Atom) node_ptr->set_atom();
+      if(type_ == Type::ObjectId) node_ptr->set_object_id();
       return node_ptr;
     }
 
@@ -317,6 +316,11 @@ Node Node::get_type() const { return type_; }
 void Node::set_null() { this->value_ = monostate{}; type_=Type::Null; }
 void Node::set_atom(Integer v)  { *this = Node(v); type_ = Type::Atom; }
 void Node::set_atom()  { type_ = Type::Atom; }
+
+void Node::set_object_id(Integer v)  { *this = Node(v); type_ = Type::ObjectId; }
+void Node::set_object_id()  { type_ = Type::ObjectId; }
+
+
 void Node::set_identifier(const string& v) { *this = Node(v); type_ = Type::Identifier; }
 void Node::set_identifier() { type_ = Type::Identifier; }
 

@@ -28,6 +28,7 @@ string Node::_to_str(Type type) {
     case Type::Map: return "Map";
     case Type::IMap: return "IMap";
     case Type::Atom: return "Atom";
+    case Type::ObjectId: return "ObjectId";
     case Type::LispOp: return "LispOp";
     case Type::ProcState: return "ProcessState";
     case Type::ControlFlow: return "ControlFlow";
@@ -83,6 +84,10 @@ string Node::_to_str() const {
     case Type::Atom: { // { //extern Node::OpStatus Lang::atom_to_str(Node::Integer v) ; }
       Integer num = get<Integer>(value_);
       return ":" + Lang::atom_to_str(num); 
+    }
+    case Type::ObjectId: { // { //extern Node::OpStatus Lang::atom_to_str(Node::Integer v) ; }
+      Integer num = get<Integer>(value_);
+      return "OID:" + to_string(num);
     }
 
     case Type::Integer: {

@@ -32,7 +32,7 @@ public:
   enum class Type { 
     Null, Bool, Error, Integer, Float, String, 
     Identifier, List, Map, IMap, Vector, DeQue, LispOp, ProcState, 
-    ControlFlow, Atom, Shared, Raw, Unique, Fun };
+    ControlFlow, Atom, ObjectId, Shared, Raw, Unique, Fun };
 
   using Integer = long; using Float = double;
   //using List = vector<unique_ptr<Node>>;
@@ -95,6 +95,8 @@ public:
   void set(unique_ptr<Node> new_node);
   void set_atom(Integer v);
   void set_atom();
+  void set_object_id(Integer v);
+  void set_object_id();
   void set_identifier(const string& v);
   void set_identifier();
   void set_null();
