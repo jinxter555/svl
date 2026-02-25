@@ -25,6 +25,9 @@ bool sym_lang(char c) {
 
 // Updated Tokenizer to handle \( ... ) as a single literal token
 vector<string> tokenize_infix(string infix) {
+  MYLOGGER(trace_function, "tokenize_infix(string& infix)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "infix_input " + infix , SLOG_FUNC_INFO+30);
+
   vector<string> tokens;
   for (size_t i = 0; i < infix.length(); i++) {
     if (isspace(infix[i])) continue;
@@ -63,6 +66,13 @@ vector<string> tokenize_infix(string infix) {
   if(tokens.size() == 1) {
     return tokens;
   }
+  //if(tokens.size() == 2) { return tokens; }
+  if(tokens.size() == 2) { 
+    //cout << "2 tokens: " << _to_str_ext(tokens) << "\n";
+    tokens.push_back("noop");
+    return tokens; 
+  }
+
   if(tokens.size() < 3) {
    auto msg = "infix tokens need to be than 1 or 3 parameters  in froms [a op b]: but got [" + infix + "]";
     cerr << msg << "\n";
@@ -154,8 +164,8 @@ std::string replace_bracketed_string(std::string input, const std::string& repla
 
 
 void LispReader::convert_to_infix(string& infix_input) {
-  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Lisp::Op op_head, Node::Vector& code_list)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "Infix_input " + infix_input , SLOG_FUNC_INFO+30);
+  MYLOGGER(trace_function, "LispReader::convert_to_infix(string&infx_input)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "infix_input " + infix_input , SLOG_FUNC_INFO+30);
 
   auto bracket_strings  = find_bracketed_strings(infix_input);
 
@@ -163,6 +173,7 @@ void LispReader::convert_to_infix(string& infix_input) {
 
   for(auto infix_str : bracket_strings) {
     auto lisp_prefix_str =  infixToLispPrefix(infix_str);
+    MYLOGGER_MSG(trace_function, "lisp_prefix " + lisp_prefix_str , SLOG_FUNC_INFO+30);
     input  = replace_bracketed_string(input, lisp_prefix_str);
   }
   infix_input = input;
