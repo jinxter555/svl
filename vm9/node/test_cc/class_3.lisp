@@ -39,7 +39,7 @@ module Kernel
 
   def main (x y)
 
-    var v1 v2
+    var v1
 
     # f1()
     = v1 (new Dict "webster11  " "global" "affairs")

@@ -324,21 +324,31 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
           cout << "It's an object var " << var_ref << "\n\n";
           object_finalize(process, var_ref.second);
           var_ref.second.delete_();
-        }
-        continue;
 
+        }
+        // now delete from scope
+        auto scope_vars_ref_status = scope_ref_status.second.get_node(VAR);
+        scope_vars_ref_status.second.delete_key(name);
+        continue;
       }
+
       auto immute_ref = immute_lookup(scope_ref_status.second, name);
       if(immute_ref.first)  {
         cout << "found immute" << immute_ref << "\n";
         if(Lisp::type(immute_ref.second)==Lisp::Type::object) {
           cout << "It's an object immute" << immute_ref << "\n\n";
           object_finalize(process, immute_ref.second);
-          var_ref.second.delete_();
+          immute_ref.second.delete_();
         }
+        // now delete from scope
+        auto scope_immute_ref_status = scope_ref_status.second.get_node(IMMUTE);
+        scope_immute_ref_status.second.delete_key(name);
+
         continue;
       }
-      cerr << "var '" << name <<"' not found!\n";
+
+
+      cerr << "'" << name <<"' not found!\n";
     }
   }
 
