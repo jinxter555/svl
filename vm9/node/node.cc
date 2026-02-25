@@ -291,6 +291,45 @@ Node::List& Node::_get_list_ref() { return get<List>(value_); }
 Node::OpStatus Node::eval(Node& env) {
   return {true, clone()};
 }
+//------------------------------------------------------------------------
+bool Node::delete_() {
+  MYLOGGER(trace_function, "Node::delete_()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "type: " + Node::_to_str(type_), SLOG_FUNC_INFO+30);
+  switch(type_) {
+  case Type::Shared: {
+    cout << "delete_(): resetting shared pointer, val: " << _to_str() <<"\n";
+    auto sptr = get<ptr_S>(value_);
+    sptr->delete_(); 
+    sptr.reset();
+    value_ = monostate{};
+    type_ = Type::Null;
+    return true;
+  }
+  case Type::Raw: {
+    cout  << "delete_(): resetting raw pointer, val: " << _to_str() <<"\n";
+    auto rptr = get<ptr_R>(value_);
+    rptr->delete_(); 
+    value_ = monostate{};
+    type_ = Type::Null;
+    return true;
+  }
+  case Type::Unique:  {
+    cout  << "delete_(): resetting unique pointer, val: " << _to_str() <<"\n";
+    auto &uptr = get<ptr_U>(value_);
+    if(uptr->type_ == Type::Shared || uptr->type_ == Type::Raw || uptr->type_ ==Type::Unique) { uptr->delete_(); }
+    uptr.reset();
+    value_ = monostate{};
+    type_ = Type::Null;
+    return true;
+  }
+  default: {}}
+  //cerr << "not a node pointing to an object!\n";
+  return false;
+
+}
+
+
+//------------------------------------------------------------------------
 
 void Node::set(Integer v)  { *this = Node(v); }
 void Node::set(Float v)  { *this = Node(v); }

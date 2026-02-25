@@ -293,6 +293,57 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
 
 }
 
+// call finalize() and node.delete
+Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::object_create(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
+  auto frame_ref_status = frame_current(process);
+  auto scopes_ref_status = frame_ref_status.second[SCOPES];
+  Node::Integer s = scopes_ref_status.second.size_container() ;
+
+  for(Node::Integer i=s-1; i>=0; i--) {
+    //auto scope_ref_status = scope_current(process);
+    //cout << "symbol lookup i: " << i << "\n";
+    auto scope_ref_status = scopes_ref_status.second[i];
+    if(!scope_ref_status.first) {
+      cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
+      return {false, Node::create_error(Error::Type::InvalidOperation, "Object_delete(): Unknown error looking up scope")};
+    }
+
+    size_t s2 = list.size();
+    for(size_t j=start; j<s2; j++) {
+      string name = list[j]->_to_str();
+      // cout << "deleting " << name << "\n";
+  
+      auto var_ref = var_lookup(scope_ref_status.second, name);
+      if(var_ref.first)  {
+        cout << "found var " << name<< "\n";
+        if(Lisp::type(var_ref.second)==Lisp::Type::object) {
+          cout << "It's an object var " << var_ref << "\n\n";
+          object_finalize(process, var_ref.second);
+          var_ref.second.delete_();
+        }
+        continue;
+
+      }
+      auto immute_ref = immute_lookup(scope_ref_status.second, name);
+      if(immute_ref.first)  {
+        cout << "found immute" << immute_ref << "\n";
+        if(Lisp::type(immute_ref.second)==Lisp::Type::object) {
+          cout << "It's an object immute" << immute_ref << "\n\n";
+          object_finalize(process, immute_ref.second);
+          var_ref.second.delete_();
+        }
+        continue;
+      }
+      cerr << "var not found!\n";
+    }
+  }
+
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
+}
 
 
 //------------------------------------------------------------------------

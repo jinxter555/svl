@@ -82,6 +82,7 @@ public:
   static unique_ptr<Node> clone(const Map& map) ;
   static unique_ptr<Node> clone(const IMap& imap) ;
   static unique_ptr<Node> clone(const Fun& fun) ;
+  bool delete_();
 
   void set(Integer v);
   void set(Float v);

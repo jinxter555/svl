@@ -39,9 +39,10 @@ module Kernel
 
   def main (x y)
 
-    (assign x1 999)
+    var v1
 
     f1()
+    = v1 (new Dict "webster11  " "global" "affairs")
 
     loop
        print ( eval (read)) "\n"

@@ -60,7 +60,8 @@ module Kernel
 
   def main (x y)
 
-    (assign x1 999)
+    (var m1)
+
     = m1 (new Dict "ship building" "world1" "trade")
     = m2 (new Dict2 "construction" "fishery" "saliing")
 
