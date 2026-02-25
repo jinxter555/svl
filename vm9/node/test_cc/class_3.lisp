@@ -39,10 +39,17 @@ module Kernel
 
   def main (x y)
 
-    var v1
+    var v1 v2
 
-    f1()
+    # f1()
     = v1 (new Dict "webster11  " "global" "affairs")
+    = v2 v1
+
+    #print "v2 " v2
+
+    #delete v1
+    #print "v2 " v2
+    #delete v2
 
     loop
        print ( eval (read)) "\n"

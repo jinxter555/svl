@@ -338,7 +338,7 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
         }
         continue;
       }
-      cerr << "var not found!\n";
+      cerr << "var '" << name <<"' not found!\n";
     }
   }
 

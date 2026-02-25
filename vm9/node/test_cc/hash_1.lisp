@@ -1,8 +1,7 @@
 (module Kernel 
-  (defun main (x y) my_func_des
+  (def main (x y) 
     (
       (var m1)
-;      (print "hello, world1\n")
       (assign m1 
       (hash 
             (k1 123)

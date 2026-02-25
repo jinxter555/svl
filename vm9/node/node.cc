@@ -323,8 +323,10 @@ bool Node::delete_() {
     return true;
   }
   default: {}}
+  value_ = monostate{};
+  type_ = Type::Null;
   //cerr << "not a node pointing to an object!\n";
-  return false;
+  return true;
 
 }
 
