@@ -326,9 +326,14 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
           var_ref.second.delete_();
 
         }
+
+        if(var_ref.second.type_ == Node::Type::Shared) var_ref.second.delete_(); 
+
         // now delete from scope
         auto scope_vars_ref_status = scope_ref_status.second.get_node(VAR);
         scope_vars_ref_status.second.delete_key(name);
+
+        return {true, Node::create(atom_ok, Node::Type::Atom)};
         continue;
       }
 
@@ -341,9 +346,12 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
           immute_ref.second.delete_();
         }
         // now delete from scope
+        if(immute_ref.second.type_ == Node::Type::Shared) immute_ref.second.delete_(); 
+
         auto scope_immute_ref_status = scope_ref_status.second.get_node(IMMUTE);
         scope_immute_ref_status.second.delete_key(name);
 
+        return {true, Node::create(atom_ok, Node::Type::Atom)};
         continue;
       }
 
@@ -357,6 +365,10 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
 
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::clone(Node&process, const Node::Vector &list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::clone(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
 }
 
 //------------------------------------------------------------------------
