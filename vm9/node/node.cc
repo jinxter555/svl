@@ -297,7 +297,7 @@ bool Node::delete_() {
   MYLOGGER_MSG(trace_function, "type: " + Node::_to_str(type_), SLOG_FUNC_INFO+30);
   switch(type_) {
   case Type::Shared: {
-    cout << "delete_(): resetting shared pointer, val: " << _to_str() <<"\n";
+    //cout << "delete_(): resetting shared pointer, val: " << _to_str() <<"\n";
     auto sptr = get<ptr_S>(value_);
     sptr->delete_(); 
     sptr.reset();
@@ -306,7 +306,7 @@ bool Node::delete_() {
     return true;
   }
   case Type::Raw: {
-    cout  << "delete_(): resetting raw pointer, val: " << _to_str() <<"\n";
+  //  cout  << "delete_(): resetting raw pointer, val: " << _to_str() <<"\n";
     auto rptr = get<ptr_R>(value_);
     rptr->delete_(); 
     value_ = monostate{};
@@ -314,7 +314,7 @@ bool Node::delete_() {
     return true;
   }
   case Type::Unique:  {
-    cout  << "delete_(): resetting unique pointer, val: " << _to_str() <<"\n";
+   // cout  << "delete_(): resetting unique pointer, val: " << _to_str() <<"\n";
     auto &uptr = get<ptr_U>(value_);
     if(uptr->type_ == Type::Shared || uptr->type_ == Type::Raw || uptr->type_ ==Type::Unique) { uptr->delete_(); }
     uptr.reset();

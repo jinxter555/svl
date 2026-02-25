@@ -242,6 +242,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::ihash:   return ihash_create(process, code_list, start);
   case Lisp::Op::new_:  return object_create(process, code_list, start);
   case Lisp::Op::delete_:  return object_delete(process, code_list, start);
+  //case Lisp::Op::clone:  return clone(process, code_list, start);
   case Lisp::Op::send:    return send_object_message(process, code_list, start); 
   case Lisp::Op::if_:    { return if_(process, code_list, start ); }
   case Lisp::Op::iif:    { return if_(process, code_list, start ); }

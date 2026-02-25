@@ -232,6 +232,7 @@ public:
   Node::OpStatus ihash_create(Node&process, const Node::Vector &list_kv, size_t start=0);
   Node::OpStatus object_create(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus object_delete(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus clone(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus send_object_message(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus call_object(Node&Process, Node& object, const string method_fun, const Node::Vector&argv_list);
 

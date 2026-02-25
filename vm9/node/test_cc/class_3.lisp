@@ -1,5 +1,11 @@
 module Kernel 
 
+  defmacro clone(x y) 
+    quote
+      = (unquote y) (eval (unquote x) )
+    end.quote
+  end.defmacro
+
   class Car
     var car_type
     def initialize()
@@ -39,17 +45,17 @@ module Kernel
 
   def main (x y)
 
-    var v1
+    var v1 v3
 
     # f1()
     = v1 (new Dict "webster11  " "global" "affairs")
     = v2 v1
 
-    #print "v2 " v2
+    print "v2 " v2 "\n"
 
-    #delete v1
-    #print "v2 " v2
-    #delete v2
+#    delete v1
+#    print "v2 " v2
+#    delete v2
 
     loop
        print ( eval (read)) "\n"

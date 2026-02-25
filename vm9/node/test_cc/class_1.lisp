@@ -1,4 +1,11 @@
 module Kernel 
+  defmacro clone(x)
+    quote
+      eval (unquote x) 
+    end.quote
+  
+  end.defmacro
+
   class Car
     var car_type
     def initialize()
@@ -66,6 +73,7 @@ module Kernel
     = m2 (new Dict2 "construction" "fishery" "saliing")
 
     f1()
+:e 
 
     loop
        print ( eval (read)) "\n"

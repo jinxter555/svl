@@ -319,9 +319,9 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
   
       auto var_ref = var_lookup(scope_ref_status.second, name);
       if(var_ref.first)  {
-        cout << "found var " << name<< "\n";
+        //cout << "found var " << name<< "\n";
         if(Lisp::type(var_ref.second)==Lisp::Type::object) {
-          cout << "It's an object var " << var_ref << "\n\n";
+         // cout << "It's an object var " << var_ref << "\n\n";
           object_finalize(process, var_ref.second);
           var_ref.second.delete_();
 
@@ -334,9 +334,9 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
 
       auto immute_ref = immute_lookup(scope_ref_status.second, name);
       if(immute_ref.first)  {
-        cout << "found immute" << immute_ref << "\n";
+        //cout << "found immute" << immute_ref << "\n";
         if(Lisp::type(immute_ref.second)==Lisp::Type::object) {
-          cout << "It's an object immute" << immute_ref << "\n\n";
+         // cout << "It's an object immute" << immute_ref << "\n\n";
           object_finalize(process, immute_ref.second);
           immute_ref.second.delete_();
         }
@@ -355,6 +355,9 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
   return {true, Node::create(atom_ok, Node::Type::Atom)};
 }
 
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::clone(Node&process, const Node::Vector &list, size_t start) {
+}
 
 //------------------------------------------------------------------------
 // create a map object
