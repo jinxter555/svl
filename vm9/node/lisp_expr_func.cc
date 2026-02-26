@@ -334,7 +334,6 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
         scope_vars_ref_status.second.delete_key(name);
 
         return {true, Node::create(atom_ok, Node::Type::Atom)};
-        continue;
       }
 
       auto immute_ref = immute_lookup(scope_ref_status.second, name);
@@ -352,7 +351,6 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
         scope_immute_ref_status.second.delete_key(name);
 
         return {true, Node::create(atom_ok, Node::Type::Atom)};
-        continue;
       }
 
 
