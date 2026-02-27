@@ -15,8 +15,37 @@
 
 using namespace std;
 
+class GCObject;
 
-class Node {
+class Visitor {
+  friend class Node;
+  virtual void visit(GCObject* obj) = 0;
+  //virtual ~Visitor() = default;
+};
+
+class GCObject {
+  friend class Marker;
+  friend class ObjectStore;
+private:
+  long id=0;
+  bool marked = false;
+public:
+//  GCObject() ;
+ // virtual ~GCObject() ;
+  virtual void accept(Visitor& v) =0 ;
+  virtual string _to_str() const = 0 ;
+};
+
+class Marker : public Visitor {
+public:
+  void visit(GCObject *obj) ;
+
+};
+
+
+
+
+class Node : public GCObject {
   friend class Tree;
   friend class LispExpr;
   friend class LispReader;
@@ -55,6 +84,9 @@ public:
   using OpStatusRef = pair<bool, Node&>;
   using SExpr= pair<unique_ptr<Node>, unique_ptr<Node>>;
 
+  vector <GCObject*> edges;
+
+ void accept(Visitor&v) override;
 
 
   Node();
@@ -207,7 +239,7 @@ public:
   OpStatus empty() const;
   bool empty_container() const;
   //
-  string _to_str() const;
+  string _to_str() const override;
 
 
   static string _to_str(const Map&m) ;
@@ -272,3 +304,19 @@ ostream& operator<<(ostream& os, const Node::OpStatusRef& s) ;
 extern Node null_node;
 
 //extern unordered_map<Node::Integer , string> Atoms;
+
+class ObjectStore {
+public:
+  //Node::Integer register_object(unique_ptr<GCObject> obj);
+  Node::Integer register_object(shared_ptr<GCObject> obj);
+  void add_root(long id);
+  void collect();
+  void print();
+
+
+private:
+  Node::Integer current_id=1;
+
+  unordered_map<long, shared_ptr<GCObject>> registry;
+  vector <GCObject*> roots;
+};

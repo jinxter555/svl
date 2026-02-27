@@ -56,6 +56,10 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
           auto current_frame = frame_current(process);
           cout << current_frame << "\n\n";
         }
+        if(atom == Lang::str_to_atom("GC")) {
+          ObjStore.print();
+
+        }
 
         continue;
       }

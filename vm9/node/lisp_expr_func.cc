@@ -264,7 +264,8 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   attach_class_vars_to_object(process, *object, var_ref_status.second._get_vector_ref());
   // inject vars into contructor 
 
-  auto shared_object_call = Node::container_obj_to_US(move(object));
+  //auto shared_object_call = Node::container_obj_to_US(move(object));
+  auto shared_object_call = object_register(move(object));
   auto shared_object_ret = Node::ptr_USU(shared_object_call);
 
   vector<string> constructor_name = {FUNCTION, INITIALIZE};
@@ -279,9 +280,7 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
     }
     auto &argv_list_vector = argv_status.second->_get_vector_ref();
   
-    //argv_list_vector.insert(argv_list_vector.begin(), Node::ptr_US( move(shared_object_call)));
-    //argv_list_vector[0] = Node::ptr_US( move(shared_object_call));
-    argv_list_vector[0] = move(shared_object_call);
+    argv_list_vector[0] = move(shared_object_call);  // this object
   
     call(process, constructor_ref_status.second, move(argv_list_vector));
     return {true, move(shared_object_ret)};
@@ -366,6 +365,7 @@ Node::OpStatus LispExpr::clone(Node&process, const Node::Vector &list, size_t st
   MYLOGGER(trace_function, "LispExpr::clone(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+  return {true, Node::create()};
 
 }
 
@@ -394,7 +394,7 @@ Node::OpStatus LispExpr::send_object_message(Node&process, const Node::Vector &l
     .second.get_node(CLASS_PTR)
     .second.get_node(FUNCTION);
 
-  auto object_uptr = Node::ptr_USU(object);
+  auto object_uptr = Node::ptr_USU(object); // object_uptr becomes 'this' object as the first argument in argv_list
 
   if(!fun_ref_status.first) {
     cerr << "in send_object_Message(...) error looking up methods fun_ref_status: "  << fun_ref_status.second << "\n";

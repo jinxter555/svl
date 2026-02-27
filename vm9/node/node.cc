@@ -971,6 +971,7 @@ bool Node::empty_container() const {
 //------------------------------------------------------------------------
 // convert container objects map, list, vector, deque to unqiue_ptr(shared_ptr);
 unique_ptr<Node> Node::container_obj_to_US(unique_ptr<Node> node) {
+  MYLOGGER(trace_function, "Node::container_obj_to_US(unique_ptr<Node>node)", __func__, SLOG_FUNC_INFO);
   switch(node->type_) {
   case Node::Type::Map:
   case Node::Type::List:

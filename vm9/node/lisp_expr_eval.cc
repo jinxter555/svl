@@ -176,6 +176,12 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 
     return {true, rv_ref_status.second.clone()};
   }
+  case Node::Type::ObjectId: { // object
+    cout << "eval node object_id!\n";
+    auto object_ref = object_get(process, code_node);
+    return {object_ref.first, object_ref.second.clone()};
+    break;
+  }
   case Node::Type::Map: { // object, lambda, 
     cout << "eval node map!\n";
     return {true, code_node.clone()};
@@ -183,9 +189,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     
   case Node::Type::List: { // object, lambda, 
     cout << "code node list: " << code_node._to_str()  << "\n";
-
     break;
   }
+
+
   case Node::Type::Shared: { // object, lambda, 
     MYLOGGER_MSG(trace_function, string("Shared code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
     //cout << "code node Shared\n";

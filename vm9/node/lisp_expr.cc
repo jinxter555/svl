@@ -556,6 +556,11 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
   auto &value_expr = var_list[start+1];
   auto value_status = eval(process, *value_expr);
   if(!value_status.first) return value_status;
+  if( value_status.second->type_ == Node::Type::Map || 
+      value_status.second->type_ == Node::Type::Shared) {
+
+    //cout << "= 'x' map type or shared type\n";
+  }
   //cout << "ret value : " << value_status << "\n";
   return assign_attach(process, identifier, move(value_status.second));
 
@@ -686,14 +691,16 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
   
   if(nested_name.size() == 1) {   // assign non nested  map scalar value
     if(!scope_vars_ref_status.second.m_has_key(identifier)){
-      if(!scope_immute_ref_status.second.m_has_key(identifier))  // doesn't exist and assign only once
-        return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
-      else  {
+      if(!scope_immute_ref_status.second.m_has_key(identifier))  {// doesn't exist and assign only once
+        //--- return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
+        return scope_immute_ref_status.second.set(identifier,  object_register(  move(value_ptr)));
+      } else  {
         cerr << "identifier '" << identifier <<"' can not be reassigned\n";
         return {false, nullptr};
       }
     }
-    return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
+    //-- return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
+    return scope_vars_ref_status.second.set(identifier,  object_register(move(value_ptr)));
 
   }
 
@@ -952,5 +959,37 @@ vector<string> LispExpr::full_path_fun(Node&process, const string fun_name) {
   //cout << "fun_name: " << fun_name << "\n";
   //cout << "fun_path: " << join_str(fun_path, "--") << "\n";
   return fun_path;
+
+}
+
+
+
+Node::OpStatusRef  LispExpr::object_get(Node&process, const Node& object_id) {
+  MYLOGGER(trace_function, "LispExpr::object_get(Node&process, Node&object_id)", __func__, SLOG_FUNC_INFO);
+  return {true, null_node};
+
+}
+unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register with Object Store
+  MYLOGGER(trace_function, "LispExpr::object_register(unqiue_ptr<Node> node)", __func__, SLOG_FUNC_INFO);
+  if(node->type_ == Node::Type::Shared 
+    || node->type_ == Node::Type::Raw 
+    || node->type_ == Node::Type::Unique) {
+      Node::create_error(Error::Type::Unknown, "LispExpr::container_obj_to_US() too complicated to do pointer->pointer");
+  }
+  switch(node->type_) {
+  case Node::Type::Map:
+  case Node::Type::List:
+  case Node::Type::Vector:
+  case Node::Type::DeQue: {
+    shared_ptr<Node> s_ptr_node = move(node);
+    ObjStore.register_object(s_ptr_node);
+    return make_unique<Node>(s_ptr_node);
+
+  }
+  default: {}
+  }
+  //return move(node);
+  return node;
+
 
 }

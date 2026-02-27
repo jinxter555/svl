@@ -19,6 +19,10 @@ class LispExpr : public Lang, public Lisp {
 private:
   Interactive *interface; // interface with command line, repl prompt, 
   LispReader reader;
+
+  ObjectStore ObjStore;
+
+
   string build_namespace_default ="Main";
   vector<string> build_namespace ={ build_namespace_default };
   //vector<string> build_namespace ={ };
@@ -145,6 +149,9 @@ public:
 
   LispReader& get_reader(); // lisp lexer and parser
 
+
+  // get object
+
   //Node::Integer str_to_atom(const string& input);
   //Node::OpStatus atom_to_str(Node::Integer v);
 
@@ -232,6 +239,11 @@ public:
   Node::OpStatus ihash_create(Node&process, const Node::Vector &list_kv, size_t start=0);
   Node::OpStatus object_create(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus object_delete(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatusRef  object_get(Node&process, const Node& object_id);  // returns object from "GC"
+
+  unique_ptr<Node> object_register(unique_ptr<Node> node) ; // register with Object Store
+
+
   Node::OpStatus clone(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus send_object_message(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus call_object(Node&Process, Node& object, const string method_fun, const Node::Vector&argv_list);

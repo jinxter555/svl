@@ -9,7 +9,7 @@ kernel.o lang.o lisp.o  error.o \
 lisp_expr.o lisp_expr_parse.o  lisp_expr_eval.o lisp_expr_func.o lisp_expr_call.o \
 lisp_expr_helpers.o \
 lisp_reader.o lisp_reader_infix.o scope_logger.o commandline.o my_helpers.o lisp_expr_keywords.o \
-io_file.o
+io_file.o gc.o
 
 #objects = (wildcard: *.cc)
 headers  := (wildcard: *.hh)
