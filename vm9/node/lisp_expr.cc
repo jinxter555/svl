@@ -445,7 +445,6 @@ Node::OpStatus LispExpr::run_program() {
   //cout << "init: " << proc_1.second << "\n";
 
   return eval(proc_1.second, code_list_status.second);
-  //return  {true, nullptr};
 
 }
 

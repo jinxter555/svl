@@ -494,7 +494,7 @@ Node::OpStatus Node::add(unique_ptr<Node> child) {
 
   List& list = get<List>(value_);
   list.push_back(move(child));
-  return {true, nullptr};
+    return {true, Node::create()};
 }
 
 Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
@@ -506,7 +506,7 @@ Node::OpStatus Node::add(const string&key, unique_ptr<Node> child) {
   if(!map.try_emplace(key, std::move(child)).second) {
     return {false, create_error(Error::Type::KeyAlreadyExists, "Key '" + key + "' already exists in map.")};
   }
-  return {true, nullptr};
+    return {true, Node::create()};
 }
 
 
@@ -517,7 +517,7 @@ Node::OpStatus Node::delete_key(const string &key) {
   Map& map = get<Map>(value_);
   if(map.erase(key)==0)
     return {false, create_error(Error::Type::InvalidOperation,  "Key '" + key + "' not found in map.")};
-  return {true, nullptr};
+  return {true, Node::create()};
 }
 
 Node::OpStatus Node::delete_key(Integer key) {
@@ -527,7 +527,7 @@ Node::OpStatus Node::delete_key(Integer key) {
   IMap& map = get<IMap>(value_);
   if(map.erase(key)==0)
     return {false, create_error(Error::Type::InvalidOperation,  "Key '" + to_string( key) + "' not found in map.")};
-  return {true, nullptr};
+  return {true, Node::create()};
 }
 
 //------------------------------------------------------------------------
@@ -628,7 +628,7 @@ Node::OpStatus Node::clear() {
   }
   List& list = get<List>(value_);
   list.clear();
-  return {true, nullptr}; // Success
+  return {true, Node::create()};
 }
 
 
@@ -865,7 +865,7 @@ Node::OpStatus Node::list_add() const {
         }
       }
       return {true, move(result)};
-    } else { return {false, nullptr}; }
+    } else { return {false, Node::create_error(Error::Type::NotEqual, "list_add() type: error!")}; }
     return {true, move(result)};
   }, value_);
 }

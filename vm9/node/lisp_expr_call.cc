@@ -141,8 +141,9 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
     frame->set(CURRENT_MODULE_PTR, &module_node); 
 
   }else {
-    cerr << "fun has no class_ptr or module_ptr!\n";
-    return {false, nullptr};
+    auto msg = "fun has no class_ptr or module_ptr!";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
   }
 
 
@@ -518,13 +519,12 @@ Node::OpStatus LispExpr::funcall(Node& process, const Node::Vector& code_list, s
 
     return call_lambda(process, *s_ptr, move(args) );
   }
-  default: 
-    cerr << "funcall() fun_var lookup up failed " << fun_var_ptr->_to_str() << " is not a Node::Type::Map primitive\n";
-    cout << "get type: " << obj_ref_status.second.get_type() << "\n";
-    return {false, Node::create_error(Error::Type::Parse, "funcall() fun_var identifier lookup failed! " + fun_var_ptr->_to_str())};
-  }
-  cout << "fun call var!\n";
-  return {true, nullptr};
+  default:  {}}
+  cerr << "funcall() fun_var lookup up failed " << fun_var_ptr->_to_str() << " is not a Node::Type::Map primitive\n";
+  cout << "get type: " << obj_ref_status.second.get_type() << "\n";
+
+  return {false, Node::create_error(Error::Type::Parse, "funcall() fun_var identifier lookup failed! " + fun_var_ptr->_to_str())};
+
 }
 
 //

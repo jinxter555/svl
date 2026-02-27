@@ -265,17 +265,17 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 
   case Lisp::Op::class_:   {
     cout << "class in eval!\n"; //return map_messages(process, code_list, start );
-    return {true, nullptr};
+    return {true, Node::create()};
   }
   case Lisp::Op::private_:   {
     cout << "private in eval!\n"; //return map_messages(process, code_list, start );
-    return {true, nullptr};
+    return {true, Node::create()};
   }
 
   case Lisp::Op::call_extern: { return call_extern(process, code_list, start ); }
   case Lisp::Op::defun:   {
     cout << "defun in eval!\n";
-    return {true, nullptr};
+    return {true, Node::create()};
   }
   default:{ return  eval_math(process, op_head, code_list, start); }
   } 

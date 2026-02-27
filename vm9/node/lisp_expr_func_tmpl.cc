@@ -24,7 +24,6 @@ Node::OpStatus LispExpr::builtin_print(Node& env, const T& list) {
       }
     }
     //return {true, Node::create()};
-    //return {true, nullptr};
     return {true, Node::create()};
   } else {
     cout << "builtin_print something\n";
