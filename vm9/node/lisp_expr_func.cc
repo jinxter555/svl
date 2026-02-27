@@ -294,7 +294,7 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
 
 // call finalize() and node.delete
 Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::object_create(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::object_delete(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
 

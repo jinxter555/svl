@@ -58,6 +58,18 @@ bool Node::is_nil() {
   return type_ == Type::Null ? true : false;
 }
 
+bool Node::is_container() {
+  switch(type_) {
+  case Node::Type::Map:
+  case Node::Type::List:
+  case Node::Type::Vector:
+  case Node::Type::DeQue: 
+    return true;
+  default:  {}
+  }
+  return false;
+}
+
 Node::Node(ptr_S ptr) {value_ = ptr; type_ = Type::Shared;}
 Node::Node(ptr_R ptr) {value_ = ptr; type_ = Type::Raw;}
 Node::Node(ptr_U ptr) {value_ = move(ptr); type_ = Type::Unique;}

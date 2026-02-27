@@ -695,8 +695,9 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
         //--- return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
         return scope_immute_ref_status.second.set(identifier,  object_register(  move(value_ptr)));
       } else  {
-        cerr << "identifier '" << identifier <<"' can not be reassigned\n";
-        return {false, nullptr};
+        auto msg = "identifier '" + identifier + "' can not be reassigned";
+        cerr << msg << "\n";
+        return {false, Node::create(msg)};
       }
     }
     //-- return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
@@ -708,9 +709,9 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
   // need to change to allow args
   if(!scope_vars_ref_status.second.m_has_key(nested_name[0]) &&
       !scope_args_ref_status.second.m_has_key(nested_name[0])){
-    //cerr << "identifier " << identifier  <<" can not be reassigned\n";
-    cerr << "Identifier: '" << nested_name[0] <<"' is not a variable. Object and Maps have to be variables to be re-assigned\n";
-    return {false, nullptr};
+    auto msg = "Identifier: '" + nested_name[0] +"' is not a variable. Object and Maps have to be variables to be re-assigned";
+    cerr  << msg << "\n";
+    return {false, Node::create(msg)};
   }
 
   //return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
@@ -971,19 +972,24 @@ Node::OpStatusRef  LispExpr::object_get(Node&process, const Node& object_id) {
 }
 unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register with Object Store
   MYLOGGER(trace_function, "LispExpr::object_register(unqiue_ptr<Node> node)", __func__, SLOG_FUNC_INFO);
-  if(node->type_ == Node::Type::Shared 
-    || node->type_ == Node::Type::Raw 
-    || node->type_ == Node::Type::Unique) {
-      Node::create_error(Error::Type::Unknown, "LispExpr::container_obj_to_US() too complicated to do pointer->pointer");
-  }
+
   switch(node->type_) {
-  case Node::Type::Map:
+  case Node::Type::Shared:
+  case Node::Type::Raw:
+  case Node::Type::Unique: {
+      //Node::create_error(Error::Type::Unknown, "LispExpr::container_obj_to_US() too complicated to do pointer->pointer");
+      //cout << "LispExpr::object_regsiter() Shared, Raw, Unique\n";
+      MYLOGGER_MSG(trace_function, "LispExpr::object_regsiter() Shared, Raw, Unique", SLOG_FUNC_INFO+30);
+      break;
+  }
+  case Node::Type::DeQue:
   case Node::Type::List:
   case Node::Type::Vector:
-  case Node::Type::DeQue: {
+  case Node::Type::Map: {
     shared_ptr<Node> s_ptr_node = move(node);
-    ObjStore.register_object(s_ptr_node);
+    auto obj_store_id = ObjStore.register_object(s_ptr_node);
     return make_unique<Node>(s_ptr_node);
+
 
   }
   default: {}
