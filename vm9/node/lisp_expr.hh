@@ -244,6 +244,8 @@ public:
   unique_ptr<Node> object_register(unique_ptr<Node> node) ; // register with Object Store
 
 
+
+
   Node::OpStatus clone(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus send_object_message(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus call_object(Node&Process, Node& object, const string method_fun, const Node::Vector&argv_list);
@@ -296,5 +298,8 @@ public:
   template <typename T>
   Node::OpStatus builtin_print_n(Node& process, const T& list, size_t start=0);
   Node::OpStatus builtin_print_r(Node& process, const Node::Vector& cc_vec, size_t start=0);
+
+  //
+  Node::OpStatus gc_get_roots(Node&process);
 
 };

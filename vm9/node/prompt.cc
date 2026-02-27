@@ -65,11 +65,22 @@ string LangPrompt::read() {
   MYLOGGER(trace_function , "LangPrompt::read()" , __func__, SLOG_FUNC_INFO);
   char *input;
   std::string input_str;
+ do {
   input = readline(prompt_string.c_str());
+  if(!input) {
+    exit(1);
+  }
+  input_str = input; 
+  if(input ==nullptr || input_str=="") {
+   // free(input);
+    return "";
+  }
+} while(input_str=="" || isspace(input_str[0]) );
+
   add_history(input);
   history.push_back(input);
-  input_str = input; 
-  if(input ==nullptr) return "";
+
+
   free(input);
   return input_str;
 

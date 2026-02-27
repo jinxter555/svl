@@ -991,5 +991,36 @@ unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register 
   //return move(node);
   return node;
 
+}
 
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::gc_get_roots(Node&process) {
+  Node::Vector roots;
+  auto frames_status = process.get_node(FRAMES);
+  if(!frames_status.first)
+    return {false, Node::create_error(Error::Type::Unknown, "Can't get frames")};
+
+  for(auto &frame : frames_status.second._get_vector_ref()) {
+    auto scopes_ref_status = frame->get_node(SCOPES);
+    if(!scopes_ref_status.first) return {false, scopes_ref_status.second.clone()};
+
+    Node::Integer s_scopes = scopes_ref_status.second.size_container() ;
+
+    for(Node::Integer i=s_scopes-1; i>=0; i--) {
+      auto scope_ref_status = scopes_ref_status.second[i];
+      if(!scope_ref_status.first) {
+        cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
+        return {false, scope_ref_status.second.clone()};
+      }
+      auto var_ref = scope_ref_status.second[VAR];
+      cout << "var_ref: " << var_ref << "\n";
+      auto immute_ref = scope_ref_status.second[IMMUTE];
+      cout << "immute_ref: " << immute_ref << "\n";
+    }
+    cout << "\n\n";
+
+
+    cout << "scopes: " << scopes_ref_status<< "\n";
+  }
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
 }

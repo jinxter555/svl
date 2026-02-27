@@ -58,7 +58,9 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
         }
         if(atom == Lang::str_to_atom("GC")) {
           ObjStore.print();
-
+        }
+        if(atom == Lang::str_to_atom("gc_roots")) {
+          gc_get_roots(process);
         }
 
         continue;
