@@ -19,13 +19,14 @@ class GCObject;
 
 class Visitor {
   friend class Node;
-  virtual void visit(GCObject* obj) = 0;
+  virtual void visit(GCObject& obj) = 0;
   //virtual ~Visitor() = default;
 };
 
 class GCObject {
   friend class Marker;
   friend class ObjectStore;
+  friend class LispExpr;
 private:
   long id=0;
   bool marked = false;
@@ -38,7 +39,7 @@ public:
 
 class Marker : public Visitor {
 public:
-  void visit(GCObject *obj) ;
+  void visit(GCObject &obj) override;
 
 };
 
@@ -84,7 +85,7 @@ public:
   using OpStatusRef = pair<bool, Node&>;
   using SExpr= pair<unique_ptr<Node>, unique_ptr<Node>>;
 
-  vector <GCObject*> edges;
+  vector <GCObject> edges;
 
  void accept(Visitor&v) override;
 
@@ -160,6 +161,8 @@ public:
   OpStatusRef get_node(const vector<string>&path);
   OpStatusRef get_node(size_t i);
   bool has_node(const vector<string>&path);
+
+  Node& get_node(); // returns node if it's ptrs shared raw unique
   //
   //OpStatusRef get_node_with_ptr(const string&key);
   //OpStatusRef get_node_with_ptr(const vector<string>&path);
@@ -319,5 +322,5 @@ private:
   Node::Integer current_id=1;
 
   unordered_map<long, shared_ptr<GCObject>> registry;
-  vector <GCObject*> roots;
+  vector <GCObject> roots;
 };

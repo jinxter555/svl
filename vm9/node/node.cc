@@ -65,9 +65,39 @@ bool Node::is_container() {
   case Node::Type::Vector:
   case Node::Type::DeQue: 
     return true;
+  case Node::Type::Shared: {
+    auto& ptr = get<ptr_S>(value_);
+    return ptr->is_container();
+  }
+  case Node::Type::Unique: {
+    auto& ptr = get<ptr_U>(value_);
+    return ptr->is_container();
+  }
+  case Node::Type::Raw:  {
+    auto& ptr = get<ptr_R>(value_);
+    return ptr->is_container();
+  }
   default:  {}
   }
   return false;
+}
+Node& Node::get_node() {
+  switch(type_) {
+  case Node::Type::Shared: {
+    auto& ptr = get<ptr_S>(value_);
+    return ptr->get_node();
+  }
+  case Node::Type::Unique: {
+    auto& ptr = get<ptr_U>(value_);
+    return ptr->get_node();
+  }
+  case Node::Type::Raw:  {
+    auto& ptr = get<ptr_R>(value_);
+    return ptr->get_node();
+  }
+  default:  {}
+  }
+  return *this;
 }
 
 Node::Node(ptr_S ptr) {value_ = ptr; type_ = Type::Shared;}

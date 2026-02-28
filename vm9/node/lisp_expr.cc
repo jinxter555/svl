@@ -1000,6 +1000,7 @@ unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register 
 
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::gc_get_roots(Node&process) {
+  MYLOGGER(trace_function, "LispExpr::gc_get_roots(Node& process)", __func__, SLOG_FUNC_INFO);
   Node::Vector roots;
   auto frames_status = process.get_node(FRAMES);
   if(!frames_status.first)
@@ -1017,10 +1018,32 @@ Node::OpStatus LispExpr::gc_get_roots(Node&process) {
         cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
         return {false, scope_ref_status.second.clone()};
       }
+
       auto var_ref = scope_ref_status.second[VAR];
-      cout << "var_ref: " << var_ref << "\n";
+      auto &var_map = var_ref.second._get_map_ref();
+      //cout << "var_ref: " << var_ref << "\n";
+
+      Marker marker;
+      for(auto &ele : var_map) {
+        //cout << "var-ele-key: " << ele.first << "var-ele-value: " << *ele.second << "\n";
+        if( ele.second->is_container()) { 
+          //cout << "var-ele-key: " << ele.first << ", var-ele-value: " << *ele.second << "\n"; 
+          //cout << "marked: " <<  ele.second->marked << "type: " << Node::_to_str(ele.second->type_) << "\n";
+          marker.visit(ele.second->get_node());
+        }
+      }
+
+      
       auto immute_ref = scope_ref_status.second[IMMUTE];
-      cout << "immute_ref: " << immute_ref << "\n";
+      auto &immute_map = immute_ref.second._get_map_ref();
+      for(auto &ele : immute_map) {
+        if( ele.second->is_container()) {
+          //cout << "immute-ele-key: " << ele.first << ", immute-ele-value: " << *ele.second << "\n";
+          marker.visit(ele.second->get_node());
+        }
+      }
+
+      //cout << "immute_ref: " << immute_ref << "\n";
     }
     cout << "\n\n";
 

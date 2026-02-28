@@ -12,15 +12,16 @@ GCObject::~GCObject() {
   //cout << "deleting object id: " << id << "\n";
 }*/
 //------------------------------------------------------------------------
-void Marker::visit(GCObject *obj) {
-  if(obj && !obj->marked) {
-    obj->marked = true;
-    obj->accept(*this);
+void Marker::visit(GCObject &obj) {
+  if(!obj.marked) {
+    cout << "marking object: " << obj._to_str() << "\n";
+    obj.marked = true;
+    obj.accept(*this);
   }
 }
 
 void Node::accept(Visitor&v) {
-  for(GCObject* neighbor : edges) {
+  for(GCObject& neighbor : edges) {
     v.visit(neighbor);
   }
 
@@ -42,7 +43,7 @@ Node::Integer ObjectStore::register_object(shared_ptr<GCObject> obj) {
 void ObjectStore::collect() {
   Marker marker;
 
-  for(GCObject* root : roots) {
+  for(GCObject& root : roots) {
     marker.visit(root);
   }
 
@@ -58,6 +59,6 @@ void ObjectStore::collect() {
 }
 void ObjectStore::print() {
   for(auto &obj : registry ) {
-    cout << "obj.id: " << obj.first << ", " << obj.second->_to_str() << "\n";
+    cout << "obj.id: " << obj.first << " marked: " << obj.second->marked  <<  " , " << obj.second->_to_str() << "\n";
   }
 }

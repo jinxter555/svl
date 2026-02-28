@@ -68,7 +68,8 @@ string LangPrompt::read() {
   do {
     input = readline(prompt_string.c_str());
     if(!input) {
-      exit(1);
+      save_history();
+      exit(0);
     }
     input_str = input; 
     if(input ==nullptr || input_str=="") {
