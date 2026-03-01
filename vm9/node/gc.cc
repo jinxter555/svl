@@ -25,6 +25,19 @@ void Node::accept(Visitor&v) {
     v.visit(neighbor);
   }
 
+  if(is_container()) { cout << "container type: " << _to_str(type_) << ",  object: " << _to_str() << "\n"; }
+  switch(type_) {
+  case Type::Vector: {
+    for(auto &ele : _get_vector_ref() ) {
+      cout << "ele: " << *ele << "\n";
+    }
+  }
+  case Type::Map: {
+    for(auto &ele : _get_map_ref() ) {
+      cout << "ele-key : " << ele.first << ", ele-value: " << ele.second->_to_str() << "\n";
+    }
+  }
+  default: {}}
 
 }
 
@@ -57,6 +70,7 @@ void ObjectStore::collect() {
     }
   }
 }
+
 void ObjectStore::print() {
   for(auto &obj : registry ) {
     cout << "obj.id: " << obj.first << " marked: " << obj.second->marked  <<  " , " << obj.second->_to_str() << "\n";

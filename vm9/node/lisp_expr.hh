@@ -301,5 +301,6 @@ public:
 
   //
   Node::OpStatus gc_get_roots(Node&process);
+  Node::OpStatus mark(Node&process);
 
 };

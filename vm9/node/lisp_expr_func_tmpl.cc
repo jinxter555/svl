@@ -59,7 +59,14 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
           ObjStore.print();
         }
         if(atom == Lang::str_to_atom("gc_roots")) {
-          gc_get_roots(process);
+          auto roots_status = gc_get_roots(process);
+          if(!roots_status.first) {
+            cerr <<"gc_get_roots(): roots_status error: " << roots_status << "\n";
+            return roots_status;
+           }
+          for(auto &ele : roots_status.second->_get_vector_ref()) {
+            cout << "root object: " << ele->_to_str() << "\n";
+          }
         }
 
         continue;

@@ -2,8 +2,8 @@ module Kernel
   class Range
     (var begin fin step state)
 
-    def Range(start fin step)  
-      ; assign needs to return a value
+    def initialize(start fin step)  
+      # assign needs to return a value
       = @begin start
       = @state start
       = @fin fin
@@ -16,10 +16,10 @@ module Kernel
       (:ok @state)
     end.def
 
-    ; return statement needed
+    # return statement needed
     def next ()
       = @state (+ @state @step)
-       ;print "in next, state= " @state "\n"
+       # print "in next, state= " @state "\n"
 
       iif (>= @state @fin)
         return (:end @fin)
@@ -30,11 +30,14 @@ module Kernel
         return (:ok @state)
       end.iif
 
-      ;print "i am in next(v): \n"
+      # print "i am in next(v): \n"
     end.def
 
     def end ()
       assign @state @begin
+    end.def
+
+    def finalize()
     end.def
 
   end.class
@@ -44,9 +47,9 @@ module Kernel
       var rv u (forever~ true)
       = rv (send (unquote it)  :init)
   
-      ;faz (rv) (unquote cblock)
+      # faz (rv) (unquote cblock)
       while(forever~)
-        ;= rv (send (unquote it)  :next)
+        #= rv (send (unquote it)  :next)
         
 
         iif (= (:end _) rv)
@@ -65,8 +68,8 @@ module Kernel
 
         faz (rv) (unquote cblock)
         = rv (send (unquote it)  :next)
-        ;faz (rv2) (unquote cblock)
-        ; faz (rv) (unquote cblock)
+        #faz (rv2) (unquote cblock)
+        # faz (rv) (unquote cblock)
 
       
 
@@ -80,9 +83,10 @@ module Kernel
 
   def main (x y)
     var i forever
-    = r1 (new Range 1 6 3)
+    # = r1 (new Range 1 6 3)
+    = r1 (new Range 1 10 1)
 
-    ;send r1 :next 
+    #send r1 :next 
 
     (forloop r1 
       do (:ok i)

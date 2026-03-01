@@ -970,7 +970,8 @@ Node::OpStatusRef  LispExpr::object_get(Node&process, const Node& object_id) {
 
 }
 unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register with Object Store
-  MYLOGGER(trace_function, "LispExpr::object_register(unqiue_ptr<Node> node)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::object_register(unqiue_ptr<Node> node)", __func__, SLOG_FUNC_INFO)
+  MYLOGGER_MSG(trace_function, "node: " + node->_to_str(),  SLOG_FUNC_INFO)
 
   switch(node->type_) {
   case Node::Type::Shared:
@@ -984,12 +985,11 @@ unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register 
   case Node::Type::DeQue:
   case Node::Type::List:
   case Node::Type::Vector:
+  case Node::Type::IMap:
   case Node::Type::Map: {
     shared_ptr<Node> s_ptr_node = move(node);
     auto obj_store_id = ObjStore.register_object(s_ptr_node);
     return make_unique<Node>(s_ptr_node);
-
-
   }
   default: {}
   }
@@ -999,7 +999,7 @@ unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register 
 }
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::gc_get_roots(Node&process) {
+Node::OpStatus LispExpr::mark(Node&process) {
   MYLOGGER(trace_function, "LispExpr::gc_get_roots(Node& process)", __func__, SLOG_FUNC_INFO);
   Node::Vector roots;
   auto frames_status = process.get_node(FRAMES);
@@ -1033,7 +1033,6 @@ Node::OpStatus LispExpr::gc_get_roots(Node&process) {
         }
       }
 
-      
       auto immute_ref = scope_ref_status.second[IMMUTE];
       auto &immute_map = immute_ref.second._get_map_ref();
       for(auto &ele : immute_map) {
@@ -1045,10 +1044,51 @@ Node::OpStatus LispExpr::gc_get_roots(Node&process) {
 
       //cout << "immute_ref: " << immute_ref << "\n";
     }
-    cout << "\n\n";
-
-
-    cout << "scopes: " << scopes_ref_status<< "\n";
+    //cout << "scopes: " << scopes_ref_status<< "\n";
   }
   return {true, Node::create(atom_ok, Node::Type::Atom)};
+}
+
+Node::OpStatus LispExpr::gc_get_roots(Node&process) {
+  MYLOGGER(trace_function, "LispExpr::gc_get_roots(Node& process)", __func__, SLOG_FUNC_INFO);
+  Node::Vector roots;
+  auto frames_status = process.get_node(FRAMES);
+  if(!frames_status.first)
+    return {false, Node::create_error(Error::Type::Unknown, "Can't get frames")};
+
+  for(auto &frame : frames_status.second._get_vector_ref()) {
+    auto scopes_ref_status = frame->get_node(SCOPES);
+    if(!scopes_ref_status.first) return {false, scopes_ref_status.second.clone()};
+
+    Node::Integer s_scopes = scopes_ref_status.second.size_container() ;
+
+    for(Node::Integer i=s_scopes-1; i>=0; i--) {
+      auto scope_ref_status = scopes_ref_status.second[i];
+      if(!scope_ref_status.first) {
+        cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
+        return {false, scope_ref_status.second.clone()};
+      }
+
+      auto var_ref = scope_ref_status.second[VAR];
+      auto &var_map = var_ref.second._get_map_ref();
+
+      Marker marker;
+      for(auto &ele : var_map) {
+        if( ele.second->is_container()) { 
+          roots.push_back(Node::ptr_USU(ele.second));
+        }
+      }
+
+      auto immute_ref = scope_ref_status.second[IMMUTE];
+      auto &immute_map = immute_ref.second._get_map_ref();
+      for(auto &ele : immute_map) {
+        if( ele.second->is_container()) {
+          roots.push_back(Node::ptr_USU(ele.second));
+        }
+      }
+
+    }
+
+  }
+  return {true, Node::create(move(roots))};
 }

@@ -473,7 +473,7 @@ Node::OpStatus LispExpr::hash_create(Node&process, const Node::Vector &list_kv, 
   MYLOGGER(trace_function, "LispExpr::hash_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list_kv: ") + Node::_to_str(list_kv), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
-  Node::Map map;
+  Node::Map hash;
   auto obj_info = make_unique<Node>(Node::Type::Map);
 
   if(list_kv.empty()) return {true, Node::create(Node::Type::Map)}; // empty map
@@ -497,21 +497,25 @@ Node::OpStatus LispExpr::hash_create(Node&process, const Node::Vector &list_kv, 
       cerr << "hash create key,value eval pair error! "  <<  value_status << "\n";
       return value_status;
     }
-    map[key_ref_status.second._to_str()] = move(value_status.second);
+    hash[key_ref_status.second._to_str()] = move(value_status.second);
 
   }
   
   obj_info->set("type", Lisp::Type::hash );
-  map[OBJ_INFO] = move(obj_info);
+  hash[OBJ_INFO] = move(obj_info);
 
-  return {true, Node::create(move(map))};
+  auto shared_object_ret = object_register(Node::create(move(hash)));
+
+
+  // return {true, Node::create(move(hash))};
+  return {true, move(shared_object_ret)};
 }
 
 Node::OpStatus LispExpr::ihash_create(Node&process, const Node::Vector &list_kv, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::hash_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::ihash_create(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list_kv: ") + Node::_to_str(list_kv), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
-  Node::IMap map;
+  Node::IMap ihash;
   auto obj_info = make_unique<Node>(Node::Type::Map);
 
   if(list_kv.empty()) return {true, Node::create(Node::Type::Map)}; // empty map
@@ -536,7 +540,7 @@ Node::OpStatus LispExpr::ihash_create(Node&process, const Node::Vector &list_kv,
       return value_status;
     }
     try {
-    map[key_ref_status.second._get_integer()] = move(value_status.second);
+    ihash[key_ref_status.second._get_integer()] = move(value_status.second);
     } catch(...) {
       cerr << "hash key error! "  <<  key_ref_status.second._to_str() << "\n";
       return {false, key_ref_status.second.clone()};
@@ -545,8 +549,12 @@ Node::OpStatus LispExpr::ihash_create(Node&process, const Node::Vector &list_kv,
   }
   
   obj_info->set("type", Lisp::Type::ihash );
-  map[Lang::str_to_atom( OBJ_INFO)] = move(obj_info);
-  return {true, Node::create(move(map))};
+  ihash[Lang::str_to_atom( OBJ_INFO)] = move(obj_info);
+
+  auto shared_object_ret = object_register(Node::create(move(ihash)));
+
+  //return {true, Node::create(move(ihash))};
+  return {true, move(shared_object_ret)};
 }
 
 
