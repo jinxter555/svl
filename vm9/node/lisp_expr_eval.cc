@@ -271,6 +271,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     cout << "private in eval!\n"; //return map_messages(process, code_list, start );
     return {true, Node::create()};
   }
+  case Lisp::Op::interpreter:   return interpreter(process, code_list, start );
 
   case Lisp::Op::call_extern: { return call_extern(process, code_list, start ); }
   case Lisp::Op::defun:   {

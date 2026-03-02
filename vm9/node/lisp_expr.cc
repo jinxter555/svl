@@ -999,7 +999,7 @@ unique_ptr<Node> LispExpr::object_register(unique_ptr<Node> node) { // register 
 }
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::mark(Node&process) {
+Node::OpStatus LispExpr::gc_mark_roots(Node&process) {
   MYLOGGER(trace_function, "LispExpr::gc_get_roots(Node& process)", __func__, SLOG_FUNC_INFO);
   Node::Vector roots;
   auto frames_status = process.get_node(FRAMES);
@@ -1049,6 +1049,7 @@ Node::OpStatus LispExpr::mark(Node&process) {
   return {true, Node::create(atom_ok, Node::Type::Atom)};
 }
 
+//------------------------------------------------------------------------
 Node::OpStatus LispExpr::gc_get_roots(Node&process) {
   MYLOGGER(trace_function, "LispExpr::gc_get_roots(Node& process)", __func__, SLOG_FUNC_INFO);
   Node::Vector roots;
@@ -1091,4 +1092,17 @@ Node::OpStatus LispExpr::gc_get_roots(Node&process) {
 
   }
   return {true, Node::create(move(roots))};
+}
+
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::gc_sweep(Node&process) {
+  ObjStore.sweep();
+  return {true, Node::create()};
+}
+//------------------------------------------------------------------------
+
+Node::OpStatus LispExpr::gc_collect(Node&process) {
+  gc_mark_roots(process);
+  ObjStore.sweep();
+  return {true, Node::create()};
 }

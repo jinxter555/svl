@@ -60,6 +60,7 @@ bool Node::is_nil() {
 
 bool Node::is_container() {
   switch(type_) {
+  case Node::Type::IMap:
   case Node::Type::Map:
   case Node::Type::List:
   case Node::Type::Vector:
@@ -292,8 +293,9 @@ Lisp::Op Node::_get_lisp_op() const { return get<Lisp::Op>(value_); }
 Node::Integer Node::_get_integer() const { return get<Integer>(value_); }
 Node::Float Node::_get_float() const { return get<Float>(value_); }
 string Node::_get_str() const { return _to_str(); }
-Node::Map& Node::_get_map_ref() { 
 
+//------------------------------
+Node::Map& Node::_get_map_ref() { 
   switch(type_) {
   case Type::Shared: {
     auto sptr = get<ptr_S>(value_);
@@ -308,8 +310,28 @@ Node::Map& Node::_get_map_ref() {
   }
   
   return get<Map>(value_); 
-
 }
+//------------------------------
+Node::IMap& Node::_get_imap_ref() { 
+
+
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->_get_imap_ref(); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->_get_imap_ref(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->_get_imap_ref(); }
+  default: {}
+  }
+  
+  return get<IMap>(value_); 
+}
+
+
 
 Node::Vector& Node::_get_vector_ref() { 
   switch(type_) {

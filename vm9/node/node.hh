@@ -232,6 +232,7 @@ public:
   bool _get_bool() const;
   string _get_str() const;
   Map& _get_map_ref() ;
+  IMap& _get_imap_ref() ;
   Vector& _get_vector_ref() ;
   List& _get_list_ref() ;
   ptr_S _get_ptr_s();
@@ -314,7 +315,7 @@ public:
   //Node::Integer register_object(unique_ptr<GCObject> obj);
   Node::Integer register_object(shared_ptr<GCObject> obj);
   void add_root(long id);
-  void collect();
+  void sweep();
   void print();
 
 

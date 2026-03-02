@@ -301,6 +301,10 @@ public:
 
   //
   Node::OpStatus gc_get_roots(Node&process);
-  Node::OpStatus mark(Node&process);
+  Node::OpStatus gc_mark_roots(Node&process);
+  Node::OpStatus gc_sweep(Node&process);
+  Node::OpStatus gc_collect(Node&process);
+
+  Node::OpStatus interpreter(Node& process, const Node::Vector& code_list, size_t start=0);
 
 };

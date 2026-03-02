@@ -1259,3 +1259,51 @@ Node::OpStatus LispExpr::case_(Node& process, const Node::Vector& list, size_t s
   }
   return  {true, Node::create()};
 }
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::interpreter(Node& process, const Node::Vector& list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::interpreter(Node& process, Vector&list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  if(list.size() < 3) {
+    auto msg = "Interpreter requries 3 arguments";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+  auto &element_cmd = list[start];
+  auto &element_arg = list[start+1];
+  auto ee = eval(process, *element_cmd);
+  auto ea = eval(process, *element_arg);
+  if(!ee.first ) return ee;
+  if(!ea.first ) return ea;
+  if(ee.second->type_!= Node::Type::Atom)
+    return ee;
+  if(ea.second->type_!= Node::Type::Atom)
+    return ea;
+  auto cmd = ee.second->_get_integer();
+  auto arg = ea.second->_get_integer();
+  if(cmd == str_to_atom("run")) {
+    cout << "command run!\n";
+  }
+  if(cmd == str_to_atom("gc")) {
+    cout << "command garbage collect:\n";
+    if(arg == str_to_atom("mark")) {
+      cout << "mark!\n";
+      gc_mark_roots(process);
+    } else if( arg== str_to_atom("sweep")) {
+      cout << "sweep!\n";
+      gc_sweep(process);
+
+    } else if( arg== str_to_atom("collect")) {
+      cout << "collect!\n";
+      gc_collect(process);
+    } else {
+      cerr << "unknown garbage collection command!";
+      return {true, Node::create(atom_error, Node::Type::Atom) };
+    }
+  }
+
+  return {true, Node::create(atom_ok, Node::Type::Atom) };
+
+
+}
