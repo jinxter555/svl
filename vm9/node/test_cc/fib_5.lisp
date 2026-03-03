@@ -4,7 +4,7 @@ module Kernel
     = t1  "t1 robot"
     = forever true
 
-     print (fib 6)  "\n"
+     print (fib 3)  "\n"
 
   end.def
 
@@ -13,8 +13,12 @@ module Kernel
     if[n <= 1]
       return n
     :else
-      # return (+  (fib[n-1]) (fib[n-2]))
-      return [\(fib(- n 1)) + \(fib(- n 2))]
+       return (+    \
+         (fib[n-1]) \
+         (fib[n-2]) \
+       )
+
+      #return [\(fib(- n 1)) + \(fib(- n 2))]
     end.if
 
   end.def

@@ -215,7 +215,8 @@ string Node::_to_str(const IMap&map) {
 string Node::_to_str(const Vector&list) {
   MYLOGGER(trace_function, "Node::_to_str(const Vector&list)", __func__, SLOG_TO_STR);
   size_t s = list.size(), i;
-  if(s==0) {return "Vector[]";}
+  //if(s==0) {return "Vector[]";}
+  if(s==0) {return "():nil";}
   string outstr("Vector[");
 
   for(i=0; i<s-1; i++) {
