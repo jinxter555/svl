@@ -163,21 +163,15 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
 
   Node* current = this;
   for(const auto&key : path) {
-    if(!current || current->type_ != Node::Type::Map) {
-      return {false, Error::ref(Error::Type::IndexWrongType, 
-      "current is nullptr, or not Map node/branch. Current key:" + key  +  
-      ", Current type: " + _to_str(current->type_))};
-    }
-
-    Node::Map& map = get<Node::Map>(current->value_);
-    auto it = map.find(key);
-
-    if(it==map.end()) {
+    auto current_node_ref = current->get_node(key);
+    if(!current_node_ref.first) {
       string msg = "key '" + key + "' not found in map.";
       return {false, Error::ref(Error::Type::KeyNotFound, msg)};
     }
 
-    current = it->second.get();
+    //cout << "currento node ref: " << current_node_ref << "\n";
+
+    current = &current_node_ref.second;
   }
   return {true, *current};
 }

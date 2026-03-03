@@ -36,6 +36,10 @@ void LispExpr::set_keywords() {
   map_->set("car", Op::car);
   map_->set("cdr", Op::cdr);
   map_->set("map", Op::map);
+  map_->set("index", Op::index);
+  map_->set("head", Op::head);
+  map_->set("body", Op::body);
+  map_->set("tail", Op::tail);
   map_->set("add", Op::add);
   map_->set("sub", Op::sub); 
   map_->set("mul", Op::mul);

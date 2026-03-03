@@ -42,6 +42,10 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::car: return "car";
     case Lisp::Op::cdr: return "cdr";
     case Lisp::Op::map: return "map";
+    case Lisp::Op::index: return "index";
+    case Lisp::Op::head: return "head";
+    case Lisp::Op::body: return "body";
+    case Lisp::Op::tail: return "tail";
 
     case Lisp::Op::add: return "add";
     case Lisp::Op::sub: return "sub";
