@@ -1307,3 +1307,51 @@ Node::OpStatus LispExpr::interpreter(Node& process, const Node::Vector& list, si
 
 
 }
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::index(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  size_t idx;
+
+  if(list_cc_vec.size() < 3) {
+    auto msg = "(indiex num vector_name) requries 3 arguments";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+
+  try {
+    auto idx_status = eval(process, *list_cc_vec[start]);
+    if(!idx_status.first) {
+      auto msg ="Can't eval index!\n";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::Parse, msg)};
+    }
+    idx = idx_status.second->_get_integer();
+  } catch(...) {
+     return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with idx. ")};
+
+  }
+
+  try {
+    auto array_status = eval(process, *list_cc_vec[start+1]);
+    if(!array_status.first) {
+      auto msg ="Can't eval array!\n";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::Parse, msg)};
+    }
+    auto &array_vector = array_status.second->_get_vector_ref();
+    if(array_vector.empty()) return {true, Node::create()};
+    if(idx < 0 || idx >= array_vector.size()) return {false, Node::create_error(Error::Type::IndexOutOfBounds, "Index out of bound!\n")};
+    auto &retv = array_vector[idx];
+    return {true, retv->clone()};
+  } catch(...) {
+     return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with array. ")};
+  }
+
+
+  cout <<"index: " << idx << "\n";
+  return {true, Node::create()};
+
+}

@@ -241,6 +241,10 @@ public:
   Node::OpStatus object_delete(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatusRef  object_get(Node&process, const Node& object_id);  // returns object from "GC"
 
+  Node::OpStatus index(Node&process, const Node::Vector &list, size_t start=0);
+
+
+
   unique_ptr<Node> object_register(unique_ptr<Node> node) ; // register with Object Store
 
 
