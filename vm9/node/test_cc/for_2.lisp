@@ -3,7 +3,7 @@ module Kernel
     (var begin fin step state)
 
     def Range(start fin step)  
-      ; assign needs to return a value
+      # assign needs to return a value
       = @begin start
       = @state start
       = @fin fin
@@ -16,10 +16,10 @@ module Kernel
       (:ok @state)
     end.def
 
-    ; return statement needed
+    # return statement needed
     def next ()
       = @state (+ @state @step)
-      ; print "next: " @state "\n"
+      # print "next: " @state "\n"
 
       if[@state == @fin]
         return (:end @fin)
@@ -30,7 +30,7 @@ module Kernel
         return (:ok @state)
       end.if
 
-      ;print "i am in next(v): \n"
+      #print "i am in next(v): \n"
     end.def
 
     def end ()
@@ -47,18 +47,18 @@ module Kernel
 
   defmacro forloop ( it cblock )
     quote
-           ; (unquote cblock) 
+           # (unquote cblock) 
       var rv u (forever~ true)
       = rv (send (unquote it)  :init)
 
 
   
-    ;  (faz (rv)
-    ;       do (:ok i)
-    ;        print i
-    ;        print "what is up\n"
-    ;       end.do
-    ;   )
+    #  (faz (rv)
+    #       do (:ok i)
+    #        print i
+    #        print "what is up\n"
+    #       end.do
+    #   )
 
       while (forever~)
         faz (rv) (unquote cblock)
@@ -79,7 +79,7 @@ module Kernel
         )
         end.if
 
-        ;print "rv: " rv "\n"
+        #print "rv: " rv "\n"
 
       end.while
       
@@ -103,9 +103,9 @@ module Kernel
   end.def
 
   def main (x y)
-    ;var i 
+    #var i 
     = r1 (new Range 1 13 3)
-    ;send r1 :next 
+    #send r1 :next 
 
     if [ true == true]
       print "true == true\n"
@@ -129,8 +129,8 @@ module Kernel
   
 
    (loop  (print (eval (read)) "\n"))
-   ; repl()
-   ;(repl())
+   # repl()
+   #(repl())
 
   end.def
 

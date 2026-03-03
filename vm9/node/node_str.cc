@@ -163,8 +163,10 @@ string Node::_to_str(const Map&map) {
     if(key == MODULE_PTR || key == CLASS_PTR  || key == CURRENT_CLASS_PTR
       || key == CURRENT_MODULE_PTR || key == CURRENT_FUNCTION_PTR) {
       outstr = q + key + q  + colon + "--*ptr--";
-    } else 
-      outstr = q + key + q  + colon + " " + val->_to_str();
+    } else  {
+      if(val) outstr = q + key + q  + colon + " " + val->_to_str();
+      else outstr = q + key + q  + colon + " " + "NULL-VAL";
+    }
     kv_paires.push_back(outstr);
   }
 

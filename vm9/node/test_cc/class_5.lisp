@@ -11,11 +11,11 @@ module Kernel
     def initialize()
       = @type  123
 
-      print  "car init\n"
+      # print  "car init\n"
     end.def
 
     def finalize()
-      print  "car fin\n"
+      #print  "car fin\n"
     end.def
 
   end.class
@@ -24,7 +24,7 @@ module Kernel
     (var size (length 123) w c1)
 
     def initialize(w1 w2 w3)  
-      print "Dict init:  " w1 "\n"
+      # print "Dict init:  " w1 "\n"
       = @w w1
       = @c1 (new Car  )
 
@@ -37,7 +37,7 @@ module Kernel
     end.def
 
     def finalize()
-      print @w " Dict finalize destructor!\n\n"
+      #print @w " Dict finalize destructor!\n\n"
     end.def
 
   end.class
@@ -51,7 +51,7 @@ module Kernel
     = v1 (new Dict "main-webster11  " "global" "affairs")
     = v2 v1
 
-    print "v2 " v2 "\n"
+    # print "v2 " v2 "\n"
 
 #    delete v1
 #    print "v2 " v2
@@ -67,7 +67,7 @@ module Kernel
     var m1 
     print "in f1\n"
     = m1 (new Dict "f1-webster11  " "global" "affairs")
-    print :gc
+    # print :gc
 
     #loop
     #   print ( eval (read)) "\n"
@@ -76,4 +76,15 @@ module Kernel
     print "\n"
   end.def
 
+
+  def fib(n) 
+
+    print "fib(n) is " n "\n"
+
+    return n
+  
+  end.def
+
+
 end.module
+

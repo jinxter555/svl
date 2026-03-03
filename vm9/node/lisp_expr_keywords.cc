@@ -91,6 +91,8 @@ void LispExpr::set_keywords() {
   map_->set("not", Op::not_);
   map_->set("and", Op::and_);
   map_->set("or", Op::or_);
+  map_->set("||", Op::or_);
+  map_->set("&&", Op::and_);
 
   set_branch(lisp_path_keyword, move(map_));
 }

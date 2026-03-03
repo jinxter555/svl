@@ -84,9 +84,11 @@ vector<string> LispExpr::extract_mf(Node& process, Node::Vector &list) {
 
 
 //------------------------------------------------------------------------
+// arg_list not evaled become macros do not eval arg_list
+// we'll need eval arg_list in fun call 
 
 Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_list) {
-  MYLOGGER(trace_function, "LispExpr::frame_fun_params_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::frame_create_fun_args(frame, param_path, arg_list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "arg_list: " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
 
 
@@ -96,7 +98,7 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   auto scope_status = scope_params_args(params, move(arg_list));
 
   if(!scope_status.first) {
-    cerr << "error creating scope in frame_create_fun_args!\n";
+    cerr << "frame_create_fun_args(): error creating scope in frame_create_fun_args!\n";
     return scope_status;
   }
   scope_push_frame(*frame, move(scope_status.second));
@@ -169,7 +171,7 @@ Node::OpStatus   LispExpr::frame_create_fun_args_lambda(Node&process, Node& fun,
   auto scope_status = scope_params_args(params, move(arg_list));
 
   if(!scope_status.first) {
-    cerr << "error creating scope in frame_create_fun_args!\n";
+    cerr << "frame_create_fun_args_lambda(): error creating scope in frame_create_fun_args!\n";
     return scope_status;
   }
   scope_push_frame(*frame, move(scope_status.second));
@@ -247,6 +249,9 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
       return call_object(process, object_ref.second, mf_vector[1], argv_vector);
     } catch(...) {}
     const auto &argv_vector =  list_clone_remainder(code_list, start + 1);
+ //   cout << "argv_vector " << Node::_to_str(argv_vector) << "\n";
+//    cout << "argv_vector.size() " << argv_vector.size() << "\n";
+
     return call_object(process, object_ref.second, mf_vector[1], argv_vector);
   }
 
@@ -276,10 +281,22 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 
   try { // mod.fun ( arg1 arg2 arg3 ...)
     const auto &argv_vector =  code_list[start+1]->_get_vector_ref();
+    if(code_list.size() >2) {
+      auto msg = "You can't have arguments out sof parenthesis in this case";
+      cerr << msg << "\n";
+      return  {false, Node::create_error(Error::Type::Parse, msg)};
+    }
 
     auto fun_exist = get_node(fun_path);
     if(fun_exist.first) {
-      auto call_fun_status = call(process, fun_path, argv_vector);
+      auto argv_vector_evaled_status = eval(process, argv_vector);
+      if(!argv_vector_evaled_status.first) {
+        cerr << "call ev argv_list failed!\n";
+        return argv_vector_evaled_status;
+      }
+
+      //auto call_fun_status = call(process, fun_path, argv_vector);
+      auto call_fun_status = call(process, fun_path, argv_vector_evaled_status.second->_get_vector_ref());
       if(call_fun_status.first) return call_fun_status;
 
     }
@@ -441,6 +458,8 @@ Node::OpStatus LispExpr::call_macro(Node& process, const vector<string>& path, c
 }
 
 //------------------------------------------------------------------------
+// can't eval argv_vector here because call_object call() and 'this' object, argument is in arg_vector
+//
 Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vector) {
   MYLOGGER(trace_function, "LispExpr::call(Node&process, const Node& fun, Node::vector&&argv_vector)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "fun: " + fun._to_str(), SLOG_FUNC_INFO+30);
@@ -451,7 +470,6 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
   //cout << "\ncall(proc, fun, argv) frame status:" << frame_status << "\n\n";
 
   if(!frame_status.first) {
-    cout << "fun: " << fun._to_str() << "\n";
     cerr << "call(process, fun, argv vector) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
     return frame_status;
   }

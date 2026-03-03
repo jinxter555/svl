@@ -234,6 +234,8 @@ unique_ptr<Node> Node::clone(const IMap& map) {
 unique_ptr<Node> Node::clone() const {
   MYLOGGER(trace_function, "Node::clone()", __func__, SLOG_NODE_OP);
 
+  if(type_==Type::Null) return make_unique<Node>();
+
   if(holds_alternative<monostate>(value_)) 
     return make_unique<Node>();
 

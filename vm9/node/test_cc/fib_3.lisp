@@ -10,19 +10,13 @@ module Kernel
 
   def fib(n) 
     if[n == 0]
-      print "n == 0\n"
       return 0
     end.if
 
-    if[n == 1 || n==2 ]
-      return 1
-    end.if
-
-    = a (fib[n - 1])
-    = b (fib[n - 2])
-
-
-    return a + b
+    print "n:" n "\n"
+    [nv = n - 1]
+    = v (fib nv )
+    return v
   end.def
 
 end.module
