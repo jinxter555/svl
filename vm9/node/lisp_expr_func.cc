@@ -1313,9 +1313,9 @@ Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, si
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
 
-  size_t idx;
+  size_t idx, l_size = list_cc_vec.size();
 
-  if(list_cc_vec.size() < 3) {
+  if(l_size < 3) {
     auto msg = "(indiex num vector_name) requries 3 arguments";
     cerr << msg << "\n";
     return {false, Node::create_error(Error::Type::Parse, msg)};
@@ -1341,11 +1341,29 @@ Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, si
       cerr << msg << "\n";
       return {false, Node::create_error(Error::Type::Parse, msg)};
     }
+
+    if(array_status.second->_get_value_type() != Node::Type::Vector) {
+      return {false, Node::create_error(Error::Type::IndexWrongType, "wrong type to op on vector array ")};
+    }
+
     auto &array_vector = array_status.second->_get_vector_ref();
     if(array_vector.empty()) return {true, Node::create()};
     if(idx < 0 || idx >= array_vector.size()) return {false, Node::create_error(Error::Type::IndexOutOfBounds, "Index out of bound!\n")};
-    auto &retv = array_vector[idx];
-    return {true, retv->clone()};
+    if(l_size==3) {
+      auto &retv = array_vector[idx];
+      return {true, retv->clone()};
+    }
+
+
+    auto &array_op = list_cc_vec[start+2];
+    if(array_op->_get_integer() == atom_set) {
+      auto value_status = eval(process, *list_cc_vec[start+3]);
+      auto &retv = array_vector[idx];
+      cout << ":set "  <<  *retv <<" to  " <<  value_status.second->_to_str() <<"\n";
+      array_vector[idx] = move(value_status.second);
+    }
+
+
   } catch(...) {
      return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with array. ")};
   }

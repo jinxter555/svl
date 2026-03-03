@@ -185,6 +185,7 @@ public:
 
 
   Type _get_type() const;
+  Type _get_value_type() const;
   Node get_type() const;
 
   OpStatus add(unique_ptr<Node> child);

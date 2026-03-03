@@ -418,7 +418,28 @@ void Node::set(unique_ptr<Node> new_node) {
 }
 
 Node::Type Node::_get_type() const { return type_; }
+Node::Type Node::_get_value_type() const { 
+
+  switch(type_) {
+  case Node::Type::Shared: {
+    auto& ptr = get<ptr_S>(value_);
+    return ptr->_get_value_type();
+  }
+  case Node::Type::Unique: {
+    auto& ptr = get<ptr_U>(value_);
+    return ptr->_get_value_type();
+  }
+  case Node::Type::Raw:  {
+    auto& ptr = get<ptr_R>(value_);
+    return ptr->_get_value_type();
+  }
+  default:  {}
+  }
+  return type_;
+}
+
 Node Node::get_type() const { return type_; }
+
 
 void Node::set_null() { this->value_ = monostate{}; type_=Type::Null; }
 void Node::set_atom(Integer v)  { *this = Node(v); type_ = Type::Atom; }
