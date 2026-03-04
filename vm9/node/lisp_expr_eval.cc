@@ -235,7 +235,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
 
   case Lisp::Op::while_:   return while_(process, code_list, start );
   case Lisp::Op::return_:   return lisp_object_return(process, code_list, start );
-  case Lisp::Op::exit_:   {forever=false; return {true, Node::create() };};
+  case Lisp::Op::exit_:   {forever=false; return {true, Node::create("exit") };};
 
   case Lisp::Op::funcall:   return funcall(process, code_list, start); 
   case Lisp::Op::call:   return call(process, code_list, start); 

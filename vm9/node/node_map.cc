@@ -155,25 +155,49 @@ Node::OpStatusRef Node::get_node(const vector<string>&path) {
   default: {}
   }
 
-  if(type_ != Type::Map){
-    cerr << "Node::get_node(path) not Type::Map!\n"; 
-    return {false, Error::ref(Error::Type::IndexWrongType, 
-    "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(type_))};
-  }
 
   Node* current = this;
   for(const auto&key : path) {
-    auto current_node_ref = current->get_node(key);
-    if(!current_node_ref.first) {
-      string msg = "key '" + key + "' not found in map.";
-      return {false, Error::ref(Error::Type::KeyNotFound, msg)};
+    Integer ikey;
+
+    try {
+      ikey = stol(key);
+
+      auto current_node_ref = current->get_node(ikey);
+      if(!current_node_ref.first) {
+        string msg = "key '" + key + "' not found in vector or out of bound.";
+        cerr << msg << "\n";
+        return {false, Error::ref(Error::Type::KeyNotFound, msg)};
+      }
+      current = &current_node_ref.second;
+
+    } catch(...) {
+      if(type_ != Type::Map){
+        cerr << "Node::get_node(path) not Type::Map!\n"; 
+        return {false, Error::ref(Error::Type::IndexWrongType, 
+        "get_node(vector<string>path) only works Map nodes. Current type: " + _to_str(type_))};
+      }
+
+      auto current_node_ref = current->get_node(key);
+      if(!current_node_ref.first) {
+        string msg = "key '" + key + "' not found in map.";
+        return {false, Error::ref(Error::Type::KeyNotFound, msg)};
+      }
+
+      current = &current_node_ref.second;
+
     }
+
+
 
     //cout << "currento node ref: " << current_node_ref << "\n";
 
-    current = &current_node_ref.second;
   }
+
+
+
   return {true, *current};
+
 }
 
 Node::OpStatusRef Node::get_node(const string&key) {

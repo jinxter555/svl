@@ -36,6 +36,7 @@ Node::OpStatusRef Node::get_node(size_t index) {
 
   //cout << "get_node index value: " << _to_str() << "\n";
   auto &v = get<Vector>(value_);
+  if(index < 0 || index >=v.size() ) return {false, null_node};
   auto &rv = v[index];
   //return {true, *rv};
   return {true, *v[index]};

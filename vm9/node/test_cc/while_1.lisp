@@ -1,13 +1,19 @@
 module Kernel 
   def main (x y) 
-    var forever
+    var forever value
     assign t1  "t1 robot"
     assign forever true
 
-    while (forever) 
+    while [forever] 
       print "forever: " forever "\n"
-      print (eval (read)) "\n"
-      ;print "hello world\n"
+      = value (eval (read)) "\n"
+      if[value == "exit"]
+        print "exiting...\n"
+        = forever false
+      :else
+        print value "\n"
+      end.if
+
     end.while
 
   end.def

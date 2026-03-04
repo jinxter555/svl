@@ -1276,16 +1276,17 @@ Node::OpStatus LispExpr::interpreter(Node& process, const Node::Vector& list, si
   auto ea = eval(process, *element_arg);
   if(!ee.first ) return ee;
   if(!ea.first ) return ea;
-  if(ee.second->type_!= Node::Type::Atom)
-    return ee;
-  if(ea.second->type_!= Node::Type::Atom)
-    return ea;
+
+  if(ee.second->type_!= Node::Type::Atom) return ee;
+
   auto cmd = ee.second->_get_integer();
-  auto arg = ea.second->_get_integer();
   if(cmd == str_to_atom("run")) {
     cout << "command run!\n";
-  }
-  if(cmd == str_to_atom("gc")) {
+  } else if(cmd == str_to_atom("gc")) {
+
+    auto arg = ea.second->_get_integer();
+    if(ea.second->type_!= Node::Type::Atom) return ea;
+
     cout << "command garbage collect:\n";
     if(arg == str_to_atom("mark")) {
       cout << "mark!\n";
@@ -1301,6 +1302,15 @@ Node::OpStatus LispExpr::interpreter(Node& process, const Node::Vector& list, si
       cerr << "unknown garbage collection command!";
       return {true, Node::create(atom_error, Node::Type::Atom) };
     }
+  } else if(cmd == str_to_atom("parse")) { 
+    auto tokens_cc_list = reader.tokenize(element_arg->_to_str());
+    auto code_status = reader.parse(tokens_cc_list);
+    return code_status;
+  } else if(cmd == str_to_atom("build")) { 
+    return build_file_str(element_arg->_to_str());
+  } else {
+    cout << "Unknown Interpreter command!\n";
+    return {true, Node::create(atom_error, Node::Type::Atom) };
   }
 
   return {true, Node::create(atom_ok, Node::Type::Atom) };

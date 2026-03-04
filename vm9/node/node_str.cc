@@ -22,6 +22,7 @@ string Node::_to_str(Type type) {
     case Type::Integer: return "Integer";
     case Type::Float: return "Float";
     case Type::String: return "String";
+    case Type::Tuple: return "Tuple";
     case Type::List: return "List";
     case Type::Vector: return "Vector";
     case Type::DeQue: return "DeQue";

@@ -61,7 +61,7 @@ public:
 
   enum class Type { 
     Null, Bool, Error, Integer, Float, String, 
-    Identifier, List, Map, IMap, Vector, DeQue, LispOp, ProcState, 
+    Identifier, Tuple, List, Map, IMap, Vector, DeQue, LispOp, ProcState, 
     ControlFlow, Atom, ObjectId, Shared, Raw, Unique, Fun };
 
   using Integer = long; using Float = double;
