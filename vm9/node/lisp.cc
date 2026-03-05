@@ -101,6 +101,9 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::lambda: return "lambda";
     case Lisp::Op::read: return "read";
     case Lisp::Op::readline: return "readline";
+    case Lisp::Op::load: return "load";
+    case Lisp::Op::require: return "require";
+    case Lisp::Op::import: return "import";
     default: {}
   }
   return "Unknown LispOp";

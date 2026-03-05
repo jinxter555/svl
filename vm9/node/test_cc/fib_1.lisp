@@ -1,5 +1,5 @@
 module Kernel 
-  def main (x y) 
+  def main2 (x y) 
     var forever (count 0)
     = t1  "t1 robot"
     = forever true

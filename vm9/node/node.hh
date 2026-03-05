@@ -170,6 +170,10 @@ public:
 
   OpStatus merge(unique_ptr<Node> n, bool override=false);
   OpStatus merge(Map &m, bool override=false);
+
+  OpStatus merge_nested(unique_ptr<Node>n);
+  static OpStatus merge_nested(Map& m1, const Map&m2);
+
   OpStatus has_key(const string&key);
   bool extend(const vector<string>&path, bool override=false);
 

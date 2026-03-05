@@ -1,10 +1,10 @@
-module Kernel 
-  def main (x y) 
+module Kernel
+  def main2 (x y) 
     var forever (count 0)
     = t1  "t1 robot"
     = forever true
 
-     print (fib 3)  "\n"
+     # print (fib 3)  "\n"
 
   end.def
 

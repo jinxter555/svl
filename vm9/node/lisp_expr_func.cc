@@ -1383,3 +1383,38 @@ Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, si
   return {true, Node::create()};
 
 }
+
+
+Node::OpStatus LispExpr::load(Node& process, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::load(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(code_list), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+  string filename = code_list[start]->_to_str();
+
+  cout << "load file: " <<  filename << "\n";
+  std::ifstream infile(filename);
+  if(! infile.is_open()) {
+    return {false, Node::create_error(Error::Type::System, "Can't open file: " + filename)};
+  }
+
+  string line, source_str; 
+  Node::List source; Node::Map map;
+
+  while(getline(infile, line) ) {
+    source_str = source_str + line + "\n" ;
+    source.push_back(Node::create(line));
+  }
+  infile.close();
+
+//  cout << "source :\n" << source_str << "\n\n";
+
+  auto build_status  = build_file_str(source_str);
+  if(!build_status.first) {
+    cerr << "load file: " <<  filename << " failed: " <<  build_status.second->_to_str() << "\n";
+    return {false, Node::create(atom_error, Node::Type::Atom)};
+  }
+
+
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
+
+}

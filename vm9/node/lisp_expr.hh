@@ -23,7 +23,7 @@ private:
   ObjectStore ObjStore;
 
 
-  string build_namespace_default ="Main";
+  string build_namespace_default ="England";
   vector<string> build_namespace ={ build_namespace_default };
   //vector<string> build_namespace ={ };
 
@@ -143,6 +143,8 @@ public:
   // of modules.function.mvar ...
   Node::OpStatus read_input(); 
   Node::OpStatus parse_build(Node& tokens); 
+  Node::OpStatus load(Node& process, const Node::Vector& code_list, size_t start=0);
+
 
   //Node::OpStatus parse_list(Node::List& list);
   Node::OpStatus get_process();

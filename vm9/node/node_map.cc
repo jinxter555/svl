@@ -38,6 +38,44 @@ Node::OpStatus Node::merge(Map &mv, bool override){
   return {true, Node::create(true)}; // success
 }
 
+//------------------------------------------------------------------------
+Node::OpStatus Node::merge_nested(unique_ptr<Node> n) {
+  MYLOGGER(trace_function, "Node::merge(unqiue_ptr<Node>n)", __func__, SLOG_FUNC_INFO);
+  if(n->type_ != Node::Type::Map || type_ != n->type_) {
+    auto msg = "merge_nested(): not a map";
+    cerr << msg << "\n";
+    return {false, create_error(Error::Type::Unknown, msg)};
+  }
+  auto &m1 = get<Map>(value_);
+  auto &m2 = n->_get_map_ref();
+  return merge_nested(m1, m2);
+
+
+}
+Node::OpStatus Node::merge_nested(Map&m1, const Map &m2){
+
+  for(const auto& pair2 : m2 ) {
+    const string& key = pair2.first;
+    auto &v2 = pair2.second;
+    if(m1.count(key)) {
+      auto &v1  = m1.at(key);
+      if(v1->type_ == Node::Type::Map && v2->type_ == Node::Type::Map) {
+        auto &nm1 = v1->_get_map_ref();
+        auto &nm2 = v2->_get_map_ref();
+        merge_nested(nm1, nm2);
+      } else {
+        m1[key] = v2->clone();
+      }
+    } else {
+      m1[key] = v2->clone();
+    }
+  }
+  return {true, Node::create(true)}; // success
+
+}
+
+//------------------------------------------------------------------------
+
 Node::OpStatus Node::has_key(const string&key) {
   if(type_ != Node::Type::Map) {
     return {false, create_error(Error::Type::InvalidOperation, 

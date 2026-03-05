@@ -1,42 +1,343 @@
-f1
-Dict init:  webster11  
-car init
-1 object_finalize(): object: {"w": webster11  , "length": 123, "c1": {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}}, "size": nil, "__object_info__": {"class": Dict, "class_ptr":--*ptr--, "type": object}} 
-
-ele.first: w
-Lisp::type(ele.second)): nil
-ele.second: webster11  
-
-ele.first: length
-Lisp::type(ele.second)): nil
-ele.second: 123
-
-ele.first: c1
-Lisp::type(ele.second)): object
-ele.second: {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}}
-
-hello, world!
-1 ele.second: {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}}
-
-1 object_finalize(): object: {"car_type": 123, "__object_info__": {"class": Car, "class_ptr":--*ptr--, "type": object}} 
-
-ele.first: car_type
-Lisp::type(ele.second)): nil
-ele.second: 123
-
-ele.first: __object_info__
-Lisp::type(ele.second)): nil
-ele.second: {"class": Car, "class_ptr":--*ptr--, "type": object}
-
-ele.first: size
-Lisp::type(ele.second)): nil
-ele.second: nil
-
-ele.first: __object_info__
-Lisp::type(ele.second)): nil
-ele.second: {"class": Dict, "class_ptr":--*ptr--, "type": object}
-
-webster11   Dict finalize destructor!
-
+load file: fib_5.lisp
+module name Kernel already exist!
 [?2004hloosh> exit
-[?2004lnil
+[?2004lexit
+Lisp Interpreter
+print recursive:
+{ (Map, size=1) 
+  - universe (Type: Map): { (Map, size=2) 
+   - Lang (Type: Map): { (Map, size=2) 
+    - CC (Type: Map): { (Map, size=1) 
+     - Module (Type: Map): { (Map, size=2) 
+      - System.Io.File (Type: Map): { (Map, size=1) 
+       - function (Type: Map): { (Map, size=1) 
+        - apply (Type: Function): Fun*:
+       }
+      }
+      - Map (Type: Map): { (Map, size=1) 
+       - function (Type: Map): { (Map, size=5) 
+        - has (Type: Function): Fun*:
+        - del (Type: Function): Fun*:
+        - set (Type: Function): Fun*:
+        - get (Type: Function): Fun*:
+        - keys (Type: Function): Fun*:
+       }
+      }
+     }
+    }
+    - Lisp (Type: Map): { (Map, size=2) 
+     - Keyword (Type: Map): { (Map, size=91) 
+      - or (Type: LispOp): or
+      - not (Type: LispOp): not
+      - iif (Type: LispOp): iif
+      - = (Type: LispOp): assign
+      - != (Type: LispOp): neq
+      - <= (Type: LispOp): lteq
+      - > (Type: LispOp): gt
+      - * (Type: LispOp): mul
+      - + (Type: LispOp): add
+      - import (Type: LispOp): import
+      - require (Type: LispOp): require
+      - read (Type: LispOp): read
+      - lambda (Type: LispOp): lambda
+      - alias (Type: LispOp): alias
+      - defmacro (Type: LispOp): defmacro
+      - module (Type: LispOp): module
+      - map (Type: LispOp): map
+      - div (Type: LispOp): div
+      - hash (Type: LispOp): hash
+      - call_extern (Type: LispOp): call_extern
+      - while (Type: LispOp): while
+      - defun (Type: LispOp): defun
+      - cdr (Type: LispOp): cdr
+      - quote (Type: LispOp): quote
+      - and (Type: LispOp): and
+      - literal (Type: LispOp): literal
+      - < (Type: LispOp): lt
+      - var (Type: LispOp): var
+      - deque (Type: LispOp): deque
+      - assign (Type: LispOp): assign
+      - break (Type: LispOp): break
+      - == (Type: LispOp): eq
+      - >= (Type: LispOp): gteq
+      - vector (Type: LispOp): vector
+      - scalar (Type: LispOp): scalar
+      - readline (Type: LispOp): readline
+      - sub (Type: LispOp): sub
+      - list (Type: LispOp): list
+      - kernel (Type: LispOp): kernel
+      - % (Type: LispOp): mod
+      - root (Type: LispOp): root
+      - ret (Type: LispOp): ret
+      - case (Type: LispOp): case
+      - add (Type: LispOp): add
+      - exit (Type: LispOp): exit_
+      - identifier (Type: LispOp): identifier
+      - curry (Type: LispOp): curry
+      - class (Type: LispOp): class
+      - interpreter (Type: LispOp): interpreter
+      - printr (Type: LispOp): printr
+      - private (Type: LispOp): private
+      - match (Type: LispOp): match
+      - new (Type: LispOp): new
+      - call (Type: LispOp): call
+      - error (Type: LispOp): error
+      - clone (Type: LispOp): clone
+      - unquote (Type: LispOp): unquote
+      - def (Type: LispOp): def
+      - if (Type: LispOp): if
+      - faz (Type: LispOp): faz
+      - ihash (Type: LispOp): ihash
+      - system (Type: LispOp): system
+      - continue (Type: LispOp): continue
+      - - (Type: LispOp): sub
+      - namespace (Type: LispOp): namespace
+      - nil (Type: LispOp): nil
+      - use (Type: LispOp): use
+      - pipe (Type: LispOp): pipe
+      - || (Type: LispOp): or
+      - index (Type: LispOp): index
+      - load (Type: LispOp): load
+      - tail (Type: LispOp): tail
+      - repeat (Type: LispOp): repeat
+      - head (Type: LispOp): head
+      - body (Type: LispOp): body
+      - eval (Type: LispOp): eval
+      - car (Type: LispOp): car
+      - delete (Type: LispOp): delete
+      - mul (Type: LispOp): mul
+      - cond (Type: LispOp): cond
+      - mod (Type: LispOp): mod
+      - / (Type: LispOp): div
+      - print (Type: LispOp): print
+      - funcall (Type: LispOp): funcall
+      - send (Type: LispOp): send
+      - loop (Type: LispOp): loop
+      - && (Type: LispOp): and
+      - return (Type: LispOp): return
+      - noop (Type: LispOp): noop
+      - for (Type: LispOp): for
+      - do (Type: LispOp): do
+     }
+     - namespace (Type: Map): { (Map, size=1) 
+      - England (Type: Map): { (Map, size=1) 
+       - module (Type: Map): { (Map, size=1) 
+        - Kernel (Type: Map): { (Map, size=6) 
+         - namespace (Type: String): "England"
+         - name (Type: String): "Kernel"
+         - class (Type: Map): { (Map, size=0) 
+         }
+         - macro (Type: Map): { (Map, size=0) 
+         }
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): module
+         }
+         - function (Type: Map): { (Map, size=4) 
+          - main2 (Type: Map): { (Map, size=5) 
+           - params (Type: Vector): Vector[(size=2) 
+            - [0, Type: Identifier]: "x"
+            - [1, Type: Identifier]: "y"
+           ]
+           - code (Type: Vector): Vector[(size=3) 
+            - [0, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: var
+             - [1, Type: Identifier]: "forever"
+             - [2, Type: Vector]: Vector[(size=2) 
+              - [0, Type: Identifier]: "count"
+              - [1, Type: Integer]: 0
+             ]
+            ]
+            - [1, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: assign
+             - [1, Type: Identifier]: "t1"
+             - [2, Type: String]: "t1 robot"
+            ]
+            - [2, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: assign
+             - [1, Type: Identifier]: "forever"
+             - [2, Type: Bool]: bool: 1
+            ]
+           ]
+           - namespace (Type: String): "England"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
+           - name (Type: String): "main2"
+          }
+          - fib (Type: Map): { (Map, size=5) 
+           - params (Type: Vector): Vector[(size=1) 
+            - [0, Type: Identifier]: "n"
+           ]
+           - code (Type: Vector): Vector[(size=2) 
+            - [0, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "n: "
+             - [2, Type: Identifier]: "n"
+             - [3, Type: String]: "
+"
+            ]
+            - [1, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: if
+             - [1, Type: Vector]: Vector[(size=3) 
+              - [0, Type: LispOp]: lteq
+              - [1, Type: Identifier]: "n"
+              - [2, Type: Integer]: 1
+             ]
+             - [2, Type: Vector]: Vector[(size=1) 
+              - [0, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: return
+               - [1, Type: Identifier]: "n"
+              ]
+             ]
+             - [3, Type: Vector]: Vector[(size=1) 
+              - [0, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: return
+               - [1, Type: Vector]: Vector[(size=3) 
+                - [0, Type: LispOp]: add
+                - [1, Type: Vector]: Vector[(size=2) 
+                 - [0, Type: Identifier]: "fib"
+                 - [1, Type: Vector]: Vector[(size=3) 
+                  - [0, Type: LispOp]: sub
+                  - [1, Type: Identifier]: "n"
+                  - [2, Type: Integer]: 1
+                 ]
+                ]
+                - [2, Type: Vector]: Vector[(size=2) 
+                 - [0, Type: Identifier]: "fib"
+                 - [1, Type: Vector]: Vector[(size=3) 
+                  - [0, Type: LispOp]: sub
+                  - [1, Type: Identifier]: "n"
+                  - [2, Type: Integer]: 2
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+           - namespace (Type: String): "England"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
+           - name (Type: String): "fib"
+          }
+          - p1 (Type: Map): { (Map, size=6) 
+           - module_ptr (Type: RawPtr): ==*ptr==
+           - name (Type: String): "p1"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
+           - namespace (Type: String): "England"
+           - code (Type: Vector): Vector[(size=1) 
+            - [0, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "p1
+"
+            ]
+           ]
+           - params (Type: Vector): Vector[(size=0) 
+           ]
+          }
+          - main (Type: Map): { (Map, size=6) 
+           - module_ptr (Type: RawPtr): ==*ptr==
+           - name (Type: String): "main"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
+           - namespace (Type: String): "England"
+           - code (Type: Vector): Vector[(size=4) 
+            - [0, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: load
+             - [1, Type: String]: "fib_5.lisp"
+            ]
+            - [1, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: var
+             - [1, Type: Identifier]: "l1"
+            ]
+            - [2, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: assign
+             - [1, Type: Identifier]: "l1"
+             - [2, Type: Vector]: Vector[(size=5) 
+              - [0, Type: Integer]: 11
+              - [1, Type: Integer]: 22
+              - [2, Type: Integer]: 33
+              - [3, Type: Integer]: 44
+              - [4, Type: Integer]: 55
+             ]
+            ]
+            - [3, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: loop
+             - [1, Type: Vector]: Vector[(size=3) 
+              - [0, Type: LispOp]: print
+              - [1, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: eval
+               - [1, Type: Vector]: Vector[(size=1) 
+                - [0, Type: LispOp]: read
+               ]
+              ]
+              - [2, Type: String]: "
+"
+             ]
+            ]
+           ]
+           - params (Type: Vector): Vector[(size=2) 
+            - [0, Type: Identifier]: "x"
+            - [1, Type: Identifier]: "y"
+           ]
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+   - Process (Type: Vector): Vector[(size=2) 
+    - [0, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=1) 
+      - [0, Type: Map]: { (Map, size=3) 
+       - Pi (Type: Float): 3.14
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=3) 
+         - args (Type: Map): { (Map, size=0) 
+         }
+         - immute (Type: Map): { (Map, size=0) 
+         }
+         - var (Type: Map): { (Map, size=0) 
+         }
+        }
+       ]
+      }
+     ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 0
+    }
+    - [1, Type: Map]: { (Map, size=3) 
+     - frames (Type: Vector): Vector[(size=1) 
+      - [0, Type: Map]: { (Map, size=6) 
+       - pid (Type: Integer): 1
+       - args (Type: Map): { (Map, size=0) 
+       }
+       - namespace (Type: String): "England"
+       - current_function (Type: String): "Main"
+       - current_module (Type: String): "Kernel"
+       - scopes (Type: Vector): Vector[(size=1) 
+        - [0, Type: Map]: { (Map, size=3) 
+         - args (Type: Map): { (Map, size=0) 
+         }
+         - immute (Type: Map): { (Map, size=0) 
+         }
+         - var (Type: Map): { (Map, size=1) 
+          - l1 (Type: SharedPtr): shared_ptr*:Vector[11, 22, 33, 44, 55]
+         }
+        }
+       ]
+      }
+     ]
+     - state (Type: ProcessState): init
+     - pid (Type: Integer): 1
+    }
+   ]
+  }
+ }

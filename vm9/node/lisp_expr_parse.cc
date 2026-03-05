@@ -361,6 +361,12 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> mod_ptr) {
   //cout << "module name: " << module_name << "\n";
 
 
+  if(mod_loc->m_has_key(module_name)) {
+    cout << "module name " << module_name << " already exist!\n";
+    auto m1_status = mod_loc->get_node(module_name);
+    return m1_status.second.merge_nested(move(mod_ptr));
+  }
+
   //return mod_loc->merge(move(module));
   return mod_loc->set(module_name, move(mod_ptr));
   //cout << "mod_loc: " << *mod_loc << "\n\n";

@@ -74,6 +74,9 @@ void LispExpr::set_keywords() {
   map_->set("lambda", Op::lambda);
   map_->set("read", Op::read);
   map_->set("readline", Op::readline);
+  map_->set("load", Op::load);
+  map_->set("require", Op::require);
+  map_->set("import", Op::import);
 
   map_->set("+", Op::add);
   map_->set("-", Op::sub);
