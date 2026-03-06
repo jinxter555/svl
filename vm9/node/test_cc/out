@@ -1,5 +1,34 @@
-load file: fib_5.lisp
 module name Kernel already exist!
+mod_ptr is : {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"p2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": p2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p2 
+]], "params": ():nil}, "main2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": ():nil, "params": Vector[x, y]}}}
+
+m2: {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"p2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": p2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p2 
+]], "params": ():nil}, "main2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": ():nil, "params": Vector[x, y]}}}
+
+merge_nested key: namespace
+1key clone: namespace
+merge_nested key: name
+1key clone: name
+merge_nested key: class
+m2: {}
+
+merge_nested key: macro
+m2: {}
+
+merge_nested key: __object_info__
+m2: {"type": module}
+
+merge_nested key: type
+1key clone: type
+merge_nested key: function
+m2: {"p2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": p2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p2 
+]], "params": ():nil}, "main2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": ():nil, "params": Vector[x, y]}}
+
+merge_nested key: p2
+2key clone: p2
+merge_nested key: main2
+2key clone: main2
+p1 n: 12345
 [?2004hloosh> exit
 [?2004lexit
 Lisp Interpreter
@@ -138,25 +167,7 @@ print recursive:
             - [0, Type: Identifier]: "x"
             - [1, Type: Identifier]: "y"
            ]
-           - code (Type: Vector): Vector[(size=3) 
-            - [0, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: var
-             - [1, Type: Identifier]: "forever"
-             - [2, Type: Vector]: Vector[(size=2) 
-              - [0, Type: Identifier]: "count"
-              - [1, Type: Integer]: 0
-             ]
-            ]
-            - [1, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: assign
-             - [1, Type: Identifier]: "t1"
-             - [2, Type: String]: "t1 robot"
-            ]
-            - [2, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: assign
-             - [1, Type: Identifier]: "forever"
-             - [2, Type: Bool]: bool: 1
-            ]
+           - code (Type: Vector): Vector[(size=0) 
            ]
            - namespace (Type: String): "England"
            - __object_info__ (Type: Map): { (Map, size=1) 
@@ -164,108 +175,57 @@ print recursive:
            }
            - name (Type: String): "main2"
           }
-          - fib (Type: Map): { (Map, size=5) 
-           - params (Type: Vector): Vector[(size=1) 
-            - [0, Type: Identifier]: "n"
+          - p2 (Type: Map): { (Map, size=5) 
+           - params (Type: Vector): Vector[(size=0) 
            ]
-           - code (Type: Vector): Vector[(size=2) 
-            - [0, Type: Vector]: Vector[(size=4) 
+           - code (Type: Vector): Vector[(size=1) 
+            - [0, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: print
-             - [1, Type: String]: "n: "
-             - [2, Type: Identifier]: "n"
-             - [3, Type: String]: "
+             - [1, Type: String]: "p2 
 "
-            ]
-            - [1, Type: Vector]: Vector[(size=4) 
-             - [0, Type: LispOp]: if
-             - [1, Type: Vector]: Vector[(size=3) 
-              - [0, Type: LispOp]: lteq
-              - [1, Type: Identifier]: "n"
-              - [2, Type: Integer]: 1
-             ]
-             - [2, Type: Vector]: Vector[(size=1) 
-              - [0, Type: Vector]: Vector[(size=2) 
-               - [0, Type: LispOp]: return
-               - [1, Type: Identifier]: "n"
-              ]
-             ]
-             - [3, Type: Vector]: Vector[(size=1) 
-              - [0, Type: Vector]: Vector[(size=2) 
-               - [0, Type: LispOp]: return
-               - [1, Type: Vector]: Vector[(size=3) 
-                - [0, Type: LispOp]: add
-                - [1, Type: Vector]: Vector[(size=2) 
-                 - [0, Type: Identifier]: "fib"
-                 - [1, Type: Vector]: Vector[(size=3) 
-                  - [0, Type: LispOp]: sub
-                  - [1, Type: Identifier]: "n"
-                  - [2, Type: Integer]: 1
-                 ]
-                ]
-                - [2, Type: Vector]: Vector[(size=2) 
-                 - [0, Type: Identifier]: "fib"
-                 - [1, Type: Vector]: Vector[(size=3) 
-                  - [0, Type: LispOp]: sub
-                  - [1, Type: Identifier]: "n"
-                  - [2, Type: Integer]: 2
-                 ]
-                ]
-               ]
-              ]
-             ]
             ]
            ]
            - namespace (Type: String): "England"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
-           - name (Type: String): "fib"
+           - name (Type: String): "p2"
           }
           - p1 (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr==
+           - module_ptr (Type: RawPtr): ==*ptr[0x5bda1ad76a00]==
            - name (Type: String): "p1"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
            - namespace (Type: String): "England"
            - code (Type: Vector): Vector[(size=1) 
-            - [0, Type: Vector]: Vector[(size=2) 
+            - [0, Type: Vector]: Vector[(size=4) 
              - [0, Type: LispOp]: print
-             - [1, Type: String]: "p1
+             - [1, Type: String]: "p1 n: "
+             - [2, Type: Identifier]: "n"
+             - [3, Type: String]: "
 "
             ]
            ]
-           - params (Type: Vector): Vector[(size=0) 
+           - params (Type: Vector): Vector[(size=1) 
+            - [0, Type: Identifier]: "n"
            ]
           }
           - main (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr==
+           - module_ptr (Type: RawPtr): ==*ptr[0x5bda1ad76a00]==
            - name (Type: String): "main"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
            - namespace (Type: String): "England"
-           - code (Type: Vector): Vector[(size=4) 
+           - code (Type: Vector): Vector[(size=2) 
             - [0, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: load
-             - [1, Type: String]: "fib_5.lisp"
-            ]
-            - [1, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: var
-             - [1, Type: Identifier]: "l1"
-            ]
-            - [2, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: assign
-             - [1, Type: Identifier]: "l1"
-             - [2, Type: Vector]: Vector[(size=5) 
-              - [0, Type: Integer]: 11
-              - [1, Type: Integer]: 22
-              - [2, Type: Integer]: 33
-              - [3, Type: Integer]: 44
-              - [4, Type: Integer]: 55
+             - [0, Type: Identifier]: "p1"
+             - [1, Type: Vector]: Vector[(size=1) 
+              - [0, Type: Integer]: 12345
              ]
             ]
-            - [3, Type: Vector]: Vector[(size=2) 
+            - [1, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: loop
              - [1, Type: Vector]: Vector[(size=3) 
               - [0, Type: LispOp]: print
@@ -328,8 +288,7 @@ print recursive:
          }
          - immute (Type: Map): { (Map, size=0) 
          }
-         - var (Type: Map): { (Map, size=1) 
-          - l1 (Type: SharedPtr): shared_ptr*:Vector[11, 22, 33, 44, 55]
+         - var (Type: Map): { (Map, size=0) 
          }
         }
        ]

@@ -213,8 +213,15 @@ unique_ptr<Node> Node::clone(const Map& map) {
 
   Map cloned_map;
   for(const auto& [key, child_ptr] : map) {
-    if(key == CLASS_PTR) continue;      // prevent recursive cloning since class function contain  ptr to class itself
-    if(key == MODULE_PTR) continue;
+    if(key == CLASS_PTR) {
+      cloned_map.try_emplace(key, child_ptr.get());
+      continue;      // prevent recursive cloning since class function contain  ptr to class itself
+    }
+    if(key == MODULE_PTR) { 
+      //cout << "1 cloning: '" << key <<  "' mod_ptr node: " << &child_ptr->get_node() << "\n";
+      cloned_map.try_emplace(key, child_ptr.get());
+      continue;
+    }
     cloned_map.try_emplace(key, child_ptr->clone());
   }
   return create(move(cloned_map));
@@ -874,8 +881,10 @@ void Node::print_value_recursive(const Node& node, int depth) {
 
         indent(); 
         cout << "  - " << key << " (Type: " << Node::_to_str(child_ptr->type_) << "): ";
-        if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr==\n"; continue; }
-        if(key == CURRENT_MODULE_PTR || key == CURRENT_CLASS_PTR) { cout << "###*ptr##\n"; continue; }
+        //if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr[" << &child_ptr->value_ << "]==\n"; continue; }
+        if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr[" << &child_ptr->get_node() << "]==\n"; continue; }
+        //if(key == CURRENT_MODULE_PTR || key == CURRENT_CLASS_PTR) { cout << "###*ptr["<< &child_ptr->value_ << "]##\n"; continue; }
+        if(key == CURRENT_MODULE_PTR || key == CURRENT_CLASS_PTR) { cout << "###*ptr["<< &child_ptr->get_node()<< "]##\n"; continue; }
 
         print_value_recursive(*child_ptr.get(), depth+1);
         cout << "\n";

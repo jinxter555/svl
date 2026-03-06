@@ -250,3 +250,11 @@ string join_str(const deque<std::string>& elements, const string& delimiter) {
     }
     return ss.str();
 }
+
+
+
+std::string addressToHexString(void* ptr) {
+    char buffer[20]; // Large enough for 64-bit address + prefix
+    auto [p, ec] = std::to_chars(buffer, buffer + 20, reinterpret_cast<uintptr_t>(ptr), 16);
+    return "0x" + std::string(buffer, p - buffer);
+}

@@ -7,6 +7,7 @@
 #include "lisp.hh"
 #include "defs.hh"
 #include "lang.hh"
+#include "my_helpers.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -163,7 +164,8 @@ string Node::_to_str(const Map&map) {
   for (auto const& [key, val] : map) {
     if(key == MODULE_PTR || key == CLASS_PTR  || key == CURRENT_CLASS_PTR
       || key == CURRENT_MODULE_PTR || key == CURRENT_FUNCTION_PTR) {
-      outstr = q + key + q  + colon + "--*ptr--";
+      //outstr = q + key + q  + colon + "--*ptr--";
+      outstr = q + key + q  + colon + "--*ptr["  +  addressToHexString( &val->get_node()) + "]--";
     } else  {
       if(val) outstr = q + key + q  + colon + " " + val->_to_str();
       else outstr = q + key + q  + colon + " " + "NULL-VAL";

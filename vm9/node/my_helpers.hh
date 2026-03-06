@@ -1,3 +1,5 @@
+#ifndef MY_HELPERS_HH
+#define MY_HELPERS_HH
 #pragma once
 #include <iostream>
 #include <string>
@@ -5,6 +7,11 @@
 #include <list>
 #include <deque>
 #include <regex>
+#include <iomanip>
+
+#include <charconv>
+#include <string>
+#include <cstdint>
 
 using namespace std;
 std::vector<std::string> split_string(const std::string& istr, const std::string& delimiter);
@@ -28,4 +35,10 @@ string  _to_str_ext(const deque<string>& keys) ;
 string join_str(const vector<std::string>& elements, const string& delimiter=" ");
 string join_str(const deque<std::string>& elements, const string& delimiter=" ");
 
+
+std::string addressToHexString(void* ptr);
+
+
 #define __CLASS_NAME__ extractClassName(__PRETTY_FUNCTION__)
+
+#endif

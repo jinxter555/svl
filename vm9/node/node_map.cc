@@ -41,6 +41,7 @@ Node::OpStatus Node::merge(Map &mv, bool override){
 //------------------------------------------------------------------------
 Node::OpStatus Node::merge_nested(unique_ptr<Node> n) {
   MYLOGGER(trace_function, "Node::merge(unqiue_ptr<Node>n)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "n: " + n->_to_str(), SLOG_FUNC_INFO+30)
   if(n->type_ != Node::Type::Map || type_ != n->type_) {
     auto msg = "merge_nested(): not a map";
     cerr << msg << "\n";
@@ -53,20 +54,32 @@ Node::OpStatus Node::merge_nested(unique_ptr<Node> n) {
 
 }
 Node::OpStatus Node::merge_nested(Map&m1, const Map &m2){
+  MYLOGGER(trace_function, "Node::merge(Map&m1, const Map&m2)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "m1: " + _to_str(m1), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "m2: " + _to_str(m2), SLOG_FUNC_INFO+30)
 
+  //cout << "m2: " << Node::_to_str(m2) << "\n\n";
   for(const auto& pair2 : m2 ) {
     const string& key = pair2.first;
     auto &v2 = pair2.second;
+    //cout << "merge_nested key: " << key << "\n";
+
+    // if key mod_ptr or class_ptr
+    //if(key == MODULE_PTR || key == CLASS_PTR) { cout << "==*ptr==\n"; continue; }
+
     if(m1.count(key)) {
       auto &v1  = m1.at(key);
+      //if(v1->_get_value_type()== Node::Type::Map && v2->_get_value_type()== Node::Type::Map) {
       if(v1->type_ == Node::Type::Map && v2->type_ == Node::Type::Map) {
         auto &nm1 = v1->_get_map_ref();
         auto &nm2 = v2->_get_map_ref();
         merge_nested(nm1, nm2);
       } else {
+        //cout << "1key clone: " << key << "\n";
         m1[key] = v2->clone();
       }
     } else {
+      //cout << "2key clone: " << key << "\n";
       m1[key] = v2->clone();
     }
   }
