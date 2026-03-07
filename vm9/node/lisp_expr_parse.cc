@@ -351,6 +351,8 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> mod_ptr) {
   MYLOGGER(trace_function, "LispExpr::attach_module(unique_ptr<Node>module)", __func__, SLOG_FUNC_INFO);
   //auto mod_loc = get_branch(lisp_path_module);
   auto mod_loc = get_branch(namespace_module_path());
+
+
   auto name_ref_status  = mod_ptr->get_node(NAME);
 
   if(!name_ref_status.first) {
@@ -361,18 +363,34 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> mod_ptr) {
   //cout << "module name: " << module_name << "\n";
 
 
+  // merging other file modules
   if(mod_loc->m_has_key(module_name)) {
     cout << "module name " << module_name << " already exist!\n";
     //cout << "mod_ptr is : " << mod_ptr->_to_str() << "\n\n";
     auto m1_status = mod_loc->get_node(module_name);
-    return m1_status.second.merge_nested(move(mod_ptr));
-    //return {true, Node::create()};
+   // cout << "mod_loc address: " << &m1_status.second<< "\n";
+
+    // overwrite the mod_ptr to the m1 mod_ptr
+    //mod_ptr->replace_nested(MODULE_PTR, &m1_status.second); 
+    //cout << "\n replaced, *mod_ptr: " << *mod_ptr << "\n\n";
+
+    //return m1_status.second.merge_nested(move(mod_ptr));
+    m1_status.second.merge_nested(move(mod_ptr));
+    m1_status.second.replace_nested(MODULE_PTR, &m1_status.second);
+
+    //cout << "\nmerged, m1_status : " << m1_status << "\n\n";
+    //cout << "\nmerged, mod_loc: " << *mod_loc << "\n\n";
+    return {true, Node::create(true)};
   }
 
-  //return mod_loc->merge(move(module));
-  return mod_loc->set(module_name, move(mod_ptr));
+  //return mod_loc->set(module_name, move(mod_ptr));
+
+
+  mod_loc->set(module_name, move(mod_ptr));
+  //cout << "\nnon merge, mod_loc: " << *mod_loc << "\n\n";
   //cout << "mod_loc: " << *mod_loc << "\n\n";
   //return {false, Node::create(true)};
+  return {true, Node::create(true)};
 }
 //--------------------------------  attach c++ static function
 Node::OpStatus LispExpr::attach_cc_fun(const string&name, const Node::Fun& f) {

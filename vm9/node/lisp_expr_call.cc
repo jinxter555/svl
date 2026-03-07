@@ -136,7 +136,8 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
     frame->set(CURRENT_MODULE_PTR, &module_node); 
 
   } else if(fun.m_has_key(MODULE_PTR)) {
-    auto &module_node = fun.get_node(MODULE_PTR).second;
+    //auto &module_node = fun.get_node(MODULE_PTR).second;
+    auto &module_node = fun.get_node(MODULE_PTR).second.get_node();
     auto module_name = module_node.get_node(NAME).second._to_str();
 
     frame->set(CURRENT_MODULE, module_name); 
@@ -315,6 +316,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 
   auto fun_exist = get_node(fun_path);
   if(fun_exist.first) {
+
     auto call_fun_status = call(process, fun_path, argv_vector);
     if(call_fun_status.first) return call_fun_status;
   }

@@ -214,12 +214,14 @@ unique_ptr<Node> Node::clone(const Map& map) {
   Map cloned_map;
   for(const auto& [key, child_ptr] : map) {
     if(key == CLASS_PTR) {
-      cloned_map.try_emplace(key, child_ptr.get());
+      //cloned_map.try_emplace(key, child_ptr.get());
       continue;      // prevent recursive cloning since class function contain  ptr to class itself
     }
     if(key == MODULE_PTR) { 
       //cout << "1 cloning: '" << key <<  "' mod_ptr node: " << &child_ptr->get_node() << "\n";
-      cloned_map.try_emplace(key, child_ptr.get());
+      //cloned_map.try_emplace(key, child_ptr.get());
+      //cloned_map.try_emplace(key, create("hello module_ptr"));
+      cloned_map.try_emplace(key, create());
       continue;
     }
     cloned_map.try_emplace(key, child_ptr->clone());
@@ -500,7 +502,8 @@ Node::OpStatus Node::set(const string&key, ptr_R child) {
     return {false, create_error(Error::Type::InvalidOperation, "Cannot set key on a non-Map node.")};
   }        
   Map& map= get<Map>(value_);
-  map[key] = Node::create(child);
+  //map[key] = Node::create(child);
+  map[key] = Node::create(child, Type::Raw);
   return {true, create(true)};
 }
 
@@ -1111,4 +1114,8 @@ unique_ptr<Node> Node::ptr_USU(const Node &node) {
 //------------------------------------------------------------------------
 Node::ptr_S Node::_get_ptr_s() {
   return get<ptr_S>(value_);
+}
+
+Node::ptr_R Node::_get_ptr_r() {
+  return get<ptr_R>(value_);
 }

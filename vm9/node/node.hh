@@ -139,6 +139,8 @@ public:
   OpStatus set(size_t index, unique_ptr<Node> child);                              
   OpStatus set(const string& key, unique_ptr<Node> child);                    
   OpStatus set(const string& key, ptr_R child);                    
+  OpStatus replace_nested(const string& key, ptr_R child);                    
+
   OpStatus set_imap(Integer k, unique_ptr<Node> child);                    
  
   // Convenience Overloads for Atomic Types (Delegates)                             
@@ -241,6 +243,7 @@ public:
   Vector& _get_vector_ref() ;
   List& _get_list_ref() ;
   ptr_S _get_ptr_s();
+  ptr_R _get_ptr_r();
 
   // for list and map
   Integer size_container() const;

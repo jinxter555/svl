@@ -1,34 +1,48 @@
+
+non merge, mod_loc: {"Kernel": {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"p1": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": p1, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p1
+]], "params": ():nil}, "main": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": main, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[var, l1], Vector[assign, l1, Vector[11, 22, 33, 44, 55]], Vector[loop, Vector[print, Vector[eval, Vector[read]], 
+]]], "params": Vector[x, y]}}}}
+
 module name Kernel already exist!
-mod_ptr is : {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"p2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": p2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p2 
-]], "params": ():nil}, "main2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": ():nil, "params": Vector[x, y]}}}
+mod_loc address: 0x5d7e10681350
 
-m2: {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"p2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": p2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p2 
-]], "params": ():nil}, "main2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": ():nil, "params": Vector[x, y]}}}
+m1: {"module_ptr":--*ptr[0x5d7e10681350]--, "name": fib, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, n: , n, 
+], Vector[if, Vector[lteq, n, 1], Vector[Vector[return, n]], Vector[Vector[return, Vector[add, Vector[fib, Vector[sub, n, 1]], Vector[fib, Vector[sub, n, 2]]]]]]], "params": Vector[n]}
 
-merge_nested key: namespace
+
+m1: {"module_ptr":--*ptr[0x5d7e10681350]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[var, forever, Vector[count, 0]], Vector[assign, t1, t1 robot], Vector[assign, forever, true]], "params": Vector[x, y]}
+
+
+ replaced, *mod_ptr: {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"fib": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": fib, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, n: , n, 
+], Vector[if, Vector[lteq, n, 1], Vector[Vector[return, n]], Vector[Vector[return, Vector[add, Vector[fib, Vector[sub, n, 1]], Vector[fib, Vector[sub, n, 2]]]]]]], "params": Vector[n]}, "main2": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[var, forever, Vector[count, 0]], Vector[assign, t1, t1 robot], Vector[assign, forever, true]], "params": Vector[x, y]}}}
+
 1key clone: namespace
-merge_nested key: name
+&v2->clone: England
 1key clone: name
-merge_nested key: class
-m2: {}
-
-merge_nested key: macro
-m2: {}
-
-merge_nested key: __object_info__
-m2: {"type": module}
-
-merge_nested key: type
+&v2->clone: Kernel
 1key clone: type
-merge_nested key: function
-m2: {"p2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": p2, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p2 
-]], "params": ():nil}, "main2": {"module_ptr":--*ptr[0x5bda1ad6b0a0]--, "name": main2, "__object_info__": {"type": def}, "namespace": England, "code": ():nil, "params": Vector[x, y]}}
-
-merge_nested key: p2
-2key clone: p2
-merge_nested key: main2
+&v2->clone: module
+2key clone: fib
+&v2->clone: 1 cloning: 'module_ptr' mod_ptr node: 0x5d7e10681350
+{"params": Vector[n], "code": Vector[Vector[print, n: , n, 
+], Vector[if, Vector[lteq, n, 1], Vector[Vector[return, n]], Vector[Vector[return, Vector[add, Vector[fib, Vector[sub, n, 1]], Vector[fib, Vector[sub, n, 2]]]]]]], "namespace": England, "__object_info__": {"type": def}, "name": fib, "module_ptr":--*ptr[0x5d7e10681490]--}
+1 cloning: 'module_ptr' mod_ptr node: 0x5d7e10681350
 2key clone: main2
-p1 n: 12345
+&v2->clone: 1 cloning: 'module_ptr' mod_ptr node: 0x5d7e10681350
+{"params": Vector[x, y], "code": Vector[Vector[var, forever, Vector[count, 0]], Vector[assign, t1, t1 robot], Vector[assign, forever, true]], "namespace": England, "__object_info__": {"type": def}, "name": main2, "module_ptr":--*ptr[0x5d7e1068d830]--}
+1 cloning: 'module_ptr' mod_ptr node: 0x5d7e10681350
+
+merged, m1_status : true: value: {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"main2": {"params": Vector[x, y], "code": Vector[Vector[var, forever, Vector[count, 0]], Vector[assign, t1, t1 robot], Vector[assign, forever, true]], "namespace": England, "__object_info__": {"type": def}, "name": main2, "module_ptr":--*ptr[0x5d7e1068deb0]--}, "fib": {"params": Vector[n], "code": Vector[Vector[print, n: , n, 
+], Vector[if, Vector[lteq, n, 1], Vector[Vector[return, n]], Vector[Vector[return, Vector[add, Vector[fib, Vector[sub, n, 1]], Vector[fib, Vector[sub, n, 2]]]]]]], "namespace": England, "__object_info__": {"type": def}, "name": fib, "module_ptr":--*ptr[0x5d7e106852a0]--}, "p1": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": p1, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p1
+]], "params": ():nil}, "main": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": main, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[var, l1], Vector[assign, l1, Vector[11, 22, 33, 44, 55]], Vector[loop, Vector[print, Vector[eval, Vector[read]], 
+]]], "params": Vector[x, y]}}}, type: Map
+
+
+merged, mod_loc: {"Kernel": {"namespace": England, "name": Kernel, "class": {}, "macro": {}, "__object_info__": {"type": module}, "function": {"main2": {"params": Vector[x, y], "code": Vector[Vector[var, forever, Vector[count, 0]], Vector[assign, t1, t1 robot], Vector[assign, forever, true]], "namespace": England, "__object_info__": {"type": def}, "name": main2, "module_ptr":--*ptr[0x5d7e1068deb0]--}, "fib": {"params": Vector[n], "code": Vector[Vector[print, n: , n, 
+], Vector[if, Vector[lteq, n, 1], Vector[Vector[return, n]], Vector[Vector[return, Vector[add, Vector[fib, Vector[sub, n, 1]], Vector[fib, Vector[sub, n, 2]]]]]]], "namespace": England, "__object_info__": {"type": def}, "name": fib, "module_ptr":--*ptr[0x5d7e106852a0]--}, "p1": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": p1, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[print, p1
+]], "params": ():nil}, "main": {"module_ptr":--*ptr[0x5d7e10681350]--, "name": main, "__object_info__": {"type": def}, "namespace": England, "code": Vector[Vector[var, l1], Vector[assign, l1, Vector[11, 22, 33, 44, 55]], Vector[loop, Vector[print, Vector[eval, Vector[read]], 
+]]], "params": Vector[x, y]}}}}
+
 [?2004hloosh> exit
 [?2004lexit
 Lisp Interpreter
@@ -162,70 +176,137 @@ print recursive:
           - type (Type: LispOp): module
          }
          - function (Type: Map): { (Map, size=4) 
-          - main2 (Type: Map): { (Map, size=5) 
+          - main2 (Type: Map): { (Map, size=6) 
            - params (Type: Vector): Vector[(size=2) 
             - [0, Type: Identifier]: "x"
             - [1, Type: Identifier]: "y"
            ]
-           - code (Type: Vector): Vector[(size=0) 
+           - code (Type: Vector): Vector[(size=3) 
+            - [0, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: var
+             - [1, Type: Identifier]: "forever"
+             - [2, Type: Vector]: Vector[(size=2) 
+              - [0, Type: Identifier]: "count"
+              - [1, Type: Integer]: 0
+             ]
+            ]
+            - [1, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: assign
+             - [1, Type: Identifier]: "t1"
+             - [2, Type: String]: "t1 robot"
+            ]
+            - [2, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: assign
+             - [1, Type: Identifier]: "forever"
+             - [2, Type: Bool]: bool: 1
+            ]
            ]
            - namespace (Type: String): "England"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
            - name (Type: String): "main2"
+           - module_ptr (Type: Null): ==*ptr[0x5d7e1068deb0]==
           }
-          - p2 (Type: Map): { (Map, size=5) 
-           - params (Type: Vector): Vector[(size=0) 
+          - fib (Type: Map): { (Map, size=6) 
+           - params (Type: Vector): Vector[(size=1) 
+            - [0, Type: Identifier]: "n"
            ]
-           - code (Type: Vector): Vector[(size=1) 
-            - [0, Type: Vector]: Vector[(size=2) 
+           - code (Type: Vector): Vector[(size=2) 
+            - [0, Type: Vector]: Vector[(size=4) 
              - [0, Type: LispOp]: print
-             - [1, Type: String]: "p2 
+             - [1, Type: String]: "n: "
+             - [2, Type: Identifier]: "n"
+             - [3, Type: String]: "
 "
+            ]
+            - [1, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: if
+             - [1, Type: Vector]: Vector[(size=3) 
+              - [0, Type: LispOp]: lteq
+              - [1, Type: Identifier]: "n"
+              - [2, Type: Integer]: 1
+             ]
+             - [2, Type: Vector]: Vector[(size=1) 
+              - [0, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: return
+               - [1, Type: Identifier]: "n"
+              ]
+             ]
+             - [3, Type: Vector]: Vector[(size=1) 
+              - [0, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: return
+               - [1, Type: Vector]: Vector[(size=3) 
+                - [0, Type: LispOp]: add
+                - [1, Type: Vector]: Vector[(size=2) 
+                 - [0, Type: Identifier]: "fib"
+                 - [1, Type: Vector]: Vector[(size=3) 
+                  - [0, Type: LispOp]: sub
+                  - [1, Type: Identifier]: "n"
+                  - [2, Type: Integer]: 1
+                 ]
+                ]
+                - [2, Type: Vector]: Vector[(size=2) 
+                 - [0, Type: Identifier]: "fib"
+                 - [1, Type: Vector]: Vector[(size=3) 
+                  - [0, Type: LispOp]: sub
+                  - [1, Type: Identifier]: "n"
+                  - [2, Type: Integer]: 2
+                 ]
+                ]
+               ]
+              ]
+             ]
             ]
            ]
            - namespace (Type: String): "England"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
-           - name (Type: String): "p2"
+           - name (Type: String): "fib"
+           - module_ptr (Type: Null): ==*ptr[0x5d7e106852a0]==
           }
           - p1 (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr[0x5bda1ad76a00]==
+           - module_ptr (Type: RawPtr): ==*ptr[0x5d7e10681350]==
            - name (Type: String): "p1"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
            - namespace (Type: String): "England"
            - code (Type: Vector): Vector[(size=1) 
-            - [0, Type: Vector]: Vector[(size=4) 
+            - [0, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: print
-             - [1, Type: String]: "p1 n: "
-             - [2, Type: Identifier]: "n"
-             - [3, Type: String]: "
+             - [1, Type: String]: "p1
 "
             ]
            ]
-           - params (Type: Vector): Vector[(size=1) 
-            - [0, Type: Identifier]: "n"
+           - params (Type: Vector): Vector[(size=0) 
            ]
           }
           - main (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr[0x5bda1ad76a00]==
+           - module_ptr (Type: RawPtr): ==*ptr[0x5d7e10681350]==
            - name (Type: String): "main"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
            - namespace (Type: String): "England"
-           - code (Type: Vector): Vector[(size=2) 
+           - code (Type: Vector): Vector[(size=3) 
             - [0, Type: Vector]: Vector[(size=2) 
-             - [0, Type: Identifier]: "p1"
-             - [1, Type: Vector]: Vector[(size=1) 
-              - [0, Type: Integer]: 12345
+             - [0, Type: LispOp]: var
+             - [1, Type: Identifier]: "l1"
+            ]
+            - [1, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: assign
+             - [1, Type: Identifier]: "l1"
+             - [2, Type: Vector]: Vector[(size=5) 
+              - [0, Type: Integer]: 11
+              - [1, Type: Integer]: 22
+              - [2, Type: Integer]: 33
+              - [3, Type: Integer]: 44
+              - [4, Type: Integer]: 55
              ]
             ]
-            - [1, Type: Vector]: Vector[(size=2) 
+            - [2, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: loop
              - [1, Type: Vector]: Vector[(size=3) 
               - [0, Type: LispOp]: print
@@ -288,7 +369,8 @@ print recursive:
          }
          - immute (Type: Map): { (Map, size=0) 
          }
-         - var (Type: Map): { (Map, size=0) 
+         - var (Type: Map): { (Map, size=1) 
+          - l1 (Type: SharedPtr): shared_ptr*:Vector[11, 22, 33, 44, 55]
          }
         }
        ]

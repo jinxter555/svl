@@ -1,5 +1,6 @@
 #include "node.hh"
 #include "defs.hh"
+#include "my_helpers.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -41,7 +42,7 @@ Node::OpStatus Node::merge(Map &mv, bool override){
 //------------------------------------------------------------------------
 Node::OpStatus Node::merge_nested(unique_ptr<Node> n) {
   MYLOGGER(trace_function, "Node::merge(unqiue_ptr<Node>n)", __func__, SLOG_FUNC_INFO);
-  MYLOGGER_MSG(trace_function, "n: " + n->_to_str(), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "node_ptr: " + n->_to_str(), SLOG_FUNC_INFO+30)
   if(n->type_ != Node::Type::Map || type_ != n->type_) {
     auto msg = "merge_nested(): not a map";
     cerr << msg << "\n";
@@ -76,15 +77,53 @@ Node::OpStatus Node::merge_nested(Map&m1, const Map &m2){
         merge_nested(nm1, nm2);
       } else {
         //cout << "1key clone: " << key << "\n";
+        //cout << "&v2->clone: " << v2->clone()<< "\n";
         m1[key] = v2->clone();
       }
     } else {
       //cout << "2key clone: " << key << "\n";
+      //  cout << "&v2->clone: " << v2->clone()<< "\n";
       m1[key] = v2->clone();
     }
   }
   return {true, Node::create(true)}; // success
 
+}
+
+
+Node::OpStatus Node::replace_nested(const string& key, ptr_R child_ptr) {
+  MYLOGGER(trace_function, "Node::set_nested(const string&key, ptr_R child)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "key: " + key, SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "child_ptr " + addressToHexString( child_ptr), SLOG_FUNC_INFO+30)
+//  MYLOGGER_MSG(trace_function, "child_ptr " + child_ptr->_to_str(), SLOG_FUNC_INFO+30)
+
+  auto &n1 = get_node();
+  if(n1.type_!= Type::Map)
+    return {false, create_error(Error::Type::InvalidOperation, 
+      "set_nested(): Can't operate on non map type. key '" + key + "' type: " + _to_str(type_) )};
+
+  auto &m1=  n1._get_map_ref();
+  if(m1.count(key)) {
+    m1[key] = create(child_ptr, Type::Raw);
+    //cout << "\nm1: " << Node::_to_str( m1) << "\n\n";
+  }
+
+  //for(const auto& pair1 : n1._get_map_ref() ) {
+  for(const auto& pair1 : m1) {
+    const string& key1 = pair1.first;
+    auto &v1 = pair1.second;
+    /*
+    if(key1 == key ) {
+      n1.set(key, child_ptr);
+      cout << "key1 == key: " << key << " child_ptr:" << addressToHexString(child_ptr) << ",  " << v1->_to_str() << "\n";
+    }
+    */
+
+    if(v1->type_ == Node::Type::Map) {
+      v1->replace_nested(key, child_ptr);
+    }
+  }
+  return {true, Node::create(true)}; // success
 }
 
 //------------------------------------------------------------------------

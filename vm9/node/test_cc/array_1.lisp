@@ -1,6 +1,6 @@
 module Kernel 
   def main (x y)
-    load "fib_5.lisp"
+    #load "fib_5.lisp"
     #load "use_build_1.lisp"
 
     var l1
