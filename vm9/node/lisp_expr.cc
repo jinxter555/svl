@@ -284,6 +284,7 @@ Node::OpStatus LispExpr::object_finalize(Node&process, Node& object){
 
 
 
+//------------------------------------------------------------------------
 Node::OpStatusRef LispExpr::frame_current(Node&process)  {
   MYLOGGER(trace_function, "LispExpr::frame_current(Node& process)", __func__, SLOG_FUNC_INFO);
 
@@ -299,6 +300,23 @@ Node::OpStatusRef LispExpr::frame_current(Node&process)  {
     cerr << "frames back() doesn't exist!\n";
   }
   return frame_ref_back_status;
+}
+
+Node::OpStatusRef LispExpr::frame_front(Node&process)  {
+  MYLOGGER(trace_function, "LispExpr::frame_current(Node& process)", __func__, SLOG_FUNC_INFO);
+
+  auto frames_ref_status = process[FRAMES];
+  if(!frames_ref_status.first) {
+    cerr << "frames[] doesn't exist!\n";
+    return frames_ref_status;
+  }
+  auto s = frames_ref_status.second.size();
+
+  auto frame_ref_front_status = frames_ref_status.second.front();
+  if(!frame_ref_front_status.first) {
+    cerr << "frames front() doesn't exist!\n";
+  }
+  return frame_ref_front_status;
 }
 
 //------------------------------------------------------------------------
@@ -341,6 +359,7 @@ Node::OpStatus LispExpr::scope_push_frame(Node&frame, unique_ptr<Node>scope) {
 
 
 
+//------------------------------------------------------------------------
 Node::OpStatusRef LispExpr::scope_current(Node&process)  {
   MYLOGGER(trace_function, "LispExpr::scope_current(Node& process)", __func__, SLOG_FUNC_INFO);
 
@@ -368,6 +387,33 @@ Node::OpStatusRef LispExpr::scope_current(Node&process)  {
   //return  {true, null_node};
   //return scopes_ref_status.second.back();
 }
+Node::OpStatusRef LispExpr::scope_first(Node&process)  {
+  MYLOGGER(trace_function, "LispExpr::scope_current(Node& process)", __func__, SLOG_FUNC_INFO);
+
+
+  auto frame_ref_first_status = frame_front(process);
+
+  if(!frame_ref_first_status.first) return frame_ref_first_status;
+
+  auto scopes_ref_status = frame_ref_first_status.second[SCOPES];
+  if(!scopes_ref_status.first) {
+    cerr << "scopes[] doesn't exist!\n";
+    return scopes_ref_status;
+  }
+
+  auto scope_ref_front_status = scopes_ref_status.second.front();
+  if(!scope_ref_front_status.first) {
+    cerr << "scopes front() failed!"  << scope_ref_front_status.second._to_str() << "\n";
+  }
+  return  scope_ref_front_status;
+
+  
+}
+
+
+
+
+
 
 
 //------------------------------------------------------------------------

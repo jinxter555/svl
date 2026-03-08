@@ -215,6 +215,7 @@ unique_ptr<Node> Node::clone(const Map& map) {
   for(const auto& [key, child_ptr] : map) {
     if(key == CLASS_PTR) {
       //cloned_map.try_emplace(key, child_ptr.get());
+      cloned_map.try_emplace(key, create());
       continue;      // prevent recursive cloning since class function contain  ptr to class itself
     }
     if(key == MODULE_PTR) { 

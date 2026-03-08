@@ -239,7 +239,18 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
       module_classes->set(class_name, move(status.second));
       break;
     }
-    default: { }}
+    default: { // assign module attributes here like  (var )
+      if(status.second->type_==Node::Type::Vector) {
+        auto head = status.second->front().second._to_str();
+        auto v2o_status = vector_to_object(status.second->_get_vector_ref()); // vector 2 object
+        v2o_status.second->pop_front();
+        module_node->set(head,  move(v2o_status.second) );
+
+      } else {
+        cerr << "unknown module attribute not vector!\n";
+        return {false, Node::create_error(Error::Type::Parse, "unknown class attribute:" )};
+      }
+    }}
   }
   module_node->set(FUNCTION, move(module_functions));
   module_node->set(MACRO, move(module_macros));

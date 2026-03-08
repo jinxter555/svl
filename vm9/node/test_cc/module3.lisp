@@ -1,13 +1,19 @@
-(module Kernel 
-  (defun main (x y) "my func des" 
-    (vector
-      (print "hello, world")
-      (p55 (1 2) )
-;      (p65)
-;      (p75)
-    )
-  )
-  (defun p55 (x y) "my func p5" 
-    (print "hello, 555\n")
-  )
-)
+module Kernel 
+  var gvalue
+  def main (x y) 
+     var (v1 "hola mundo") (v2 "halo welt")
+     print "hello "
+     print "world\n" 
+     print v1 ", " v2 "\n"
+     p55 88888888
+     loop
+        print (eval (read)) "\n"
+      end.loop
+  end.def
+
+  def p55(value)
+    print "p55 hello\n" 
+    print "x value:" value "\n"
+  end.def
+
+end.module

@@ -113,6 +113,7 @@ public:
   Node::OpStatus frame_push(Node&process, unique_ptr<Node>frame) ; // 
   Node::OpStatus frame_pop(Node&process);
   Node::OpStatusRef frame_current(Node&process) ; // 
+  Node::OpStatusRef frame_front(Node&process) ; // 
   Node::OpStatus frame_finalize(Node&process, Node&frame); // goes through all the scope of the frame
   Node::OpStatus scope_finalize(Node&process, Node&scope); // goes through all the vars of each scope, both immut and var
   Node::OpStatus object_finalize(Node&process, Node&scope); // goes through all the vars of each scope, both immut and var
@@ -122,6 +123,7 @@ public:
   Node::OpStatus scope_push_process(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
   Node::OpStatus scope_push_frame(Node&frame, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
   Node::OpStatusRef scope_current(Node&process) ; // 
+  Node::OpStatusRef scope_first(Node&process) ; // 
 
   Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
   Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 

@@ -51,10 +51,16 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
       case Node::Type::Atom: {  
         //cout << "current frame:\n";
         Node::Integer atom = get<Node::Integer>(ee.second->value_);
-        if(atom == Lang::str_to_atom("current_frame")) {
+        if(atom == Lang::str_to_atom("frame_current")) {
           auto current_frame = frame_current(process);
           cout << current_frame << "\n\n";
         }
+        if(atom == Lang::str_to_atom("frame_front")) {
+          auto current_frame = frame_front(process);
+          cout << current_frame << "\n\n";
+        }
+
+
         if(atom == Lang::str_to_atom("gc")) {
           ObjStore.print();
         }
