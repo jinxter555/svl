@@ -843,62 +843,7 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
 
     return {false, scope_ref_status.second.clone()};
   }
-  auto scope_vars_ref_status = scope_ref_status.second.get_node(VAR);
-  if(!scope_vars_ref_status.first)  
-    return {false, scope_vars_ref_status.second.clone()};
-
-  auto scope_immute_ref_status = scope_ref_status.second.get_node(IMMUTE);
-  if(!scope_immute_ref_status.first)  
-    return {false, scope_immute_ref_status.second.clone()};
-
-
-  auto scope_args_ref_status = scope_ref_status.second.get_node(ARGS);
-
-  if(!scope_args_ref_status.first)   {
-    cout << "scope ref status " <<  scope_ref_status.second << "\n";
-    cout << "scope args ref not found!\n";
-    return {false, scope_args_ref_status.second.clone()};
-  }
-
-  // cout << "identifier " << identifier << "\n";
-
-  auto nested_name = split_string(identifier, ".");
-
-  
-  if(nested_name.size() == 1) {   // assign non nested  map scalar value
-    if(!scope_vars_ref_status.second.m_has_key(identifier)){
-      if(!scope_immute_ref_status.second.m_has_key(identifier))  {// doesn't exist and assign only once
-        //--- return scope_immute_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
-        return scope_immute_ref_status.second.set(identifier,  object_register(  move(value_ptr)));
-      } else  {
-        auto msg = "identifier '" + identifier + "' can not be reassigned";
-        cerr << msg << "\n";
-        return {false, Node::create(msg)};
-      }
-    }
-    //-- return scope_vars_ref_status.second.set(identifier,  Node::container_obj_to_US( move(value_ptr)));
-    return scope_vars_ref_status.second.set(identifier,  object_register(move(value_ptr)));
-
-  }
-
-  //   !scope_args_ref_status.second.m_has_key(nested_name[0])){
-  // need to change to allow args
-  if(!scope_vars_ref_status.second.m_has_key(nested_name[0]) &&
-      !scope_args_ref_status.second.m_has_key(nested_name[0])){
-    auto msg = "Identifier: '" + nested_name[0] +"' is not a variable. Object and Maps have to be variables to be re-assigned";
-    cerr  << msg << "\n";
-    return {false, Node::create(msg)};
-  }
-
-  //return scope_vars_ref_status.second.set(identifier,  move(value_status.second));
-  auto rv_ref_status = symbol_lookup(process, identifier );
-  if(!rv_ref_status.first) {
-    cerr << "assign map key error!" << rv_ref_status.second._to_str() << "\n";
-    return {false, rv_ref_status.second.clone()};
-  }
-  //cout << "value_status : " << value_status << "\n";
-  rv_ref_status.second = move(value_ptr);
-  return {true, Node::create(true)};
+  return assign_attach_scope(process, scope_ref_status.second, identifier, move(value_ptr));
 
 }
 

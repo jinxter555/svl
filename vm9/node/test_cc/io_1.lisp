@@ -46,6 +46,7 @@ module System.Io
     end.def
   
     def open(fn)
+      = @file_name fn
      call_extern (System.Io.File apply) this (:open fn)
     end.def
 
