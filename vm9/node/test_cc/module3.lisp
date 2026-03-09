@@ -1,6 +1,8 @@
 module Kernel 
   var gvalue
   def main (x y) 
+     use :global Kernel
+  
      var (v1 "hola mundo") (v2 "halo welt")
      print "hello "
      print "world\n" 
@@ -14,6 +16,9 @@ module Kernel
   def p55(value)
     print "p55 hello\n" 
     print "x value:" value "\n"
+      loop
+        print (eval (read)) "\n"
+      end.loop
   end.def
 
 end.module

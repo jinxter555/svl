@@ -232,7 +232,9 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::eval:     return eval_eval(process, code_list, start);
   case Lisp::Op::read:   return read_input();
   case Lisp::Op::load:   return load(process, code_list, start);
-  case Lisp::Op::loop:   return loop_forever(process,code_list,start );
+
+  case Lisp::Op::use:    return use_at_run(process, code_list, start); 
+  case Lisp::Op::loop:   return loop_forever(process,code_list, start);
 
   case Lisp::Op::while_:   return while_(process, code_list, start );
   case Lisp::Op::return_:   return lisp_object_return(process, code_list, start );

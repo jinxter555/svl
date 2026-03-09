@@ -456,6 +456,7 @@ Node::OpStatus LispExpr::run_program() {
   if(!scope_status.first) {
     cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
   }
+
     
 
   Node::OpStatusRef code_list_status = get_node(kernel_path);
@@ -472,16 +473,26 @@ Node::OpStatus LispExpr::run_program() {
   frame1->set(CURRENT_FUNCTION, "Main");
   frame1->set(NAMESPACE, build_namespace.back());
   frame1->set(ARGS, Node::create(Node::Type::Map)); // empty args for now
+
+
   auto proc_1= process_create();
   //frame1->set(CURRENT_PROCESS_PTR, proc_1.second->pid(PID));
   frame1->set(PID, Kernel::pid(proc_1.second));
   frame_push(proc_1.second, move(frame1));
 
   scope = scope_create();
+
+  auto immute_status = scope->get_node(IMMUTE);
+  immute_status.second.set(CURRENT_MODULE_IMMUTE, "Kernel");
+  immute_status.second.set(CURRENT_FUNCTION_IMMUTE, "Main");
+  immute_status.second.set(CURRENT_NAMESPACE_IMMUTE, build_namespace.back());
+
+
   scope_status =  scope_push_process(proc_1.second, move(scope));
   if(!scope_status.first) {
     cerr << "scope status is false: scope push failed " << *scope_status.second << "\n";
   }
+
 
   if(!proc_1.first) {
     cerr << "no proc1 aka init ! found!\n";
@@ -700,6 +711,19 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
 
   //Node m1=make_shared<Node>(1);
 
+  if(identifier[0] == '$') {
+    auto current_frame_ref_status = frame_current(process);
+    if(!current_frame_ref_status.first) {
+      cerr << "error assign_attach(): " << current_frame_ref_status.second._to_str() << "\n";
+      return {false, Node::create_error(Error::Type::KeyNotFound, current_frame_ref_status.second._to_str())};
+    }
+    auto current_module = current_frame_ref_status.second[CURRENT_MODULE].second._to_str();
+    
+    auto g_identifier = current_module + identifier ;
+    cout << "global variable $: " << g_identifier <<"\n";
+    auto scope_ref_status = scope_first(process);
+    cout << "scope first: " << scope_ref_status << "\n\n";
+  }
 
   auto scope_ref_status = scope_current(process);
   if(!scope_ref_status.first) {

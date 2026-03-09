@@ -101,6 +101,14 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
     cerr << "frame_create_fun_args(): error creating scope in frame_create_fun_args!\n";
     return scope_status;
   }
+  // insert __MODULE__ __FUN__ __CLASS__ into immute
+  auto immute_status = scope_status.second->get_node(IMMUTE);
+  if(!immute_status.first) {
+    cerr << "frame_create_fun_args(): error getting scope IMMUTE!\n";
+    return {false, immute_status.second.clone()};
+  }
+
+
   scope_push_frame(*frame, move(scope_status.second));
 
 
@@ -111,8 +119,10 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   try {
     auto fun_name = fun.get_node(NAME).second._to_str();
     frame->set(CURRENT_FUNCTION, fun_name); 
+    immute_status.second.set(CURRENT_FUNCTION_IMMUTE, fun_name);
   } catch(...) {
     frame->set(CURRENT_FUNCTION, "lambda"); 
+    immute_status.second.set(CURRENT_FUNCTION_IMMUTE, "lambda");
   }
 
   frame->set(CURRENT_FUNCTION_PTR, &fun); 
@@ -123,6 +133,8 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
     auto &module_node = class_node.get_node(MODULE_PTR).second;
     auto class_name = class_node.get_node(NAME).second._to_str();
     auto module_name = module_node.get_node(NAME).second._to_str();
+
+    immute_status.second.set(CURRENT_MODULE_IMMUTE, module_name);
 
     //cout << "fun parent class name :" << class_node.get_node_with_ptr(NAME) <<  "\n";
     //cout << "fun parent class :" << class_node <<  " is an object!";
@@ -139,6 +151,8 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
     //auto &module_node = fun.get_node(MODULE_PTR).second;
     auto &module_node = fun.get_node(MODULE_PTR).second.get_node();
     auto module_name = module_node.get_node(NAME).second._to_str();
+
+    immute_status.second.set(CURRENT_MODULE_IMMUTE, module_name);
 
     frame->set(CURRENT_MODULE, module_name); 
     frame->set(CURRENT_MODULE_PTR, &module_node); 

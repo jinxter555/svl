@@ -120,6 +120,7 @@ public:
 
 
   unique_ptr<Node> scope_create() const ; // create a scope 
+  unique_ptr<Node> scope_create(Node&process) const ; // inject __MODULE_,_ __FUN__ __CLASS__
   Node::OpStatus scope_push_process(Node&process, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
   Node::OpStatus scope_push_frame(Node&frame, unique_ptr<Node>scope) ; // add a scope to last scope of last frame
   Node::OpStatusRef scope_current(Node&process) ; // 

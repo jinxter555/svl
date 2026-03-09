@@ -1418,3 +1418,25 @@ Node::OpStatus LispExpr::load(Node& process, const Node::Vector& code_list, size
   return {true, Node::create(atom_ok, Node::Type::Atom)};
 
 }
+
+Node::OpStatus LispExpr::use_at_run(Node&process, const Node::Vector &code_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::use_at_run(Node& process, Vector&cc_vec, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(code_cc_vec), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+
+  auto &element_arg = code_cc_vec[start];
+  auto ea = eval(process, *element_arg);
+  if(!ea.first ) return ea;
+  auto arg = ea.second->_get_integer();
+  if(arg == str_to_atom("module")) {
+    string mod_name = code_cc_vec[start+1]->_to_str();
+    cout <<  "use module " <<  mod_name << "\n";
+  }
+  if(arg == str_to_atom("global")) {
+    string mod_name = code_cc_vec[start+1]->_to_str();
+    cout <<  "use global " <<  mod_name << "\n";
+  }
+
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
+}

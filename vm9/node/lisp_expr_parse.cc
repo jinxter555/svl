@@ -686,9 +686,13 @@ Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
     build_namespace.push_back(  ns->_to_str());
     set_branch(namespace_module_path(), Node::create(Node::Type::Map));
     //cout << "namespace: " << build_namespace << "\n";
+    return {true, Node::create(true)};
 
+  } else {
+    cc_list.push_front(move(cmd_option));
+    cc_list.push_front(Node::create(Lisp::Op::use));
+   
+    return build_parsed_vector(cc_list);
   }
 
-
-  return {true, Node::create(true)};
 }

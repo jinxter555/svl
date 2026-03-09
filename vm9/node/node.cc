@@ -652,7 +652,10 @@ Node::OpStatus Node::pop_front() {
       return {true, move(front)};
 
     } else if constexpr (is_same_v<T, Vector>){
-      cerr << "Warning!: Node::pop_front() with vector object\n";
+      auto msg = "Warning!: Node::pop_front() with vector object";
+      cerr << msg << "\n";
+      MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP+30);
+
       if(list.empty()) { return {false, 
         create_error(Error::Type::InvalidOperation, "Cannot pop_front from an empty Vector node.")};};
       auto front = move(list.front());
