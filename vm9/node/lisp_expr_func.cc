@@ -1435,7 +1435,22 @@ Node::OpStatus LispExpr::use_at_run(Node&process, const Node::Vector &code_cc_ve
   }
   if(arg == str_to_atom("global")) {
     string mod_name = code_cc_vec[start+1]->_to_str();
-    cout <<  "use global " <<  mod_name << "\n";
+    auto mod_path =  namespace_module_path(process);
+    mod_path.push_back(mod_name);
+
+    auto module_ref_status  = get_node(mod_path);
+    if(!module_ref_status.first) {
+      auto msg = "module doesn't exist to get module vars!";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::KeyNotFound, msg)};
+    }
+    auto g_vars = module_ref_status.second.get_node(VAR);
+    auto scope_ref_status = scope_first(process);
+
+    cout << "module_: " << module_ref_status << "\n";
+    cout << "gvars: " << g_vars << "\n";
+    cout << "scope first: " << scope_ref_status << "\n\n";
+    
   }
 
   return {true, Node::create(atom_ok, Node::Type::Atom)};

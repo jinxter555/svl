@@ -689,6 +689,7 @@ Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
     return {true, Node::create(true)};
 
   } else {
+    // put everything back
     cc_list.push_front(move(cmd_option));
     cc_list.push_front(Node::create(Lisp::Op::use));
    

@@ -127,6 +127,7 @@ public:
   Node::OpStatusRef scope_first(Node&process) ; // 
 
   Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
+
   Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
   Node::OpStatus assign_attach(Node&process, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
   Node::OpStatus assign_match(Node&process, const Node::Vector& var_list, const Node::Vector& value_list) ; //  assign a value 

@@ -549,8 +549,8 @@ Node::OpStatus LispExpr::var_attach(Node&process, const Node::Vector& var_list, 
     switch(ele->type_) {
     case Node::Type::Vector: {
       auto v_name_ref_1 = (*ele)[0];
-      auto v_var_ref_1 = (*ele)[1];
-      auto v = eval(process, v_var_ref_1.second);
+      auto v_val_ref_1 = (*ele)[1];
+      auto v = eval(process, v_val_ref_1.second);
       if(!v.first) return v;
       scope_vars_status.second.set(v_name_ref_1.second._to_str(),  move(v.second));
       break; }

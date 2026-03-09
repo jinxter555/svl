@@ -20,5 +20,8 @@ module Kernel
         print (eval (read)) "\n"
       end.loop
   end.def
+end.module
 
+module Another
+  var my_var1 my_int2 my_map3
 end.module
