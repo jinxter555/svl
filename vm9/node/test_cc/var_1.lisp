@@ -1,7 +1,6 @@
 (module Kernel 
-  (defun main (x y) my_func_des
+  (def main (x y)
     (
-;    (print "hello, world1\n")    (print "hello, world2\n")
       (var v1 (v2 12345) (pi 3.14159) (s1 "hello") (s2 "world"))
       (print v2 ", " pi "\n")
       (p55 (11111 22222))
@@ -9,14 +8,13 @@
   )
 
 
-  (defun p55 (x y) "my func p55" 
+  (def p55 (x y) 
     (
       (print "hello, p55, 55\n")
-      (print x; print out x 
-             "\n" ; print new
-             y "\n"; new line
+      (print x
+             "\n" 
+             y "\n"
             )
-;      (var v1 v2 (s1 "hello") (s2 "world"))
     )
   )
 

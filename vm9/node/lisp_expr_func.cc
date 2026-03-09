@@ -1445,11 +1445,19 @@ Node::OpStatus LispExpr::use_at_run(Node&process, const Node::Vector &code_cc_ve
       return {false, Node::create_error(Error::Type::KeyNotFound, msg)};
     }
     auto g_vars = module_ref_status.second.get_node(VAR);
-    auto scope_ref_status = scope_first(process);
 
-    cout << "module_: " << module_ref_status << "\n";
-    cout << "gvars: " << g_vars << "\n";
-    cout << "scope first: " << scope_ref_status << "\n\n";
+    auto scope_ref_status = scope_first(process);
+    if(!scope_ref_status.first) return  {false,scope_ref_status.second.clone()}; 
+    auto var_ref_status = scope_ref_status.second.get_node(VAR);
+    if(!var_ref_status.first)  return {false, var_ref_status.second.clone()}; 
+
+
+    //cout << "module_: " << module_ref_status << "\n";
+    //cout << "gvars: " << g_vars << "\n";
+    //cout << "scope first: " << scope_ref_status << "\n\n";
+    //var_attach_scope(process, scope_ref_status.second, g_vars.second._get_vector_ref(), 0 );
+    mod_name = mod_name + "$";
+    var_attach_scope(process, var_ref_status.second, g_vars.second._get_vector_ref(), mod_name, 0 );
     
   }
 
