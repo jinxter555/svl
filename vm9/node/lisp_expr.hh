@@ -131,6 +131,8 @@ public:
 
   Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
   Node::OpStatus assign_attach(Node&process, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
+  Node::OpStatus assign_attach_scope(Node&process, Node&scope, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
+
   Node::OpStatus assign_match(Node&process, const Node::Vector& var_list, const Node::Vector& value_list) ; //  assign a value 
   Node::OpStatusRef var_current(Node&scope) ; // 
   Node::OpStatusRef immute_current(Node&scope) ; // 
@@ -143,6 +145,7 @@ public:
   Node::OpStatusRef var_lookup(Node&scope, const string&name ) ; //  should use
   Node::OpStatusRef immute_lookup(Node&scope, const string&name ) ; //  should use
   Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
+  Node::OpStatusRef symbol_lookup_frame(Node&frame, const string&name ) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...

@@ -113,12 +113,23 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 
   if(name=="nil") return {true, null_node};
 
+   
+  if(name[0] == '$') { // global variable
+    auto frame_ref_status = frame_front(process);
+    auto mod_name = get_module_name(process);
+    auto g_name =mod_name + name;
+    return symbol_lookup_frame(frame_ref_status.second, g_name);
+  }
   auto frame_ref_status = frame_current(process);
   if(!frame_ref_status.first) return frame_ref_status;
 
+  return symbol_lookup_frame(frame_ref_status.second, name);
+
+  /*
   auto scopes_ref_status = frame_ref_status.second[SCOPES];
 
   if(!scopes_ref_status.first) return scopes_ref_status;
+
   Node::Integer s = scopes_ref_status.second.size_container() ;
 
   //cout << "symbol lookup size: " << s << "\n";
@@ -143,11 +154,49 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 
   }
 
-
-
-
   return {false, Error::ref(Error::Type::SymbolNotFound)};
+*/
+
 }
+
+//------------------------------------------------------------------------
+Node::OpStatusRef LispExpr::symbol_lookup_frame(Node&frame, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::symbol_lookup_frame(Node&frame, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
+
+  auto scopes_ref_status = frame[SCOPES];
+
+  if(!scopes_ref_status.first) return scopes_ref_status;
+
+  Node::Integer s = scopes_ref_status.second.size_container() ;
+
+  //cout << "symbol lookup size: " << s << "\n";
+
+  for(Node::Integer i=s-1; i>=0; i--) {
+    //auto scope_ref_status = scope_current(process);
+    //cout << "symbol lookup i: " << i << "\n";
+    auto scope_ref_status = scopes_ref_status.second[i];
+    if(!scope_ref_status.first) {
+      cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
+      return scope_ref_status;
+    }
+  
+    auto var_ref = var_lookup(scope_ref_status.second, name);
+    if(var_ref.first) return var_ref;
+  
+    auto immute_ref = immute_lookup(scope_ref_status.second, name);
+    if(immute_ref.first) return immute_ref;
+
+    auto arg_ref = arg_lookup(scope_ref_status.second, name);
+    if(arg_ref.first) return arg_ref;
+
+  }
+  return {false, Error::ref(Error::Type::SymbolNotFound)};
+
+}
+
+
+
 
 
 //------------------------------------------------------------------------

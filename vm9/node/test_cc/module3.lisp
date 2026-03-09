@@ -1,5 +1,5 @@
 module Kernel 
-  var gvalue
+  var (gvalue 123)
   def main (x y) 
     
      use :global Kernel
@@ -25,4 +25,13 @@ end.module
 
 module Another
   var (my_var1 "variable string") (my_int2 6) (my_map3 (1 2 3))
+
+  def p1()
+    print "Another p1()\n"
+      loop
+        print (eval (read)) "\n"
+      end.loop
+  end.def
+
+
 end.module
