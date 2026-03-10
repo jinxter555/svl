@@ -1384,6 +1384,7 @@ Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, si
 
 }
 
+//------------------------------------------------------------------------
 
 Node::OpStatus LispExpr::load(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::load(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
@@ -1454,12 +1455,60 @@ Node::OpStatus LispExpr::use_at_run(Node&process, const Node::Vector &code_cc_ve
 
     //cout << "module_: " << module_ref_status << "\n";
     //cout << "gvars: " << g_vars << "\n";
-    //cout << "scope first: " << scope_ref_status << "\n\n";
+    cout << "scope first: " << scope_ref_status << "\n\n";
     //var_attach_scope(process, scope_ref_status.second, g_vars.second._get_vector_ref(), 0 );
+    scope_modsym_path(scope_ref_status.second, mod_name);
     mod_name = mod_name + "$";
+
     var_attach_scope(process, var_ref_status.second, g_vars.second._get_vector_ref(), mod_name, 0 );
     
   }
 
   return {true, Node::create(atom_ok, Node::Type::Atom)};
+}
+
+//------------------------------------------------------------------------
+// create global variables and global immutes, module path. scope first frame, first scope
+//
+Node::OpStatus LispExpr::scope_modsym_path(Node&scope, const string& modname) {
+  MYLOGGER(trace_function, "LispExpr::scope_modsym_path(Node& process, Vector&cc_vec, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "module: "+ modname, SLOG_FUNC_INFO+30)
+  auto var_ref_status = scope.get_node(VAR);
+  auto immute_ref_status = scope.get_node(IMMUTE);
+
+  if(!var_ref_status.first)
+    return {false, var_ref_status.second.clone()};
+  if(!immute_ref_status.first)
+    return {false, immute_ref_status.second.clone()};
+  
+  //-----
+  if(var_ref_status.second.m_has_key(_MODULE)){
+    auto mod_ref_status  = var_ref_status.second.get_node({_MODULE, modname});
+    if(!mod_ref_status.first) { //
+      auto mvar = Node::create(Node::Type::Map);
+      var_ref_status.second.set({_MODULE, modname}, move(mvar), true);
+    }
+
+  } else {
+    auto mvar = Node::create(Node::Type::Map);
+    var_ref_status.second.set({_MODULE, modname}, move(mvar), true);
+  }
+
+  //-----
+
+  if(immute_ref_status.second.m_has_key(_MODULE)){
+    auto mod_ref_status  = immute_ref_status.second.get_node({_MODULE, modname});
+    if(!mod_ref_status.first) { //
+      auto mvar = Node::create(Node::Type::Map);
+      immute_ref_status.second.set({_MODULE, modname}, move(mvar), true);
+    }
+
+  } else {
+    auto mvar = Node::create(Node::Type::Map);
+    immute_ref_status.second.set({_MODULE, modname} , move(mvar), true);
+  }
+
+
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
+
 }

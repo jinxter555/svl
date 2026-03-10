@@ -133,6 +133,9 @@ public:
   Node::OpStatus assign_attach(Node&process, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
   Node::OpStatus assign_attach_scope(Node&process, Node&scope, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
 
+  Node::OpStatus scope_modsym_path(Node&scope, const string& modname) ; //   create scope.var.module[name] scope.immute.module[name]
+
+
   Node::OpStatus assign_match(Node&process, const Node::Vector& var_list, const Node::Vector& value_list) ; //  assign a value 
   Node::OpStatusRef var_current(Node&scope) ; // 
   Node::OpStatusRef immute_current(Node&scope) ; // 
