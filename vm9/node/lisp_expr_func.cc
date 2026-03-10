@@ -1308,6 +1308,10 @@ Node::OpStatus LispExpr::interpreter(Node& process, const Node::Vector& list, si
     return code_status;
   } else if(cmd == str_to_atom("build")) { 
     return build_file_str(element_arg->_to_str());
+
+  } else if(cmd == str_to_atom("get")) { 
+    auto arg = ea.second->_get_integer();
+    if(arg == str_to_atom("frame_front")) return {true, frame_front(process).second.clone()};
   } else {
     cout << "Unknown Interpreter command!\n";
     return {true, Node::create(atom_error, Node::Type::Atom) };
@@ -1458,6 +1462,8 @@ Node::OpStatus LispExpr::use_at_run(Node&process, const Node::Vector &code_cc_ve
     cout << "scope first: " << scope_ref_status << "\n\n";
     //var_attach_scope(process, scope_ref_status.second, g_vars.second._get_vector_ref(), 0 );
     scope_modsym_path(scope_ref_status.second, mod_name);
+    var_attach_gscope(process, var_ref_status.second, g_vars.second._get_vector_ref(), mod_name, 0 );
+
     mod_name = mod_name + "$";
 
     var_attach_scope(process, var_ref_status.second, g_vars.second._get_vector_ref(), mod_name, 0 );

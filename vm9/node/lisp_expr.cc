@@ -575,6 +575,8 @@ Node::OpStatus LispExpr::var_attach_scope(Node&process, Node&scope_var, const No
   MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
 
+
+
   //cout << "current pid : " << Kernel::pid(process) << "\n";;
   size_t s = var_list.size();
   for(size_t i=start; i<s; i++) {
@@ -585,10 +587,42 @@ Node::OpStatus LispExpr::var_attach_scope(Node&process, Node&scope_var, const No
       auto v_val_ref_1 = (*ele)[1];
       auto v = eval(process, v_val_ref_1.second);
       if(!v.first) return v;
+
       scope_var.set(mod_name + v_name_ref_1.second._to_str(),  move(v.second));
+
       break; }
     case Node::Type::Identifier: {
       scope_var.set(mod_name + ele->_to_str(),  Node::create());
+      break;
+    }
+    default: return {false, Node::create_error(Error::Type::Unknown, "Unknown var error")}; }
+  }
+  return {true, Node::create(true)};
+}
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::var_attach_gscope(Node&process, Node&scope_var, const Node::Vector& var_list, const string& mod_name, size_t start)  {
+  MYLOGGER(trace_function, "LispExpr::var_attach_gscope(process, scope_var, var_list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("var_list: ") + Node::_to_str(var_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
+
+  //auto &mod_var = scope_var.get_node(_MODULE).second._get_map_ref();
+  auto &mod_var = scope_var.get_node({_MODULE, mod_name}).second;
+
+
+  //cout << "current pid : " << Kernel::pid(process) << "\n";;
+  size_t s = var_list.size();
+  for(size_t i=start; i<s; i++) {
+    auto const &ele = var_list[i];
+    switch(ele->type_) {
+    case Node::Type::Vector: {
+      auto v_name_ref_1 = (*ele)[0];
+      auto v_val_ref_1 = (*ele)[1];
+      auto v = eval(process, v_val_ref_1.second);
+      if(!v.first) return v;
+      mod_var.set(v_name_ref_1.second._to_str(),  v.second->clone());
+      break; }
+    case Node::Type::Identifier: {
+      mod_var.set(mod_name + ele->_to_str(),  Node::create());
       break;
     }
     default: return {false, Node::create_error(Error::Type::Unknown, "Unknown var error")}; }

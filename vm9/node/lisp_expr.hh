@@ -128,10 +128,12 @@ public:
 
   Node::OpStatus var_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
   Node::OpStatus var_attach_scope(Node&process, Node&scope, const Node::Vector& var_list, const string& modname,  size_t start=0);
+  Node::OpStatus var_attach_gscope(Node&process, Node&scope, const Node::Vector& var_list, const string& modname,  size_t start=0);
 
   Node::OpStatus assign_attach(Node&process, const Node::Vector& var_list, size_t start=0) ; // 
   Node::OpStatus assign_attach(Node&process, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
   Node::OpStatus assign_attach_scope(Node&process, Node&scope, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
+  Node::OpStatus assign_attach_gscope(Node&process, Node&scope, const string& identifier, unique_ptr<Node>value_ptr) ; //  assign a value 
 
   Node::OpStatus scope_modsym_path(Node&scope, const string& modname) ; //   create scope.var.module[name] scope.immute.module[name]
 
