@@ -653,7 +653,7 @@ Node::OpStatus Node::pop_front() {
 
     } else if constexpr (is_same_v<T, Vector>){
       auto msg = "Warning!: Node::pop_front() with vector object";
-      cerr << msg << "\n";
+      //cerr << msg << "\n";
       MYLOGGER_MSG(trace_function, msg, SLOG_NODE_OP+30);
 
       if(list.empty()) { return {false, 

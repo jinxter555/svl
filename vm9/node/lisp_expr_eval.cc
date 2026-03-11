@@ -45,9 +45,13 @@ Node::OpStatusRef LispExpr::arg_lookup(Node&scope, const string&name ) {
 }
 
 //------------------------------------------------------------------------
-Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name ) {
+Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name) {
   MYLOGGER(trace_function, "LispExpr::var_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
+
+  string module_name, var_name=name;
+  bool use_module=false;
+
 
   auto scope_vars_ref_status = scope.get_node(VAR);
   if(!scope_vars_ref_status.first) {
@@ -55,13 +59,22 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name ) {
     return scope_vars_ref_status;
   }
 
-  auto nested_name = split_string(name, ".");
+  if( scope_vars_ref_status.second.m_has_key(name)) {
+    return scope_vars_ref_status.second[name];
+  }
+
+
+  auto nested_name = split_string(var_name, ".");
+
+
+
 
   if(nested_name.size()==1) {
     return scope_vars_ref_status.second[name];
   }
 
   // this returns a shared ptr to a map
+
   auto shared_ptr_ref_status = scope_vars_ref_status.second[nested_name[0]];
 
   if(!shared_ptr_ref_status.first) {
@@ -73,6 +86,9 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name ) {
 
 }
 
+
+
+
 Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
   MYLOGGER(trace_function, "LispExpr::immute_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
@@ -81,6 +97,9 @@ Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
   if(!scope_immute_ref_status.first) {
     cerr << "immute[] lookup failed!" <<  scope_immute_ref_status.second._to_str() << "\n";
     return scope_immute_ref_status;
+  }
+  if( scope_immute_ref_status.second.m_has_key(name)) {
+    return scope_immute_ref_status.second[name];
   }
 
   auto nested_name = split_string(name, ".");
@@ -115,47 +134,18 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 
    
   if(name[0] == '$') { // global variable
+    auto g_name = name; g_name[0] = '.';
     auto frame_ref_status = frame_front(process);
     auto mod_name = get_module_name(process);
-    auto g_name =mod_name + name;
+    g_name =mod_name + g_name;
+    //cout << "frame_front(), status: " << frame_ref_status<< "\n";
+    //cout << "symbol_lookup() : gname: " <<g_name << "\n";
     return symbol_lookup_frame(frame_ref_status.second, g_name);
   }
   auto frame_ref_status = frame_current(process);
   if(!frame_ref_status.first) return frame_ref_status;
 
   return symbol_lookup_frame(frame_ref_status.second, name);
-
-  /*
-  auto scopes_ref_status = frame_ref_status.second[SCOPES];
-
-  if(!scopes_ref_status.first) return scopes_ref_status;
-
-  Node::Integer s = scopes_ref_status.second.size_container() ;
-
-  //cout << "symbol lookup size: " << s << "\n";
-
-  for(Node::Integer i=s-1; i>=0; i--) {
-    //auto scope_ref_status = scope_current(process);
-    //cout << "symbol lookup i: " << i << "\n";
-    auto scope_ref_status = scopes_ref_status.second[i];
-    if(!scope_ref_status.first) {
-      cerr << "scope lookup failed!" <<  scope_ref_status.second._to_str() << "\n";
-      return scope_ref_status;
-    }
-  
-    auto var_ref = var_lookup(scope_ref_status.second, name);
-    if(var_ref.first) return var_ref;
-  
-    auto immute_ref = immute_lookup(scope_ref_status.second, name);
-    if(immute_ref.first) return immute_ref;
-
-    auto arg_ref = arg_lookup(scope_ref_status.second, name);
-    if(arg_ref.first) return arg_ref;
-
-  }
-
-  return {false, Error::ref(Error::Type::SymbolNotFound)};
-*/
 
 }
 

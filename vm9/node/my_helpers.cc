@@ -251,6 +251,30 @@ string join_str(const deque<std::string>& elements, const string& delimiter) {
     return ss.str();
 }
 
+std::vector<std::string> split_string_except_quoted(const std::string& s, char delimiter) {
+  std::vector<std::string> result;
+  std::string current_token;
+  bool in_quotes = false;
+
+  for (char c : s) {
+    if (c == '"') {
+     in_quotes = !in_quotes; // Toggle the in_quotes flag
+     // current_token += c; // Optionally keep quotes in the output
+    } else if (c == delimiter && !in_quotes) {
+     // If the character is the delimiter AND we are not in quotes
+     result.push_back(current_token);
+     current_token.clear();
+    } else {
+     current_token += c;
+    }
+  }
+
+  // Add the last token
+  result.push_back(current_token);
+  
+  return result;
+}
+
 
 
 std::string addressToHexString(void* ptr) {

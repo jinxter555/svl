@@ -37,6 +37,7 @@ string join_str(const deque<std::string>& elements, const string& delimiter=" ")
 
 
 std::string addressToHexString(void* ptr);
+std::vector<std::string> split_string_except_quoted(const std::string& s, char delimiter) ;
 
 
 #define __CLASS_NAME__ extractClassName(__PRETTY_FUNCTION__)

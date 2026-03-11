@@ -779,12 +779,24 @@ Node::OpStatus  LispExpr::assign_attach_scope(Node&process, Node&scope, const st
   MYLOGGER(trace_function, "LispExpr::assign_attach_scope(Node&process, Node&scope, string&identifier, unique_ptr<Node> value_ptr)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("identifier: ") + identifier, SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("value_ptr: ") + value_ptr->_to_str(), SLOG_FUNC_INFO+30);
+  //MYLOGGER_MSG(trace_function, string("current_module : ") + get_module_name(process), SLOG_FUNC_INFO+30);
+
+  auto current_module = get_module_name(process);
 
   // attach to scope 
   auto scope_vars_ref_status = scope.get_node(VAR);
   if(!scope_vars_ref_status.first)  
     return {false, scope_vars_ref_status.second.clone()};
 
+  
+    // -- assign if it exist in scope 
+  if( scope_vars_ref_status.second.m_has_key(identifier)) {
+    auto rv_ref_status = scope_vars_ref_status.second.get_node(identifier);
+    rv_ref_status.second = move(value_ptr);
+    return {true, Node::create(true)};
+  }
+
+  // attach to scope 
   auto scope_immute_ref_status = scope.get_node(IMMUTE);
   if(!scope_immute_ref_status.first)  
     return {false, scope_immute_ref_status.second.clone()};
@@ -797,7 +809,7 @@ Node::OpStatus  LispExpr::assign_attach_scope(Node&process, Node&scope, const st
     return {false, scope_args_ref_status.second.clone()};
   }
 
-  // cout << "identifier " << identifier << "\n";
+
 
   auto nested_name = split_string(identifier, ".");
 
@@ -818,10 +830,28 @@ Node::OpStatus  LispExpr::assign_attach_scope(Node&process, Node&scope, const st
 
   }
 
+
+
   //   !scope_args_ref_status.second.m_has_key(nested_name[0])){
   // need to change to allow args
   if(!scope_vars_ref_status.second.m_has_key(nested_name[0]) &&
       !scope_args_ref_status.second.m_has_key(nested_name[0])){
+
+      // nested var not found  then it's a module global immute
+    auto identifier_vec = nested_name; identifier_vec.pop_back();
+    auto identifier_module_str = join_str(identifier_vec, ".");
+    if(identifier_module_str == current_module) {
+      cout << "might need to assign an immute!";
+      if(!scope_immute_ref_status.second.m_has_key(identifier))  // doesn't exist and assign only once
+        return scope_immute_ref_status.second.set(identifier,  object_register(  move(value_ptr)));
+      else {
+        auto msg = "identifier '" + identifier + "' can not be reassigned";
+        cerr << msg << "\n";
+        return {false, Node::create(msg)};
+      }
+
+    }
+
     auto msg = "Identifier: '" + nested_name[0] +"' is not a variable. Object and Maps have to be variables to be re-assigned";
     cerr  << msg << "\n";
     return {false, Node::create(msg)};
@@ -837,6 +867,9 @@ Node::OpStatus  LispExpr::assign_attach_scope(Node&process, Node&scope, const st
   rv_ref_status.second = move(value_ptr);
   return {true, Node::create(true)};
 
+
+
+
 }
 
 
@@ -851,6 +884,10 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
   //Node m1=make_shared<Node>(1);
 
   if(identifier[0] == '$') {
+
+    auto g_identifier = identifier;
+    g_identifier[0] = '.';
+
     auto current_frame_ref_status = frame_current(process);
     if(!current_frame_ref_status.first) {
       cerr << "error assign_attach(): " << current_frame_ref_status.second._to_str() << "\n";
@@ -858,10 +895,8 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, u
     }
     auto current_module = current_frame_ref_status.second[CURRENT_MODULE].second._to_str();
     
-    auto g_identifier = current_module + identifier ;
-    cout << "global variable $: " << g_identifier <<"\n";
+    g_identifier = current_module + g_identifier ;
     auto scope_ref_status = scope_first(process);
-    cout << "scope first: " << scope_ref_status << "\n\n";
     return assign_attach_scope(process, scope_ref_status.second, g_identifier, move(value_ptr));
   }
 

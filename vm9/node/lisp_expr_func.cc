@@ -1459,12 +1459,12 @@ Node::OpStatus LispExpr::use_at_run(Node&process, const Node::Vector &code_cc_ve
 
     //cout << "module_: " << module_ref_status << "\n";
     //cout << "gvars: " << g_vars << "\n";
-    cout << "scope first: " << scope_ref_status << "\n\n";
+    // cout << "scope first: " << scope_ref_status << "\n\n";
     //var_attach_scope(process, scope_ref_status.second, g_vars.second._get_vector_ref(), 0 );
-    scope_modsym_path(scope_ref_status.second, mod_name);
-    var_attach_gscope(process, var_ref_status.second, g_vars.second._get_vector_ref(), mod_name, 0 );
+    //scope_modsym_path(scope_ref_status.second, mod_name);
+    //var_attach_gscope(process, var_ref_status.second, g_vars.second._get_vector_ref(), mod_name, 0 );
 
-    mod_name = mod_name + "$";
+    mod_name = mod_name + ".";
 
     var_attach_scope(process, var_ref_status.second, g_vars.second._get_vector_ref(), mod_name, 0 );
     
