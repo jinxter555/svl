@@ -66,7 +66,7 @@ module My.Mod1
   def p1()
     use :global My.Mod1
     var (hello "world")
-     # = $d (new Dict 1 2 3)
+     = $data (new Dict 1 2 3)
 
     print "Another p1() with class Dict() \n"
     print  hello "\n"

@@ -32,15 +32,17 @@ Node::OpStatusRef LispExpr::arg_lookup(Node&scope, const string&name ) {
     return arg_ref_status.second[name];
   }
 
-  auto shared_ptr_ref_status = arg_ref_status.second[nested_name[0]];
+  //auto shared_ptr_ref_status = arg_ref_status.second[nested_name[0]];
+  auto ptr_ref_status = arg_ref_status.second[nested_name[0]];
 
-  if(!shared_ptr_ref_status.first) {
+  if(!ptr_ref_status.first) {
     //cerr << "var_lookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
-    return shared_ptr_ref_status;
+    return ptr_ref_status;
   }
 
   nested_name.erase(nested_name.begin());
-  return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+  //return ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+  return ptr_ref_status.second.get_node(nested_name);
 
 }
 
@@ -75,14 +77,23 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name) {
 
   // this returns a shared ptr to a map
 
-  auto shared_ptr_ref_status = scope_vars_ref_status.second[nested_name[0]];
+  auto ptr_ref_status = scope_vars_ref_status.second[nested_name[0]];
 
-  if(!shared_ptr_ref_status.first) {
+  if(!ptr_ref_status.first) {
     //cerr << "var_lookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
-    return shared_ptr_ref_status;
+    return ptr_ref_status;
   }
   nested_name.erase(nested_name.begin());
-  return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+
+  //cout << "nested_name: " <<  _to_str_ext(nested_name) << "\n";
+  //cout << "shared_ptr_ref_status: " << shared_ptr_ref_status << "\n";
+  //cout << "shared_ptr-> tostr: " << shared_ptr_ref_status.second._to_str() << "\n";
+
+  //return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+
+
+  return ptr_ref_status.second.get_node(nested_name);
+
 
 }
 
@@ -110,14 +121,16 @@ Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
     return scope_immute_ref_status.second[name];
    // return immute_ref_value;
 
-  auto shared_ptr_ref_status = scope_immute_ref_status.second[nested_name[0]];
+  //auto shared_ptr_ref_status = scope_immute_ref_status.second[nested_name[0]];
+  auto ptr_ref_status = scope_immute_ref_status.second[nested_name[0]];
 
-  if(!shared_ptr_ref_status.first) {
+  if(!ptr_ref_status.first) {
     //cerr << "immute_lookup() error sptr_ref_status : " << shared_ptr_ref_status.second._to_str() << "\n";
-    return shared_ptr_ref_status;
+    return ptr_ref_status;
   }
   nested_name.erase(nested_name.begin());
-  return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+  //return shared_ptr_ref_status.second._get_ptr_s()->get_node(nested_name);
+  return ptr_ref_status.second.get_node(nested_name);
   //return scope_immute_ref_status.second[name];
 }
 
@@ -213,7 +226,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     if(rv_ref_status.second.type_ == Node::Type::Shared) 
       return {true, Node::ptr_USU(rv_ref_status.second)}; // clone a uniqu ptr to shared ptr without  recursive clone
 
-    return {true, rv_ref_status.second.clone()};
+    return {true,  rv_ref_status.second.clone()};
   }
   case Node::Type::ObjectId: { // object
     cout << "eval node object_id!\n";

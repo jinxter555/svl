@@ -214,16 +214,23 @@ unique_ptr<Node> Node::clone(const Map& map) {
   Map cloned_map;
   for(const auto& [key, child_ptr] : map) {
     if(key == CLASS_PTR) {
+      MYLOGGER_MSG(trace_function, "cloning class_ptr: ", SLOG_FUNC_INFO+30)
+      //cout << "cloning child_ptr, class_ptr: " << Node::_to_str( child_ptr->type_ ) <<"\n";
+
       //cloned_map.try_emplace(key, child_ptr.get());
-      cloned_map.try_emplace(key, create());
+      cloned_map.try_emplace(key, create( child_ptr.get()));
+      //cloned_map.try_emplace(key, create());
       continue;      // prevent recursive cloning since class function contain  ptr to class itself
     }
     if(key == MODULE_PTR) { 
       //cout << "1 cloning: '" << key <<  "' mod_ptr node: " << &child_ptr->get_node() << "\n";
       //cloned_map.try_emplace(key, child_ptr.get());
+      //cloned_map.try_emplace(key, child_ptr.get());
       //cloned_map.try_emplace(key, create("hello module_ptr"));
-      cloned_map.try_emplace(key, create());
+      cloned_map.try_emplace(key, create( child_ptr.get()));
       continue;
+      //cloned_map.try_emplace(key, create());
+      //continue;
     }
     cloned_map.try_emplace(key, child_ptr->clone());
   }

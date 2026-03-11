@@ -49,9 +49,10 @@ module Kernel
 
     f1()
     = v1 (new Dict "main-webster11  " "global" "affairs")
-    = v2 v1
+    # = v2 v1
 
-    print "v2 " v2 "\n"
+    #print "v2 " v2 "\n"
+    print "v1 " v1 "\n"
 
 #    delete v1
 #    print "v2 " v2
