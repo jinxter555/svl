@@ -1383,8 +1383,7 @@ Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, si
   }
 
 
-  cout <<"index: " << idx << "\n";
-  return {true, Node::create()};
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
 
 }
 

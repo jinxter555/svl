@@ -31,7 +31,7 @@ module Kernel
 
   def main (x y)
 
-    (var m1)
+    var v m1
 
     = m1 (new Dict "ship building" )
 

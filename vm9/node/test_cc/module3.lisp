@@ -4,12 +4,12 @@ module Kernel
     
      use :global Kernel
   
-     var (v1 "hola mundo") (v2 "halo welt")
+     var  v (v1 "hola mundo") (v2 "halo welt")
      print "hello "
      print "world\n" 
      print v1 ", " v2 "\n"
 
-      My.Mod1.p1()
+#      My.Mod1.p1()
       
      # p55 88888888
      loop

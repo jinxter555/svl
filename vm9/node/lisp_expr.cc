@@ -792,7 +792,8 @@ Node::OpStatus  LispExpr::assign_attach_scope(Node&process, Node&scope, const st
     // -- assign if it exist in scope 
   if( scope_vars_ref_status.second.m_has_key(identifier)) {
     auto rv_ref_status = scope_vars_ref_status.second.get_node(identifier);
-    rv_ref_status.second = move(value_ptr);
+    // rv_ref_status.second = move(value_ptr);
+    rv_ref_status.second = object_register(move(value_ptr));
     return {true, Node::create(true)};
   }
 
@@ -837,11 +838,10 @@ Node::OpStatus  LispExpr::assign_attach_scope(Node&process, Node&scope, const st
   if(!scope_vars_ref_status.second.m_has_key(nested_name[0]) &&
       !scope_args_ref_status.second.m_has_key(nested_name[0])){
 
-      // nested var not found  then it's a module global immute
+    // nested var not found  then it's a module global immute
     auto identifier_vec = nested_name; identifier_vec.pop_back();
     auto identifier_module_str = join_str(identifier_vec, ".");
     if(identifier_module_str == current_module) {
-      cout << "might need to assign an immute!";
       if(!scope_immute_ref_status.second.m_has_key(identifier))  // doesn't exist and assign only once
         return scope_immute_ref_status.second.set(identifier,  object_register(  move(value_ptr)));
       else {

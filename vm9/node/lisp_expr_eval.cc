@@ -226,6 +226,19 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     if(rv_ref_status.second.type_ == Node::Type::Shared) 
       return {true, Node::ptr_USU(rv_ref_status.second)}; // clone a uniqu ptr to shared ptr without  recursive clone
 
+    //if(rv_ref_status.second.type_ == Node::Type::Raw)  { cout << "rv_ref is raw!\n"; }
+    if(rv_ref_status.second.type_ == Node::Type::Unique)  {
+     // cout << "rv_ref is unique!\n";
+      auto &ptr = get<Node::ptr_U>(rv_ref_status.second.value_);
+    //  cout << "rv_ref ptr type: " << Node::_to_str( ptr->type_) << "\n";
+      if(ptr->type_ == Node::Type::Shared) {
+        return {true, Node::ptr_USU(ptr)}; 
+      }
+      //return {true, Node::ptr_USU(rv_ref_status.second.get_ptr  )}; // clone a uniqu ptr to shared ptr without  recursive clone
+    }
+    //cout << "cloning rv_ref_status : " << rv_ref_status << "\n";
+    MYLOGGER_MSG(trace_function, "eval clone: " + rv_ref_status.second._to_str(), SLOG_FUNC_INFO+30);
+
     return {true,  rv_ref_status.second.clone()};
   }
   case Node::Type::ObjectId: { // object
