@@ -2,7 +2,7 @@ module Kernel
   class Range
     (var begin fin step state)
 
-    def Range(start fin step)  
+    def initialize(start fin step)  
       # assign needs to return a value
       = @begin start
       = @state start
@@ -19,125 +19,84 @@ module Kernel
     # return statement needed
     def next ()
       = @state (+ @state @step)
-      # print "next: " @state "\n"
+       # print "in next, state= " @state "\n"
 
-      if[@state == @fin]
+      iif (>= @state @fin)
         return (:end @fin)
-      end.if
+      end.iif
 
-      if (> @state @fin)
+      iif(> @state @fin)
         return (:error nil)
         return (:ok @state)
-      end.if
+      end.iif
 
-      #print "i am in next(v): \n"
+      # print "i am in next(v): \n"
     end.def
 
     def end ()
       assign @state @begin
     end.def
 
-    def enter ()
-      print "this: " this "\n"
-      (loop(print (eval (read)) "\n"))
+    def finalize()
     end.def
-  
 
   end.class
 
   defmacro forloop ( it cblock )
     quote
-           # (unquote cblock) 
       var rv u (forever~ true)
       = rv (send (unquote it)  :init)
-
-
   
-    #  (faz (rv)
-    #       do (:ok i)
-    #        print i
-    #        print "what is up\n"
-    #       end.do
-    #   )
-
-      while (forever~)
-        faz (rv) (unquote cblock)
+      # faz (rv) (unquote cblock)
+      while(forever~)
+        #= rv (send (unquote it)  :next)
         
 
-        = rv (send (unquote it)  :next)
-
-        if (= (:end u) rv)
+        iif (= (:end _) rv)
          ( print "end\n"
-           = forever~ false
+          = forever~ false
          )
-        end.if
+        end.iif
 
-        if (= (:error _) (rv))
+        iif (= (:error _) rv)
         (
           print "error\n"
           = forever~ false
         )
-        end.if
+        end.iif
 
-        #print "rv: " rv "\n"
+
+        faz (rv) (unquote cblock)
+        = rv (send (unquote it)  :next)
+        #faz (rv2) (unquote cblock)
+        # faz (rv) (unquote cblock)
+
+      
 
       end.while
-      
-      
 
+      (:ok)
     end.quote
 
 
   end.defmacro
 
-
-  def repl()
-    
-    while (true)
-
-      (print (eval (read)) "\n")
-      print "hello\n"
-
-    end.while
-
-  end.def
-
   def main (x y)
-    #var i 
-    = r1 (new Range 1 13 3)
+    var i forever
+    # = r1 (new Range 1 6 3)
+    = r1 (new Range 1 10 1)
+
     #send r1 :next 
 
-    if [ true == true]
-      print "true == true\n"
-    end.if
-
-    (forloop r1 
+    forloop r1 
       do (:ok i)
         print i ": what is up\n"
       end.do
-    )
+    end.forloop
 
-    send r1 :init
-
-    = r2 (new Range 1 20 5)
-    send r2 :init
-    (forloop r1
-      (do (:ok i)
-        (print i ": what is up2\n")
-       )
-    )
+   (loop (print (eval (read)) "\n"))
   
 
-   (loop  (print (eval (read)) "\n"))
-   # repl()
-   #(repl())
-
-  end.def
-
-  def f1 ()
-    print "here in f1\n"
-    return :ok
-    return
   end.def
 
 end.module

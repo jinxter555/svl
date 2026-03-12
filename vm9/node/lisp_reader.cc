@@ -448,7 +448,16 @@ string LispReader::tokenize_preprocess_multiline_parenthesis(const string& input
 bool LispReader::is_closurable(const string&token_str) {
   MYLOGGER(trace_function, "LispReader::is_closurable(const string&token_str) ", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "token_str: " + token_str , SLOG_FUNC_INFO);
+
+
+  if(closurable_user_defined.count(token_str)  
+  && closurable_user_defined.at(token_str)==true) 
+    return true;
+
   auto op = lisp->keyword_to_op(token_str); // Lisp::Op
+
+
+
   return is_closurable(op);
 }
 
@@ -500,6 +509,11 @@ bool LispReader::is_endable(const string&token_str) {
   //cout << "end : " << end<< "\n";
   //cout << "opstr: " << op_str << "\n";
 
+  // use user defined as well 
+  return is_closurable(op_str);
+
+  // might need to get rid of these two lines
+
   auto op = lisp->keyword_to_op(op_str); // Lisp::Op
   return is_closurable(op);
 }
@@ -540,4 +554,23 @@ vector<string> LispReader::tokenize_pre(const string& input) {
   }
   if (!token.empty()) tokens.push_back(token);
   return tokens;
+}
+
+bool LispReader::load_closurable(const string&file) {
+  std::ifstream infile(file);
+  if(! infile.is_open()) {
+    return false;
+  }
+
+  string line, source_str; 
+
+  while(getline(infile, line) ) {
+    closurable_user_defined[line] = true;
+
+  }
+//  for(auto&p : closurable_user_defined) cout << "p.first: " << p.first << ", p.second: " << p.second << "\n";
+
+  infile.close();
+  return true;
+
 }

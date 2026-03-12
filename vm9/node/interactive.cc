@@ -122,3 +122,7 @@ void Interactive::print() {
   MYLOGGER(trace_function , "Interactive::print()" ,  __CLASS_NAME__ + "::" +  __func__, SLOG_FUNC_INFO);
   lang.print();
 }
+
+LispReader& Interactive::get_reader() {
+  return lang.get_reader();
+}

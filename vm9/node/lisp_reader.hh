@@ -1,6 +1,7 @@
 #pragma once
 #include "lang.hh"
 #include "lisp.hh"
+#include <map>
 
 struct Token {
   Node::Integer col_;
@@ -24,6 +25,8 @@ private:
   string extract_single_quoted_string(const string&input, size_t &i);
   void to_newline(const string&input, size_t &i);
 
+  //unordered_map<string, bool> closurable_user_defined={{"forloop", true}};
+  unordered_map<string, bool> closurable_user_defined;
   vector<string>  end_list;
   //Token token_previous={};
 public:
@@ -45,4 +48,6 @@ public:
   bool is_closurable(Lisp::Op op); // if this can be a block of {identifier end}
   bool is_closurable(const string&token_str) ;
   bool is_endable(const string&token_str) ;
+
+  bool load_closurable(const string&file);
 };

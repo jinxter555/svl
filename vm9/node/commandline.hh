@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "defs.hh"
 
 class Interactive;
 class Commandline {
@@ -12,12 +13,14 @@ class Commandline {
 public:
   //std::map<std::string, std::string> options;
   std::string infile_name="";
+  std::string closurable_file_name=CLOSURABLE_FILE;
   std::vector<std::string> arguments;
 
   static struct option long_options[];
   bool opt_interactive=false,
   opt_run=false,
   opt_file=false,
+  opt_closurable=false,
   assembly_lang=false,
   lisp_lang=false,
   svlm_lang=false,

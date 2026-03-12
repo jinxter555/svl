@@ -31,6 +31,7 @@ public:
 
   PromptSwitch ready(); // ready for user readline input
   string read(); // ready for user readline input
+  LispReader& get_reader(); // lisp lexer and parser
 
 
 

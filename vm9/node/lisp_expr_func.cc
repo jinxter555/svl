@@ -1182,7 +1182,7 @@ Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t s
       auto  condition_status =  assign_attach(process, assign_code_list, 1);
 
       //cout << "assign_code_list: " << Node::_to_str( assign_code_list)  << "\n";
-      //cout << "condition_status : " << condition_status << "\n";
+      if(!condition_status.first) cerr << " condition_status error: " << condition_status << "\n";
 
       try { condition=condition_status.second->_get_bool(); } catch(...) {
         try {

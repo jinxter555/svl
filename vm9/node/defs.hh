@@ -55,3 +55,5 @@
 #define RET_VALUE "return_value"
 #define INITIALIZE "initialize"
 #define FINALIZE "finalize"
+
+#define CLOSURABLE_FILE "closurable.txt"

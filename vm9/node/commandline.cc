@@ -14,7 +14,7 @@ struct option Commandline::long_options[] = {
 
 Commandline::Commandline(int argc, char* argv[]) {
   int opt;
-  while( (opt = getopt_long(argc, argv, "prhil:f:o:", long_options, NULL)) != -1) {
+  while( (opt = getopt_long(argc, argv, "prhic:l:f:o:", long_options, NULL)) != -1) {
     switch(opt) {
       case 'i': { opt_interactive = true; break; }
       case 'r': { opt_run= true; break;}
@@ -27,6 +27,10 @@ Commandline::Commandline(int argc, char* argv[]) {
       }
       case 'f': infile_name  = optarg; opt_file=true; break;
       case 'h': outerr(argv); exit(0); break;
+      case 'c': { 
+        closurable_file_name=optarg; opt_closurable=true; break; 
+      
+      }
     }
   }
   for(; optind < argc; optind++){      
@@ -72,15 +76,24 @@ void Commandline::printout() {
 }
 
 void Commandline::run(Interactive* interactive) {
+
+  { // load closurable for macros
+    auto& lisp_reader = interactive->get_reader();
+    lisp_reader.load_closurable(closurable_file_name);
+  }
+
   if(opt_file){
     load_files(interactive, infile_name);
   }
+
+
 
   interactive->build_program(); // LispExpr post process
 
   if(opt_run) {
     interactive->run_program();
   }
+
   if(opt_interactive) {
     cout << "interact with interactive lang!\n";
     interactive->ready();
