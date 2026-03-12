@@ -9,7 +9,7 @@ module Kernel
      print "world\n" 
      print v1 ", " v2 "\n"
 
-#      My.Mod1.p1()
+      My.Mod1.p1()
       
      # p55 88888888
      loop
@@ -26,6 +26,8 @@ module Kernel
   end.def
 end.module
 
+#--------------------------------
+
 module Another
   var (my_var1 "variable string") (my_int2 6) (my_map3 (1 2 3))
   def p1()
@@ -35,6 +37,9 @@ module Another
       end.loop
   end.def
 end.module
+
+
+#--------------------------------
 
 module My.Mod1
 
@@ -66,7 +71,7 @@ module My.Mod1
   def p1()
     use :global My.Mod1
     var (hello "world")
-     = $data (new Dict 1 2 3)
+     = $data (new Dict "house" 2 3)
 
     print "Another p1() with class Dict() \n"
     print  hello "\n"

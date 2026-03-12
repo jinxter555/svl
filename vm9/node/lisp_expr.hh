@@ -146,11 +146,12 @@ public:
   Node::OpStatusRef get_class(deque<string> mfc) ; //  module class ,  1
 
   // var lookup should pass frame 
-  Node::OpStatusRef arg_lookup(Node&scope, const string&name ) ; // 
-  Node::OpStatusRef var_lookup(Node&scope, const string&name ) ; //  should use
-  Node::OpStatusRef immute_lookup(Node&scope, const string&name ) ; //  should use
+  Node::OpStatusRef arg_lookup(Node&process, Node&scope, const string&name ) ; // 
+  Node::OpStatusRef var_lookup(Node&process, Node&scope, const string&name ) ; //  should use
+  Node::OpStatusRef immute_lookup(Node&process, Node&scope, const string&name ) ; //  should use
+
   Node::OpStatusRef symbol_lookup(Node&process, const string&name ) ; // 
-  Node::OpStatusRef symbol_lookup_frame(Node&frame, const string&name ) ; // 
+  Node::OpStatusRef symbol_lookup_frame(Node&process, Node&frame, const string&name ) ; // 
 
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...

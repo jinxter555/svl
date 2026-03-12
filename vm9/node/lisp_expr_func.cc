@@ -316,7 +316,7 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
       string name = list[j]->_to_str();
       // cout << "deleting " << name << "\n";
   
-      auto var_ref = var_lookup(scope_ref_status.second, name);
+      auto var_ref = var_lookup(process, scope_ref_status.second, name);
       if(var_ref.first)  {
         //cout << "found var " << name<< "\n";
         if(Lisp::type(var_ref.second)==Lisp::Type::object) {
@@ -335,7 +335,7 @@ Node::OpStatus LispExpr::object_delete(Node&process, const Node::Vector &list, s
         return {true, Node::create(atom_ok, Node::Type::Atom)};
       }
 
-      auto immute_ref = immute_lookup(scope_ref_status.second, name);
+      auto immute_ref = immute_lookup(process, scope_ref_status.second, name);
       if(immute_ref.first)  {
         //cout << "found immute" << immute_ref << "\n";
         if(Lisp::type(immute_ref.second)==Lisp::Type::object) {

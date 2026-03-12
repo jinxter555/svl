@@ -11,8 +11,8 @@
 
 //------------------------------------------------------------------------
 // symbol lookup 
-Node::OpStatusRef LispExpr::arg_lookup(Node&scope, const string&name ) {
-  MYLOGGER(trace_function, "LispExpr::arg_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
+Node::OpStatusRef LispExpr::arg_lookup(Node&process, Node&scope, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::arg_lookup(Node&process, Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
 //  cout << "scope:" << scope << "\n";
@@ -47,11 +47,11 @@ Node::OpStatusRef LispExpr::arg_lookup(Node&scope, const string&name ) {
 }
 
 //------------------------------------------------------------------------
-Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name) {
-  MYLOGGER(trace_function, "LispExpr::var_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
+Node::OpStatusRef LispExpr::var_lookup(Node&process, Node&scope, const string&name) {
+  MYLOGGER(trace_function, "LispExpr::var_lookup(Node&process, Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
-  string module_name, var_name=name;
+  string module_name=get_module_name(process);
   bool use_module=false;
 
 
@@ -66,17 +66,40 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name) {
   }
 
 
-  auto nested_name = split_string(var_name, ".");
+  auto nested_name = split_string(name, ".");
 
 
 
-
+  // local scalar var
   if(nested_name.size()==1) {
     return scope_vars_ref_status.second[name];
   }
 
-  // this returns a shared ptr to a map
+  // test if it's a global/module var, by split the current module name
+  //
+  auto module_var_vec =  split_string(name, module_name + ".");
+  if(module_var_vec.size()>1) {
+    //cout << "it's a global/module var: " << name << "\n";
 
+    auto module_var_inner = split_string(module_var_vec[1], ".");
+
+    nested_name = module_var_inner;
+
+    nested_name[0] = module_name +  "." + module_var_inner[0];
+
+    //cout << "scope var stat: " <<  scope_vars_ref_status << "\n";
+    //cout << "1 nested_name[0]: " << nested_name[0]<< "\n";
+    //cout << "1 nested_name: " << join_str(nested_name, " ")<< "\n";
+    //cout << "got: " << scope_vars_ref_status.second[nested_name[0]]  << "\n";
+
+  } else {
+    //cout << "2 nested_name[0]: " << nested_name[0]<< "\n";
+
+  }
+
+
+  // variable.member
+  // this returns a shared ptr to a map
   auto ptr_ref_status = scope_vars_ref_status.second[nested_name[0]];
 
   if(!ptr_ref_status.first) {
@@ -100,8 +123,8 @@ Node::OpStatusRef LispExpr::var_lookup(Node&scope, const string&name) {
 
 
 
-Node::OpStatusRef LispExpr::immute_lookup(Node&scope, const string&name ) {
-  MYLOGGER(trace_function, "LispExpr::immute_lookup(Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
+Node::OpStatusRef LispExpr::immute_lookup(Node&process, Node&scope, const string&name ) {
+  MYLOGGER(trace_function, "LispExpr::immute_lookup(Node&process, Node&scope, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
   auto scope_immute_ref_status = scope.get_node(IMMUTE);
@@ -153,17 +176,17 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
     g_name =mod_name + g_name;
     //cout << "frame_front(), status: " << frame_ref_status<< "\n";
     //cout << "symbol_lookup() : gname: " <<g_name << "\n";
-    return symbol_lookup_frame(frame_ref_status.second, g_name);
+    return symbol_lookup_frame(process, frame_ref_status.second, g_name);
   }
   auto frame_ref_status = frame_current(process);
   if(!frame_ref_status.first) return frame_ref_status;
 
-  return symbol_lookup_frame(frame_ref_status.second, name);
+  return symbol_lookup_frame(process, frame_ref_status.second, name);
 
 }
 
 //------------------------------------------------------------------------
-Node::OpStatusRef LispExpr::symbol_lookup_frame(Node&frame, const string&name ) {
+Node::OpStatusRef LispExpr::symbol_lookup_frame(Node&process, Node&frame, const string&name ) {
   MYLOGGER(trace_function, "LispExpr::symbol_lookup_frame(Node&frame, const string&)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
@@ -184,13 +207,13 @@ Node::OpStatusRef LispExpr::symbol_lookup_frame(Node&frame, const string&name ) 
       return scope_ref_status;
     }
   
-    auto var_ref = var_lookup(scope_ref_status.second, name);
+    auto var_ref = var_lookup(process, scope_ref_status.second, name);
     if(var_ref.first) return var_ref;
   
-    auto immute_ref = immute_lookup(scope_ref_status.second, name);
+    auto immute_ref = immute_lookup(process, scope_ref_status.second, name);
     if(immute_ref.first) return immute_ref;
 
-    auto arg_ref = arg_lookup(scope_ref_status.second, name);
+    auto arg_ref = arg_lookup(process, scope_ref_status.second, name);
     if(arg_ref.first) return arg_ref;
 
   }
