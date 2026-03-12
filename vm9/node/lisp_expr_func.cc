@@ -1181,6 +1181,9 @@ Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t s
     } else {
       auto  condition_status =  assign_attach(process, assign_code_list, 1);
 
+      //cout << "assign_code_list: " << Node::_to_str( assign_code_list)  << "\n";
+      //cout << "condition_status : " << condition_status << "\n";
+
       try { condition=condition_status.second->_get_bool(); } catch(...) {
         try {
           auto condition_status_inner = car(process, condition_status.second->_get_vector_ref(), 0);
@@ -1194,6 +1197,7 @@ Node::OpStatus LispExpr::match(Node& process, const Node::Vector& list, size_t s
     }
 
     if(condition) {
+      //cout <<"good condition!:" <<  *block <<  "\n";
       return eval(process, *block);
     }
   }

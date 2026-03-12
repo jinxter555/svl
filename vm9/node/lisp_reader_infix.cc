@@ -14,6 +14,7 @@ using namespace std;
 
 bool sym_lang(char c) {
   switch(c) {
+  case '$' : return true;
   case '@' : return true;
   case '~' : return true;
   case '"' : return true;

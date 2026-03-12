@@ -1,14 +1,14 @@
 module Kernel 
-
+  var x
   def main (x y) 
 
-    var x v
+    var v
 
-    [x = \(:ok 5)]
+    [ $x = \(:ok 5)]
 
-    print "x: " x "\n"
+    print "$x: " $x "\n"
 
-    match x
+    match $x
       (:ok 1) (print "1 hello\n")
       (:ok 3) (print "3 world\n")
       (:ok 6) (print "v: " v ", 5 match\n")

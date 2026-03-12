@@ -651,19 +651,24 @@ Node::OpStatus LispExpr::assign_attach(Node&process, const Node::Vector& var_lis
 
       auto identifier_rhs = var_list[start+1]->_to_str();
       auto rhs_value_ref_status = symbol_lookup(process, identifier_rhs);
+      //cout << "rhs_value_ref_status: " << rhs_value_ref_status << "\n";
     
       if(!rhs_value_ref_status.first) 
         return {false, rhs_value_ref_status.second.clone()};
 
+        /*
       if( rhs_value_ref_status.second.type_ != Node::Type::Shared )  {
-        return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: right hand side is not a list")};
+        return {false, Node::create_error(Error::Type::Parse, "!Shared! assign match parsing error: right hand side is not a list")};
       }
-      if( rhs_value_ref_status.second._get_ptr_s()->type_ != Node::Type::Vector )  {
-        return {false, Node::create_error(Error::Type::Parse, "assign match parsing error: right hand side is not a list")};
+        */
+      //if( rhs_value_ref_status.second._get_ptr_s()->type_ != Node::Type::Vector )  {
+      if( rhs_value_ref_status.second.get_node().type_ != Node::Type::Vector )  {
+        return {false, Node::create_error(Error::Type::Parse, "!Vector! assign match parsing error: right hand side is not a list")};
       }
 
 
-      return assign_match(process, var_list[start]->_get_vector_ref(), rhs_value_ref_status.second._get_ptr_s()->_get_vector_ref());
+      //return assign_match(process, var_list[start]->_get_vector_ref(), rhs_value_ref_status.second._get_ptr_s()->_get_vector_ref());
+      return assign_match(process, var_list[start]->_get_vector_ref(), rhs_value_ref_status.second.get_node()._get_vector_ref());
 
     }
 
@@ -875,7 +880,7 @@ Node::OpStatus  LispExpr::assign_attach_scope(Node&process, Node&scope, const st
 
 
 Node::OpStatus LispExpr::assign_attach(Node&process, const string& identifier, unique_ptr<Node> value_ptr) {
-  MYLOGGER(trace_function, "LispExpr::assign_attach(process, process, value_ptr)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::assign_attach(process, identifier, value_ptr)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("identifier: ") + identifier, SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("value_ptr: ") + value_ptr->_to_str(), SLOG_FUNC_INFO+30);
 
