@@ -11,10 +11,10 @@
       ))
 
       = l1 (ihash (:abcd "hello") (:a2 "world"))
-      print "l1: " l1 "\n"
+      print "ihash: l1: " l1 "\n"
+      print "map: Map:m1 "  m1 "\n\n"
 
       loop
-        print "Map:m1 "  m1 "\n\n"
         print (eval (read)) "\n"
       end.loop
 
