@@ -1,5 +1,5 @@
 (module Kernel 
-  (defun main (x y) my_func_des
+  (def main (x y)
     (
       (assign l1 
         (lambda  (x y)

@@ -44,7 +44,7 @@ module Kernel
 
   defmacro forloop ( it cblock )
     quote
-      var rv u (forever~ true)
+      var rv  (forever~ true)
       = rv (send (unquote it)  :init)
   
       # faz (rv) (unquote cblock)

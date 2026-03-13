@@ -747,13 +747,8 @@ Node::OpStatus LispExpr::lambda_create(Node&process, const Node::Vector &list, s
   auto obj_info = make_unique<Node>(Node::Type::Map);
 
   map[_PARAMS] = list[start]->clone();
+  map[CODE] =  Node::create(list_clone_remainder(list, start+1));
 
-  if(s==4){ // both description and code
-    map[DESC] = list[start+1]->clone();
-    map[CODE] = list[start+2]->clone();
-  } else if(s==3) { // just code
-    map[CODE] = list[start+1]->clone();
-  }
   obj_info->set("type",  Lisp::Type::lambda);
   map[OBJ_INFO] = move(obj_info);
   
