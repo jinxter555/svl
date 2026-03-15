@@ -11,6 +11,7 @@ extern Node null_node;
 
 const vector<string> LispExpr::lisp_path= {UNIVERSE, "Lang", "Lisp"};
 const vector<string> LispExpr::lisp_path_module= {UNIVERSE, "Lang", "Lisp", "Module"};
+const vector<string> LispExpr::lisp_path_alias= {UNIVERSE, "Lang", "Lisp", "Alias"};
 const vector<string> LispExpr::lisp_path_keyword= {UNIVERSE, "Lang", "Lisp", "Keyword"};
 const vector<string> LispExpr::lisp_lang_atoms = {UNIVERSE, "module", "fun", "mvar", "lvar", "class"};
 const vector<string> LispExpr::cc_path_module= {UNIVERSE, "Lang", "CC", "Module"};
@@ -45,6 +46,7 @@ LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
   //set_branch(lisp_path_module, Node::create(Node::Type::Map));
   set_branch(namespace_module_path(), Node::create(Node::Type::Map));
   set_branch(cc_path_module, Node::create(Node::Type::Map));
+  set_branch(lisp_path_alias, Node::create(Node::Type::Map));
   bootstrap();
 
   //set_branch(lisp_module_key, Node::create(Node::Type::Map));

@@ -735,8 +735,7 @@ Node::OpStatus LispExpr::map_has_key(Node&process, Node &node, const Node::Vecto
 // (lambda (param_list) (description) (code list))
 // (lambda (param_list) (code list))
 Node::OpStatus LispExpr::lambda_create(Node&process, const Node::Vector &list, size_t start){
-
-  MYLOGGER(trace_function, "LispExpr::lambda(Node::List& list)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::lambda_create(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
 
   size_t s = list.size();
@@ -1021,6 +1020,7 @@ Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &co
   return {true, Node::create(move(map))};
 
 }
+//------------------------------------------------------------------------ handle control flow object
 
 Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_list, const Node::Map& object) {
   MYLOGGER(trace_function, "LispExpr::handle_cf_object(Node&process, Node::Vector& result_list, Node::Map& object)", __func__, SLOG_FUNC_INFO);
@@ -1038,6 +1038,10 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_l
       //cout << "return value " << *return_value << "\n";
       result_list.push_back(return_value->clone());
       return Node::ControlFlow::cf_return;
+    }
+    case Lisp::Op::lambda: {
+      cout << "it's a lambda object!" <<  Node::_to_str(result_list) <<  "\n";
+
     }
     default: {}
     }

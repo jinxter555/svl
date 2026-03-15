@@ -163,7 +163,7 @@ Node::OpStatusRef LispExpr::immute_lookup(Node&process, Node&scope, const string
 //------------------------------------------------------------------------
 // lookup both var, immute and then argument list in current frame
 Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
-  MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::symbol_lookup(Node&process, const string&name)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
   if(name=="nil") return {true, null_node};
@@ -187,7 +187,7 @@ Node::OpStatusRef LispExpr::symbol_lookup(Node&process, const string&name ) {
 
 //------------------------------------------------------------------------
 Node::OpStatusRef LispExpr::symbol_lookup_frame(Node&process, Node&frame, const string&name ) {
-  MYLOGGER(trace_function, "LispExpr::symbol_lookup_frame(Node&frame, const string&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::symbol_lookup_frame(Node&frame, const string&name)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
   auto scopes_ref_status = frame[SCOPES];
@@ -237,7 +237,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   switch(code_node.type_) {
   case Node::Type::Vector: {
     auto const &code_list = get<Node::Vector>(code_node.value_);
-    return eval(process, code_list); }
+    return eval(process, code_list); 
+  }
 
   case Node::Type::Identifier: { // just identifier as a variable
     auto name = get<string>(code_node.value_);
@@ -260,8 +261,13 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
       //return {true, Node::ptr_USU(rv_ref_status.second.get_ptr  )}; // clone a uniqu ptr to shared ptr without  recursive clone
     }
     //cout << "cloning rv_ref_status : " << rv_ref_status << "\n";
-    MYLOGGER_MSG(trace_function, "eval clone: " + rv_ref_status.second._to_str(), SLOG_FUNC_INFO+30);
+    MYLOGGER_MSG(trace_function, "eval clone rv_ref_status type: " + Node::_to_str( rv_ref_status.second.type_) , SLOG_FUNC_INFO+30);
+    MYLOGGER_MSG(trace_function, "eval clone rv_ref_status: " + rv_ref_status.second._to_str(), SLOG_FUNC_INFO+30);
 
+    if(rv_ref_status.second.is_container()){
+      return {true,  Node::create(&rv_ref_status.second)}; 
+    }
+  
     return {true,  rv_ref_status.second.clone()};
   }
   case Node::Type::ObjectId: { // object
@@ -271,7 +277,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     break;
   }
   case Node::Type::Map: { // object, lambda, 
+    if(Lisp::type(code_node) == Lisp::Type::lambda) {
+      cout << "eval node map is lambda!!!\n";
+    }
     cout << "eval node map!" << code_node <<"\n";
+    
     return {true, code_node.clone()};
   }
     
@@ -283,9 +293,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 
   case Node::Type::Shared: { // object, lambda, 
     MYLOGGER_MSG(trace_function, string("Shared code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
-    //cout << "code node Shared\n";
+    cout << "eval() code node Shared\n";
     auto s_ptr = get<Node::ptr_S>(code_node.value_);
-    return eval(process, *s_ptr);
+    //return eval(process, *s_ptr);
+    return {true, Node::ptr_USU(code_node)};
   }
 
   default: {
@@ -498,4 +509,61 @@ Node::OpStatus LispExpr::eval_eval(Node& process, const Node::Vector& code_list,
   }
   //cout << "evaluated stat2: " <<  evaled_stat2<< "\n";
   return evaled_stat2;
+}
+
+// 
+Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, size_t start, size_t front_insert_count){
+  MYLOGGER(trace_function, "LispExpr::eval_args(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "Lisp::Op::eval: start " + to_string(start) + ", code_list " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
+  // create a list of prepend object for front replacement
+  Node::Vector result_list; //, result_list2;
+  size_t s=arg_list.size();
+  result_list.reserve(s+front_insert_count);
+
+  for(size_t i=0; i<front_insert_count; i++) { result_list.push_back(Node::create()); }
+
+  for(size_t i=start; i<s; i++) { // return last eval,  size -1 
+
+    if(arg_list[i]->is_container() ) {
+      cout << "is a container: " <<  *arg_list[i]<< "\n";
+      result_list.push_back(Node::ptr_USU(arg_list[i]));
+      continue;;
+    }
+
+    auto value_status = eval(process, *arg_list[i]);
+
+
+    if(!value_status.first) {
+      auto frame_ref_status = frame_current(process);
+      if(frame_ref_status.first) { // get frame and find out where eval failed.
+        auto current_module = frame_ref_status.second[CURRENT_MODULE].second._to_str();
+        auto current_class = frame_ref_status.second[CURRENT_CLASS].second._to_str();
+        auto current_function = frame_ref_status.second[CURRENT_FUNCTION].second._to_str();
+        cout << "In Module:" << current_module << ", Class "<<   current_class<<  "\n";
+        cout << "Function or method: " << current_function <<"\n";
+      }
+      cerr << "eval failed! " << *value_status.second << "\n" << *arg_list[i] <<"\n";
+      return value_status;
+    }
+
+    // return is an object 
+    if(value_status.second->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
+      switch(handle_cf_object(process, result_list, value_status.second->_get_map_ref())) {
+      case Node::ControlFlow::cf_run: { break;}
+      case Node::ControlFlow::cf_return:{ 
+        //return  {true, Node::create(move(result_list))}; 
+        //cout << "return value_status " << *value_status.second<< "\n";
+        return  {true, move(value_status.second)};
+      }
+      default: {}
+      }
+    }
+
+
+    result_list.push_back(move(value_status.second));
+  }
+  return  {true, Node::create(move(result_list))};
+
+
 }

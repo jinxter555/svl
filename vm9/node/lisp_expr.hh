@@ -29,6 +29,7 @@ private:
 
   static const vector<string> lisp_path; 
   static const vector<string> lisp_path_module; 
+  static const vector<string> lisp_path_alias; 
   static const vector<string> lisp_path_keyword; 
   //static const vector<string> interactive_key; 
   static const vector<string> lisp_lang_atoms; 
@@ -185,6 +186,7 @@ public:
   Node::OpStatus eval(Node& process, const Node::Vector& code_list); // this figures what to do
   Node::OpStatus eval(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count=0); // eval each as an element node
   Node::OpStatus eval_eval(Node& process, const Node::Vector& code_list, size_t start);
+  Node::OpStatus eval_args(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count=0); // eval each as an element node
 
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 

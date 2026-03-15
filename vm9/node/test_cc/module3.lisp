@@ -70,7 +70,7 @@ module My.Mod1
 
   def p1()
     use :global My.Mod1
-    var (hello "world")
+    var d1 (hello "world")
      = $data (new Dict "house" 2 3)
 
     print "Another p1() with class Dict() \n"
@@ -79,6 +79,11 @@ module My.Mod1
         print (eval (read)) "\n"
       end.loop
   end.def
+
+  def p3(d)
+    print "p2 d: " d "\n"
+  end.def
+
 
 
 

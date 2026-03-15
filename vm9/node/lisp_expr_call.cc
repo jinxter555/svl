@@ -98,7 +98,7 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   auto scope_status = scope_params_args(params, move(arg_list));
 
   if(!scope_status.first) {
-    cerr << "frame_create_fun_args(): error creating scope in frame_create_fun_args!\n";
+    cerr << "frame_create_fun_args(): error creating scope: " << scope_status.second->_to_str() << "\n";
     return scope_status;
   }
   // insert __MODULE__ __FUN__ __CLASS__ into immute
@@ -207,6 +207,18 @@ Node::OpStatus LispExpr::scope_params_args(const vector<string>& params, Node::V
   MYLOGGER_MSG(trace_function, "params: " + _to_str_ext(params), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "args_cc_vec: " + Node::_to_str(args_cc_vec), SLOG_FUNC_INFO+30);
 
+
+  // hack
+  if(params.size() == 1 && args_cc_vec.size() > 1) {
+    auto scope = scope_create();
+    Node::Map args;
+    cout << "args_cc_vec: " << Node::_to_str(args_cc_vec) << "\n";
+//    args_cc_vec[0] = Node::create(5555);
+    args[params[0]] = Node::create(move(args_cc_vec));
+    scope->set(ARGS,  Node::create(move(args)));
+    cout << "scope: " <<  *scope << "\n\n";
+    return {true, move(scope)};
+  }
 
   if(args_cc_vec.size() != params.size())
     return {false, Node::create_error(Error::Type::InvalidOperation,  
@@ -426,7 +438,7 @@ Node::OpStatus LispExpr::call(Node& process, const vector<string>& path, const N
   }
 
   //auto  args_status = eval(process, argv_list); // this returns a vector
-  auto  args_status = eval(process, argv_list, 0); // this returns a vector
+  auto  args_status = eval_args(process, argv_list, 0); // this returns a vector
 
   if(!args_status.first) {
     cerr << " call() error eval argv_list: " << _to_str_ext( path ) + ": " + Node::_to_str(argv_list) + args_status.second->_to_str() <<"\n";
@@ -451,7 +463,7 @@ Node::OpStatus LispExpr::call_macro(Node& process, const vector<string>& path, c
   }
   auto frame_status = frame_create_fun_args(mac_ref_status.second, move(Node::clone(argv_list)->_get_vector_ref()));
   if(!frame_status.first) {
-    cerr << "call_mac(process, path, argv list) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
+    cerr << "call_macro(process, path, argv list) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
     return frame_status;
   }
   frame_push(process, move(frame_status.second));
@@ -486,7 +498,7 @@ Node::OpStatus LispExpr::call(Node& process, Node& fun, Node::Vector&& argv_vect
   //cout << "\ncall(proc, fun, argv) frame status:" << frame_status << "\n\n";
 
   if(!frame_status.first) {
-    cerr << "call(process, fun, argv vector) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
+    cerr << "call(process, fun, argv_vector) can't do frame_create_params!"  +  frame_status.second->_to_str() +"\n";
     return frame_status;
   }
   frame_push(process, move(frame_status.second));

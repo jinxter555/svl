@@ -1,22 +1,20 @@
 module Kernel 
   def main (x y)
-    print "call l1()\n"
 
-    loop
-        print (eval (read)) "\n"
-    end.loop
-  end.def 
-
-
-  def l1()
-      (
-        lambda  (x)
-          print "x is : " x "\n"
-          (print "hello world123\n")
+      (assign l1 
+        lambda  (x y)
+            print "x " x "\n"
+            print "y " y "\n"
+            print "hello\n"
         end.lambda 
-        5
       )
-  end.def
+      assign l2 "hello"
+
+      lambda  (x)
+        (print "hello world123\n")
+        5
+      end.lambda 
+
+      funcall l1 1 "holy shit"
+  end.def 
 end.module
-
-

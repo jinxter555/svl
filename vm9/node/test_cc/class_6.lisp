@@ -8,7 +8,7 @@ module Kernel
 
 
   class Dict
-    (var size (length 123) w c1)
+    (var size (length 123) w )
 
     def initialize(w1)  
       print "Dict w1: " w1 "\n"
@@ -41,6 +41,15 @@ module Kernel
     end.loop
 
   end.def
+
+  def p1(m)
+    print "p1(m): m " m "\n"
+    loop
+       print ( eval (read)) "\n"
+    end.loop
+    
+  end.def
+  
 
 
 end.module
