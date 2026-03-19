@@ -52,7 +52,7 @@ Node::OpStatusRef LispExpr::var_lookup(Node&process, Node&scope, const string&na
   MYLOGGER_MSG(trace_function, "name:" + name, SLOG_FUNC_INFO+30);
 
   string module_name=get_module_name(process);
-  bool use_module=false;
+  //bool use_module=false;
 
 
   auto scope_vars_ref_status = scope.get_node(VAR);
@@ -526,7 +526,7 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
 
     if(arg_list[i]->is_container() ) {
-      cout << "is a container: " <<  *arg_list[i]<< "\n";
+      //cout << "is a container: " <<  *arg_list[i]<< "\n";
       result_list.push_back(Node::ptr_USU(arg_list[i]));
       continue;;
     }

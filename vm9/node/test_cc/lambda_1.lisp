@@ -10,11 +10,16 @@ module Kernel
       )
       assign l2 "hello"
 
-      lambda  (x)
-        (print "hello world123\n")
-        5
-      end.lambda 
+      (
+        lambda  (x)
+          (print "hello world123\n")
+          print x
+        end.lambda
+        5 6 7
+      )
 
-      funcall l1 1 "holy shit"
+     # ((lambda (number) (* 7 number)) 3)
+
+      # funcall l1 1 "holy shit"
   end.def 
 end.module

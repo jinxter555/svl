@@ -784,13 +784,16 @@ Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t sta
   size_t s = list.size();
   for(size_t i=start; i<s; i++)  {
     // might need to check if it's container
+    /*
     if(list[i]->is_container()) {
       cout << "list_clone_remainder: ptr_USU: " << list[i]-> _to_str() << "\n";
-      result_list.push_back(Node::ptr_USU( list[i]));
+      result_list.push_back(Node::ptr_USU( *list[i]));
 
     } else  {
       result_list.push_back(list[i]->clone());
-    }
+    }*/
+
+      result_list.push_back(list[i]->clone());
   }
   return result_list;
 }
@@ -1049,6 +1052,7 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_l
     }
     case Lisp::Op::lambda: {
       cout << "it's a lambda object!" <<  Node::_to_str(result_list) <<  "\n";
+      cout << "object" <<  Node::_to_str(object) <<  "\n";
 
     }
     default: {}
