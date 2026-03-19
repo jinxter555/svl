@@ -316,7 +316,8 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
 
     auto fun_exist = get_node(fun_path);
     if(fun_exist.first) {
-      auto argv_vector_evaled_status = eval(process, argv_vector);
+      //auto argv_vector_evaled_status = eval(process, argv_vector);
+      auto argv_vector_evaled_status = eval_args(process, argv_vector, 0);
       if(!argv_vector_evaled_status.first) {
         cerr << "call ev argv_list failed!\n";
         return argv_vector_evaled_status;
@@ -448,6 +449,7 @@ Node::OpStatus LispExpr::call(Node& process, const vector<string>& path, const N
   auto &argv = args_status.second->_get_vector_ref();
 
   return call(process, fun_ref_status.second, move(argv));
+
 
 }
 //------------------------------------------------------------------------

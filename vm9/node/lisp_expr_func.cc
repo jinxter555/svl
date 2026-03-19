@@ -740,7 +740,7 @@ Node::OpStatus LispExpr::lambda_create(Node&process, const Node::Vector &list, s
 
   size_t s = list.size();
 
-  if(list.size()<3) return {false, Node::create_error(Error::Type::Parse, "lambda requires atleast 2 parameters! " + Node::_to_str(list))};
+  if(s<3) return {false, Node::create_error(Error::Type::Parse, "lambda requires atleast 2 parameters! " + Node::_to_str(list))};
 
   Node::Map map={}; 
   auto obj_info = make_unique<Node>(Node::Type::Map);
@@ -782,8 +782,16 @@ Node::OpStatus LispExpr::closure_create(Node&process, const Node::Vector &list, 
 Node::Vector LispExpr::list_clone_remainder(const Node::Vector &list, size_t start) {
   Node::Vector result_list;
   size_t s = list.size();
-  for(size_t i=start; i<s; i++) 
-    result_list.push_back(list[i]->clone());
+  for(size_t i=start; i<s; i++)  {
+    // might need to check if it's container
+    if(list[i]->is_container()) {
+      cout << "list_clone_remainder: ptr_USU: " << list[i]-> _to_str() << "\n";
+      result_list.push_back(Node::ptr_USU( list[i]));
+
+    } else  {
+      result_list.push_back(list[i]->clone());
+    }
+  }
   return result_list;
 }
 

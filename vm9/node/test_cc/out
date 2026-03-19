@@ -1,6 +1,4 @@
-Dict w1: ship building
-[?2004hloosh> exit
-[?2004lexit
+alias ele List[mp3 ]
 Lisp Interpreter
 print recursive:
 { (Map, size=1) 
@@ -24,7 +22,7 @@ print recursive:
       }
      }
     }
-    - Lisp (Type: Map): { (Map, size=2) 
+    - Lisp (Type: Map): { (Map, size=3) 
      - Keyword (Type: Map): { (Map, size=91) 
       - or (Type: LispOp): or
       - not (Type: LispOp): not
@@ -118,23 +116,117 @@ print recursive:
       - for (Type: LispOp): for
       - do (Type: LispOp): do
      }
+     - Alias (Type: Map): { (Map, size=0) 
+     }
      - namespace (Type: Map): { (Map, size=1) 
       - England (Type: Map): { (Map, size=1) 
-       - module (Type: Map): { (Map, size=1) 
-        - Kernel (Type: Map): { (Map, size=6) 
+       - module (Type: Map): { (Map, size=3) 
+        - My.Mod1 (Type: Map): { (Map, size=8) 
+         - name (Type: String): "My.Mod1"
          - namespace (Type: String): "England"
-         - name (Type: String): "Kernel"
-         - class (Type: Map): { (Map, size=1) 
-          - Dict (Type: Map): { (Map, size=6) 
+         - alias (Type: Map): { (Map, size=0) 
+         }
+         - macro (Type: Map): { (Map, size=0) 
+         }
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): module
+         }
+         - function (Type: Map): { (Map, size=2) 
+          - p3 (Type: Map): { (Map, size=6) 
+           - module_ptr (Type: RawPtr): ==*ptr[0x6341a1c9ac50]==
+           - name (Type: String): "p3"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
            - namespace (Type: String): "England"
-           - module_ptr (Type: RawPtr): ==*ptr[0x62ce192991a0]==
+           - code (Type: Vector): Vector[(size=1) 
+            - [0, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "p2 d: "
+             - [2, Type: Identifier]: "d"
+             - [3, Type: String]: "
+"
+            ]
+           ]
+           - params (Type: Vector): Vector[(size=1) 
+            - [0, Type: Identifier]: "d"
+           ]
+          }
+          - p1 (Type: Map): { (Map, size=6) 
+           - module_ptr (Type: RawPtr): ==*ptr[0x6341a1c9ac50]==
+           - name (Type: String): "p1"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
+           - namespace (Type: String): "England"
+           - code (Type: Vector): Vector[(size=6) 
+            - [0, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: use
+             - [1, Type: Atom]: -1626812092354939535
+             - [2, Type: Identifier]: "My.Mod1"
+            ]
+            - [1, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: var
+             - [1, Type: Identifier]: "d1"
+             - [2, Type: Vector]: Vector[(size=2) 
+              - [0, Type: Identifier]: "hello"
+              - [1, Type: String]: "world"
+             ]
+            ]
+            - [2, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: assign
+             - [1, Type: Identifier]: "$data"
+             - [2, Type: Vector]: Vector[(size=5) 
+              - [0, Type: LispOp]: new
+              - [1, Type: Identifier]: "Dict"
+              - [2, Type: String]: "house"
+              - [3, Type: Integer]: 2
+              - [4, Type: Integer]: 3
+             ]
+            ]
+            - [3, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "Another p1() with class Dict() 
+"
+            ]
+            - [4, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: print
+             - [1, Type: Identifier]: "hello"
+             - [2, Type: String]: "
+"
+            ]
+            - [5, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: loop
+             - [1, Type: Vector]: Vector[(size=3) 
+              - [0, Type: LispOp]: print
+              - [1, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: eval
+               - [1, Type: Vector]: Vector[(size=1) 
+                - [0, Type: LispOp]: read
+               ]
+              ]
+              - [2, Type: String]: "
+"
+             ]
+            ]
+           ]
+           - params (Type: Vector): Vector[(size=0) 
+           ]
+          }
+         }
+         - class (Type: Map): { (Map, size=1) 
+          - Dict (Type: Map): { (Map, size=7) 
+           - module_ptr (Type: RawPtr): ==*ptr[0x6341a1c9ac50]==
            - name (Type: String): "Dict"
+           - namespace (Type: String): "England"
+           - alias (Type: Map): { (Map, size=0) 
+           }
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): class
            }
            - function (Type: Map): { (Map, size=3) 
             - finalize (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr[0x62ce1929a3c0]==
+             - class_ptr (Type: RawPtr): ==*ptr[0x6341a1ca5340]==
              - name (Type: String): "finalize"
              - __object_info__ (Type: Map): { (Map, size=1) 
               - type (Type: LispOp): def
@@ -154,7 +246,7 @@ print recursive:
              ]
             }
             - area (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr[0x62ce1929a3c0]==
+             - class_ptr (Type: RawPtr): ==*ptr[0x6341a1ca5340]==
              - name (Type: String): "area"
              - __object_info__ (Type: Map): { (Map, size=1) 
               - type (Type: LispOp): def
@@ -189,7 +281,7 @@ hello class Dict::area ()
              ]
             }
             - initialize (Type: Map): { (Map, size=6) 
-             - class_ptr (Type: RawPtr): ==*ptr[0x62ce1929a3c0]==
+             - class_ptr (Type: RawPtr): ==*ptr[0x6341a1ca5340]==
              - name (Type: String): "initialize"
              - __object_info__ (Type: Map): { (Map, size=1) 
               - type (Type: LispOp): def
@@ -198,7 +290,7 @@ hello class Dict::area ()
              - code (Type: Vector): Vector[(size=2) 
               - [0, Type: Vector]: Vector[(size=4) 
                - [0, Type: LispOp]: print
-               - [1, Type: String]: "Dict w1: "
+               - [1, Type: String]: "Dict init:  "
                - [2, Type: Identifier]: "w1"
                - [3, Type: String]: "
 "
@@ -209,13 +301,15 @@ hello class Dict::area ()
                - [2, Type: Identifier]: "w1"
               ]
              ]
-             - params (Type: Vector): Vector[(size=2) 
+             - params (Type: Vector): Vector[(size=4) 
               - [0, Type: Identifier]: "this"
               - [1, Type: Identifier]: "w1"
+              - [2, Type: Identifier]: "w2"
+              - [3, Type: Identifier]: "w3"
              ]
             }
            }
-           - var (Type: Vector): Vector[(size=5) 
+           - var (Type: Vector): Vector[(size=4) 
             - [0, Type: LispOp]: var
             - [1, Type: Identifier]: "size"
             - [2, Type: Vector]: Vector[(size=2) 
@@ -223,59 +317,123 @@ hello class Dict::area ()
              - [1, Type: Integer]: 123
             ]
             - [3, Type: Identifier]: "w"
-            - [4, Type: Identifier]: "c1"
            ]
           }
          }
-         - macro (Type: Map): { (Map, size=1) 
-          - clone (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr[0x62ce192991a0]==
-           - name (Type: String): "clone"
-           - __object_info__ (Type: Map): { (Map, size=1) 
-            - type (Type: LispOp): defmacro
-           }
-           - namespace (Type: String): "England"
-           - code (Type: Vector): Vector[(size=1) 
-            - [0, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: quote
-             - [1, Type: Vector]: Vector[(size=2) 
-              - [0, Type: LispOp]: eval
-              - [1, Type: Vector]: Vector[(size=2) 
-               - [0, Type: LispOp]: unquote
-               - [1, Type: Identifier]: "x"
-              ]
-             ]
-            ]
+         - var (Type: Vector): Vector[(size=4) 
+          - [0, Type: Identifier]: "data"
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "my_var1"
+           - [1, Type: String]: "variable string--Mod.Mod1--"
+          ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "my_int2"
+           - [1, Type: Integer]: 6
+          ]
+          - [3, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "my_map3"
+           - [1, Type: Vector]: Vector[(size=3) 
+            - [0, Type: Integer]: 1
+            - [1, Type: Integer]: 2
+            - [2, Type: Integer]: 3
            ]
-           - params (Type: Vector): Vector[(size=1) 
-            - [0, Type: Identifier]: "x"
-           ]
-          }
+          ]
+         ]
+        }
+        - Another (Type: Map): { (Map, size=8) 
+         - name (Type: String): "Another"
+         - namespace (Type: String): "England"
+         - alias (Type: Map): { (Map, size=0) 
+         }
+         - macro (Type: Map): { (Map, size=0) 
          }
          - __object_info__ (Type: Map): { (Map, size=1) 
           - type (Type: LispOp): module
          }
          - function (Type: Map): { (Map, size=1) 
-          - main (Type: Map): { (Map, size=6) 
-           - module_ptr (Type: RawPtr): ==*ptr[0x62ce192991a0]==
-           - name (Type: String): "main"
+          - p1 (Type: Map): { (Map, size=6) 
+           - module_ptr (Type: RawPtr): ==*ptr[0x6341a1c98060]==
+           - name (Type: String): "p1"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
+           - namespace (Type: String): "England"
+           - code (Type: Vector): Vector[(size=2) 
+            - [0, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "Another p1()
+"
+            ]
+            - [1, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: loop
+             - [1, Type: Vector]: Vector[(size=3) 
+              - [0, Type: LispOp]: print
+              - [1, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: eval
+               - [1, Type: Vector]: Vector[(size=1) 
+                - [0, Type: LispOp]: read
+               ]
+              ]
+              - [2, Type: String]: "
+"
+             ]
+            ]
+           ]
+           - params (Type: Vector): Vector[(size=0) 
+           ]
+          }
+         }
+         - class (Type: Map): { (Map, size=0) 
+         }
+         - var (Type: Vector): Vector[(size=3) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "my_var1"
+           - [1, Type: String]: "variable string"
+          ]
+          - [1, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "my_int2"
+           - [1, Type: Integer]: 6
+          ]
+          - [2, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "my_map3"
+           - [1, Type: Vector]: Vector[(size=3) 
+            - [0, Type: Integer]: 1
+            - [1, Type: Integer]: 2
+            - [2, Type: Integer]: 3
+           ]
+          ]
+         ]
+        }
+        - Kernel (Type: Map): { (Map, size=8) 
+         - name (Type: String): "Kernel"
+         - namespace (Type: String): "England"
+         - alias (Type: Map): { (Map, size=0) 
+         }
+         - macro (Type: Map): { (Map, size=0) 
+         }
+         - __object_info__ (Type: Map): { (Map, size=1) 
+          - type (Type: LispOp): module
+         }
+         - function (Type: Map): { (Map, size=2) 
+          - p55 (Type: Map): { (Map, size=6) 
+           - module_ptr (Type: RawPtr): ==*ptr[0x6341a1ca6030]==
+           - name (Type: String): "p55"
            - __object_info__ (Type: Map): { (Map, size=1) 
             - type (Type: LispOp): def
            }
            - namespace (Type: String): "England"
            - code (Type: Vector): Vector[(size=3) 
             - [0, Type: Vector]: Vector[(size=2) 
-             - [0, Type: LispOp]: var
-             - [1, Type: Identifier]: "m1"
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "p55 hello
+"
             ]
-            - [1, Type: Vector]: Vector[(size=3) 
-             - [0, Type: LispOp]: assign
-             - [1, Type: Identifier]: "m1"
-             - [2, Type: Vector]: Vector[(size=3) 
-              - [0, Type: LispOp]: new
-              - [1, Type: Identifier]: "Dict"
-              - [2, Type: String]: "ship building"
-             ]
+            - [1, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "value:"
+             - [2, Type: Identifier]: "value"
+             - [3, Type: String]: "
+"
             ]
             - [2, Type: Vector]: Vector[(size=2) 
              - [0, Type: LispOp]: loop
@@ -292,12 +450,92 @@ hello class Dict::area ()
              ]
             ]
            ]
+           - params (Type: Vector): Vector[(size=1) 
+            - [0, Type: Identifier]: "value"
+           ]
+          }
+          - main (Type: Map): { (Map, size=7) 
+           - module_ptr (Type: RawPtr): ==*ptr[0x6341a1ca6030]==
+           - name (Type: String): "main"
+           - __object_info__ (Type: Map): { (Map, size=1) 
+            - type (Type: LispOp): def
+           }
+           - namespace (Type: String): "England"
+           - code (Type: Vector): Vector[(size=8) 
+            - [0, Type: LispOp]: noop
+            - [1, Type: Vector]: Vector[(size=1) 
+             - [0, Type: Identifier]: "mp3"
+            ]
+            - [2, Type: Vector]: Vector[(size=3) 
+             - [0, Type: LispOp]: use
+             - [1, Type: Atom]: -1626812092354939535
+             - [2, Type: Identifier]: "Kernel"
+            ]
+            - [3, Type: Vector]: Vector[(size=4) 
+             - [0, Type: LispOp]: var
+             - [1, Type: Identifier]: "v"
+             - [2, Type: Vector]: Vector[(size=2) 
+              - [0, Type: Identifier]: "v1"
+              - [1, Type: String]: "hola mundo"
+             ]
+             - [3, Type: Vector]: Vector[(size=2) 
+              - [0, Type: Identifier]: "v2"
+              - [1, Type: String]: "halo welt"
+             ]
+            ]
+            - [4, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "hello "
+            ]
+            - [5, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: print
+             - [1, Type: String]: "world
+"
+            ]
+            - [6, Type: Vector]: Vector[(size=5) 
+             - [0, Type: LispOp]: print
+             - [1, Type: Identifier]: "v1"
+             - [2, Type: String]: ", "
+             - [3, Type: Identifier]: "v2"
+             - [4, Type: String]: "
+"
+            ]
+            - [7, Type: Vector]: Vector[(size=2) 
+             - [0, Type: LispOp]: loop
+             - [1, Type: Vector]: Vector[(size=3) 
+              - [0, Type: LispOp]: print
+              - [1, Type: Vector]: Vector[(size=2) 
+               - [0, Type: LispOp]: eval
+               - [1, Type: Vector]: Vector[(size=1) 
+                - [0, Type: LispOp]: read
+               ]
+              ]
+              - [2, Type: String]: "
+"
+             ]
+            ]
+           ]
+           - alias (Type: Map): { (Map, size=3) 
+            - __object_info__ (Type: Map): { (Map, size=1) 
+             - type (Type: LispOp): alias
+            }
+            - name (Type: String): "mp3"
+            - mp3 (Type: String): "My.Mod1.p3"
+           }
            - params (Type: Vector): Vector[(size=2) 
             - [0, Type: Identifier]: "x"
             - [1, Type: Identifier]: "y"
            ]
           }
          }
+         - class (Type: Map): { (Map, size=0) 
+         }
+         - var (Type: Vector): Vector[(size=1) 
+          - [0, Type: Vector]: Vector[(size=2) 
+           - [0, Type: Identifier]: "gvalue"
+           - [1, Type: Integer]: 123
+          ]
+         ]
         }
        }
       }
@@ -343,8 +581,7 @@ hello class Dict::area ()
           - __FUN__ (Type: String): "Main"
           - __MODULE__ (Type: String): "Kernel"
          }
-         - var (Type: Map): { (Map, size=1) 
-          - m1 (Type: UniquePtr): unique_ptr*:{"w": ship building, "length": 123, "c1": nil, "size": nil, "__object_info__": {"class": Dict, "class_ptr":--*ptr[0x62ce1929a3c0]--, "type": object}}
+         - var (Type: Map): { (Map, size=0) 
          }
         }
        ]

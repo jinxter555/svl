@@ -1,6 +1,7 @@
 module Kernel 
   var (gvalue 123)
   def main (x y) 
+    alias My.Mod1.p3  mp3
     
      use :global Kernel
   
@@ -9,7 +10,7 @@ module Kernel
      print "world\n" 
      print v1 ", " v2 "\n"
 
-      My.Mod1.p1()
+#      My.Mod1.p1()
       
      # p55 88888888
      loop

@@ -24,6 +24,7 @@
 
 #define FUNCTION "function"
 #define MACRO "macro"
+#define ALIAS "alias"
 
 #define CURRENT_FUNCTION "current_function"
 #define CURRENT_FUNCTION_IMMUTE "__FUN__"

@@ -227,7 +227,10 @@ string Node::_to_str(const Vector&list) {
     if(e==nullptr) continue;
     outstr = outstr + e->_to_str() + ", ";
   }
-  outstr = outstr + list[i]->_to_str() + "]";
+  if(list[i]) 
+    outstr = outstr + list[i]->_to_str() + "]";
+   else 
+    outstr = outstr + "NULLPTR" + "]";
   return outstr;
 }
 

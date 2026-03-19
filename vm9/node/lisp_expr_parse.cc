@@ -1,5 +1,6 @@
 #include <iostream>
 #include "lisp_expr.hh"
+#include "my_helpers.hh"
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -49,6 +50,7 @@ Node::OpStatus LispExpr::parse_build(Node& tokens) {
     case Lisp::Op::defmacro: { return build_parsed_macro(list); }
     case Lisp::Op::module_: { return build_parsed_module(list); }
     case Lisp::Op::class_: { return build_parsed_class(list); }
+    case Lisp::Op::alias: { return build_parsed_alias(list); }
  // case Lisp::Op::root: { return build_parsed_root(list); }
  // case Lisp::Op::defun: { return build_parsed_fun(list); }
     default: {}
@@ -66,6 +68,7 @@ Node::OpStatus LispExpr::parse_build(Node& tokens) {
 // (fun_name (param_list) (description) (code list))
 // return map as function
 // return -> fun_name -> {code,params,object_info}
+/*
 Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   MYLOGGER(trace_function, "LispExpr::build_parsed_fun(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
@@ -108,9 +111,9 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   return {true, Node::create(move(fun))};
 
 }
+*/
 
-
-//-------------------------------- parse fun
+//-------------------------------- parse def 
 // (def name (param_list) (code list))
 // def fun (x,y) ... end.def
 // return map as function
@@ -134,6 +137,24 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
   if(!status.first) return status;
   fun[_PARAMS] = move(status.second); list.pop_front();
   }
+
+
+  /*
+  for(auto &ele : list) {// find alias
+    auto &inner_line = ele->_get_list_ref();
+    auto &inner_ele = inner_line.front();
+    if(inner_ele->_to_str() == ALIAS)  {
+      inner_line.pop_front();
+      auto alias_status = build_parsed_alias(inner_line);
+      if(!alias_status.first) {
+        return alias_status;
+      }
+    //  fun[ALIAS] = move(alias_status.second);
+      cout << "alias ele " <<  *ele << "\n";
+      list.push_front(Node::create(Lisp::Op::noop));
+    }
+  }*/
+  
 
   {// turn code List to code Vector for speed performance
   //auto status=  build_parsed_vector(*list.front()); 
@@ -205,6 +226,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   vector<string> keys={};
 
   auto module_functions=make_unique<Node>(Node::Type::Map);
+  auto module_aliases=make_unique<Node>(Node::Type::Map);
   auto module_classes=make_unique<Node>(Node::Type::Map);
   auto module_macros=make_unique<Node>(Node::Type::Map);
   auto module_node=make_unique<Node>(Node::Type::Map);
@@ -226,6 +248,8 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
       module_functions->set(fun_name, move(status.second));
       continue;
     }
+
+
     case Lisp::Type::defmacro: {
       auto mac_name = (*status.second)["name"].second._to_str();
       //status.second->set(MODULE_PTR, module_node.get()); // causes recursive segault when print recursive// get raw pointer from 
@@ -239,6 +263,14 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
       module_classes->set(class_name, move(status.second));
       break;
     }
+
+    case Lisp::Type::alias: {
+      auto alias_name = (*status.second)["name"].second._to_str();
+      module_aliases->set(alias_name, move(status.second));
+      break;
+    }
+
+
     default: { // assign module attributes here like  (var )
       if(status.second->type_==Node::Type::Vector) {
         auto head = status.second->front().second._to_str();
@@ -255,6 +287,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   module_node->set(FUNCTION, move(module_functions));
   module_node->set(MACRO, move(module_macros));
   module_node->set(_CLASS, move(module_classes));
+  module_node->set(ALIAS, move(module_aliases));
   module_node->set(OBJ_INFO, move(obj_info));
   module_node->set(NAME, module_name);
   module_node->set(NAMESPACE,  Node::create(build_namespace.back()));
@@ -277,6 +310,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
   vector<string> keys={};
 
   auto class_functions=make_unique<Node>(Node::Type::Map);
+  auto class_aliases=make_unique<Node>(Node::Type::Map);
   auto class_node=make_unique<Node>(Node::Type::Map);
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
@@ -300,6 +334,13 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
       class_functions->set(fun_name, move(status.second));
       continue;
     }
+
+    case Lisp::Type::alias: {
+      auto alias_name = (*status.second)["name"].second._to_str();
+      class_aliases->set(alias_name, move(status.second));
+      break;
+    }
+
     case Lisp::Type::class_: {
     }
     default: { // assign class attributes here like  (var )
@@ -315,6 +356,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
     }}
   }
   class_node->set(FUNCTION, move(class_functions));
+  class_node->set(ALIAS, move(class_aliases));
   class_node->set(OBJ_INFO, move(obj_info));
   class_node->set(NAME, class_name);
   class_node->set(NAMESPACE,  Node::create(build_namespace.back()));
@@ -673,6 +715,7 @@ Node::OpStatus LispExpr::build_parsed_if(Node::List& list) {
   return {true, Node::create(move(if_vl))};
 }
 
+//-------------------------------- use
 Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
   MYLOGGER(trace_function, "LispExpr::use_at_parse_build(Node::List& list)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "Node::List& list : " + Node::_to_str(cc_list), SLOG_FUNC_INFO+30);
@@ -696,4 +739,53 @@ Node::OpStatus LispExpr::use_at_parse_build(Node::List& cc_list) {
     return build_parsed_vector(cc_list);
   }
 
+}
+//-------------------------------- 
+
+
+// alias Mod.Part1.Part2.fun
+// alias Mod.Part1.Part2.fun :as newfun
+// alias NameSpace.Part1.Part2::Mod.Part1.Part2.fun
+// alias NameSpace.Part1.Part2::Mod.Part1.Part2.fun :as newfun
+//
+Node::OpStatus LispExpr::build_parsed_alias(Node::List& list) {
+  MYLOGGER(trace_function, "LispExpr::build_parsed_deque(Node& node)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: " + Node::_to_str(list), SLOG_FUNC_INFO+30);
+  auto alias_map = make_unique<Node>(Node::Type::Map);
+  auto obj_info = make_unique<Node>(Node::Type::Map);
+  obj_info->set(TYPE,  Node::create(Lisp::Type::alias));
+
+  auto s =  list.size();
+  if(!s) return {false, Node::create()};
+  
+  auto alias_fullname =  list.front()->_to_str();
+  list.pop_front();
+  switch(s) {
+  case 1: {
+    auto vec_str  = split_string(alias_fullname, ".");
+    auto alias_name  = vec_str.back();  // vec_str.pop_back();  
+    if(vec_str.size() == 0) {
+      auto msg = "alias error: requires Mod.Fun format!";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::Parse, msg)};
+    }
+    alias_map->set(alias_name, move(alias_fullname));
+    alias_map->set(NAME, alias_name);
+    break;
+  }
+  case 2: {
+    auto alias_name = list.front()->_to_str();
+    alias_map->set(alias_name, move(alias_fullname));
+    alias_map->set(NAME, alias_name);
+    break;
+  }
+  default: {
+    auto msg = "unknow alias option errors";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }}
+
+  alias_map->set(OBJ_INFO,  move(obj_info));
+  //cout << "alias map: " << alias_map->_to_str() << "\n";
+  return {true, move(alias_map)};
 }
