@@ -1117,7 +1117,7 @@ Node::OpStatus LispExpr::cf_object_to_OpStatus(Node&process, unique_ptr<Node>obj
     switch(type) {
     case Lisp::Op::return_: {
       auto return_value_ref = object_ptr->get_node(RET_VALUE);
-      cout << "cf_object_to_Opstatus() return value ref " << return_value_ref << "\n\n";
+      //cout << "cf_object_to_Opstatus() return value ref " << return_value_ref << "\n\n";
       return {true, return_value_ref.second.clone()};
     }
     default: {}

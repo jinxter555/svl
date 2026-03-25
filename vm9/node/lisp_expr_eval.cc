@@ -477,7 +477,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
           auto arg_list_status  = eval_args(process, code_list, i+1, 0);
           if(!arg_list_status.first) return arg_list_status;
 
-          cout << "eval_args ..." <<  arg_list_status << "\n";
+          //cout << "eval_args ..." <<  arg_list_status << "\n";
           auto &arg_list  = arg_list_status.second->_get_vector_ref();
           cf = handle_cf_object(process, result_list, value_status.second->_get_map_ref(), arg_list);
 
@@ -494,16 +494,16 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
       case Node::ControlFlow::cf_run: { break;}
       case Node::ControlFlow::cf_return:{ 
         //return  {true, Node::create(move(result_list))}; 
-        cout << "return value_status " << *value_status.second<< "\n\n";
+        //cout << "return value_status " << *value_status.second<< "\n\n";
         return  {true, move(value_status.second)};
       }
       default: {}
       }
       if(Lisp::type(*value_status.second) == Lisp::Type::lambda) {
-        cout << "result list: " << Node::_to_str( result_list) << "\n\n";
-        cout << "ret lambda:  return value_status " << *value_status.second<< "\n\n";
+        //cout << "result list: " << Node::_to_str( result_list) << "\n\n";
+        //cout << "ret lambda:  return value_status " << *value_status.second<< "\n\n";
         return{true,  move(result_list.back()) };
-        break;
+        //break;
 
       }
  //     continue;

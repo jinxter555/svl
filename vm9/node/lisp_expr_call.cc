@@ -603,7 +603,7 @@ Node::OpStatus LispExpr::call_lambda(Node& process, Node& obj_lambda, Node::Vect
     if(type == Lisp::Type::lambda) {
       //cout << "call object type == lambda\n";
       auto evaled_status = eval(process, code);
-      cout << "lambda evaled_status: " << evaled_status << "\n\n";
+      //cout << "lambda evaled_status: " << evaled_status << "\n\n";
       MYLOGGER_MSG(trace_function, "lambda eval_status :" + evaled_status.second->_to_str(), SLOG_FUNC_INFO+30)
       // has to modify cf_object to handle lambda return
       // pop frame 

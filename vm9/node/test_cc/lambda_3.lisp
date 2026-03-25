@@ -5,7 +5,7 @@ module Kernel
 
           print "arg: x: " [x*3.3] "\n"
            return  x
-          #123456
+          123456
     ) 55555))
 
 
