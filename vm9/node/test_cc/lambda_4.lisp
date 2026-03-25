@@ -3,9 +3,12 @@ module Kernel
 
     (= v1    ((lambda  (x)
 
-          print "arg: x: " [x*3.3] "\n"
-           return  x
-          #123456
+          # print "arg: x: " [x*3.3] "\n"
+          #return  x
+          #   return (:ok x)
+           123 457
+          x
+
     ) 55555))
 
 

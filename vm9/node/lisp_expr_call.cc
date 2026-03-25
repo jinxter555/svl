@@ -602,14 +602,25 @@ Node::OpStatus LispExpr::call_lambda(Node& process, Node& obj_lambda, Node::Vect
     auto type = get<Lisp::Type>(type_ref_status.second.value_);
     if(type == Lisp::Type::lambda) {
       //cout << "call object type == lambda\n";
-      return eval(process, code);
+      auto evaled_status = eval(process, code);
+      cout << "lambda evaled_status: " << evaled_status << "\n\n";
+      MYLOGGER_MSG(trace_function, "lambda eval_status :" + evaled_status.second->_to_str(), SLOG_FUNC_INFO+30)
+      // has to modify cf_object to handle lambda return
+      // pop frame 
+      frame_pop(process);
+
+
+      return cf_object_to_OpStatus(process, move(evaled_status.second));
     }
   } catch(...) {}
+
+  // might need to merge with above frame_pop somehow
+  frame_pop(process);
 
   cerr << "call __object_info__.type != lambda. but call_lambda()!\n";
   return {false, Node::create_error(Error::Type::Unknown,  "call __object_info__.type != lambda. but call_lambda()!")};
 
- }
+}
 
 //------------------------------------------------------------------------ call_closure
 // call to closure blocks .. (for range(1..10) (do (i) ..))

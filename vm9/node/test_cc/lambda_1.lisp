@@ -10,13 +10,16 @@ module Kernel
       )
       assign l2 "hello"
 
-      (
+     (
         lambda  (x)
-          (print "hello world123\n")
-          print x
+          (print "hello lambda \n")
+          print x "\n"
+          return  x
         end.lambda
-        5 6 7
+        55555
       )
+
+      # print "v1: " v1 "\n"
 
      # ((lambda (number) (* 7 number)) 3)
 

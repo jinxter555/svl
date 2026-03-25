@@ -1033,8 +1033,9 @@ Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &co
 }
 //------------------------------------------------------------------------ handle control flow object
 
-Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_list, const Node::Map& object) {
+Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_list, const Node::Map& object, const Node::Vector&args) {
   MYLOGGER(trace_function, "LispExpr::handle_cf_object(Node&process, Node::Vector& result_list, Node::Map& object)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "args " + Node::_to_str(args), SLOG_FUNC_INFO+30)
 
    //cout << "returned map or object need to check if t needs to call lambda or closure!\n";
    //cout << "return object : " <<  Node::_to_str(object) << "\n";
@@ -1051,8 +1052,16 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_l
       return Node::ControlFlow::cf_return;
     }
     case Lisp::Op::lambda: {
-      cout << "it's a lambda object!" <<  Node::_to_str(result_list) <<  "\n";
-      cout << "object" <<  Node::_to_str(object) <<  "\n";
+//      cout << "it's a lambda object!" <<  Node::_to_str(result_list) <<  "\n";
+//      cout << "object: " <<  Node::_to_str(object) <<  "\n";
+//      cout << "args: " <<  Node::_to_str(args) <<  "\n";
+      auto lambda_object = Node::create(Node::clone(object));
+      auto arg_list = eval_args(process, args, 0);
+      auto status = call_lambda(process, *lambda_object, move(arg_list.second->_get_vector_ref()) );
+
+      if(!status.first) { return Node::ControlFlow::cf_run; }
+      result_list.push_back(move(status.second));
+      return Node::ControlFlow::cf_run;
 
     }
     default: {}
@@ -1108,7 +1117,7 @@ Node::OpStatus LispExpr::cf_object_to_OpStatus(Node&process, unique_ptr<Node>obj
     switch(type) {
     case Lisp::Op::return_: {
       auto return_value_ref = object_ptr->get_node(RET_VALUE);
-      //cout << "return value " << *return_value << "\n";
+      cout << "cf_object_to_Opstatus() return value ref " << return_value_ref << "\n\n";
       return {true, return_value_ref.second.clone()};
     }
     default: {}
