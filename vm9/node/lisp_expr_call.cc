@@ -208,8 +208,11 @@ Node::OpStatus LispExpr::scope_params_args(const vector<string>& params, Node::V
   MYLOGGER_MSG(trace_function, "args_cc_vec: " + Node::_to_str(args_cc_vec), SLOG_FUNC_INFO+30);
 
 
+  Node::Map args;
+  auto scope = scope_create();
+  size_t s =  params.size();
   // hack
-  if(params.size() == 1 && args_cc_vec.size() > 1) {
+  if(s == 1 && args_cc_vec.size() > 1) {
     auto scope = scope_create();
     Node::Map args;
     cout << "args_cc_vec: " << Node::_to_str(args_cc_vec) << "\n";
@@ -218,17 +221,40 @@ Node::OpStatus LispExpr::scope_params_args(const vector<string>& params, Node::V
     scope->set(ARGS,  Node::create(move(args)));
     cout << "scope: " <<  *scope << "\n\n";
     return {true, move(scope)};
-  }
+  } else if( s < args_cc_vec.size()) {
 
-  if(args_cc_vec.size() != params.size())
+    cout << "parameter is less arg!\n";
+    auto identifier = params.back();
+    if(identifier.front() == '*') { // assign all 
+      identifier.erase(0, 1); // remove '*'
+      for(size_t i=0; i<s-1; i++) {
+        args[params[i]] =  move(args_cc_vec[i]);
+      }
+
+      Node::Vector result_rest_wild_card;
+      for(size_t j=s-1; j<args_cc_vec.size(); j++) {
+        result_rest_wild_card.push_back(move(args_cc_vec[j]));
+      }
+      args[identifier] =  Node::create(move(result_rest_wild_card));
+
+      scope->set(ARGS,  Node::create(move(args)));
+
+      return {true, move(scope)};
+
+    }
+
     return {false, Node::create_error(Error::Type::InvalidOperation,  
       "scope_params_args() different size, between params " +_to_str_ext(params) +
       " and args: " + Node::_to_str(args_cc_vec))};
+
+  } else if( s != args_cc_vec.size()) {
+    return {false, Node::create_error(Error::Type::InvalidOperation,  
+      "scope_params_args() different size, between params " +_to_str_ext(params) +
+      " and args: " + Node::_to_str(args_cc_vec))};
+  }
   
     
-  size_t s =  params.size();
-  auto scope = scope_create();
-  Node::Map args;
+  //size_t s =  params.size();
 
   for(size_t i=0; i<s; i++) {
     args[params[i]] =  move(args_cc_vec[i]);

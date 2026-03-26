@@ -3,12 +3,12 @@ module Kernel
 
 
      (
-        (lambda  (x)
+        lambda  (x)
           print "x: " x "\n"
           return  x
-        ) 
-        555
-      )
+        end.lambda
+        
+      555)
 
   end.def 
 end.module
