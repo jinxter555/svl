@@ -251,6 +251,7 @@ public:
   // 
   Node::OpStatus car_eval_head(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus car(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus head(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus cdr(Node&process, const Node::Vector &list, size_t start=0);
   //
   // (map ( (k1 v1) (k2 v2) )) //creates a new map object

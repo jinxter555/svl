@@ -343,6 +343,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::call:   return call(process, code_list, start); 
   case Lisp::Op::car:   return car(process, code_list, start);
   case Lisp::Op::cdr:   return cdr(process, code_list, start);
+  case Lisp::Op::head:    return {true, code_list[start]->head().clone()};
   case Lisp::Op::lambda:    return lambda_create(process, code_list, start);
   case Lisp::Op::do_:    return closure_create(process, code_list, start);
   case Lisp::Op::faz:    return faz(process, code_list, start);
@@ -439,7 +440,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
 
 //------------------------------------------------------------------------
 Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count) {
-  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list, size_t start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::eval(Node&process, Node::Vector& code_list, size_t start, front_count)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "code_list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
 
@@ -454,7 +455,20 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
 
 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
+
+    /*
+    // if(code_list[i]->is_container() && Lisp::type(*code_list[i])== Lisp::Type::identifier) {
+    MYLOGGER_MSG(trace_function, "code_list[i]: " + code_list[i]->_to_str(), SLOG_FUNC_INFO+30);
+    MYLOGGER_MSG(trace_function, "code_list[i].type_: " + Node::_to_str( code_list[i]->type_ ), SLOG_FUNC_INFO+30);
+    if(code_list[i]->is_container() && code_list[i]->head().type_ != Node::Type::LispOp) {
+      // MYLOGGER_MSG(trace_function, "code_list[i] is container and identifier " + code_list[i]->_to_str(), SLOG_FUNC_INFO+30);
+      MYLOGGER_MSG(trace_function, "is conatiner && code_list[i]: " + code_list[i]->_to_str(), SLOG_FUNC_INFO+30);
+      result_list.push_back(Node::ptr_USU(code_list[i]));
+      continue;
+    }
+*/
     auto value_status = eval(process, *code_list[i]);
+
     if(!value_status.first) {
       auto frame_ref_status = frame_current(process);
       if(frame_ref_status.first) { // get frame and find out where eval failed.
@@ -548,6 +562,8 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
   MYLOGGER_MSG(trace_function, "Lisp::Op::eval: start " + to_string(start) + ", code_list " + Node::_to_str(arg_list), SLOG_FUNC_INFO+30);
   // create a list of prepend object for front replacement
   Node::Vector result_list; //, result_list2;
+  Node::OpStatus value_status;
+
   size_t s=arg_list.size();
   result_list.reserve(s+front_insert_count);
 
@@ -555,13 +571,20 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
 
-    if(arg_list[i]->is_container() ) {
+    if(arg_list[i]->is_container() && arg_list[i]->head().type_ != Node::Type::LispOp) {
       //cout << "is a container: " <<  *arg_list[i]<< "\n";
+      MYLOGGER_MSG(trace_function, "is conatiner && arg_list[i]: " + arg_list[i]->_to_str(), SLOG_FUNC_INFO+30);
       result_list.push_back(Node::ptr_USU(arg_list[i]));
       continue;;
     }
+    if(arg_list[i]->head().type_ == Node::Type::LispOp &&
+      arg_list[i]->type_ == Node::Type::Vector) {
+        cout << "eval_args:() lispop and vector\n";
+        value_status = eval(process, arg_list, start);
 
-    auto value_status = eval(process, *arg_list[i]);
+    } else  {
+      value_status = eval(process, *arg_list[i]);
+    }
 
 
     if(!value_status.first) {

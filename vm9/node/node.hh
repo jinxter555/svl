@@ -165,6 +165,7 @@ public:
   bool has_node(const vector<string>&path);
 
   Node& get_node(); // returns node if it's ptrs shared raw unique
+  Node& head(); // returns head node 
   //
   //OpStatusRef get_node_with_ptr(const string&key);
   //OpStatusRef get_node_with_ptr(const vector<string>&path);

@@ -1130,3 +1130,12 @@ Node::ptr_S Node::_get_ptr_s() {
 Node::ptr_R Node::_get_ptr_r() {
   return get<ptr_R>(value_);
 }
+//------------------------------------------------------------------------
+
+Node& Node::head() {
+  if(type_ != Type::Vector) return *this;
+  auto &vec_cc = _get_vector_ref() ;
+  if(vec_cc.empty())
+    return node_null;
+  return vec_cc[0]->head();
+}
