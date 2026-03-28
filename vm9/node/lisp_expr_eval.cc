@@ -572,15 +572,17 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
 
     if(arg_list[i]->is_container() && arg_list[i]->head().type_ != Node::Type::LispOp) {
-      //cout << "is a container: " <<  *arg_list[i]<< "\n";
+      cout << "is a container: " <<  *arg_list[i]<< "\n";
       MYLOGGER_MSG(trace_function, "is conatiner && arg_list[i]: " + arg_list[i]->_to_str(), SLOG_FUNC_INFO+30);
       result_list.push_back(Node::ptr_USU(arg_list[i]));
+      cout << "eval_args() result_list: " << Node::_to_str(result_list) << "\n";
+
       continue;;
     }
     if(arg_list[i]->head().type_ == Node::Type::LispOp &&
       arg_list[i]->type_ == Node::Type::Vector) {
         cout << "eval_args:() lispop and vector\n";
-        value_status = eval(process, arg_list, start);
+        value_status = eval(process, arg_list, i);
 
     } else  {
       value_status = eval(process, *arg_list[i]);
@@ -618,6 +620,7 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
 
     result_list.push_back(move(value_status.second));
   }
+  cout << "eval_args() result_list: " << Node::_to_str(result_list) << "\n";
   return  {true, Node::create(move(result_list))};
 
 
