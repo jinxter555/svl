@@ -382,8 +382,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
     cout << "defun in eval!\n";
     return {true, Node::create()};
   }
-  default:{ return  eval_math(process, op_head, code_list, start); }
-  } 
+  default:{ 
+    return  eval_math(process, op_head, code_list, start); 
+  
+  }} 
   cerr << "unknown op()!: " + Lisp::_to_str(op_head) + "\n"; 
   return {false, Node::create_error(Error::Type::Unknown, "Unknown Lisp::Op command")};
 }
@@ -456,18 +458,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
 
-    /*
-    // if(code_list[i]->is_container() && Lisp::type(*code_list[i])== Lisp::Type::identifier) {
-    MYLOGGER_MSG(trace_function, "code_list[i]: " + code_list[i]->_to_str(), SLOG_FUNC_INFO+30);
-    MYLOGGER_MSG(trace_function, "code_list[i].type_: " + Node::_to_str( code_list[i]->type_ ), SLOG_FUNC_INFO+30);
-    if(code_list[i]->is_container() && code_list[i]->head().type_ != Node::Type::LispOp) {
-      // MYLOGGER_MSG(trace_function, "code_list[i] is container and identifier " + code_list[i]->_to_str(), SLOG_FUNC_INFO+30);
-      MYLOGGER_MSG(trace_function, "is conatiner && code_list[i]: " + code_list[i]->_to_str(), SLOG_FUNC_INFO+30);
-      result_list.push_back(Node::ptr_USU(code_list[i]));
-      continue;
-    }
-*/
     auto value_status = eval(process, *code_list[i]);
+//    cout << "1 eval value_status:  "  << value_status << "\n";
 
     if(!value_status.first) {
       auto frame_ref_status = frame_current(process);
@@ -503,12 +495,9 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
         Node::Vector nv;
         cf = handle_cf_object(process, result_list, value_status.second->_get_map_ref(), nv);
       }
-      //switch(handle_cf_object(process, result_list, value_status.second->_get_map_ref(), code_list)) {
       switch(cf) {
       case Node::ControlFlow::cf_run: { break;}
       case Node::ControlFlow::cf_return:{ 
-        //return  {true, Node::create(move(result_list))}; 
-        //cout << "return value_status " << *value_status.second<< "\n\n";
         return  {true, move(value_status.second)};
       }
       default: {}
@@ -517,17 +506,19 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
         //cout << "result list: " << Node::_to_str( result_list) << "\n\n";
         //cout << "ret lambda:  return value_status " << *value_status.second<< "\n\n";
         return{true,  move(result_list.back()) };
-        //break;
-
       }
- //     continue;
     }
 
     //cout << "i " << i << "  result_list: " <<  Node::_to_str(result_list) << "\n";
 
+    //cout << "2 before push  to result_list  eval value_status:  "  << value_status << "\n";
+    if(start+1 == s) { // this is just eval a single node, coould be nested (+1 2 3)
+      return {true, move(value_status.second)};
+    }
     result_list.push_back(move(value_status.second));
   }
-  //cout << "2 result_list: " <<  Node::_to_str(result_list) << "\n";
+  MYLOGGER_MSG(trace_function, "result_list: " + Node::_to_str(result_list), SLOG_FUNC_INFO+30);
+
   return  {true, Node::create(move(result_list))};
 }
 

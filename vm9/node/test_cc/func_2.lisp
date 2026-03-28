@@ -1,5 +1,5 @@
 (module Kernel 
-  (defun main (x y) my_func_des
+  (def main (x y)
     (
       (assign x (p55 ()))
       (print "x is: " x "\n")
@@ -11,7 +11,7 @@
 
   )
 
-  (defun p55 () "my func p55" 
+  (def p55 () 
     (
       1111
       55555
