@@ -574,7 +574,19 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
     if(arg_list[i]->is_container() && arg_list[i]->head().type_ != Node::Type::LispOp) {
       cout << "is a container: " <<  *arg_list[i]<< "\n";
       MYLOGGER_MSG(trace_function, "is conatiner && arg_list[i]: " + arg_list[i]->_to_str(), SLOG_FUNC_INFO+30);
-      result_list.push_back(Node::ptr_USU(arg_list[i]));
+
+
+      //result_list.push_back(Node::ptr_USU(arg_list[i]));
+
+      if(arg_list[i]->type_==Node::Type::Shared)
+        result_list.push_back(Node::ptr_USU(arg_list[i]));
+      else{
+        //auto vptr = arg_list[i]->clone();
+        result_list.push_back(Node::ptr_US(arg_list[i]->clone()));
+      }
+
+
+
       cout << "eval_args() result_list: " << Node::_to_str(result_list) << "\n";
 
       continue;;

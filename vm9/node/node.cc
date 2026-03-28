@@ -1112,6 +1112,8 @@ unique_ptr<Node> Node::ptr_US(unique_ptr<Node> node) {
 // make a clone of unique shared without recursive cloning.
 unique_ptr<Node> Node::ptr_USU(const unique_ptr<Node> &node) {
   MYLOGGER(trace_function, "Node::ptr_USU(const unique_ptr<Node>&node)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(node->type_), SLOG_FUNC_INFO+30);
+
   const auto sptr = get<ptr_S>(node->value_);
   return make_unique<Node>(sptr);
 }
