@@ -512,12 +512,15 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
     //cout << "i " << i << "  result_list: " <<  Node::_to_str(result_list) << "\n";
 
     //cout << "2 before push  to result_list  eval value_status:  "  << value_status << "\n";
-    if(start+1 == s) { // this is just eval a single node, coould be nested (+1 2 3)
-      return {true, move(value_status.second)};
-    }
+    //if(start+1 == s) { return {true, move(value_status.second)}; }
+
     result_list.push_back(move(value_status.second));
   }
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start) + ", s: " + to_string(s), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "result_list: " + Node::_to_str(result_list), SLOG_FUNC_INFO+30);
+  if(start + 1 == s && result_list[0]->head().type_ != Node::Type::LispOp) {
+    return {true, move(result_list[0])};
+  }
 
   return  {true, Node::create(move(result_list))};
 }
@@ -623,7 +626,7 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
 
     result_list.push_back(move(value_status.second));
   }
-  cout << "eval_args() result_list: " << Node::_to_str(result_list) << "\n";
+  //cout << "eval_args() result_list: " << Node::_to_str(result_list) << "\n";
   return  {true, Node::create(move(result_list))};
 
 
