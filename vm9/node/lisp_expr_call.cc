@@ -400,34 +400,35 @@ Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string m
     .second.get_node(CLASS_PTR)
     .second.get_node(FUNCTION);
 
+    //cout << "fun ref status :" << fun_ref_status << "\n\n";
 
     auto obj_ref_status  = object.get_node(OBJ_INFO);
-    //cout << "trying object get __obj_info__: " <<  object._to_str() << "\n\n";
+    cout << "trying object get __obj_info__: " <<  object._to_str() << "\n\n";
     if(!obj_ref_status.first) {
       cerr << "call_object() object.get_node error!\n";
     }
 
-//    cout << "fun ref status :" << fun_ref_status << "\n";
-    // auto  argvs_status = eval(process, argv_list, 8); // this returns a vector
-    auto  argvs_status = eval(process, argv_list, 0, 1); // this returns a vector
+    //auto  argvs_status = eval(process, argv_list, 0, 1); // this returns a vector
+    auto  argvs_status = eval_args(process, argv_list, 0, 1); // this returns a vector
     if(!argvs_status.first) {
       cerr << " call_object() error eval argv_list: " << Node::_to_str(argv_list) + argvs_status.second->_to_str() <<"\n";
       return argvs_status;
     }
+    // if argvs_status.second.type not vector create a vector 
 
-    //cout << "1 I have made this far: " <<  object._to_str() <<"\n\n";
+    cout << "argvs_status: " <<  argvs_status <<"\n\n";
 
     auto object_uptr = Node::ptr_USU(object); // this object
 
-    //cout << "2 I have made this far: " <<  object._to_str() <<"\n\n";
+    cout << "object_uptr->to_str(): " <<  object_uptr->_to_str() <<"\n\n";
 
     // argvs_status.second->push_front(move(object_uptr));
     argvs_status.second->_get_vector_ref()[0] = move(object_uptr);
-    //cout << "3 I have made this far: " <<  object._to_str() <<"\n\n";
+    //cout << "argvs_status with 'this' object " <<  argvs_status  <<"\n\n";
 
     auto method_fun_ref = fun_ref_status.second.get_node(method_name);
 
-    //cout << "4 I have made this far: " <<  object._to_str() <<"\n\n";
+    //cout << "method_fun_ref: " <<  method_fun_ref<<"\n\n";
 
     if(!method_fun_ref.first) {
       string msg = "send object message() method '" + method_name +  "' not found!";
@@ -439,7 +440,7 @@ Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string m
 
 
   } catch(...) {
-      string msg = "call_object() calling not Not class object!";
+      string msg = "call_object() calling not class object!";
       cerr << msg << "\n";
       cerr << object._to_str() << "\n";
       return {false, Node::create_error(Error::Type::SymbolNotFound,  msg)};

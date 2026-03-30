@@ -418,7 +418,15 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list) {
     if(s == 1) { // signle element: identifier, var, immut, arg lookup //cout << "vector 1 identifier lookup : " << Node::_to_str(code_list) << "\n";
       return eval(process, *code_list[0]);
     } else if(s > 1) { // function lookup // cout << "identifier s>1!\n";
-      return call(process, code_list);
+      auto call_status =  call(process, code_list);
+      if(!call_status.first) { // do i need a lookup?
+        auto call_first_status = eval_args(process, code_list, 0, 0);
+        if(!call_first_status.first) {
+          return call_status; // return upper original call status
+        }
+        return call_first_status;
+      }
+      return call_status;
     }
     return {false, Node::create_error(Error::Type::Unknown, "Unknown error in Identifier :'" + code_list[0]->_to_str() + "'")};
   }
@@ -454,6 +462,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
 
   // create a list of prepend object for front replacement
   for(size_t i=0; i<front_insert_count; i++) { result_list.push_back(Node::create()); }
+
 
 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
@@ -517,10 +526,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
     result_list.push_back(move(value_status.second));
   }
   MYLOGGER_MSG(trace_function, "start: " + to_string(start) + ", s: " + to_string(s), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "front insert count: " + to_string(front_insert_count) , SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "result_list: " + Node::_to_str(result_list), SLOG_FUNC_INFO+30);
-  if(start + 1 == s && result_list[0]->head().type_ != Node::Type::LispOp) {
-    return {true, move(result_list[0])};
-  }
+  //cout << "result_list: " << Node::_to_str( result_list) << "\n";
+  //if(result_list.size() == 1) return {true, move(result_list[0])}; 
+  if(result_list.size()==1 && result_list[0]->type_!= Node::Type::Vector) return {true, move(result_list[0])}; 
 
   return  {true, Node::create(move(result_list))};
 }

@@ -72,8 +72,7 @@ module Kernel
     = m1 (new Dict "ship building" "world1" "trade")
     = m2 (new Dict2 "construction" "fishery" "saliing")
 
-    f1()
-:e 
+#    f1()
 
     loop
        print ( eval (read)) "\n"

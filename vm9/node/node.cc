@@ -1120,8 +1120,28 @@ unique_ptr<Node> Node::ptr_USU(const unique_ptr<Node> &node) {
 //------------------------------------------------------------------------
 unique_ptr<Node> Node::ptr_USU(const Node &node) {
   MYLOGGER(trace_function, "Node::ptr_USU(const Node& node)", __func__, SLOG_FUNC_INFO);
-  const auto sptr = get<ptr_S>(node.value_);
-  return make_unique<Node>(sptr);
+  MYLOGGER_MSG(trace_function, "type: " + _to_str(node.type_), SLOG_FUNC_INFO+30);
+//  const auto sptr = get<ptr_S>(node.value_);
+
+  switch(node.type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(node.value_);
+    return make_unique<Node>(sptr);
+  }
+  case Type::Raw: {
+    auto &sptr = get<ptr_R>(node.value_);
+    return make_unique<Node>(sptr);
+  }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(node.value_);
+    return make_unique<Node>(sptr->_get_ptr_s());
+  }
+  default: {}
+  }
+  
+  cerr << "not supported ptr_USU ptr type: " << Node::_to_str(node.type_) <<"\n";
+  return nullptr;
+  //return make_unique<Node>(sptr);
 }
 
 //------------------------------------------------------------------------
