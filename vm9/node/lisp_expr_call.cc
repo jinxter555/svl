@@ -403,7 +403,7 @@ Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string m
     //cout << "fun ref status :" << fun_ref_status << "\n\n";
 
     auto obj_ref_status  = object.get_node(OBJ_INFO);
-    cout << "trying object get __obj_info__: " <<  object._to_str() << "\n\n";
+    //cout << "trying object get __obj_info__: " <<  object._to_str() << "\n\n";
     if(!obj_ref_status.first) {
       cerr << "call_object() object.get_node error!\n";
     }
@@ -416,11 +416,11 @@ Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string m
     }
     // if argvs_status.second.type not vector create a vector 
 
-    cout << "argvs_status: " <<  argvs_status <<"\n\n";
+    //cout << "argvs_status: " <<  argvs_status <<"\n\n";
 
     auto object_uptr = Node::ptr_USU(object); // this object
 
-    cout << "object_uptr->to_str(): " <<  object_uptr->_to_str() <<"\n\n";
+    //cout << "object_uptr->to_str(): " <<  object_uptr->_to_str() <<"\n\n";
 
     // argvs_status.second->push_front(move(object_uptr));
     argvs_status.second->_get_vector_ref()[0] = move(object_uptr);
