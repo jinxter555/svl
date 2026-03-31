@@ -530,7 +530,11 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
   MYLOGGER_MSG(trace_function, "result_list: " + Node::_to_str(result_list), SLOG_FUNC_INFO+30);
   //cout << "result_list: " << Node::_to_str( result_list) << "\n";
   //if(result_list.size() == 1) return {true, move(result_list[0])}; 
-  if(result_list.size()==1 && result_list[0]->type_!= Node::Type::Vector) return {true, move(result_list[0])}; 
+  // this might be useful
+  //if(result_list.size()==1 && result_list[0]->type_!= Node::Type::Vector) return {true, move(result_list[0])}; 
+  // or is_listy()
+  //if(result_list.size()==1 &&  !result_list[0]->is_container()) return {true, move(result_list[0])}; 
+  if(result_list.size()==1 &&  !result_list[0]->is_listy()) return {true, move(result_list[0])}; 
 
   return  {true, Node::create(move(result_list))};
 }
@@ -600,7 +604,7 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
     }
     if(arg_list[i]->head().type_ == Node::Type::LispOp &&
       arg_list[i]->type_ == Node::Type::Vector) {
-        cout << "eval_args:() lispop and vector\n";
+        //cout << "eval_args:() lispop and vector\n";
         value_status = eval(process, arg_list, i);
 
     } else  {

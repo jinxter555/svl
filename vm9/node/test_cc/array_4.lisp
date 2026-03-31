@@ -17,7 +17,7 @@ module Kernel
   # def p1(myl x)
   def p1(myl )
     print "p1(myl) " myl "\n"
-    index 0 myl :set 5555
+#    index 0 myl :set 5555
     print "p1(myl) " myl "\n"
     # print "x second: "  x "\n"
 

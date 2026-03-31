@@ -299,6 +299,7 @@ public:
 
   bool is_nil(); 
   bool is_container(); 
+  bool is_listy(); 
 
 protected:
 

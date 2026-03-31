@@ -82,6 +82,31 @@ bool Node::is_container() {
   }
   return false;
 }
+
+bool Node::is_listy() {
+  switch(type_) {
+  case Node::Type::List:
+  case Node::Type::Vector:
+  case Node::Type::DeQue: 
+    return true;
+  case Node::Type::Shared: {
+    auto& ptr = get<ptr_S>(value_);
+    return ptr->is_listy();
+  }
+  case Node::Type::Unique: {
+    auto& ptr = get<ptr_U>(value_);
+    return ptr->is_listy();
+  }
+  case Node::Type::Raw:  {
+    auto& ptr = get<ptr_R>(value_);
+    return ptr->is_listy();
+  }
+  default:  {}
+  }
+  return false;
+}
+
+
 Node& Node::get_node() {
   switch(type_) {
   case Node::Type::Shared: {

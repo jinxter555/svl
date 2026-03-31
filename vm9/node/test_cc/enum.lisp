@@ -4,9 +4,7 @@ module Kernel
     
      use :global Kernel
   
-     var  v (v1 "hola mundo") (v2 "halo welt") l1
       = l1 (1 2 3 4 5)
-     print v1 ", " v2 "\n"
 
     
       

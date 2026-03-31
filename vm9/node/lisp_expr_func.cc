@@ -1116,6 +1116,7 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, const Node::Map& obje
 
 Node::OpStatus LispExpr::cf_object_to_OpStatus(Node&process, unique_ptr<Node>object_ptr) {
   MYLOGGER(trace_function, "LispExpr::cf_object_to_OpStatus(Node&process, Node::Map& object)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "object_ptr: " + object_ptr->_to_str(), SLOG_FUNC_INFO+30)
   if(object_ptr->type_ == Node::Type::Map) { // need to figure if need to call lambda closure
    try {
     //cout << "object_ptr " << *object_ptr << "\n";
@@ -1143,7 +1144,12 @@ Node::OpStatus LispExpr::cf_object_to_OpStatus(Node&process, unique_ptr<Node>obj
    return {true, object_ptr->back().second.clone()};
    }
   }
+  if(object_ptr->type_ == Node::Type::Vector) {
    return {true, object_ptr->back().second.clone()};
+  }else {
+   //return {true, object_ptr->clone()};
+   return {true, move(object_ptr)};
+  }
 }
 
 Node::ControlFlow LispExpr::handle_cf_object_return(Node&process, Node::Vector&result_list, const Node::Map& object) {
