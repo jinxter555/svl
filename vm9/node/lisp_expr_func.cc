@@ -19,9 +19,14 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t star
     cerr << "Error encounter in lisp::car eval list" << ev_list_status << "\n";
     return ev_list_status;
   }
+  if( ev_list_status.second->type_ != Node::Type::Vector) {
+    return {true, move(ev_list_status.second)};
+  }
+
 
 
   auto &head = ev_list_status.second->front().second;
+  cout << "car head " << head << "\n";
   // auto rv_status = eval(process, *head);
   auto rv_status = eval(process, head);
   if(!rv_status.first) {
