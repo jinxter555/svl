@@ -575,7 +575,10 @@ Node::OpStatus LispExpr::eval_args(Node& process, const Node::Vector& arg_list, 
 
   for(size_t i=start; i<s; i++) { // return last eval,  size -1 
 
-    if(arg_list[i]->is_container() && arg_list[i]->head().type_ != Node::Type::LispOp) {
+    if(arg_list[i]->is_container() 
+    && arg_list[i]->head().type_ != Node::Type::LispOp
+    && arg_list[i]->head().type_ != Node::Type::Identifier // added this to avoid  e.g. (varlist1 1 2 3) not varlist1 not evaluated
+  ) {
       cout << "is a container: " <<  *arg_list[i]<< "\n";
       MYLOGGER_MSG(trace_function, "is conatiner && arg_list[i]: " + arg_list[i]->_to_str(), SLOG_FUNC_INFO+30);
 

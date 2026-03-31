@@ -215,11 +215,10 @@ Node::OpStatus LispExpr::scope_params_args(const vector<string>& params, Node::V
   if(s == 1 && args_cc_vec.size() > 1) {
     auto scope = scope_create();
     Node::Map args;
-    cout << "args_cc_vec: " << Node::_to_str(args_cc_vec) << "\n";
-//    args_cc_vec[0] = Node::create(5555);
+    //cout << "args_cc_vec: " << Node::_to_str(args_cc_vec) << "\n";
     args[params[0]] = Node::create(move(args_cc_vec));
     scope->set(ARGS,  Node::create(move(args)));
-    cout << "scope: " <<  *scope << "\n\n";
+    //cout << "scope: " <<  *scope << "\n\n";
     return {true, move(scope)};
   } else if( s < args_cc_vec.size()) {
 
@@ -576,7 +575,10 @@ Node::OpStatus LispExpr::funcall(Node& process, const Node::Vector& code_list, s
     return {false, Node::create_error(Error::Type::Parse, "funcall() fun_var identifier lookup failed! " + fun_var_ptr->_to_str())};
   }
 
-  auto args = list_clone_remainder(code_list, start+1);
+ // auto args = list_clone_remainder(code_list, start+1);
+  auto args_status = eval_args(process, code_list, start+1);
+  if(!args_status.first) return args_status;
+  auto &args = args_status.second->_get_vector_ref();
 
 
   switch(obj_ref_status.second.type_){

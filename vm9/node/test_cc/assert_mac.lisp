@@ -2,7 +2,7 @@ module Kernel
   def main (x y) 
       (var a)
       print "Macros!\n"
-      assert [1!=1]
+      assert [1==1]
       loop
         print (eval (read)) "\n"
       end.loop

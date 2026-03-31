@@ -26,7 +26,7 @@ Node::OpStatus LispExpr::car(Node&process, const Node::Vector &list, size_t star
 
 
   auto &head = ev_list_status.second->front().second;
-  cout << "car head " << head << "\n";
+  //cout << "car head " << head << "\n";
   // auto rv_status = eval(process, *head);
   auto rv_status = eval(process, head);
   if(!rv_status.first) {
