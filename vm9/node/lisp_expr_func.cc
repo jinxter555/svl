@@ -1471,9 +1471,7 @@ Node::OpStatus LispExpr::list(Node&process, const Node::Vector &list_cc_vec, siz
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
 
-  size_t idx, l_size = list_cc_vec.size();
-
-  cout << "list!\n";
+  size_t idx, l_size = list_cc_vec.size(), array_size=0;
   if(l_size < 3) {
     auto msg = "(list  num vector_name) requries 3 arguments";
     cerr << msg << "\n";
@@ -1495,13 +1493,16 @@ Node::OpStatus LispExpr::list(Node&process, const Node::Vector &list_cc_vec, siz
 
 
     auto &array_vector = array_status.second->_get_vector_ref();
+    array_size = array_vector.size();
 
     if(array_vector.empty()) return {true, Node::create()};
+    
 
     auto &array_op = list_cc_vec[start+1];
 
 
     if(array_op->_get_integer() == atom_index) {
+
       try {
         auto idx_status = eval(process, *list_cc_vec[start+2]);
         if(!idx_status.first) {
@@ -1514,7 +1515,7 @@ Node::OpStatus LispExpr::list(Node&process, const Node::Vector &list_cc_vec, siz
          return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with idx. ")};
       }
 
-      if(idx < 0 || idx >= array_vector.size()) return {false, Node::create_error(Error::Type::IndexOutOfBounds, "Index out of bound!\n")};
+      if(idx < 0 || idx >= array_size) return {false, Node::create_error(Error::Type::IndexOutOfBounds, "Index out of bound!\n")};
       if(l_size==4) {
         auto &retv = array_vector[idx];
         return {true, retv->clone()};
@@ -1522,10 +1523,28 @@ Node::OpStatus LispExpr::list(Node&process, const Node::Vector &list_cc_vec, siz
 
 
     } else if(array_op->_get_integer() == atom_set) {
+
+      try {
+        auto idx_status = eval(process, *list_cc_vec[start+2]);
+        if(!idx_status.first) {
+          auto msg ="Can't eval index!\n";
+          cerr << msg << "\n";
+          return {false, Node::create_error(Error::Type::Parse, msg)};
+        }
+        idx = idx_status.second->_get_integer();
+      } catch(...) {
+         return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with idx. ")};
+      }
+
+      if(idx < 0 || idx >= array_size) return {false, Node::create_error(Error::Type::IndexOutOfBounds, "Index out of bound!\n")};
+
+
       auto value_status = eval(process, *list_cc_vec[start+3]);
       auto &retv = array_vector[idx];
       cout << ":set "  <<  *retv <<" to  " <<  value_status.second->_to_str() <<"\n";
       array_vector[idx] = move(value_status.second);
+    } else if(array_op->_get_integer() == atom_size) {
+      return {true, Node::create(Node::Integer(array_size))};
     }
 
     return {true, Node::create(atom_ok, Node::Type::Atom)};
@@ -1554,9 +1573,10 @@ Node::OpStatus LispExpr::list(Node&process, const Node::Vector &list_cc_vec, siz
 
     if(array_op->_get_integer() == atom_set) {
       auto value_status = eval(process, *list_cc_vec[start+3]);
-
       ihash[idx] = move(value_status.second);
     }
+
+
     return {true, Node::create(atom_ok, Node::Type::Atom)};
 
 
