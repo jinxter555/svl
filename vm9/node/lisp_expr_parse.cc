@@ -41,10 +41,10 @@ Node::OpStatus LispExpr::parse_build(Node& tokens) {
 
     switch(op_head) {
     case Lisp::Op::use:  { return use_at_parse_build(list); }
-    case Lisp::Op::deque:  { return build_parsed_deque(list); }
-    case Lisp::Op::list:  { return build_parsed_list(list); }
+    case Lisp::Op::cc_deque:  { return build_parsed_deque(list); }
+    case Lisp::Op::cc_list:  { return build_parsed_list(list); }
+    case Lisp::Op::cc_vector:  { return build_parsed_vector(list);}
     case Lisp::Op::pipe:  { return build_parsed_pipe(list); }
-    case Lisp::Op::vector:  { return build_parsed_vector(list);}
     case Lisp::Op::def: { return build_parsed_def(list); }
     case Lisp::Op::if_: { return build_parsed_if(list); }
     case Lisp::Op::defmacro: { return build_parsed_macro(list); }

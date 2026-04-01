@@ -40,7 +40,7 @@ private:
 
   //Node::OpStatus parse_def(const Node::List &list);
 
-  const Node::Integer atom_module, atom_fun, atom_def, atom_class, atom_get, atom_set, atom_ok, atom_error,
+  const Node::Integer atom_module, atom_fun, atom_def, atom_class, atom_get, atom_set, atom_index, atom_ok, atom_error,
   atom_lambda, atom_closure, atom_else,
   atom_atom, atom_integer, atom_float, atom_string, atom_cc_vec, atom_cc_list, atom_cc_deque, atom_cc_map, atom_object, atom_namespace;
   // internal lisp hashed symbol values  (def :symbol ... )
@@ -262,6 +262,7 @@ public:
   Node::OpStatusRef  object_get(Node&process, const Node& object_id);  // returns object from "GC"
 
   Node::OpStatus index(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus list(Node&process, const Node::Vector &list, size_t start=0);
 
 
 

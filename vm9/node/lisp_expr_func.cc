@@ -1366,7 +1366,7 @@ Node::OpStatus LispExpr::interpreter(Node& process, const Node::Vector& list, si
 
 
 }
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------ index
 Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, size_t start) {
   MYLOGGER(trace_function, "LispExpr::index(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
@@ -1461,6 +1461,110 @@ Node::OpStatus LispExpr::index(Node&process, const Node::Vector &list_cc_vec, si
 
   return {false, Node::create(atom_error, Node::Type::Atom)};
 
+}
+
+//------------------------------------------------------------------------ list
+// list array_name :index 0
+
+Node::OpStatus LispExpr::list(Node&process, const Node::Vector &list_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::list(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  size_t idx, l_size = list_cc_vec.size();
+
+  cout << "list!\n";
+  if(l_size < 3) {
+    auto msg = "(list  num vector_name) requries 3 arguments";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+
+
+  auto array_status = eval(process, *list_cc_vec[start]);
+  if(!array_status.first) {
+    auto msg ="Can't eval array/ihash!\n";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+
+  try { // try vector
+  //  if(array_status.second->_get_value_type() != Node::Type::Vector) {
+  //    return {false, Node::create_error(Error::Type::IndexWrongType, "wrong type to op on vector array ")};
+  //  }
+
+
+    auto &array_vector = array_status.second->_get_vector_ref();
+
+    if(array_vector.empty()) return {true, Node::create()};
+
+    auto &array_op = list_cc_vec[start+1];
+
+
+    if(array_op->_get_integer() == atom_index) {
+      try {
+        auto idx_status = eval(process, *list_cc_vec[start+2]);
+        if(!idx_status.first) {
+          auto msg ="Can't eval index!\n";
+          cerr << msg << "\n";
+          return {false, Node::create_error(Error::Type::Parse, msg)};
+        }
+        idx = idx_status.second->_get_integer();
+      } catch(...) {
+         return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with idx. ")};
+      }
+
+      if(idx < 0 || idx >= array_vector.size()) return {false, Node::create_error(Error::Type::IndexOutOfBounds, "Index out of bound!\n")};
+      if(l_size==4) {
+        auto &retv = array_vector[idx];
+        return {true, retv->clone()};
+      }
+
+
+    } else if(array_op->_get_integer() == atom_set) {
+      auto value_status = eval(process, *list_cc_vec[start+3]);
+      auto &retv = array_vector[idx];
+      cout << ":set "  <<  *retv <<" to  " <<  value_status.second->_to_str() <<"\n";
+      array_vector[idx] = move(value_status.second);
+    }
+
+    return {true, Node::create(atom_ok, Node::Type::Atom)};
+
+
+  } catch(...) {
+   //  return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with array. ")};
+  }
+
+  try { // try ihash
+
+    auto &ihash = array_status.second->_get_imap_ref();
+    if(ihash.empty()) return {true, Node::create()};
+    if(l_size==3) {
+      if(!ihash.count(idx)) {
+        auto msg = "ihash key '" + atom_to_str(idx) + "' not found";
+        cerr << msg <<"\n";
+        return {false, Node::create_error(Error::Type::KeyNotFound,  msg)};
+      }
+      auto &retv = ihash[idx];
+      return {true, retv->clone()};
+    }
+
+
+    auto &array_op = list_cc_vec[start+2];
+
+    if(array_op->_get_integer() == atom_set) {
+      auto value_status = eval(process, *list_cc_vec[start+3]);
+
+      ihash[idx] = move(value_status.second);
+    }
+    return {true, Node::create(atom_ok, Node::Type::Atom)};
+
+
+  } catch(...) {
+   //  return {false, Node::create_error(Error::Type::Parse, "index(): something wrong with array. ")};
+  }
+
+  return {false, Node::create(atom_error, Node::Type::Atom)};
 }
 
 //------------------------------------------------------------------------

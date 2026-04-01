@@ -21,7 +21,7 @@ public:
   , class_, private_, new_, delete_, clone, use
   , error, noop
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
-  , atom, integer_, float_, number, string_, cc_vec, cc_list, cc_deque, cc_map
+  , atom, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map
   , var, assign
   , car, cdr, map, index, head, tail, body
   , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_
