@@ -22,6 +22,7 @@ public:
   , error, noop
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object
   , atom, integer_, float_, number, string_, cc_vector, cc_list, cc_deque, cc_map
+  , typeof_, size, is_atom, is_integer, is_float, is_string, is_list, is_deque, is_vector, is_cc_list, is_hash, is_ihash
   , var, assign
   , car, cdr, map, index, head, tail, body
   , add, sub, div, mul, mod, lt, gt, lteq, gteq, eq, neq, and_, or_, not_

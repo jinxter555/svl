@@ -1588,6 +1588,25 @@ Node::OpStatus LispExpr::list(Node&process, const Node::Vector &list_cc_vec, siz
 }
 
 //------------------------------------------------------------------------
+Node::OpStatus LispExpr::size(Node&process, const Node::Vector &list_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::size(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  auto ele_status = eval(process, *list_cc_vec[start]);
+
+  if(!ele_status.first) {
+    auto msg ="Can't eval array/ihash or container!\n";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+//  cout << "ele_status: " <<  ele_status << "\n";
+
+  if(!ele_status.second->is_container()) return {true, Node::create(0)};
+  return ele_status.second->get_node().size();
+}
+
+//------------------------------------------------------------------------
 
 Node::OpStatus LispExpr::load(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::load(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);

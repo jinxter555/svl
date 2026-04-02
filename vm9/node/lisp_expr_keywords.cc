@@ -80,6 +80,18 @@ void LispExpr::set_keywords() {
   map_->set("load", Op::load);
   map_->set("require", Op::require);
   map_->set("import", Op::import);
+  map_->set("size", Op::size);
+  map_->set("typeof", Op::typeof_);
+  map_->set("is_atom", Op::is_atom);
+  map_->set("is_integer", Op::is_integer);
+  map_->set("is_float", Op::is_float);
+  map_->set("is_string", Op::is_string);
+  map_->set("is_list", Op::is_list);
+  map_->set("is_cc_list", Op::is_cc_list);
+  map_->set("is_deque", Op::is_deque);
+  map_->set("is_vector", Op::is_vector);
+  map_->set("is_hash", Op::is_hash);
+  map_->set("is_ihash", Op::is_ihash);
 
   map_->set("+", Op::add);
   map_->set("-", Op::sub);

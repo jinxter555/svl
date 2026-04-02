@@ -351,6 +351,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::hash:   return hash_create(process, code_list, start);
   case Lisp::Op::ihash:   return ihash_create(process, code_list, start);
   case Lisp::Op::index:   return index(process, code_list, start);
+  case Lisp::Op::size:   return size(process, code_list, start);
   case Lisp::Op::list:   return list(process, code_list, start);
   case Lisp::Op::new_:  return object_create(process, code_list, start);
   case Lisp::Op::delete_:  return object_delete(process, code_list, start);

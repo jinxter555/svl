@@ -246,6 +246,8 @@ public:
   Lisp::Op      type_of(Node&node);
   Lisp::Op      type_of_by_map(Node::Map&obj);
 
+  Node::OpStatus typeof_(Node&process, const Node::Vector &list, size_t start=0);
+
 
 
   // 
@@ -263,6 +265,7 @@ public:
 
   Node::OpStatus index(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus list(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus size(Node&process, const Node::Vector &list, size_t start=0);
 
 
 

@@ -104,6 +104,18 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::load: return "load";
     case Lisp::Op::require: return "require";
     case Lisp::Op::import: return "import";
+    case Lisp::Op::typeof_: return "typeof";
+    case Lisp::Op::size: return "size";
+    case Lisp::Op::is_atom: return "is_atom";
+    case Lisp::Op::is_integer: return "is_integer";
+    case Lisp::Op::is_float: return "is_float";
+    case Lisp::Op::is_string: return "is_string";
+    case Lisp::Op::is_list: return "is_list";
+    case Lisp::Op::is_deque: return "is_deque";
+    case Lisp::Op::is_vector: return "is_vector";
+    case Lisp::Op::is_cc_list: return "is_cc_list";
+    case Lisp::Op::is_hash: return "is_hash";
+    case Lisp::Op::is_ihash: return "is_ihash";
     default: {}
   }
   return "Unknown LispOp";
