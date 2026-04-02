@@ -70,6 +70,8 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::funcall: return "funcall";
     case Lisp::Op::curry: return "curry";
     case Lisp::Op::pipe: return "pipe";
+    case Lisp::Op::spawn: return "spawn";
+    case Lisp::Op::spin: return "spin";
     case Lisp::Op::eval: return "eval";
 
     case Lisp::Op::call_extern: return "call_extern";

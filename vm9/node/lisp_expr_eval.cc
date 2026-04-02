@@ -237,7 +237,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
   switch(code_node.type_) {
   case Node::Type::Vector: {
     auto const &code_list = get<Node::Vector>(code_node.value_);
-    return eval(process, code_list); 
+    auto eval_status = eval(process, code_list); 
+    MYLOGGER_MSG(trace_function, "vector: eval_status " + eval_status.second->_to_str(), SLOG_FUNC_INFO+30);
+    //cout << "vector: eval_status " << eval_status << "\n";
+    return eval_status;
   }
 
   case Node::Type::Identifier: { // just identifier as a variable
@@ -289,7 +292,13 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     cout << "code node list: " << code_node._to_str()  << "\n";
     break;
   }
-
+  /*
+  case Node::Type::Atom: { // object, lambda, 
+    cout << "Atom : " << code_node << "\n";
+    return {true, code_node.clone()};
+    break;
+  }
+*/
 
   case Node::Type::Shared: { // object, lambda, 
     MYLOGGER_MSG(trace_function, string("Shared code_node: ") + code_node._to_str(), SLOG_FUNC_INFO+30);
@@ -301,6 +310,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 
   default: {
   }}
+
+  //cout << "return clone()" << code_node << "\n";
 
   return {true, code_node.clone()};
 
@@ -352,8 +363,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::ihash:   return ihash_create(process, code_list, start);
   case Lisp::Op::index:   return index(process, code_list, start);
   case Lisp::Op::size:   return size(process, code_list, start);
+  case Lisp::Op::typeof_:   return typeof_(process, code_list, start);
   case Lisp::Op::list:   return list(process, code_list, start);
   case Lisp::Op::new_:  return object_create(process, code_list, start);
+  case Lisp::Op::clone:  return clone(process, code_list, start);
   case Lisp::Op::delete_:  return object_delete(process, code_list, start);
   //case Lisp::Op::clone:  return clone(process, code_list, start);
   case Lisp::Op::send:    return send_object_message(process, code_list, start); 
@@ -536,7 +549,10 @@ Node::OpStatus LispExpr::eval(Node& process, const Node::Vector& code_list, size
   //if(result_list.size()==1 && result_list[0]->type_!= Node::Type::Vector) return {true, move(result_list[0])}; 
   // or is_listy()
   //if(result_list.size()==1 &&  !result_list[0]->is_container()) return {true, move(result_list[0])}; 
-  if(result_list.size()==1 &&  !result_list[0]->is_listy()) return {true, move(result_list[0])}; 
+  if(result_list.size()==1 &&  !result_list[0]->is_listy()) {
+     //cout << "return result_list[0]: " << result_list[0]->_to_str() << "\n";
+    return {true, move(result_list[0])}; 
+  }
 
   return  {true, Node::create(move(result_list))};
 }

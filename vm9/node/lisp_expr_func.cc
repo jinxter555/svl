@@ -370,7 +370,16 @@ Node::OpStatus LispExpr::clone(Node&process, const Node::Vector &list, size_t st
   MYLOGGER(trace_function, "LispExpr::clone(Node&process, Node::Vector&list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(list), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
-  return {true, Node::create()};
+  auto eval_status = eval(process, list, start); // get all the argv and create a spot at vector[0] for 'this' object
+  if(!eval_status.first){
+    cerr << "Can't eval "  << eval_status.second->_to_str() << "\n";
+    return eval_status;
+  }
+  auto clone_ptr = eval_status.second->clone();
+  cout << "clone_ptr: " <<  *clone_ptr << "\n";
+
+  return {true, move(clone_ptr)};
+
 
 }
 
@@ -1735,4 +1744,51 @@ Node::OpStatus LispExpr::scope_modsym_path(Node&scope, const string& modname) {
 
   return {true, Node::create(atom_ok, Node::Type::Atom)};
 
+}
+
+//------------------------------------------------------------------------
+Node::OpStatus LispExpr::typeof_(Node&process, const Node::Vector &list_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::size(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  auto ele_status = eval(process, *list_cc_vec[start]);
+
+  if(!ele_status.first) {
+    auto msg ="Can't eval array/ihash or container!";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+  cout << "ele_status: " <<  ele_status << "\n";
+  cout << "ele_status get_node: " <<  ele_status.second->get_node() << "\n";
+  cout << "ele_status get_node_type: " <<  Node::_to_str( ele_status.second->get_node().type_) << "\n";
+
+
+  switch(ele_status.second->get_node().type_) {
+  case Node::Type::Integer: {
+    cout << "integer!\n";
+    return {true, Node::create(atom_integer, Node::Type::Atom)};
+  }
+  case Node::Type::Float:
+    return {true, Node::create(atom_float, Node::Type::Atom)};
+  case Node::Type::String:
+    return {true, Node::create(atom_string, Node::Type::Atom)};
+  case Node::Type::Vector:
+    return {true, Node::create(atom_cc_vec, Node::Type::Atom)};
+  case Node::Type::List:
+    return {true, Node::create(atom_cc_list, Node::Type::Atom)};
+  case Node::Type::DeQue:
+    return {true, Node::create(atom_cc_deque, Node::Type::Atom)};
+  case Node::Type::Map:
+    return {true, Node::create(atom_cc_map, Node::Type::Atom)};
+  case Node::Type::IMap: 
+    return {true, Node::create(atom_cc_imap, Node::Type::Atom)};
+  default: {
+    auto msg ="unknown type";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+  }
+  cout << "hello!\n";
+  return {true, Node::create(atom_unknown, Node::Type::Atom)};
 }

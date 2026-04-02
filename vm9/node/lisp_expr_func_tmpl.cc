@@ -40,7 +40,9 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
     size_t s=list.size();
     for(size_t i = start;  i<s; i++) {
       auto &element = list[i];
+      //MYLOGGER_MSG(trace_function, "list[" + to_string(i) + "]: " +  element->_to_str() , SLOG_FUNC_INFO+30);
       auto ee = eval(process, *element);
+      //MYLOGGER_MSG(trace_function, "ee evaled_status: " +  ee.second->_to_str() , SLOG_FUNC_INFO+30);
       if(!ee.first ) return ee;
 
       switch(ee.second->type_){
@@ -54,17 +56,12 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
         if(atom == Lang::str_to_atom("frame_current")) {
           auto current_frame = frame_current(process);
           cout << current_frame << "\n\n";
-        }
-        if(atom == Lang::str_to_atom("frame_front")) {
+        } else if(atom == Lang::str_to_atom("frame_front")) {
           auto current_frame = frame_front(process);
           cout << current_frame << "\n\n";
-        }
-
-
-        if(atom == Lang::str_to_atom("gc")) {
+        } else if(atom == Lang::str_to_atom("gc")) {
           ObjStore.print();
-        }
-        if(atom == Lang::str_to_atom("gc_roots")) {
+        } else if(atom == Lang::str_to_atom("gc_roots")) {
           auto roots_status = gc_get_roots(process);
           if(!roots_status.first) {
             cerr <<"gc_get_roots(): roots_status error: " << roots_status << "\n";
@@ -73,11 +70,17 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
           for(auto &ele : roots_status.second->_get_vector_ref()) {
             cout << "root object: " << ele->_to_str() << "\n";
           }
+        } else {
+          cout << *ee.second;
+
         }
 
         continue;
       }
       default: { // for other nodes
+        //cout << "built_print_n default: \n";
+        //cout << "ee.second "  << ee.second->_to_str() << "\n";
+
         cout << *ee.second;
       }}
 
@@ -87,5 +90,6 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
 
   }
   return {true, Node::create(atom_ok, Node::Type::Atom)};
+  //return {true, Node::create()};
 }
 #endif

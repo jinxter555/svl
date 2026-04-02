@@ -3,7 +3,7 @@ module Kernel
     #load "fib_5.lisp"
     #load "use_build_1.lisp"
 
-    var v list1
+    var v a list1
     = list1 ( 11 22 33 44 55)
       loop
         print (eval (read)) "\n"
