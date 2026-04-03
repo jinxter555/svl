@@ -27,6 +27,7 @@ public:
   Node::OpStatus build_program(); // create module structure 
   Node::OpStatus build_file_str(const string& input); // create module structure 
   void run_program(const std::string &l="") override;
+  void run_program(int argc, char *argv[]) ;
 
 
   PromptSwitch ready(); // ready for user readline input

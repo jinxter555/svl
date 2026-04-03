@@ -10,6 +10,8 @@
 class Interactive;
 class Commandline {
   friend class Interactive;
+  int argc;
+  char **argv;
 public:
   //std::map<std::string, std::string> options;
   std::string infile_name="";

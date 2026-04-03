@@ -12,7 +12,11 @@ struct option Commandline::long_options[] = {
   {NULL, 0, NULL, 0}
 };
 
-Commandline::Commandline(int argc, char* argv[]) {
+//Commandline::Commandline(int argc, char* argv[]) {
+Commandline::Commandline(int ac, char* av[]) {
+  argc = ac;
+  argv = av;
+  
   int opt;
   while( (opt = getopt_long(argc, argv, "prhic:l:f:o:", long_options, NULL)) != -1) {
     switch(opt) {
@@ -91,7 +95,8 @@ void Commandline::run(Interactive* interactive) {
   interactive->build_program(); // LispExpr post process
 
   if(opt_run) {
-    interactive->run_program();
+    //interactive->run_program();
+    interactive->run_program(argc, argv);
   }
 
   if(opt_interactive) {

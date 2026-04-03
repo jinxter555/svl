@@ -103,9 +103,15 @@ void Interactive::run_program(const std::string &l) {
   //MYLOGGER(trace_function , __PRETTY_FUNCTION__ , __func__, SLOG_FUNC_INFO);
   //std::cout << "run program\n";
   //svlm_lang.run_evaluate();
-  lang.run_program();
-
+  lang.run_program(0, nullptr);
 }
+void Interactive::run_program(int argc, char *argv[]){
+  MYLOGGER(trace_function , "Interactive::run_program(int argc, char *argv[])" , __func__, SLOG_FUNC_INFO);
+  lang.run_program(argc, argv);
+}
+
+
+
 Node::OpStatus Interactive::build_program() {
   MYLOGGER(trace_function , "Interactive::build_program()" , __func__, SLOG_FUNC_INFO);
   return lang.build_program();

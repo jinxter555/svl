@@ -83,7 +83,7 @@ public:
   //LispExpr(Node::Value v) : Tree() {}
   //LispExpr(vector<Node::ValueSimple> v) : Tree() {}
   
-  Node::OpStatus run_program(); // create module structure 
+  Node::OpStatus run_program(int argc, char *argv[]); // create module structure 
   Node::OpStatus build_program(); // create module structure 
   Node::OpStatus build_file_str(const string& input); // create module structure 
 

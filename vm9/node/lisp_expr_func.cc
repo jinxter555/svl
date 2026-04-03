@@ -1759,9 +1759,9 @@ Node::OpStatus LispExpr::typeof_(Node&process, const Node::Vector &list_cc_vec, 
     cerr << msg << "\n";
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
-  cout << "ele_status: " <<  ele_status << "\n";
-  cout << "ele_status get_node: " <<  ele_status.second->get_node() << "\n";
-  cout << "ele_status get_node_type: " <<  Node::_to_str( ele_status.second->get_node().type_) << "\n";
+  //cout << "ele_status: " <<  ele_status << "\n";
+  //cout << "ele_status get_node: " <<  ele_status.second->get_node() << "\n";
+  //cout << "ele_status get_node_type: " <<  Node::_to_str( ele_status.second->get_node().type_) << "\n";
 
 
   switch(ele_status.second->get_node().type_) {

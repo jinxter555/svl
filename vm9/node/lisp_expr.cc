@@ -432,8 +432,11 @@ Node::OpStatus LispExpr::build_program() {
 }
 
 //------------------------------------------------------------------------
-Node::OpStatus LispExpr::run_program() { 
+Node::OpStatus LispExpr::run_program(int argc, char *argv[]) { 
   MYLOGGER(trace_function, "LispExpr::run_program()", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "argc: " + to_string(argc), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "argv: " + string(argv[0]), SLOG_FUNC_INFO+30);
+
 
 
   //vector<string> kernel_path=  LispExpr::lisp_path_module;
