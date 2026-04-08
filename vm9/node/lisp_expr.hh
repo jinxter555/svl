@@ -199,7 +199,6 @@ public:
   Node::OpStatus match(Node& process, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus case_(Node& process, const Node::Vector& code_list, size_t start=0);
 
-  Node::OpStatus frame_create_with_proc(Node& process, const Node::Vector& code_list, size_t start=0); // create 
   Node::OpStatusRef get_fun(Lisp::Op &fom, Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const Node& code_node); 
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
@@ -210,10 +209,10 @@ public:
   Node::OpStatus call_macro(Node& process, const vector<string>&path , const Node::Vector& argv_list);
 
   Node::OpStatus call(Node& process, Node& fun, Node::Vector&& params);
+
   void call_by_thread(Node& process, Node& fun);
-  //void call_by_thread(Node& process);
-  //void call_by_thread(int v );
-  //void call_by_thread();
+  Node::OpStatus sleep_ms(Node& process, const Node::Vector& list_cc_vec, size_t start=0);
+
 
 
 

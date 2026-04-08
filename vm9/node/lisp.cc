@@ -72,6 +72,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::pipe: return "pipe";
     case Lisp::Op::spawn: return "spawn";
     case Lisp::Op::spin: return "spin";
+    case Lisp::Op::sleep: return "sleep";
     case Lisp::Op::eval: return "eval";
 
     case Lisp::Op::call_extern: return "call_extern";

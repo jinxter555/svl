@@ -342,6 +342,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
   case Lisp::Op::eval:     return eval_eval(process, code_list, start);
   case Lisp::Op::spawn:     return spawn(process, code_list, start);
+  case Lisp::Op::sleep:     return sleep_ms(process, code_list, start);
 
   case Lisp::Op::read:   return read_input();
   case Lisp::Op::load:   return load(process, code_list, start);

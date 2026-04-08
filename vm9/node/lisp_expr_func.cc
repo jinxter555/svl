@@ -1,7 +1,10 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "lisp_expr.hh"
 #include "my_helpers.hh"
 #include "interactive.hh"
+
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -1796,4 +1799,22 @@ Node::OpStatus LispExpr::typeof_(Node&process, const Node::Vector &list_cc_vec, 
   }
   cout << "hello!\n";
   return {true, Node::create(atom_unknown, Node::Type::Atom)};
+}
+
+Node::OpStatus LispExpr::sleep_ms(Node& process, const Node::Vector& list_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::size(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  auto ele_status = eval(process, *list_cc_vec[start]);
+
+  if(!ele_status.first) {
+    auto msg ="sleep_ms(): Can't eval!";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+  auto dt = ele_status.second->_get_integer();
+  this_thread::sleep_for(std::chrono::milliseconds(dt));
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
+
 }

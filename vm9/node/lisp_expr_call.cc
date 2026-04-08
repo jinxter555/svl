@@ -911,8 +911,8 @@ void LispExpr::call_by_thread(Node& process, Node& fun) {
   MYLOGGER(trace_function, "LispExpr::call_by_thread(Node&process, fun, params)", __func__, SLOG_FUNC_INFO);
   //
   //call(process,  fun);
-  cout  << "call_by_thread(): process " <<  process << "\n";
-  cout  << "call_by_thread(): fun" <<  fun << "\n";
+  //cout  << "call_by_thread(): process " <<  process << "\n";
+  //cout  << "call_by_thread(): fun" <<  fun << "\n";
   auto code_list_status = fun.get_node(CODE);
   if(!code_list_status.first) {
     cerr << "call(process, fun, argv) error!" +  code_list_status.second._to_str() +"\n";
@@ -953,19 +953,12 @@ Node::OpStatus LispExpr::spawn(Node& process, const Node::Vector& code_list, siz
   frame_status.second->set(PID, Kernel::pid(new_proc.second));
   frame_push(new_proc.second, move(frame_status.second));
 
-
- //  return call(new_proc.second, fun_ref.second, move(args_status.second->_get_vector_ref()));
-//  spawn_internal(&LispExpr::call_by_thread, this, new_proc.second, fun_ref.second, move(args_status.second->_get_vector_ref()));
-
-  // std::thread t(&LispExpr::call_by_thread, this, new_proc.second, fun_ref.second, move(args_status.second->_get_vector_ref() ));
-  // std::thread t(&LispExpr::call_by_thread, this, new_proc.second, fun_ref.second );
-  //std::thread t(&LispExpr::call_by_thread, this, ref(new_proc.second));
-  //std::thread t(&LispExpr::call_by_thread, this, 123);
   spawn_internal(&LispExpr::call_by_thread, this, ref(new_proc.second), ref(fun_ref.second));
-  //spawn_internal(&LispExpr::call_by_thread, this, 123);
 
-  return {true, Node::create()};
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
 
 
 
 }
+
+
