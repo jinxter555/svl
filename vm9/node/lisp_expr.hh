@@ -187,6 +187,7 @@ public:
   Node::OpStatus eval(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count=0); // eval each as an element node
   Node::OpStatus eval_eval(Node& process, const Node::Vector& code_list, size_t start);
   Node::OpStatus eval_args(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count=0); // eval each as an element node
+  Node::OpStatus spawn(Node& process, const Node::Vector& code_list, size_t start);
 
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 
@@ -198,14 +199,22 @@ public:
   Node::OpStatus match(Node& process, const Node::Vector& code_list, size_t start=0);
   Node::OpStatus case_(Node& process, const Node::Vector& code_list, size_t start=0);
 
+  Node::OpStatus frame_create_with_proc(Node& process, const Node::Vector& code_list, size_t start=0); // create 
+  Node::OpStatusRef get_fun(Lisp::Op &fom, Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const Node& code_node); 
   Node::OpStatus call(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus faz(Node& process, const Node::Vector& code_list, size_t start=0); // (call (module function) (arg1 arg2 arg3))
   Node::OpStatus call(Node& process, const vector<string>& path, const Node::Vector& argv_list); // 
 
+
   Node::OpStatus call_macro(Node& process, const vector<string>&path , const Node::Vector& argv_list);
 
   Node::OpStatus call(Node& process, Node& fun, Node::Vector&& params);
+  void call_by_thread(Node& process, Node& fun);
+  //void call_by_thread(Node& process);
+  //void call_by_thread(int v );
+  //void call_by_thread();
+
 
 
   Node::OpStatus funcall(Node& process, const Node::Vector& code_list, size_t start=0); // creates new frame push args to args

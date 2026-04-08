@@ -70,6 +70,11 @@ Node::OpStatus LispExpr::builtin_print_n(Node& process, const T& list, size_t st
           for(auto &ele : roots_status.second->_get_vector_ref()) {
             cout << "root object: " << ele->_to_str() << "\n";
           }
+        } else if(atom == Lang::str_to_atom("get_call_path")) {
+          Lisp::Op fom;
+          auto fun_ref = get_fun(fom, process, list, i);
+          cout << "fun_ref: " << fun_ref << "\n";
+          return {true, Node::create(atom_ok, Node::Type::Atom)};
         } else {
           cout << *ee.second;
 

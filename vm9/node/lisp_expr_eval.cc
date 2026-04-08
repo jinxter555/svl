@@ -245,7 +245,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
 
   case Node::Type::Identifier: { // just identifier as a variable
     auto name = get<string>(code_node.value_);
-    auto rv_ref_status = symbol_lookup(process, name  );
+    auto rv_ref_status = symbol_lookup(process, name  ); //cout << "rv_ref_status : " << rv_ref_status << "\n";
+
     if(!rv_ref_status.first) {
       cerr << "Identifier: '" << name << "' not found!" << rv_ref_status.second._to_str() << "\n";
       return {false, rv_ref_status.second.clone()};
@@ -340,6 +341,8 @@ Node::OpStatus LispExpr::eval(Node& process, const Lisp::Op op_head, const Node:
   case Lisp::Op::var:     return var_attach(process, code_list, start); 
   case Lisp::Op::assign:  return assign_attach(process, code_list, start); 
   case Lisp::Op::eval:     return eval_eval(process, code_list, start);
+  case Lisp::Op::spawn:     return spawn(process, code_list, start);
+
   case Lisp::Op::read:   return read_input();
   case Lisp::Op::load:   return load(process, code_list, start);
 

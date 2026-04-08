@@ -54,8 +54,15 @@ Node::OpStatusRef Kernel::process_create() {
 
 
   return proc_vector_node->get_node(pid);
-
 }
+
+
+Node::OpStatusRef Kernel::process_create_run(const Node::Vector& code_list) {
+  auto process_status_ref = process_create();
+  if(!process_status_ref.first)
+    return process_status_ref;
+}
+
 
 Node::OpStatusRef Kernel::process_get(Node::Integer pid) {
   auto proc_vector_node = get_branch(path_to_processes);

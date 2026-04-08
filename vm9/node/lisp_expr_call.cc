@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 #include "lisp_expr.hh"
 #include "my_helpers.hh"
 #include "defs.hh"
@@ -222,7 +223,11 @@ Node::OpStatus LispExpr::scope_params_args(const vector<string>& params, Node::V
     return {true, move(scope)};
   } else if( s < args_cc_vec.size()) {
 
-    cout << "parameter is less arg!\n";
+    cout << "function definition has less parameter than args passed!\n";
+    if(params.size() == 0) {
+      return {false, Node::create_error(Error::Type::Parse, "Null parameter")};
+    }
+
     auto identifier = params.back();
     if(identifier.front() == '*') { // assign all 
       identifier.erase(0, 1); // remove '*'
@@ -279,7 +284,8 @@ Node::OpStatus LispExpr::call(Node& process, const Node& code_node) {
 } 
 
 
-// code_list = (call (module function) (arg1 arg2 arg3))
+// code_list = 
+// (call (module function) (arg1 arg2 arg3))
 // object.method(...)
 // Module.fun(...)
 // Namespace::Module.fun(...)
@@ -339,6 +345,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
       return  {false, Node::create_error(Error::Type::Parse, msg)};
     }
 
+    MYLOGGER_MSG(trace_function, "fun_path: " +  join_str(fun_path, " "), SLOG_FUNC_INFO+30);
     auto fun_exist = get_node(fun_path);
     if(fun_exist.first) {
       //auto argv_vector_evaled_status = eval(process, argv_vector);
@@ -366,6 +373,7 @@ Node::OpStatus LispExpr::call(Node& process, const Node::Vector& code_list, size
   // mod.fun arg1 arg2 arg3 ...
   const auto &argv_vector =  list_clone_remainder(code_list, start + 1);
 
+  MYLOGGER_MSG(trace_function, "fun_path: " +  join_str(fun_path, " "), SLOG_FUNC_INFO+30);
   auto fun_exist = get_node(fun_path);
   if(fun_exist.first) {
 
@@ -813,5 +821,151 @@ Node::OpStatus LispExpr::faz(Node& process, const Node::Vector& code_list, size_
 
 
   return {true, Node::create(true)};
+
+}
+Node::OpStatusRef LispExpr::get_fun(Lisp::Op &fom,  Node& process, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::get_fun(Node&process, Node::Vector&list_kv, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, string("list: ") + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, string("start: ") + to_string(start), SLOG_FUNC_INFO+30);
+
+  vector<string> mod_path;
+  const auto &mf_list_pair =  code_list[start+1];
+  auto mf_vector = extract_mf(process, *mf_list_pair); //cout << "mf_vector " << _to_str_ext(mf_vector) << "\n";
+
+  auto ns_call_list  = split_string(mf_vector[0], "::"); // cross namespace call  Namespace::Module
+  if(ns_call_list.size() > 1) {
+
+    mod_path = namespace_module_path(ns_call_list[0]); 
+    auto m =  ns_call_list[1];
+    auto f = mf_vector[1];
+    mod_path.push_back(m);
+
+  } else {
+    mod_path = namespace_module_path(process);
+    mod_path.push_back(mf_vector[0]); // push module name
+  }
+
+
+  auto fun_path = mod_path;
+  auto mac_path = mod_path; // just copy to the macro
+  mac_path.push_back(MACRO);
+
+  fun_path.push_back(FUNCTION);    //  push module."function".
+  fun_path.push_back(mf_vector[1]); // module."function".func_name
+
+  mac_path.push_back(mf_vector[1]); // try macro 
+
+  auto  args_status = eval_args(process, code_list, start+2); // this returns a vector
+//  cout << "get_call_path(): args_status: " <<  args_status << "\n";
+
+  try { // mod.fun ( arg1 arg2 arg3 ...)
+    MYLOGGER_MSG(trace_function, "fun_path: " +  join_str(fun_path, " "), SLOG_FUNC_INFO+30);
+    auto fun_exist = get_node(fun_path);
+
+//    auto frame_status = frame_create_fun_args(fun, move(argv_vector));
+    if(fun_exist.first) {
+      //return  {true, Node::create(fun_path)};
+ //     cout << "fun_exist: " <<  fun_exist << "\n\n";
+  //    auto fc = frame_create_fun_args(fun_exist.second, move(args_status.second->_get_vector_ref()));
+  //    cout << "frame: " <<  fc << "\n\n";
+      fom = Lisp::Op::def;
+      return fun_exist;
+
+
+
+      //return  {true, Node::create(Node::vecstr_to_vec( fun_path))};
+
+
+    }
+
+    auto mac_exist = get_node(mac_path);
+    if(mac_exist.first) {
+      fom = Lisp::Op::defmacro;
+      return mac_exist;
+      //return  {true, Node::create(Node::vecstr_to_vec( mac_path))};
+    }
+    
+
+  } catch(...) {}
+
+
+  // return {true, Node::create()};
+  return {true, null_node};
+
+
+
+}
+
+
+
+template <typename F, typename... Args>
+void spawn_internal(F&& f, Args&&... args) {
+    // Create the thread, perfectly forwarding the function and all arguments
+    std::thread t(std::forward<F>(f), std::forward<Args>(args)...);
+    
+    // Detach to make it "fire-and-forget"
+    t.detach();
+}
+
+void LispExpr::call_by_thread(Node& process, Node& fun) {
+  MYLOGGER(trace_function, "LispExpr::call_by_thread(Node&process, fun, params)", __func__, SLOG_FUNC_INFO);
+  //
+  //call(process,  fun);
+  cout  << "call_by_thread(): process " <<  process << "\n";
+  cout  << "call_by_thread(): fun" <<  fun << "\n";
+  auto code_list_status = fun.get_node(CODE);
+  if(!code_list_status.first) {
+    cerr << "call(process, fun, argv) error!" +  code_list_status.second._to_str() +"\n";
+  }
+  //return eval(process, code_list_status.second);
+  auto evaled_status = eval(process, code_list_status.second);
+
+  frame_pop(process);
+
+
+
+}
+
+Node::OpStatus LispExpr::spawn(Node& process, const Node::Vector& code_list, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::spawn(Node&process, Node::Vector&code_list, int start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30);
+
+  if(start>0) start--;
+ // cout << "spawn!\n";
+
+  Lisp::Op fom;
+  auto fun_ref = get_fun(fom, process, code_list, start);
+
+  auto  args_status = eval_args(process, code_list, start+2); // this returns a vector
+  auto argv_vec = args_status.second->clone();
+  // auto frame = frame_create_fun_args(fun_ref.second, move(args_status.second->_get_vector_ref()));
+  auto frame_status = frame_create_fun_args(fun_ref.second,  move(argv_vec->_get_vector_ref()));
+
+
+
+//  cout << "fun_ref: " << fun_ref << "\n\n";
+//  cout << "arg_status: " << args_status << "\n\n";
+//  cout << "frame: " << frame << "\n\n";
+
+
+  auto new_proc= process_create();
+  frame_status.second->set(PID, Kernel::pid(new_proc.second));
+  frame_push(new_proc.second, move(frame_status.second));
+
+
+ //  return call(new_proc.second, fun_ref.second, move(args_status.second->_get_vector_ref()));
+//  spawn_internal(&LispExpr::call_by_thread, this, new_proc.second, fun_ref.second, move(args_status.second->_get_vector_ref()));
+
+  // std::thread t(&LispExpr::call_by_thread, this, new_proc.second, fun_ref.second, move(args_status.second->_get_vector_ref() ));
+  // std::thread t(&LispExpr::call_by_thread, this, new_proc.second, fun_ref.second );
+  //std::thread t(&LispExpr::call_by_thread, this, ref(new_proc.second));
+  //std::thread t(&LispExpr::call_by_thread, this, 123);
+  spawn_internal(&LispExpr::call_by_thread, this, ref(new_proc.second), ref(fun_ref.second));
+  //spawn_internal(&LispExpr::call_by_thread, this, 123);
+
+  return {true, Node::create()};
+
+
 
 }

@@ -965,7 +965,7 @@ ostream& operator<<(ostream& os, const Node::OpStatus& s) {
   return os;
 }
 ostream& operator<<(ostream& os, const Node::OpStatusRef& s) {
-  MYLOGGER(trace_function, "ostream& << (Node::OpStatus&)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "ostream& << (Node::OpStatusRef&)", __func__, SLOG_FUNC_INFO);
   if(s.first)  cout << "true: "; else cout << "false: ";
   cout << "value: " << s.second << ", type: " << Node::_to_str(s.second._get_type());
   return os;
@@ -1185,4 +1185,23 @@ Node& Node::head() {
   if(vec_cc.empty())
     return node_null;
   return vec_cc[0]->head();
+}
+
+
+unique_ptr<Node> Node::vecstr_to_vec(const vector<string> vs) { // convert to  unique pointer -> unique pointer(shared pointer)
+  Node::Vector vl;
+
+  for(auto ele : vs ) {
+    vl.push_back(Node::create(ele));
+  }
+  return create(move(vl));
+}
+
+vector<string> Node::vec_to_vecstr() { // convert to  unique pointer -> unique pointer(shared pointer)
+  vector<string> vs;
+  auto &vl = _get_vector_ref();
+  for(auto &ele : vl) {
+    vs.push_back(ele->_to_str());
+  }
+  return vs;
 }

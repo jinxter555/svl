@@ -164,6 +164,9 @@ public:
   OpStatusRef get_node(size_t i);
   bool has_node(const vector<string>&path);
 
+  static unique_ptr<Node> vecstr_to_vec(const vector<string> vs); // convert to  unique pointer -> unique pointer(shared pointer)
+  vector<string> vec_to_vecstr(); // convert to  unique pointer -> unique pointer(shared pointer)
+
   Node& get_node(); // returns node if it's ptrs shared raw unique
   Node& head(); // returns head node 
   //

@@ -1677,6 +1677,11 @@ Node::OpStatus LispExpr::use_at_run(Node&process, const Node::Vector &code_cc_ve
       return {false, Node::create_error(Error::Type::KeyNotFound, msg)};
     }
     auto g_vars = module_ref_status.second.get_node(VAR);
+    if(!g_vars.first){
+      auto msg = "use: ! module vars don't exist or haven't been defined!";
+      cerr << msg << "\n";
+      return {false, g_vars.second.clone()};
+    }
 
     auto scope_ref_status = scope_first(process);
     if(!scope_ref_status.first) return  {false,scope_ref_status.second.clone()}; 
