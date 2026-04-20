@@ -12,6 +12,7 @@ string Lisp::_to_str(Lisp::Op op) {
     case Lisp::Op::nil: return "nil";
     case Lisp::Op::kernel: return "kernel";
     case Lisp::Op::system: return "system";
+    case Lisp::Op::process: return "process";
     case Lisp::Op::branch: return "branch";
     case Lisp::Op::namespace_: return "namespace";
     case Lisp::Op::interpreter: return "interpreter";

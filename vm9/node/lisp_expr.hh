@@ -3,6 +3,7 @@
 #include "lisp.hh"
 #include "lisp_reader.hh"
 #include "defs.hh"
+#include "safe_deque.hh"
 
 /*
  * Env: current_process, parent_process, 
@@ -21,6 +22,15 @@ private:
   LispReader reader;
 
   ObjectStore ObjStore;
+
+  //SafeData<Node::Vector> ipc;
+  //SafeData<Node::IMap> ipc;
+  //vector<SafeData<Node::ptr_U>> ipc;
+  //unordered_map<Node::Integer, SafeData<Node::ptr_U>> ipc;
+  unordered_map<Node::Integer, SafeDeque> ipc;
+
+
+
 
 
   string build_namespace_default ="England";
@@ -42,7 +52,8 @@ private:
 
   const Node::Integer atom_module, atom_fun, atom_def, atom_class, atom_get, atom_set, atom_index, atom_size, atom_ok, atom_error, atom_unknown,
   atom_lambda, atom_closure, atom_else,
-  atom_atom, atom_integer, atom_float, atom_string, atom_cc_vec, atom_cc_list, atom_cc_deque, atom_cc_map, atom_cc_imap, atom_object, atom_namespace;
+  atom_atom, atom_integer, atom_float, atom_string, atom_cc_vec, atom_cc_list, atom_cc_deque, atom_cc_map, atom_cc_imap, atom_object, atom_namespace,
+  atom_pid, atom_ppid;
   // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
@@ -283,6 +294,8 @@ public:
 
 
   Node::OpStatus clone(Node&process, const Node::Vector &list, size_t start=0);
+  Node::OpStatus process_info(Node& process, const Node::Vector& code_list, size_t start=0); // get process info
+
   Node::OpStatus send_object_message(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus call_object(Node&Process, Node& object, const string method_fun, const Node::Vector&argv_list);
 

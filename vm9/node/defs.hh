@@ -4,6 +4,7 @@
 
 #define UNIVERSE "universe"
 #define PID "pid"
+#define PPID "ppid"
 //#define CFS "control_flow_state"
 #define FRAMES "frames"
 #define STATE "state"
@@ -21,6 +22,8 @@
 #define CURRENT_MODULE "current_module"
 #define CURRENT_MODULE_PTR "current_module_ptr"
 #define CURRENT_MODULE_IMMUTE "__MODULE__"
+#define CURRENT_PID  "__PID__"
+#define CURRENT_PPID  "__PPID__"
 
 #define FUNCTION "function"
 #define MACRO "macro"
@@ -38,7 +41,7 @@
 
 #define CURRENT_CLASS_PTR "current_class_ptr"
 
-#define CURRENT_PROCESS_PID "current_process_ptr"
+#define CURRENT_PROCESS_PID "current_process_pid"
 #define CURRENT_PROCESS_PTR "current_process_ptr"
 
 #define PARENT "parent"

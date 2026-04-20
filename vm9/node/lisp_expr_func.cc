@@ -1818,3 +1818,47 @@ Node::OpStatus LispExpr::sleep_ms(Node& process, const Node::Vector& list_cc_vec
   return {true, Node::create(atom_ok, Node::Type::Atom)};
 
 }
+
+Node::OpStatus LispExpr::process_info(Node&process, const Node::Vector &list_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::process(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
+  MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+  cout << "process!\n";
+
+  auto ele_status = eval(process, *list_cc_vec[start]);
+
+  if(!ele_status.first) {
+    auto msg ="process: error !";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+  cout << "ele_status: " <<  ele_status << "\n";
+  cout << "ele_status get_node: " <<  ele_status.second->get_node() << "\n";
+  cout << "ele_status get_node_type: " <<  Node::_to_str( ele_status.second->get_node().type_) << "\n";
+
+
+  if(ele_status.second->get_node().type_ != Node::Type::Atom) {
+    auto msg ="process: error not Atom!";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+  auto frame_ref_status = frame_front(process);
+  if(! frame_ref_status.first) {
+    auto msg ="process: error frame!";
+    cerr << msg << "\n";
+    return {false, Node::create_error(Error::Type::Parse, msg)};
+  }
+
+  if(ele_status.second->_get_integer() == atom_pid) {
+    auto pid = frame_ref_status.second[PID];
+    //cout << "pid: " << pid << "\n";
+    return {true, pid.second.clone()};
+
+  } else if(ele_status.second->_get_integer() == atom_ppid) {
+    auto pid = frame_ref_status.second[PPID];
+    //cout << "ppid: " << pid << "\n";
+    return {true, pid.second.clone()};
+  }
+  return {true, Node::create(atom_ok, Node::Type::Atom)};
+
+}

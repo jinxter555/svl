@@ -16,6 +16,7 @@ module Kernel
 
   def p55(value)
     print "p55 hello\n" 
+    print :frame_front "\n"
     print "value:" value "\n"
     sleep value
     print "p55 world\n" 

@@ -44,6 +44,8 @@ LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
 , atom_cc_imap(str_to_atom("cc_imap"))
 , atom_object(str_to_atom("object"))
 , atom_namespace(str_to_atom("namespace"))
+, atom_pid(str_to_atom("pid"))
+, atom_ppid(str_to_atom("ppid"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
 
@@ -487,6 +489,7 @@ Node::OpStatus LispExpr::run_program(int argc, char *argv[]) {
   auto proc_1= process_create();
   //frame1->set(CURRENT_PROCESS_PTR, proc_1.second->pid(PID));
   frame1->set(PID, Kernel::pid(proc_1.second));
+  frame1->set(PPID, 0L);
   frame_push(proc_1.second, move(frame1));
 
   scope = scope_create();

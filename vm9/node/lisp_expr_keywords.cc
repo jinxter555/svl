@@ -8,6 +8,7 @@ void LispExpr::set_keywords() {
   auto map_ = make_unique<Node>(Node::Type::Map);
   map_->set("kernel", Op::kernel);
   map_->set("system", Op::system);
+  map_->set("process", Op::process);
   map_->set("interpreter", Op::interpreter);
   map_->set("namespace", Op::namespace_);
   map_->set("nil",   Op::nil);

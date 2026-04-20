@@ -17,7 +17,7 @@ using Map = unordered_map<string, unique_ptr<Node>>;
 class Lisp {
 public:
   enum class Op 
-  { root, nil, kernel, system, branch, namespace_, interpreter
+  { root, nil, kernel, system, process, branch, namespace_, interpreter
   , class_, private_, new_, delete_, clone, use
   , error, noop
   , identifier, scalar, literal, quote, unquote, list, deque, vector, hash, ihash, object

@@ -926,6 +926,7 @@ void LispExpr::call_by_thread(Node& process, Node& fun) {
 
 }
 
+
 Node::OpStatus LispExpr::spawn(Node& process, const Node::Vector& code_list, size_t start) {
   MYLOGGER(trace_function, "LispExpr::spawn(Node&process, Node::Vector&code_list, int start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "list: " + Node::_to_str(code_list), SLOG_FUNC_INFO+30);
@@ -939,9 +940,7 @@ Node::OpStatus LispExpr::spawn(Node& process, const Node::Vector& code_list, siz
 
   auto  args_status = eval_args(process, code_list, start+2); // this returns a vector
   auto argv_vec = args_status.second->clone();
-  // auto frame = frame_create_fun_args(fun_ref.second, move(args_status.second->_get_vector_ref()));
   auto frame_status = frame_create_fun_args(fun_ref.second,  move(argv_vec->_get_vector_ref()));
-
 
 
 //  cout << "fun_ref: " << fun_ref << "\n\n";
@@ -950,15 +949,17 @@ Node::OpStatus LispExpr::spawn(Node& process, const Node::Vector& code_list, siz
 
 
   auto new_proc= process_create();
-  frame_status.second->set(PID, Kernel::pid(new_proc.second));
+  auto pid = Kernel::pid(new_proc.second);
+  auto ppid = Kernel::pid(process); // parent
+  frame_status.second->set(PID, pid);
+  frame_status.second->set(PPID, ppid);
   frame_push(new_proc.second, move(frame_status.second));
 
   spawn_internal(&LispExpr::call_by_thread, this, ref(new_proc.second), ref(fun_ref.second));
 
-  return {true, Node::create(atom_ok, Node::Type::Atom)};
+  //return {true, Node::create(atom_ok, Node::Type::Atom)};
+  return {true, Node::create(pid)};
 
 
 
 }
-
-
