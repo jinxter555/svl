@@ -294,7 +294,7 @@ public:
 
 
   Node::OpStatus clone(Node&process, const Node::Vector &list, size_t start=0);
-  Node::OpStatus process_info(Node& process, const Node::Vector& code_list, size_t start=0); // get process info
+  Node::OpStatus process_(Node& process, const Node::Vector& code_list, size_t start=0); // get process info
 
   Node::OpStatus send_object_message(Node&process, const Node::Vector &list, size_t start=0);
   Node::OpStatus call_object(Node&Process, Node& object, const string method_fun, const Node::Vector&argv_list);

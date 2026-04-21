@@ -950,6 +950,13 @@ Node::OpStatus LispExpr::spawn(Node& process, const Node::Vector& code_list, siz
 
   auto new_proc= process_create();
   auto pid = Kernel::pid(new_proc.second);
+
+  //ipc[pid].push_back(nullptr); ipc[pid].pop_back(); // create ipc
+
+  ipc[pid].noop(); // create ipc  for process
+
+
+
   auto ppid = Kernel::pid(process); // parent
   frame_status.second->set(PID, pid);
   frame_status.second->set(PPID, ppid);

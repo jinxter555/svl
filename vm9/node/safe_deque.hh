@@ -15,4 +15,8 @@ public:
   
   Node::ptr_U pop_back();
   void push_back(Node::ptr_U);
+
+  void printq();
+
+  void noop();
 };

@@ -1819,11 +1819,10 @@ Node::OpStatus LispExpr::sleep_ms(Node& process, const Node::Vector& list_cc_vec
 
 }
 
-Node::OpStatus LispExpr::process_info(Node&process, const Node::Vector &list_cc_vec, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::process(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec, size_t start) {
+  MYLOGGER(trace_function, "LispExpr::process_info(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
-  cout << "process!\n";
 
   auto ele_status = eval(process, *list_cc_vec[start]);
 
@@ -1832,10 +1831,6 @@ Node::OpStatus LispExpr::process_info(Node&process, const Node::Vector &list_cc_
     cerr << msg << "\n";
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
-  cout << "ele_status: " <<  ele_status << "\n";
-  cout << "ele_status get_node: " <<  ele_status.second->get_node() << "\n";
-  cout << "ele_status get_node_type: " <<  Node::_to_str( ele_status.second->get_node().type_) << "\n";
-
 
   if(ele_status.second->get_node().type_ != Node::Type::Atom) {
     auto msg ="process: error not Atom!";
@@ -1858,7 +1853,40 @@ Node::OpStatus LispExpr::process_info(Node&process, const Node::Vector &list_cc_
     auto pid = frame_ref_status.second[PPID];
     //cout << "ppid: " << pid << "\n";
     return {true, pid.second.clone()};
+  } else if(ele_status.second->_get_integer() == str_to_atom("send")) {
+    auto pid_status = eval(process, *list_cc_vec[start+1]);
+    auto arg_status  = eval(process, *list_cc_vec[start+2]);
+    if(!pid_status.first) return pid_status;
+    if(!arg_status.first) return arg_status;
+    auto pid = pid_status.second->_get_integer();
+
+
+    if(!ipc.count(pid)) {
+      auto msg  = "pid: "  + to_string( pid) + " doesn't exist!";
+      cerr << msg  << "\n";
+      return {false, Node::create_error(Error::Type::KeyNotFound, msg)};
+    }
+    ipc[pid].push_back(move(arg_status.second));
+
+
+    //cout << "send:pid " << pid<< "\n";
+    //cout << "args: " << args << "\n";
+  } else if(ele_status.second->_get_integer() == str_to_atom("printdq")) {
+    auto pid_status = eval(process, *list_cc_vec[start+1]);
+    if(!pid_status.first) return pid_status;
+    auto pid = pid_status.second->_get_integer();
+    if(!ipc.count(pid)) {
+      auto msg  = "pid: "  + to_string( pid) + " doesn't exist!";
+      cerr << msg  << "\n";
+      return {false, Node::create_error(Error::Type::KeyNotFound, msg)};
+    }
+    ipc[pid].printq();
+
   }
+
+
+
+
   return {true, Node::create(atom_ok, Node::Type::Atom)};
 
 }

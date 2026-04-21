@@ -1,4 +1,5 @@
 #include <map>
+#include <iostream>
 #include  "safe_deque.hh"
 
 
@@ -40,6 +41,15 @@ Node::ptr_U  SafeDeque::pop_back() {
   return move(ptr);
 }
 
+void  SafeDeque::noop() { }
+void  SafeDeque::printq() { 
+  access([](Node::DeQue& dq) {
+    for(auto const& e : dq) { 
+      cout << e->_to_str() << "\n"; 
+    }
+});
+
+}
 
 map<int, SafeDeque> a1() {
    map<int, SafeDeque> ipc;
