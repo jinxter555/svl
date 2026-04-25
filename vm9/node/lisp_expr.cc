@@ -9,43 +9,8 @@
 
 extern Node null_node;
 
-const vector<string> LispExpr::lisp_path= {UNIVERSE, "Lang", "Lisp"};
-const vector<string> LispExpr::lisp_path_module= {UNIVERSE, "Lang", "Lisp", "Module"};
-const vector<string> LispExpr::lisp_path_alias= {UNIVERSE, "Lang", "Lisp", "Alias"};
-const vector<string> LispExpr::lisp_path_keyword= {UNIVERSE, "Lang", "Lisp", "Keyword"};
-const vector<string> LispExpr::lisp_lang_atoms = {UNIVERSE, "module", "fun", "mvar", "lvar", "class"};
-const vector<string> LispExpr::cc_path_module= {UNIVERSE, "Lang", "CC", "Module"};
-//const vector<string> LispExpr::interactive_key  = {UNIVERSE, "interactive"};
-//const vector<string> LispExpr::lisp_process = {UNIVERSE, "Process"};
 
 LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
-, atom_module(str_to_atom("module"))
-, atom_fun(str_to_atom("fun"))
-, atom_def(str_to_atom("def"))
-, atom_class(str_to_atom("class"))
-, atom_get(str_to_atom("get"))
-, atom_set(str_to_atom("set"))
-, atom_index(str_to_atom("index"))
-, atom_size(str_to_atom("size"))
-, atom_ok(str_to_atom("ok"))
-, atom_error(str_to_atom("error"))
-, atom_unknown(str_to_atom("unknown"))
-, atom_lambda(str_to_atom("lambda"))
-, atom_closure(str_to_atom("closure"))
-, atom_else(str_to_atom("else"))
-, atom_atom(str_to_atom("atom"))
-, atom_integer(str_to_atom("integer"))
-, atom_float(str_to_atom("float"))
-, atom_string(str_to_atom("string"))
-, atom_cc_vec(str_to_atom("cc_vec"))
-, atom_cc_list(str_to_atom("cc_list"))
-, atom_cc_deque(str_to_atom("cc_deque"))
-, atom_cc_map(str_to_atom("cc_map"))
-, atom_cc_imap(str_to_atom("cc_imap"))
-, atom_object(str_to_atom("object"))
-, atom_namespace(str_to_atom("namespace"))
-, atom_pid(str_to_atom("pid"))
-, atom_ppid(str_to_atom("ppid"))
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
 
