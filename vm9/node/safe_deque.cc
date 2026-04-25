@@ -42,13 +42,17 @@ Node::ptr_U  SafeDeque::pop_back() {
 }
 
 void  SafeDeque::noop() { }
+
 void  SafeDeque::printq() { 
   access([](Node::DeQue& dq) {
     for(auto const& e : dq) { 
       cout << e->_to_str() << "\n"; 
     }
-});
-
+  });
+}
+void  SafeDeque::swap(Node::DeQue &dq_in) { 
+  lock_guard<mutex> lock(mtx);
+  dq.swap(dq_in);
 }
 
 map<int, SafeDeque> a1() {

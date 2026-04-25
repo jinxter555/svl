@@ -7,6 +7,7 @@
 #define PPID "ppid"
 //#define CFS "control_flow_state"
 #define FRAMES "frames"
+#define DQ_WORK "dq_work"
 #define STATE "state"
 
 #define VAR "var"
