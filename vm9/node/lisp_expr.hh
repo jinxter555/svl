@@ -53,7 +53,7 @@ private:
   static  const Node::Integer atom_module, atom_fun, atom_def, atom_class, atom_get, atom_set, atom_index, atom_size, atom_ok, atom_error, atom_unknown,
   atom_lambda, atom_closure, atom_else,
   atom_atom, atom_integer, atom_float, atom_string, atom_cc_vec, atom_cc_list, atom_cc_deque, atom_cc_map, atom_cc_imap, atom_object, atom_namespace,
-  atom_pid, atom_ppid;
+  atom_pid, atom_ppid, atom_queue, atom_swap, atom_send, atom_receive, atom_worker, atom_inbox, atom_ipc, atom_print, atom_self;
   // internal lisp hashed symbol values  (def :symbol ... )
 
   void set_keywords();
@@ -199,6 +199,7 @@ public:
   Node::OpStatus eval_eval(Node& process, const Node::Vector& code_list, size_t start);
   Node::OpStatus eval_args(Node& process, const Node::Vector& code_list, size_t start, size_t front_insert_count=0); // eval each as an element node
   Node::OpStatus spawn(Node& process, const Node::Vector& code_list, size_t start);
+  Node::OpStatusRef dq_worker(Node&process) ; // 
 
   //Node::OpStatus eval_list(Node& process, const Node::List& list);
 

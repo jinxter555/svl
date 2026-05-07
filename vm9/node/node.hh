@@ -245,6 +245,7 @@ public:
   Map& _get_map_ref() ;
   IMap& _get_imap_ref() ;
   Vector& _get_vector_ref() ;
+  DeQue& _get_deque_ref() ;
   List& _get_list_ref() ;
   ptr_S _get_ptr_s();
   ptr_R _get_ptr_r();

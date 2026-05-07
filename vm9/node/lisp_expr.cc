@@ -258,6 +258,16 @@ Node::OpStatus LispExpr::object_finalize(Node&process, Node& object){
 
 
 //------------------------------------------------------------------------
+Node::OpStatusRef LispExpr::dq_worker(Node&process)  {
+  MYLOGGER(trace_function, "LispExpr::dq_worker(Node& process)", __func__, SLOG_FUNC_INFO);
+  auto dq_ref_status = process[DQ_WORKER];
+  if(!dq_ref_status.first) {
+    cerr << "dq_worker[] doesn't exist!\n";
+  }
+  return dq_ref_status;
+}
+
+//------------------------------------------------------------------------
 Node::OpStatusRef LispExpr::frame_current(Node&process)  {
   MYLOGGER(trace_function, "LispExpr::frame_current(Node& process)", __func__, SLOG_FUNC_INFO);
 
@@ -418,6 +428,7 @@ Node::OpStatus LispExpr::run_program(int argc, char *argv[]) {
   //  proc0
   auto frame = frame_create();
   auto proc_0  = process_get(0); 
+  ipc[0].noop(); // create ipc  for process
   if(!proc_0.first) {
     return  {false, Node::create_error(
       Error::Type::InvalidOperation, 
@@ -452,6 +463,7 @@ Node::OpStatus LispExpr::run_program(int argc, char *argv[]) {
 
 
   auto proc_1= process_create();
+  ipc[1].noop(); // create ipc  for process
   //frame1->set(CURRENT_PROCESS_PTR, proc_1.second->pid(PID));
   frame1->set(PID, Kernel::pid(proc_1.second));
   frame1->set(PPID, 0L);

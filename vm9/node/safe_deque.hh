@@ -18,6 +18,7 @@ public:
   void swap(Node::DeQue &dq);
 
   void printq();
+  Node::Integer size() ;
 
   void noop();
 };

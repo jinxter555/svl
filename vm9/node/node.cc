@@ -393,6 +393,27 @@ Node::Vector& Node::_get_vector_ref() {
   return get<Vector>(value_); 
 }
 
+Node::DeQue& Node::_get_deque_ref() { 
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->_get_deque_ref(); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->_get_deque_ref(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->_get_deque_ref(); }
+  default: {}
+  }
+  return get<DeQue>(value_); 
+}
+
+
+
+
+
+
 Node::List& Node::_get_list_ref() { return get<List>(value_); }
 
 // eval list

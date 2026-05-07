@@ -34,3 +34,6 @@ string Lang::unqiue_name(const string& input) {
 }
 
 void Lang::bootstrap() {}
+
+
+const Node::Integer Lang::Atom::fun=str_to_atom("fun");

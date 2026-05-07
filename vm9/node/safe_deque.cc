@@ -2,6 +2,9 @@
 #include <iostream>
 #include  "safe_deque.hh"
 
+#define SLOG_DEBUG_TRACE_FUNC
+#include "scope_logger.hh"
+
 
 SafeDeque::SafeDeque() {}
 
@@ -44,8 +47,11 @@ Node::ptr_U  SafeDeque::pop_back() {
 void  SafeDeque::noop() { }
 
 void  SafeDeque::printq() { 
+  MYLOGGER(trace_function, "SafeDeque::printq()", __func__, SLOG_FUNC_INFO);
   access([](Node::DeQue& dq) {
+    cout << "dq size: " <<  dq.size() << "\n";
     for(auto const& e : dq) { 
+      //e->print();
       cout << e->_to_str() << "\n"; 
     }
   });
@@ -54,6 +60,13 @@ void  SafeDeque::swap(Node::DeQue &dq_in) {
   lock_guard<mutex> lock(mtx);
   dq.swap(dq_in);
 }
+Node::Integer  SafeDeque::size() {
+  return access([](Node::DeQue& dq) {
+    return dq.size();
+  });
+
+}
+
 
 map<int, SafeDeque> a1() {
    map<int, SafeDeque> ipc;

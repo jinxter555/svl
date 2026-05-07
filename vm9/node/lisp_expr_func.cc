@@ -1802,7 +1802,7 @@ Node::OpStatus LispExpr::typeof_(Node&process, const Node::Vector &list_cc_vec, 
 }
 
 Node::OpStatus LispExpr::sleep_ms(Node& process, const Node::Vector& list_cc_vec, size_t start) {
-  MYLOGGER(trace_function, "LispExpr::size(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "LispExpr::sleep(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
 
@@ -1814,7 +1814,10 @@ Node::OpStatus LispExpr::sleep_ms(Node& process, const Node::Vector& list_cc_vec
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
   auto dt = ele_status.second->_get_integer();
+
+  //cout << "sleep for " << dt << "\n";
   this_thread::sleep_for(std::chrono::milliseconds(dt));
+  //cout << "wake up after  " << dt << "\n";
   return {true, Node::create(atom_ok, Node::Type::Atom)};
 
 }
@@ -1823,6 +1826,8 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
   MYLOGGER(trace_function, "LispExpr::process_info(Node& process, Vector&code_list, start)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "list: "+ Node::_to_str(list_cc_vec), SLOG_FUNC_INFO+30)
   MYLOGGER_MSG(trace_function, "start: " + to_string(start), SLOG_FUNC_INFO+30)
+
+  //Node::Integer this_process_pid;
 
   auto ele_status = eval(process, *list_cc_vec[start]);
 
@@ -1833,7 +1838,7 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
   }
 
   if(ele_status.second->get_node().type_ != Node::Type::Atom) {
-    auto msg ="process: error not Atom!";
+    auto msg ="process: error not an atom command!";
     cerr << msg << "\n";
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
@@ -1843,17 +1848,24 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
     cerr << msg << "\n";
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
+  auto this_process_pid_ptr =  frame_ref_status.second[PID].second.clone();
+  auto this_process_ppid_ptr =  frame_ref_status.second[PPID].second.clone();
+  auto this_process_pid=  this_process_pid_ptr->_get_integer();
+  auto this_process_ppid=  this_process_ppid_ptr->_get_integer();
 
   if(ele_status.second->_get_integer() == atom_pid) {
-    auto pid = frame_ref_status.second[PID];
+    //auto pid = frame_ref_status.second[PID];
     //cout << "pid: " << pid << "\n";
-    return {true, pid.second.clone()};
+    //return {true, pid.second.clone()};
+    return {true, move(this_process_pid_ptr)};
 
   } else if(ele_status.second->_get_integer() == atom_ppid) {
-    auto pid = frame_ref_status.second[PPID];
+    //auto pid = frame_ref_status.second[PPID];
     //cout << "ppid: " << pid << "\n";
-    return {true, pid.second.clone()};
-  } else if(ele_status.second->_get_integer() == str_to_atom("send")) {
+    //return {true, pid.second.clone()};
+    return {true, move(this_process_ppid_ptr)};
+
+  } else if(ele_status.second->_get_integer() == atom_send) {
     auto pid_status = eval(process, *list_cc_vec[start+1]);
     auto arg_status  = eval(process, *list_cc_vec[start+2]);
     if(!pid_status.first) return pid_status;
@@ -1863,6 +1875,7 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
 
     if(!ipc.count(pid)) {
       auto msg  = "pid: "  + to_string( pid) + " doesn't exist!";
+      cout << "ipc.size : " << ipc.size()<<"\n";
       cerr << msg  << "\n";
       return {false, Node::create_error(Error::Type::KeyNotFound, msg)};
     }
@@ -1871,7 +1884,52 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
 
     //cout << "send:pid " << pid<< "\n";
     //cout << "args: " << args << "\n";
-  } else if(ele_status.second->_get_integer() == str_to_atom("printdq")) {
+  } else if(ele_status.second->_get_integer() == atom_queue) {
+    if(list_cc_vec.size() < 4) return {false, Node::create_error(Error::Type::Parse, "Not enough args for process queue. args.size <4") };
+    auto qn_status = eval(process, *list_cc_vec[start+1]); // queue name status
+    auto qcmd_status = eval(process, *list_cc_vec[start+2]); // queue name status
+    if(!qn_status.first) return qn_status;
+    if(!qcmd_status.first) return qcmd_status;
+
+
+
+
+    if(qn_status.second->_get_integer() == atom_worker)  {
+
+      if(qcmd_status.second->_get_integer()== atom_swap) {
+        auto &dq_inbox = ipc[this_process_pid];
+        auto dq_worker_status = dq_worker(process);
+        cout << "dq_worker_status: " << dq_worker_status << "\n";
+        auto &dq_worker= dq_worker_status.second._get_deque_ref();
+        cout << "dq_worker: " << Node::_to_str( dq_worker) << "\n";
+        if(dq_inbox.size() == 0 ) {
+          auto msg = "ipc inbox queue zero/0 for swap!";
+          return  {false,  Node::create_error(Error::Type::Unknown, msg)};
+        }
+        cout << "queue worker swap!\n";
+      }
+
+    } else if(qn_status.second->_get_integer() == atom_inbox)  {
+      auto &dq_inbox = ipc[this_process_pid];
+
+      if(qcmd_status.second->_get_integer()== atom_print) {
+        cout << "inbox print:";
+        dq_inbox.printq();
+        cout << "\n";
+
+      }
+
+
+    } else {
+
+    }
+
+    cout << "process queue\n";
+    cout << "qn_status : " <<  qn_status << "\n";
+    cout << "qcmd_status : " <<  qcmd_status << "\n";
+
+
+  } else if(ele_status.second->_get_integer() == atom_print) {
     auto pid_status = eval(process, *list_cc_vec[start+1]);
     if(!pid_status.first) return pid_status;
     auto pid = pid_status.second->_get_integer();

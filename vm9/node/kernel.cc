@@ -43,11 +43,13 @@ Node::OpStatusRef Kernel::process_create() {
   auto pid = proc_vector_node->size_container();
   Node::Map map={}; 
   Node::Vector frames;
+  Node::DeQue dq_worker;
   frames.reserve(20);
 
   map[PID] = Node::create(pid);
   //map[CFS]= Node::create(pid);
   map[FRAMES] = Node::create(move(frames));
+  map[DQ_WORKER] = Node::create(move(dq_worker));
   map[STATE] = Node::create(Node::ProcState::init);
 
   proc_vector_node->push_back( Node::create(move(map))  );
