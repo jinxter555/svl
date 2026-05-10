@@ -1932,9 +1932,15 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
         cout << "queue worker swap!\n";
 
       }else if(qcmd_status.second->_get_integer()== atom_eval) {
-        cout << "in que eval !\n";
         if(dq_worker.size()>0) {
           cout << "worker eval:" << Node::_to_str( dq_worker) << "\n";
+          while(!dq_worker.empty()){
+            auto &ele = dq_worker.front();
+            cout << "element: " << *ele << "\n";
+            eval(process, *ele);
+            dq_worker.pop_front();
+          }
+        
           cout << "\n";
         } else {
           cout << "worker queue is 0:" << Node::_to_str( dq_worker) << "\n";
