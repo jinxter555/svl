@@ -1853,6 +1853,10 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
   auto this_process_pid=  this_process_pid_ptr->_get_integer();
   auto this_process_ppid=  this_process_ppid_ptr->_get_integer();
 
+  auto &dq_inbox = ipc[this_process_pid];
+  auto dq_worker_status = dq_worker(process);         //cout << "dq_worker_status: " << dq_worker_status << "\n";
+  auto &dq_worker= dq_worker_status.second._get_deque_ref(); //cout << "dq_worker: " << Node::_to_str( dq_worker) << "\n";
+
   if(ele_status.second->_get_integer() == atom_pid) {
     //auto pid = frame_ref_status.second[PID];
     //cout << "pid: " << pid << "\n";
@@ -1864,6 +1868,22 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
     //cout << "ppid: " << pid << "\n";
     //return {true, pid.second.clone()};
     return {true, move(this_process_ppid_ptr)};
+
+  } else if(ele_status.second->_get_integer() == atom_receive) {
+    cout << "receive:\n";
+    if(dq_worker.size()!=0 )  {
+      auto msg = "Receive: DQ worker queue != 0, some tasks are still undone !"; 
+      //return  {false,  Node::create_error(Error::Type::Unknown, msg)}; 
+      cerr << msg << "\n";
+      return {true, Node::create(atom_error, Node::Type::Atom)};
+    }
+    if(dq_inbox.size() == 0 ) {  
+     // auto msg = "ipc inbox queue zero/0 for swap!"; 
+      return {true, Node::create(atom_ok, Node::Type::Atom)};
+    }
+
+    dq_inbox.swap(dq_worker);
+
 
   } else if(ele_status.second->_get_integer() == atom_send) {
     auto pid_status = eval(process, *list_cc_vec[start+1]);
@@ -1888,8 +1908,16 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
     if(list_cc_vec.size() < 4) return {false, Node::create_error(Error::Type::Parse, "Not enough args for process queue. args.size <4") };
     auto qn_status = eval(process, *list_cc_vec[start+1]); // queue name status
     auto qcmd_status = eval(process, *list_cc_vec[start+2]); // queue name status
+
+
     if(!qn_status.first) return qn_status;
     if(!qcmd_status.first) return qcmd_status;
+
+    //auto &dq_inbox = ipc[this_process_pid];
+    //auto dq_worker_status = dq_worker(process);         //cout << "dq_worker_status: " << dq_worker_status << "\n";
+    //auto &dq_worker= dq_worker_status.second._get_deque_ref(); //cout << "dq_worker: " << Node::_to_str( dq_worker) << "\n";
+
+
 
 
 
@@ -1897,26 +1925,23 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
     if(qn_status.second->_get_integer() == atom_worker)  {
 
       if(qcmd_status.second->_get_integer()== atom_swap) {
-        auto &dq_inbox = ipc[this_process_pid];
-        auto dq_worker_status = dq_worker(process);
-        cout << "dq_worker_status: " << dq_worker_status << "\n";
-        auto &dq_worker= dq_worker_status.second._get_deque_ref();
-        cout << "dq_worker: " << Node::_to_str( dq_worker) << "\n";
         if(dq_inbox.size() == 0 ) {
           auto msg = "ipc inbox queue zero/0 for swap!";
           return  {false,  Node::create_error(Error::Type::Unknown, msg)};
         }
         cout << "queue worker swap!\n";
+
+      } else if(qcmd_status.second->_get_integer()== atom_print) {
+        cout << "worker print:" << Node::_to_str( dq_worker) << "\n";
+        cout << "\n";
       }
 
     } else if(qn_status.second->_get_integer() == atom_inbox)  {
-      auto &dq_inbox = ipc[this_process_pid];
 
       if(qcmd_status.second->_get_integer()== atom_print) {
         cout << "inbox print:";
         dq_inbox.printq();
         cout << "\n";
-
       }
 
 
