@@ -1,10 +1,13 @@
 #include <mutex>
+#include <condition_variable>
 #include "node.hh"
 
 class SafeDeque {
 private:
   Node::DeQue dq;
   mutable mutex mtx;
+  condition_variable cv;
+
 public:
   SafeDeque();
   template <typename Fun> auto access(Fun fun);
@@ -19,6 +22,7 @@ public:
 
   void printq();
   Node::Integer size() ;
+  void  wait();
 
   void noop();
 };

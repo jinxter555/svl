@@ -14,6 +14,7 @@ module Kernel
       end.loop
   end.def
 
+
   # spawn p55 5000
   def p55(value)
     print "p55 hello\n" 
@@ -31,6 +32,20 @@ module Kernel
 
 
   end.def
+
+
+
+  def runq()
+    while(true)
+      # print "run queue!\n"
+      process :receive
+      process :queue :worker :eval
+      process :queue :inbox :wait
+     # sleep 5000
+    end.while
+  end.def
+
+
 
 end.module
 

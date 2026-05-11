@@ -48,3 +48,4 @@ const Node::Integer LispExpr:: atom_ipc(str_to_atom("ipc"));
 const Node::Integer LispExpr:: atom_print(str_to_atom("print"));
 const Node::Integer LispExpr:: atom_self(str_to_atom("self"));
 const Node::Integer LispExpr:: atom_eval(str_to_atom("eval"));
+const Node::Integer LispExpr:: atom_wait(str_to_atom("wait"));

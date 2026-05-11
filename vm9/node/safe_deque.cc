@@ -1,6 +1,7 @@
 #include <map>
 #include <iostream>
 #include  "safe_deque.hh"
+#include <thread>
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
@@ -34,7 +35,9 @@ Node::ptr_U  SafeDeque::pop_front() {
 
 void  SafeDeque::push_back(Node::ptr_U ptr) {
   lock_guard<mutex> lock(mtx);
+//  std::cout << "pushback(). Current thread ID: " << std::this_thread::get_id() << std::endl;
   dq.push_back(move(ptr));
+  cv.notify_one();
 }
 
 Node::ptr_U  SafeDeque::pop_back() {
@@ -57,7 +60,8 @@ void  SafeDeque::printq() {
   });
 }
 void  SafeDeque::swap(Node::DeQue &dq_in) { 
-  lock_guard<mutex> lock(mtx);
+  //lock_guard<mutex> lock(mtx);
+  unique_lock<mutex> lock(mtx);
   dq.swap(dq_in);
 }
 Node::Integer  SafeDeque::size() {
@@ -67,12 +71,8 @@ Node::Integer  SafeDeque::size() {
 
 }
 
-
-map<int, SafeDeque> a1() {
-   map<int, SafeDeque> ipc;
-   ipc[0].push_back(Node::create(123));
-   ipc[1].push_back(Node::create(123));
-   return ipc;
-
-
+void SafeDeque::wait() {
+  unique_lock<mutex> lock(mtx);
+ // std::cout << "wait(). Current thread ID: " << std::this_thread::get_id() << std::endl;
+  cv.wait(lock, [this]{ return !dq.empty(); });
 }

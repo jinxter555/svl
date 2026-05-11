@@ -1943,7 +1943,7 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
         
           cout << "\n";
         } else {
-          cout << "worker queue is 0:" << Node::_to_str( dq_worker) << "\n";
+          // cout << "worker queue is 0:" << Node::_to_str( dq_worker) << "\n";
         }
         return {true, Node::create(atom_ok, Node::Type::Atom)};
 
@@ -1954,7 +1954,12 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
 
     } else if(qn_status.second->_get_integer() == atom_inbox)  {
 
-      if(qcmd_status.second->_get_integer()== atom_print) {
+      if(qcmd_status.second->_get_integer()== atom_wait) { //cout << "inbox wait start\n";
+        dq_inbox.wait(); cout << "inbox wait finish\n";
+
+        return {true, Node::create(atom_ok, Node::Type::Atom)};
+
+      } else if(qcmd_status.second->_get_integer()== atom_print) {
         cout << "inbox print:";
         dq_inbox.printq();
         cout << "\n";
