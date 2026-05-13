@@ -281,12 +281,18 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   try {
     auto constructor_ref_status = class_ref_status.second.get_node(constructor_name);
   
-    auto argv_status = eval(process, list, start + 1, 1); // get all the argv and create a spot at vector[0] for 'this' object
+    //auto argv_status = eval(process, list, start + 1, 1); // get all the argv and create a spot at vector[0] for 'this' object
+    auto argv_status = eval_args(process, list, start + 1, 1); // get all the argv and create a spot at vector[0] for 'this' object
+//    cout << "list.size(): " << list.size() << ", start " << start << "\n";
+ //   cout << "argv_status eval: " << argv_status << "\n";
+
     if(!argv_status.first) {
       cerr  << "Object construct parameters errors: " <<  argv_status.second->_to_str() << "\n";
       return argv_status;
     }
+  //  cout << "1 argv_ilist_vector : \n" ;
     auto &argv_list_vector = argv_status.second->_get_vector_ref();
+  //  cout << "2 argv_ilist_vector : " << Node::_to_str( argv_list_vector) << "\n";
   
     argv_list_vector[0] = move(shared_object_call);  // this object
   
@@ -294,6 +300,7 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
     return {true, move(shared_object_ret)};
 
   } catch(...) {
+    //cout << "class_ref_status: " << class_ref_status << "\n";
     auto msg = "constructor method: initialize() doesn't exist!";
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
@@ -1870,7 +1877,7 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
     return {true, move(this_process_ppid_ptr)};
 
   } else if(ele_status.second->_get_integer() == atom_receive) {
-    cout << "receive:\n";
+    //cout << "receive:\n";
     if(dq_worker.size()!=0 )  {
       auto msg = "Receive: DQ worker queue != 0, some tasks are still undone !"; 
       //return  {false,  Node::create_error(Error::Type::Unknown, msg)}; 
@@ -1933,10 +1940,10 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
 
       }else if(qcmd_status.second->_get_integer()== atom_eval) {
         if(dq_worker.size()>0) {
-          cout << "worker eval:" << Node::_to_str( dq_worker) << "\n";
+          //cout << "worker eval:" << Node::_to_str( dq_worker) << "\n";
           while(!dq_worker.empty()){
             auto &ele = dq_worker.front();
-            cout << "element: " << *ele << "\n";
+            //cout << "element: " << *ele << "\n";
             eval(process, *ele);
             dq_worker.pop_front();
           }
@@ -1955,7 +1962,7 @@ Node::OpStatus LispExpr::process_(Node&process, const Node::Vector &list_cc_vec,
     } else if(qn_status.second->_get_integer() == atom_inbox)  {
 
       if(qcmd_status.second->_get_integer()== atom_wait) { //cout << "inbox wait start\n";
-        dq_inbox.wait(); cout << "inbox wait finish\n";
+        dq_inbox.wait(); //cout << "inbox wait finish\n";
 
         return {true, Node::create(atom_ok, Node::Type::Atom)};
 

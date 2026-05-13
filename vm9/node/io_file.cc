@@ -56,15 +56,15 @@ Node::OpStatus File::apply(Node&process, Node &object_node, const Node::Vector& 
 
 }
 Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node::Vector& args) {
-  MYLOGGER(trace_function, "File::apply(Node&process, Node& object, const Vector& args)", __func__, SLOG_FUNC_INFO);
+  MYLOGGER(trace_function, "File::apply_obj(Node&process, Node& object, const Vector& args)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "args: " + Node::_to_str(args), SLOG_FUNC_INFO+30);
 
-  //cout << "args: " << Node::_to_str(args) << "\n";
+  //cout << "File::apply_obj(): args: " << Node::_to_str(args) << "\n";
   //return {true, Node::create()};
   Node::Integer  id;
 
   if(args.size() < 1) 
-      return {false, Node::create_error(Error::Type::Unknown, "need a file :method, :open,:close etc...")};
+      return {false, Node::create_error(Error::Type::Unknown, "need a file :method, :open, :close etc...")};
 
 
   auto &method = args[0];

@@ -1,6 +1,7 @@
 #!./main.out
 
-use :namespace Main
+# use :namespace Main
+# use :namespace England
 
 # this is a test
 module Kernel 
@@ -14,13 +15,13 @@ module Kernel
       (print "sometimes, forever " forever "\n" )
     end.iif
 
-    = f1 (new System.Io.File)
+     = f1 (new System.Io.File)
 
-    f1.open("t.txt")
+     f1.open("/etc/hosts")
 
-    while[ \(f1.eof()) == false  ]
-      print (f1.getline ()) "\n"
-    end.while
+     #while[ \(f1.eof()) == false  ]
+     #  print (f1.getline ()) "\n"
+     #end.while
 
     loop
       print(eval (read)) "\n"
@@ -42,26 +43,29 @@ module System.Io
     var file_name 
 
     def initialize()
-      print "System.Io.File() init!\n"
+      # print "System.Io.File() initialize():\n"
     end.def
   
     def open(fn)
       = @file_name fn
-     call_extern (System.Io.File apply) this (:open fn)
+     call_extern (System.Io.File apply) this :open fn
     end.def
 
     def getline()
-     call_extern (System.Io.File apply) this (:getline)
+     call_extern (System.Io.File apply) this :getline
     end.def
 
     def close()
-     call_extern (System.Io.File apply) this (:close)
+     call_extern (System.Io.File apply) this :close
     end.def
 
     def eof()
-     call_extern (System.Io.File apply) this (:eof)
+     call_extern (System.Io.File apply) this :eof 
     end.def
 
+    def finalize()
+      print "System.Io.File() finalize():\n"
+    end.def
 
   end.class
 

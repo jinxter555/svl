@@ -36,8 +36,9 @@ module Kernel
 
 
   def runq()
-    while(true)
+    while [true]
       # print "run queue!\n"
+      print "process id: "  (process :pid) ", " (process :ppid) "\n"
       process :receive
       process :queue :worker :eval
       process :queue :inbox :wait

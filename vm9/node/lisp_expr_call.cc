@@ -725,7 +725,9 @@ Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_lis
     return object_this_status;
   }
 
-  auto object_arg_status = eval(process, *object_args);
+  //auto object_arg_status = eval(process, *object_args);
+  auto object_arg_status = eval_args(process, code_list, start+2);
+  //cout << "object_arg_status: " <<  object_arg_status << "\n";
   if(!object_arg_status.first  ) {
     cerr << "call_extern() error, can't eval object arg list! object arguments:\n" 
           <<  object_arg_status.second->_to_str() << "\n";
@@ -739,6 +741,7 @@ Node::OpStatus LispExpr::call_extern(Node& process, const Node::Vector& code_lis
       *object_this_status.second, object_arg_status.second->_get_vector_ref());
 
   } catch(...) { // object_arg_status returned a 'nil' empty {}
+    //cout << "call extern(): catch with nil{}\n";
     return call_extern(process,  
       mod_ref_status.second._to_str(), 
       fun_ref_status.second._to_str(), 
