@@ -11,7 +11,8 @@ protected:
 public:
   class Atom {
   public: 
-    static  const Node::Integer fun;
+    static  const Node::Integer fun, server, client, run, ok, error
+    ;
     /*
     static  const Node::Integer module_, fun, def, class_, atom_get, atom_set, atom_index, atom_size, atom_ok, atom_error, atom_unknown,
     atom_lambda, atom_closure, atom_else,

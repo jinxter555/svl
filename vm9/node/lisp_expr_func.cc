@@ -249,7 +249,7 @@ Node::OpStatus LispExpr::object_create(Node&process, const Node::Vector &list, s
   auto object = Node::create(Node::Type::Map);
   auto obj_info = Node::create(Node::Type::Map);
 
-  obj_info->set(TYPE, Lisp::Type::object );
+  obj_info->set(_TYPE, Lisp::Type::object );
 
   auto cfp = full_path_class(process, class_full_name); 
   auto class_ref_status  = get_node(cfp);
@@ -1059,7 +1059,7 @@ Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &co
   map[RET_VALUE] = move(ret_status.second);
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Lisp::Type::return_);
+  obj_info->set(_TYPE,  Lisp::Type::return_);
   map[OBJ_INFO] = move(obj_info);
   
   return {true, Node::create(move(map))};
@@ -1076,7 +1076,7 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, Node::Vector&result_l
 
    try {
     auto &object_info = object.at(OBJ_INFO);
-    auto type = object_info->get_node(TYPE).second._get_lisp_op();
+    auto type = object_info->get_node(_TYPE).second._get_lisp_op();
 
     switch(type) {
     case Lisp::Op::return_: {
@@ -1114,7 +1114,7 @@ Node::ControlFlow LispExpr::handle_cf_object(Node&process, const Node::Map& obje
   MYLOGGER(trace_function, "LispExpr::handle_cf_object(Node&process, Node::Map& object)", __func__, SLOG_FUNC_INFO);
    try {
     auto &object_info = object.at(OBJ_INFO);
-    auto type = object_info->get_node(TYPE).second._get_lisp_op();
+    auto type = object_info->get_node(_TYPE).second._get_lisp_op();
 
     switch(type) {
     case Lisp::Op::return_: {
@@ -1147,7 +1147,7 @@ Node::OpStatus LispExpr::cf_object_to_OpStatus(Node&process, unique_ptr<Node>obj
      }
 
 
-    auto type = object_info_ref.second.get_node(TYPE).second._get_lisp_op();
+    auto type = object_info_ref.second.get_node(_TYPE).second._get_lisp_op();
 
     switch(type) {
     case Lisp::Op::return_: {

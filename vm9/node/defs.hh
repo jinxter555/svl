@@ -12,7 +12,7 @@
 
 #define VAR "var"
 #define IMMUTE "immute"
-#define NAME "name"
+#define _NAME "name"
 #define VECTOR "vector"
 #define NAMESPACE "namespace"
 #define CURRENT_NAMESPACE_IMMUTE "__NAMESPACE__"
@@ -54,7 +54,7 @@
 #define OBJ_INFO "__object_info__"
 #define CC_OBJ_ID "__cc_obj_id__"
 
-#define TYPE "type"
+#define _TYPE "type"
 #define BASE_FRAME "base_frame"
 
 #define RET_VALUE "return_value"

@@ -10,6 +10,9 @@
 extern Node null_node;
 
 
+#include "net_ws.hh"
+
+
 LispExpr::LispExpr() : Lang(), Lisp(), reader(this)
  {
   MYLOGGER(trace_function, "LispExpr::LispExpr()", __func__, SLOG_FUNC_INFO);
@@ -113,8 +116,8 @@ void LispExpr::attach_cc_extern() {
   attach_cc_fun("Map", "set", map_set_value);
   attach_cc_fun("Map", "del", map_del_key);
   attach_cc_fun("Map", "has", map_has_key);
-  //attach_cc_fun("System.Io.File", "apply", File::apply);
   attach_cc_fun("System.Io.File", "apply", File::apply);
+  attach_cc_fun("System.Net.SWSS", "apply", SimpleWebSocketServer::apply);
 
 }
 
@@ -929,7 +932,7 @@ Node::Integer LispExpr::type_of_lisp_obj(Node&node) {
 }
 
 Node::Integer LispExpr::type_of_lisp_obj_by_map(Node::Map&map) {
-  const auto &type_ref_status = map.at(OBJ_INFO)->get_node(TYPE);
+  const auto &type_ref_status = map.at(OBJ_INFO)->get_node(_TYPE);
   if(!type_ref_status.first) {
     return atom_cc_map;
   }
@@ -968,7 +971,7 @@ Lisp::Op LispExpr::type_of_by_map(Node::Map&map) {
   MYLOGGER(trace_function, "LispExpr::type_of(Node::Map& map)", __func__, SLOG_FUNC_INFO)
   MYLOGGER_MSG(trace_function, "map: " + Node::_to_str(map), SLOG_FUNC_INFO+32)
   try {
-    const auto &type_ref_status = map.at(OBJ_INFO)->get_node(TYPE);
+    const auto &type_ref_status = map.at(OBJ_INFO)->get_node(_TYPE);
     auto lisp_obj_type = get<Lisp::Type>(type_ref_status.second.value_);
     MYLOGGER_MSG(trace_function, "lisp::Op:: " + Lisp::_to_str(lisp_obj_type), SLOG_FUNC_INFO+30)
     return lisp_obj_type;

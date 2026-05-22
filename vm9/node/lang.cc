@@ -37,3 +37,8 @@ void Lang::bootstrap() {}
 
 
 const Node::Integer Lang::Atom::fun=str_to_atom("fun");
+const Node::Integer Lang::Atom::server=str_to_atom("server");
+const Node::Integer Lang::Atom::client=str_to_atom("client");
+const Node::Integer Lang::Atom::run=str_to_atom("run");
+const Node::Integer Lang::Atom::ok=str_to_atom("ok");
+const Node::Integer Lang::Atom::error=str_to_atom("error");

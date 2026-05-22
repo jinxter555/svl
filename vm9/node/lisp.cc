@@ -155,7 +155,7 @@ Lisp::Type Lisp::type(const Node::Map& map_) {
   try {
     auto &obj_info = map_.at(OBJ_INFO);
     //cout << "obj_info: " <<  *obj_info << "\n";
-    auto type_ref_status = obj_info->get_node(TYPE);
+    auto type_ref_status = obj_info->get_node(_TYPE);
     if(!type_ref_status.first) return Lisp::Type::nil;
     auto t = get<Lisp::Type>(type_ref_status.second.value_);
     //cout << "type_ref_status : " <<  type_ref_status << "\n";

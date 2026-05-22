@@ -103,7 +103,7 @@ Node::OpStatus LispExpr::build_parsed_fun(Node::List& list) {
   }
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::defun));
+  obj_info->set(_TYPE,  Node::create(Lisp::Type::defun));
 
   fun[OBJ_INFO] = move(obj_info);
   fun["name"] = Node::create(name);
@@ -166,10 +166,10 @@ Node::OpStatus LispExpr::build_parsed_def(Node::List& list) {
   }
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::def));
+  obj_info->set(_TYPE,  Node::create(Lisp::Type::def));
 
   fun[OBJ_INFO] = move(obj_info);
-  fun[NAME] = Node::create(name);
+  fun[_NAME] = Node::create(name);
   fun[NAMESPACE] = Node::create(build_namespace.back());
 
   return {true, Node::create(move(fun))};
@@ -207,9 +207,9 @@ Node::OpStatus LispExpr::build_parsed_macro(Node::List& cclist) {
   }
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::defmacro));
+  obj_info->set(_TYPE,  Node::create(Lisp::Type::defmacro));
   macro[OBJ_INFO] = move(obj_info);
-  macro[NAME] = Node::create(name);
+  macro[_NAME] = Node::create(name);
   macro[NAMESPACE] = Node::create(build_namespace.back());
   return {true, Node::create(move(macro))};
 }
@@ -232,7 +232,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   auto module_node=make_unique<Node>(Node::Type::Map);
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::module_));
+  obj_info->set(_TYPE,  Node::create(Lisp::Type::module_));
 
   string module_name = get<string>(list.front()->value_); list.pop_front(); // module name
 
@@ -289,7 +289,7 @@ Node::OpStatus LispExpr::build_parsed_module(Node::List& list) {
   module_node->set(_CLASS, move(module_classes));
   module_node->set(ALIAS, move(module_aliases));
   module_node->set(OBJ_INFO, move(obj_info));
-  module_node->set(NAME, module_name);
+  module_node->set(_NAME, module_name);
   module_node->set(NAMESPACE,  Node::create(build_namespace.back()));
 
   return {true, move(module_node)};
@@ -314,7 +314,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
   auto class_node=make_unique<Node>(Node::Type::Map);
 
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::class_));
+  obj_info->set(_TYPE,  Node::create(Lisp::Type::class_));
 
   string class_name = get<string>(list.front()->value_); list.pop_front(); // class name
 
@@ -326,7 +326,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
 
     switch(Lisp::type(*status.second)){
     case Lisp::Type::def: {
-      auto fun_name = (*status.second)[NAME].second._to_str();
+      auto fun_name = (*status.second)[_NAME].second._to_str();
     //  auto &code_list = (*status.second)[CODE].second._get_vector_ref();
       //cout << "defun code list:" << code_list << "\n";
       attach_this_to_arguments((*status.second)[_PARAMS].second._get_vector_ref());
@@ -358,7 +358,7 @@ Node::OpStatus LispExpr::build_parsed_class(Node::List& list) {
   class_node->set(FUNCTION, move(class_functions));
   class_node->set(ALIAS, move(class_aliases));
   class_node->set(OBJ_INFO, move(obj_info));
-  class_node->set(NAME, class_name);
+  class_node->set(_NAME, class_name);
   class_node->set(NAMESPACE,  Node::create(build_namespace.back()));
 
   //cout << "module_node:" << *module_node << "\n";
@@ -406,7 +406,7 @@ Node::OpStatus LispExpr::attach_module(unique_ptr<Node> mod_ptr) {
   auto mod_loc = get_branch(namespace_module_path());
 
 
-  auto name_ref_status  = mod_ptr->get_node(NAME);
+  auto name_ref_status  = mod_ptr->get_node(_NAME);
 
   if(!name_ref_status.first) {
     cerr << "error getting module name!\n";
@@ -651,9 +651,9 @@ Node::OpStatus LispExpr::vector_to_object(const Node::Vector&list) {
       return {true, Node::clone(list)};
 
     }
-    object_info->set(TYPE, lisp_type);
+    object_info->set(_TYPE, lisp_type);
   } catch (...) {
-    object_info->set(TYPE, Lisp::Type::nil);
+    object_info->set(_TYPE, Lisp::Type::nil);
   }
 /*
   size_t s = list.size();
@@ -753,7 +753,7 @@ Node::OpStatus LispExpr::build_parsed_alias(Node::List& list) {
   MYLOGGER_MSG(trace_function, "list: " + Node::_to_str(list), SLOG_FUNC_INFO+30);
   auto alias_map = make_unique<Node>(Node::Type::Map);
   auto obj_info = make_unique<Node>(Node::Type::Map);
-  obj_info->set(TYPE,  Node::create(Lisp::Type::alias));
+  obj_info->set(_TYPE,  Node::create(Lisp::Type::alias));
 
   auto s =  list.size();
   if(!s) return {false, Node::create()};
@@ -770,13 +770,13 @@ Node::OpStatus LispExpr::build_parsed_alias(Node::List& list) {
       return {false, Node::create_error(Error::Type::Parse, msg)};
     }
     alias_map->set(alias_name, move(alias_fullname));
-    alias_map->set(NAME, alias_name);
+    alias_map->set(_NAME, alias_name);
     break;
   }
   case 2: {
     auto alias_name = list.front()->_to_str();
     alias_map->set(alias_name, move(alias_fullname));
-    alias_map->set(NAME, alias_name);
+    alias_map->set(_NAME, alias_name);
     break;
   }
   default: {

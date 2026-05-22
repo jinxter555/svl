@@ -118,7 +118,7 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   // lambda fun name doesn't exist
   //
   try {
-    auto fun_name = fun.get_node(NAME).second._to_str();
+    auto fun_name = fun.get_node(_NAME).second._to_str();
     frame->set(CURRENT_FUNCTION, fun_name); 
     immute_status.second.set(CURRENT_FUNCTION_IMMUTE, fun_name);
   } catch(...) {
@@ -132,12 +132,12 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   if(fun.m_has_key(CLASS_PTR)) {
     auto &class_node = fun.get_node(CLASS_PTR).second;
     auto &module_node = class_node.get_node(MODULE_PTR).second;
-    auto class_name = class_node.get_node(NAME).second._to_str();
-    auto module_name = module_node.get_node(NAME).second._to_str();
+    auto class_name = class_node.get_node(_NAME).second._to_str();
+    auto module_name = module_node.get_node(_NAME).second._to_str();
 
     immute_status.second.set(CURRENT_MODULE_IMMUTE, module_name);
 
-    //cout << "fun parent class name :" << class_node.get_node_with_ptr(NAME) <<  "\n";
+    //cout << "fun parent class name :" << class_node.get_node_with_ptr(_NAME) <<  "\n";
     //cout << "fun parent class :" << class_node <<  " is an object!";
     //cout << "module :" << module_node<<  "\n\n";
 
@@ -151,7 +151,7 @@ Node::OpStatus   LispExpr::frame_create_fun_args(Node& fun, Node::Vector &&arg_l
   } else if(fun.m_has_key(MODULE_PTR)) {
     //auto &module_node = fun.get_node(MODULE_PTR).second;
     auto &module_node = fun.get_node(MODULE_PTR).second.get_node();
-    auto module_name = module_node.get_node(NAME).second._to_str();
+    auto module_name = module_node.get_node(_NAME).second._to_str();
 
     immute_status.second.set(CURRENT_MODULE_IMMUTE, module_name);
 
@@ -630,7 +630,7 @@ Node::OpStatus LispExpr::call_lambda(Node& process, Node& obj_lambda, Node::Vect
   frame_push(process, move(frame_status.second));
 
   try {
-    const auto &type_ref_status = obj_lambda.get_node(OBJ_INFO).second.get_node(TYPE);
+    const auto &type_ref_status = obj_lambda.get_node(OBJ_INFO).second.get_node(_TYPE);
     const auto &code = obj_lambda.get_node(CODE).second;
     if(!type_ref_status.first) {
       cerr << "obj type info error:" <<  type_ref_status.second._to_str() << "\n";

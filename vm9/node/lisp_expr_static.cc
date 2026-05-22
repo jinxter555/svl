@@ -49,3 +49,6 @@ const Node::Integer LispExpr:: atom_print(str_to_atom("print"));
 const Node::Integer LispExpr:: atom_self(str_to_atom("self"));
 const Node::Integer LispExpr:: atom_eval(str_to_atom("eval"));
 const Node::Integer LispExpr:: atom_wait(str_to_atom("wait"));
+const Node::Integer LispExpr:: atom_websocket(str_to_atom("websocket"));
+const Node::Integer LispExpr:: atom_server(str_to_atom("server"));
+const Node::Integer LispExpr:: atom_client(str_to_atom("client"));
