@@ -400,6 +400,11 @@ Node::OpStatus LispExpr::call_object(Node&process,  Node& object, const string m
   MYLOGGER_MSG(trace_function, "object.type: " + Node::_to_str(object.type_), SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "method: " + method_name, SLOG_FUNC_INFO+30);
   MYLOGGER_MSG(trace_function, "argv_list: " + Node::_to_str(argv_list), SLOG_FUNC_INFO+30);
+  if(object.is_nil())  {
+      string msg = "nil object!";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::Unknown, msg)};
+  }
 
   try {
     auto fun_ref_status
@@ -942,7 +947,8 @@ Node::OpStatus LispExpr::spawn(Node& process, const Node::Vector& code_list, siz
   auto fun_ref = get_fun(fom, process, code_list, start);
 
   auto  args_status = eval_args(process, code_list, start+2); // this returns a vector
-  auto argv_vec = args_status.second->clone();
+  //auto argv_vec = args_status.second->clone();
+  auto &argv_vec = args_status.second;
   auto frame_status = frame_create_fun_args(fun_ref.second,  move(argv_vec->_get_vector_ref()));
 
 

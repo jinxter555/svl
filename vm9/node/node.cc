@@ -1175,13 +1175,20 @@ unique_ptr<Node> Node::ptr_USU(const Node &node) {
     return make_unique<Node>(sptr);
   }
   case Type::Raw: {
-    auto &sptr = get<ptr_R>(node.value_);
-    return make_unique<Node>(sptr);
+    auto &rptr = get<ptr_R>(node.value_);
+    return make_unique<Node>(rptr);
   }
   case Type::Unique:  {
-    auto &sptr = get<ptr_U>(node.value_);
-    return make_unique<Node>(sptr->_get_ptr_s());
+    auto &uptr = get<ptr_U>(node.value_);
+    return make_unique<Node>(uptr->_get_ptr_s());
   }
+  /*
+  case Type::Map:  {
+    // this shouldn't be here except for spawn server socket
+    return node.clone();
+  }
+*/
+
   default: {}
   }
   

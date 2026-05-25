@@ -6,33 +6,34 @@
 # this is a test
 module Kernel 
   def main (x y) 
-    var forever (t true)
-
+    
      = n1 (new System.Net.WS)
      n1.server "0.0.0.0" 8080
 
 
-     #while[ \(f1.eof()) == false  ]
-     #  print (f1.getline ()) "\n"
-     #end.while
+    # run(n1)
 
     loop
-      "main "
+      print "main "
       print(eval (read)) "\n"
     end.loop
     
 
   end.def
 
-  def run (sock_obj)
-    print "main run()"
+  # can't be spawn and access global from another process
+  def run (x)
+    print "run\n"
     # loop
-    #  "run: "
-    #  print(eval (read)) "\n"
-    #end.loop
-    sock_obj.run()
+    #   print "run() "
+    #   print(eval (read)) "\n"
+    # end.loop
+    print "x: " x "\n"
+    x.run()
 
   end.def
+
+
 end.module
 
 
