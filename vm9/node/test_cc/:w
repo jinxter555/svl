@@ -8,10 +8,10 @@ module Kernel
   def main (x y) 
     var n1
     
-     = n1 (new System.Net.WS)
-     = n2 (new System.Net.WS)
+     = n1 (new System.Net.WSListener)
+     = n2 (new System.Net.WSListener)
      n1.server "0.0.0.0" 8080
-     n2.server "0.0.0.0" 9999
+    # n2.server "0.0.0.0" 9999
 
 
     # run(n1)
@@ -43,30 +43,57 @@ end.module
 #---------------------------------
 
 module System.Net
-  class WS
+
+  class Session
+    def initialize()
+      print "System.Net.WSSession.initialize():\n"
+    end.def
+
+    def read_text()
+      # call_extern (System.Net.SWSSSession apply) this :server :read_text
+    end.def
+
+    def finalize()
+      print "System.Net.WSSession: finalize():\n"
+    end.def
+  end.class
+
+  class WSListener
     var addr port
 
     def initialize()
-      print "System.Net.WS: initialize():\n"
+      print "System.Net.WSListener: initialize():\n"
     end.def
   
     def server(a p)
+      print "server!\n\n"
       = @addr a
       = @port p
-     call_extern (System.Net.SWSS apply) this :server a p
+      call_extern (System.Net.SWSSListener apply) this :server a p
     end.def
+
+    def accept()
+        var ssocket
+        = ssocket (new System.Net.WSSession)
+        = ssid (call_extern (System.Net.SWSSListener apply) this :accept)
+        print "ss_id: " ss_id "\n"
+        = ssocket.cc_obj_id ssid
+        return ssocket
+    end.def
+
 
     def run()
       print "swss object run()!\n"
       call_extern (System.Net.SWSS apply) this :run :echo
     end.def
 
-
-
     def finalize()
       print "System.Net.WS: finalize():\n"
     end.def
 
   end.class
+
+
+
 
 end.module

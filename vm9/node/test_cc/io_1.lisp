@@ -6,7 +6,7 @@
 # this is a test
 module Kernel 
   def main (x y) 
-    var forever (t true)
+    var forever (t true) f1
     assign t1  "t1 robot"
     assign forever false
 
@@ -14,6 +14,8 @@ module Kernel
       (print "forever: " forever "\n" )
       (print "sometimes, forever " forever "\n" )
     end.iif
+
+
 
      = f1 (new System.Io.File)
 

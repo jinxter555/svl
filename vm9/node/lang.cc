@@ -38,7 +38,20 @@ void Lang::bootstrap() {}
 
 const Node::Integer Lang::Atom::fun=str_to_atom("fun");
 const Node::Integer Lang::Atom::server=str_to_atom("server");
+const Node::Integer Lang::Atom::accept=str_to_atom("accept");
+const Node::Integer Lang::Atom::connect=str_to_atom("connect");
 const Node::Integer Lang::Atom::client=str_to_atom("client");
 const Node::Integer Lang::Atom::run=str_to_atom("run");
 const Node::Integer Lang::Atom::ok=str_to_atom("ok");
 const Node::Integer Lang::Atom::error=str_to_atom("error");
+const Node::Integer Lang::Atom::read=str_to_atom("read");
+const Node::Integer Lang::Atom::write=str_to_atom("write");
+const Node::Integer Lang::Atom::read_text=str_to_atom("read_text");
+const Node::Integer Lang::Atom::write_text=str_to_atom("write_text");
+const Node::Integer Lang::Atom::read_binary=str_to_atom("read_binary");
+const Node::Integer Lang::Atom::write_binary=str_to_atom("write_binary");
+const Node::Integer Lang::Atom::is_open=str_to_atom("is_open");
+const Node::Integer Lang::Atom::got_text=str_to_atom("got_text");
+const Node::Integer Lang::Atom::echo=str_to_atom("echo");
+const Node::Integer Lang::Atom::initialize=str_to_atom("initialize");
+const Node::Integer Lang::Atom::finalize=str_to_atom("finalize");

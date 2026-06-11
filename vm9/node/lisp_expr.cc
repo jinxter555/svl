@@ -118,6 +118,9 @@ void LispExpr::attach_cc_extern() {
   attach_cc_fun("Map", "has", map_has_key);
   attach_cc_fun("System.Io.File", "apply", File::apply);
   attach_cc_fun("System.Net.SWSS", "apply", SimpleWebSocketServer::apply);
+  attach_cc_fun("System.Net.SWSSListener", "apply", SocketListener::apply);
+  attach_cc_fun("System.Net.SWSSSession", "apply", SocketSession::apply);
+  attach_cc_fun("System.Net.SWSSClient", "apply", SocketClient::apply);
 
 }
 
