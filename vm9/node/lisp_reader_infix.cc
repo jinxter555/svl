@@ -19,6 +19,7 @@ bool sym_lang(char c) {
   case '~' : return true;
   case '"' : return true;
   case ':' : return true;
+  case '_' : return true;
   default: return false;
   }
   return false;

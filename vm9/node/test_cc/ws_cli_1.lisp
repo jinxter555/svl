@@ -40,6 +40,7 @@ module System.Net
     def read_text()
       call_extern (System.Net.SWSSClient apply) this :read_text
     end.def
+
     def write_text(msg)
       call_extern (System.Net.SWSSClient apply) this :write_text msg
     end.def

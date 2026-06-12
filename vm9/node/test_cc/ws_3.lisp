@@ -54,13 +54,30 @@ module System.Net
       call_extern (System.Net.SWSSSession apply) this :read_text
     end.def
 
+    def write_text(msg)
+      call_extern (System.Net.SWSSSession apply) this :write_text msg
+    end.def
+
     def echo()
       call_extern (System.Net.SWSSSession apply) this :echo
     end.def
 
     def is_open()
-      call_extern (System.Net.SWSSSession apply) this :is_open
+      return( call_extern (System.Net.SWSSSession apply) this :is_open)
     end.def
+
+    def echo2()
+      var msg open_cond
+
+      while [ \(@is_open()) ]
+        = msg (@read_text())
+        print msg
+        # @write_text "got_it"
+        @write_text msg
+     end.while
+
+    end.def
+
 
     def got_text()
       call_extern (System.Net.SWSSSession apply) this :got_text

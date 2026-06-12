@@ -22,6 +22,13 @@ module Kernel
       print "pi: " pi "\n"
     end.def
 
+    def per()
+      print "Dict::per()"   "\n"
+      loop
+        print ( eval (read)) "\n"
+      end.loop
+    end.def
+
     def finalize()
       print @w " Dict finalize destructor!\n\n"
     end.def

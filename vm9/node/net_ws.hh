@@ -113,6 +113,9 @@ public:
   vector<uint8_t> read_binary();
   void close();
 
+  bool is_open() const;
+  bool got_text() const;
+
   //static Node::Integer  create_and_register(const string& address,  uint16_t port);
   static Node::Integer  create_and_register();
 

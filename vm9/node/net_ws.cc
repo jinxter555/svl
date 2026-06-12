@@ -257,7 +257,7 @@ string SocketSession::read_text() {
 
   ws_.read(buffer_);
   //cout << "end: read_text(): bs: " << buffer_.size() <<"\n";
-  write_text("got it");
+  //write_text("got it");
 
   return beast::buffers_to_string(buffer_.data());
 }
@@ -345,11 +345,21 @@ Node::OpStatus SocketSession::apply_obj(Node&process, Node::Map &lisp_object, co
   auto atom_cc_fun_name = method->_get_integer();
 
   if(atom_cc_fun_name  == Lang::Atom::read_text) {
-    cout << "begin read_text: " ;
+ //   cout << "begin read_text: " ;
     auto input_str =  swss_obj->read_text();
-    cout << "read_text: "  << input_str << "\n ";
+//    cout << "read_text: "  << input_str << "\n ";
     return {true, Node::create(Node::create(input_str))};
   } 
+
+  if(atom_cc_fun_name  == Lang::Atom::write_text) {
+    if(args.size() < 2) return {false, Node::create_error(Error::Type::Parse, "need string")};
+    cout << "sending: " <<  args[1]->_to_str() << "\n";
+    swss_obj->write_text(args[1]->_to_str());
+    return {true, Node::create(Lang::Atom::ok, Node::Type::Atom)};
+  }
+
+
+
   if(atom_cc_fun_name  == Lang::Atom::echo) {
     cout << "begin echo: " ;
     swss_obj->run_echo_server();
@@ -504,7 +514,7 @@ string SocketClient::read_text() {
 
   ws_.read(buffer_);
   //cout << "end: read_text(): bs: " << buffer_.size() <<"\n";
-  write_text("got it");
+  //write_text("got it");
 
   return beast::buffers_to_string(buffer_.data());
 
@@ -536,6 +546,9 @@ Node::Integer SocketClient::create_and_register() {
   sc_objects.push_back(sptr);
   return id;
 }
+
+bool SocketClient::is_open() const { return ws_.is_open(); }
+bool SocketClient::got_text() const { return ws_.got_text(); }
 
 Node::OpStatus SocketClient::apply(Node&process, Node &object_node, const Node::Vector& args) {
   MYLOGGER(trace_function, "SocketClient::apply(Node&process, Node& object, const Vector& args)", __func__, SLOG_FUNC_INFO);
@@ -605,8 +618,13 @@ Node::OpStatus SocketClient::apply_obj(Node&process, Node::Map &lisp_object, con
     cout << "sending: " <<  args[1]->_to_str() << "\n";
     sc_obj->write_text(args[1]->_to_str());
     return {true, Node::create(Lang::Atom::ok, Node::Type::Atom)};
-
   }
+  if(atom_cc_fun_name  == Lang::Atom::read_text) {
+ //   cout << "begin read_text: " ;
+    auto input_str =  sc_obj->read_text();
+//    cout << "read_text: "  << input_str << "\n ";
+    return {true, Node::create(Node::create(input_str))};
+  } 
 
 
   return {true, Node::create(Lang::Atom::ok, Node::Type::Atom)};
