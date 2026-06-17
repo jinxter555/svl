@@ -586,7 +586,6 @@ Node::OpStatus SocketClient::apply_obj(Node&process, Node::Map &lisp_object, con
   auto atom_cc_fun_name = method->_get_integer();
 
 
-
   //cout << "SS apply,pass 1!\n";
   //cout << "lisp_object: " <<  Node::_to_str(lisp_object) << "\n";
   if(atom_cc_fun_name  == Lang::Atom::initialize) {

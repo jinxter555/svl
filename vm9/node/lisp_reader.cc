@@ -57,22 +57,29 @@ string LispReader::extract_quoted_string(const string&input, size_t &i) {
 }
 
 string LispReader::extract_single_quoted_string(const string&input, size_t &i) {
-  string result;
+  string result="";
   bool in_quote = true;
   bool escaped = false;
+  size_t origin_start = i;
+
   for(++i; i<input.size(); i++) {
     char c = input[i];
     if(escaped) {
-      result += escaped_char(c);
+      result += c;
       escaped = false;
-    } else if(isspace(c)) {
+    // } else if(isspace(c)) {
+    } else if(c == '\n') {
+      i = origin_start; 
+      return "";
+    } else if(c == '\'') {
       in_quote = !in_quote;
       break;
     } else {
       result += c;
     }
-    
   }
+  // if(i>=input.size() && input[i] != '\'') { i= origin_start; return ""; };
+  if(i==input.size()) { i = origin_start; return ""; };
   return result;
 }
 
@@ -115,6 +122,20 @@ list<Token> LispReader::tokenize(const string& input)  {
       token.value_ = "\"" + move(extract_quoted_string(input, i));
       tokens.push_back(token);
       token_begin = true;
+
+
+    } else if(c == '\'') {
+      auto result_str  =  move(extract_single_quoted_string(input, i));
+      if(result_str != "") {
+        token.value_ = '\'' + result_str;
+        tokens.push_back(token);
+        token_begin = true;
+      } else {
+        if(token_begin) { token.col_ = col_; token_begin=false;}
+        token_str += c;
+
+      }
+
     } else if(c == '#') {
       token_begin = true;
       if(!token_str.empty()) {
@@ -270,8 +291,8 @@ Node::OpStatus LispReader::parse(list<Token>& tokens) {
     }
 
     if(token.value_[0]=='\'') {
-      token.value_.erase(0, 1);
-      string esc_str = raw_to_escaped_string(token.value_);
+      string esc_str =  token.value_.erase(0, 1);
+      //string esc_str = raw_to_escaped_string(token.value_);
       return {true, Node::create(esc_str)}; 
     }
 

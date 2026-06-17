@@ -2,6 +2,7 @@
 #include "my_helpers.hh"
 #include "interactive.hh"
 #include "io_file.hh"
+#include "regexp.hh"
 #include <iostream>
 
 #define SLOG_DEBUG_TRACE_FUNC
@@ -121,6 +122,7 @@ void LispExpr::attach_cc_extern() {
   attach_cc_fun("System.Net.SWSSListener", "apply", SocketListener::apply);
   attach_cc_fun("System.Net.SWSSSession", "apply", SocketSession::apply);
   attach_cc_fun("System.Net.SWSSClient", "apply", SocketClient::apply);
+  attach_cc_fun("Lang.RE.CCRE", "apply", Regexp::apply);
 
 }
 
