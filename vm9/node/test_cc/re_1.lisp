@@ -8,8 +8,8 @@ module Kernel
   def main (x y) 
     var n1
     
-      = r1 (new Lang.Text.RegExp '(\d)\s(\w+)' (:icase :global))
-     # = r1 (new Lang.Text.RegExp '(\d\d)' (:icase :global))
+     # = r1 (new Lang.Text.RegExp '(\d)\s(\w+)' (:icase :ecmas))
+     = r1 (new Lang.Text.RegExp '(\d\d)' (:icase :ecmas))
      # = r1 (new Lang.Text.RegExp '\d\d'  :icase)
 
     loop
@@ -30,7 +30,7 @@ end.module
 module Lang.Text
 
   class RegExp
-    var pattern flags
+    var pattern flags FOUND
     def initialize(p f)
       = @pattern p
       = @flags f
@@ -58,6 +58,10 @@ module Lang.Text
       call_extern (Lang.RE.CCRE apply) this :extract :full text
     end.def
 
+    def replace(text_src text_tgt)
+      print "replace(src tgt)\n"
+      call_extern (Lang.RE.CCRE apply) this :replace text_src text_tgt
+    end.def
 
     def finalize()
       print "Lang.RE.CCRE finalize():\n"

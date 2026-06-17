@@ -57,6 +57,18 @@ const Node::Integer Lang::Atom::initialize=str_to_atom("initialize");
 const Node::Integer Lang::Atom::finalize=str_to_atom("finalize");
 const Node::Integer Lang::Atom::extract=str_to_atom("extract");
 const Node::Integer Lang::Atom::match=str_to_atom("match");
-const Node::Integer Lang::Atom::icase=str_to_atom("icase");
+const Node::Integer Lang::Atom::replace=str_to_atom("replace");
 const Node::Integer Lang::Atom::part=str_to_atom("part");
 const Node::Integer Lang::Atom::full=str_to_atom("full");
+
+
+const Node::Integer Lang::Atom::icase=str_to_atom("icase");
+const Node::Integer Lang::Atom::nosubs=str_to_atom("nosubs");
+const Node::Integer Lang::Atom::optimize=str_to_atom("optimize");
+const Node::Integer Lang::Atom::collate=str_to_atom("collate");
+const Node::Integer Lang::Atom::ecmas=str_to_atom("ecmas");
+const Node::Integer Lang::Atom::basic=str_to_atom("basic");
+const Node::Integer Lang::Atom::extended=str_to_atom("extended");
+const Node::Integer Lang::Atom::awk=str_to_atom("awk");
+const Node::Integer Lang::Atom::grep=str_to_atom("grep");
+const Node::Integer Lang::Atom::egrep=str_to_atom("egrep");

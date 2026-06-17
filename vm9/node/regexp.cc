@@ -89,7 +89,7 @@ Node::OpStatus Regexp::apply(Node&process, Node &object_node, const Node::Vector
 
   } catch(...) {
     //auto msg = "1File object is not a Node::Map!";
-    auto msg = "SocketClient object is not a Node::Map or applying method not successful!";
+    auto msg = "Regex object is not a Node::Map or applying method not successful!";
     cerr << msg << "\n";
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
@@ -119,8 +119,8 @@ Node::OpStatus Regexp::apply_obj(Node&process, Node::Map &lisp_object, const Nod
     //id =  Regexp::create_and_register();
     regex_constants::syntax_option_type flags;
     //flags = regex_constants::ECMAScript | regex_constants::icase;
-    flags = regex_constants::icase;
-    //flags = regex_constants::ECMAScript ;
+    flags = regex_constants::ECMAScript | regex_constants::icase;
+    //flags = regex_constants::icase;
     Node::Integer atom_match_type=0;
 
 
@@ -128,16 +128,84 @@ Node::OpStatus Regexp::apply_obj(Node&process, Node::Map &lisp_object, const Nod
     if(args.size() < 2) return {false, Node::create_error(Error::Type::Parse, "need pattern and flag")};
     auto pattern = args[1]->_to_str();
 
-    if(args[2]->_get_type() == Node::Type::Atom) {
+
+    cout << "args2[] value type: " << Node::_to_str(  args[2]->_get_value_type()) << "\n";
+
+    /*
+    if(args[2]->_get_value_type() == Node::Type::Atom) {
       cout << "Atom args2[]: " << args[2]->_to_str() << "\n";
       atom_match_type = args[2]->_get_integer();
-    } else if(args[2]->_get_type() == Node::Type::Vector) {
-        cout << "Vector args[] " << *args[2] << "\n";
+
+
+
+    } else  {}
+    */
+   
+    if(args[2]->_get_value_type() == Node::Type::Vector) {
+      auto &flag_list = args[2]->_get_vector_ref();
+        cout << "in Vector args[] " << *args[2] << "\n";
+      for(auto& flag_ele : flag_list) {
+        if(flag_ele->_get_integer() == Lang::Atom::icase) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::icase;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::nosubs) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::nosubs;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::optimize) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::optimize;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::collate) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::collate;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::basic) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::basic;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::extended) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::extended;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::awk) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::awk;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::grep) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::grep;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::egrep) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::egrep;
+          continue;
+        }
+        if(flag_ele->_get_integer() == Lang::Atom::ecmas) {
+          cout << "flag e: " << flag_ele->_to_str() << "\n";
+          flags |= regex_constants::ECMAScript;
+          continue;
+        }
+
+        cout << "--flag e: " << flag_ele->_to_str() << "\n";
+      }
+    } else {
+      auto msg = "must specify (flags)";
+      cerr << msg << "\n";
+      return {false, Node::create_error(Error::Type::Unknown, msg)};
     }
-    if(atom_match_type == Lang::Atom::icase)
-      flags |= regex_constants::icase;
+    //if(atom_match_type == Lang::Atom::icase) flags |= regex_constants::icase;
     
-    cout << "pattern: " << pattern;
+    cout << "pattern: " << pattern << ", flags" << flags << "\n";
     cout << "args2[]: " << args[2]->_to_str() << "\n";
     id = create_and_register(pattern, flags);
     lisp_object[CC_OBJ_ID]  = Node::create(id);
@@ -175,16 +243,16 @@ Node::OpStatus Regexp::apply_obj(Node&process, Node::Map &lisp_object, const Nod
   }
   if(atom_cc_fun_name  == Lang::Atom::extract) {
     if(args.size() < 3) return {false, Node::create_error(Error::Type::Parse, "extract [:full|:part] and text")};
-    auto match_type = args[1]->_get_integer();
+    auto x_type = args[1]->_get_integer();
     auto text =  args[2]->_get_str();
-    if(match_type == Lang::Atom::full) {
+    if(x_type == Lang::Atom::full) {
     cout << "match full\n";
       auto group = re_obj->extract_full(text);
       //cout << "found group: " << _to_str_ext(group);
       lisp_object["FOUND"] =  Node::create(move(group));
       return {true, Node::create(Lang::Atom::ok, Node::Type::Atom)};
 
-    } else if(match_type == Lang::Atom::part) {
+    } else if(x_type == Lang::Atom::part) {
       cout << "extract part\n";
       auto group = re_obj->extract_part(text);
       lisp_object["FOUND"] =  Node::create(move(group));
@@ -194,9 +262,15 @@ Node::OpStatus Regexp::apply_obj(Node&process, Node::Map &lisp_object, const Nod
     } else {
 
     }
-
-
   }
+  if(atom_cc_fun_name  == Lang::Atom::replace) {
+    if(args.size() < 2) return {false, Node::create_error(Error::Type::Parse, "replace text")};
+    auto text_src =  args[1]->_get_str();
+    auto text_tgt =  args[2]->_get_str();
+    auto result = re_obj->replace(text_src, text_tgt);
+      return {true, Node::create(result)};
+  }
+
 
 
 
