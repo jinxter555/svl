@@ -975,11 +975,11 @@ Node::OpStatus LispExpr::if_(Node& process, const Node::Vector& list, size_t sta
 
 
 
-Node::OpStatus LispExpr::read_input() {
+Node::OpStatus LispExpr::read_input(Node&process) {
   MYLOGGER(trace_function, "LispExpr::read_input()", __func__, SLOG_FUNC_INFO);
   string input;
 
-  try { input = interface->read(); } catch(...) { forever=false; return {true, Node::create()}; }
+  try { input = interface->read(&process); } catch(...) { forever=false; return {true, Node::create()}; }
   
   //cout << "> "; getline(cin , input);
 

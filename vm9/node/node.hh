@@ -181,6 +181,8 @@ public:
   static OpStatus merge_nested(Map& m1, const Map&m2);
 
   OpStatus has_key(const string&key);
+  vector<string> get_keys_vector();
+  OpStatus get_vector_node();
   bool extend(const vector<string>&path, bool override=false);
 
   //----

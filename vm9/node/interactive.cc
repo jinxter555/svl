@@ -7,15 +7,19 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
+extern Interactive *it_ptr;
+std::vector<std::string> Interactive::cui_keys={};
+Node *Interactive::proc_shell=nullptr;
+
 // Interactive svlm_it(".svlm_history", "svlm> ");
 // histoery_file , prompt string
+
 Interactive::Interactive(const std::string& hf , const std::string&ps) 
 : LangPrompt(hf, ps) 
 {
   MYLOGGER(trace_function , string("LispExprInteractive::LispExprInteractive()") , __func__, SLOG_FUNC_INFO);
   lang.set_interface(this);
 
-//  init_command_functions();
   
 };
 
@@ -44,12 +48,12 @@ void Interactive::accept_prompt(const std::string &line) {
 PromptSwitch Interactive::ready() { 
   return LangPrompt::ready();
 }
-string Interactive::read() { 
+string Interactive::read(Node*process_ptr) { 
+  proc_shell = process_ptr;
   return LangPrompt::read();
 }
 
 void Interactive::parse_prompt(const std::string &line) {
-//    svlm_lang.interactive = true;
     if(line[0] == '!' && line[1] == '!') 
       //interact(line);
       parse(line);
@@ -131,4 +135,67 @@ void Interactive::print() {
 
 LispReader& Interactive::get_reader() {
   return lang.get_reader();
+}
+
+
+// ptk current prompt line list of strings
+vector<std::string> Interactive::get_ui_commands(const vector<string> &ptk) {
+  //it_ptr->lang.frame_current();
+  //cout << "ptk: " << _to_str_ext( ptk) << "\n";
+  //vector<string> l1= {"hello", "world", "help", "word"};
+  auto lvs = it_ptr->lang.get_local_vars(*proc_shell);
+
+  //lvs.insert(lvs.end(), l1.begin(), l1.end());
+
+  return lvs;
+}
+
+
+// -------------------command completion
+void Interactive::convert_buff_to_keys() {
+  std::string rlbuff=trim(rl_line_buffer);
+  cui_keys.clear();
+  if(rl_line_buffer!=NULL)
+    cui_keys = split_string(rlbuff, " ");
+}
+
+
+char* Interactive::command_generator(const char *text, int state) {
+  std::vector<std::string> commands = std::move(get_ui_commands(cui_keys));
+  int  commands_size = commands.size();
+  std::string textstr(text), command;
+  static int list_index, len; 
+
+  if(!state) {
+    list_index = 0;
+    len = strlen(text);
+  }  
+  
+  while(list_index < commands_size && (command = commands[list_index++]) != "") {
+    if( command.compare(0, len, textstr) == 0) {
+      return strdup(command.c_str());
+    }
+  }
+  return nullptr;
+}
+
+char** Interactive::command_completion(const char *text, int start, int end) {
+  char **matches;
+  std::string matchstr, rematch;
+  rl_attempted_completion_over = 1;
+
+  if(std::string(rl_line_buffer)  == "") cui_keys.clear();
+  if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') {convert_buff_to_keys(); }
+
+  matches = rl_completion_matches(text, command_generator);
+
+  if(matches == nullptr && strlen(text) > 0) {     // if stuck from previous command didn't complete properly
+    convert_buff_to_keys(); 
+    if(!cui_keys.empty()) 
+      rematch = cui_keys.back();
+    cui_keys.pop_back();
+    matches = rl_completion_matches(rematch.c_str(), command_generator);
+  }
+
+  return  matches;
 }

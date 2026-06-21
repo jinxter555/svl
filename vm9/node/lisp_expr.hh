@@ -169,7 +169,7 @@ public:
 
   // parse Node::List of tokens, returns a hierarchical tree
   // of modules.function.mvar ...
-  Node::OpStatus read_input(); 
+  Node::OpStatus read_input(Node&process); 
   Node::OpStatus parse_build(Node& tokens); 
   Node::OpStatus load(Node& process, const Node::Vector& code_list, size_t start=0);
 
@@ -358,5 +358,10 @@ public:
   Node::OpStatus gc_collect(Node&process);
 
   Node::OpStatus interpreter(Node& process, const Node::Vector& code_list, size_t start=0);
+
+
+  // auto complete
+  vector<string> get_local_vars(Node&process);
+
 
 };

@@ -15,6 +15,7 @@
 class Interactive : public LangPrompt {
 private:
   LispExpr lang; // static or not static to be determined
+  static  Node *proc_shell;
 public:
   Interactive(const std::string&hf, const std::string&ps);//  : LangPrompt(hf, ps) {};
   void accept_prompt(const std::string&l) override; // readyline prompt
@@ -31,7 +32,7 @@ public:
 
 
   PromptSwitch ready(); // ready for user readline input
-  string read(); // ready for user readline input
+  string read(Node *process_ptr); // ready for user readline input, process_ptr for variable completion
   LispReader& get_reader(); // lisp lexer and parser
 
 
@@ -42,7 +43,11 @@ public:
 
   static std::vector<std::string> cui_keys;
 
-  std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});                                                 
+  static char **command_completion(const char *text, int start, int end);
+  static void convert_buff_to_keys();
+
+  static char* command_generator(const char *text, int state);
+  static std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});                                                 
 
   void print();
 

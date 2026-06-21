@@ -25,6 +25,7 @@ void init() {
 }
 
 
+Interactive *it_ptr;
 
 int main(int argc, char *argv[]) {
 
@@ -37,12 +38,16 @@ ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
 
   init();
 
-  Interactive lang_iteractive(".loosh_history", "loosh> ");
+  Interactive lang_interactive(".loosh_history", "loosh> ");
+  rl_attempted_completion_function = lang_interactive.command_completion;
+  it_ptr = &lang_interactive;
   Commandline cml(argc, argv);
-  lang_iteractive.interact(cml);
-  lang_iteractive.pop_last_exit_history();
-  lang_iteractive.save_history();
+  lang_interactive.interact(cml);
+  lang_interactive.pop_last_exit_history();
+  lang_interactive.save_history();
   //cout << "\n"; lang_it.print(); cout << "\n";
+
+
 
 
 

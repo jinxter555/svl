@@ -4,6 +4,7 @@
 
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
+#include <ranges>
 
 string  _to_str_ext(const vector<string>& keys) ;
 
@@ -381,5 +382,33 @@ Node::OpStatusRef Node::method(const string&fun) {
   auto &class_ptr = obj_info_ref_status.second.get_node(CLASS_PTR).second;
   // vector<string> path = {FUNCTION, fun};
   return class_ptr.get_node({FUNCTION, fun});
+
+}
+
+
+vector<string> Node::get_keys_vector() {
+  MYLOGGER(trace_function, "Node::get_keys_vector()", __func__, SLOG_FUNC_INFO);
+
+  switch(type_) {
+  case Type::Shared: {
+    auto sptr = get<ptr_S>(value_);
+    return sptr->get_keys_vector(); }
+  case Type::Raw: {
+    auto sptr = get<ptr_R>(value_);
+    return sptr->get_keys_vector(); }
+  case Type::Unique:  {
+    auto &sptr = get<ptr_U>(value_);
+    return sptr->get_keys_vector(); }
+  case Type::Map:  {
+    auto &m = get<Map>(value_);
+    vector<string> keys;
+    for( auto const& [key, value] : m) {
+      keys.push_back(key);
+    }
+    return keys; }
+  default: {}
+  }
+
+  return {};
 
 }

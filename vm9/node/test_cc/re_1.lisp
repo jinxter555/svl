@@ -6,7 +6,7 @@
 # this is a test
 module Kernel 
   def main (x y) 
-    var n1
+    var n1  my_kinda_var
     
      # = r1 (new Lang.Text.RegExp '(\d)\s(\w+)' (:icase :ecmas))
      = r1 (new Lang.Text.RegExp '(\d\d)' (:icase :ecmas))
