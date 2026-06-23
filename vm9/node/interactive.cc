@@ -235,7 +235,7 @@ char** Interactive::command_completion(const char *text, int start, int end) {
 
   if(std::string(rl_line_buffer)  == "") { 
     cui_keys.clear(); 
-    //children_keys.clear(); 
+    children_keys.clear(); 
   }
   if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') {convert_buff_to_keys(); }
   if(rl_line_buffer[strlen(rl_line_buffer)-1] == '.') {convert_last_string_to_keys(); }
