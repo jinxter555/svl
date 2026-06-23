@@ -42,12 +42,15 @@ public:
   std::map<std::string, std::function<void(const std::string&)>> command_functions;
 
   static std::vector<std::string> cui_keys;
+  static std::vector<std::string> children_keys;
 
   static char **command_completion(const char *text, int start, int end);
   static void convert_buff_to_keys();
+  static void convert_last_string_to_keys();
 
   static char* command_generator(const char *text, int state);
   static std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});                                                 
+  static std::vector<std::string> get_map_var_children(const string&map_var);
 
   void print();
 

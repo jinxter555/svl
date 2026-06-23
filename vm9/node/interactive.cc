@@ -9,6 +9,7 @@
 
 extern Interactive *it_ptr;
 std::vector<std::string> Interactive::cui_keys={};
+std::vector<std::string> Interactive::children_keys={};
 Node *Interactive::proc_shell=nullptr;
 
 // Interactive svlm_it(".svlm_history", "svlm> ");
@@ -137,17 +138,34 @@ LispReader& Interactive::get_reader() {
   return lang.get_reader();
 }
 
+//extern const vector<string> LispExpr::lisp_path_keyword;
 
-// ptk current prompt line list of strings
+// ptk/cui_keys current prompt line list of strings
 vector<std::string> Interactive::get_ui_commands(const vector<string> &ptk) {
   //it_ptr->lang.frame_current();
   //cout << "ptk: " << _to_str_ext( ptk) << "\n";
   //vector<string> l1= {"hello", "world", "help", "word"};
   auto lvs = it_ptr->lang.get_local_vars(*proc_shell);
+  auto kws = it_ptr->lang.get_branch(LispExpr::lisp_path_keyword)->get_keys_vector();
 
   //lvs.insert(lvs.end(), l1.begin(), l1.end());
+  lvs.insert(lvs.end(), kws.begin(), kws.end());
 
   return lvs;
+}
+
+vector<string> Interactive::get_map_var_children(const string& map_var) {
+  auto m_ref_status = it_ptr->lang.symbol_lookup(*proc_shell, map_var);
+  if(!m_ref_status.first) return {};
+  vector<string> children;
+
+  auto keys = m_ref_status.second.get_keys_vector();
+  for(auto k : keys) {
+    children.push_back( map_var+ "." + k);
+
+  }
+  return children;
+
 }
 
 
@@ -158,11 +176,42 @@ void Interactive::convert_buff_to_keys() {
   if(rl_line_buffer!=NULL)
     cui_keys = split_string(rlbuff, " ");
 }
+void Interactive::convert_last_string_to_keys() {
+  std::string rlbuff=trim(rl_line_buffer);
+  cui_keys.clear();
+  if(rl_line_buffer!=NULL)
+    cui_keys = split_string(rlbuff, " ");
+  string map_var = cui_keys.back();
+  map_var.pop_back();
+
+  children_keys = get_map_var_children(map_var);
+ 
+  //cout << "last string with dot: "  << map_var << "\n";
+  //cout << "1 children_keys:  " <<  _to_str_ext( children_keys)  << "\n";
+
+}
 
 
 char* Interactive::command_generator(const char *text, int state) {
-  std::vector<std::string> commands = std::move(get_ui_commands(cui_keys));
+
+
+
+  std::vector<std::string> commands ;
+//  int  commands_size = commands.size();
+
+  if(children_keys.empty()) {
+    commands = std::move(get_ui_commands(cui_keys));
+  } else {
+    //cout << "text" << string(text) << "\n";
+    //cout << "2 children_keys:  " <<  _to_str_ext( children_keys)  << "\n";
+
+    commands = children_keys;
+
+  }
+
   int  commands_size = commands.size();
+
+
   std::string textstr(text), command;
   static int list_index, len; 
 
@@ -184,8 +233,12 @@ char** Interactive::command_completion(const char *text, int start, int end) {
   std::string matchstr, rematch;
   rl_attempted_completion_over = 1;
 
-  if(std::string(rl_line_buffer)  == "") cui_keys.clear();
+  if(std::string(rl_line_buffer)  == "") { 
+    cui_keys.clear(); 
+    //children_keys.clear(); 
+  }
   if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') {convert_buff_to_keys(); }
+  if(rl_line_buffer[strlen(rl_line_buffer)-1] == '.') {convert_last_string_to_keys(); }
 
   matches = rl_completion_matches(text, command_generator);
 

@@ -6,6 +6,8 @@ module Kernel
   
       = l1 (1 2 3 4 5)
 
+    print "$gvalue " $gvalue "\n"
+
     
       
      # p55 88888888
