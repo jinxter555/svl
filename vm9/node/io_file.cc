@@ -3,7 +3,7 @@
 #define SLOG_DEBUG_TRACE_FUNC
 #include "scope_logger.hh"
 
-vector<File::file_sptr> File::file_objects={};
+vector<File::file_uptr> File::file_objects={};
 
 
 Node::Integer File::atom_open, File::atom_close, File::atom_getline, File::atom_eof;
@@ -19,11 +19,12 @@ void File::init() {
 }
 
 void File::open(string fn) { 
-  filename=fn ;
+  filename=fn ; string line;
   fss.open(fn,  std::fstream::in );
   if(!fss) {
     cerr << "Can't open file!\n";
   }
+
 }
 
 string File::getline() { 
@@ -53,8 +54,9 @@ Node::OpStatus File::apply(Node&process, Node &object_node, const Node::Vector& 
     cerr << msg << "\n";
     return {false, Node::create_error(Error::Type::Parse, msg)};
   }
-
 }
+
+
 Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node::Vector& args) {
   MYLOGGER(trace_function, "File::apply_obj(Node&process, Node& object, const Vector& args)", __func__, SLOG_FUNC_INFO);
   MYLOGGER_MSG(trace_function, "args: " + Node::_to_str(args), SLOG_FUNC_INFO+30);
@@ -79,11 +81,11 @@ Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node:
     auto filename = args[1]->_to_str();
 
     //cout << "opening " << filename << "\n";
-    auto file_obj = make_shared<File>();
-    file_objects.push_back(file_obj);
+    auto file_obj = make_unique<File>();
 
-    Node::Integer id = file_objects.size() -1;
+    Node::Integer id = file_objects.size() ;
     file_obj->open(filename);
+    file_objects.push_back(move(file_obj));
     lisp_object[CC_OBJ_ID] = Node::create(id);
     return {true, Node::create(true)};
 
@@ -103,7 +105,7 @@ Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node:
   }
 
   if(method->_get_integer() == atom_close) {
-    auto file_obj = file_objects[id];
+    auto &file_obj = file_objects[id];
     file_obj->close();
     file_objects[id] = nullptr;
     lisp_object.erase(CC_OBJ_ID);
@@ -111,15 +113,14 @@ Node::OpStatus File::apply_obj(Node&process, Node::Map &lisp_object, const Node:
   }
 
   if(method->_get_integer() == atom_getline) {
-    auto file_obj = file_objects[id];
+    auto &file_obj = file_objects[id];
     if(file_obj->eof()) {
-      cerr << "end of file!\n";
       return {true, Node::create()};
     }
     return {true, Node::create( file_obj->getline())};
   }
   if(method->_get_integer() == atom_eof) {
-    auto file_obj = file_objects[id];
+    auto &file_obj = file_objects[id];
     if(file_obj->eof()) {
       return {true, Node::create(true)};
     }

@@ -273,6 +273,7 @@ Node::OpStatus LispExpr::eval(Node& process, const Node& code_node) {
     }
   
     return {true,  rv_ref_status.second.clone()};
+    //return {true,  Node::create(rv_ref_status.second._get_ptr_r()};
   }
   case Node::Type::ObjectId: { // object
     cout << "eval node object_id!\n";

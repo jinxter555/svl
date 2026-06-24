@@ -17,30 +17,6 @@ namespace websocket = beast::websocket;
 
 using namespace std;
 
-struct SessionState {
-  websocket::stream<beast::tcp_stream> ws;
-};
-
-
-class SimpleWebSocketServer {
-  net::io_context ioc_;
-  tcp::acceptor acceptor_;
-
-  using lambda_t = function<void(websocket::stream<beast::tcp_stream>&)> ;
-  //lambda_t session_lambda_;
-  lambda_t session_lambda_={};
-public:
-  SimpleWebSocketServer(const string& address, unsigned short port,  lambda_t lambda);
-  SimpleWebSocketServer(const string& address, unsigned short port);
-  void run();
-  void run(lambda_t& lambda);
-  void run_echo_server();
-  static Node::OpStatus apply(Node&process, Node &node, const Node::Vector& args) ;
-  static Node::OpStatus apply_obj(Node&process, Node::Map &object, const Node::Vector& args) ;
-
-  using swss_sptr = shared_ptr<SimpleWebSocketServer>;
-  static vector<swss_sptr>  swss_objects;
-};
 
 
 //------------------------------------------------------------------------
@@ -65,8 +41,8 @@ public:
   void run_echo_server();
 
 
-  using ss_sptr = shared_ptr<SocketSession>;
-  static vector<ss_sptr> ss_objects;
+  using ss_uptr = unique_ptr <SocketSession>;
+  static vector<ss_uptr> ss_objects;
 
   static Node::Integer create_and_register(tcp::socket&& socket);
   static Node::OpStatus apply(Node&process, Node &node, const Node::Vector& args) ;
@@ -83,8 +59,8 @@ public:
   //SocketListener(net::io_context& ioc, const string& address,  uint16_t port);
   SocketListener(const string& address,  uint16_t port);
   SocketSession accept();
-  using sl_sptr = shared_ptr<SocketListener>;
-  static vector<sl_sptr> sl_objects;
+  using sl_uptr =  unique_ptr<SocketListener>;
+  static vector<sl_uptr> sl_objects;
   static Node::Integer  create_and_register(const string& address,  uint16_t port);
 
   static Node::OpStatus apply(Node&process, Node &node, const Node::Vector& args) ;
@@ -122,8 +98,8 @@ public:
   static Node::OpStatus apply(Node&process, Node &node, const Node::Vector& args) ;
   static Node::OpStatus apply_obj(Node&process, Node::Map &object, const Node::Vector& args) ;
 
-  using sc_sptr = shared_ptr<SocketClient>;
-  static vector<sc_sptr>  sc_objects;
+  using sc_uptr = unique_ptr   <SocketClient>;
+  static vector<sc_uptr>  sc_objects;
 
 };
 

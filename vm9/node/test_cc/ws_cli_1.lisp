@@ -10,7 +10,7 @@ module Kernel
     
      = c1 (new System.Net.WSClient)
      = c2 (new System.Net.WSClient)
-     # c1.connect "0.0.0.0" 8080
+      c1.connect "0.0.0.0" 8080
 
     # run(n1)
 

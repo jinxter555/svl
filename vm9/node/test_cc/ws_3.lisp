@@ -11,6 +11,7 @@ module Kernel
      = n1 (new System.Net.WSListener)
      = n2 (new System.Net.WSListener)
      n1.server "0.0.0.0" 8080
+    = s1 (n1.accept())
     # n2.server "0.0.0.0" 9999
 
 

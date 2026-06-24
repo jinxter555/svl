@@ -6,7 +6,7 @@ using namespace std;
 
 class File  {
 public:
-  using file_sptr = shared_ptr<File>;
+  using file_uptr = unique_ptr<File>;
   File();
   void open(string fn);
   string getline();
@@ -20,7 +20,7 @@ public:
 private:
   string filename;
   fstream fss;
-  static vector<file_sptr> file_objects;
+  static vector<file_uptr> file_objects;
   static   Node::Integer atom_open, atom_close, atom_getline, atom_eof;
 
 };
