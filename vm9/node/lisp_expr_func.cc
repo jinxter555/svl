@@ -1023,18 +1023,23 @@ Node::OpStatus LispExpr::root_manifest(Node& process, const Node::Vector& code_l
   for(size_t i=start; i<s; i++) {
     path.push_back(code_list[i]->_to_str());
   }
-   cout  << "root path '" << _to_str_ext( path) << "' \n";
+  cout  << "root path: '" << _to_str_ext( path) << "' \n";
   auto node_status_ref = get_node(path);
-   cout  << "node status1 '" << node_status_ref << "' \n\n";
 
   if(!node_status_ref.first) {
     cerr << "root path '" << _to_str_ext( path) << "' not found\n";
     return {false, Node::create_error(Error::Type::KeyNotFound, "Path: '"  + _to_str_ext( path) + "' not found")};
   }
-   cout  << "node status2 '" << node_status_ref << "' \n\n";
-  return {true, node_status_ref.second.clone() };
+  cout  << "node status  '" << Node::_to_str( node_status_ref.second.type_) << "' \n\n";
 
-  return {true, Node::create()};
+
+  // cout  << "node status2 '" << node_status_ref << "' \n\n";
+  //return {true, node_status_ref.second.clone() };
+  return {true, Node::create(
+    &node_status_ref.second
+  )};
+
+//  return {true, Node::create()};
 }
 
 Node::OpStatus LispExpr::lisp_object_return(Node&process, const Node::Vector &code_list, size_t start) {

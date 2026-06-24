@@ -12,6 +12,8 @@ module Kernel
      = r1 (new Lang.Text.RegExp '(\d\d)' (:icase :ecmas))
      # = r1 (new Lang.Text.RegExp '\d\d'  :icase)
 
+    = bob (root)
+
     loop
       # print "main "
       print(eval (read)) "\n"

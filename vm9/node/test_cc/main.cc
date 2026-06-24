@@ -39,6 +39,7 @@ ScopeLogger::set_current_verbose_level(SLOG_FUNC_INFO+30);
   init();
 
   Interactive lang_interactive(".loosh_history", "loosh> ");
+  //rl_variable_bind("completion-append-space", "off");
   rl_attempted_completion_function = lang_interactive.command_completion;
   it_ptr = &lang_interactive;
   Commandline cml(argc, argv);

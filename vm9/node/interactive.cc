@@ -8,8 +8,8 @@
 #include "scope_logger.hh"
 
 extern Interactive *it_ptr;
-std::vector<std::string> Interactive::cui_keys={};
-std::vector<std::string> Interactive::children_keys={};
+std::vector<std::string> Interactive::line_buff_keys={}; // after space ' ' completion
+std::vector<std::string> Interactive::map_children_keys={}; // only for map or object completion
 Node *Interactive::proc_shell=nullptr;
 
 // Interactive svlm_it(".svlm_history", "svlm> ");
@@ -138,17 +138,17 @@ LispReader& Interactive::get_reader() {
   return lang.get_reader();
 }
 
-//extern const vector<string> LispExpr::lisp_path_keyword;
 
-// ptk/cui_keys current prompt line list of strings
-vector<std::string> Interactive::get_ui_commands(const vector<string> &ptk) {
-  //it_ptr->lang.frame_current();
-  //cout << "ptk: " << _to_str_ext( ptk) << "\n";
-  //vector<string> l1= {"hello", "world", "help", "word"};
+vector<std::string> Interactive::get_ui_commands() {
+
+  // auto map_keys = lookup_last_string_for_map_keys();
+  //if(!map_keys.empty()) return map_keys;
+  if(!map_children_keys.empty()) return map_children_keys;
+
+
   auto lvs = it_ptr->lang.get_local_vars(*proc_shell);
   auto kws = it_ptr->lang.get_branch(LispExpr::lisp_path_keyword)->get_keys_vector();
 
-  //lvs.insert(lvs.end(), l1.begin(), l1.end());
   lvs.insert(lvs.end(), kws.begin(), kws.end());
 
   return lvs;
@@ -172,41 +172,49 @@ vector<string> Interactive::get_map_var_children(const string& map_var) {
 // -------------------command completion
 void Interactive::convert_buff_to_keys() {
   std::string rlbuff=trim(rl_line_buffer);
-  cui_keys.clear();
+  line_buff_keys.clear();
   if(rl_line_buffer!=NULL)
-    cui_keys = split_string(rlbuff, " ");
+    line_buff_keys = split_string(rlbuff, " ");
 }
-void Interactive::convert_last_string_to_keys() {
-  std::string rlbuff=trim(rl_line_buffer);
-  cui_keys.clear();
-  if(rl_line_buffer!=NULL)
-    cui_keys = split_string(rlbuff, " ");
-  string map_var = cui_keys.back();
-  map_var.pop_back();
 
-  children_keys = get_map_var_children(map_var);
+vector<string> Interactive::lookup_last_string_for_map_keys() {
+  MYLOGGER(trace_function, "Interactive::lookup_last_string_for_map_keys()", __func__, SLOG_FUNC_INFO);
+
+  std::string rlbuff=trim(rl_line_buffer);
+  vector<string> buff_vector;
+  if(rl_line_buffer!=NULL)
+    buff_vector = split_string(rlbuff, " ");
+
+
+  if(buff_vector.empty()) return {};
+
+  string map_var = buff_vector.back();
+  if(map_var=="" && buff_vector.size() == 1) return {}; 
+
+  MYLOGGER_MSG(trace_function, "map var: " + map_var, SLOG_FUNC_INFO+30);
+
+  //cout << "lookup_last_string_for_map_keys(): map var: " << map_var << "\n";
+
+  if(map_var.back()=='.')
+    map_var.pop_back(); // get rid of '.'
+
+  map_children_keys = get_map_var_children(map_var);
  
   //cout << "last string with dot: "  << map_var << "\n";
   //cout << "1 children_keys:  " <<  _to_str_ext( children_keys)  << "\n";
+  return map_children_keys;
 
 }
 
 
 char* Interactive::command_generator(const char *text, int state) {
 
-
-
   std::vector<std::string> commands ;
-//  int  commands_size = commands.size();
 
-  if(children_keys.empty()) {
-    commands = std::move(get_ui_commands(cui_keys));
+  if(map_children_keys.empty()) {
+    commands = std::move(get_ui_commands());
   } else {
-    //cout << "text" << string(text) << "\n";
-    //cout << "2 children_keys:  " <<  _to_str_ext( children_keys)  << "\n";
-
-    commands = children_keys;
-
+    commands = map_children_keys;
   }
 
   int  commands_size = commands.size();
@@ -232,23 +240,40 @@ char** Interactive::command_completion(const char *text, int start, int end) {
   char **matches;
   std::string matchstr, rematch;
   rl_attempted_completion_over = 1;
+  rl_completion_suppress_append = 1;
 
   if(std::string(rl_line_buffer)  == "") { 
-    cui_keys.clear(); 
-    children_keys.clear(); 
+    line_buff_keys.clear(); 
+    map_children_keys.clear(); 
   }
-  if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') {convert_buff_to_keys(); }
-  if(rl_line_buffer[strlen(rl_line_buffer)-1] == '.') {convert_last_string_to_keys(); }
+
+  if(rl_line_buffer[strlen(rl_line_buffer)-1] == ' ') { 
+    map_children_keys.clear(); 
+    convert_buff_to_keys(); 
+  } else if(rl_line_buffer[strlen(rl_line_buffer)-1] == '.') {
+    lookup_last_string_for_map_keys(); 
+  } else {
+    //if(!line_buff_keys.empty() && line_buff_keys.back() != "") { }
+  }
+
+
+  auto next_map_var_children =  get_map_var_children(text);
+  if(!next_map_var_children.empty()) {
+  //  cout << "\ncommand_completion() text " <<  string(text) << "\n";
+    map_children_keys = next_map_var_children;
+  }
+
 
   matches = rl_completion_matches(text, command_generator);
 
   if(matches == nullptr && strlen(text) > 0) {     // if stuck from previous command didn't complete properly
     convert_buff_to_keys(); 
-    if(!cui_keys.empty()) 
-      rematch = cui_keys.back();
-    cui_keys.pop_back();
+    if(!line_buff_keys.empty()) 
+      rematch = line_buff_keys.back();
+    line_buff_keys.pop_back();
     matches = rl_completion_matches(rematch.c_str(), command_generator);
   }
+
 
   return  matches;
 }

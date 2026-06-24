@@ -39,18 +39,19 @@ public:
 
 
   // command completion
-  std::map<std::string, std::function<void(const std::string&)>> command_functions;
+  map<string, function<void(const std::string&)>> command_functions;
 
-  static std::vector<std::string> cui_keys;
-  static std::vector<std::string> children_keys;
+  static vector<string> line_buff_keys;
+  static vector<string> map_children_keys;
 
   static char **command_completion(const char *text, int start, int end);
   static void convert_buff_to_keys();
-  static void convert_last_string_to_keys();
+  static vector<string> lookup_last_string_for_map_keys();
 
   static char* command_generator(const char *text, int state);
-  static std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});                                                 
-  static std::vector<std::string> get_map_var_children(const string&map_var);
+  //static std::vector<std::string> get_ui_commands(const std::vector<std::string> &ptk={});                                                 
+  static vector<string> get_ui_commands();
+  static vector<string> get_map_var_children(const string&map_var);
 
   void print();
 
